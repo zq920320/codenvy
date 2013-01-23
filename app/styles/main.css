@@ -1,114 +1,75 @@
-/* logo */
-/* line 18, _movie.scss */
-.fixed-logo {
-  position: fixed;
-  z-index: 6000;
-  width: 34px;
-  height: 17px;
-  top: 5%;
-  left: 50%;
-  margin-left: -17px;
-  background-image: url("../images/movie/cloudLogo.png");
+/* line 9, _signup.scss */
+.signup-form-wrapper {
+  width: 400px;
+  margin: 20px;
 }
 
-/* narrative - where stories live */
-/* line 30, _movie.scss */
-.narrative {
-  width: 600px;
-  position: fixed;
-  z-index: 6000;
-  left: 50%;
-  margin-left: -300px;
-  top: 15%;
+/* line 14, _signup.scss */
+.signup-form {
   text-align: center;
+  padding: 10px;
 }
 
-/* progress bar */
-/* line 40, _movie.scss */
-.progress-bar {
-  position: fixed;
-  z-index: 6001;
-  left: 50%;
-  bottom: 15px;
-  height: 49px;
-  width: 758px;
-  margin-left: -379px;
-  background-image: url("../images/movie/timelineEmpty.png");
-  background-repeat: no-repeat;
-  background-position: 50% 0;
+/* line 20, _signup.scss */
+.signup-form > input {
+  width: 95%;
+}
+
+/* line 24, _signup.scss */
+.signup-form > .domain-name {
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+  transition-duration: 0.5s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+}
+
+/* line 28, _signup.scss */
+.hidden-text-box {
+  opacity: 0;
+}
+
+/* line 32, _signup.scss */
+.aternative-login {
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  border-top: solid 1px #CCC;
+  padding: 10px;
   text-align: center;
-}
-/* line 60, _movie.scss */
-.progress-bar .filler {
-  position: fixed;
-  z-index: 6000;
-  left: 50%;
-  bottom: 15px;
-  height: 49px;
-  margin-left: -379px;
-  height: 49px;
-  width: 758px;
-  background-image: url("../images/movie/timelineLoaded.png");
-  background-repeat: no-repeat;
-  background-position: 0 0;
+  -webkit-transform: translate(0, -64px);
+  -moz-transform: translate(0, -64px);
+  -ms-transform: translate(0, -64px);
+  -o-transform: translate(0, -64px);
+  transform: translate(0, -64px);
 }
 
-/* opening screen */
-/* line 78, _movie.scss */
-.opening {
-  position: fixed;
-  z-index: 5000;
-  left: 0;
-  top: 0;
-  right: 0;
+/* line 40, _signup.scss */
+.aternative-login.collapsed {
+  opacity: 0;
+}
+
+/* line 44, _signup.scss */
+.signup-terms {
+  position: absolute;
+  left: 20px;
   bottom: 0;
-  background-color: #FBFBFB;
-  border-bottom: solid 4px #CCC;
-}
-
-/* line 85, _movie.scss */
-.ship {
-  position: fixed;
-  z-index: 5001;
-  background-image: url("../images/movie/colorShip.png");
-  width: 373px;
-  height: 161px;
-  left: 50%;
-  margin-left: -186.5px;
-  top: 50%;
-  margin-top: -80.5px;
-}
-/* line 95, _movie.scss */
-.ship .blank {
-  background-image: url("../images/movie/wireShip.png");
-  width: 373px;
-  height: 161px;
-  position: fixed;
-  z-index: 5002;
-}
-
-/* build screen */
-/* line 104, _movie.scss */
-.build {
-  position: fixed;
-  z-index: 5003;
-  top: 0%;
-  left: 0%;
-  width: 100%;
-  height: 100%;
-  border-left: solid 10px rgba(255, 255, 0, 0.2);
-}
-
-/* the end screen */
-/* line 111, _movie.scss */
-.theend {
-  position: fixed;
-  z-index: 5004;
-  top: 0%;
-  left: 0%;
-  width: 100%;
-  height: 100%;
-  border-bottom: solid 10px #CCC;
 }
 
 @font-face {
@@ -190,6 +151,7 @@ html {
 /* line 83, main.scss */
 body {
   margin: 0;
+  background-color: #FBFBFB;
 }
 
 /* ==========================================================================
@@ -198,7 +160,7 @@ body {
 /**
  * Address `outline` inconsistency between Chrome and other browsers.
  */
-/* line 95, main.scss */
+/* line 96, main.scss */
 a:focus {
   outline: thin dotted;
 }
@@ -206,7 +168,7 @@ a:focus {
 /**
  * Improve readability when focused and also mouse hovered in all browsers.
  */
-/* line 104, main.scss */
+/* line 105, main.scss */
 a:active,
 a:hover {
   outline: 0;
@@ -219,7 +181,7 @@ a:hover {
  * Address variable `h1` font size within `section` and `article` contexts in
  * Firefox 4+, Safari 5, and Chrome.
  */
-/* line 117, main.scss */
+/* line 118, main.scss */
 h1 {
   font-size: 2em;
 }
@@ -227,7 +189,7 @@ h1 {
 /**
  * Address styling not present in IE 8/9, Safari 5, and Chrome.
  */
-/* line 125, main.scss */
+/* line 126, main.scss */
 abbr[title] {
   border-bottom: 1px dotted;
 }
@@ -235,7 +197,7 @@ abbr[title] {
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 134, main.scss */
+/* line 135, main.scss */
 b,
 strong {
   font-weight: bold;
@@ -244,7 +206,7 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 142, main.scss */
+/* line 143, main.scss */
 dfn {
   font-style: italic;
 }
@@ -252,7 +214,7 @@ dfn {
 /**
  * Address styling not present in IE 8/9.
  */
-/* line 150, main.scss */
+/* line 151, main.scss */
 mark {
   background: #ff0;
   color: #000;
@@ -261,7 +223,7 @@ mark {
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 162, main.scss */
+/* line 163, main.scss */
 code,
 kbd,
 pre,
@@ -273,7 +235,7 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 171, main.scss */
+/* line 172, main.scss */
 pre {
   white-space: pre;
   white-space: pre-wrap;
@@ -283,7 +245,7 @@ pre {
 /**
  * Set consistent quote types.
  */
-/* line 181, main.scss */
+/* line 182, main.scss */
 q {
   quotes: "\201C" "\201D" "\2018" "\2019";
 }
@@ -291,7 +253,7 @@ q {
 /**
  * Address inconsistent and variable font size in all browsers.
  */
-/* line 189, main.scss */
+/* line 190, main.scss */
 small {
   font-size: 80%;
 }
@@ -299,7 +261,7 @@ small {
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 198, main.scss */
+/* line 199, main.scss */
 sub,
 sup {
   font-size: 75%;
@@ -308,12 +270,12 @@ sup {
   vertical-align: baseline;
 }
 
-/* line 205, main.scss */
+/* line 206, main.scss */
 sup {
   top: -0.5em;
 }
 
-/* line 209, main.scss */
+/* line 210, main.scss */
 sub {
   bottom: -0.25em;
 }
@@ -324,7 +286,7 @@ sub {
 /**
  * Remove border when inside `a` element in IE 8/9.
  */
-/* line 221, main.scss */
+/* line 222, main.scss */
 img {
   border: 0;
 }
@@ -332,7 +294,7 @@ img {
 /**
  * Correct overflow displayed oddly in IE 9.
  */
-/* line 229, main.scss */
+/* line 230, main.scss */
 svg:not(:root) {
   overflow: hidden;
 }
@@ -343,7 +305,7 @@ svg:not(:root) {
 /**
  * Address margin not present in IE 8/9 and Safari 5.
  */
-/* line 241, main.scss */
+/* line 242, main.scss */
 figure {
   margin: 0;
 }
@@ -354,7 +316,7 @@ figure {
 /**
  * Define consistent border, margin, and padding.
  */
-/* line 253, main.scss */
+/* line 254, main.scss */
 fieldset {
   border: 1px solid #c0c0c0;
   margin: 0 2px;
@@ -365,7 +327,7 @@ fieldset {
  * 1. Correct `color` not being inherited in IE 8/9.
  * 2. Remove padding so people aren't caught out if they zero out fieldsets.
  */
-/* line 264, main.scss */
+/* line 265, main.scss */
 legend {
   border: 0;
   /* 1 */
@@ -378,7 +340,7 @@ legend {
  * 2. Correct font size not being inherited in all browsers.
  * 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 278, main.scss */
+/* line 279, main.scss */
 button,
 input,
 select,
@@ -395,7 +357,7 @@ textarea {
  * Address Firefox 4+ setting `line-height` on `input` using `!important` in
  * the UA stylesheet.
  */
-/* line 290, main.scss */
+/* line 291, main.scss */
 button,
 input {
   line-height: normal;
@@ -408,7 +370,7 @@ input {
  * 3. Improve usability and consistency of cursor style between image-type
  *    `input` and others.
  */
-/* line 305, main.scss */
+/* line 306, main.scss */
 button,
 html input[type="button"],
 input[type="reset"],
@@ -422,7 +384,7 @@ input[type="submit"] {
 /**
  * Re-set default cursor for disabled elements.
  */
-/* line 315, main.scss */
+/* line 316, main.scss */
 button[disabled],
 html input[disabled] {
   cursor: default;
@@ -432,7 +394,7 @@ html input[disabled] {
  * 1. Address box sizing set to `content-box` in IE 8/9.
  * 2. Remove excess padding in IE 8/9.
  */
-/* line 325, main.scss */
+/* line 326, main.scss */
 input[type="checkbox"],
 input[type="radio"] {
   box-sizing: border-box;
@@ -446,7 +408,7 @@ input[type="radio"] {
  * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
  *    (include `-moz` to future-proof).
  */
-/* line 336, main.scss */
+/* line 337, main.scss */
 input[type="search"] {
   -webkit-appearance: textfield;
   /* 1 */
@@ -460,7 +422,7 @@ input[type="search"] {
  * Remove inner padding and search cancel button in Safari 5 and Chrome
  * on OS X.
  */
-/* line 349, main.scss */
+/* line 350, main.scss */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
@@ -469,7 +431,7 @@ input[type="search"]::-webkit-search-decoration {
 /**
  * Remove inner padding and border in Firefox 4+.
  */
-/* line 358, main.scss */
+/* line 359, main.scss */
 button::-moz-focus-inner,
 input::-moz-focus-inner {
   border: 0;
@@ -480,7 +442,7 @@ input::-moz-focus-inner {
  * 1. Remove default vertical scrollbar in IE 8/9.
  * 2. Improve readability and alignment in all browsers.
  */
-/* line 368, main.scss */
+/* line 369, main.scss */
 textarea {
   overflow: auto;
   /* 1 */
@@ -494,14 +456,14 @@ textarea {
 /**
  * Remove most spacing between table cells.
  */
-/* line 381, main.scss */
+/* line 382, main.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
 /* end Normalize */
-/* line 401, main.scss */
+/* line 402, main.scss */
 .wrapper {
   width: 947px;
   margin: auto;
@@ -509,7 +471,7 @@ table {
   position: relative;
 }
 @media only screen and (max-width: 947px) {
-  /* line 401, main.scss */
+  /* line 402, main.scss */
   .wrapper {
     width: 100%;
   }
@@ -518,29 +480,28 @@ table {
 /*
   for movies only
 */
-/* line 416, main.scss */
+/* line 417, main.scss */
 .wrapper.extended {
   height: 10000px;
 }
 
-/* line 420, main.scss */
+/* line 421, main.scss */
 header {
   text-align: center;
   padding: 20px;
   border-bottom: solid 1px #CCC;
 }
 
-/* line 425, main.scss */
+/* line 426, main.scss */
 footer {
   text-align: center;
   padding: 20px;
   border-top: solid 1px #CCC;
 }
 
-/* line 430, main.scss */
+/* line 431, main.scss */
 .scene {
   height: 400px;
-  background-color: #FBFBFB;
   width: 100%;
   -webkit-transition-property: all;
   -moz-transition-property: all;
@@ -554,9 +515,10 @@ footer {
   -moz-transition-timing-function: ease-in;
   -o-transition-timing-function: ease-in;
   transition-timing-function: ease-in;
+  position: relative;
 }
 
-/* line 437, main.scss */
+/* line 439, main.scss */
 .overview {
   -webkit-transition-property: all;
   -moz-transition-property: all;
@@ -572,14 +534,14 @@ footer {
   transition-timing-function: ease-in;
   border-top: solid 1px #CCC;
 }
-/* line 441, main.scss */
+/* line 443, main.scss */
 .overview ul {
   padding: 0;
   margin: 0;
   text-align: center;
 }
 @media only screen and (min-width: 947px) {
-  /* line 441, main.scss */
+  /* line 443, main.scss */
   .overview ul {
     margin: 0;
     padding: 0;
@@ -588,7 +550,7 @@ footer {
     *zoom: 1;
   }
 }
-/* line 449, main.scss */
+/* line 451, main.scss */
 .overview ul li {
   background-image: url("../images/tools.png");
   background-repeat: no-repeat;
@@ -598,7 +560,7 @@ footer {
   margin-top: 10px;
 }
 @media only screen and (min-width: 947px) {
-  /* line 449, main.scss */
+  /* line 451, main.scss */
   .overview ul li {
     width: 20%;
     list-style-image: none;
@@ -616,7 +578,7 @@ footer {
   }
 }
 @media only screen and (max-width: 947px) {
-  /* line 449, main.scss */
+  /* line 451, main.scss */
   .overview ul li {
     width: 100%;
     list-style-image: none;
@@ -634,7 +596,7 @@ footer {
   }
 }
 
-/* line 478, main.scss */
+/* line 480, main.scss */
 .scroll-meter {
   position: fixed;
   z-index: 10000;
@@ -646,7 +608,7 @@ footer {
   font-size: 40pt;
 }
 @media only screen and (max-width: 947px) {
-  /* line 478, main.scss */
+  /* line 480, main.scss */
   .scroll-meter {
     display: none;
   }
