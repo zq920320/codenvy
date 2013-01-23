@@ -1,0 +1,48 @@
+@import "compass/css3/transform";
+
+@mixin transition($duration,$timing:ease-in,$property:all){
+  @include transition-property($property);
+  @include transition-duration($duration);
+  @include transition-timing-function($timing);
+};
+
+.signup-form-wrapper {
+    width: 400px;
+    margin: 20px;
+}
+
+.signup-form {
+    text-align: center;
+    padding: 10px;
+    
+}
+
+.signup-form > input {
+    width: 95%;
+}
+
+.signup-form > .domain-name {
+    @include transition(0.5s,ease-in,opacity);
+}
+
+.hidden-text-box {
+    opacity: 0;
+}
+
+.aternative-login {
+    @include transition(0.3s);
+    border-top:solid 1px #CCC;
+    padding: 10px;
+    text-align: center; 
+    @include transform(translate(0,-64px));
+}
+
+.aternative-login.collapsed {
+    opacity: 0; 
+}
+
+.signup-terms {
+    position: absolute;
+    left: 20px;
+    bottom: 0;
+}
