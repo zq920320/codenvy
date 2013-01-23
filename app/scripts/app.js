@@ -1,49 +1,19 @@
-define(["jquery","modernizr","skrollr", "text!templates/movie.html"], function($,Modernizr,skrollr,movieTemplate){
-
-
-	function initializeSkrollr(){
-		var s = skrollr.init({
-            beforerender: function(data) {
-                //console.log('beforerender');
-            },
-            render: function() {
-                //console.log('render');
-            },
-            constants: {
-                rubicon: 200,
-                build : 2000,
-                theend : 5000
-            },
-            easing: {
-                WTF: Math.random,
-                inverted: function(p) {
-                    return 1-p;
-                }
-            }
-        });
-	}
-
-	function initializeScrollMeter(){
-		window.onscroll = function() {
-            function getScrollTop(){
-                return window.pageYOffset || document.scrollTop || document.body.scrollTop || 0;
-            }
-            $(".scroll-meter").html(getScrollTop());
-        }
-	}
-
+define(["jquery"], function($){
 
 	return {
 		run : function(){
 			$(document).ready(function(){
-				if(Modernizr.mq('only screen and (min-width: 947px)')){
-					$(".wrapper").addClass("extended");
+                $(".signup-form > input, a").on("focus", function(){
+                    $(".signup-form > input[type=submit]").show();
+                    $(".signup-form > .domain-name").removeClass("hidden-text-box");
+                    $(".aternative-login").addClass("collapsed");
+                });
 
-					$("body").append(movieTemplate);
-					initializeSkrollr();
-					initializeScrollMeter();
-
-				}
+                $(".signup-form > input, a").on("blur", function(){
+                    $(".signup-form > input[type=submit]").hide();
+                    $(".signup-form > .domain-name").addClass("hidden-text-box");
+                    $(".aternative-login").removeClass("collapsed");
+                });
 			});
 		}
 	};
