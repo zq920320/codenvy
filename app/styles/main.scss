@@ -1,11 +1,11 @@
 @import "compass/css3";
-@import "movie";
+@import "signup";
 @import "compass/typography/lists/inline-block-list";
 
 
-@font-face { 
-  font-family: CodeEnvy; 
-  src: url('../fonts/regular.otf'); 
+@font-face {
+  font-family: CodeEnvy;
+  src: url('../fonts/regular.otf');
 }
 
 /*! normalize.css v2.0.1 | MIT License | git.io/normalize */
@@ -82,6 +82,7 @@ html {
 
 body {
     margin: 0;
+    background-color: #FBFBFB;
 }
 
 /* ==========================================================================
@@ -388,11 +389,11 @@ table {
 @mixin transition($duration,$timing:ease-in,$property:all){
   @include transition-property($property);
   @include transition-duration($duration);
-  @include transition-timing-function($timing); 
+  @include transition-timing-function($timing);
 };
 
-$page-width : 947px; 
-$page-height : 10000px; //movies only 
+$page-width : 947px;
+$page-height : 10000px; //movies only
 $scene-height : 400px;
 $large-screen: "only screen and (min-width:" + $page-width + ")";
 $smaller-screen: "only screen and (max-width:" + $page-width + ")";
@@ -400,9 +401,9 @@ $smaller-screen: "only screen and (max-width:" + $page-width + ")";
 
 .wrapper {
   width: $page-width;
-  
-  @media #{$smaller-screen} { 
-    width: 100%; 
+
+  @media #{$smaller-screen} {
+    width: 100%;
   }
 
   margin: auto;
@@ -428,24 +429,25 @@ footer {
 }
 
 .scene {
-  height: $scene-height; 
-  background-color: #FBFBFB;
+  height: $scene-height;
+  // background-color: #FBFBFB;
   width: 100%;
   @include transition(0.5s);
+  position: relative;
 }
 
 .overview {
-  @include transition(0.5s); 
+  @include transition(0.5s);
   border-top: solid 1px #CCC;
 
   ul{
     padding: 0; margin: 0;
     text-align: center;
 
-    @media #{$large-screen} { 
+    @media #{$large-screen} {
       @include inline-block-list-container();
     }
-    
+
     li{
 
       $icon-size : 25px;
@@ -460,13 +462,13 @@ footer {
       padding-top: $icon-size*1.2;
       margin-top: 10px;
 
-      @media #{$large-screen} { 
+      @media #{$large-screen} {
         width:20%;
         @include inline-block-list-item();
         white-space: normal; vertical-align: top;
       }
 
-      @media #{$smaller-screen} { 
+      @media #{$smaller-screen} {
         width:100%;
         @include inline-block-list-item();
         white-space: normal; vertical-align: top;
@@ -476,10 +478,10 @@ footer {
 }
 
 .scroll-meter{
-  @media #{$smaller-screen} { 
+  @media #{$smaller-screen} {
     display: none;
   }
-  
+
   position: fixed; z-index: 10000;
   right: 0; bottom: 10px;
   background-color: yellow;
