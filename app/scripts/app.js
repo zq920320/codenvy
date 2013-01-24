@@ -5,11 +5,11 @@ define(["jquery"], function($){
 			$(document).ready(function(){
                 function adjustFormDisplay(){
                     if($(".signup-form > input, a").toArray().indexOf(document.activeElement) !== -1){
-                        $(".signup-form > input[type=submit]").show();
+                        $(".signup-form > .signup-button").removeClass("hidden-button");
                         $(".signup-form > .domain-name").removeClass("hidden-text-box");
                         $(".aternative-login").addClass("collapsed");
                     } else {
-                        $(".signup-form > input[type=submit]").hide();
+                        $(".signup-form > .signup-button").addClass("hidden-button");
                         $(".signup-form > .domain-name").addClass("hidden-text-box");
                         $(".aternative-login").removeClass("collapsed");
                     }
