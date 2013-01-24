@@ -1,43 +1,108 @@
-/* line 9, _signup.scss */
+/* line 10, _signup.scss */
 .signup-form-wrapper {
   width: 400px;
   margin: 20px;
 }
 
-/* line 14, _signup.scss */
+/* line 15, _signup.scss */
 .signup-form {
   text-align: center;
   padding: 10px;
 }
 
-/* line 20, _signup.scss */
+/* line 21, _signup.scss */
 .signup-form > input {
   width: 95%;
 }
 
-/* line 24, _signup.scss */
+/* line 25, _signup.scss */
 .signup-form > .domain-name {
   -webkit-transition-property: opacity;
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
   transition-property: opacity;
-  -webkit-transition-duration: 0.5s;
-  -moz-transition-duration: 0.5s;
-  -o-transition-duration: 0.5s;
-  transition-duration: 0.5s;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
   -webkit-transition-timing-function: ease-in;
   -moz-transition-timing-function: ease-in;
   -o-transition-timing-function: ease-in;
   transition-timing-function: ease-in;
+  -webkit-transition-delay: 0.3s;
+  -moz-transition-delay: 0.3s;
+  -o-transition-delay: 0.3s;
+  transition-delay: 0.3s;
 }
 
-/* line 28, _signup.scss */
+/* line 29, _signup.scss */
 .hidden-text-box {
   opacity: 0;
 }
 
-/* line 32, _signup.scss */
+/* line 33, _signup.scss */
+.signup-form > .signup-button {
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0.3s;
+  -moz-transition-delay: 0.3s;
+  -o-transition-delay: 0.3s;
+  transition-delay: 0.3s;
+}
+
+/* line 37, _signup.scss */
+.hidden-button {
+  opacity: 0;
+}
+
+/* line 41, _signup.scss */
 .aternative-login {
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0.6s;
+  -moz-transition-duration: 0.6s;
+  -o-transition-duration: 0.6s;
+  transition-duration: 0.6s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  transition-delay: 0;
+  border-top: solid 1px #CCC;
+  padding: 10px;
+  text-align: center;
+  -webkit-transform: translate(0, -64px);
+  -moz-transform: translate(0, -64px);
+  -ms-transform: translate(0, -64px);
+  -o-transform: translate(0, -64px);
+  transform: translate(0, -64px);
+  opacity: 1;
+  background-color: #FBFBFB;
+}
+
+/* line 51, _signup.scss */
+.aternative-login.collapsed {
+  opacity: 0;
+  -webkit-transform: translate(0, 0);
+  -moz-transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
+  transform: translate(0, 0);
   -webkit-transition-property: all;
   -moz-transition-property: all;
   -o-transition-property: all;
@@ -50,22 +115,13 @@
   -moz-transition-timing-function: ease-in;
   -o-transition-timing-function: ease-in;
   transition-timing-function: ease-in;
-  border-top: solid 1px #CCC;
-  padding: 10px;
-  text-align: center;
-  -webkit-transform: translate(0, -64px);
-  -moz-transform: translate(0, -64px);
-  -ms-transform: translate(0, -64px);
-  -o-transform: translate(0, -64px);
-  transform: translate(0, -64px);
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  transition-delay: 0;
 }
 
-/* line 40, _signup.scss */
-.aternative-login.collapsed {
-  opacity: 0;
-}
-
-/* line 44, _signup.scss */
+/* line 57, _signup.scss */
 .signup-terms {
   position: absolute;
   left: 20px;
