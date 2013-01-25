@@ -1,16 +1,13 @@
 @import "compass/css3";
 @import "compass/typography/lists/inline-block-list";
 
+@import "assets";
 @import "typography";
 @import "colors";
 @import "behaviors";
 @import "signup";
 
 
-@font-face {
-  font-family: CodeEnvy;
-  src: url('../fonts/helvetica.otf');
-}
 
 /*! normalize.css v2.0.1 | MIT License | git.io/normalize */
 
