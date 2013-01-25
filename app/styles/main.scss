@@ -3,6 +3,7 @@
 
 @import "typography";
 @import "colors";
+@import "behaviors";
 @import "signup";
 
 
@@ -390,11 +391,6 @@ table {
 
 /* end Normalize */
 
-@mixin transition($duration,$timing:ease-in,$property:all){
-  @include transition-property($property);
-  @include transition-duration($duration);
-  @include transition-timing-function($timing);
-};
 
 $page-width : 947px;
 $page-height : 10000px; //movies only
