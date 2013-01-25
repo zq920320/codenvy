@@ -1,0 +1,15 @@
+// @mixin transition($duration,$timing:ease-in,$property:all){
+//   @include transition-property($property);
+//   @include transition-duration($duration);
+//   @include transition-timing-function($timing);
+// };
+
+@import "compass/css3";
+
+@mixin transition($duration,$timing:ease-in,$property:all,$delay:0){
+  @include transition-property($property);
+  @include transition-duration($duration);
+  @include transition-timing-function($timing);
+  @include transition-delay($delay);
+};
+
