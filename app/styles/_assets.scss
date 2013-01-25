@@ -8,43 +8,57 @@
 @mixin image_logo {
 	background:{
 		image:url('../images/logoCodenvy.png');
-		repeat:no-repeat; 
+		repeat:no-repeat;
 	}
 }
 
 @mixin image_totem {
 	background:{
 		image:url('../images/codenvyTotem.png');
-		repeat:no-repeat; 
-	} 
-} 
+		repeat:no-repeat;
+	}
+}
 
 @mixin image_small_dot {
 	background:{
 		image:url('../images/dotLittleguy.png');
 		repeat:no-repeat;
-		position:0 12px; 
+		position:0 12px;
 	}
-} 
+}
 
 @mixin image_big_dot {
 	background:{
 		image:url('../images/dotMaous.png');
 		repeat:no-repeat;
-		position:0 9px; 
-	} 
+		position:0 9px;
+	}
 }
 
 @mixin content_totem {
-	content:url('../images/codenvyTotem.png'); 
+	content:url('../images/codenvyTotem.png');
 	text-align: right;
 	padding-top: 30px;
 	padding-right: 20px;
-} 
+}
 
 @mixin bg_scene {
 	background:{
-		image:url('../images/sceneBackground.png');	
+		image:url('../images/sceneBackground.png');
 		repeat:repeat-x;
 	}
+}
+
+@mixin image_button_github {
+    background:{
+        image:url('../images/buttonoffGithub.png');
+        repeat:no-repeat;
+    }
+}
+
+@mixin image_button_google {
+    background:{
+        image:url('../images/buttonoffGoogle.png');
+        repeat:no-repeat;
+    }
 }

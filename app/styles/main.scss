@@ -5,6 +5,7 @@
 @import "typography";
 @import "colors";
 @import "behaviors";
+@import "buttons";
 @import "header";
 @import "signup";
 
@@ -102,7 +103,8 @@ a {
 }
 
 a:focus {
-    outline: thin dotted;
+    //outline: thin dotted;
+    outline: none;
 }
 
 /**
@@ -434,6 +436,12 @@ footer {
   @include transition(0.5s);
   position: relative; z-index: 1;
   overflow: hidden;
+  border-radius: 6px;
+  color: $text-on-dark-color;
+
+  a {
+    color: $text-on-dark-color;
+  }
 }
 
 
