@@ -4,7 +4,7 @@ define(["jquery"], function($){
 		run : function(){
 			$(document).ready(function(){
                 function adjustFormDisplay(){
-                    if($(".signup-form > input, a").toArray().indexOf(document.activeElement) !== -1){
+                    if($(".signup-form > input").toArray().indexOf(document.activeElement) !== -1){
                         $(".signup-form > .signup-button").removeClass("hidden-button");
                         $(".signup-form > .domain-name").removeClass("hidden-text-box");
                         $(".aternative-login").addClass("collapsed");
@@ -15,11 +15,11 @@ define(["jquery"], function($){
                     }
                 }
 
-                $(".signup-form > input, a").on("focus", function(){
+                $(".signup-form > input").on("focus", function(){
                     adjustFormDisplay();
                 });
 
-                $(".signup-form > input, a").on("blur", function(){
+                $(".signup-form > input").on("blur", function(){
                     adjustFormDisplay();
                 });
 			});
