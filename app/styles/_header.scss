@@ -5,13 +5,13 @@
 @import "compass/css3/images";
 
 header {
-
+  padding: 20px;
 }
 
 header > nav {
 }
 
-.main-menu {	
+.main-menu {
 	@include horizontal-list;
 
 	li {
@@ -26,8 +26,8 @@ header > nav {
 			border: solid 1px $signup-button-outline;
 			padding: 11px;
 			border-radius: 5px;
-			
-			@include background-image(linear-gradient(#fcfcfc, #f1f1f1)); 
+
+			@include background-image(linear-gradient(#fcfcfc, #f1f1f1));
 		}
 	};
 
