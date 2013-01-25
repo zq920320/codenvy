@@ -70,3 +70,35 @@
         position: 50% 0;
     }
 }
+
+@mixin image_line_light {
+    background:{
+        image:url('../images/lineLight.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+@mixin icon_cloud {
+    background:{
+        image:url('../images/iconCloud.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}
+
+@mixin icon_lighting {
+    background:{
+        image:url('../images/iconLighting.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}
+
+@mixin icon_user {
+    background:{
+        image:url('../images/iconUser.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}

@@ -181,6 +181,48 @@ header {
   src: url("../fonts/regular.otf");
 }
 
+/* line 8, _footer.scss */
+footer {
+  padding: 20px 20px 20px 31px;
+  margin-top: 40px;
+}
+
+/* line 14, _footer.scss */
+.footer-link {
+  color: #8e979d;
+}
+
+/* line 18, _footer.scss */
+footer > nav > ul {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  *zoom: 1;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+/* line 25, _footer.scss */
+footer > nav > ul li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0;
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  white-space: nowrap;
+  margin-left: 20px;
+}
+
+@font-face {
+  font-family: CodeEnvy;
+  src: url("../fonts/regular.otf");
+}
+
 /* line 6, _signup.scss */
 .signup-form-wrapper {
   width: 335px;
@@ -354,7 +396,7 @@ header {
 /**
  * Correct `block` display not defined in IE 8/9.
  */
-/* line 35, main.scss */
+/* line 36, main.scss */
 article,
 aside,
 details,
@@ -372,7 +414,7 @@ summary {
 /**
  * Correct `inline-block` display not defined in IE 8/9.
  */
-/* line 45, main.scss */
+/* line 46, main.scss */
 audio,
 canvas,
 video {
@@ -383,7 +425,7 @@ video {
  * Prevent modern browsers from displaying `audio` without controls.
  * Remove excess height in iOS 5 devices.
  */
-/* line 54, main.scss */
+/* line 55, main.scss */
 audio:not([controls]) {
   display: none;
   height: 0;
@@ -392,7 +434,7 @@ audio:not([controls]) {
 /**
  * Address styling not present in IE 8/9.
  */
-/* line 63, main.scss */
+/* line 64, main.scss */
 [hidden] {
   display: none;
 }
@@ -405,7 +447,7 @@ audio:not([controls]) {
  * 2. Prevent iOS text size adjust after orientation change, without disabling
  *    user zoom.
  */
-/* line 77, main.scss */
+/* line 78, main.scss */
 html {
   font-family: 'CodeEnvy';
   /* 1 */
@@ -418,7 +460,7 @@ html {
 /**
  * Remove default margin.
  */
-/* line 87, main.scss */
+/* line 88, main.scss */
 body {
   margin: 0;
   background-color: #f3f3f3;
@@ -432,13 +474,13 @@ body {
 /**
  * Address `outline` inconsistency between Chrome and other browsers.
  */
-/* line 102, main.scss */
+/* line 103, main.scss */
 a {
   text-decoration: none;
   color: #44484b;
 }
 
-/* line 107, main.scss */
+/* line 108, main.scss */
 a:focus {
   outline: none;
 }
@@ -446,7 +488,7 @@ a:focus {
 /**
  * Improve readability when focused and also mouse hovered in all browsers.
  */
-/* line 117, main.scss */
+/* line 118, main.scss */
 a:active,
 a:hover {
   outline: 0;
@@ -459,7 +501,7 @@ a:hover {
  * Address variable `h1` font size within `section` and `article` contexts in
  * Firefox 4+, Safari 5, and Chrome.
  */
-/* line 130, main.scss */
+/* line 131, main.scss */
 h1 {
   font-size: 2em;
 }
@@ -467,7 +509,7 @@ h1 {
 /**
  * Address styling not present in IE 8/9, Safari 5, and Chrome.
  */
-/* line 138, main.scss */
+/* line 139, main.scss */
 abbr[title] {
   border-bottom: 1px dotted;
 }
@@ -475,7 +517,7 @@ abbr[title] {
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 147, main.scss */
+/* line 148, main.scss */
 b,
 strong {
   font-weight: bold;
@@ -484,7 +526,7 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 155, main.scss */
+/* line 156, main.scss */
 dfn {
   font-style: italic;
 }
@@ -492,7 +534,7 @@ dfn {
 /**
  * Address styling not present in IE 8/9.
  */
-/* line 163, main.scss */
+/* line 164, main.scss */
 mark {
   background: #ff0;
   color: #000;
@@ -501,7 +543,7 @@ mark {
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 175, main.scss */
+/* line 176, main.scss */
 code,
 kbd,
 pre,
@@ -512,7 +554,7 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 184, main.scss */
+/* line 185, main.scss */
 pre {
   white-space: pre;
   white-space: pre-wrap;
@@ -522,7 +564,7 @@ pre {
 /**
  * Set consistent quote types.
  */
-/* line 194, main.scss */
+/* line 195, main.scss */
 q {
   quotes: "\201C" "\201D" "\2018" "\2019";
 }
@@ -533,7 +575,7 @@ q {
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 211, main.scss */
+/* line 212, main.scss */
 sub,
 sup {
   line-height: 0;
@@ -541,12 +583,12 @@ sup {
   vertical-align: baseline;
 }
 
-/* line 218, main.scss */
+/* line 219, main.scss */
 sup {
   top: -0.5em;
 }
 
-/* line 222, main.scss */
+/* line 223, main.scss */
 sub {
   bottom: -0.25em;
 }
@@ -557,7 +599,7 @@ sub {
 /**
  * Remove border when inside `a` element in IE 8/9.
  */
-/* line 234, main.scss */
+/* line 235, main.scss */
 img {
   border: 0;
 }
@@ -565,7 +607,7 @@ img {
 /**
  * Correct overflow displayed oddly in IE 9.
  */
-/* line 242, main.scss */
+/* line 243, main.scss */
 svg:not(:root) {
   overflow: hidden;
 }
@@ -576,7 +618,7 @@ svg:not(:root) {
 /**
  * Address margin not present in IE 8/9 and Safari 5.
  */
-/* line 254, main.scss */
+/* line 255, main.scss */
 figure {
   margin: 0;
 }
@@ -587,7 +629,7 @@ figure {
 /**
  * Define consistent border, margin, and padding.
  */
-/* line 266, main.scss */
+/* line 267, main.scss */
 fieldset {
   border: 1px solid #c0c0c0;
   margin: 0 2px;
@@ -598,7 +640,7 @@ fieldset {
  * 1. Correct `color` not being inherited in IE 8/9.
  * 2. Remove padding so people aren't caught out if they zero out fieldsets.
  */
-/* line 277, main.scss */
+/* line 278, main.scss */
 legend {
   border: 0;
   /* 1 */
@@ -611,7 +653,7 @@ legend {
  * 2. Correct font size not being inherited in all browsers.
  * 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 291, main.scss */
+/* line 292, main.scss */
 button,
 input,
 select,
@@ -633,7 +675,7 @@ textarea {
  * 3. Improve usability and consistency of cursor style between image-type
  *    `input` and others.
  */
-/* line 318, main.scss */
+/* line 319, main.scss */
 button,
 html input[type="button"],
 input[type="reset"],
@@ -647,7 +689,7 @@ input[type="submit"] {
 /**
  * Re-set default cursor for disabled elements.
  */
-/* line 328, main.scss */
+/* line 329, main.scss */
 button[disabled],
 html input[disabled] {
   cursor: default;
@@ -657,7 +699,7 @@ html input[disabled] {
  * 1. Address box sizing set to `content-box` in IE 8/9.
  * 2. Remove excess padding in IE 8/9.
  */
-/* line 338, main.scss */
+/* line 339, main.scss */
 input[type="checkbox"],
 input[type="radio"] {
   box-sizing: border-box;
@@ -671,7 +713,7 @@ input[type="radio"] {
  * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
  *    (include `-moz` to future-proof).
  */
-/* line 349, main.scss */
+/* line 350, main.scss */
 input[type="search"] {
   -webkit-appearance: textfield;
   /* 1 */
@@ -685,7 +727,7 @@ input[type="search"] {
  * Remove inner padding and search cancel button in Safari 5 and Chrome
  * on OS X.
  */
-/* line 362, main.scss */
+/* line 363, main.scss */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
@@ -694,7 +736,7 @@ input[type="search"]::-webkit-search-decoration {
 /**
  * Remove inner padding and border in Firefox 4+.
  */
-/* line 371, main.scss */
+/* line 372, main.scss */
 button::-moz-focus-inner,
 input::-moz-focus-inner {
   border: 0;
@@ -705,7 +747,7 @@ input::-moz-focus-inner {
  * 1. Remove default vertical scrollbar in IE 8/9.
  * 2. Improve readability and alignment in all browsers.
  */
-/* line 381, main.scss */
+/* line 382, main.scss */
 textarea {
   overflow: auto;
   /* 1 */
@@ -719,22 +761,21 @@ textarea {
 /**
  * Remove most spacing between table cells.
  */
-/* line 394, main.scss */
+/* line 395, main.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
 /* end Normalize */
-/* line 409, main.scss */
+/* line 410, main.scss */
 .wrapper {
   width: 947px;
   margin: auto;
-  border: solid 1px #CCC;
   position: relative;
 }
 @media only screen and (max-width: 947px) {
-  /* line 409, main.scss */
+  /* line 410, main.scss */
   .wrapper {
     width: 100%;
   }
@@ -743,19 +784,12 @@ table {
 /*
   for movies only
 */
-/* line 424, main.scss */
+/* line 425, main.scss */
 .wrapper.extended {
   height: 10000px;
 }
 
 /* line 429, main.scss */
-footer {
-  text-align: center;
-  padding: 20px;
-  border-top: solid 1px #CCC;
-}
-
-/* line 434, main.scss */
 .scene {
   background-image: url("../images/sceneBackground.png");
   background-repeat: repeat-x;
@@ -783,12 +817,12 @@ footer {
   border-radius: 6px;
   color: #f3f3f3;
 }
-/* line 444, main.scss */
+/* line 439, main.scss */
 .scene a {
   color: #f3f3f3;
 }
 
-/* line 450, main.scss */
+/* line 445, main.scss */
 .scene:before {
   position: absolute;
   z-index: -1;
@@ -802,7 +836,7 @@ footer {
   padding-right: 20px;
 }
 
-/* line 461, main.scss */
+/* line 456, main.scss */
 .overview {
   -webkit-transition-property: all;
   -moz-transition-property: all;
@@ -820,16 +854,15 @@ footer {
   -moz-transition-delay: 0;
   -o-transition-delay: 0;
   transition-delay: 0;
-  border-top: solid 1px #CCC;
 }
-/* line 465, main.scss */
+/* line 460, main.scss */
 .overview ul {
   padding: 0;
   margin: 0;
   text-align: center;
 }
 @media only screen and (min-width: 947px) {
-  /* line 465, main.scss */
+  /* line 460, main.scss */
   .overview ul {
     margin: 0;
     padding: 0;
@@ -838,19 +871,15 @@ footer {
     *zoom: 1;
   }
 }
-/* line 473, main.scss */
+/* line 468, main.scss */
 .overview ul li {
-  background-image: url("../images/tools.png");
-  background-repeat: no-repeat;
-  background-position: 50% 0;
-  background-size: 25px 25px;
   padding-top: 30px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 @media only screen and (min-width: 947px) {
-  /* line 473, main.scss */
+  /* line 468, main.scss */
   .overview ul li {
-    width: 20%;
+    width: 30%;
     list-style-image: none;
     list-style-type: none;
     margin-left: 0;
@@ -866,7 +895,7 @@ footer {
   }
 }
 @media only screen and (max-width: 947px) {
-  /* line 473, main.scss */
+  /* line 468, main.scss */
   .overview ul li {
     width: 100%;
     list-style-image: none;
@@ -882,4 +911,30 @@ footer {
     white-space: normal;
     vertical-align: top;
   }
+}
+/* line 488, main.scss */
+.overview ul p {
+  padding: 10px 10px 20px 10px;
+  line-height: 1.5em;
+  background-image: url("../images/lineLight.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+/* line 495, main.scss */
+.overview ul li.cloud {
+  background-image: url("../images/iconCloud.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 499, main.scss */
+.overview ul li.lighting {
+  background-image: url("../images/iconLighting.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 503, main.scss */
+.overview ul li.user {
+  background-image: url("../images/iconUser.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
 }

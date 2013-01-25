@@ -8,6 +8,7 @@
 @import "buttons";
 @import "form";
 @import "header";
+@import "footer";
 @import "signup";
 
 
@@ -414,7 +415,7 @@ $smaller-screen: "only screen and (max-width:" + $page-width + ")";
   }
 
   margin: auto;
-  border:solid 1px #CCC;
+  //border:solid 1px #CCC;
   position: relative;
 }
 
@@ -423,12 +424,6 @@ $smaller-screen: "only screen and (max-width:" + $page-width + ")";
 */
 .wrapper.extended {
   height: $page-height;
-}
-
-
-footer {
-  text-align: center; padding: 20px;
-  border-top: solid 1px #CCC;
 }
 
 .scene {
@@ -460,7 +455,7 @@ footer {
 
 .overview {
   @include transition(0.5s);
-  border-top: solid 1px #CCC;
+  //border-top: solid 1px #CCC;
 
   ul{
     padding: 0; margin: 0;
@@ -474,18 +469,11 @@ footer {
 
       $icon-size : 25px;
 
-      background: {
-        image: url('../images/tools.png');
-        repeat:no-repeat;
-        position: 50% 0;
-        size:$icon-size $icon-size;
-      }
-
       padding-top: $icon-size*1.2;
-      margin-top: 10px;
+      margin-top: 20px;
 
       @media #{$large-screen} {
-        width:20%;
+        width:30%;
         @include inline-block-list-item();
         white-space: normal; vertical-align: top;
       }
@@ -495,6 +483,25 @@ footer {
         @include inline-block-list-item();
         white-space: normal; vertical-align: top;
       }
+    }
+
+    p {
+        padding:10px 10px 20px 10px;
+        line-height: 1.5em;
+
+        @include image_line_light;
+    }
+
+    li.cloud{
+        @include icon_cloud();
+    }
+
+    li.lighting{
+        @include icon_lighting();
+    }
+
+    li.user{
+        @include icon_user();
     }
   }
 }
