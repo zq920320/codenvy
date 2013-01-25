@@ -5,9 +5,35 @@
 }
 
 
+@mixin image_logo {
+	background:{
+		image:url('../images/logoCodenvy.png');
+		repeat:no-repeat; 
+	}
+}
+
 @mixin image_totem {
-	background-image:url('../images/codenvyTotem.png'); 
+	background:{
+		image:url('../images/codenvyTotem.png');
+		repeat:no-repeat; 
+	} 
 } 
+
+@mixin image_small_dot {
+	background:{
+		image:url('../images/dotLittleguy.png');
+		repeat:no-repeat;
+		position:0 12px; 
+	}
+} 
+
+@mixin image_big_dot {
+	background:{
+		image:url('../images/dotMaous.png');
+		repeat:no-repeat;
+		position:0 9px; 
+	} 
+}
 
 @mixin content_totem {
 	content:url('../images/codenvyTotem.png'); 
