@@ -8,3 +8,10 @@
 @mixin image_totem {
 	background-image:url('../images/codenvyTotem.png'); 
 } 
+
+@mixin bg_scene {
+	background:{
+		image:url('../images/sceneBackground.png');	
+		repeat:repeat-x;
+	}
+}
