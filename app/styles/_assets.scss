@@ -1,7 +1,7 @@
 
 @font-face {
   font-family: CodeEnvy;
-  src: url('../fonts/helvetica.otf');
+  src: url('../fonts/regular.otf');
 }
 
 
@@ -60,5 +60,13 @@
     background:{
         image:url('../images/buttonoffGoogle.png');
         repeat:no-repeat;
+    }
+}
+
+@mixin image_line_full {
+    background:{
+        image:url('../images/lineFull.png');
+        repeat:no-repeat;
+        position: 50% 0;
     }
 }
