@@ -1,0 +1,10 @@
+
+@font-face {
+  font-family: CodeEnvy;
+  src: url('../fonts/helvetica.otf');
+}
+
+
+@mixin image_totem {
+	background-image:url('../images/codenvyTotem.png'); 
+} 
