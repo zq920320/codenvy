@@ -1,7 +1,10 @@
 @import "compass/css3";
-@import "signup";
 @import "compass/typography/lists/inline-block-list";
+
 @import "typography";
+@import "colors";
+@import "signup";
+
 
 @font-face {
   font-family: CodeEnvy;
@@ -82,7 +85,8 @@ html {
 
 body {
     margin: 0;
-    background-color: #FBFBFB;
+    background-color: $background-color;
+    color:$text-color;
 }
 
 /* ==========================================================================
@@ -430,7 +434,6 @@ footer {
 
 .scene {
   height: $scene-height;
-  // background-color: #FBFBFB;
   width: 100%;
   @include transition(0.5s);
   position: relative;
@@ -475,16 +478,4 @@ footer {
       }
     }
   }
-}
-
-.scroll-meter{
-  @media #{$smaller-screen} {
-    display: none;
-  }
-
-  position: fixed; z-index: 10000;
-  right: 0; bottom: 10px;
-  background-color: yellow;
-  width: 150px; height: 50px;
-  font-size: 40pt;
 }

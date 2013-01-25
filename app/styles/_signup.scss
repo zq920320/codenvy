@@ -15,7 +15,7 @@
 .signup-form {
     text-align: center;
     padding: 10px;
-    
+
 }
 
 .signup-form > input {
@@ -32,7 +32,7 @@
 
 .signup-form > .signup-button {
     @include transition(0.3s,ease-in,opacity,0.3s);
-} 
+}
 
 .hidden-button {
     opacity: 0;
@@ -42,14 +42,13 @@
     @include transition(0.6s);
     border-top:solid 1px #CCC;
     padding: 10px;
-    text-align: center; 
+    text-align: center;
     @include transform(translate(0,-64px));
     opacity: 1;
-    background-color: #FBFBFB;
 }
 
 .aternative-login.collapsed {
-    opacity: 0; 
+    opacity: 0;
     @include transform(translate(0,0));
     @include transition(0.3s);
 }
