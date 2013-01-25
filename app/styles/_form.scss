@@ -1,0 +1,19 @@
+@import "colors";
+
+
+@mixin placeholder($color){
+	::-webkit-input-placeholder {
+    	color:$color;
+	}
+	:-moz-placeholder {
+	    color:$color;
+	}
+	::-moz-placeholder {
+	    color:$color;
+	}
+	:-ms-input-placeholder {
+	    color:$color;
+	}
+}
+
+@include placeholder($text-box-placeholder-color);

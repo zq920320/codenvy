@@ -6,7 +6,11 @@ $text-on-dark-color:#f3f3f3;
 $link-color:#44484b;
 $signin-button-outline:#cbcbcb;
 $signup-button-color:#54aee1;
-
+$text-box-background-color:#313a48;
+$text-box-drop-shadow-color:rgba(84,94,108,1);
+$text-box-inset-shadow-color:rgba(35,40,52,1);
+$text-box-font-color:rgba(251,251,251,0.49);
+$text-box-placeholder-color:rgba(251,251,251,0.17);
 
 @mixin signup-button-gradient {
     @include background-image(linear-gradient(#d6e3ed, $signup-button-color 35%));

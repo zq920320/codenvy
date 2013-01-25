@@ -6,6 +6,7 @@
 @import "colors";
 @import "behaviors";
 @import "buttons";
+@import "form";
 @import "header";
 @import "signup";
 
@@ -87,6 +88,7 @@ body {
     margin: 0;
     background-color: $background-color;
     color:$text-color;
+    letter-spacing: $letter-spacing;
 }
 
 /* ==========================================================================
