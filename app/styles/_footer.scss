@@ -1,0 +1,29 @@
+@import "assets";
+@import "colors";
+@import "compass/utilities/general/clearfix";
+@import "compass/typography/lists/horizontal-list";
+@import "compass/typography/lists/inline-block-list";
+@import "compass/css3/images";
+
+footer {
+	padding: 20px 20px 20px 31px;
+	margin-top: 40px;
+	//border-top: solid 1px #CCC;
+}
+
+.footer-link {
+	color: $footer-link-color;
+}
+
+footer > nav > ul {
+
+	@include inline-block-list-container();
+
+	padding: 0; margin: 0;
+	text-align: center;
+
+	li{ 
+		@include inline-block-list-item();
+		margin-left: 20px; 
+	}
+}
