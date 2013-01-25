@@ -5,6 +5,7 @@
 @import "typography";
 @import "colors";
 @import "behaviors";
+@import "header";
 @import "signup";
 
 
@@ -94,6 +95,11 @@ body {
 /**
  * Address `outline` inconsistency between Chrome and other browsers.
  */
+
+a {
+    text-decoration: none;
+    color:$link-color;
+}
 
 a:focus {
     outline: thin dotted;

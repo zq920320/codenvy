@@ -1,0 +1,53 @@
+@import "assets";
+@import "colors";
+@import "compass/utilities/general/clearfix";
+@import "compass/typography/lists/horizontal-list";
+@import "compass/css3/images";
+
+header {
+
+}
+
+header > nav {
+}
+
+.main-menu {	
+	@include horizontal-list;
+
+	li {
+		@include image_small_dot;
+		padding-left: 10px;
+		margin-left: 10px
+	}
+
+	& li:last-child{
+		float:right;
+		a {
+			border: solid 1px $signup-button-outline;
+			padding: 11px;
+			border-radius: 5px;
+			
+			@include background-image(linear-gradient(#fcfcfc, #f1f1f1)); 
+		}
+	};
+
+	& li:first-child{
+		margin-top: 4px;
+		background: none;
+		margin-left: 0px
+	};
+
+	& li:nth-child(2){
+		@include image_big_dot;
+		margin-left: 15px;
+		padding-left: 20px
+	};
+
+	overflow: visible;
+}
+
+.logo {
+	@include image_logo;
+	width: 130px; height: 19px;
+	float: left;
+}
