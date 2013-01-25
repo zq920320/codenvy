@@ -9,6 +9,13 @@
 	background-image:url('../images/codenvyTotem.png'); 
 } 
 
+@mixin content_totem {
+	content:url('../images/codenvyTotem.png'); 
+	text-align: right;
+	padding-top: 30px;
+	padding-right: 20px;
+} 
+
 @mixin bg_scene {
 	background:{
 		image:url('../images/sceneBackground.png');	

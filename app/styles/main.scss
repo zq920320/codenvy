@@ -118,7 +118,7 @@ a:hover {
  */
 
 h1 {
-    // font-size: 2em;
+    font-size: 2em;
 }
 
 /**
@@ -391,7 +391,7 @@ table {
 
 $page-width : 947px;
 $page-height : 10000px; //movies only
-$scene-height : 400px;
+$scene-height : 407px;
 $large-screen: "only screen and (min-width:" + $page-width + ")";
 $smaller-screen: "only screen and (max-width:" + $page-width + ")";
 
@@ -426,11 +426,25 @@ footer {
 }
 
 .scene {
+  @include bg_scene();
   height: $scene-height;
   width: 100%;
   @include transition(0.5s);
-  position: relative;
+  position: relative; z-index: 1;
+  overflow: hidden;
 }
+
+
+.scene:before {
+   position:absolute;
+   z-index:-1;
+   top:0;
+   left:0;
+   right:0;
+   bottom:0;
+   @include content_totem;
+}
+
 
 .overview {
   @include transition(0.5s);
