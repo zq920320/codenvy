@@ -32,7 +32,7 @@ module.exports = function( grunt ) {
       dist: {
         // http://compass-style.org/help/tutorials/configuration-reference/#configuration-properties
         options: {
-          css_dir: 'app/styles',
+          css_dir: 'app/_site/styles',
           sass_dir: 'app/styles',
           images_dir: 'app/images',
           javascripts_dir: 'temp/scripts',
@@ -66,9 +66,9 @@ module.exports = function( grunt ) {
       reload: {
         files: [
           'app/*.html',
-          'app/styles/**/*.css',
-          'app/scripts/**/*.js',
-          'app/images/**/*'
+          'app/_site/styles/**/*.css',
+          'app/_site/scripts/**/*.js',
+          'app/_site/images/**/*'
         ],
         tasks: 'reload'
       }
@@ -132,13 +132,13 @@ module.exports = function( grunt ) {
     rev: {
       js: 'scripts/**/*.js',
       css: 'styles/**/*.css',
-      img: 'images/**'
+      img: 'imagess/**'
     },
 
     // usemin handler should point to the file containing
     // the usemin blocks to be parsed
     'usemin-handler': {
-      html: 'index.html'
+      html: '_layouts/base.html' //'index.html'
     },
 
     // update references in HTML/CSS to revved files
@@ -169,7 +169,8 @@ module.exports = function( grunt ) {
       optimize: 'none',
       baseUrl: './scripts',
       wrap: true,
-      name: 'main'
+      name: 'main',
+      mainFile:'_layouts/base.html'
     },
 
     // While Yeoman handles concat/min when using
