@@ -1,0 +1,31 @@
+$devices: mobile, mobile-tablet, tablet, tablet-desktop, desktop;
+$mobile-end: $responsive-breakpoint;
+$tablet-start: $mobile-end + 1;
+$tablet-end: $page-width + ($column-gutter * 2);
+$desktop-start: $tablet-end + 1;
+
+// ! Respond to device mixins
+// --------------------------
+
+@mixin respond-to($device) {
+
+    @if $device == "desktop" {
+        @media screen and (min-width: $desktop-start) { @content }
+    }
+
+    @if $device == "tablet-desktop" {
+        @media screen and (min-width: $tablet-start) { @content }
+    }
+
+    @if $device == "tablet" {
+        @media screen and (min-width: $tablet-start) and (max-width: $tablet-end) { @content }
+    }
+
+    @if $device == "mobile-tablet" {
+        @media screen and (max-width: $tablet-end) { @content }
+    }
+
+    @if $device == "mobile" {
+        @media screen and (max-width: $mobile-end) { @content }
+    }
+}
