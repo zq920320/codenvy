@@ -22,5 +22,6 @@ To run the site on your machine
 
 ```
 yeoman server
+cd ./app
 jekyll --auto --server
 ```
