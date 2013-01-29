@@ -1,6 +1,7 @@
 @import "compass/css3";
 @import "compass/typography/lists/inline-block-list";
 
+@import "config";
 @import "assets";
 @import "typography";
 @import "colors";
@@ -398,14 +399,6 @@ table {
 }
 
 /* end Normalize */
-
-
-$page-width : 947px;
-$page-height : 10000px; //movies only
-$scene-height : 407px;
-$large-screen: "only screen and (min-width:" + $page-width + ")";
-$smaller-screen: "only screen and (max-width:" + $page-width + ")";
-
 
 .wrapper {
   width: $page-width;
