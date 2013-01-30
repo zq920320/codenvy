@@ -2,6 +2,7 @@
 @import "compass/typography/lists/inline-block-list";
 
 @import "config";
+@import "utilities";
 @import "assets";
 @import "typography";
 @import "colors";
@@ -11,8 +12,8 @@
 @import "header";
 @import "footer";
 @import "signup";
-
-
+@import "grid";
+@import "components";
 
 /*! normalize.css v2.0.1 | MIT License | git.io/normalize */
 
@@ -399,102 +400,3 @@ table {
 }
 
 /* end Normalize */
-
-.wrapper {
-  width: $page-width;
-
-  @media #{$smaller-screen} {
-    width: 100%;
-  }
-
-  margin: auto;
-  //border:solid 1px #CCC;
-  position: relative;
-}
-
-/*
-  for movies only
-*/
-.wrapper.extended {
-  height: $page-height;
-}
-
-.scene {
-  @include bg_scene();
-  height: $scene-height;
-  width: 100%;
-  @include transition(0.5s);
-  position: relative; z-index: 1;
-  overflow: hidden;
-  border-radius: 6px;
-  color: $text-on-dark-color;
-
-  a {
-    color: $text-on-dark-color;
-  }
-}
-
-
-.scene:before {
-   position:absolute;
-   z-index:-1;
-   top:0;
-   left:0;
-   right:0;
-   bottom:0;
-   @include content_totem;
-}
-
-
-.overview {
-  @include transition(0.5s);
-  //border-top: solid 1px #CCC;
-
-  ul{
-    padding: 0; margin: 0;
-    text-align: center;
-
-    @media #{$large-screen} {
-      @include inline-block-list-container();
-    }
-
-    li{
-
-      $icon-size : 25px;
-
-      padding-top: $icon-size*1.2;
-      margin-top: 20px;
-
-      @media #{$large-screen} {
-        width:30%;
-        @include inline-block-list-item();
-        white-space: normal; vertical-align: top;
-      }
-
-      @media #{$smaller-screen} {
-        width:100%;
-        @include inline-block-list-item();
-        white-space: normal; vertical-align: top;
-      }
-    }
-
-    p {
-        padding:10px 10px 20px 10px;
-        line-height: 1.5em;
-
-        @include image_line_light;
-    }
-
-    li.cloud{
-        @include icon_cloud();
-    }
-
-    li.lighting{
-        @include icon_lighting();
-    }
-
-    li.user{
-        @include icon_user();
-    }
-  }
-}
