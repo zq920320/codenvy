@@ -1,0 +1,6 @@
+2013-01-24 11:29:15,408[ool-18-thread-8]  [INFO ] [e.c.a.t.TenantStateDataManager 93]   [][][] - EVENT#tenant-created# WS#tenant1# USER#user1@mail.com#
+2013-01-24 11:29:15,408[ool-18-thread-8]  [INFO ] [e.c.a.t.TenantStateDataManager 93]   [][][] - EVENT#tenant-created# WS#tenant2# USER#user1@mail.com#
+2013-01-24 11:29:15,408[ool-18-thread-8]  [INFO ] [e.c.a.t.TenantStateDataManager 93]   [][][] - EVENT#tenant-created# WS#tenant3# USER#user2@mail.com#
+2013-01-24 11:29:11,783[io-8080-exec-10]  [INFO ] [c.e.c.user.AddTenantUserPlugin 134]  [][][] - EVENT#user-added-to-ws# WS#tenant2# USER#user3@mail.com#
+2013-01-24 11:37:43,347[io-8080-exec-15]  [INFO ] [e.c.a.t.TenantStateDataManager 269]  [][][] - EVENT#tenant-destroyed# WS#tenant2#
+

@@ -1,0 +1,6 @@
+2013-01-24 11:41:24,829[io-8080-exec-19]  [INFO ] [o.e.i.v.impl.jcr.JcrFileSystem 1515] [user1@mail.com][tenant1][15EA4AECCB59116171EC4CF26E331D8A] - EVENT#project-created# PROJECT#test#
+2013-01-24 11:41:24,829[io-8080-exec-19]  [INFO ] [o.e.i.v.impl.jcr.JcrFileSystem 1515] [user1@mail.com][tenant1][15EA4AECCB59116171EC4CF26E331D8A] - EVENT#project-created# PROJECT#test#
+2013-01-24 11:41:24,829[io-8080-exec-19]  [INFO ] [o.e.i.v.impl.jcr.JcrFileSystem 1515] [user1@mail.com][tenant1][15EA4AECCB59116171EC4CF26E331D8A] - EVENT#project-destroyed# PROJECT#test#
+2013-01-28 09:20:47,316[bio-8080-exec-9]  [INFO ] [o.e.i.v.impl.jcr.JcrFileSystem 1300] [natasha.vakulenko@gmail.com][natashavakulenko][3BF2CB6F737AC1BFCB0FE444739CC581] - EVENT#project-created# PROJECT#shopping-cart-project#
+2013-01-28 09:20:52,629[bio-8080-exec-4]  [INFO ] [o.e.i.v.impl.jcr.JcrFileSystem 1300] [natasha.vakulenko@gmail.com][natashavakulenko][3BF2CB6F737AC1BFCB0FE444739CC581] - EVENT#project-created# PROJECT#shopping-cart-project#
+
