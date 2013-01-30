@@ -30,9 +30,6 @@ $desktop-start: $tablet-end + 1;
     }
 }
 
-// ! Clearfix
-// ----------
-
 @mixin clearfix {
     &:before,
     &:after {
@@ -43,4 +40,33 @@ $desktop-start: $tablet-end + 1;
         clear:both;
     }
     zoom:1;
+}
+
+// ! Show or hide on device
+// ------------------------
+
+.show-on-mobile,
+.show-on-mobile-tablet,
+.show-on-tablet,
+.show-on-tablet-desktop,
+.show-on-desktop {
+    display: none !important;
+}
+
+@each $device in $devices {
+    @include respond-to($device) {
+        .show-on-#{$device} { display: inherit !important; }
+        .hide-on-#{$device} { display: none !important; }
+    }
+}
+
+// ! Content alignment
+// ----------------------
+
+.center {
+    text-align: center;
+}
+
+.right {
+    text-align: right;
 }
