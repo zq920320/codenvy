@@ -6,6 +6,10 @@
 
 header {
   padding: 20px;
+  min-height: 67px;
+  .row {
+    overflow: visible;
+  }
 }
 
 header > nav {
@@ -15,38 +19,35 @@ header > nav {
 	@include horizontal-list;
 
 	li {
-		@include image_small_dot;
-		padding-left: 10px;
-		margin-left: 10px
+        @include image_small_dot;
+        padding-left: 10px;
+        margin-left: 10px;
 	}
 
-	& li:last-child{
-		float:right;
-		a {
-			border: solid 1px $signin-button-outline;
-			padding: 11px;
-			border-radius: 5px;
-			@include signin-button-gradient;
-		}
-	};
-
-	& li:first-child{
-		margin-top: 4px;
-		background: none;
-		margin-left: 0px
-	};
-
-	& li:nth-child(2){
-		@include image_big_dot;
-		margin-left: 15px;
-		padding-left: 20px
-	};
+    @include respond-to(tablet-desktop){
+        & li:nth-child(1){
+            @include image_big_dot;
+            margin-left: 15px;
+            padding-left: 20px
+        };
+    };
 
 	overflow: visible;
 }
 
-.logo {
-	@include image_logo;
-	width: 130px; height: 19px;
-	float: left;
+.sign-in-button {
+    border: solid 1px $signin-button-outline;
+    padding: 11px;
+    border-radius: 5px;
+    @include signin-button-gradient;
+}
+
+.span2.logo-wrapper{
+    padding-top: 4px;
+    @include respond-to(mobile){
+        text-align: center;
+    }
+    img{
+        display: inline;
+    }
 }
