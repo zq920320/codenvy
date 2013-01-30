@@ -15,26 +15,31 @@
 
         <link rel="stylesheet" href="styles/main.css">
     </head>
-    <body>
-    <div class="wrapper"
+    <body class="responsive">
 
-        data-0="opacity:1.0;"
-        data-_rubicon="opacity:0;"
-        >
         <header>
-            <nav>
-
-                <ul class="main-menu">
-                    <li><a class="logo" href="/"></a></li>
-                    <li><a href="features.html">Features</a></li>
-                    <li><a href="pricing.html">Pricing</a></li>
-                    <li><a href="contact.html">Talk to us</a></li>
-                    <li><a href="enterprise.html">Enterprise</a></li>
-                    <li><a href="#">Sign in</a></li>
-                </ul>
-
-                <div style="clear:both;"></div>
-            </nav>
+            <div class="container" style="overflow:visible;">
+                <div class="row">
+                    <div class="span2 logo-wrapper">
+                        <a href="/">
+                            <img width="130px" height="19px" src="../images/logoCodenvy.png">
+                        </a>
+                    </div>
+                    <div class="span8 show-on-tablet-desktop">
+                        <nav>
+                            <ul class="main-menu">
+                                <li><a href="features.html">Features</a></li>
+                                <li><a href="pricing.html">Pricing</a></li>
+                                <li><a href="contact.html">Talk to us</a></li>
+                                <li><a href="enterprise.html">Enterprise</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="span2 right show-on-tablet-desktop">
+                        <a class="sign-in-button" href="#">Sign in</a>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <div class="content">
@@ -56,7 +61,7 @@
                 </ul>
             </nav>
         </footer>
-    </div>
+
 
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
