@@ -1,0 +1,95 @@
+/*
+	
+	Landing page
+
+*/
+
+$scene-height:407px;
+
+.scene {
+	position: relative;
+	@include bg_scene();
+	max-height: $scene-height;
+	overflow: hidden;
+	border-radius: 6px;
+	color: $text-on-dark-color;
+
+	a { color: $text-on-dark-color; }
+}
+
+
+.totem {
+	@include image_totem();
+	min-height: $scene-height;
+}
+
+
+.overview {
+
+	p {
+		text-align: center;
+		padding:10px 10px 20px 10px;
+		line-height: 1.5em;
+		@include image_line_light;
+	}
+
+	.icon-head {
+		$icon-size : 25px;
+		padding-top: $icon-size*1.2;
+        margin-top: $icon-size*0.8;
+	}
+
+	.cloud{
+        @include icon_cloud();
+    }
+
+    .lighting{
+        @include icon_lighting();
+    }
+
+    .user{
+        @include icon_user();
+    }
+
+}
+
+// .overview {
+//   @include transition(0.5s);
+
+//   ul{
+//     padding: 0; margin: 0;
+//     text-align: center;
+
+//     li{
+
+//       $icon-size : 25px;
+
+//       padding-top: $icon-size*1.2;
+//       margin-top: 20px;
+
+//         width:30%;
+//         @include inline-block-list-item();
+//         white-space: normal; vertical-align: top;
+
+//     }
+
+//     p {
+//         padding:10px 10px 20px 10px;
+//         line-height: 1.5em;
+
+//         @include image_line_light;
+//     }
+
+//     li.cloud{
+//         @include icon_cloud();
+//     }
+
+//     li.lighting{
+//         @include icon_lighting();
+//     }
+
+//     li.user{
+//         @include icon_user();
+//     }
+//   }
+// }
