@@ -1,12 +1,3 @@
-
-
-$page-height : 10000px; //movies only
-$scene-height : 407px;
-
-$large-screen: "only screen and (min-width:" + $page-width + ")";
-$smaller-screen: "only screen and (max-width:" + $page-width + ")";
-
-
 // Grid
 // -----
 
@@ -17,6 +8,12 @@ $responsive-breakpoint: 767px;
 $mobile-padding: 15px; // Distance from content to edge of screen on mobile
 $tablet-padding: 20px; // Distance from content to edge of screen on tablet
 
+
+$page-height : 10000px; //movies only
+$scene-height : 407px;
+
+$large-screen: "only screen and (min-width:" + $page-width + ")";
+$smaller-screen: "only screen and (max-width:" + $page-width + ")";
 
 // Typography
 // ----------
