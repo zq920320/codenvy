@@ -4,8 +4,8 @@
 @import "config";
 @import "utilities";
 @import "assets";
-@import "typography";
 @import "colors";
+@import "typography";
 @import "behaviors";
 @import "buttons";
 @import "form";
@@ -134,6 +134,8 @@ a:hover {
 
 h1 {
     font-size: 2em;
+    font-weight: 300;
+    line-height: 1.3em;
 }
 
 /**
