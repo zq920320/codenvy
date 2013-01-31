@@ -186,6 +186,6 @@ module.exports = function( grunt ) {
   });
 
   // Alias the `test` task to run the `mocha` task instead
-  grunt.registerTask('test', 'server:phantom mocha');
+  grunt.registerTask('test', 'server:test');
 
 };
