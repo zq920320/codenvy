@@ -1,5 +1,10 @@
+
+.content {
+    margin-top: 8px;
+}
+
 /*
-	
+
 	Landing page
 
 */
@@ -53,43 +58,6 @@ $scene-height:407px;
 
 }
 
-// .overview {
-//   @include transition(0.5s);
-
-//   ul{
-//     padding: 0; margin: 0;
-//     text-align: center;
-
-//     li{
-
-//       $icon-size : 25px;
-
-//       padding-top: $icon-size*1.2;
-//       margin-top: 20px;
-
-//         width:30%;
-//         @include inline-block-list-item();
-//         white-space: normal; vertical-align: top;
-
-//     }
-
-//     p {
-//         padding:10px 10px 20px 10px;
-//         line-height: 1.5em;
-
-//         @include image_line_light;
-//     }
-
-//     li.cloud{
-//         @include icon_cloud();
-//     }
-
-//     li.lighting{
-//         @include icon_lighting();
-//     }
-
-//     li.user{
-//         @include icon_user();
-//     }
-//   }
-// }
+.signup-terms{
+    color:$text-on-dark-color;
+}
