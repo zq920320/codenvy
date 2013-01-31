@@ -35,6 +35,10 @@ header > nav {
 	overflow: visible;
 }
 
+.sign-in-button-wrapper.span2 {
+    padding: 0;
+}
+
 .sign-in-button {
     font-weight: 300;
     border: solid 1px $signin-button-outline;

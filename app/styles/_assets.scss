@@ -16,7 +16,7 @@
 	background:{
 		image:url('../images/codenvyTotem.png');
 		repeat:no-repeat;
-        position: 50% 50%;
+        position: 65% 40%;
 	}
 }
 
@@ -67,6 +67,14 @@
 @mixin image_line_full {
     background:{
         image:url('../images/lineFull.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}
+
+@mixin image_line_or {
+    background:{
+        image:url('../images/lineOr.png');
         repeat:no-repeat;
         position: 50% 0;
     }
