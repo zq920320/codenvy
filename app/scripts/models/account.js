@@ -1,83 +1,67 @@
-(function(window,document,$){
+define(["jquery"],function($){
+
+    /*
+        AccountError is used to report errors through error callback function
+        (see details below ). Example usage:
+
+        new AccountError("password","Your password is too short")
+
+    */
+
+    var AccountError = function(fieldName, errorDescription){
+        return {
+            getFieldName : function(){
+                return fieldName;
+            },
+
+            getErrorDescription : function(){
+                return errorDescription;
+            }
+        };
+    };
 
 
-	/*
-		AccountError is used to report errors through error callback function 
-		(see details below ). Example usage:
 
-		new AccountError("password","Your password is too short")
+    /*
+        Every method accepts 0 or more data values and two callbacks (success and error)
 
-	*/
-	var AccountError = function(fieldName, errorDescription){
-		return {
-			getFieldName : function(){
-				return fieldName;
-			},
+        Success callback spec:
 
-			getErrorDescription : function(){
-				return errorDescription;
-			}
-		};
-	}
+            function success(data){
+                // data includes any additonal data you want to pass back
+            }
 
+        Error callback spec:
+
+            function error(errors){
+                // errors is a list of AccountError instances
+            }
+
+    */
 
 
-	/*
-		Every method accepts 0 or more data values and two callbacks (success and error)
+    return {
 
-		Success callback spec:
+        signUp : function(email,domain,success,error){
 
-			function success(data){
-				// data includes any additonal data you want to pass back
-			}
+            //example
 
-		Error callback spec:
-
-			function error(errors){
-				// errors is a list of AccountError instances
-			}
-
-	*/
+            //hit the server with the data we got back
 
 
-	return {
+        },
 
-		signUp : function(email,domain,success,error){
+        login : function(email,password,success,error){
 
-			//example
+        },
 
-			//hit the server with the data we got back
+        createTenant : function(success,error){
 
-			$.ajax(
-				url : "/account/create/", data : { email : email, domain : domain}, 
-				success : function(){
-					success(/* any additional data we might need */);
-				},
+        },
 
-				error : function(){
-					//figure out what is wrong
-					var errors = [];
-					errors.push(new AccountError("email","Already in use"));
-					errors.push(new AccountError("domain","Already in use"));
+        recoverPassword : function(email,success,error){
 
-					error(errors);
-				} 
-			);
+        }
 
-		},
-
-		login : function(email,password,success,error){
-
-		},
-
-		createTenant : function(success,error){
-
-		},
-
-		recoverPassword : function(email,success,error){
-
-		}
-
-	};
-
-})(window,document,jQuery);
+    };
+});
