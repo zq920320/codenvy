@@ -16,4 +16,8 @@
 	}
 }
 
+input[type='text']{
+    font-weight: 200;
+}
+
 @include placeholder($text-box-placeholder-color);
