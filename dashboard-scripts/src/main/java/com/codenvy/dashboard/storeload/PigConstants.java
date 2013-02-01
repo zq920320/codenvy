@@ -37,18 +37,16 @@ public class PigConstants
    public static final String EVENT_PARAM = "event";
 
    /**
-    * Parameter name in Pig script contains the resources are needed to be loaded.
-    * Can be either the name of single resource (file or directory) or the list of 
-    * comma separated resources. Wildcard characters are supported.
+    * Parameter name in Pig script contains the beginning of time frame.
+    * For instance: 20101201. What means the first of December in 2010 year.
     */
-   public static final String AS_LOG_PARAM = "asLog";
+   public static final String FROM_PARAM = "from";
 
    /**
-    * Parameter name in Pig script contains the resources are needed to be loaded.
-    * Can be either the name of single resource (file or directory) or the list of 
-    * comma separated resources. Wildcard characters are supported.
+    * Parameter name in Pig script contains the ending of time frame.
+    * For instance: 20101202. What means the second of December in 2010 year.
     */
-   public static final String SYS_LOG_PARAM = "sysLog";
+   public static final String TO_PARAM = "to";
 
    /**
     * Parameter name in Pig script contains the resources are needed to be loaded.

@@ -22,27 +22,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.exoplatform</groupId>
-        <artifactId>exo.parent</artifactId>
-        <version>8.1</version>
+        <groupId>com.codenvy</groupId>
+        <artifactId>maven-parent-pom</artifactId>
+        <version>1-SNAPSHOT</version>
     </parent>
 
     <groupId>com.codenvy.dashboard</groupId>
     <artifactId>dashboard-parent</artifactId>
     <name>Codenvy :: Dashboard :: Parent</name>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-    <!--scm>
-        <connection>scm:git:git@github.com:exoplatform/cloud-ide.git</connection>
-        <url>https://fisheye.exoplatform.org/browse/cloud-ide</url>
-        <developerConnection>scm:git:git@github.com:exoplatform/cloud-ide.git</developerConnection>
-    </scm>
-
-    <ciManagement>
-        <system>hudson</system>
-        <url>https://ci.exoplatform.org/job/cloud-ide-develop-ci/</url>
-    </ciManagement-->
 
     <properties>
         <!-- Apache Pig dependencies -->
@@ -123,6 +112,6 @@
     </dependencyManagement>
 
     <modules>
-        <module>dashboard-udfs</module>
+        <module>dashboard-scripts</module>
     </modules>
 </project>
