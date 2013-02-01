@@ -51,14 +51,36 @@ define(["jquery"],function($){
 
         },
 
-        login : function(email,password,success,error){
+        login : function(email,password,domain,success,error){
+            
+            var loginUrl =  "/sso/server/gen" 
+            + "?username=" + email
+            + "&password=" + password
+            + "&redirectTenantName=" + domain
+            + "&authType=jaas";
 
+            var request = $.ajax({
+                url : loginUrl,
+                type: POST,
+                data: {
+                    username:email,
+                    password:password,
+                    redirectTenantName:tenant,
+                    //encodedQueryParam: encodeURIComponent(queryString);
+                },
+                success : function(output, status, xhr){
+                        success();
+                },
+                error : function(xhr, status, err){
+                    error(err);      
+                }
+            });
         },
 
         createTenant : function(email,domain,success,error){
 
-            var tenantServiceConfirmUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm";
-            var createTenantUrl = tenantServiceConfirmUrl + "/" + encodeURIComponent(domain) + "/" + email;
+            var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm";
+            var createTenantUrl = tenantServiceUrl + "/" + encodeURIComponent(domain) + "/" + email;
 
             var request = $.ajax({
                 url : createTenantUrl,
@@ -70,19 +92,8 @@ define(["jquery"],function($){
                 },
                 error : function(xhr, status, err){
 
-                    //if redirect status code, redirect to ResponseHeader
-                    if((xhr.getReponseHeader("Location") != null) && (xhr.status != "") && (xhr.status == 301 || xhr.status == 302 || xhr.status == 303)){
-                        
-                        //redirect to Location
-                        errors.push({url: xhr.getReponseHeader("Location")});
-                    }
-
                     //else error code, display error message
-                    else {
-                        errors.push(new AccountError("domain","Something went wrong: " + err));
-                        
-                    }
-                    error(errors);      
+                    error(err);      
                 }
             });
         },
