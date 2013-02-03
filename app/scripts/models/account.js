@@ -42,6 +42,12 @@ define(["jquery"],function($){
 
     return {
 
+        isValidDomain : function(domain){
+            return (
+                /^[a-z]{1}[a-z0-9-]{1,18}[a-z0-9]{1}\.codenvy\.com/g
+            ).exec(domain) !== null ;
+        },
+
         signUp : function(email,domain,success,error){
 
             //example
@@ -52,8 +58,8 @@ define(["jquery"],function($){
         },
 
         login : function(email,password,domain,success,error){
-            
-            var loginUrl =  "/sso/server/gen" 
+
+            var loginUrl =  "/sso/server/gen"
             + "?username=" + email
             + "&password=" + password
             + "&redirectTenantName=" + domain
@@ -72,7 +78,7 @@ define(["jquery"],function($){
                         success();
                 },
                 error : function(xhr, status, err){
-                    error(err);      
+                    error(err);
                 }
             });
         },
@@ -93,7 +99,7 @@ define(["jquery"],function($){
                 error : function(xhr, status, err){
 
                     //else error code, display error message
-                    error(err);      
+                    error(err);
                 }
             });
         },
