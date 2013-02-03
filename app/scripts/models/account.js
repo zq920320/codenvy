@@ -50,6 +50,8 @@ define(["jquery"],function($){
 
         signUp : function(email,domain,success,error){
 
+            console.log("signing you up", email, domain);
+
             //example
 
             //hit the server with the data we got back
