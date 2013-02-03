@@ -21,3 +21,21 @@ input[type='text']{
 }
 
 @include placeholder($text-box-placeholder-color);
+
+
+.error-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 40px;
+    text-align: center;
+    background-color: rgba(255,0,0,0.4);
+    border-radius: 5px;
+    @include transition(0.3s,ease-in,opacity,0.3s);
+    opacity: 0;
+}
+
+.error-container.expanded {
+    opacity: 1.0;
+}
