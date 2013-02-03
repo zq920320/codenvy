@@ -14,7 +14,7 @@ define(["jquery","underscore","backbone","models/account","validation"],
         var ProgressiveForm = Backbone.View.extend({
             initialize : function(){
 
-                console.log("calling progressive form");
+                this.canCollapse = true;
 
                 this.$(".field > input").on("focus", _.bind(function(){
                     this.adjustFormDisplay();
@@ -22,6 +22,11 @@ define(["jquery","underscore","backbone","models/account","validation"],
 
                 this.$(".field > input").on("blur", _.bind(function(){
                     this.adjustFormDisplay();
+                },this));
+
+                $(this.el).submit(_.bind(function(){
+                    this.stopFromCollapsing();
+                    return false;
                 },this));
             },
 
@@ -31,15 +36,18 @@ define(["jquery","underscore","backbone","models/account","validation"],
                     this.$(".field > .domain-name").removeClass("hidden-text-box");
                     $(".aternative-login").addClass("collapsed");
                 } else {
-                    this.$(".field > .signup-button").addClass("hidden-button");
-                    this.$(".field > .domain-name").addClass("hidden-text-box");
-                    $(".aternative-login").removeClass("collapsed");
+                    if(this.canCollapse){
+                        this.$(".field > .signup-button").addClass("hidden-button");
+                        this.$(".field > .domain-name").addClass("hidden-text-box");
+                        $(".aternative-login").removeClass("collapsed");
+                    }
                 }
+            },
+
+            stopFromCollapsing : function(){
+                this.canCollapse = false;
             }
         });
-
-
-
 
 
     	var SignupForm = ProgressiveForm.extend({
@@ -95,6 +103,9 @@ define(["jquery","underscore","backbone","models/account","validation"],
             },
 
             __submit : function(form){
+
+                this.stopFromCollapsing();
+
                 Account.signUp(
                     $(form).find("input[name='email']").val(),
                     $(form).find("input[name='domain']").val()
@@ -106,13 +117,19 @@ define(["jquery","underscore","backbone","models/account","validation"],
                 console.log("this is", this);
                 console.log("invalid form", errorMap, errorList);
 
+                function refocus(el){
+                    el.focus();
+                }
+
                 if(typeof errorMap.email !== 'undefined'){
                     this.trigger("invalid","email",errorMap.email);
+                    refocus(this.$("input[name='email']"));
                     return;
                 }
 
                 if(typeof errorMap.domain !== 'undefined'){
                     this.trigger("invalid","domain",errorMap.domain);
+                    refocus(this.$("input[name='email']"));
                     return;
                 }
             }
