@@ -6,7 +6,10 @@ define(["jquery","views/signupform"], function($,SignupForm){
                 var signupForm = $(".signup-form");
 
                 if(signupForm.length !== 0){
-                    SignupForm.get(signupForm);
+                    var form = SignupForm.get(signupForm);
+                    form.on("invalid", function(field,message){
+                        alert(message);
+                    });
                 }
 			});
 		}
