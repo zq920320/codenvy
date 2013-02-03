@@ -1,39 +1,151 @@
-define(["jquery","views/signupform"],function($,SignUpForm){
+define(["jquery","views/signupform","models/account","text!templates/signupform.html"],
 
-	describe("Views : SignUpForm",function(){
+    function($,SignUpForm,Account,signupFormTemplate){
 
-		describe("module", function(){
+    	describe("Views : SignUpForm",function(){
 
-			it("can be imported", function(){
-				expect(SignUpForm).to.be.ok;
-			});
+    		describe("module", function(){
 
-			it("exports get method", function(){
-				expect(SignUpForm).to.respondTo('get');
-			});
+    			it("can be imported", function(){
+    				expect(SignUpForm).to.be.ok;
+    			});
 
-		});
+    			it("exports get method", function(){
+    				expect(SignUpForm).to.respondTo('get');
+    			});
 
-		describe("get", function(){
+    		});
 
-			it("requires a form", function(){
+    		describe("get", function(){
 
-				var fn = function(){
-					SignUpForm.get();
-				};
+    			it("requires a form", function(){
 
-				expect(fn).to.throw("Need a form");
+    				var fn = function(){
+    					SignUpForm.get();
+    				};
 
-			});
+    				expect(fn).to.throw("Need a form");
 
-			it("returns a SignUpForm view with el set to form", function(){
-				var form = jQuery("<form>"), v = SignUpForm.get(form);
-				expect(v).to.be.ok;
-				expect(v.el).to.equal(form[0]);
-			});
+    			});
 
-		});
+    			it("returns a SignUpForm view with el set to form", function(){
+    				var form = jQuery("<form>"), v = SignUpForm.get(form);
+    				expect(v).to.be.ok;
+    				expect(v.el).to.equal(form[0]);
+    			});
 
-	});
+    		});
 
-});
+            describe("SignUpForm", function(){
+
+                afterEach(function(){
+                    if(typeof Account.isValidDomain.restore !== 'undefined'){
+                        Account.isValidDomain.restore();
+                    }
+
+                    if(typeof Account.signUp.restore !== 'undefined'){
+                        Account.signUp.restore();
+                    }
+                });
+
+                function buildForm(){
+                    return jQuery(signupFormTemplate);
+                }
+
+                it("sets validator property", function(){
+                    var formDOM = $(jQuery("<form>")),
+                        form = SignUpForm.get(formDOM);
+
+                    expect(form.validator).to.be.ok;
+                });
+
+
+                it("raises invalid event if email is not specified", function(done){
+
+                    var form = SignUpForm.get(buildForm());
+
+
+                    form.on("invalid", function(errorField, errorText){
+                        expect(errorField).to.equal("email");
+                        expect(errorText).to.equal(form.settings.noEmailErrorMessage);
+
+                        done();
+                    });
+
+                    form.__showErrors({email: form.settings.noEmailErrorMessage});
+                });
+
+                it("raises invalid event if email is not valid", function(done){
+                    var form = SignUpForm.get(buildForm());
+
+
+                    form.on("invalid", function(errorField, errorText){
+                        expect(errorField).to.equal("email");
+                        expect(errorText).to.equal(form.settings.invalidEmailErrorMessage);
+                        done();
+                    });
+
+                    form.__showErrors({email: form.settings.invalidEmailErrorMessage});
+                });
+
+                it("raises invalid event if domain is not speicified", function(done){
+                    var form = SignUpForm.get(buildForm());
+
+
+                    form.on("invalid", function(errorField, errorText){
+                        expect(errorField).to.equal("domain");
+                        expect(errorText).to.equal(form.settings.noDomainErrorMessage);
+                        done();
+                    });
+
+                    form.__showErrors({domain: form.settings.noDomainErrorMessage});
+                });
+
+                it("raises invalid event if domain is not valid", function(done){
+                    var form = SignUpForm.get(buildForm());
+
+
+                    form.on("invalid", function(errorField, errorText){
+                        expect(errorField).to.equal("domain");
+                        expect(errorText).to.equal(form.settings.invalidDomainNameErrorMessage);
+                        done();
+                    });
+
+                    form.__showErrors({domain: form.settings.invalidDomainNameErrorMessage});
+                });
+
+                it("calls Account.signUp when the form is valid", function(done){
+
+                    var e = 'bob@gmail.com', d = 'bob.codenvy.com';
+
+                    sinon.stub(Account,"signUp",function(email,domain){
+                        expect(email).to.equal(e);
+                        expect(domain).to.equal(d);
+                        done();
+                    });
+
+                    var form = SignUpForm.get(buildForm());
+
+                    $(form.el).find("input[name='email']").val(e);
+                    $(form.el).find("input[name='domain']").val(d);
+
+                    $(form.el).submit();
+                });
+
+                // it("validates domain name using Account.isValidDomain", function(done){
+
+                //     sinon.stub(Account,"isValidDomain", function(name){
+                //         done();
+                //     });
+
+                //     var form = SignUpForm.get(buildForm());
+                //     $(form.el).find("input[name='email']").val("bob@gmail.com")
+                //     $(form.el).submit();
+                // });
+
+            });
+
+    	});
+
+    }
+);

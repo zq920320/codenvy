@@ -1,59 +1,132 @@
-define(["jquery","underscore","backbone","validation"],function($,_,Backbone){
+define(["jquery","underscore","backbone","models/account","validation"],
+
+    function($,_,Backbone,Account){
 
 
-    var ProgressiveForm = Backbone.View.extend({
-        initialize : function(){
+        /*
+            Custom validator for .codenvy.com tenant names
+        */
 
-            console.log("calling progressive form");
+        jQuery.validator.addMethod("validDomain", function(value, element) {
+            return Account.isValidDomain(value);
+        });
 
-            this.$(".field > input").on("focus", _.bind(function(){
-                this.adjustFormDisplay();
-            },this));
+        var ProgressiveForm = Backbone.View.extend({
+            initialize : function(){
 
-            this.$(".field > input").on("blur", _.bind(function(){
-                this.adjustFormDisplay();
-            },this));
-        },
+                console.log("calling progressive form");
 
-        adjustFormDisplay : function(){
-            if(this.$(".field > input").toArray().indexOf(document.activeElement) !== -1){
-                this.$(".field > .signup-button").removeClass("hidden-button");
-                this.$(".field > .domain-name").removeClass("hidden-text-box");
-                $(".aternative-login").addClass("collapsed");
-            } else {
-                this.$(".field > .signup-button").addClass("hidden-button");
-                this.$(".field > .domain-name").addClass("hidden-text-box");
-                $(".aternative-login").removeClass("collapsed");
-            }
-        }
-    });
+                this.$(".field > input").on("focus", _.bind(function(){
+                    this.adjustFormDisplay();
+                },this));
 
+                this.$(".field > input").on("blur", _.bind(function(){
+                    this.adjustFormDisplay();
+                },this));
+            },
 
-
-
-
-	var SignupForm = ProgressiveForm.extend({
-        initialize : function(arguments){
-
-            ProgressiveForm.prototype.initialize.apply(this,arguments);
-
-            $(this.el).validate({
-                submitHandler: function(form) {
-                    alert("submitting");
-                    //form.submit();
+            adjustFormDisplay : function(){
+                if(this.$(".field > input").toArray().indexOf(document.activeElement) !== -1){
+                    this.$(".field > .signup-button").removeClass("hidden-button");
+                    this.$(".field > .domain-name").removeClass("hidden-text-box");
+                    $(".aternative-login").addClass("collapsed");
+                } else {
+                    this.$(".field > .signup-button").addClass("hidden-button");
+                    this.$(".field > .domain-name").addClass("hidden-text-box");
+                    $(".aternative-login").removeClass("collapsed");
                 }
-            });
-        }
-	});
+            }
+        });
 
-	return {
-		get : function(form){
-			if(typeof form === 'undefined'){
-				throw new Error("Need a form");
-			}
 
-			return new SignupForm({ el : form });
-		}
-	};
 
-});
+
+
+    	var SignupForm = ProgressiveForm.extend({
+
+            settings : {
+                noDomainErrorMessage : "Please specify a domain name",
+                noEmailErrorMessage : "You forgot to give us your email",
+                invalidEmailErrorMessage : "Your email address must be legit",
+                invalidDomainNameErrorMessage : "Please specify a valid name for the domain"
+            },
+
+            initialize : function(arguments){
+
+                ProgressiveForm.prototype.initialize.apply(this,arguments);
+
+                this.validator = $(this.el).validate({
+
+                    rules: {
+                        domain: {
+                            required : true,
+                            validDomain : true
+                        },
+                        email: {
+                            required: true,
+                            email: true
+                        }
+                    },
+
+                    messages: {
+                        domain: {
+                            required : this.settings.noDomainErrorMessage,
+                            validDomain : this.settings.invalidDomainNameErrorMessage
+                        },
+                        email: {
+                            required: this.settings.noEmailErrorMessage,
+                            email: this.settings.invalidEmailErrorMessage
+                        }
+                    },
+
+                    onfocusout : false,
+                    onkeyup : false,
+
+                    submitHandler: _.bind(this.__submit,this),
+
+                    // invalidHandler: function(form, validator){
+                    //     console.log("invalid handler", validator);
+                    // },
+
+                    showErrors : _.bind(function(errorMap, errorList){
+                        this.__showErrors(errorMap, errorList);
+                    },this)
+                });
+            },
+
+            __submit : function(form){
+                Account.signUp(
+                    $(form).find("input[name='email']").val(),
+                    $(form).find("input[name='domain']").val()
+                );
+                //form.submit();
+            },
+
+            __showErrors : function(errorMap, errorList){
+                console.log("this is", this);
+                console.log("invalid form", errorMap, errorList);
+
+                if(typeof errorMap.email !== 'undefined'){
+                    this.trigger("invalid","email",errorMap.email);
+                    return;
+                }
+
+                if(typeof errorMap.domain !== 'undefined'){
+                    this.trigger("invalid","domain",errorMap.domain);
+                    return;
+                }
+            }
+    	});
+
+    	return {
+    		get : function(form){
+    			if(typeof form === 'undefined'){
+    				throw new Error("Need a form");
+    			}
+
+    			return new SignupForm({ el : form });
+    		}
+    	};
+
+    }
+);
