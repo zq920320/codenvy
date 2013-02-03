@@ -84,6 +84,11 @@ define(["models/account","underscore"], function(Account,_){
                 expect(Account.isValidDomain(makeAName(50) + ".codenvy.com")).to.be.false;
             });
 
+            it("only allows names that are at least 1 character long", function(){
+                expect(Account.isValidDomain(".codenvy.com")).to.be.false;
+                expect(Account.isValidDomain("a.codenvy.com")).to.be.true;
+            });
+
         });
 
 	});

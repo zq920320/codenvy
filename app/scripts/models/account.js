@@ -43,8 +43,21 @@ define(["jquery"],function($){
     return {
 
         isValidDomain : function(domain){
+
+            //check for the trailing dash
+            var d = domain || "", ds = d.split(".codenvy.com");
+
+            if(ds.length === 2){
+
+                var name = ds[0];
+
+                if(name[name.length-1] === '-'){
+                    return false;
+                }
+            }
+
             return (
-                /^[a-z]{1}[a-z0-9-]{1,18}[a-z0-9]{1}\.codenvy\.com/g
+                /^[a-z]{1}[a-z0-9-]{0,19}\.codenvy\.com/g
             ).exec(domain) !== null ;
         },
 
