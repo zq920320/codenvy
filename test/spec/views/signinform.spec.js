@@ -40,13 +40,93 @@ define(["jquery","views/signinform", "models/account", "text!templates/signinfor
     		describe("SignInForm", function(){
 
                 function buildForm(){
-                    return jQuery(formTemplate);
+                    $("body").append(jQuery(formTemplate));
+                    return $(".login-form"); 
                 }
 
                 afterEach(function(){
+                    
+                    $(".login-form").remove();
+
                     if(typeof Account.login.restore !== 'undefined'){
                         Account.login.restore();
                     }
+                });
+
+                it("triggers invalid event when email is not provided", function(done){
+
+                    var form = SignInForm.get(buildForm());
+
+                    form.on("invalid",function(field,description){
+                        expect(field).to.equal("email");
+                        expect(description).to.equal(form.settings.noEmailErrorMessage);
+                        done();
+                    });
+
+                    $(form.el).valid();
+
+                });
+
+                it("triggers invalid event when email is not valid", function(done){
+
+                    var form = SignInForm.get(buildForm());
+
+                    form.on("invalid", function(field,description){
+                        expect(field).to.equal("email");
+                        expect(description).to.equal(form.settings.invalidEmailErrorMessage);
+                        done();
+                    });
+
+                    $(form.el).find("input[name='email']").val("this is not a valid email");
+
+                    $(form.el).valid();
+                });
+
+                it("triggers invalid event when domain is not provided", function(done){
+
+                    var form = SignInForm.get(buildForm());
+
+                    form.on("invalid", function(field,description){
+                        expect(field).to.equal("domain");
+                        expect(description).to.equal(form.settings.noDomainErrorMessage);
+                        done();
+                    });
+
+                    $(form.el).find("input[name='email']").val("bob@gmail.com");
+
+                    $(form.el).valid();
+
+                });
+
+                it("triggers invalid event when domain is not valid", function(done){
+
+                    var form = SignInForm.get(buildForm());
+
+                    form.on("invalid", function(field,description){
+                        expect(field).to.equal("domain");
+                        expect(description).to.equal(form.settings.invalidDomainNameErrorMessage);
+                        done();
+                    });
+
+                    $(form.el).find("input[name='email']").val("bob@gmail.com");
+                    $(form.el).find("input[name='domain']").val("12--thisisnotavaliddomain");
+
+                    $(form.el).valid();
+                });
+
+                it("triggers invalid event when password is not provided", function(done){
+                    var form = SignInForm.get(buildForm());
+
+                    form.on("invalid", function(field,description){
+                        expect(field).to.equal("password");
+                        expect(description).to.equal(form.settings.noPasswordErrorMessage);
+                        done();
+                    });
+
+                    $(form.el).find("input[name='email']").val("bob@gmail.com");
+                    $(form.el).find("input[name='domain']").val("bob");
+
+                    $(form.el).valid(); 
                 });
 
     			it("calls account login upon successful submit",function(done){
