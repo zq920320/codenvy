@@ -21,6 +21,7 @@
 
 .signup-form .field {
     padding: 10px;
+    position: relative;
 }
 
 .signup-form input {
@@ -45,6 +46,13 @@
 
 .signup-form .domain-name {
     @include transition(0.3s,ease-in,opacity,0.3s);
+}
+
+.domain-placeholder {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    color:$text-box-placeholder-color;
 }
 
 .hidden-text-box {
