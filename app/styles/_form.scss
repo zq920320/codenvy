@@ -156,7 +156,8 @@ form .field {
 	}
 }
 
-input[type='text']{
+input[type='text'],
+input[type='password']{
     font-weight: 200;
     height: 2em;
     font-size: 1.2em;
