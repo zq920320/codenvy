@@ -90,16 +90,6 @@ define(["jquery","underscore","backbone","models/account","views/accountformbase
                 );
 
                 return false;
-            },
-
-            __restoreForm : function(){
-                this.$(".working").addClass("hidden");
-                this.$("input[type='submit']").show();
-            },
-
-            __showProgress : function(){
-                this.$("input[type='submit']").hide();
-                this.$(".working").removeClass("hidden");
             }
     	});
 
