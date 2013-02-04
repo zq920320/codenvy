@@ -16,16 +16,17 @@ define(["backbone","views/accountformbase", "models/account"],
 
             __submit : function(form){
 
-                this.__showProgress();
+                // this.__showProgress();
 
-                this.trigger("submitting");
+                // this.trigger("submitting");
 
                 Account.login(
                     this.$("input[name='email']").val(),
                     this.$("input[name='password']").val(),
                     this.$("input[name='domain']").val(),
-                    _.bind(function(){
-                        this.trigger("success");
+                    _.bind(function(data){
+                        $(this.el).attr('action',data.loginUrl);
+                        form.submit();
                     },this),
                     _.bind(function(errors){
 
@@ -40,6 +41,7 @@ define(["backbone","views/accountformbase", "models/account"],
                         }
                     },this)
                 );
+
                 return false;
             }
 

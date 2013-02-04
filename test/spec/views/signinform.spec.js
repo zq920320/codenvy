@@ -94,47 +94,47 @@ define(["jquery","views/signinform", "models/account", "text!templates/signinfor
                     $(v.el).submit();
                 });
 
-                it("triggers success when Account.login succeeds", function(done){
+                // it("triggers success when Account.login succeeds", function(done){
 
-                    var v = SignInForm.get(buildForm()),
-                        e = "bob@gmail.com", d = "bob", p = "password";
+                //     var v = SignInForm.get(buildForm()),
+                //         e = "bob@gmail.com", d = "bob", p = "password";
 
-                    sinon.stub(Account,"login", function(email,password,domain,success,error){
-                        success();
-                    });
+                //     sinon.stub(Account,"login", function(email,password,domain,success,error){
+                //         success();
+                //     });
 
-                    v.on("success",function(){
-                        done();
-                    });
+                //     v.on("success",function(){
+                //         done();
+                //     });
 
-                    $(v.el).find("input[name='email']").val(e);
-                    $(v.el).find("input[name='domain']").val(d);
-                    $(v.el).find("input[name='password']").val(p);
+                //     $(v.el).find("input[name='email']").val(e);
+                //     $(v.el).find("input[name='domain']").val(d);
+                //     $(v.el).find("input[name='password']").val(p);
 
-                    $(v.el).submit();
+                //     $(v.el).submit();
 
-                });
+                // });
 
-                it("triggers submitting event just before hitting Account.login ", function(done){
+                // it("triggers submitting event just before hitting Account.login ", function(done){
 
-                    var v = SignInForm.get(buildForm()),
-                        e = "bob@gmail.com", d = "bob", p = "password";
+                //     var v = SignInForm.get(buildForm()),
+                //         e = "bob@gmail.com", d = "bob", p = "password";
 
-                    sinon.stub(Account,"login", function(email,password,domain,success,error){
+                //     sinon.stub(Account,"login", function(email,password,domain,success,error){
 
-                    });
+                //     });
 
-                    v.on("submitting",function(){
-                        done();
-                    });
+                //     v.on("submitting",function(){
+                //         done();
+                //     });
 
-                    $(v.el).find("input[name='email']").val(e);
-                    $(v.el).find("input[name='domain']").val(d);
-                    $(v.el).find("input[name='password']").val(p);
+                //     $(v.el).find("input[name='email']").val(e);
+                //     $(v.el).find("input[name='domain']").val(d);
+                //     $(v.el).find("input[name='password']").val(p);
 
-                    $(v.el).submit();
+                //     $(v.el).submit();
 
-                });
+                // });
 
     		});
 

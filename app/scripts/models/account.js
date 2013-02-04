@@ -65,28 +65,35 @@ define(["jquery"],function($){
 
         login : function(email,password,domain,success,error){
 
+            // most of the stuff copied from https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/chrome_app.js
+            // !! Note :
+            //  putting sensitive data (e.g. passwords) as GET parameters is a VERY bad idea
+            //  please fix this ASAP and transport this data through POST
+
             var loginUrl =  "/sso/server/gen"
             + "?username=" + email
             + "&password=" + password
             + "&redirectTenantName=" + domain
             + "&authType=jaas";
 
-            var request = $.ajax({
-                url : loginUrl,
-                type: "POST",
-                data: {
-                    username:email,
-                    password:password,
-                    redirectTenantName:tenant,
-                    //encodedQueryParam: encodeURIComponent(queryString);
-                },
-                success : function(output, status, xhr){
-                        success();
-                },
-                error : function(xhr, status, err){
-                    error(err);
-                }
-            });
+            success({ loginUrl : loginUrl });
+
+            // var request = $.ajax({
+            //     url : loginUrl,
+            //     type: "POST",
+            //     data: {
+            //         username:email,
+            //         password:password,
+            //         redirectTenantName:tenant,
+            //         //encodedQueryParam: encodeURIComponent(queryString);
+            //     },
+            //     success : function(output, status, xhr){
+
+            //     },
+            //     error : function(xhr, status, err){
+            //         error(err);
+            //     }
+            // });
         },
 
         createTenant : function(email,domain,success,error){
