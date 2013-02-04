@@ -118,6 +118,26 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                     form.__showErrors({domain: form.settings.invalidDomainNameErrorMessage});
                 });
 
+                it("triggers submitting event before submitting the form", function(done){
+
+                    var e = 'bob@gmail.com', d = 'bob';
+
+                    sinon.stub(Account,"createTenant",function(email,domain,success,error){
+                    });
+
+                    var form = SignUpForm.get(buildForm());
+
+                    $(form.el).find("input[name='email']").val(e);
+                    $(form.el).find("input[name='domain']").val(d);
+
+                    form.on("submitting", function(){
+                        done();
+                    });
+
+                    $(form.el).submit();
+
+                });
+
                 it("calls Account.createTenant when the form is valid", function(done){
 
                     var e = 'bob@gmail.com', d = 'bob';

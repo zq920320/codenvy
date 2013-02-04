@@ -106,6 +106,8 @@ define(["jquery","underscore","backbone","models/account","validation"],
 
                 this.stopFromCollapsing();
 
+                this.trigger("submitting");
+
                 Account.createTenant(
                     $(form).find("input[name='email']").val(),
                     $(form).find("input[name='domain']").val(),
