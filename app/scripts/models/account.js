@@ -63,17 +63,6 @@ define(["jquery"],function($){
             ).exec(domain) !== null ;
         },
 
-        signUp : function(email,domain,success,error){
-
-            console.log("signing you up", email, domain);
-
-            //example
-
-            //hit the server with the data we got back
-
-
-        },
-
         login : function(email,password,domain,success,error){
 
             var loginUrl =  "/sso/server/gen"
@@ -107,22 +96,14 @@ define(["jquery"],function($){
 
             var request = $.ajax({
                 url : createTenantUrl,
-                type: "POST",
+                type : "POST",
                 success : function(output, status, xhr){
-
-                        //Succes, redirect to thankyou.jsp
-                        success({url: 'thankyou.jsp'});
+                    success({url: 'thankyou.jsp'});
                 },
                 error : function(xhr, status, err){
-
-                    // TODO: need to figure out what the errors are and populate
-                    // a list of errors accordingly:
-                    //
-                    //      var errors = [new AccountError("email","Here's a description")];
-                    //      error(errors);
-
-                    //else error code, display error message
-                    error(err);
+                    error([
+                        new AccountError(null,xhr.responseText)
+                    ]);
                 }
             });
         },
