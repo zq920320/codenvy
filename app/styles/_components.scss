@@ -72,6 +72,8 @@ $scene-height:407px;
 
 .login {
     @include darkContainer();
+    position: relative;
+    padding-top: 21px;
 }
 
 /*
