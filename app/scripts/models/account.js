@@ -116,7 +116,27 @@ define(["jquery"],function($){
         },
 
         recoverPassword : function(email,success,error){
+            //implementation based on this: 
+            //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/recover-password.js
 
+            // !! Note :
+            //  security concern here: flashing email address in GET. should be moved to POST  
+
+            var passwordRecoveryService = "/rest/password/recover/",
+                passwordRecoveryUri = passwordRecoveryService + email;
+
+            var request = $.ajax({
+                url : passwordRecoveryUri,
+                type : "POST",
+                success : function(output, status, xhr){
+                    success({message: xhr.responseText});
+                },
+                error : function(xhr, status, err){
+                    error([
+                        new AccountError(null,xhr.responseText)
+                    ]);
+                }
+            });
         }
 
     };
