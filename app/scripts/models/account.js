@@ -84,7 +84,7 @@ define(["jquery"],function($){
 
             var request = $.ajax({
                 url : loginUrl,
-                type: POST,
+                type: "POST",
                 data: {
                     username:email,
                     password:password,
@@ -107,7 +107,7 @@ define(["jquery"],function($){
 
             var request = $.ajax({
                 url : createTenantUrl,
-                type: POST,
+                type: "POST",
                 success : function(output, status, xhr){
 
                         //Succes, redirect to thankyou.jsp
