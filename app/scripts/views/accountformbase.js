@@ -1,4 +1,4 @@
-define(["jquery","underscore","backbone","models/account","validation"], 
+define(["jquery","underscore","backbone","models/account","validation"],
 
 	function($,_,Backbone,Account){
 
@@ -16,10 +16,11 @@ define(["jquery","underscore","backbone","models/account","validation"],
 	    	settings : {
                 noDomainErrorMessage : "Please specify a domain name",
                 noEmailErrorMessage : "You forgot to give us your email",
+                noPasswordErrorMessage : "Please provide your account password",
                 invalidEmailErrorMessage : "Your email address must be legit",
                 invalidDomainNameErrorMessage : "Please specify a valid name for the domain"
             },
-	    	
+
 	    	initialize : function(attributes){
 
 	    		$(this.el).on('submit', function(e){
@@ -27,7 +28,7 @@ define(["jquery","underscore","backbone","models/account","validation"],
 				});
 
 	    		this.validator = $(this.el).validate({
-                    
+
                     rules: this.__validationRules(),
 
                     messages: {
@@ -38,6 +39,9 @@ define(["jquery","underscore","backbone","models/account","validation"],
                         email: {
                             required: this.settings.noEmailErrorMessage,
                             email: this.settings.invalidEmailErrorMessage
+                        },
+                        password: {
+                            required: this.settings.noPasswordErrorMessage
                         }
                     },
 
@@ -83,6 +87,23 @@ define(["jquery","underscore","backbone","models/account","validation"],
                     refocus(this.$("input[name='email']"));
                     return;
                 }
+
+                if(typeof errorMap.password !== 'undefined'){
+                    this.trigger("invalid","password",errorMap.password);
+                    refocus(this.$("input[name='password']"));
+                    return;
+                }
+            },
+
+
+            __restoreForm : function(){
+                this.$(".working").addClass("hidden");
+                this.$("input[type='submit']").show();
+            },
+
+            __showProgress : function(){
+                this.$("input[type='submit']").hide();
+                this.$(".working").removeClass("hidden");
             },
 
 	    	__submit : function(form){}
