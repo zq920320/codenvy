@@ -8,6 +8,10 @@ define(["models/account","underscore"], function(Account,_){
 				expect(Account).to.be.ok;
 			});
 
+            it("exports AccountError", function(){
+                expect(Account).to.respondTo("AccountError");
+            });
+
 			it("exports signUp method", function(){
 				expect(Account).to.respondTo("signUp");
 			});

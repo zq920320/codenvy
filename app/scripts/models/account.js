@@ -42,6 +42,8 @@ define(["jquery"],function($){
 
     return {
 
+        AccountError : AccountError,
+
         isValidDomain : function(domain){
 
             //check for the trailing dash
@@ -112,6 +114,12 @@ define(["jquery"],function($){
                         success({url: 'thankyou.jsp'});
                 },
                 error : function(xhr, status, err){
+
+                    // TODO: need to figure out what the errors are and populate
+                    // a list of errors accordingly:
+                    //
+                    //      var errors = [new AccountError("email","Here's a description")];
+                    //      error(errors);
 
                     //else error code, display error message
                     error(err);
