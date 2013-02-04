@@ -10,6 +10,10 @@ define(["jquery","views/signupform","views/errorreport"], function($,SignupForm,
                     var form = SignupForm.get(signupForm),
                         errorReport = ErrorReport.get(errorContainer);
 
+                    form.on("success", function(d){
+                        window.location.href = d.url;
+                    });
+
                     form.on("invalid", function(field,message){
 
                         errorReport.show(message);
