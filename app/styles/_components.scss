@@ -3,6 +3,15 @@
     margin-top: 8px;
 }
 
+@mixin darkContainer(){
+    position: relative;
+    @include bg_scene();
+    overflow: hidden;
+    border-radius: 6px;
+    color: $text-on-dark-color;
+    a { color: $text-on-dark-color; }
+}
+
 /*
 
 	Landing page
@@ -12,14 +21,8 @@
 $scene-height:407px;
 
 .scene {
-	position: relative;
-	@include bg_scene();
+    @include darkContainer();
 	max-height: $scene-height;
-	overflow: hidden;
-	border-radius: 6px;
-	color: $text-on-dark-color;
-
-	a { color: $text-on-dark-color; }
 }
 
 
@@ -58,4 +61,15 @@ $scene-height:407px;
         @include icon_user();
     }
 
+}
+
+
+/*
+
+    Login
+
+*/
+
+.login {
+    @include darkContainer();
 }
