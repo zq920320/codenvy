@@ -46,6 +46,10 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                     if(typeof Account.signUp.restore !== 'undefined'){
                         Account.signUp.restore();
                     }
+
+                    if(typeof Account.createTenant.restore !== 'undefined'){
+                        Account.createTenant.restore();
+                    }
                 });
 
                 function buildForm(){
@@ -114,11 +118,11 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                     form.__showErrors({domain: form.settings.invalidDomainNameErrorMessage});
                 });
 
-                it("calls Account.signUp when the form is valid", function(done){
+                it("calls Account.createTenant when the form is valid", function(done){
 
-                    var e = 'bob@gmail.com', d = 'bob.codenvy.com';
+                    var e = 'bob@gmail.com', d = 'bob';
 
-                    sinon.stub(Account,"signUp",function(email,domain){
+                    sinon.stub(Account,"createTenant",function(email,domain){
                         expect(email).to.equal(e);
                         expect(domain).to.equal(d);
                         done();
