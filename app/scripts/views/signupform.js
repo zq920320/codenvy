@@ -104,6 +104,8 @@ define(["jquery","underscore","backbone","models/account","validation"],
 
             __submit : function(form){
 
+                this.__showProgress();
+
                 this.stopFromCollapsing();
 
                 this.trigger("submitting");
@@ -115,6 +117,9 @@ define(["jquery","underscore","backbone","models/account","validation"],
                         this.trigger("success",d);
                     },this),
                     _.bind(function(errors){
+
+                        this.__restoreForm();
+
                         if(errors.length !== 0){
                             this.trigger(
                                 "invalid",
@@ -146,6 +151,16 @@ define(["jquery","underscore","backbone","models/account","validation"],
                     refocus(this.$("input[name='email']"));
                     return;
                 }
+            },
+
+            __restoreForm : function(){
+                this.$(".working").addClass("hidden");
+                this.$("input[type='submit']").show();
+            },
+
+            __showProgress : function(){
+                this.$("input[type='submit']").hide();
+                this.$(".working").removeClass("hidden");
             }
     	});
 

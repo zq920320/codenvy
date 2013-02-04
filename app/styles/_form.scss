@@ -39,3 +39,12 @@ input[type='text']{
 .error-container.expanded {
     opacity: 1.0;
 }
+
+
+.working {
+    text-align: center;
+}
+
+.working.hidden {
+    display: none;
+}
