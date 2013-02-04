@@ -13,11 +13,12 @@
 
 .signup-form {
     @include image_line_full;
-}
-
-
-.signup-form .domain-name {
-    @include transition(0.3s,ease-in,opacity,0.3s);
+    .domain-name {
+        @include transition(0.3s,ease-in,opacity,0.3s);
+    }
+    .field {
+        @include transition(0.3s,ease-in,opacity,0.3s);
+    }
 }
 
 .domain-placeholder {
@@ -27,13 +28,7 @@
     color:$text-box-placeholder-color;
 }
 
-.signup-form .field {
-    @include transition(0.3s,ease-in,opacity,0.3s);
-}
-
-.hidden-text-box {
-    opacity: 0;
-}
+.hidden-text-box { opacity: 0; }
 
 .signup-button {
     opacity: 1;
@@ -41,10 +36,7 @@
     font-weight: bold;
     font-size: 1.3em;
 }
-
-.signup-button.hidden-button {
-    opacity: 0;
-}
+.signup-button.hidden-button { opacity: 0; }
 
 .aternative-login {
     @include image_line_or;
