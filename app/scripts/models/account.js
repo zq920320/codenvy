@@ -77,23 +77,6 @@ define(["jquery"],function($){
             + "&authType=jaas";
 
             success({ loginUrl : loginUrl });
-
-            // var request = $.ajax({
-            //     url : loginUrl,
-            //     type: "POST",
-            //     data: {
-            //         username:email,
-            //         password:password,
-            //         redirectTenantName:tenant,
-            //         //encodedQueryParam: encodeURIComponent(queryString);
-            //     },
-            //     success : function(output, status, xhr){
-
-            //     },
-            //     error : function(xhr, status, err){
-            //         error(err);
-            //     }
-            // });
         },
 
         createTenant : function(email,domain,success,error){
