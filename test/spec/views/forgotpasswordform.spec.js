@@ -1,4 +1,4 @@
-define(["jquery", "views/forgotpasswordform", "text!templates/forgotpasswordform.html"], 
+define(["jquery", "views/forgotpasswordform", "text!templates/forgotpasswordform.html"],
 
 	function($,ForgotPasswordForm,formTemplate){
 
@@ -15,7 +15,7 @@ define(["jquery", "views/forgotpasswordform", "text!templates/forgotpasswordform
 
 				it("exports ForgotPasswordForm", function(){
 					expect(ForgotPasswordForm).to.respondTo("ForgotPasswordForm");
-				});	
+				});
 			});
 
 			describe("get", function(){
@@ -39,13 +39,9 @@ define(["jquery", "views/forgotpasswordform", "text!templates/forgotpasswordform
 			});
 
 			describe("ForgotPasswordForm", function(){
-
 				function buildForm(){
 					return jQuery(formTemplate);
 				}
-
-				
-
 			});
 
 		});
