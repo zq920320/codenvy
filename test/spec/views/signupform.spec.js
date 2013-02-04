@@ -43,10 +43,6 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                         Account.isValidDomain.restore();
                     }
 
-                    if(typeof Account.signUp.restore !== 'undefined'){
-                        Account.signUp.restore();
-                    }
-
                     if(typeof Account.createTenant.restore !== 'undefined'){
                         Account.createTenant.restore();
                     }

@@ -12,10 +12,6 @@ define(["models/account","underscore"], function(Account,_){
                 expect(Account).to.respondTo("AccountError");
             });
 
-			it("exports signUp method", function(){
-				expect(Account).to.respondTo("signUp");
-			});
-
 			it("exports login method", function(){
 				expect(Account).to.respondTo("login");
 			});
