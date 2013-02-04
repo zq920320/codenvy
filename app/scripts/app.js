@@ -1,29 +1,55 @@
-define(["jquery","views/signupform","views/errorreport"], function($,SignupForm,ErrorReport){
+define(["jquery","views/signupform","views/signinform","views/errorreport"],
 
-	return {
-		run : function(){
-			$(document).ready(function(){
-                var signupForm = $(".signup-form"),
-                    errorContainer = $(".error-container");
+    function($,SignupForm,SigninForm,ErrorReport){
 
-                if(signupForm.length !== 0){
-                    var form = SignupForm.get(signupForm),
-                        errorReport = ErrorReport.get(errorContainer);
 
-                    form.on("submitting", function(){
-                        errorReport.hide();
-                    });
+    	return {
+    		run : function(){
+    			$(document).ready(function(){
+                    var signupForm = $(".signup-form"),
+                        signinForm = $(".login-form"),
+                        errorContainer = $(".error-container");
 
-                    form.on("success", function(d){
-                        window.location.href = d.url;
-                    });
+                    if(signupForm.length !== 0){
+                        (function(){
+                            var form = SignupForm.get(signupForm),
+                            errorReport = ErrorReport.get(errorContainer);
 
-                    form.on("invalid", function(field,message){
-                        errorReport.show(message);
-                    });
-                }
-			});
-		}
-	};
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
 
-});
+                            form.on("success", function(d){
+                                window.location.href = d.url;
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+                        })();
+                    }
+
+                    if(signinForm.length !== 0){
+                        (function(){
+                            var form = SigninForm.get(signinForm),
+                            errorReport = ErrorReport.get(errorContainer);
+
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+
+                            form.on("success", function(){
+                                alert("logged in");
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+                        })();
+                    }
+    			});
+    		}
+    	};
+
+    }
+);
