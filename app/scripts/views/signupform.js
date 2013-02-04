@@ -8,7 +8,7 @@ define(["jquery","underscore","backbone","models/account","validation"],
         */
 
         jQuery.validator.addMethod("validDomain", function(value, element) {
-            return Account.isValidDomain(value);
+            return Account.isValidDomain(value+".codenvy.com");
         });
 
         var ProgressiveForm = Backbone.View.extend({
@@ -33,12 +33,12 @@ define(["jquery","underscore","backbone","models/account","validation"],
             adjustFormDisplay : function(){
                 if(this.$(".field > input").toArray().indexOf(document.activeElement) !== -1){
                     this.$(".field > .signup-button").removeClass("hidden-button");
-                    this.$(".field > .domain-name").removeClass("hidden-text-box");
+                    this.$(".field > .domain-name").parent().removeClass("hidden-text-box");
                     $(".aternative-login").addClass("collapsed");
                 } else {
                     if(this.canCollapse){
                         this.$(".field > .signup-button").addClass("hidden-button");
-                        this.$(".field > .domain-name").addClass("hidden-text-box");
+                        this.$(".field > .domain-name").parent().addClass("hidden-text-box");
                         $(".aternative-login").removeClass("collapsed");
                     }
                 }
