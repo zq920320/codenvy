@@ -7,42 +7,14 @@
     width: 335px;
     margin: 20px;
     padding-top: 11px;
-}
 
-.signup-form-wrapper h1 {
-    padding-left: 16px;
+    h1 { padding-left: 16px; }
 }
 
 .signup-form {
     @include image_line_full;
-    text-align:center;
-    padding: 20px 5px 25px 5px;
 }
 
-.signup-form .field {
-    padding: 10px;
-    position: relative;
-}
-
-.signup-form input {
-    width: 100%;
-}
-
-.signup-form input[type="text"] {
-    height: 2em;
-    font-size: 1.2em;
-    background-color: $text-box-background-color;
-    border-radius: 5px;
-    border: none;
-    color:$text-box-font-color;
-
-    @include box-shadow(
-        $text-box-drop-shadow-color 0px 1px 1px,
-        $text-box-inset-shadow-color 0px 1px 1px inset
-    );
-
-    padding-left: 10px;
-}
 
 .signup-form .domain-name {
     @include transition(0.3s,ease-in,opacity,0.3s);
@@ -53,6 +25,10 @@
     top: 14px;
     right: 14px;
     color:$text-box-placeholder-color;
+}
+
+.signup-form .field {
+    @include transition(0.3s,ease-in,opacity,0.3s);
 }
 
 .hidden-text-box {
