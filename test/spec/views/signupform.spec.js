@@ -136,6 +136,30 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                     $(form.el).submit();
                 });
 
+                it("raises invalid event when Account.createTenant returns errors", function(done){
+                    var e = 'bob@gmail.com', d = 'bob',
+                        efield = "email", edesc = "Already in use";
+
+                    sinon.stub(Account,"createTenant",function(email,domain,success,error){
+                        error([
+                            new Account.AccountError(efield,edesc)
+                        ]);
+                    });
+
+                    var form = SignUpForm.get(buildForm());
+
+                    $(form.el).find("input[name='email']").val(e);
+                    $(form.el).find("input[name='domain']").val(d);
+
+                    form.on("invalid", function(field,message){
+                        expect(field).to.equal(efield);
+                        expect(message).to.equal(edesc);
+                        done();
+                    });
+
+                    $(form.el).submit();
+                });
+
                 // it("validates domain name using Account.isValidDomain", function(done){
 
                 //     sinon.stub(Account,"isValidDomain", function(name){

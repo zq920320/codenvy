@@ -108,9 +108,21 @@ define(["jquery","underscore","backbone","models/account","validation"],
 
                 Account.createTenant(
                     $(form).find("input[name='email']").val(),
-                    $(form).find("input[name='domain']").val()
+                    $(form).find("input[name='domain']").val(),
+                    _.bind(function(){
+                        //success
+                    },this),
+                    _.bind(function(errors){
+                        if(errors.length !== 0){
+                            this.trigger(
+                                "invalid",
+                                errors[0].getFieldName(),
+                                errors[0].getErrorDescription()
+                            );
+                        }
+                    },this)
                 );
-                //form.submit();
+
             },
 
             __showErrors : function(errorMap, errorList){

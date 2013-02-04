@@ -88,6 +88,12 @@ html {
   line-height: 2em;
 }
 
+/* line 10, _typography.scss */
+p {
+  font-weight: 300;
+  color: #595e62;
+}
+
 @font-face {
   font-family: CodeEnvy;
   src: url("../fonts/regular.otf");
@@ -97,7 +103,7 @@ html {
 .oauth-button {
   padding-left: 157px;
   padding-top: 36px;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 /* line 10, _buttons.scss */
 .oauth-button:hover {
@@ -141,24 +147,29 @@ html {
   opacity: 0.7;
 }
 
+/* line 19, _form.scss */
+input[type='text'] {
+  font-weight: 200;
+}
+
 /* line 5, _form.scss */
 ::-webkit-input-placeholder {
-  color: rgba(251, 251, 251, 0.17);
+  color: rgba(251, 251, 251, 0.5);
 }
 
 /* line 8, _form.scss */
 :-moz-placeholder {
-  color: rgba(251, 251, 251, 0.17);
+  color: rgba(251, 251, 251, 0.5);
 }
 
 /* line 11, _form.scss */
 ::-moz-placeholder {
-  color: rgba(251, 251, 251, 0.17);
+  color: rgba(251, 251, 251, 0.5);
 }
 
 /* line 14, _form.scss */
 :-ms-input-placeholder {
-  color: rgba(251, 251, 251, 0.17);
+  color: rgba(251, 251, 251, 0.5);
 }
 
 @font-face {
@@ -228,7 +239,13 @@ header .row {
 }
 
 /* line 38, _header.scss */
+.sign-in-button-wrapper.span2 {
+  padding: 0;
+}
+
+/* line 42, _header.scss */
 .sign-in-button {
+  font-weight: 300;
   border: solid 1px #cbcbcb;
   padding: 11px;
   border-radius: 5px;
@@ -237,19 +254,20 @@ header .row {
   background-image: -moz-linear-gradient(#fcfcfc, #f3f3f3);
   background-image: -o-linear-gradient(#fcfcfc, #f3f3f3);
   background-image: linear-gradient(#fcfcfc, #f3f3f3);
+  color: #8e979d;
 }
 
-/* line 45, _header.scss */
+/* line 51, _header.scss */
 .span2.logo-wrapper {
   padding-top: 4px;
 }
 @media screen and (max-width: 885px) {
-  /* line 45, _header.scss */
+  /* line 51, _header.scss */
   .span2.logo-wrapper {
     text-align: center;
   }
 }
-/* line 50, _header.scss */
+/* line 56, _header.scss */
 .span2.logo-wrapper img {
   display: inline;
 }
@@ -268,9 +286,11 @@ footer {
 /* line 14, _footer.scss */
 .footer-link {
   color: #8e979d;
+  font-size: 0.9em;
+  font-weight: 300;
 }
 
-/* line 18, _footer.scss */
+/* line 20, _footer.scss */
 footer > nav > ul {
   margin: 0;
   padding: 0;
@@ -281,7 +301,7 @@ footer > nav > ul {
   margin: 0;
   text-align: center;
 }
-/* line 25, _footer.scss */
+/* line 27, _footer.scss */
 footer > nav > ul li {
   list-style-image: none;
   list-style-type: none;
@@ -305,7 +325,7 @@ footer > nav > ul li {
 .signup-form-wrapper {
   width: 335px;
   margin: 20px;
-  padding-top: 29px;
+  padding-top: 11px;
 }
 
 /* line 12, _signup.scss */
@@ -339,7 +359,7 @@ footer > nav > ul li {
   background-color: #313a48;
   border-radius: 5px;
   border: none;
-  color: rgba(251, 251, 251, 0.49);
+  color: #fbfbfb;
   -webkit-box-shadow: #545e6c 0px 1px 1px, #232834 0px 1px 1px inset;
   -moz-box-shadow: #545e6c 0px 1px 1px, #232834 0px 1px 1px inset;
   box-shadow: #545e6c 0px 1px 1px, #232834 0px 1px 1px inset;
@@ -401,7 +421,7 @@ footer > nav > ul li {
 
 /* line 65, _signup.scss */
 .aternative-login {
-  background-image: url("../images/lineFull.png");
+  background-image: url("../images/lineOr.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
   -webkit-transition-property: all;
@@ -422,13 +442,13 @@ footer > nav > ul li {
   transition-delay: 0;
   padding: 10px;
   text-align: center;
-  -webkit-transform: translate(0, -126px);
-  -moz-transform: translate(0, -126px);
-  -ms-transform: translate(0, -126px);
-  -o-transform: translate(0, -126px);
-  transform: translate(0, -126px);
+  -webkit-transform: translate(0, -136px);
+  -moz-transform: translate(0, -136px);
+  -ms-transform: translate(0, -136px);
+  -o-transform: translate(0, -136px);
+  transform: translate(0, -136px);
   opacity: 1;
-  padding-top: 45px;
+  padding-top: 51px;
 }
 
 /* line 75, _signup.scss */
@@ -461,9 +481,10 @@ footer > nav > ul li {
 .signup-terms {
   position: absolute;
   left: 33px;
-  bottom: 0;
+  bottom: 5px;
   font-size: 0.8em;
   line-height: 1.1em;
+  font-weight: 200;
   opacity: 0.7;
 }
 
@@ -629,12 +650,17 @@ img {
   width: 100%;
 }
 
+/* line 2, _components.scss */
+.content {
+  margin-top: 8px;
+}
+
 /*
-	
+
 	Landing page
 
 */
-/* line 9, _components.scss */
+/* line 14, _components.scss */
 .scene {
   position: relative;
   background-image: url("../images/sceneBackground.png");
@@ -644,20 +670,24 @@ img {
   border-radius: 6px;
   color: #f3f3f3;
 }
-/* line 17, _components.scss */
+/* line 22, _components.scss */
 .scene a {
   color: #f3f3f3;
 }
 
-/* line 21, _components.scss */
+/* line 26, _components.scss */
 .totem {
   background-image: url("../images/codenvyTotem.png");
   background-repeat: no-repeat;
-  background-position: 50% 50%;
+  background-position: 65% 40%;
   min-height: 407px;
 }
 
-/* line 29, _components.scss */
+/* line 32, _components.scss */
+.overview {
+  margin-top: 10px;
+}
+/* line 36, _components.scss */
 .overview p {
   text-align: center;
   padding: 10px 10px 20px 10px;
@@ -666,28 +696,33 @@ img {
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
-/* line 36, _components.scss */
+/* line 43, _components.scss */
 .overview .icon-head {
   padding-top: 30px;
   margin-top: 20px;
 }
-/* line 42, _components.scss */
+/* line 49, _components.scss */
 .overview .cloud {
   background-image: url("../images/iconCloud.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 46, _components.scss */
+/* line 53, _components.scss */
 .overview .lighting {
   background-image: url("../images/iconLighting.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 50, _components.scss */
+/* line 57, _components.scss */
 .overview .user {
   background-image: url("../images/iconUser.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
+}
+
+/* line 63, _components.scss */
+.signup-terms {
+  color: #f3f3f3;
 }
 
 /* normalize.css v2.0.1 | MIT License | git.io/normalize */
@@ -750,8 +785,8 @@ audio:not([controls]) {
  */
 /* line 80, main.scss */
 html {
-  font-family: 'CodeEnvy';
-  /* 1 */
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
   -webkit-text-size-adjust: 100%;
   /* 2 */
   -ms-text-size-adjust: 100%;
@@ -761,12 +796,12 @@ html {
 /**
  * Remove default margin.
  */
-/* line 90, main.scss */
+/* line 92, main.scss */
 body {
   margin: 0;
   background-color: #f3f3f3;
   color: #44484b;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.05em;
 }
 
 /* ==========================================================================
@@ -775,13 +810,13 @@ body {
 /**
  * Address `outline` inconsistency between Chrome and other browsers.
  */
-/* line 105, main.scss */
+/* line 107, main.scss */
 a {
   text-decoration: none;
   color: #44484b;
 }
 
-/* line 110, main.scss */
+/* line 112, main.scss */
 a:focus {
   outline: none;
 }
@@ -789,7 +824,7 @@ a:focus {
 /**
  * Improve readability when focused and also mouse hovered in all browsers.
  */
-/* line 120, main.scss */
+/* line 122, main.scss */
 a:active,
 a:hover {
   outline: 0;
@@ -802,15 +837,17 @@ a:hover {
  * Address variable `h1` font size within `section` and `article` contexts in
  * Firefox 4+, Safari 5, and Chrome.
  */
-/* line 133, main.scss */
+/* line 135, main.scss */
 h1 {
   font-size: 2em;
+  font-weight: 300;
+  line-height: 1.3em;
 }
 
 /**
  * Address styling not present in IE 8/9, Safari 5, and Chrome.
  */
-/* line 141, main.scss */
+/* line 145, main.scss */
 abbr[title] {
   border-bottom: 1px dotted;
 }
@@ -818,7 +855,7 @@ abbr[title] {
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 150, main.scss */
+/* line 154, main.scss */
 b,
 strong {
   font-weight: bold;
@@ -827,7 +864,7 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 158, main.scss */
+/* line 162, main.scss */
 dfn {
   font-style: italic;
 }
@@ -835,7 +872,7 @@ dfn {
 /**
  * Address styling not present in IE 8/9.
  */
-/* line 166, main.scss */
+/* line 170, main.scss */
 mark {
   background: #ff0;
   color: #000;
@@ -844,7 +881,7 @@ mark {
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 178, main.scss */
+/* line 182, main.scss */
 code,
 kbd,
 pre,
@@ -855,7 +892,7 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 187, main.scss */
+/* line 191, main.scss */
 pre {
   white-space: pre;
   white-space: pre-wrap;
@@ -865,7 +902,7 @@ pre {
 /**
  * Set consistent quote types.
  */
-/* line 197, main.scss */
+/* line 201, main.scss */
 q {
   quotes: "\201C" "\201D" "\2018" "\2019";
 }
@@ -876,7 +913,7 @@ q {
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 214, main.scss */
+/* line 218, main.scss */
 sub,
 sup {
   line-height: 0;
@@ -884,12 +921,12 @@ sup {
   vertical-align: baseline;
 }
 
-/* line 221, main.scss */
+/* line 225, main.scss */
 sup {
   top: -0.5em;
 }
 
-/* line 225, main.scss */
+/* line 229, main.scss */
 sub {
   bottom: -0.25em;
 }
@@ -900,7 +937,7 @@ sub {
 /**
  * Remove border when inside `a` element in IE 8/9.
  */
-/* line 237, main.scss */
+/* line 241, main.scss */
 img {
   border: 0;
 }
@@ -908,7 +945,7 @@ img {
 /**
  * Correct overflow displayed oddly in IE 9.
  */
-/* line 245, main.scss */
+/* line 249, main.scss */
 svg:not(:root) {
   overflow: hidden;
 }
@@ -919,7 +956,7 @@ svg:not(:root) {
 /**
  * Address margin not present in IE 8/9 and Safari 5.
  */
-/* line 257, main.scss */
+/* line 261, main.scss */
 figure {
   margin: 0;
 }
@@ -930,7 +967,7 @@ figure {
 /**
  * Define consistent border, margin, and padding.
  */
-/* line 269, main.scss */
+/* line 273, main.scss */
 fieldset {
   border: 1px solid #c0c0c0;
   margin: 0 2px;
@@ -941,7 +978,7 @@ fieldset {
  * 1. Correct `color` not being inherited in IE 8/9.
  * 2. Remove padding so people aren't caught out if they zero out fieldsets.
  */
-/* line 280, main.scss */
+/* line 284, main.scss */
 legend {
   border: 0;
   /* 1 */
@@ -954,7 +991,7 @@ legend {
  * 2. Correct font size not being inherited in all browsers.
  * 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 294, main.scss */
+/* line 298, main.scss */
 button,
 input,
 select,
@@ -976,7 +1013,7 @@ textarea {
  * 3. Improve usability and consistency of cursor style between image-type
  *    `input` and others.
  */
-/* line 321, main.scss */
+/* line 325, main.scss */
 button,
 html input[type="button"],
 input[type="reset"],
@@ -990,7 +1027,7 @@ input[type="submit"] {
 /**
  * Re-set default cursor for disabled elements.
  */
-/* line 331, main.scss */
+/* line 335, main.scss */
 button[disabled],
 html input[disabled] {
   cursor: default;
@@ -1000,7 +1037,7 @@ html input[disabled] {
  * 1. Address box sizing set to `content-box` in IE 8/9.
  * 2. Remove excess padding in IE 8/9.
  */
-/* line 341, main.scss */
+/* line 345, main.scss */
 input[type="checkbox"],
 input[type="radio"] {
   box-sizing: border-box;
@@ -1014,7 +1051,7 @@ input[type="radio"] {
  * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
  *    (include `-moz` to future-proof).
  */
-/* line 352, main.scss */
+/* line 356, main.scss */
 input[type="search"] {
   -webkit-appearance: textfield;
   /* 1 */
@@ -1028,7 +1065,7 @@ input[type="search"] {
  * Remove inner padding and search cancel button in Safari 5 and Chrome
  * on OS X.
  */
-/* line 365, main.scss */
+/* line 369, main.scss */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
@@ -1037,7 +1074,7 @@ input[type="search"]::-webkit-search-decoration {
 /**
  * Remove inner padding and border in Firefox 4+.
  */
-/* line 374, main.scss */
+/* line 378, main.scss */
 button::-moz-focus-inner,
 input::-moz-focus-inner {
   border: 0;
@@ -1048,7 +1085,7 @@ input::-moz-focus-inner {
  * 1. Remove default vertical scrollbar in IE 8/9.
  * 2. Improve readability and alignment in all browsers.
  */
-/* line 384, main.scss */
+/* line 388, main.scss */
 textarea {
   overflow: auto;
   /* 1 */
@@ -1062,7 +1099,7 @@ textarea {
 /**
  * Remove most spacing between table cells.
  */
-/* line 397, main.scss */
+/* line 401, main.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
