@@ -1,21 +1,41 @@
-define(["backbone","views/"], function(Backbone){
+define(["underscore","backbone","views/accountformbase","models/account"], 
 
-	var ForgotPasswordForm = Backbone.View.extend({
+	function(_,Backbone,AccountFormBase,Account){
 
-	});
+		var ForgotPasswordForm = AccountFormBase.extend({
+			__submit : function(form){
+				this.__showProgress();
+				this.trigger("submitting");
 
-	return {
-
-		get : function(form){
-			if(typeof form === 'undefined'){
-				throw new Error("Need a form");
+				Account.recoverPassword(
+					this.$("input[name='email']").val(),
+					_.bind(function(d){
+						this.trigger("success",d);
+					},this),
+					_.bind(function(errors){
+						if(errors.length > 0){
+							this.trigger(
+								"invalid",
+								errors[0].getFieldName(),
+								errors[0].getErrorDescription()
+							);
+						}
+					},this)
+				);
 			}
+		});
 
-			return new ForgotPasswordForm({ el : form });
-		},
+		return {
+			get : function(form){
+				if(typeof form === 'undefined'){
+					throw new Error("Need a form");
+				}
 
-		ForgotPasswordForm : ForgotPasswordForm
+				return new ForgotPasswordForm({ el : form });
+			},
 
-	};
+			ForgotPasswordForm : ForgotPasswordForm
+		};
 
-});
+	}
+);

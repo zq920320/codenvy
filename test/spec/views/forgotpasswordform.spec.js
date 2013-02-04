@@ -1,6 +1,6 @@
-define(["jquery", "views/forgotpasswordform", "text!templates/forgotpasswordform.html"],
+define(["jquery", "views/forgotpasswordform", "models/account", "text!templates/forgotpasswordform.html"],
 
-	function($,ForgotPasswordForm,formTemplate){
+	function($,ForgotPasswordForm,Account,formTemplate){
 
 		describe("Views : ForgotPasswordForm", function(){
 
@@ -40,8 +40,111 @@ define(["jquery", "views/forgotpasswordform", "text!templates/forgotpasswordform
 
 			describe("ForgotPasswordForm", function(){
 				function buildForm(){
-					return jQuery(formTemplate);
+					$("body").append(jQuery(formTemplate));
+					return $(".forgotpassword-form");
 				}
+
+				afterEach(function(){
+					$(".forgotpassword-form").remove();
+
+					if(typeof Account.recoverPassword.restore !== 'undefined'){
+						Account.recoverPassword.restore();
+					}
+				});
+
+				it("triggers invalid event if no email is provided", function(done){
+
+					var form = ForgotPasswordForm.get(buildForm());
+
+					form.on("invalid",function(field,description){
+						expect(field).to.equal("email");
+						expect(description).to.equal(form.settings.noEmailErrorMessage);
+						done();
+					});
+
+					$(form.el).valid();
+
+				});
+
+				it("triggers invalid event if email is not valid", function(done){
+
+					var form = ForgotPasswordForm.get(buildForm());
+
+					form.on("invalid", function(field, description){
+						expect(field).to.equal("email");
+						expect(description).to.equal(form.settings.invalidEmailErrorMessage);
+						done();
+					});
+
+					$(form.el).find("input[name='email']").val("this is not a valid email");
+					$(form.el).valid();
+				});
+
+				it("triggers submitting event before submitting data", function(done){
+
+					var form = ForgotPasswordForm.get(buildForm());
+
+					form.on("submitting", function(){
+						done();
+					});
+
+					$(form.el).find("input[name='email']").val("bob@gmail.com");
+					$(form.el).submit();
+
+				});
+
+				it("call Account.recoverPassword if email is valid", function(done){
+
+					var form = ForgotPasswordForm.get(buildForm()), e = "bob@gmail.com";
+
+					sinon.stub(Account,"recoverPassword",function(email){
+						expect(email).to.equal(e);
+						done();
+					});
+
+					$(form.el).find("input[name='email']").val(e);
+					$(form.el).submit();					
+
+				});
+
+				it("triggers success event if Account.recoverPassword succeeds", function(done){
+
+					var form = ForgotPasswordForm.get(buildForm()), e = "bob@gmail.com", d = { data : "u"};
+
+					sinon.stub(Account,"recoverPassword",function(email,success,error){
+						success(d);
+					});
+
+					form.on("success", function(data){
+						expect(data).to.eql(d);
+						done();
+					});
+
+					$(form.el).find("input[name='email']").val(e);
+					$(form.el).submit();					
+
+				});
+
+				it("triggers invalid event if Account.recoverPassword fails", function(done){
+					var form = ForgotPasswordForm.get(buildForm()), e = "bob@gmail.com", 
+						eField = "email", eDesc = "bad email";
+
+					sinon.stub(Account,"recoverPassword",function(email,success,error){
+						error([
+							new Account.AccountError(eField,eDesc)
+						]);
+					});
+
+					form.on("invalid", function(field,message){
+						expect(field).to.equal(eField);
+						expect(message).to.equal(eDesc);
+						done();
+					});
+
+					$(form.el).find("input[name='email']").val(e);
+					$(form.el).submit();					
+				});
+
 			});
 
 		});
