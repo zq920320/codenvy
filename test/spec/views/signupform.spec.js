@@ -46,10 +46,14 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                     if(typeof Account.createTenant.restore !== 'undefined'){
                         Account.createTenant.restore();
                     }
+
+                    $(".signup-form").remove();
+
                 });
 
                 function buildForm(){
-                    return jQuery(signupFormTemplate);
+                    $("body").append(jQuery(signupFormTemplate));
+                    return $(".signup-form")[0];
                 }
 
                 it("sets validator property", function(){
@@ -64,7 +68,6 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
 
                     var form = SignUpForm.get(buildForm());
 
-
                     form.on("invalid", function(errorField, errorText){
                         expect(errorField).to.equal("email");
                         expect(errorText).to.equal(form.settings.noEmailErrorMessage);
@@ -72,12 +75,12 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                         done();
                     });
 
-                    form.__showErrors({email: form.settings.noEmailErrorMessage});
+                    $(form.el).find("input[name='domain']").val("bob");
+                    $(form.el).valid();
                 });
 
                 it("raises invalid event if email is not valid", function(done){
                     var form = SignUpForm.get(buildForm());
-
 
                     form.on("invalid", function(errorField, errorText){
                         expect(errorField).to.equal("email");
@@ -85,12 +88,14 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                         done();
                     });
 
-                    form.__showErrors({email: form.settings.invalidEmailErrorMessage});
+                    $(form.el).find("input[name='email']").val("this is not a valid email");
+                    $(form.el).find("input[name='domain']").val("bob");
+
+                    $(form.el).valid();
                 });
 
                 it("raises invalid event if domain is not speicified", function(done){
                     var form = SignUpForm.get(buildForm());
-
 
                     form.on("invalid", function(errorField, errorText){
                         expect(errorField).to.equal("domain");
@@ -98,12 +103,12 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                         done();
                     });
 
-                    form.__showErrors({domain: form.settings.noDomainErrorMessage});
+                    $(form.el).find("input[name='email']").val("bob@gmail.com");
+                    $(form.el).valid();
                 });
 
                 it("raises invalid event if domain is not valid", function(done){
                     var form = SignUpForm.get(buildForm());
-
 
                     form.on("invalid", function(errorField, errorText){
                         expect(errorField).to.equal("domain");
@@ -111,7 +116,10 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                         done();
                     });
 
-                    form.__showErrors({domain: form.settings.invalidDomainNameErrorMessage});
+                    $(form.el).find("input[name='email']").val("bob@gmail.com");
+                    $(form.el).find("input[name='domain']").val("12sdf");
+
+                    $(form.el).valid();
                 });
 
                 it("triggers submitting event before submitting the form", function(done){
@@ -197,16 +205,20 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
                     $(form.el).submit();
                 });
 
-                // it("validates domain name using Account.isValidDomain", function(done){
+                it("validates domain name using Account.isValidDomain", function(done){
 
-                //     sinon.stub(Account,"isValidDomain", function(name){
-                //         done();
-                //     });
+                    var form = SignUpForm.get(buildForm()), d = "bob";
 
-                //     var form = SignUpForm.get(buildForm());
-                //     $(form.el).find("input[name='email']").val("bob@gmail.com")
-                //     $(form.el).submit();
-                // });
+                    sinon.stub(Account,"isValidDomain", function(name){
+                        expect(name).to.equal(d+".codenvy.com");
+                        done();
+                    });
+
+                    $(form.el).find("input[name='email']").val("bob@gmail.com");
+                    $(form.el).find("input[name='domain']").val(d);
+
+                    $(form.el).valid();
+                });
 
             });
 
