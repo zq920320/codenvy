@@ -105,7 +105,7 @@ define(["jquery"],function($){
                 url : createTenantUrl,
                 type : "POST",
                 success : function(output, status, xhr){
-                    success({url: 'thankyou.jsp'});
+                    success({url: 'thank-you.jsp'});
                 },
                 error : function(xhr, status, err){
                     error([
