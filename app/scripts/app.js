@@ -3,9 +3,9 @@ define(["jquery","views/signupform","views/signinform","views/errorreport"],
     function($,SignupForm,SigninForm,ErrorReport){
 
 
-    	return {
-    		run : function(){
-    			$(document).ready(function(){
+        return {
+            run : function(){
+                $(document).ready(function(){
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
                         errorContainer = $(".error-container");
@@ -42,14 +42,16 @@ define(["jquery","views/signupform","views/signinform","views/errorreport"],
                                 alert("logged in");
                             });
 
+                            /*jslint unparam: true*/
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
+                            /*jslint unparam: false*/
                         })();
                     }
-    			});
-    		}
-    	};
+                });
+            }
+        };
 
     }
 );
