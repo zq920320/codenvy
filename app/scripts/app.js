@@ -2,9 +2,15 @@ define(["jquery",
         "views/signupform",
         "views/signinform",
         "views/forgotpasswordform",
+        "views/resetpasswordform",
         "views/errorreport"],
 
-    function($,SignupForm,SigninForm,ForgotPasswordForm,ErrorReport){
+    function($,
+        SignupForm,
+        SigninForm,
+        ForgotPasswordForm,
+        ResetPasswordForm,
+        ErrorReport){
 
 
         return {
@@ -13,6 +19,7 @@ define(["jquery",
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
                         forgotPasswordForm = $(".forgotpassword-form"),
+                        resetPasswordForm = $(".resetpassword-form"),
                         errorContainer = $(".error-container");
 
                     if(signupForm.length !== 0){
@@ -69,6 +76,28 @@ define(["jquery",
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
+
+                        })();
+                    }
+
+                    if(resetPasswordForm.length !== 0){
+                        (function(){
+
+                            var form = ResetPasswordForm.get(resetPasswordForm),
+                                errorReport = ErrorReport.get(errorContainer);
+
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+
+                            form.on("success", function(d){
+                                window.location.href = d.url;
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+
 
                         })();
                     }
