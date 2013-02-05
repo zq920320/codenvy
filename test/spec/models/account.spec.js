@@ -32,6 +32,10 @@ define(["models/account","underscore"], function(Account,_){
                 expect(Account).to.respondTo("setupPassword");
             });
 
+            it("exports confirmSetupPassword method", function(){
+                expect(Account).to.respondTo("confirmSetupPassword");
+            });
+
 		});
 
         describe("isValidDomain", function(){

@@ -122,9 +122,32 @@ define(["jquery"],function($){
             });
         },
 
+        confirmSetupPassword : function(id){
+            // implementation based on this: 
+            // https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
+            // just like with setupPassword, we expect the id to be in the url:
+            // https://codenvy.com/setup-password.jsp?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
+
+            var confirmSetupPasswordUrl = "/rest/password/setup-confirmed";
+            
+            var request = $.ajax({
+                url : confirmSetupPasswordUrl + "/" + id,
+                type : "GET",
+                success : function(output, status, xhr){
+                    success({ email : xhr.responseText });
+                },
+                error : function(xhr, status, err){
+                    error([
+                        new AccountError(null,xhr.responseText)
+                    ]);
+                }
+            });
+
+        },
+
         setupPassword : function(id,password,success,error){
-            //implementation based on this: 
-            //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
+            // implementation based on this: 
+            // https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
             // We assume that uid is part of the url :
             //  https://codenvy.com/setup-password.jsp?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
         
