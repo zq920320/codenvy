@@ -16,7 +16,7 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.storeload;
+package com.codenvy.dashboard.pig.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,14 +33,17 @@ public class Event
 
    private final String date;
 
+   private final String time;
+
    /**
     * Event constructor. {@link EventContext} parameters could be null. 
     * It means they'll be omitted in the resulted message. The same true
     * and for date parameter;
     */
-   private Event(String date, EventContext context, Map<String, String> params)
+   private Event(String date, String time, EventContext context, Map<String, String> params)
    {
       this.date = date;
+      this.time = time;
       this.context = context;
       this.params = params;
    }
@@ -52,8 +55,10 @@ public class Event
    {
       StringBuilder builder = new StringBuilder();
       builder.append(date == null ? "2010-10-10" : date);
+      builder.append(' ');
 
-      builder.append(" 10:10:10,100[main] [INFO] [HelloWorld 1010]");
+      builder.append(time == null ? "10:10:10,000" : time + ",000");
+      builder.append("[main] [INFO] [HelloWorld 1010]");
 
       if (context.user != null)
       {
@@ -100,6 +105,8 @@ public class Event
 
       private String date;
 
+      private String time;
+
       public Builder withContext(String user, String ws, String session)
       {
          context = new EventContext(user, ws, session);
@@ -112,6 +119,12 @@ public class Event
          return this;
       }
 
+      public Builder withTime(String time)
+      {
+         this.time = time;
+         return this;
+      }
+
       public Builder withParam(String name, String value)
       {
          params.put(name, value);
@@ -120,7 +133,7 @@ public class Event
 
       public Event build()
       {
-         return new Event(date, context, params);
+         return new Event(date, time, context, params);
       }
 
       /**
@@ -155,6 +168,25 @@ public class Event
       {
          return new Builder().withContext(user, ws, session).withParam("EVENT", "project-destroyed")
             .withParam("PROJECT", project);
+      }
+
+      /**
+       * Create 'project-built' event.
+       */
+      public static Builder createProjectBuiltEvent(String user, String ws, String session, String project, String type)
+      {
+         return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
+            .withParam("PROJECT", project).withParam("TYPE", type);
+      }
+
+      /**
+       * Create 'project-deployed' event.
+       */
+      public static Builder createProjectDeployedEvent(String user, String ws, String session, String project,
+         String type, String paas)
+      {
+         return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
+            .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
       }
 
       /**

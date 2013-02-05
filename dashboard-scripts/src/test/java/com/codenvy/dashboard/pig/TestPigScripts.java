@@ -16,7 +16,14 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.storeload;
+package com.codenvy.dashboard.pig;
+
+import com.codenvy.dashboard.pig.PigConstants;
+
+import com.codenvy.dashboard.pig.util.Event;
+import com.codenvy.dashboard.pig.util.LogGenerator;
+
+
 
 import org.apache.pig.ExecType;
 import org.apache.pig.PigServer;
@@ -120,6 +127,7 @@ public class TestPigScripts extends BaseTest
 
       Assert.assertEquals(tuple.get(1), "user2");
       Assert.assertEquals(tuple.get(2), "ws2");
+      Assert.assertNull(iter.next());
    }
 
    /**
@@ -164,7 +172,7 @@ public class TestPigScripts extends BaseTest
       Tuple tuple = iter.next();
 
       Assert.assertEquals(tuple.get(0), "tenant-created");
-      Assert.assertEquals(tuple.get(1), 3L);
+      Assert.assertEquals(tuple.get(1), 2L);
    }
 
    /**
@@ -186,7 +194,7 @@ public class TestPigScripts extends BaseTest
       Tuple tuple = iter.next();
 
       Assert.assertEquals(tuple.get(0), "tenant-destroyed");
-      Assert.assertEquals(tuple.get(1), 3L);
+      Assert.assertEquals(tuple.get(1), 2L);
    }
 
    /**
@@ -210,7 +218,7 @@ public class TestPigScripts extends BaseTest
       Tuple tuple = iter.next();
 
       Assert.assertEquals(tuple.get(0), "project-created");
-      Assert.assertEquals(tuple.get(1), 5L);
+      Assert.assertEquals(tuple.get(1), 4L);
    }
 
    /**
@@ -234,7 +242,7 @@ public class TestPigScripts extends BaseTest
       Tuple tuple = iter.next();
 
       Assert.assertEquals(tuple.get(0), "project-destroyed");
-      Assert.assertEquals(tuple.get(1), 5L);
+      Assert.assertEquals(tuple.get(1), 4L);
    }
 
    /**
@@ -257,7 +265,7 @@ public class TestPigScripts extends BaseTest
       Tuple tuple = iter.next();
 
       Assert.assertEquals(tuple.get(0), "user-added-to-ws");
-      Assert.assertEquals(tuple.get(1), 4L);
+      Assert.assertEquals(tuple.get(1), 3L);
    }
 
    /**

@@ -1,9 +1,13 @@
---
--- Returns list of users who were added to workspace but did not create project. Runtime parameters:
+------------------------------------------------------------------
+-- Returns list of users who have been added to workspace but did 
+-- not create project. Runtime parameters:
 -- log   - (mandatory) the list of resources to load
 -- from  - the first date occurred event
 -- to    - the last date occurred event
 --
+-- How to run:
+-- pig -x local -param log="<DIRECTORY1>,<DIRECTORY2>..." -param from=<YYYYMMDD> -param to=<YYYYMMDD> created-ws-but-project.pig
+------------------------------------------------------------------
 
 IMPORT 'macros.pig';
 
@@ -12,27 +16,26 @@ IMPORT 'macros.pig';
 
 log = LOAD '$log' using PigStorage() as (message : chararray);
 filteredByDate = extractAndFilterByDate(log, $from, $to);
+uniqEvents = DISTINCT filteredByDate;
 
-SPLIT filteredByDate INTO b1 IF INDEXOF(message, 'EVENT#project-created#', 0) != -1, a1 IF INDEXOF(message, 'EVENT#user-added-to-ws#', 0) != -1;
+SPLIT uniqEvents INTO b1 IF INDEXOF(message, 'EVENT#project-created#', 0) != -1, a1 IF INDEXOF(message, 'EVENT#user-added-to-ws#', 0) != -1;
 
 --
 -- resB Tuple : ('project-created', ws, user)
 --
 b2 = FOREACH b1 GENERATE REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\].*\\[(.*)\\].*\\[(.*)\\].*\\[(.*)\\].*\\[(.*)\\].*\\[(.*)\\](.*)');
-b3 = FOREACH b2 GENERATE 'project-created', $0.$4 AS ws, $0.$3 AS user; 
-resB = DISTINCT b3;
+resB = FOREACH b2 GENERATE 'project-created', $0.$4 AS ws, $0.$3 AS user; 
 
 --
 -- resA Tuple : ('user-added-to-ws', ws, user)
 --
 a2 = FOREACH a1 GENERATE REGEX_EXTRACT_ALL(message, '.*EVENT\\#(.*)\\#.*WS\\#(.*)\\#.*USER\\#(.*)\\#.*');
 a3 = FOREACH a2 GENERATE FLATTEN($0);
-a4 = DISTINCT a3;
 
 --
 -- https://jira.exoplatform.org/browse/CLDIDE-593
 --
-resA = FOREACH a4 GENERATE $0, SUBSTRING($1,1,1000) AS ws, SUBSTRING($2,1,1000) AS user;
+resA = FOREACH a3 GENERATE $0, SUBSTRING($1,1,1000) AS ws, SUBSTRING($2,1,1000) AS user;
 
 --
 -- groups by user and finds Tuples where 'project-created' bag is empty
