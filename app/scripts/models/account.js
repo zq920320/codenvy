@@ -59,7 +59,7 @@ define(["jquery"],function($){
             }
 
             return (
-                /^[a-z]{1}[a-z0-9-]{0,19}\.codenvy\.com/g
+                /^[a-z]{1}[a-z0-9\-]{0,19}\.codenvy\.com/g
             ).exec(domain) !== null ;
         },
 
@@ -70,11 +70,14 @@ define(["jquery"],function($){
             //  putting sensitive data (e.g. passwords) as GET parameters is a VERY bad idea
             //  please fix this ASAP and transport this data through POST
 
-            var loginUrl =  "/sso/server/gen"
-            + "?username=" + email
-            + "&password=" + password
-            + "&redirectTenantName=" + domain
-            + "&authType=jaas";
+            var loginUrl =  "/sso/server/gen" + 
+                            "?username=" + 
+                            email + 
+                            "&password=" + 
+                            password + 
+                            "&redirectTenantName=" + 
+                            domain + 
+                            "&authType=jaas";
 
             success({ loginUrl : loginUrl });
         },
