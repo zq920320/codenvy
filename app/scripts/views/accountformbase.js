@@ -1,19 +1,19 @@
 define(["jquery","underscore","backbone","models/account","validation"],
 
-	function($,_,Backbone,Account){
+    function($,_,Backbone,Account){
 
-		/*
-	        Custom validator for .codenvy.com tenant names
-	    */
+        /*
+            Custom validator for .codenvy.com tenant names
+        */
 
-	    jQuery.validator.addMethod("validDomain", function(value, element) {
-	        return Account.isValidDomain(value+".codenvy.com");
-	    });
+        jQuery.validator.addMethod("validDomain", function(value) {
+            return Account.isValidDomain(value+".codenvy.com");
+        });
 
 
-	    var AccountFormBase = Backbone.View.extend({
+        var AccountFormBase = Backbone.View.extend({
 
-	    	settings : {
+            settings : {
                 noDomainErrorMessage : "Please specify a domain name",
                 noEmailErrorMessage : "You forgot to give us your email",
                 noPasswordErrorMessage : "Please provide your account password",
@@ -21,13 +21,13 @@ define(["jquery","underscore","backbone","models/account","validation"],
                 invalidDomainNameErrorMessage : "Please specify a valid name for the domain"
             },
 
-	    	initialize : function(attributes){
+            initialize : function(){
 
-	    		$(this.el).on('submit', function(e){
-					e.preventDefault();
-				});
+                $(this.el).on('submit', function(e){
+                    e.preventDefault();
+                });
 
-	    		this.validator = $(this.el).validate({
+                this.validator = $(this.el).validate({
 
                     rules: this.__validationRules(),
 
@@ -53,10 +53,10 @@ define(["jquery","underscore","backbone","models/account","validation"],
                         this.__showErrors(errorMap, errorList);
                     },this)
                 });
-	    	},
+            },
 
-	    	__validationRules : function(){
-	    		return {
+            __validationRules : function(){
+                return {
                     domain: {
                         required : true,
                         validDomain : true
@@ -66,9 +66,9 @@ define(["jquery","underscore","backbone","models/account","validation"],
                         email: true
                     }
                 };
-	    	},
+            },
 
-	    	__showErrors : function(errorMap, errorList){
+            __showErrors : function(errorMap, errorList){
                 console.log("this is", this);
                 console.log("invalid form", errorMap, errorList);
 
@@ -104,11 +104,9 @@ define(["jquery","underscore","backbone","models/account","validation"],
             __showProgress : function(){
                 this.$("input[type='submit']").hide();
                 this.$(".working").removeClass("hidden");
-            },
+            }
+        });
 
-	    	__submit : function(form){}
-	    });
-
-		return AccountFormBase;
-	}
+        return AccountFormBase;
+    }
 );
