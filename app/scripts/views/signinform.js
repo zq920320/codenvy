@@ -2,7 +2,7 @@ define(["backbone","views/accountformbase", "models/account"],
 
     function(Backbone,AccountFormBase,Account){
 
-    	var SignInForm = AccountFormBase.extend({
+        var SignInForm = AccountFormBase.extend({
 
             initialize : function(arguments){
                 AccountFormBase.prototype.initialize.apply(this,arguments);
@@ -15,11 +15,6 @@ define(["backbone","views/accountformbase", "models/account"],
             },
 
             __submit : function(form){
-
-                // this.__showProgress();
-
-                // this.trigger("submitting");
-
                 Account.login(
                     this.$("input[name='email']").val(),
                     this.$("input[name='password']").val(),
@@ -45,20 +40,20 @@ define(["backbone","views/accountformbase", "models/account"],
                 return false;
             }
 
-    	});
+        });
 
-    	return {
-    		get : function(form){
-    			if(typeof form === 'undefined'){
-    				throw new Error("Need a form");
-    			}
+        return {
+            get : function(form){
+                if(typeof form === 'undefined'){
+                    throw new Error("Need a form");
+                }
 
-    			return new SignInForm({
-    				el : form
-    			});
-    		},
+                return new SignInForm({
+                    el : form
+                });
+            },
 
-    		SignInForm : SignInForm
-    	};
+            SignInForm : SignInForm
+        };
     }
 );
