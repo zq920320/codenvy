@@ -1,11 +1,11 @@
-define(["jquery","underscore","backbone","models/account","views/accountformbase","validation"],
+define(["jquery","underscore","models/account","views/accountformbase","validation"],
 
-    function($,_,Backbone,Account,AccountFormBase){
+    function($,_,Account,AccountFormBase){
 
         var ProgressiveForm = AccountFormBase.extend({
-            initialize : function(arguments){
+            initialize : function(attributes){
 
-                AccountFormBase.prototype.initialize.apply(this,arguments);
+                AccountFormBase.prototype.initialize.apply(this,attributes);
 
                 this.canCollapse = true;
 
@@ -56,10 +56,10 @@ define(["jquery","underscore","backbone","models/account","views/accountformbase
         });
 
 
-    	var SignupForm = ProgressiveForm.extend({
+        var SignupForm = ProgressiveForm.extend({
 
-            initialize : function(arguments){
-                ProgressiveForm.prototype.initialize.apply(this,arguments);
+            initialize : function(attributes){
+                ProgressiveForm.prototype.initialize.apply(this,attributes);
             },
 
             __submit : function(form){
@@ -91,17 +91,17 @@ define(["jquery","underscore","backbone","models/account","views/accountformbase
 
                 return false;
             }
-    	});
+        });
 
-    	return {
-    		get : function(form){
-    			if(typeof form === 'undefined'){
-    				throw new Error("Need a form");
-    			}
+        return {
+            get : function(form){
+                if(typeof form === 'undefined'){
+                    throw new Error("Need a form");
+                }
 
-    			return new SignupForm({ el : form });
-    		}
-    	};
+                return new SignupForm({ el : form });
+            }
+        };
 
     }
 );
