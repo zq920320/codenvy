@@ -1,4 +1,4 @@
-define(["underscore","views/accountformbase","models/account"], 
+define(["underscore","views/accountformbase","models/account"],
 
     function(_,AccountFormBase,Account){
 
@@ -13,6 +13,9 @@ define(["underscore","views/accountformbase","models/account"],
                         this.trigger("success",d);
                     },this),
                     _.bind(function(errors){
+
+                        this.__restoreForm();
+
                         if(errors.length > 0){
                             this.trigger(
                                 "invalid",

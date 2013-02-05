@@ -1,6 +1,10 @@
-define(["jquery","views/signupform","views/signinform","views/errorreport"],
+define(["jquery",
+        "views/signupform",
+        "views/signinform",
+        "views/forgotpasswordform",
+        "views/errorreport"],
 
-    function($,SignupForm,SigninForm,ErrorReport){
+    function($,SignupForm,SigninForm,ForgotPasswordForm,ErrorReport){
 
 
         return {
@@ -8,6 +12,7 @@ define(["jquery","views/signupform","views/signinform","views/errorreport"],
                 $(document).ready(function(){
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
+                        forgotPasswordForm = $(".forgotpassword-form"),
                         errorContainer = $(".error-container");
 
                     if(signupForm.length !== 0){
@@ -42,13 +47,32 @@ define(["jquery","views/signupform","views/signinform","views/errorreport"],
                                 alert("logged in");
                             });
 
-                            /*jslint unparam: true*/
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
-                            /*jslint unparam: false*/
                         })();
                     }
+
+                    if(forgotPasswordForm.length !== 0){
+                        (function(){
+                            var form = ForgotPasswordForm.get(forgotPasswordForm),
+                            errorReport = ErrorReport.get(errorContainer);
+
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+
+                            form.on("success", function(d){
+                                alert(d.message);
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+
+                        })();
+                    }
+
                 });
             }
         };
