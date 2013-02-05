@@ -1,11 +1,11 @@
-define(["backbone","views/accountformbase", "models/account"],
+define(["views/accountformbase", "models/account"],
 
-    function(Backbone,AccountFormBase,Account){
+    function(AccountFormBase,Account){
 
         var SignInForm = AccountFormBase.extend({
 
-            initialize : function(arguments){
-                AccountFormBase.prototype.initialize.apply(this,arguments);
+            initialize : function(attributes){
+                AccountFormBase.prototype.initialize.apply(this,attributes);
             },
 
             __validationRules : function(){
