@@ -4,27 +4,21 @@ define(["views/accountformbase","models/account"],
 
         var ResetPasswordForm = AccountFormBase.extend({
 
-            initialize : function(attributes){
-                AccountFormBase.prototype.initialize.apply(this,attributes);
-
-                //delay the check to make sure "invalid" event handlers
-                //are wired properly
-                setTimeout(_.bind(function(){
-                    Account.confirmSetupPassword(
-                        _.bind(function(d){
-                            this.$(".email").html(d.email);
-                        },this),
-                        _.bind(function(errors){
-                            if(errors.length !== 0){
-                                this.trigger(
-                                    "invalid",
-                                    errors[0].getFieldName(),
-                                    errors[0].getErrorDescription()
-                                );
-                            }
-                        },this)
-                    );
-                },this),200);
+            resolveUserEmail : function(){
+                Account.confirmSetupPassword(
+                    _.bind(function(d){
+                        this.$(".email").html(d.email);
+                    },this),
+                    _.bind(function(errors){
+                        if(errors.length !== 0){
+                            this.trigger(
+                                "invalid",
+                                errors[0].getFieldName(),
+                                errors[0].getErrorDescription()
+                            );
+                        }
+                    },this)
+                );
             },
 
             __validationRules : function(){

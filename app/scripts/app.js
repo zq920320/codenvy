@@ -98,6 +98,7 @@ define(["jquery",
                                 errorReport.show(message);
                             });
 
+                            form.resolveUserEmail();
 
                         })();
                     }

@@ -84,6 +84,13 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     }
                 });
 
+                it("supports resolveUserEmail method", function(){
+
+                    expect(ResetPasswordForm.ResetPasswordForm)
+                        .to.respondTo("resolveUserEmail");
+
+                });
+
                 it("triggers invalid event if password is not provided", function(done){
                     var form = ResetPasswordForm.get(buildForm());
 
@@ -214,6 +221,7 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     });
 
                     var form = ResetPasswordForm.get(buildForm());
+                    form.resolveUserEmail();
                 });
 
                 it("sets email from Account confirmSetupPassword",function(done){
@@ -230,11 +238,12 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     });
 
                     var form = ResetPasswordForm.get(buildForm());
+                    form.resolveUserEmail();
 
                     setTimeout(function(){
                         expect($(form.el).find(".email").html()).to.equal(email);
                         done();
-                    },500);
+                    },100);
 
                 });
 
@@ -248,11 +257,9 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     }
 
                     confirmSetupPasswordStub = sinon.stub(Account,"confirmSetupPassword",function(success,error){
-                        setTimeout(function(){
-                            error([
-                                new Account.AccountError(null,errorMessage)
-                            ]);
-                        },500);
+                        error([
+                            new Account.AccountError(null,errorMessage)
+                        ]);
                     });
 
                     var form = ResetPasswordForm.get(buildForm());
@@ -262,6 +269,7 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                         done();
                     });
 
+                    form.resolveUserEmail();
 
                 });
 
