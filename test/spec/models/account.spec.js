@@ -28,6 +28,10 @@ define(["models/account","underscore"], function(Account,_){
                 expect(Account).to.respondTo("isValidDomain");
             });
 
+            it("exports setupPassword method", function(){
+                expect(Account).to.respondTo("setupPassword");
+            });
+
 		});
 
         describe("isValidDomain", function(){

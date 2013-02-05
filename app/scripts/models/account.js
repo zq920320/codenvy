@@ -120,6 +120,31 @@ define(["jquery"],function($){
                     ]);
                 }
             });
+        },
+
+        setupPassword : function(id,password,success,error){
+            //implementation based on this: 
+            //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
+            // We assume that uid is part of the url :
+            //  https://codenvy.com/setup-password.jsp?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
+        
+            var setupPasswordUrl = "/rest/password/setup";
+
+            
+            var request = $.ajax({
+                url : setupPasswordUrl,
+                type : "POST",
+                data : { uuid : id, password : password }, 
+                success : function(output, status, xhr){
+                    success({url: "/"});
+                },
+                error : function(xhr, status, err){
+                    error([
+                        new AccountError(null,xhr.responseText)
+                    ]);
+                }
+            });
+
         }
 
     };
