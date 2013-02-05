@@ -17,6 +17,7 @@ define(["jquery","underscore","backbone","models/account","validation"],
                 noDomainErrorMessage : "Please specify a domain name",
                 noEmailErrorMessage : "You forgot to give us your email",
                 noPasswordErrorMessage : "Please provide your account password",
+                noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match.",
                 invalidEmailErrorMessage : "Your email address must be legit",
                 invalidDomainNameErrorMessage : "Please specify a valid name for the domain"
             },
@@ -42,6 +43,10 @@ define(["jquery","underscore","backbone","models/account","validation"],
                         },
                         password: {
                             required: this.settings.noPasswordErrorMessage
+                        },
+                        password2: {
+                            required: this.settings.noConfirmPasswordErrorMessage,
+                            equalTo: this.settings.noConfirmPasswordErrorMessage
                         }
                     },
 
@@ -91,6 +96,12 @@ define(["jquery","underscore","backbone","models/account","validation"],
                 if(typeof errorMap.password !== 'undefined'){
                     this.trigger("invalid","password",errorMap.password);
                     refocus(this.$("input[name='password']"));
+                    return;
+                }
+
+                if(typeof errorMap.password2 !== 'undefined'){
+                    this.trigger("invalid","password2",errorMap.password2);
+                    refocus(this.$("input[name='password2']"));
                     return;
                 }
             },
