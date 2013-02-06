@@ -4,6 +4,11 @@
   src: url('../fonts/regular.otf');
 }
 
+@font-face {
+  font-family: ProximaNova;
+  src: url('../fonts/proximanova/ProximaNova-Regular.otf');
+}
+
 
 @mixin image_logo {
 	background:{
