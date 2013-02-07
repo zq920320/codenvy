@@ -41,14 +41,14 @@
         <antlr.version>3.4</antlr.version>
         <jackson.version>1.7.4</jackson.version>
         <guava.version>11.0</guava.version>
+        <slf4j.version>1.2.16</slf4j.version>
 
         <!-- Third parties -->
         <testng.version>6.3.1</testng.version>
 
         <!-- Loggers -->
         <org.slf4j.version>1.6.1</org.slf4j.version>
-        <ch.qos.logback.version>1.0.0</ch.qos.logback.version>
-        <log4j.version>1.2.16</log4j.version>
+        <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
     </properties>
 
     <dependencyManagement>
@@ -84,6 +84,11 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
 
             <!-- Third parties -->
             <dependency>
@@ -99,9 +104,9 @@
                 <version>${org.slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${org.slf4j.version}</version>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${ch.qos.logback.version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -113,5 +118,6 @@
 
     <modules>
         <module>dashboard-scripts</module>
+        <module>dashboard-log-collector</module>
     </modules>
 </project>

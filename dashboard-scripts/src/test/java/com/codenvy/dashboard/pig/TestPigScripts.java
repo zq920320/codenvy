@@ -18,12 +18,8 @@
  */
 package com.codenvy.dashboard.pig;
 
-import com.codenvy.dashboard.pig.PigConstants;
-
 import com.codenvy.dashboard.pig.util.Event;
 import com.codenvy.dashboard.pig.util.LogGenerator;
-
-
 
 import org.apache.pig.ExecType;
 import org.apache.pig.PigServer;
