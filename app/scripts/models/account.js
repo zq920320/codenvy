@@ -89,30 +89,35 @@
             login : function(email,password,domain,success,error){
 
                 // most of the stuff copied from https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/chrome_app.js
-                // !! Note :
-                //  putting sensitive data (e.g. passwords) as GET parameters is a VERY bad idea
-                //  please fix this ASAP and transport this data through POST
 
-                var loginUrl =  "/sso/server/gen" +
-                                "?username=" +
-                                email +
-                                "&password=" +
-                                password +
-                                "&redirectTenantName=" +
-                                domain +
-                                "&authType=jaas";
+                var loginUrl =  "/sso/server/gen";
 
-                success({ loginUrl : loginUrl });
+                var request = $.ajax({
+                    url : loginUrl,
+                    type : "POST",
+                    data: { username: email, password: password, redirectTenantName: domain, oauthType: "jaas" },
+                    success : function(output, status, xhr){
+                        success({url: 'thank-you.jsp'});
+                    },
+                    error : function(xhr, status, err){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
+                    }
+                });
+
+
+
             },
 
             createTenant : function(email,domain,success,error){
 
                 var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm";
-                var createTenantUrl = tenantServiceUrl + "/" + encodeURIComponent(domain) + "/" + email;
 
                 var request = $.ajax({
-                    url : createTenantUrl,
+                    url : tenantServiceUrl,
                     type : "POST",
+                    data: { domain: encodeURIComponent(domain), email: email },
                     success : function(output, status, xhr){
                         success({url: 'thank-you.jsp'});
                     },
@@ -128,15 +133,12 @@
                 //implementation based on this:
                 //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/recover-password.js
 
-                // !! Note :
-                //  security concern here: flashing email address in GET. should be moved to POST
-
-                var passwordRecoveryService = "/rest/password/recover/",
-                    passwordRecoveryUri = passwordRecoveryService + email;
+                var passwordRecoveryUrl = "/rest/password/recover/";
 
                 var request = $.ajax({
-                    url : passwordRecoveryUri,
+                    url : passwordRecoveryUrl,
                     type : "POST",
+                    data: {email : email},
                     success : function(output, status, xhr){
                         success({message: xhr.responseText});
                     },
