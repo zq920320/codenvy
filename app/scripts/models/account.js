@@ -94,7 +94,7 @@
                     loginUrl += "&" + queryString.substring(1);
                 }
 
-                success({ loginUrl: loginUrl })
+                success({ loginUrl: loginUrl });
             },
 
             createTenant : function(email,domain,success,error){
