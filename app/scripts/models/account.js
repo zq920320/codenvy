@@ -86,28 +86,15 @@
                 ).exec(domain) !== null ;
             },
 
-            login : function(email,password,domain,success,error){
+            login : function(email,password,success,error){
+                var loginUrl = "/sso/server/gen?authType=jaas",
+                    queryString = window.location.search;
 
-                // most of the stuff copied from https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/chrome_app.js
+                if(queryString != null && queryString.length > 4){ ///?key=value >4 symbols
+                    loginUrl += "&" + queryString.substring(1);
+                }
 
-                var loginUrl =  "/sso/server/gen";
-
-                var request = $.ajax({
-                    url : loginUrl,
-                    type : "POST",
-                    data: { username: email, password: password, redirectTenantName: domain, oauthType: "jaas" },
-                    success : function(output, status, xhr){
-                        success({url: 'thank-you.jsp'});
-                    },
-                    error : function(xhr, status, err){
-                        error([
-                            new AccountError(null,xhr.responseText)
-                        ]);
-                    }
-                });
-
-
-
+                success({ loginUrl: loginUrl })
             },
 
             createTenant : function(email,domain,success,error){
