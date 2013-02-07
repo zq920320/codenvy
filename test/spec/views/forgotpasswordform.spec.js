@@ -52,6 +52,61 @@ define(["jquery", "views/forgotpasswordform", "models/account", "text!templates/
 					}
 				});
 
+                it("supports showMessage method", function(){
+
+                    expect(ForgotPasswordForm.ForgotPasswordForm)
+                        .to.respondTo("showMessage");
+
+                });
+
+                describe("showMessage", function(){
+                    function buildForm(){
+                        $("body").append(jQuery(formTemplate));
+                        return $(".forgotpassword-form");
+                    }
+
+                    afterEach(function(){
+                        $(".forgotpassword-form").remove();
+
+                        if(typeof Account.recoverPassword.restore !== 'undefined'){
+                            Account.recoverPassword.restore();
+                        }
+                    });
+
+                    it("requires message parameter", function(){
+
+                        var form = ForgotPasswordForm.get(buildForm());
+
+                        var fn = function(){
+                            form.showMessage();
+                        };
+
+                        expect(fn).to.throw("Need a message");
+
+                    });
+
+                    it("hides input elements on the form and shows a message", function(){
+                        var form = ForgotPasswordForm.get(buildForm()),
+                            message = "this is the message";
+
+                        form.showMessage(message);
+
+                        expect(
+                            $(form.el).find(".data").hasClass("hidden")
+                        ).to.be.true;
+
+                        expect(
+                            $(form.el).find(".result-message").hasClass("hidden")
+                        ).to.be.false;
+
+                        expect(
+                            $(form.el).find(".result-message > p").html()
+                        ).to.equal(message);
+
+                    });
+
+                });
+
 				it("triggers invalid event if no email is provided", function(done){
 
 					var form = ForgotPasswordForm.get(buildForm());
@@ -103,7 +158,7 @@ define(["jquery", "views/forgotpasswordform", "models/account", "text!templates/
 					});
 
 					$(form.el).find("input[name='email']").val(e);
-					$(form.el).submit();					
+					$(form.el).submit();
 
 				});
 
@@ -121,12 +176,12 @@ define(["jquery", "views/forgotpasswordform", "models/account", "text!templates/
 					});
 
 					$(form.el).find("input[name='email']").val(e);
-					$(form.el).submit();					
+					$(form.el).submit();
 
 				});
 
 				it("triggers invalid event if Account.recoverPassword fails", function(done){
-					var form = ForgotPasswordForm.get(buildForm()), e = "bob@gmail.com", 
+					var form = ForgotPasswordForm.get(buildForm()), e = "bob@gmail.com",
 						eField = "email", eDesc = "bad email";
 
 					sinon.stub(Account,"recoverPassword",function(email,success,error){
@@ -142,7 +197,7 @@ define(["jquery", "views/forgotpasswordform", "models/account", "text!templates/
 					});
 
 					$(form.el).find("input[name='email']").val(e);
-					$(form.el).submit();					
+					$(form.el).submit();
 				});
 
 			});

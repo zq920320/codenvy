@@ -70,7 +70,7 @@ define(["jquery",
                             });
 
                             form.on("success", function(d){
-                                alert(d.message);
+                                form.showMessage(d.message);
                             });
 
                             form.on("invalid", function(field,message){
