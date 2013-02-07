@@ -113,3 +113,37 @@ $scene-height:407px;
     @include transform(translate(0,0));
     @include transition(0.3s);
 }
+
+
+/* 
+    Domain picker 
+
+*/
+
+.select-domain {
+    @include darkContainer();
+    position: relative;
+    padding: 20px;
+
+}
+
+.domain-list {
+    background: $text-box-placeholder-color;
+    border-radius: 6px;
+    list-style: none;
+    padding: 0;
+}
+
+.domain-list li {
+    padding: 0;
+    border-bottom: solid 1px $text-box-background-color;
+}
+
+.domain-list li a {
+    display: block;
+    padding: 5px 20px;
+}
+
+.domain-list li:last-child {
+    border-bottom: none;
+}
