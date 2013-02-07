@@ -9,16 +9,21 @@ define(["views/accountformbase", "models/account"],
             },
 
             __validationRules : function(){
-                var rules = AccountFormBase.prototype.__validationRules.apply(this);
-                rules.password = { required : true };
-                return rules;
+                return {
+                    password : {
+                        required: true,
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    }
+                };
             },
 
             __submit : function(form){
                 Account.login(
                     this.$("input[name='email']").val(),
                     this.$("input[name='password']").val(),
-                    this.$("input[name='domain']").val(),
                     _.bind(function(data){
                         $(this.el).attr('action',data.loginUrl);
                         form.submit();
