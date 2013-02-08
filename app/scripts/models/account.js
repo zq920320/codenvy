@@ -120,12 +120,12 @@
                 //implementation based on this:
                 //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/recover-password.js
 
-                var passwordRecoveryUrl = "/rest/password/recover/";
+                var passwordRecoveryUrl = "/rest/password/recover/" + email;
 
                 var request = $.ajax({
                     url : passwordRecoveryUrl,
                     type : "POST",
-                    data: {email : email},
+                    data: {},
                     success : function(output, status, xhr){
                         success({message: xhr.responseText});
                     },
