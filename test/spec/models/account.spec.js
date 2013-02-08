@@ -1,4 +1,4 @@
-define(["models/account","underscore"], function(Account,_){
+define(["models/account","models/tenant","underscore"], function(Account,Tenant,_){
 
 	describe("Models : Account", function(){
 
@@ -34,6 +34,10 @@ define(["models/account","underscore"], function(Account,_){
 
             it("exports confirmSetupPassword method", function(){
                 expect(Account).to.respondTo("confirmSetupPassword");
+            });
+
+            it("exports getTenants method", function(){
+                expect(Account).to.respondTo("getTenants");
             });
 
 		});
@@ -95,6 +99,62 @@ define(["models/account","underscore"], function(Account,_){
             it("only allows names that are at least 1 character long", function(){
                 expect(Account.isValidDomain(".codenvy.com")).to.be.false;
                 expect(Account.isValidDomain("a.codenvy.com")).to.be.true;
+            });
+
+        });
+
+        describe("getTenants", function(){
+
+            afterEach(function(){
+                if(typeof Tenant.getTenants.restore !== 'undefined'){
+                    Tenant.getTenants.restore();
+                }
+            });
+
+            it("calls Tenant.getTenants", function(done){
+
+                sinon.stub(Tenant,"getTenants", function(){
+                    done();
+                });
+
+                Account.getTenants();
+            });
+
+            it("calls success callback if Tenant.getTenants resolves", function(done){
+
+                var ts = ["bob.codenvy.com","mark.codenvy.com"],
+                    success = function(tenants){
+                        expect(tenants).to.eql(ts);
+                        done();
+                    }
+
+                sinon.stub(Tenant,"getTenants",function(){
+                    var dfd = $.Deferred();
+                    dfd.resolve(ts);
+                    return dfd.promise();
+                });
+
+                Account.getTenants(success);
+
+            });
+
+            it("calls error callback if Tenant.getTenants fails", function(done){
+
+                var msg = "Cannot get tenants",
+                    error = function(errors){
+                        expect(errors.length).to.equal(1);
+                        expect(errors[0].getErrorDescription()).to.equal(msg);
+                        done();
+                    };
+
+                sinon.stub(Tenant,"getTenants",function(){
+                    var dfd = $.Deferred();
+                    dfd.reject(msg);
+                    return dfd.promise();
+                });
+
+                Account.getTenants(null,error);
+
             });
 
         });

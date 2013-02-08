@@ -1,5 +1,5 @@
 (function(window){
-    define(["jquery"],function($){
+    define(["jquery","models/tenant"],function($,Tenant){
 
         /*
             AccountError is used to report errors through error callback function
@@ -191,6 +191,16 @@
                             new AccountError(null,xhr.responseText)
                         ]);
                     }
+                });
+            },
+
+            getTenants : function(success,error){
+                $.when(Tenant.getTenants()).done(function(tenants){
+                    success(tenants);
+                }).fail(function(msg){
+                    error([
+                        new  AccountError(null,msg)
+                    ]);
                 });
             }
 
