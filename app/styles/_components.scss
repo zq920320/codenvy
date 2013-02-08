@@ -147,3 +147,48 @@ $scene-height:407px;
 .domain-list li:last-child {
     border-bottom: none;
 }
+
+
+/*
+
+    Standard pages
+
+*/
+
+.light-container {
+    background: $light-background-color;
+    border: solid 1px $light-background-border;
+    padding: 30px 60px;
+    border-radius: 6px;
+
+
+    h1 {
+        font-size: 36px;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 26px;
+        font-weight: normal;
+    }
+
+    hr {
+        border: solid 1px $light-background-line;
+        margin: 40px 0;
+    }
+
+    .subtitle-line   {
+        width: 50px;
+        border-top: solid 1px $text-color;
+        margin: 0 auto 40px auto;
+    }
+
+
+}
+
+
+
+
+
+
+
