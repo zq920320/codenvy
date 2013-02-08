@@ -156,15 +156,17 @@ $scene-height:407px;
 */
 
 .light-container {
+
     background: $light-background-color;
     border: solid 1px $light-background-border;
-    padding: 30px 60px;
+    padding: 20px 60px;
     border-radius: 6px;
 
 
     h1 {
         font-size: 36px;
         text-align: center;
+        text-transform: uppercase;
     }
 
     h2 {
@@ -174,7 +176,7 @@ $scene-height:407px;
 
     hr {
         border: solid 1px $light-background-line;
-        margin: 40px 0;
+        margin: 30px 0;
     }
 
     .subtitle-line   {
@@ -182,8 +184,11 @@ $scene-height:407px;
         border-top: solid 1px $text-color;
         margin: 0 auto 40px auto;
     }
+}
 
-
+.footer-logo img {
+    padding-top: 40px;
+    margin: 0 auto;
 }
 
 
