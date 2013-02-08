@@ -9,7 +9,9 @@ require.config({
         'backbone' : {exports: 'Backbone', deps: ['underscore']},
         'skrollr' : {exports: 'skrollr' },
         'modernizr' : {exports: 'Modernizr' },
-        'validation' : {deps:["jquery"]}
+        'validation' : {deps:["jquery"]},
+        'json' : {exports: 'JSON'},
+        'handlebars' :  {exports: 'Handlebars'}
     },
 
     paths: {
@@ -20,6 +22,8 @@ require.config({
         modernizr: 'vendor/modernizr.min',
         skrollr: 'vendor/skrollr',
         text : 'vendor/text',
+        json : 'vendor/json2',
+        handlebars : 'vendor/handlebars',
         templates: '../templates'
     }
 
