@@ -3,14 +3,17 @@ define(["jquery",
         "views/signinform",
         "views/forgotpasswordform",
         "views/resetpasswordform",
-        "views/errorreport"],
+        "views/errorreport",
+        "views/selectdomain"
+        ],
 
     function($,
         SignupForm,
         SigninForm,
         ForgotPasswordForm,
         ResetPasswordForm,
-        ErrorReport){
+        ErrorReport,
+        SelectDomain){
 
 
         return {
@@ -20,7 +23,8 @@ define(["jquery",
                         signinForm = $(".login-form"),
                         forgotPasswordForm = $(".forgotpassword-form"),
                         resetPasswordForm = $(".resetpassword-form"),
-                        errorContainer = $(".error-container");
+                        errorContainer = $(".error-container"),
+                        domainSelector = $(".select-domain");
 
                     if(signupForm.length !== 0){
                         (function(){
@@ -101,6 +105,10 @@ define(["jquery",
                             form.resolveUserEmail();
 
                         })();
+                    }
+
+                    if(domainSelector.length !== 0){
+                        var selectdomain = new SelectDomain.get(domainSelector);
                     }
 
                 });
