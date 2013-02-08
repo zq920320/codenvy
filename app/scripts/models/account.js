@@ -99,12 +99,12 @@
 
             createTenant : function(email,domain,success,error){
 
-                var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm";
+                var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm/";
 
                 var request = $.ajax({
-                    url : tenantServiceUrl,
+                    url : tenantServiceUrl + encodeURIComponent(domain) + "/" + email,
                     type : "POST",
-                    data: { domain: encodeURIComponent(domain), email: email },
+                    data: {},
                     success : function(output, status, xhr){
                         success({url: 'thank-you.jsp'});
                     },
@@ -143,7 +143,7 @@
                 // just like with setupPassword, we expect the id to be in the url:
                 // https://codenvy.com/setup-password.jsp?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
-                var confirmSetupPasswordUrl = "/rest/password/setup-confirmed",
+                var confirmSetupPasswordUrl = "/rest/password/verify",
                     id = PasswordSetupIdProvider.getId();
 
                 if(typeof id === 'undefined'){
