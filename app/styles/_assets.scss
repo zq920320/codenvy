@@ -116,3 +116,11 @@
         position: 50% 0;
     }
 }
+
+@mixin image_loader {
+    background:{
+        image:url('../images/spriteSpinner.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
