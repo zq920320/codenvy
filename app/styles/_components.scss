@@ -223,6 +223,27 @@ body.simple{
 @-moz-keyframes  shift-sprites { @include sprite-rotator(); }
 @-o-keyframes  shift-sprites { @include sprite-rotator(); }
 
+/*
+
+    Profile page
+
+*/
+
+.profile-form {
+    @include darkContainer();
+    position: relative;
+    padding: 20px;
+    background: #233040;
+
+    form {
+        padding: 10px 5px;
+    }
+
+}
+
+
+
+
 
 .loader {
 

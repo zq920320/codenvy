@@ -46,7 +46,8 @@ textarea {
  */
 
 button,
-input {
+input,
+select {
     width: 100%;
     //line-height: normal;
 }
@@ -160,6 +161,7 @@ form .field {
 }
 
 input[type='text'],
+select,
 input[type='password']{
     font-weight: 200;
     height: 2em;
