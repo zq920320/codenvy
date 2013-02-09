@@ -40,6 +40,10 @@ define(["models/account","models/tenant","underscore"], function(Account,Tenant,
                 expect(Account).to.respondTo("getTenants");
             });
 
+            it("exports waitForTenant method", function(){
+                expect(Account).to.respondTo("waitForTenant");
+            });
+
 		});
 
         describe("isValidDomain", function(){
@@ -158,6 +162,14 @@ define(["models/account","models/tenant","underscore"], function(Account,Tenant,
             });
 
         });
+
+        // describe("waitForTenant", function(){
+
+        //     it("", function(){
+
+        //     });
+
+        // });
 
 	});
 

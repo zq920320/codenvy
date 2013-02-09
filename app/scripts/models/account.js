@@ -21,6 +21,21 @@
             };
         };
 
+        var Utils = {
+            getQueryParameterByName : function(name){
+                name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+                var results = regex.exec(window.location.search);
+                if(results){
+                    return decodeURIComponent(results[1].replace(/\+/g, " "));
+                }
+            },
+
+            isBadGateway : function(jqXHR){
+                return jqXHR.status === 502;
+            }
+        };
+
 
         /*
 
@@ -32,15 +47,7 @@
         var PasswordSetupIdProvider = {
             getId : function(){
                 //get query string parameter by name
-                return (function(name)
-                {
-                    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-                    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-                    var results = regex.exec(window.location.search);
-                    if(results){
-                        return decodeURIComponent(results[1].replace(/\+/g, " "));
-                    }
-                })("id");
+                return Utils.getQueryParameterByName("id");
             }
         };
 
@@ -202,6 +209,67 @@
                         new  AccountError(null,msg)
                     ]);
                 });
+            },
+
+            waitForTenant : function(tenantName, success, error){
+                //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
+                if(typeof tenantName === 'undefined'){
+                    throw new Error("Tenant name is required");
+                }
+
+                var MAX_WAIT_TIME_SECONDS = 120,
+                    PING_TIMEOUT_MILLISECONDS = 2000,
+                    endTime = new Date().getTime() + MAX_WAIT_TIME_SECONDS * 1000;
+
+                function buildRedirectUrl(){
+                    return window.location.protocol + "//"
+                            + window.location.host.replace("www.", "")
+                            + "/sso/server/gen?username=" + Utils.getQueryParameterByName("username")
+                            + "&signature=" + encodeURIComponent(Utils.getQueryParameterByName("signature"))
+                            + "&redirectTenantName="+tenantName
+                            + "&authType=signed";
+                }
+
+                function hitServer(){
+
+                    if(new Date().getTime() >= endTime){
+                        error([
+                            new AccountError(
+                                null,
+                                "Tenant creation delayed, we will send credentials on your email when tenant started."
+                            )
+
+                        ]);
+                        return;
+                    }
+
+                    $.ajax({
+                        url : "/cloud-admin/rest/cloud-admin/tenant-service/tenant-state/" + tenantName,
+                        method : "GET",
+                        success : function(output,status, xhr){
+                            if(xhr.responseText === "ONLINE"){
+                                success({
+                                    url : buildRedirectUrl()
+                                });
+                            }else{
+                                setTimeout(hitServer,PING_TIMEOUT_MILLISECONDS);
+                            }
+                        },
+                        error : function(xhr, status, err){
+                            if(Utils.isBadGateway(xhr)){
+                                error([
+                                    new AccountError(null,"The requested domain is not available.")
+                                ]);
+                            } else {
+                                error([
+                                    new AccountError(null,xhr.responseText)
+                                ]);
+                            }
+                        }
+                    });
+                }
+
+                hitServer();
             }
 
         };
