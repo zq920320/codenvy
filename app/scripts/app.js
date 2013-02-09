@@ -4,7 +4,8 @@ define(["jquery",
         "views/forgotpasswordform",
         "views/resetpasswordform",
         "views/errorreport",
-        "views/selectdomain"
+        "views/selectdomain",
+        "views/ideloader"
         ],
 
     function($,
@@ -13,7 +14,8 @@ define(["jquery",
         ForgotPasswordForm,
         ResetPasswordForm,
         ErrorReport,
-        SelectDomain){
+        SelectDomain,
+        IDELoader){
 
 
         return {
@@ -24,7 +26,8 @@ define(["jquery",
                         forgotPasswordForm = $(".forgotpassword-form"),
                         resetPasswordForm = $(".resetpassword-form"),
                         errorContainer = $(".error-container"),
-                        domainSelector = $(".select-domain");
+                        domainSelector = $(".select-domain"),
+                        loader = $(".loader");
 
                     if(signupForm.length !== 0){
                         (function(){
@@ -109,6 +112,12 @@ define(["jquery",
 
                     if(domainSelector.length !== 0){
                         var selectdomain = new SelectDomain.get(domainSelector);
+                    }
+
+                    if(loader.length !== 0){
+                        new IDELoader.IDELoader().on("ready",function(d){
+                            window.location.href = d.url;
+                        });
                     }
 
                 });
