@@ -101,6 +101,46 @@
     }
 }
 
+@mixin icon_house {
+    background:{
+        image:url('../images/iconHouse.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}
+
+@mixin icon_lock {
+    background:{
+        image:url('../images/iconLock.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}
+
+@mixin icon_plug {
+    background:{
+        image:url('../images/iconPlug.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}
+
+@mixin icon_scale {
+    background:{
+        image:url('../images/iconScale.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}
+
+@mixin icon_browser {
+    background:{
+        image:url('../images/iconBrowser.png');
+        repeat:no-repeat;
+        position: 50% 0;
+    }
+}
+
 @mixin icon_lighting {
     background:{
         image:url('../images/iconLighting.png');

@@ -61,6 +61,26 @@ $scene-height:407px;
         @include icon_user();
     }
 
+    .house{
+        @include icon_house();
+    }
+
+    .lock{
+        @include icon_lock();
+    }
+
+    .plug{
+        @include icon_plug();
+    }
+
+    .scale{
+        @include icon_scale();
+    }
+
+    .browser{
+        @include icon_browser();
+    }
+
 }
 
 
