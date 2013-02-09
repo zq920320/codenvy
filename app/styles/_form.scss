@@ -192,11 +192,11 @@ input[type='password']{
     text-align: center;
     background-color: rgba(255,0,0,0.4);
     border-radius: 5px;
-    @include transition(0.3s,ease-in,opacity,0.3s);
 }
 
 .error-container.expanded {
     opacity: 1.0;
+    @include transition(0.3s,ease-in,opacity,0.3s);
 }
 
 
