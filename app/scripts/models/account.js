@@ -211,10 +211,15 @@
                 });
             },
 
-            waitForTenant : function(tenantName, success, error){
+            waitForTenant : function(success, error){
                 //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
+
+                var tenantName = Utils.getQueryParameterByName("tenantName");
+
                 if(typeof tenantName === 'undefined'){
-                    throw new Error("Tenant name is required");
+                    error([
+                        new AccountError(null,"This is not a valid url")
+                    ]);
                 }
 
                 var MAX_WAIT_TIME_SECONDS = 120,
