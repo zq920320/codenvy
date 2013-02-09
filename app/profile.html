@@ -1,0 +1,77 @@
+---
+    layout : base
+---
+
+
+<div class="container">
+
+	 <div class="row">
+        <div class="span2"></div>
+        <div class="span8 profile-form loading">
+            
+        	<form id="changePasswordFormId" method="post">
+
+        		<div class="field">
+        			<input id="change-password" type="password" name="change_password" class="" maxlength="255" placeholder="New password" />
+        		</div>
+
+        		<div class="field">
+        			<input type="password" id="confirm-password" name="confirm_password" class="" maxlength="255" placeholder="Confirm password"/>
+        		</div>
+
+        		<div class="field">
+                	<input type="submit" class="signup-button" id="changePassword" value="Update password" onclick="onChangePasswordButtonClick(); return false;"/>
+              	</div>  	
+
+        	</form>
+
+        	<form method="post" id="submitProfileFormId" action="IDE/ide.jsp" name="cloud-ide-profile">
+
+        		<!--
+                <%
+                    String username = request.getRemoteUser();
+                 %>-->
+
+                <input type="hidden" id="email" name="email" value="<%=username %>" placeholder="Email" disabled />
+
+                <div class="field">
+                	<input type="text" id="first_name" name="first_name" maxlength="255" class="" placeholder="First name"/>
+                </div>
+
+                <div class="field">
+                	<input type="text" id="last_name" name="last_name" maxlength="255" class="" placeholder="Last name"/>
+                </div>
+
+                <div class="field">
+                	<input type="text" id="phone_work" name="phone_work" maxlength="255" class="" placeholder="Phone"/>
+ 				</div>
+
+ 				<div class="field">
+ 					<input type="text" id="company" name="company" maxlength="255" class="" placeholder="Company" />
+                </div>           
+
+                <div class="field">
+	                <select type="selectbox" name="title" id="title" size="1" class="" >
+		                  <option value="">Please select role...</option>
+
+		                  <option value="Developer">Developer</option>
+		                  <option value="Architect">Architect</option>
+		                  <option value="PM">Product Manager</option>
+		                  <option value="Project">Project Manager</option>
+		                  <option value="CEO">CEO/CTO</option>
+		                  <option value="Developer">Student</option>
+		                  <option value="Other">Other</option>
+	                </select>
+	             </div>
+
+	            <div class="field">
+                	<input type="submit" class="signup-button" id="submitProfile" value="Update profile" onclick="onSubmitProfileButtonClick();"/>
+                </div>
+
+              </form>
+
+        </div>
+        <div class="span2"></div>
+    </div>
+
+</div>
