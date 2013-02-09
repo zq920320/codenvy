@@ -132,3 +132,11 @@
         position: 50% 50%;
     }
 }
+
+@mixin image_logo_inlaid {
+    background:{
+        image:url('../images/logo-inlaid.png');
+        repeat:no-repeat;
+        position: 50% 99.8%;
+    }
+}

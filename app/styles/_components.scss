@@ -155,13 +155,13 @@ $scene-height:407px;
 
 */
 
-.light-container {
-
+.container.light {
     background: $light-background-color;
     border: solid 1px $light-background-border;
-    padding: 20px 60px;
+    padding: 20px 60px 40px;
     border-radius: 6px;
 
+    @include image_logo_inlaid();
 
     h1 {
         font-size: 36px;
@@ -190,11 +190,6 @@ $scene-height:407px;
     }
 }
 
-.footer-logo img {
-    padding-top: 40px;
-    margin: 0 auto;
-}
-
 /*
 
     Loader (wait for tenant screen)
@@ -205,45 +200,6 @@ body.simple{
     background-color: $simple-screen-background;
     position: relative;
 }
-
-@mixin sprite-rotator (){
-  0%, 100% {
-    background-position: 50% 0px;
-  }
-  30% {
-    background-position: 50% -35px;
-  }
-  60% {
-    background-position: 50% -70px;
-  }
-}
-
-@-webkit-keyframes shift-sprites { @include sprite-rotator(); }
-@keyframes  shift-sprites { @include sprite-rotator(); }
-@-moz-keyframes  shift-sprites { @include sprite-rotator(); }
-@-o-keyframes  shift-sprites { @include sprite-rotator(); }
-
-/*
-
-    Profile page
-
-*/
-
-.profile-form {
-    @include darkContainer();
-    position: relative;
-    padding: 20px;
-    background: #233040;
-
-    form {
-        padding: 10px 5px;
-    }
-
-}
-
-
-
-
 
 .loader {
 
@@ -288,6 +244,23 @@ body.simple{
     color: $loader-text-color;
 }
 
+/*
+
+    Profile page
+
+*/
+
+.profile-form {
+    @include darkContainer();
+    position: relative;
+    padding: 20px;
+    background: #233040;
+
+    form {
+        padding: 10px 5px;
+    }
+
+}
 
 /*
     Enterprise page
