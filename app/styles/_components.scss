@@ -298,11 +298,15 @@ body.simple{
 */
 
 .container.pricing {
-    @include image_pricing_background();
+    @include dark-container-gradient();
+
     color:$text-on-dark-color;
-    a {
-        color: $link-color-on-dark;
-    }
+    a { color: $link-color-on-dark; }
+}
+
+.container.open-source {
+    background-color:#2b3748;
+    border: solid 1px #313d4d;
 }
 
 .pricing-box-open-source {
@@ -325,12 +329,16 @@ body.simple{
     height: 155px;
 }
 
-.enterprise-teaser {
-    @include image_pricing_enterprise_teaser();
+.container.enterprise-teaser {
+    background-color: #42617B;
+    color:$text-on-dark-color;
+    a { color: $link-color-on-dark; }
 }
 
-.container.pricing-details {
-    margin-top: 30px;
+.container.pricing-included {
+    border: solid 1px $container-border-color;
+    border-top: solid 4px #d6e3ed;
+    background-color:#fff;
 }
 
 .welcome-pack {
@@ -338,11 +346,28 @@ body.simple{
     height:212px;
 }
 
+.container.pricing-dedicated {
+    border: solid 1px $container-border-color;
+    border-top: none;
+    background-color:#fff;
+}
+
 .cloud-up {
     @include image_cloud_up();
+}
+
+.container.pricing-team {
+    border: solid 1px $container-border-color;
+    border-top: none;
 }
 
 .key-box {
     @include image_key_box();
     height: 250px;
+}
+
+.container.pricing-contact {
+    border: solid 1px $container-border-color;
+    border-top: none;
+    @include background-image(linear-gradient(#FFF, #F7F7F7));
 }

@@ -29,12 +29,18 @@ $loader-text-color:#f3f3f3;
 
 $link-color-on-dark:#54aee1;
 
+$container-border-color:#d7d7d7;
+
 @mixin signup-button-gradient {
     @include background-image(linear-gradient(#d6e3ed, $signup-button-color 35%));
 }
 
 @mixin signin-button-gradient {
     @include background-image(linear-gradient(#fcfcfc, #f3f3f3));
+}
+
+@mixin dark-container-gradient {
+    @include background-image(linear-gradient(#233041 30%, #3e495a));
 }
 
 // Noir et blanc:

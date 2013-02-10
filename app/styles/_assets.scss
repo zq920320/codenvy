@@ -181,14 +181,6 @@
     }
 }
 
-@mixin image_pricing_background {
-    background:{
-        image:url('../images/pricing/back_header.png');
-        repeat:no-repeat;
-        position: 50% 50%;
-    }
-}
-
 @mixin image_pricing_box_open_source {
     background: {
         image:url('../images/pricing/box_opensource.png');
@@ -216,14 +208,6 @@
 @mixin image_pricing_box_secure {
     background: {
         image:url('../images/pricing/box_secure.png');
-        repeat:no-repeat;
-        position: 50% 50%;
-    }
-}
-
-@mixin image_pricing_enterprise_teaser {
-    background: {
-        image:url('../images/pricing/back_header_messagebottom.png');
         repeat:no-repeat;
         position: 50% 50%;
     }
