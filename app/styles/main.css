@@ -82,36 +82,72 @@
   src: url("../fonts/proximanova/ProximaNova-Regular.otf");
 }
 
-/* line 61, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/_vertical_rhythm.scss */
-* html {
-  font-size: 100%;
-}
-
-/* line 64, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/_vertical_rhythm.scss */
-html {
+/* line 9, _typography.scss */
+html, body {
   font-size: 16px;
-  line-height: 2em;
+  font-weight: 300;
 }
 
-/* line 10, _typography.scss */
+/* line 15, _typography.scss */
 p {
   font-weight: 300;
   color: #595e62;
 }
 
-/* line 16, _typography.scss */
+/* line 21, _typography.scss */
 .center {
   text-align: center;
 }
 
-/* line 17, _typography.scss */
+/* line 22, _typography.scss */
 .left {
   text-align: left;
 }
 
-/* line 18, _typography.scss */
+/* line 23, _typography.scss */
 .right {
   text-align: right;
+}
+
+/* line 25, _typography.scss */
+h1 {
+  font-weight: 300;
+  line-height: 1em;
+  font-size: 1.625em;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+/* line 32, _typography.scss */
+h1.shiny {
+  background: -webkit-linear-gradient(#bec3c4, #e2e5e8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* line 35, _typography.scss */
+h2 {
+  font-size: 1.9em;
+  font-weight: 300;
+  color: #44484b;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+/* line 41, _typography.scss */
+h2.light {
+  font-weight: 200;
+}
+
+/* line 44, _typography.scss */
+h3 {
+  font-size: 1.4375em;
+  font-weight: 300;
+}
+
+/* line 49, _typography.scss */
+h4 {
+  font-size: 1em;
+  font-weight: 400;
+  margin-bottom: 0;
 }
 
 @font-face {
@@ -1272,6 +1308,20 @@ body.simple {
 
 */
 /* line 300, _components.scss */
+.pricing-poetry {
+  font-size: 1em;
+  color: #8e979d;
+  font-weight: 300;
+  padding: 0.5em;
+}
+
+/* line 307, _components.scss */
+.pricing-info {
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+/* line 312, _components.scss */
 .container.pricing {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(30%, #233041), color-stop(100%, #3e495a));
   background-image: -webkit-linear-gradient(#233041 30%, #3e495a);
@@ -1280,18 +1330,18 @@ body.simple {
   background-image: linear-gradient(#233041 30%, #3e495a);
   color: #f3f3f3;
 }
-/* line 304, _components.scss */
+/* line 316, _components.scss */
 .container.pricing a {
   color: #54aee1;
 }
 
-/* line 307, _components.scss */
+/* line 319, _components.scss */
 .container.open-source {
   background-color: #2b3748;
   border: solid 1px #313d4d;
 }
 
-/* line 312, _components.scss */
+/* line 324, _components.scss */
 .pricing-box-open-source {
   background-image: url("../images/pricing/box_opensource.png");
   background-repeat: no-repeat;
@@ -1299,7 +1349,7 @@ body.simple {
   height: 128px;
 }
 
-/* line 317, _components.scss */
+/* line 329, _components.scss */
 .pricing-box-business {
   background-image: url("../images/pricing/box_business.png");
   background-repeat: no-repeat;
@@ -1307,7 +1357,31 @@ body.simple {
   height: 155px;
 }
 
-/* line 322, _components.scss */
+/* line 334, _components.scss */
+.header-secure {
+  background: -webkit-linear-gradient(#7bbced, #54aee1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* line 341, _components.scss */
+.header-premium {
+  background: -webkit-linear-gradient(#7bbced, #54aee1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* line 348, _components.scss */
+.header-business {
+  background: -webkit-linear-gradient(#fff000, #c4a000);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* line 355, _components.scss */
 .pricing-box-premium {
   background-image: url("../images/pricing/box_premium.png");
   background-repeat: no-repeat;
@@ -1315,7 +1389,7 @@ body.simple {
   height: 155px;
 }
 
-/* line 327, _components.scss */
+/* line 360, _components.scss */
 .pricing-box-secure {
   background-image: url("../images/pricing/box_secure.png");
   background-repeat: no-repeat;
@@ -1323,24 +1397,25 @@ body.simple {
   height: 155px;
 }
 
-/* line 332, _components.scss */
+/* line 365, _components.scss */
 .container.enterprise-teaser {
   background-color: #42617B;
   color: #f3f3f3;
+  padding: 0.5em;
 }
-/* line 335, _components.scss */
+/* line 369, _components.scss */
 .container.enterprise-teaser a {
   color: #54aee1;
 }
 
-/* line 338, _components.scss */
+/* line 372, _components.scss */
 .container.pricing-included {
   border: solid 1px #d7d7d7;
   border-top: solid 4px #d6e3ed;
   background-color: #fff;
 }
 
-/* line 344, _components.scss */
+/* line 378, _components.scss */
 .welcome-pack {
   background-image: url("../images/pricing/img_welcomepack.png");
   background-repeat: no-repeat;
@@ -1348,27 +1423,28 @@ body.simple {
   height: 212px;
 }
 
-/* line 349, _components.scss */
+/* line 383, _components.scss */
 .container.pricing-dedicated {
   border: solid 1px #d7d7d7;
   border-top: none;
   background-color: #fff;
 }
 
-/* line 355, _components.scss */
+/* line 389, _components.scss */
 .cloud-up {
   background-image: url("../images/pricing/img_cloudup.png");
   background-repeat: no-repeat;
   background-position: 100% 50%;
+  min-height: 232px;
 }
 
-/* line 359, _components.scss */
+/* line 394, _components.scss */
 .container.pricing-team {
   border: solid 1px #d7d7d7;
   border-top: none;
 }
 
-/* line 364, _components.scss */
+/* line 399, _components.scss */
 .key-box {
   background-image: url("../images/pricing/img_keybox.png");
   background-repeat: no-repeat;
@@ -1376,7 +1452,7 @@ body.simple {
   height: 250px;
 }
 
-/* line 369, _components.scss */
+/* line 404, _components.scss */
 .container.pricing-contact {
   border: solid 1px #d7d7d7;
   border-top: none;

@@ -313,7 +313,7 @@ body.simple{
     @include dark-container-gradient();
 
     color:$text-on-dark-color;
-    a { color: $link-color-on-dark; }
+    a.more-info { color: $link-color-on-dark; }
 }
 
 .container.open-source {

@@ -49,6 +49,30 @@ $container-border-color:#d7d7d7;
     -webkit-text-fill-color: transparent;
 }
 
+@mixin blue-button-gradient {
+    @include background-image(linear-gradient(#7bbced 33%, #54aee1 70%));
+}
+
+@mixin blue-button-gradient-highlight {
+    @include background-image(linear-gradient(#c1e3fc 33%, #54aee1 70%));
+}
+
+@mixin gray-button-gradient {
+    @include background-image(linear-gradient(#f4f4f4, #96979a));
+}
+
+@mixin gray-button-gradient-highlight {
+    @include background-image(linear-gradient(#f4f4f4, #cccdd5));
+}
+
+@mixin light-button-gradient {
+    @include background-image(linear-gradient(#fdfdfd, #d8d9d9));
+}
+
+@mixin light-button-gradient-highlight {
+    @include background-image(linear-gradient(#fdfdfd,  #f2efef));
+}
+
 // Noir et blanc:
 // – Faux Black: #44484b
 // – Sleek Grey: #595e62

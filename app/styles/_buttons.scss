@@ -41,6 +41,69 @@
 	};
 }
 
+@mixin button() {
+    display: inline-block;
+    padding: 5px 10px 6px;
+    text-decoration: none;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    font-weight:300;
+    font-size: 1em;
+}
+
+
+.blue-button {
+    @include button();
+    @include blue-button-gradient();
+    border:solid 1px #233041;
+    color:#233041;
+
+    text-shadow:0px 1px 1px rgba(251, 251, 251, 0.5);
+
+    &:hover{
+        color: #44484b;
+        @include blue-button-gradient-highlight();
+    };
+
+    &:active{
+        border-color: #FFF;
+    };
+}
+
+.gray-button {
+    @include button();
+    @include gray-button-gradient();
+    color: #233041;
+    border: solid 1px #233041;
+
+    &:hover{
+        color: #44484b;
+        @include gray-button-gradient-highlight();
+    };
+
+    &:active{
+        border-color: #FFF;
+    };
+}
+
+.light-button {
+    @include button();
+    @include light-button-gradient();
+    border: solid 1px #d7d7d7;
+    color:#233041;
+
+    &:hover{
+        color: #44484b;
+        @include light-button-gradient-highlight();
+    };
+
+    &:active{
+        border-color: #FFF;
+    };
+}
+
+
 // a {
 
 //   background: white url(buttons.png) 0px 0px no-repeat;
