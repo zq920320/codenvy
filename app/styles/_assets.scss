@@ -244,3 +244,11 @@
         position: 100% 50%;
     }
 }
+
+@mixin image_key_box {
+    background: {
+        image:url('../images/pricing/img_keybox.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
