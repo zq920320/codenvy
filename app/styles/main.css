@@ -1273,17 +1273,25 @@ body.simple {
 */
 /* line 300, _components.scss */
 .container.pricing {
-  background-image: url("../images/pricing/back_header.png");
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(30%, #233041), color-stop(100%, #3e495a));
+  background-image: -webkit-linear-gradient(#233041 30%, #3e495a);
+  background-image: -moz-linear-gradient(#233041 30%, #3e495a);
+  background-image: -o-linear-gradient(#233041 30%, #3e495a);
+  background-image: linear-gradient(#233041 30%, #3e495a);
   color: #f3f3f3;
 }
-/* line 303, _components.scss */
+/* line 304, _components.scss */
 .container.pricing a {
   color: #54aee1;
 }
 
-/* line 308, _components.scss */
+/* line 307, _components.scss */
+.container.open-source {
+  background-color: #2b3748;
+  border: solid 1px #313d4d;
+}
+
+/* line 312, _components.scss */
 .pricing-box-open-source {
   background-image: url("../images/pricing/box_opensource.png");
   background-repeat: no-repeat;
@@ -1291,7 +1299,7 @@ body.simple {
   height: 128px;
 }
 
-/* line 313, _components.scss */
+/* line 317, _components.scss */
 .pricing-box-business {
   background-image: url("../images/pricing/box_business.png");
   background-repeat: no-repeat;
@@ -1299,7 +1307,7 @@ body.simple {
   height: 155px;
 }
 
-/* line 318, _components.scss */
+/* line 322, _components.scss */
 .pricing-box-premium {
   background-image: url("../images/pricing/box_premium.png");
   background-repeat: no-repeat;
@@ -1307,7 +1315,7 @@ body.simple {
   height: 155px;
 }
 
-/* line 323, _components.scss */
+/* line 327, _components.scss */
 .pricing-box-secure {
   background-image: url("../images/pricing/box_secure.png");
   background-repeat: no-repeat;
@@ -1315,19 +1323,24 @@ body.simple {
   height: 155px;
 }
 
-/* line 328, _components.scss */
-.enterprise-teaser {
-  background-image: url("../images/pricing/back_header_messagebottom.png");
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-}
-
 /* line 332, _components.scss */
-.container.pricing-details {
-  margin-top: 30px;
+.container.enterprise-teaser {
+  background-color: #42617B;
+  color: #f3f3f3;
+}
+/* line 335, _components.scss */
+.container.enterprise-teaser a {
+  color: #54aee1;
 }
 
-/* line 336, _components.scss */
+/* line 338, _components.scss */
+.container.pricing-included {
+  border: solid 1px #d7d7d7;
+  border-top: solid 4px #d6e3ed;
+  background-color: #fff;
+}
+
+/* line 344, _components.scss */
 .welcome-pack {
   background-image: url("../images/pricing/img_welcomepack.png");
   background-repeat: no-repeat;
@@ -1335,19 +1348,43 @@ body.simple {
   height: 212px;
 }
 
-/* line 341, _components.scss */
+/* line 349, _components.scss */
+.container.pricing-dedicated {
+  border: solid 1px #d7d7d7;
+  border-top: none;
+  background-color: #fff;
+}
+
+/* line 355, _components.scss */
 .cloud-up {
   background-image: url("../images/pricing/img_cloudup.png");
   background-repeat: no-repeat;
   background-position: 100% 50%;
 }
 
-/* line 345, _components.scss */
+/* line 359, _components.scss */
+.container.pricing-team {
+  border: solid 1px #d7d7d7;
+  border-top: none;
+}
+
+/* line 364, _components.scss */
 .key-box {
   background-image: url("../images/pricing/img_keybox.png");
   background-repeat: no-repeat;
   background-position: 50% 50%;
   height: 250px;
+}
+
+/* line 369, _components.scss */
+.container.pricing-contact {
+  border: solid 1px #d7d7d7;
+  border-top: none;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #f7f7f7));
+  background-image: -webkit-linear-gradient(#ffffff, #f7f7f7);
+  background-image: -moz-linear-gradient(#ffffff, #f7f7f7);
+  background-image: -o-linear-gradient(#ffffff, #f7f7f7);
+  background-image: linear-gradient(#ffffff, #f7f7f7);
 }
 
 /* normalize.css v2.0.1 | MIT License | git.io/normalize */

@@ -297,6 +297,18 @@ body.simple{
 
 */
 
+.pricing-poetry {
+    font-size:1em;
+    color:#8e979d;
+    font-weight:300;
+    padding:0.5em;
+}
+
+.pricing-info {
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
 .container.pricing {
     @include dark-container-gradient();
 
@@ -319,6 +331,27 @@ body.simple{
     height: 155px;
 }
 
+.header-secure {
+    background: -webkit-linear-gradient(#7bbced, #54aee1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
+}
+
+.header-premium {
+    background: -webkit-linear-gradient(#7bbced, #54aee1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
+}
+
+.header-business {
+    background: -webkit-linear-gradient(#fff000, #c4a000);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
+}
+
 .pricing-box-premium {
     @include image_pricing_box_premium();
     height: 155px;
@@ -332,6 +365,7 @@ body.simple{
 .container.enterprise-teaser {
     background-color: #42617B;
     color:$text-on-dark-color;
+    padding: 0.5em;
     a { color: $link-color-on-dark; }
 }
 
@@ -354,6 +388,7 @@ body.simple{
 
 .cloud-up {
     @include image_cloud_up();
+    min-height: 232px;
 }
 
 .container.pricing-team {

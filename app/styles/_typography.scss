@@ -1,10 +1,15 @@
-@import "compass/typography/vertical_rhythm";
+//@import "compass/typography/vertical_rhythm";
 
 $base-font-size: 16px;
 $base-line-height: 32px;
 $letter-spacing: 0.05em;
 
-@include establish-baseline;
+//@include establish-baseline;
+
+html,body {
+    font-size: $base-font-size;
+    font-weight: 300;
+}
 
 
 p{
@@ -16,3 +21,33 @@ p{
 .center { text-align: center; }
 .left { text-align: left; }
 .right { text-align: right; }
+
+h1{
+    font-weight:300;
+    line-height:1em;
+    font-size:1.625em;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+
+    &.shiny{ @include shiny-text-gradient(); }
+}
+
+h2{
+    font-size:1.9em;
+    font-weight:300;
+    color: #44484b;
+    margin-top: 0; margin-bottom: 0;
+
+    &.light{ font-weight: 200; }
+}
+
+h3 {
+    font-size:1.4375em;
+    font-weight:300;
+}
+
+h4 {
+    font-size:1em;
+    font-weight:400;
+    margin-bottom: 0;
+}

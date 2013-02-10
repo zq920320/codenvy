@@ -43,6 +43,12 @@ $container-border-color:#d7d7d7;
     @include background-image(linear-gradient(#233041 30%, #3e495a));
 }
 
+@mixin shiny-text-gradient {
+    background: -webkit-linear-gradient(#bec3c4, #e2e5e8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 // Noir et blanc:
 // – Faux Black: #44484b
 // – Sleek Grey: #595e62
