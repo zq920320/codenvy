@@ -99,6 +99,21 @@ p {
   color: #595e62;
 }
 
+/* line 16, _typography.scss */
+.center {
+  text-align: center;
+}
+
+/* line 17, _typography.scss */
+.left {
+  text-align: left;
+}
+
+/* line 18, _typography.scss */
+.right {
+  text-align: right;
+}
+
 @font-face {
   font-family: CodeEnvy;
   src: url("../fonts/regular.otf");
@@ -359,6 +374,11 @@ input[type='password'] {
   text-align: center;
   background-color: rgba(255, 0, 0, 0.4);
   border-radius: 5px;
+}
+
+/* line 197, _form.scss */
+.error-container.expanded {
+  opacity: 1.0;
   -webkit-transition-property: opacity;
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -375,11 +395,6 @@ input[type='password'] {
   -moz-transition-delay: 0.3s;
   -o-transition-delay: 0.3s;
   transition-delay: 0.3s;
-}
-
-/* line 198, _form.scss */
-.error-container.expanded {
-  opacity: 1.0;
 }
 
 /* line 203, _form.scss */
@@ -911,13 +926,43 @@ img {
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
+/* line 64, _components.scss */
+.overview .house {
+  background-image: url("../images/iconHouse.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 68, _components.scss */
+.overview .lock {
+  background-image: url("../images/iconLock.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 72, _components.scss */
+.overview .plug {
+  background-image: url("../images/iconPlug.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 76, _components.scss */
+.overview .scale {
+  background-image: url("../images/iconScale.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 80, _components.scss */
+.overview .browser {
+  background-image: url("../images/iconBrowser.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
 
 /*
 
     Login
 
 */
-/* line 73, _components.scss */
+/* line 93, _components.scss */
 .login {
   position: relative;
   background-image: url("../images/sceneBackground.png");
@@ -938,12 +983,12 @@ img {
     Forgot password form
 
 */
-/* line 85, _components.scss */
+/* line 105, _components.scss */
 .result-message.hidden {
   opacity: 0;
 }
 
-/* line 89, _components.scss */
+/* line 109, _components.scss */
 .data.hidden {
   opacity: 0;
 }
@@ -953,7 +998,7 @@ img {
     Misc
 
 */
-/* line 98, _components.scss */
+/* line 118, _components.scss */
 .aternative-login {
   background-image: url("../images/lineOr.png");
   background-repeat: no-repeat;
@@ -980,7 +1025,7 @@ img {
   padding-top: 51px;
 }
 
-/* line 107, _components.scss */
+/* line 127, _components.scss */
 .aternative-login.pulled-up {
   -webkit-transform: translate(0, -136px);
   -moz-transform: translate(0, -136px);
@@ -989,7 +1034,7 @@ img {
   transform: translate(0, -136px);
 }
 
-/* line 111, _components.scss */
+/* line 131, _components.scss */
 .aternative-login.collapsed {
   opacity: 0;
   -webkit-transform: translate(0, 0);
@@ -1019,7 +1064,7 @@ img {
     Domain picker
 
 */
-/* line 123, _components.scss */
+/* line 143, _components.scss */
 .select-domain {
   position: relative;
   background-image: url("../images/sceneBackground.png");
@@ -1035,7 +1080,7 @@ img {
   color: #f3f3f3;
 }
 
-/* line 130, _components.scss */
+/* line 150, _components.scss */
 .domain-list {
   background: rgba(251, 251, 251, 0.5);
   border-radius: 6px;
@@ -1043,19 +1088,19 @@ img {
   padding: 0;
 }
 
-/* line 137, _components.scss */
+/* line 157, _components.scss */
 .domain-list li {
   padding: 0;
   border-bottom: solid 1px #313a48;
 }
 
-/* line 142, _components.scss */
+/* line 162, _components.scss */
 .domain-list li a {
   display: block;
   padding: 5px 20px;
 }
 
-/* line 147, _components.scss */
+/* line 167, _components.scss */
 .domain-list li:last-child {
   border-bottom: none;
 }
@@ -1065,7 +1110,7 @@ img {
     Standard pages
 
 */
-/* line 158, _components.scss */
+/* line 178, _components.scss */
 .container.light {
   background: #f7f7f7;
   border: solid 1px #d9dbdf;
@@ -1075,29 +1120,29 @@ img {
   background-repeat: no-repeat;
   background-position: 50% 99.8%;
 }
-/* line 166, _components.scss */
+/* line 186, _components.scss */
 .container.light h1 {
   font-size: 36px;
   text-align: center;
   text-transform: uppercase;
 }
-/* line 172, _components.scss */
+/* line 192, _components.scss */
 .container.light h2 {
   font-size: 26px;
   font-weight: normal;
 }
-/* line 177, _components.scss */
+/* line 197, _components.scss */
 .container.light hr {
   border: solid 1px #e3e4e7;
   margin: 30px 0;
 }
-/* line 182, _components.scss */
+/* line 202, _components.scss */
 .container.light .subtitle-line {
   width: 50px;
   border-top: solid 1px #44484b;
   margin: 0 auto 40px auto;
 }
-/* line 188, _components.scss */
+/* line 208, _components.scss */
 .container.light ul {
   font-weight: 300;
 }
@@ -1107,13 +1152,13 @@ img {
     Loader (wait for tenant screen)
 
 */
-/* line 199, _components.scss */
+/* line 219, _components.scss */
 body.simple {
   background-color: #595e62;
   position: relative;
 }
 
-/* line 204, _components.scss */
+/* line 224, _components.scss */
 .loader {
   background-image: url("../images/spriteSpinner.png");
   background-repeat: no-repeat;
@@ -1143,32 +1188,32 @@ body.simple {
   -o-transition-delay: 0;
   transition-delay: 0;
 }
-/* line 219, _components.scss */
+/* line 239, _components.scss */
 .loader h3 {
   color: #f3f3f3;
 }
-/* line 223, _components.scss */
+/* line 243, _components.scss */
 .loader.frame1 {
   background-position: 50% -100px;
 }
-/* line 224, _components.scss */
+/* line 244, _components.scss */
 .loader.frame2 {
   background-position: 50% 0px;
 }
-/* line 225, _components.scss */
+/* line 245, _components.scss */
 .loader.frame3 {
   background-position: 50% -28px;
 }
-/* line 226, _components.scss */
+/* line 246, _components.scss */
 .loader.frame4 {
   background-position: 50% -56px;
 }
-/* line 228, _components.scss */
+/* line 248, _components.scss */
 .loader.visible {
   opacity: 1.0;
 }
 
-/* line 231, _components.scss */
+/* line 251, _components.scss */
 .loader-text {
   font-weight: 300;
   text-transform: uppercase;
@@ -1189,7 +1234,7 @@ body.simple {
     Profile page
 
 */
-/* line 253, _components.scss */
+/* line 273, _components.scss */
 .profile-form {
   position: relative;
   background-image: url("../images/sceneBackground.png");
@@ -1205,7 +1250,7 @@ body.simple {
 .profile-form a {
   color: #f3f3f3;
 }
-/* line 259, _components.scss */
+/* line 279, _components.scss */
 .profile-form form {
   padding: 10px 5px;
 }
@@ -1213,12 +1258,88 @@ body.simple {
 /*
     Enterprise page
 */
-/* line 269, _components.scss */
+/* line 289, _components.scss */
 .enterprise-header {
   background-image: url("../images/enterprise/header.png");
   background-repeat: no-repeat;
   background-position: 50% 50%;
   height: 410px;
+}
+
+/*
+
+    Pricing
+
+*/
+/* line 300, _components.scss */
+.container.pricing {
+  background-image: url("../images/pricing/back_header.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  color: #f3f3f3;
+}
+/* line 303, _components.scss */
+.container.pricing a {
+  color: #54aee1;
+}
+
+/* line 308, _components.scss */
+.pricing-box-open-source {
+  background-image: url("../images/pricing/box_opensource.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 128px;
+}
+
+/* line 313, _components.scss */
+.pricing-box-business {
+  background-image: url("../images/pricing/box_business.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 155px;
+}
+
+/* line 318, _components.scss */
+.pricing-box-premium {
+  background-image: url("../images/pricing/box_premium.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 155px;
+}
+
+/* line 323, _components.scss */
+.pricing-box-secure {
+  background-image: url("../images/pricing/box_secure.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 155px;
+}
+
+/* line 328, _components.scss */
+.enterprise-teaser {
+  background-image: url("../images/pricing/back_header_messagebottom.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+/* line 332, _components.scss */
+.container.pricing-details {
+  margin-top: 30px;
+}
+
+/* line 336, _components.scss */
+.welcome-pack {
+  background-image: url("../images/pricing/img_welcomepack.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 212px;
+}
+
+/* line 341, _components.scss */
+.cloud-up {
+  background-image: url("../images/pricing/img_cloudup.png");
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
 }
 
 /* normalize.css v2.0.1 | MIT License | git.io/normalize */

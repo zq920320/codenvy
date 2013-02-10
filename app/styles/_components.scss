@@ -342,3 +342,7 @@ body.simple{
     @include image_cloud_up();
 }
 
+.key-box {
+    @include image_key_box();
+    height: 250px;
+}
