@@ -290,3 +290,55 @@ body.simple{
     @include image_enterprise_header();
     height: $enterprise-header-height;
 }
+
+/*
+
+    Pricing
+
+*/
+
+.container.pricing {
+    @include image_pricing_background();
+    color:$text-on-dark-color;
+    a {
+        color: $link-color-on-dark;
+    }
+}
+
+.pricing-box-open-source {
+    @include image_pricing_box_open_source();
+    height:128px;
+}
+
+.pricing-box-business {
+    @include image_pricing_box_business();
+    height: 155px;
+}
+
+.pricing-box-premium {
+    @include image_pricing_box_premium();
+    height: 155px;
+}
+
+.pricing-box-secure {
+    @include image_pricing_box_secure();
+    height: 155px;
+}
+
+.enterprise-teaser {
+    @include image_pricing_enterprise_teaser();
+}
+
+.container.pricing-details {
+    margin-top: 30px;
+}
+
+.welcome-pack {
+    @include image_welcome_pack();
+    height:212px;
+}
+
+.cloud-up {
+    @include image_cloud_up();
+}
+

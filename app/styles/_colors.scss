@@ -27,6 +27,8 @@ $light-background-line: #e3e4e7;
 $simple-screen-background: #595e62;
 $loader-text-color:#f3f3f3;
 
+$link-color-on-dark:#54aee1;
+
 @mixin signup-button-gradient {
     @include background-image(linear-gradient(#d6e3ed, $signup-button-color 35%));
 }
