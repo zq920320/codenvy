@@ -44,7 +44,7 @@ $container-border-color:#d7d7d7;
 }
 
 @mixin shiny-text-gradient {
-    background: -webkit-linear-gradient(#bec3c4, #e2e5e8);
+    background: -webkit-linear-gradient(#e2e5e8,#bec3c4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
