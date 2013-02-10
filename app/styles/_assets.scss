@@ -180,3 +180,67 @@
         position: 50% 99.8%;
     }
 }
+
+@mixin image_pricing_background {
+    background:{
+        image:url('../images/pricing/back_header.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
+@mixin image_pricing_box_open_source {
+    background: {
+        image:url('../images/pricing/box_opensource.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
+@mixin image_pricing_box_business {
+    background: {
+        image:url('../images/pricing/box_business.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
+@mixin image_pricing_box_premium {
+    background: {
+        image:url('../images/pricing/box_premium.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
+@mixin image_pricing_box_secure {
+    background: {
+        image:url('../images/pricing/box_secure.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
+@mixin image_pricing_enterprise_teaser {
+    background: {
+        image:url('../images/pricing/back_header_messagebottom.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
+@mixin image_welcome_pack {
+    background: {
+        image:url('../images/pricing/img_welcomepack.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
+@mixin image_cloud_up {
+    background: {
+        image:url('../images/pricing/img_cloudup.png');
+        repeat:no-repeat;
+        position: 100% 50%;
+    }
+}
