@@ -185,7 +185,7 @@
     background: {
         image:url('../images/pricing/box_opensource.png');
         repeat:no-repeat;
-        position: 50% 50%;
+        position: 50px 50%;
     }
 }
 
@@ -193,31 +193,34 @@
     background: {
         image:url('../images/pricing/box_business.png');
         repeat:no-repeat;
-        position: 50% 50%;
+        position: 22px 50%;
     }
+    margin-bottom: 20px;
 }
 
 @mixin image_pricing_box_premium {
     background: {
         image:url('../images/pricing/box_premium.png');
         repeat:no-repeat;
-        position: 50% 50%;
+        position: 22px 50%;
     }
+    margin-bottom: 20px;
 }
 
 @mixin image_pricing_box_secure {
     background: {
         image:url('../images/pricing/box_secure.png');
         repeat:no-repeat;
-        position: 50% 50%;
+        position: 22px 50%;
     }
+    margin-bottom: 20px;
 }
 
 @mixin image_welcome_pack {
     background: {
         image:url('../images/pricing/img_welcomepack.png');
         repeat:no-repeat;
-        position: 50% 50%;
+        position: 80px 50%;
     }
 }
 
@@ -225,7 +228,7 @@
     background: {
         image:url('../images/pricing/img_cloudup.png');
         repeat:no-repeat;
-        position: 100% 50%;
+        position: 117% 50%;
     }
 }
 
@@ -233,6 +236,22 @@
     background: {
         image:url('../images/pricing/img_keybox.png');
         repeat:no-repeat;
-        position: 50% 50%;
+        position: 65px 50%;
+    }
+}
+
+@mixin sep_line_small {
+    background: {
+        image:url('../images/pricing/sep_line_small.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+@mixin icon_info {
+    background: {
+        image:url('../images/pricing/icon_info.png');
+        repeat:no-repeat;
+        position: 100% 50%;
     }
 }

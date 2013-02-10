@@ -50,8 +50,11 @@
     cursor: pointer;
     font-weight:300;
     font-size: 1em;
+    line-height: 1em;
 }
 
+.button-100 { width: 100px; }
+.button-200 { width: 200px; }
 
 .blue-button {
     @include button();

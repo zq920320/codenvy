@@ -3,6 +3,10 @@
     margin-top: 8px;
 }
 
+.short-line {
+    width: 100px;
+}
+
 @mixin darkContainer(){
     position: relative;
     @include bg_scene();
@@ -297,11 +301,30 @@ body.simple{
 
 */
 
+.pricing-feature-list {
+    padding: 0; margin: 2em 0;
+    list-style-type: none;
+    line-height: 2em;
+
+    li {
+        padding: 0 0 1em 0; margin: 1em 0;
+        @include sep_line_small();
+
+        a {
+            @include icon_info();
+            color: $text-on-dark-color;
+            padding-right: 30px;
+        }
+    }
+
+}
+
 .pricing-poetry {
     font-size:1em;
     color:#8e979d;
     font-weight:300;
     padding:0.5em;
+    margin-top: 30px;
 }
 
 .pricing-info {
@@ -319,6 +342,11 @@ body.simple{
 .container.open-source {
     background-color:#2b3748;
     border: solid 1px #313d4d;
+    padding: 0.8em;
+}
+
+.container.open-source-desc {
+    line-height: 2.5em;
 }
 
 .pricing-box-open-source {
