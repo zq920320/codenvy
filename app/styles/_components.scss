@@ -429,23 +429,21 @@ body.simple{
     &:after{ @include content_features_header(); };
 }
 
-.screenshot {
-    padding-bottom: 156px;
+.screenshot { padding-bottom: 209px; }
+.screenshot.anywhere { @include image_screenshot_accessanywhere(); }
+.screenshot.invite { @include image_screenshot_invite(); }
+.screenshot.language { @include image_screenshot_picklanguage(); }
+
+.choose-paas{ @include image_choose_paas(); padding-bottom: 145px; }
+
+
+.screenshot.build-cycle{ @include image_screenshot_build_cycle(); }
+.screenshot.pair-programming{ @include image_screenshot_pair(); }
+.screenshot.editor{ @include image_screenshoot_editor(); }
+.screenshot.debug{ @include image_screenshot_debug(); }
+
+.ide-screenshot {
+    margin-top: 2em;
+    img{ display: inline; }
 }
 
-.screenshot.anywhere {
-    @include image_screenshot_accessanywhere();
-}
-
-.screenshot.configure {
-    @include image_screenshot_configure();
-}
-
-.screenshot.language {
-    @include image_screenshot_picklanguage();
-}
-
-.choose-paas{
-    @include image_choose_paas();
-    padding-bottom: 193px;
-}

@@ -271,9 +271,9 @@
     }
 }
 
-@mixin image_screenshot_configure {
+@mixin image_screenshot_invite {
     background: {
-        image:url('../images/features/img_prntscr_configure.png');
+        image:url('../images/features/img_prntscr_invite.png');
         repeat:no-repeat;
         position: 50% 100%;
     }
@@ -294,3 +294,46 @@
         position: 50% 100%;
     }
 }
+
+@mixin image_screenshot_pair {
+    background: {
+        image:url('../images/features/img_prntscr_pair.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+@mixin image_screenshot_build_cycle {
+    background: {
+        image:url('../images/features/img_prntscr_buildcycle.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+@mixin image_screenshoot_editor {
+    background: {
+        image:url('../images/features/img_prntscr_editor.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+@mixin image_screenshot_debug {
+    background: {
+        image:url('../images/features/img_prntscr_debug.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+
+@mixin image_ide_screenshot {
+    background: {
+        image:url('../images/features/img_ide_screenshot.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
+

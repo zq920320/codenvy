@@ -1,4 +1,5 @@
 define(["jquery",
+        "config",
         "views/signupform",
         "views/signinform",
         "views/forgotpasswordform",
@@ -9,6 +10,7 @@ define(["jquery",
         ],
 
     function($,
+        Config,
         SignupForm,
         SigninForm,
         ForgotPasswordForm,
@@ -18,9 +20,26 @@ define(["jquery",
         IDELoader){
 
 
+        function modernize(){
+            Modernizr.load({
+                // HTML5 placeholder for input elements
+                test : Modernizr.input.placeholder,
+                nope : Config.placeholderPolyfillUrl,
+                complete : function(){
+                    if(typeof $.fn.placeholder !== 'undefined'){
+                        $('input, textarea').placeholder();
+                    }
+                }
+            });
+        }
+
         return {
             run : function(){
                 $(document).ready(function(){
+
+                    modernize();
+
+
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
                         forgotPasswordForm = $(".forgotpassword-form"),
