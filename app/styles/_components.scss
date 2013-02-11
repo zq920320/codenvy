@@ -417,3 +417,35 @@ body.simple{
     @include image_key_box();
     height: 250px;
 }
+
+/*
+
+    Features
+
+*/
+
+.container.features {
+    position:relative; z-index:1; min-height: 353px;
+    &:after{ @include content_features_header(); };
+}
+
+.screenshot {
+    padding-bottom: 156px;
+}
+
+.screenshot.anywhere {
+    @include image_screenshot_accessanywhere();
+}
+
+.screenshot.configure {
+    @include image_screenshot_configure();
+}
+
+.screenshot.language {
+    @include image_screenshot_picklanguage();
+}
+
+.choose-paas{
+    @include image_choose_paas();
+    padding-bottom: 193px;
+}
