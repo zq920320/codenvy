@@ -255,3 +255,42 @@
         position: 100% 50%;
     }
 }
+
+@mixin content_features_header {
+    content:url('../images/features/img_header.png');
+    position:absolute;
+    z-index:-1; top:0; left:0; right:0; bottom:0;
+    text-align:center;
+}
+
+@mixin image_screenshot_accessanywhere {
+    background: {
+        image:url('../images/features/img_prntscr_accessanywhere.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+@mixin image_screenshot_configure {
+    background: {
+        image:url('../images/features/img_prntscr_configure.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+@mixin image_screenshot_picklanguage {
+    background: {
+        image:url('../images/features/img_prntscr_picklanguage.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
+
+@mixin image_choose_paas {
+    background: {
+        image:url('../images/features/img_choosepaas.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
