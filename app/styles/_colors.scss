@@ -33,14 +33,17 @@ $container-border-color:#d7d7d7;
 
 @mixin signup-button-gradient {
     @include background-image(linear-gradient(#d6e3ed, $signup-button-color 35%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d6e3ed', endColorstr='#54aee1');
 }
 
 @mixin signin-button-gradient {
     @include background-image(linear-gradient(#fcfcfc, #f3f3f3));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#f3f3f3');
 }
 
 @mixin dark-container-gradient {
     @include background-image(linear-gradient(#233041 30%, #3e495a));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#233041', endColorstr='#3e495a');
 }
 
 @mixin shiny-text-gradient {
@@ -51,26 +54,32 @@ $container-border-color:#d7d7d7;
 
 @mixin blue-button-gradient {
     @include background-image(linear-gradient(#7bbced 33%, #54aee1 70%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7bbced', endColorstr='#54aee1');
 }
 
 @mixin blue-button-gradient-highlight {
     @include background-image(linear-gradient(#c1e3fc 33%, #54aee1 70%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c1e3fc', endColorstr='#54aee1');
 }
 
 @mixin gray-button-gradient {
     @include background-image(linear-gradient(#f4f4f4, #96979a));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#96979a');
 }
 
 @mixin gray-button-gradient-highlight {
     @include background-image(linear-gradient(#f4f4f4, #cccdd5));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#cccdd5');
 }
 
 @mixin light-button-gradient {
     @include background-image(linear-gradient(#fdfdfd, #d8d9d9));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#d8d9d9');
 }
 
 @mixin light-button-gradient-highlight {
     @include background-image(linear-gradient(#fdfdfd,  #f2efef));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#f2efef');
 }
 
 // Noir et blanc:
