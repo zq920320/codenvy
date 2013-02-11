@@ -32,3 +32,7 @@
     @include background-image(linear-gradient(#FFFFFF, #F7F7F7));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F7F7F7');
 }
+
+.section-header {
+    margin-bottom: 2em;
+}
