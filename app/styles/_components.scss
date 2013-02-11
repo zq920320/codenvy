@@ -229,7 +229,7 @@ body.simple{
 
     // border: solid 1px #CCC;
 
-    $width : 300px; $height: 28px;
+    $width : 300px; $height: 30px;
 
     @include image_loader();
     position: absolute;
@@ -246,8 +246,8 @@ body.simple{
 
     &.frame1{ background-position: 50% -100px; };
     &.frame2{ background-position: 50% 0px; };
-    &.frame3{ background-position: 50% -28px; };
-    &.frame4{ background-position: 50% -56px; };
+    &.frame3{ background-position: 50% -29px; };
+    &.frame4{ background-position: 50% -58px; };
 
     &.visible{ opacity: 1.0; }
 }
