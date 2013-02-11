@@ -212,9 +212,11 @@ input[type='password']{
 
 form.light {
     input[type='text'],
-    input[type='password']
+    input[type='password'],
     textarea {
-        border: solid 1px #CCC;
-        background-color: #EEE;
+        border:solid 1px #d0d0d0;
+        background-color:#fbfbfb;
+        font-weight: 300; color:#8e979d;
+        @include box-shadow(none);
     }
 }
