@@ -336,20 +336,8 @@ body.simple{
     margin-top: 30px;
 }
 
-.pricing-info {
-    padding-top: 2em;
-    padding-bottom: 2em;
-}
-
 .pricing-feature {
     padding: 15px;
-}
-
-.container.pricing {
-    @include dark-container-gradient();
-
-    color:$text-on-dark-color;
-    a.more-info { color: $link-color-on-dark; }
 }
 
 .container.open-source {
@@ -410,21 +398,12 @@ body.simple{
     a { color: $link-color-on-dark; }
 }
 
-.container.pricing-included {
-    border: solid 1px $container-border-color;
-    border-top: solid 4px #d6e3ed;
-    background-color:#fff;
-}
-
 .welcome-pack {
     @include image_welcome_pack();
     height:212px;
 }
 
 .container.pricing-dedicated {
-    border: solid 1px $container-border-color;
-    border-top: none;
-    background-color:#fff;
     padding-right: 10px;
     padding-left: 50px;
 }
@@ -434,19 +413,7 @@ body.simple{
     min-height: 232px;
 }
 
-.container.pricing-team {
-    border: solid 1px $container-border-color;
-    border-top: none;
-    background-color:#fff;
-}
-
 .key-box {
     @include image_key_box();
     height: 250px;
-}
-
-.container.pricing-contact {
-    border: solid 1px $container-border-color;
-    border-top: none;
-    @include background-image(linear-gradient(#FFF, #F7F7F7));
 }

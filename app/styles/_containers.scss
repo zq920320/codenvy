@@ -1,0 +1,33 @@
+.container.dark {
+    @include dark-container-gradient();
+    color:$text-on-dark-color;
+    a.more-info { color: $link-color-on-dark; }
+}
+
+.container.border-line { border-top: solid 4px #d6e3ed; }
+
+@mixin framing {
+    border-left: solid 1px $container-border-color;
+    border-right: solid 1px $container-border-color;
+    border-bottom: solid 1px $container-border-color;
+};
+
+.container.light-n-framed {
+    @include framing;
+
+    background-color:#fff;
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+.container.super-light-n-framed {
+    @include framing;
+
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+
+.container.light-gradient {
+    @include background-image(linear-gradient(#FFF, #F7F7F7));
+}
