@@ -22,6 +22,7 @@ header > nav {
         @include image_small_dot;
         padding-left: 10px;
         margin-left: 10px;
+        padding-top: 5px;
 	}
 
     @include respond-to(tablet-desktop){

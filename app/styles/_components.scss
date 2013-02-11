@@ -182,7 +182,7 @@ $scene-height:407px;
 .container.light {
     background: $light-background-color;
     border: solid 1px $light-background-border;
-    padding: 20px 60px 40px;
+    padding: 20px 60px 60px;
     border-radius: 6px;
 
     @include image_logo_inlaid();
@@ -295,6 +295,15 @@ body.simple{
     height: $enterprise-header-height;
 }
 
+.enterprise {
+
+    .icon-head p {
+        height: 150px;
+    }
+
+
+}
+
 /*
 
     Pricing
@@ -330,6 +339,10 @@ body.simple{
 .pricing-info {
     padding-top: 2em;
     padding-bottom: 2em;
+}
+
+.pricing-feature {
+    padding: 15px;
 }
 
 .container.pricing {
@@ -412,6 +425,8 @@ body.simple{
     border: solid 1px $container-border-color;
     border-top: none;
     background-color:#fff;
+    padding-right: 10px;
+    padding-left: 50px;
 }
 
 .cloud-up {
@@ -422,6 +437,7 @@ body.simple{
 .container.pricing-team {
     border: solid 1px $container-border-color;
     border-top: none;
+    background-color:#fff;
 }
 
 .key-box {
