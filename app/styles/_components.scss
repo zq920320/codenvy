@@ -333,7 +333,7 @@ body.simple{
 }
 
 .pricing-poetry {
-    font-size:1.5em;
+    font-size:1em;
     color:#8e979d;
     font-weight:300;
     padding:0.5em;
@@ -375,6 +375,7 @@ body.simple{
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
+    font-weight: 400;
 }
 
 .header-premium {
@@ -382,6 +383,7 @@ body.simple{
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
+    font-weight: 400;
 }
 
 .header-business {
@@ -389,6 +391,7 @@ body.simple{
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
+    font-weight: 400;
 }
 
 .pricing-box-premium {
@@ -399,6 +402,10 @@ body.simple{
 .pricing-box-secure {
     @include image_pricing_box_secure();
     height: 155px;
+}
+
+.pricing-enterprise-header {
+    
 }
 
 .container.enterprise-teaser {
