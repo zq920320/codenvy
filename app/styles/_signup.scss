@@ -23,8 +23,10 @@
 }
 
 .domain-placeholder {
+    font-size: 1.2em;
+    font-weight: 200;
     position: absolute;
-    top: 14px;
+    top: 18px;
     right: 14px;
     color:$text-box-placeholder-color;
 }

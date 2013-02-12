@@ -76,4 +76,5 @@ $desktop-start: $tablet-end + 1;
 
 .hidden {
     opacity: 0;
+    height: 0px;
 }
