@@ -103,11 +103,11 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     $(form.el).valid();
                 });
 
-                it("triggers invalid event if password2 is not provided", function(done){
+                it("triggers invalid event if password1 is not provided", function(done){
                     var form = ResetPasswordForm.get(buildForm());
 
                     form.on("invalid", function(field,message){
-                        expect(field).to.equal("password2");
+                        expect(field).to.equal("password1");
                         expect(message).to.equal(form.settings.noConfirmPasswordErrorMessage);
                         done();
                     });
@@ -122,13 +122,13 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     var form = ResetPasswordForm.get(buildForm());
 
                     form.on("invalid", function(field,message){
-                        expect(field).to.equal("password2");
+                        expect(field).to.equal("password1");
                         expect(message).to.equal(form.settings.noConfirmPasswordErrorMessage);
                         done();
                     });
 
                     $(form.el).find("input[name='password']").val("password");
-                    $(form.el).find("input[name='password2']").val("password2");
+                    $(form.el).find("input[name='password1']").val("password1");
 
                     $(form.el).valid();
 
@@ -143,7 +143,7 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     });
 
                     $(form.el).find("input[name='password']").val(password);
-                    $(form.el).find("input[name='password2']").val(password);
+                    $(form.el).find("input[name='password1']").val(password);
 
                     $(form.el).submit();
 
@@ -159,7 +159,7 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     });
 
                     $(form.el).find("input[name='password']").val(p);
-                    $(form.el).find("input[name='password2']").val(p);
+                    $(form.el).find("input[name='password1']").val(p);
 
                     $(form.el).submit();
 
@@ -182,7 +182,7 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     });
 
                     $(form.el).find("input[name='password']").val(p);
-                    $(form.el).find("input[name='password2']").val(p);
+                    $(form.el).find("input[name='password1']").val(p);
 
                     $(form.el).submit();
 
@@ -203,7 +203,7 @@ define(["jquery", "views/resetpasswordform", "models/account", "text!templates/r
                     });
 
                     $(form.el).find("input[name='password']").val(p);
-                    $(form.el).find("input[name='password2']").val(p);
+                    $(form.el).find("input[name='password1']").val(p);
 
                     $(form.el).submit();
 

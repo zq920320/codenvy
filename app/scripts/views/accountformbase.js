@@ -48,7 +48,7 @@ define(["jquery","underscore","backbone","models/account","views/form","validati
                     password: {
                         required: this.settings.noPasswordErrorMessage
                     },
-                    password2: {
+                    password1: {
                         required: this.settings.noConfirmPasswordErrorMessage,
                         equalTo: this.settings.noConfirmPasswordErrorMessage
                     }
@@ -78,9 +78,9 @@ define(["jquery","underscore","backbone","models/account","views/form","validati
                     return;
                 }
 
-                if(typeof errorMap.password2 !== 'undefined'){
-                    this.trigger("invalid","password2",errorMap.password2);
-                    refocus(this.$("input[name='password2']"));
+                if(typeof errorMap.password1 !== 'undefined'){
+                    this.trigger("invalid","password1",errorMap.password1);
+                    refocus(this.$("input[name='password1']"));
                     return;
                 }
             },

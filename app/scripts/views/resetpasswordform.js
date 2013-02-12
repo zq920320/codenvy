@@ -26,7 +26,7 @@ define(["views/accountformbase","models/account"],
                     password: {
                         required : true
                     },
-                    password2: {
+                    password1: {
                         required: true,
                         equalTo: "input[name='password']"
                     }
