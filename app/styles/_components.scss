@@ -7,14 +7,6 @@
     width: 100px;
 }
 
-@mixin darkContainer(){
-    position: relative;
-    @include bg_scene();
-    overflow: hidden;
-    border-radius: 6px;
-    color: $text-on-dark-color;
-    a { color: $text-on-dark-color; }
-}
 
 /*
 
@@ -25,8 +17,12 @@
 $scene-height:407px;
 
 .scene {
-    @include darkContainer();
-	max-height: $scene-height;
+	position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    color: $text-on-dark-color;
+    a { color: $text-on-dark-color; }
+    max-height: $scene-height;
 }
 
 
@@ -95,7 +91,6 @@ $scene-height:407px;
 */
 
 .login {
-    @include darkContainer();
     position: relative;
     padding-top: 21px;
 }
@@ -145,10 +140,8 @@ $scene-height:407px;
 */
 
 .select-domain {
-    @include darkContainer();
     position: relative;
     padding: 20px;
-
 }
 
 .domain-list {
@@ -275,7 +268,6 @@ body.simple{
 */
 
 .profile-form {
-    @include darkContainer();
     position: relative;
     padding: 20px;
     background: #233040;
@@ -433,7 +425,7 @@ h1.enterprise-header-text {
 }
 
 .pricing-enterprise-header {
-    
+
 }
 
 .container.enterprise-teaser {
