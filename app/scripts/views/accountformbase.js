@@ -1,6 +1,6 @@
-define(["jquery","underscore","backbone","models/account","validation"],
+define(["jquery","underscore","backbone","models/account","views/form","validation"],
 
-    function($,_,Backbone,Account){
+    function($,_,Backbone,Account,Form){
 
         /*
             Custom validator for .codenvy.com tenant names
@@ -11,7 +11,7 @@ define(["jquery","underscore","backbone","models/account","validation"],
         });
 
 
-        var AccountFormBase = Backbone.View.extend({
+        var AccountFormBase = Form.extend({
 
             settings : {
                 noDomainErrorMessage : "Please specify a domain name",
@@ -20,44 +20,6 @@ define(["jquery","underscore","backbone","models/account","validation"],
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match.",
                 invalidEmailErrorMessage : "Your email address must be legit",
                 invalidDomainNameErrorMessage : "Please specify a valid name for the domain"
-            },
-
-            initialize : function(){
-
-                $(this.el).on('submit', function(e){
-                    e.preventDefault();
-                });
-
-                this.validator = $(this.el).validate({
-
-                    rules: this.__validationRules(),
-
-                    messages: {
-                        domain: {
-                            required : this.settings.noDomainErrorMessage,
-                            validDomain : this.settings.invalidDomainNameErrorMessage
-                        },
-                        email: {
-                            required: this.settings.noEmailErrorMessage,
-                            email: this.settings.invalidEmailErrorMessage
-                        },
-                        password: {
-                            required: this.settings.noPasswordErrorMessage
-                        },
-                        password2: {
-                            required: this.settings.noConfirmPasswordErrorMessage,
-                            equalTo: this.settings.noConfirmPasswordErrorMessage
-                        }
-                    },
-
-                    onfocusout : false, onkeyup : false,
-
-                    submitHandler: _.bind(this.__submit,this),
-
-                    showErrors : _.bind(function(errorMap, errorList){
-                        this.__showErrors(errorMap, errorList);
-                    },this)
-                });
             },
 
             __validationRules : function(){
@@ -73,10 +35,27 @@ define(["jquery","underscore","backbone","models/account","validation"],
                 };
             },
 
-            __showErrors : function(errorMap, errorList){
-                console.log("this is", this);
-                console.log("invalid form", errorMap, errorList);
+            __validationMessages : function(){
+                return {
+                    domain: {
+                        required : this.settings.noDomainErrorMessage,
+                        validDomain : this.settings.invalidDomainNameErrorMessage
+                    },
+                    email: {
+                        required: this.settings.noEmailErrorMessage,
+                        email: this.settings.invalidEmailErrorMessage
+                    },
+                    password: {
+                        required: this.settings.noPasswordErrorMessage
+                    },
+                    password2: {
+                        required: this.settings.noConfirmPasswordErrorMessage,
+                        equalTo: this.settings.noConfirmPasswordErrorMessage
+                    }
+                };
+            },
 
+            __showErrors : function(errorMap, errorList){
                 function refocus(el){
                     el.focus();
                 }
@@ -105,7 +84,6 @@ define(["jquery","underscore","backbone","models/account","validation"],
                     return;
                 }
             },
-
 
             __restoreForm : function(){
                 this.$(".working").addClass("hidden");
