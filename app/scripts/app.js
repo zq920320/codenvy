@@ -6,7 +6,8 @@ define(["jquery",
         "views/resetpasswordform",
         "views/errorreport",
         "views/selectdomain",
-        "views/ideloader"
+        "views/ideloader",
+        "views/contactform"
         ],
 
     function($,
@@ -17,7 +18,8 @@ define(["jquery",
         ResetPasswordForm,
         ErrorReport,
         SelectDomain,
-        IDELoader){
+        IDELoader,
+        ContactForm){
 
 
         function modernize(){
@@ -46,7 +48,8 @@ define(["jquery",
                         resetPasswordForm = $(".resetpassword-form"),
                         errorContainer = $(".error-container"),
                         domainSelector = $(".select-domain"),
-                        loader = $(".loader");
+                        loader = $(".loader"),
+                        contactForm = $(".contact-form");
 
                     if(signupForm.length !== 0){
                         (function(){
@@ -137,6 +140,22 @@ define(["jquery",
                         new IDELoader.IDELoader().on("ready",function(d){
                             window.location.href = d.url;
                         });
+                    }
+
+                    if(contactForm.length !== 0){
+                        (function(){
+                            var form = ContactForm.get(contactForm),
+                                errorReport = ErrorReport.get(errorContainer);
+
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+
+                        })();
                     }
 
                 });
