@@ -98,10 +98,6 @@ define(["jquery",
                                 errorReport.hide();
                             });
 
-                            form.on("success", function(d){
-                                form.showMessage(d.message);
-                            });
-
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });

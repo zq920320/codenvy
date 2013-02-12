@@ -3,17 +3,6 @@ define(["underscore","views/accountformbase","models/account"],
     function(_,AccountFormBase,Account){
 
         var ForgotPasswordForm = AccountFormBase.extend({
-
-            showMessage : function(message){
-                if(typeof message === 'undefined'){
-                    throw new Error("Need a message");
-                }
-
-                this.$(".data").addClass("hidden");
-                this.$(".result-message").removeClass("hidden");
-                this.$(".result-message > p").html(message);
-            },
-
             __submit : function(){
                 this.__showProgress();
                 this.trigger("submitting");
@@ -21,6 +10,7 @@ define(["underscore","views/accountformbase","models/account"],
                 Account.recoverPassword(
                     this.$("input[name='email']").val(),
                     _.bind(function(d){
+                        this.__showResultMessage();
                         this.trigger("success",d);
                     },this),
                     _.bind(function(errors){
@@ -36,6 +26,11 @@ define(["underscore","views/accountformbase","models/account"],
                         }
                     },this)
                 );
+            },
+
+            __showResultMessage : function(){
+                this.$("fieldset.data").addClass("hidden");
+                this.$("fieldset.result-message").removeClass("hidden");
             }
         });
 
