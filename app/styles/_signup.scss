@@ -19,6 +19,7 @@
     .field {
         @include transition(0.3s,ease-in,opacity,0.3s);
     }
+    min-height: 231px;
 }
 
 .domain-placeholder {
@@ -36,7 +37,7 @@
     font-weight: bold;
     font-size: 1.3em;
 }
-.signup-button.hidden-button { opacity: 0; }
+.signup-button.hidden-button { opacity: 0;  }
 
 .signup-terms {
     position: absolute;
