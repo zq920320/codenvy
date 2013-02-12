@@ -8,7 +8,6 @@ require.config({
         'underscore' : {exports: '_' },
         'backbone' : {exports: 'Backbone', deps: ['underscore']},
         'skrollr' : {exports: 'skrollr' },
-        'modernizr' : {exports: 'Modernizr' },
         'validation' : {deps:["jquery"]},
         'json' : {exports: 'JSON'},
         'handlebars' :  {exports: 'Handlebars'}
@@ -19,7 +18,6 @@ require.config({
         validation: 'vendor/jquery.validate',
         underscore: 'vendor/underscore',
         backbone: 'vendor/backbone',
-        modernizr: 'vendor/modernizr.min',
         skrollr: 'vendor/skrollr',
         text : 'vendor/text',
         json : 'vendor/json2',
