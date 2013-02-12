@@ -131,6 +131,8 @@ input::-moz-focus-inner {
 textarea {
     overflow: auto; /* 1 */
     vertical-align: top; /* 2 */
+    @include input-element-text();
+    @include input-textbox-padding();
 }
 
 /**
@@ -140,6 +142,7 @@ textarea {
 form {
     text-align:center;
     padding: 20px 5px 25px 5px;
+    position: relative;
 }
 
 form .field {
@@ -165,9 +168,9 @@ form .field {
 input[type='text'],
 select,
 input[type='password']{
-    font-weight: 200;
+    @include input-element-text();
+
     height: 2em;
-    font-size: 1.2em;
     background-color: $text-box-background-color;
     border-radius: 5px;
     border: none;
@@ -178,7 +181,7 @@ input[type='password']{
         $text-box-inset-shadow-color 0px 1px 1px inset
     );
 
-    padding-left: 10px;
+    @include input-textbox-padding();
 }
 
 @include placeholder($text-box-placeholder-color);

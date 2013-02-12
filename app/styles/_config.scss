@@ -14,6 +14,14 @@ $scene-height : 407px;
 
 $enterprise-header-height:410px;
 
+@mixin input-element-text(){
+    font-weight: 200; font-size: 1.2em;
+}
+
+@mixin input-textbox-padding(){
+    padding-left: 10px;
+}
+
 // Typography
 // ----------
 
