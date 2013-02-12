@@ -18,9 +18,10 @@ define(["jquery","config"],function($,Config){
                         subject : ticketSubject,
                         message : ticketMessage
                     }
-                }, 
+                },
                 data
             ),
+            dataType : "jsonp",
             success: function(data) { success(); },
             error: function(d, msg) { error(); }
         });
