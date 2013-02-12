@@ -214,25 +214,30 @@
             waitForTenant : function(success, error){
                 //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
 
-                var tenantName = Utils.getQueryParameterByName("tenantName");
-
-                if(typeof tenantName === 'undefined'){
-                    error([
-                        new AccountError(null,"This is not a valid url")
-                    ]);
-                }
+               var redirectUrl = "";
+               if(typeof tenantName === 'undefined'){
+                   tenantName = Utils.getQueryParameterByName("tenantName");
+                   redirectUrl =  window.location.protocol + "//"
+                      + window.location.host.replace("www.", "")
+                      + "/sso/server/gen?username=" + Utils.getQueryParameterByName("username")
+                      + "&signature=" + encodeURIComponent(Utils.getQueryParameterByName("signature"))
+                      + "&redirectTenantName="+tenantName
+                      + "&authType=signed";
+                   if(typeof tenantName === 'undefined'){
+                       error([
+                           new AccountError(null,"This is not a valid url")
+                       ]);
+                   }
+               }else{
+                  redirectUrl = window.location;
+               }
 
                 var MAX_WAIT_TIME_SECONDS = 120,
                     PING_TIMEOUT_MILLISECONDS = 2000,
                     endTime = new Date().getTime() + MAX_WAIT_TIME_SECONDS * 1000;
 
                 function buildRedirectUrl(){
-                    return window.location.protocol + "//"
-                            + window.location.host.replace("www.", "")
-                            + "/sso/server/gen?username=" + Utils.getQueryParameterByName("username")
-                            + "&signature=" + encodeURIComponent(Utils.getQueryParameterByName("signature"))
-                            + "&redirectTenantName="+tenantName
-                            + "&authType=signed";
+                    return redirectUrl;
                 }
 
                 function hitServer(){
