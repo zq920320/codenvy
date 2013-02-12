@@ -70,3 +70,10 @@ $desktop-start: $tablet-end + 1;
 .right {
     text-align: right;
 }
+
+// ! Content visibility
+// ----------------------
+
+.hidden {
+    opacity: 0;
+}
