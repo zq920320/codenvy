@@ -13,6 +13,9 @@ $page-height : 10000px; //movies only
 $scene-height : 407px;
 
 $enterprise-header-height:410px;
+$enterprise-header-ground:70px;
+$enterprise-header-width: 947px;
+
 
 @mixin input-element-text(){
     font-weight: 200; font-size: 1.2em;

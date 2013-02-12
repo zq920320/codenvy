@@ -290,9 +290,37 @@ body.simple{
     Enterprise page
 */
 
-.enterprise-header {
-    @include image_enterprise_header();
+.enterprise {
+    position: relative;
     height: $enterprise-header-height;
+    padding: 0;
+
+}
+
+.enterprise-header {
+    min-height: $enterprise-header-height;
+    min-width: $enterprise-header-width;
+    @include image_enterprise_header();
+    background-position: 0% 40%;
+    position: absolute;
+    z-index: 1;
+}
+
+.enterprise-header-ground {
+    min-height: $enterprise-header-ground;
+    min-width: $enterprise-header-width;
+    background-color: #3e495a;
+    position: absolute;
+    bottom: 0;
+}
+
+h1.enterprise-header-text {
+    min-height: $enterprise-header-ground;
+    min-width: $enterprise-header-width;
+    background-color: #3e495a;
+    position: absolute;
+    top: 250px;
+    left: 400px;
 }
 
 .enterprise-features {
