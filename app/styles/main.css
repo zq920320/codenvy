@@ -1074,7 +1074,12 @@ img {
   background-image: -moz-linear-gradient(#ffffff, #f7f7f7);
   background-image: -o-linear-gradient(#ffffff, #f7f7f7);
   background-image: linear-gradient(#ffffff, #f7f7f7);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF', endColorstr='#F7F7F7');
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F7F7F7');
+}
+
+/* line 36, _containers.scss */
+.section-header {
+  margin-bottom: 2em;
 }
 
 /* line 2, _components.scss */
@@ -1676,36 +1681,73 @@ body.simple {
 
 /* line 432, _components.scss */
 .screenshot {
-  padding-bottom: 156px;
+  padding-bottom: 209px;
 }
 
-/* line 436, _components.scss */
+/* line 433, _components.scss */
 .screenshot.anywhere {
   background-image: url("../images/features/img_prntscr_accessanywhere.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 440, _components.scss */
-.screenshot.configure {
-  background-image: url("../images/features/img_prntscr_configure.png");
+/* line 434, _components.scss */
+.screenshot.invite {
+  background-image: url("../images/features/img_prntscr_invite.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 444, _components.scss */
+/* line 435, _components.scss */
 .screenshot.language {
   background-image: url("../images/features/img_prntscr_picklanguage.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 448, _components.scss */
+/* line 437, _components.scss */
 .choose-paas {
   background-image: url("../images/features/img_choosepaas.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
-  padding-bottom: 193px;
+  padding-bottom: 145px;
+}
+
+/* line 440, _components.scss */
+.screenshot.build-cycle {
+  background-image: url("../images/features/img_prntscr_buildcycle.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 441, _components.scss */
+.screenshot.pair-programming {
+  background-image: url("../images/features/img_prntscr_pair.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 442, _components.scss */
+.screenshot.editor {
+  background-image: url("../images/features/img_prntscr_editor.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 443, _components.scss */
+.screenshot.debug {
+  background-image: url("../images/features/img_prntscr_debug.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 445, _components.scss */
+.ide-screenshot {
+  margin-top: 2em;
+}
+/* line 447, _components.scss */
+.ide-screenshot img {
+  display: inline;
 }
 
 /* normalize.css v2.0.1 | MIT License | git.io/normalize */
