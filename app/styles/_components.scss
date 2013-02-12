@@ -295,12 +295,16 @@ body.simple{
     height: $enterprise-header-height;
 }
 
-.enterprise {
+.enterprise-features {
 
     .icon-head p {
         height: 150px;
     }
 
+    .row:last-child .icon-head p{
+        background: none;
+        height: 130px;
+    }
 
 }
 
@@ -329,7 +333,7 @@ body.simple{
 }
 
 .pricing-poetry {
-    font-size:1em;
+    font-size:1.5em;
     color:#8e979d;
     font-weight:300;
     padding:0.5em;
@@ -353,6 +357,12 @@ body.simple{
 .pricing-box-open-source {
     @include image_pricing_box_open_source();
     height:128px;
+}
+
+.paid-plan {
+    background-color:#2b3748;
+    border: solid 1px #313d4d;
+    padding: 0.8em;
 }
 
 .pricing-box-business {
@@ -445,5 +455,15 @@ body.simple{
 .ide-screenshot {
     margin-top: 2em;
     img{ display: inline; }
+}
+
+.feature-left {
+  text-align: left;
+  padding-right: 20px;
+}
+
+.feature-right {
+  text-align: left;
+  padding-left: 20px;
 }
 
