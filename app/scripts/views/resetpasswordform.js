@@ -1,6 +1,6 @@
-define(["views/accountformbase","models/account"],
+define(["underscore", "views/accountformbase","models/account"],
 
-    function(AccountFormBase,Account){
+    function(_,AccountFormBase,Account){
 
         var ResetPasswordForm = AccountFormBase.extend({
 

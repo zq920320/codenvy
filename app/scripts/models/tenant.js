@@ -1,6 +1,6 @@
 (function(window){
 
-    define(["underscore","backbone"], function(_,Backbone){
+    define(["jquery","underscore","backbone"], function($,_,Backbone){
 
         // implementation based on :
         // https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/select-tenant.js
@@ -12,7 +12,7 @@
             },
 
             __buildTenantUrl : function(){
-                return window.location.protocol + 
+                return window.location.protocol +
                     "//" + this.get("name") + "." + window.location.host + location.search.substr(0);
             }
 
@@ -50,4 +50,4 @@
 
     });
 
-})(window);
+}(window));

@@ -1,3 +1,5 @@
+/*global module:true */
+
 module.exports = function( grunt ) {
   'use strict';
   //
@@ -78,6 +80,12 @@ module.exports = function( grunt ) {
 
     // default lint configuration, change this to match your setup:
     // https://github.com/cowboy/grunt/blob/master/docs/task_lint.md#lint-built-in-task
+    // lint: {
+
+    // },
+
+    // specifying JSHint options and globals
+    // https://github.com/cowboy/grunt/blob/master/docs/task_lint.md#specifying-jshint-options-and-globals
     lint: {
       files: [
         'Gruntfile.js',
@@ -85,27 +93,28 @@ module.exports = function( grunt ) {
         'app/scripts/models/**/*.js',
         'app/scripts/views/**/*.js',
         'spec/**/*.js'
-      ]
-    },
-
-    // specifying JSHint options and globals
-    // https://github.com/cowboy/grunt/blob/master/docs/task_lint.md#specifying-jshint-options-and-globals
-    jshint: {
+      ],
       options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        boss: true,
-        eqnull: true,
-        browser: true
-      },
-      globals: {
-        jQuery: true
+        options: {
+            curly: true,
+            eqeqeq: true,
+            immed: true,
+            latedef: true,
+            newcap: true,
+            noarg: true,
+            sub: true,
+            undef: true,
+            boss: true,
+            eqnull: true,
+            browser: true,
+            unused: true
+        },
+        globals: {
+            jQuery: true,
+            define: true,
+            require: true,
+            Modernizr: true
+        }
       }
     },
 

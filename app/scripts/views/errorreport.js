@@ -1,4 +1,4 @@
-define(["backbone"],function(Backbone){
+define(["jquery", "backbone"],function($,Backbone){
 
     var ErrorReport = Backbone.View.extend({
 
