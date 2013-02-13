@@ -19,8 +19,27 @@
     <body class="responsive">
 
         <header>
-            <div class="container">
-                     <div class="focused-logo"><a href="/"><img src="/images/logoCodenvyBig.png"></a></div>
+            <div class="container" style="overflow:visible;">
+                <div class="row">
+                    <div class="span2 logo-wrapper">
+                        <a href="/">
+                            <img width="130px" height="19px" src="./images/logoCodenvy.png">
+                        </a>
+                    </div>
+                    <div class="span8 show-on-tablet-desktop">
+                        <nav>
+                            <ul class="main-menu">
+                                <li><a href="features.html">Features</a></li>
+                                <li><a href="pricing.html">Pricing</a></li>
+                                <li><a href="enterprise.html">Enterprise</a></li>
+                                <li><a href="contact.html">Contact</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="span2 sign-in-button-wrapper right show-on-tablet-desktop">
+                        <a class="sign-in-button" href="login.html">Login</a>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -28,7 +47,7 @@
             {{ content }}
         </div>
 
-        <footer >
+        <footer>
             <nav>
                 <ul>
                     

@@ -86,8 +86,8 @@ header > nav {
 
 
 .focused-logo {
-    margin-top: 30px;
+    margin: 30px auto 0 auto;
     height: 30px;
-    @include image_logo_big;
+    width: 205px;
 }
 

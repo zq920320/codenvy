@@ -94,12 +94,18 @@ $scene-height:407px;
 .login {
     position: relative;
     padding-top: 21px;
+    margin: 10px;
 
     form {
         padding: 25px;
     }
 
-    margin: 10px;
+    hr.short-line {
+        margin-top: 30px;
+        margin-bottom: 10px;
+    }
+
+
 }
 
 /*
