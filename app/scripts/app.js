@@ -21,7 +21,6 @@ define(["jquery",
         IDELoader,
         ContactForm){
 
-
         function modernize(){
             Modernizr.load({
                 // HTML5 placeholder for input elements
@@ -67,7 +66,7 @@ define(["jquery",
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
-                        })();
+                        }());
                     }
 
                     if(signinForm.length !== 0){
@@ -86,7 +85,7 @@ define(["jquery",
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
-                        })();
+                        }());
                     }
 
                     if(forgotPasswordForm.length !== 0){
@@ -102,7 +101,8 @@ define(["jquery",
                                 errorReport.show(message);
                             });
 
-                        })();
+
+                        }());
                     }
 
                     if(resetPasswordForm.length !== 0){
@@ -125,11 +125,11 @@ define(["jquery",
 
                             form.resolveUserEmail();
 
-                        })();
+                        }());
                     }
 
                     if(domainSelector.length !== 0){
-                        var selectdomain = new SelectDomain.get(domainSelector);
+                        new SelectDomain.get(domainSelector);
                     }
 
                     if(loader.length !== 0){
@@ -151,7 +151,7 @@ define(["jquery",
                                 errorReport.show(message);
                             });
 
-                        })();
+                        }());
                     }
 
                 });

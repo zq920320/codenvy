@@ -1,6 +1,6 @@
-define(["views/accountformbase", "models/account"],
+define(["jquery", "underscore", "views/accountformbase", "models/account"],
 
-    function(AccountFormBase,Account){
+    function($,_,AccountFormBase,Account){
 
         var SignInForm = AccountFormBase.extend({
 

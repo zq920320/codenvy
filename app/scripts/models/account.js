@@ -23,7 +23,7 @@
 
         var Utils = {
             getQueryParameterByName : function(name){
-                name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
                 var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
                 var results = regex.exec(window.location.search);
                 if(results){
@@ -216,8 +216,8 @@
 
                var redirectUrl = "";
                if(typeof tenantName === 'undefined'){
-                   tenantName = Utils.getQueryParameterByName("tenantName");
-                   redirectUrl =  window.location.protocol + "//" + 
+                   var tenantName = Utils.getQueryParameterByName("tenantName");
+                   redirectUrl =  window.location.protocol + "//" +
                                     window.location.host.replace("www.", "") +
                                     "/sso/server/gen?username=" + Utils.getQueryParameterByName("username") +
                                     "&signature=" + encodeURIComponent(Utils.getQueryParameterByName("signature")) +
@@ -284,4 +284,4 @@
 
         };
     });
-})(window);
+}(window));
