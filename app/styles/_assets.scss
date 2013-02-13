@@ -22,6 +22,14 @@
 	}
 }
 
+@mixin image_logo_big {
+    background:{
+        image:url('../images/logoCodenvyBig.png');
+        repeat:no-repeat;
+        position: 50% 50%;
+    }
+}
+
 @mixin image_totem {
 	background:{
 		image:url('../images/codenvyTotem.png');

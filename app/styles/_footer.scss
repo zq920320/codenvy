@@ -29,3 +29,17 @@ footer > nav > ul {
 		margin-left: 20px;
 	}
 }
+
+
+/*
+
+	sticky footer
+
+*/
+
+footer.sticky {
+	position: absolute;
+	bottom: 20px;
+	width: 100%;
+	z-index: 1;
+}
