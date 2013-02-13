@@ -119,9 +119,10 @@ define(["models/account","models/tenant","underscore"], function(Account,Tenant,
 
                 sinon.stub(Tenant,"getTenants", function(){
                     done();
+                    return [];
                 });
 
-                Account.getTenants();
+                Account.getTenants(function(){});
             });
 
             it("calls success callback if Tenant.getTenants resolves", function(done){
