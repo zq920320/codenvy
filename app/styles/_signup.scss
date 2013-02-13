@@ -23,12 +23,12 @@
 }
 
 .domain-placeholder {
-    font-size: 1.2em;
+    font-size: 0.8em;
     font-weight: 200;
     position: absolute;
-    top: 18px;
-    right: 14px;
-    color:$text-box-placeholder-color;
+    top: 21px;
+    right: 19px;
+    color:$domain-placeholder-text-color;
 }
 
 .hidden-text-box { opacity: 0; }

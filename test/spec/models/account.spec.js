@@ -163,13 +163,6 @@ define(["models/account","models/tenant","underscore"], function(Account,Tenant,
 
         });
 
-        // describe("waitForTenant", function(){
-
-        //     it("", function(){
-
-        //     });
-
-        // });
 
 	});
 
