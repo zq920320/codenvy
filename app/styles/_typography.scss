@@ -39,6 +39,7 @@ h2{
     margin-top: 0; margin-bottom: 0;
 
     &.light{ font-weight: 200; }
+    &.shiny{ @include shiny-text-gradient(); }
 }
 
 h3 {
