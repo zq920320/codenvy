@@ -1,7 +1,24 @@
 {
-  "author": "Hyacinthe Briand, Philip Nuzhnyi, Mark Downey",
-  "name": "Odyssey",
-  "version": "0.0.1",
-  "dependencies": {},
-  "devDependencies": {}
+    "author": "Hyacinthe Briand, Philip Nuzhnyi, Mark Downey",
+    "name": "Odyssey",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/codenvy/odyssey.git"
+    },
+    "dependencies": {
+        "jquery": "1.8.0",
+        "jquery.placeholder": "2.0.7",
+        "jquery.validate": "1.10.0",
+        "json2": "*",
+        "handlebars": "1.0.rc.1",
+        "modernizr": "2.6.2",
+        "require": "2.0.5",
+        "require text": "2.0.3",
+        "underscore": "1.4.2",
+        "backbone": "0.9.9"
+    },
+    "devDependencies": {
+        "yeoman" : "0.9.6"
+    }
 }
