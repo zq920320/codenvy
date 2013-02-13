@@ -1,28 +1,28 @@
 define(["models/account","models/tenant","underscore"], function(Account,Tenant,_){
 
-	describe("Models : Account", function(){
+    describe("Models : Account", function(){
 
-		describe("module", function(){
+        describe("module", function(){
 
-			it("can be imported", function(){
-				expect(Account).to.be.ok;
-			});
+            it("can be imported", function(){
+                expect(Account).to.be.ok;
+            });
 
             it("exports AccountError", function(){
                 expect(Account).to.respondTo("AccountError");
             });
 
-			it("exports login method", function(){
-				expect(Account).to.respondTo("login");
-			});
+            it("exports login method", function(){
+                expect(Account).to.respondTo("login");
+            });
 
-			it("exports createTenant method", function(){
-				expect(Account).to.respondTo("createTenant");
-			});
+            it("exports createTenant method", function(){
+                expect(Account).to.respondTo("createTenant");
+            });
 
-			it("exports recoverPassword method", function(){
-				expect(Account).to.respondTo("recoverPassword");
-			});
+            it("exports recoverPassword method", function(){
+                expect(Account).to.respondTo("recoverPassword");
+            });
 
             it("exports isValidDomain method", function(){
                 expect(Account).to.respondTo("isValidDomain");
@@ -44,7 +44,7 @@ define(["models/account","models/tenant","underscore"], function(Account,Tenant,
                 expect(Account).to.respondTo("waitForTenant");
             });
 
-		});
+        });
 
         describe("isValidDomain", function(){
 
@@ -164,6 +164,6 @@ define(["models/account","models/tenant","underscore"], function(Account,Tenant,
         });
 
 
-	});
+    });
 
 });

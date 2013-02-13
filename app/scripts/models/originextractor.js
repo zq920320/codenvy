@@ -5,7 +5,7 @@
         return {
             getFromQueryString : function(queryString){
                 var m = new RegExp(
-                    Config.originTrackerUrlParameterName+"\=([^\&]+)",
+                    Config.originTrackerUrlParameterName+"=([^&]+)",
                     "gi").exec(queryString);
                 if(m){ return m[1]; }
             },

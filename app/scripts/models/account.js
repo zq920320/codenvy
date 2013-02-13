@@ -97,7 +97,7 @@
                 var loginUrl = "/sso/server/gen?authType=jaas",
                     queryString = window.location.search;
 
-                if(queryString != null && queryString.length > 4){ ///?key=value >4 symbols
+                if(queryString !== null && queryString.length > 4){ ///?key=value >4 symbols
                     loginUrl += "&" + queryString.substring(1);
                 }
 
@@ -217,12 +217,12 @@
                var redirectUrl = "";
                if(typeof tenantName === 'undefined'){
                    tenantName = Utils.getQueryParameterByName("tenantName");
-                   redirectUrl =  window.location.protocol + "//"
-                      + window.location.host.replace("www.", "")
-                      + "/sso/server/gen?username=" + Utils.getQueryParameterByName("username")
-                      + "&signature=" + encodeURIComponent(Utils.getQueryParameterByName("signature"))
-                      + "&redirectTenantName="+tenantName
-                      + "&authType=signed";
+                   redirectUrl =  window.location.protocol + "//" + 
+                                    window.location.host.replace("www.", "") +
+                                    "/sso/server/gen?username=" + Utils.getQueryParameterByName("username") +
+                                    "&signature=" + encodeURIComponent(Utils.getQueryParameterByName("signature")) +
+                                    "&redirectTenantName="+tenantName +
+                                    "&authType=signed";
                    if(typeof tenantName === 'undefined'){
                        error([
                            new AccountError(null,"This is not a valid url")

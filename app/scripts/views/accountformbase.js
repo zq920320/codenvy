@@ -1,6 +1,6 @@
-define(["jquery","underscore","backbone","models/account","views/form","validation"],
+define(["models/account","views/form","validation"],
 
-    function($,_,Backbone,Account,Form){
+    function(Account,Form){
 
         /*
             Custom validator for .codenvy.com tenant names
