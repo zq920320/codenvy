@@ -477,7 +477,7 @@ h1.enterprise-header-text {
 */
 
 .container.features {
-    position:relative; z-index:1; min-height: 353px;
+    position:relative; z-index:1; min-height: 300px;
     &:after{ @include content_features_header(); };
 }
 
