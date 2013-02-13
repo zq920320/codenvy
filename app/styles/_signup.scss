@@ -35,9 +35,11 @@
 .signup-button {
     opacity: 1;
     @include transition(0.2s,ease-in,opacity,0.3s);
-    font-weight: bold;
+    font-weight: 400;
     font-size: 1.3em;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
 }
+
 .signup-button.hidden-button { opacity: 0; }
 
 .signup-terms {

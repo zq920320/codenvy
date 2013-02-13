@@ -52,12 +52,19 @@ header > nav {
 
 .sign-up-button {
     font-weight: 300;
-    border: solid 1px $signin-button-outline;
+    border: solid 1px $signup-button-outline;
     padding: 11px;
     border-radius: 5px;
-    @include signin-button-gradient;
+    @include signup-button-gradient;
     color: white;
-    background: $signup-button-color;
+
+    &:hover{
+        background: $signup-button-color;
+    };
+
+    &:active{
+        opacity: 0.7;
+    };
 }
 
 .span2.logo-wrapper{
