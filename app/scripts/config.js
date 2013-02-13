@@ -4,7 +4,10 @@ define(function(){
 		userVoiceSubdomain : "cloudide",
 		userVoiceClientKey : "HFHriEB9vuXkTY7p23VxBw",
 
-        placeholderPolyfillUrl : "scripts/vendor/jquery.placeholder.min.js"
+        // e.g. codenvy.con/contact?o=pricing-page
+        originTrackerUrlParameterName : "o",
+
+        placeholderPolyfillUrl : "scripts/vendor/jquery.placeholder.min.js",
 
 	};
 
