@@ -1,4 +1,4 @@
-define(["jquery", "models/contact"], function($,Contact){
+define(["jquery", "models/contact", "models/originextractor"], function($,Contact,OriginExtractor){
 
     describe("Models : Contact", function(){
 
@@ -16,12 +16,17 @@ define(["jquery", "models/contact"], function($,Contact){
 
         describe("sendMessage", function(){
 
-            var ajaxStub = null;
+            var ajaxStub = null, getFromLocationStub = null;
 
             afterEach(function(){
                 if(ajaxStub){
                     ajaxStub.restore();
                     ajaxStub = null;
+                }
+
+                if(getFromLocationStub){
+                    getFromLocationStub.restore();
+                    getFromLocationStub = null;
                 }
             })
 
@@ -49,9 +54,37 @@ define(["jquery", "models/contact"], function($,Contact){
                 expect(fn).to.throw("Sender must be a valid email address");
             });
 
+            it("invokes OriginExtractor.getFromLocation", function(done){
+                getFromLocationStub = sinon.stub(OriginExtractor,"getFromLocation",function(){
+                    done();
+                });
+
+                ajaxStub = sinon.stub($,"ajax",function(options){
+
+                });
+
+                var sender = "bob@gmail.com", message = "Message";
+                Contact.sendMessage(sender,message);
+            });
+
+            it("passes what OriginExtractor.getFromLocation returns along to UserVoice", function(done){
+
+                var sender = "bob@gmail.com", message = "Message", origin = "this is origin";
+
+                getFromLocationStub = sinon.stub(OriginExtractor,"getFromLocation",function(){
+                    return origin;
+                });
+
+                ajaxStub = sinon.stub($,"ajax",function(options){
+                    expect(options.data.ticket.referrer).to.equal(origin);
+                    done();
+                });
+
+                Contact.sendMessage(sender,message);
+            });
 
             it("invokes UserVoice ticket service", function(done){
-                
+
                 var sender = "bob@gmail.com", message = "Message";
 
                 ajaxStub = sinon.stub($,"ajax",function(options){
@@ -66,7 +99,7 @@ define(["jquery", "models/contact"], function($,Contact){
             it("invokes success callback if UserVoice is happy", function(done){
 
                 ajaxStub = sinon.stub($,"ajax",function(options){
-                    options.success();                 
+                    options.success();
                 });
 
                 Contact.sendMessage("bob@gmail.com","Message",function(){ done(); });
@@ -75,7 +108,7 @@ define(["jquery", "models/contact"], function($,Contact){
             it("invokes error callback if UserVoice is not happy", function(done){
 
                 ajaxStub = sinon.stub($,"ajax",function(options){
-                    options.error();                 
+                    options.error();
                 });
 
                 Contact.sendMessage("bob@gmail.com","Message",function(){}, function(){ done(); });

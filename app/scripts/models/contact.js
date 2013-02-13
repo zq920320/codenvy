@@ -1,4 +1,4 @@
-define(["jquery","config"],function($,Config){
+define(["jquery","config","models/originextractor"],function($,Config,OriginExtractor){
 
     function __isValidEmail(value){
         // http://projects.scottsplayground.com/email_address_validation/
@@ -7,10 +7,9 @@ define(["jquery","config"],function($,Config){
 
 
     function __sendData(email, ticketSubject, ticketMessage, data, success,error){
-        // Execute the JSONP request to submit the ticket
-        $.ajax({
-            url: 'https://' + Config.userVoiceSubdomain + '.uservoice.com/api/v1/tickets/create_via_jsonp.json?callback=?',
-            data: $.extend(
+
+        var origin = OriginExtractor.getFromLocation(),
+            dataBundle = $.extend(
                 {
                     client: Config.userVoiceClientKey,
                     email : email,
@@ -18,9 +17,16 @@ define(["jquery","config"],function($,Config){
                         subject : ticketSubject,
                         message : ticketMessage
                     }
-                },
-                data
-            ),
+                },data);
+
+        if(typeof origin !== 'undefined'){
+            dataBundle.ticket.referrer = origin;
+        }
+
+        // Execute the JSONP request to submit the ticket
+        $.ajax({
+            url: 'https://' + Config.userVoiceSubdomain + '.uservoice.com/api/v1/tickets/create_via_jsonp.json?callback=?',
+            data: dataBundle,
             dataType : "jsonp",
             success: function(data) { success(); },
             error: function(d, msg) { error(); }
