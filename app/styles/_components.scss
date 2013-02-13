@@ -513,4 +513,21 @@ h1.enterprise-header-text {
 }
 
 
+/* 
+
+    Jobs
+
+*/
+
+.job-listing {
+
+    p.back {
+        
+        margin-top: 30px;
+
+        a {
+            color: $link-color-on-dark;
+        }        
+    }
+}
 
