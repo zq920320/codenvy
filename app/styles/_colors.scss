@@ -9,6 +9,8 @@ $link-color:#44484b;
 $footer-link-color:#8e979d;
 
 $signin-button-outline:#cbcbcb;
+$signup-button-outline:#8ECDF2;
+
 $signup-button-color:#54aee1;
 $signup-button-font-color:#8e979d;
 
@@ -31,9 +33,10 @@ $link-color-on-dark:#54aee1;
 
 $container-border-color:#d7d7d7;
 
+
 @mixin signup-button-gradient {
-    @include background-image(linear-gradient(#d6e3ed, $signup-button-color 35%));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d6e3ed', endColorstr='#54aee1');
+    @include background-image(linear-gradient(#8ECDF2, #54aee1 35%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#8ECDF2', endColorstr='#54aee1');
 }
 
 @mixin signin-button-gradient {
