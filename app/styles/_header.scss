@@ -76,3 +76,19 @@ header > nav {
         display: inline;
     }
 }
+
+
+/*
+
+    Focused 
+
+
+*/
+
+
+.focused-logo {
+    margin-top: 50px;
+    height: 30px;
+    @include image_logo_big;
+}
+
