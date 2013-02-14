@@ -86,13 +86,15 @@ define(["models/account","views/form","validation"],
             },
 
             __restoreForm : function(){
-                this.$(".working").addClass("hidden");
-                this.$("input[type='submit']").show();
+                this.$("input[type='submit']").removeAttr("disabled");
+                // this.$(".working").addClass("hidden");
+                // this.$("input[type='submit']").show();
             },
 
             __showProgress : function(){
-                this.$("input[type='submit']").hide();
-                this.$(".working").removeClass("hidden");
+                this.$("input[type='submit']").attr("disabled","disabled");
+                // this.$("input[type='submit']").hide();
+                // this.$(".working").removeClass("hidden");
             }
         });
 
