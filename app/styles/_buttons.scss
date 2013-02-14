@@ -133,6 +133,10 @@
     &:active{
         border-color: #FFF;
     };
+
+    &:disabled{
+        background-color:#5e6574;
+    };
 }
 
 
