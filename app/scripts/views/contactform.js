@@ -51,7 +51,7 @@ define(["underscore","views/form","models/Contact"],function(_,Form,Contact){
                 },this)
             );
         },
-        
+
         __showErrors : function(errorMap, errorList){
             if(typeof errorMap.email !== 'undefined'){
                 this.trigger("invalid","email",errorMap.email);
@@ -63,15 +63,13 @@ define(["underscore","views/form","models/Contact"],function(_,Form,Contact){
                 return;
             }
         },
-        
+
         __restoreForm : function(){
-            this.$(".working").addClass("hidden");
-            this.$("input[type='submit']").show();
+            this.$("input[type='submit']").removeAttr("disabled");
         },
 
         __showProgress : function(){
-            this.$("input[type='submit']").hide();
-            this.$(".working").removeClass("hidden");
+            this.$("input[type='submit']").attr("disabled","disabled");
         }
     });
 
