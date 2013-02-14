@@ -1,42 +1,44 @@
 ---
     layout : focused
 ---
-<div class="container">
-    <div class="row">
-        <div class="span2"></div>
-        <div class="span8">
-            <div class="container dark login rounded shadow">
-                <div class="error-container"></div>
-                <h2 class="shiny center">Welcome back!</h2>
-                <hr class="short-line">
-                <form class="login-form" method="post">
-                    <div class="field">
-                        <input name="email" type="text" class="required email" placeholder="email">
-                    </div>
-                    <div class="field">
-                        <input name="password" type="password" placeholder="password">
-                    </div>
-                    <div class="field">
-                        <input type="submit" class="signup-button" value="Login">
-                        <div class="working hidden">working...</div>
-                    </div>
-                </form>
 
-                <div class="aternative-login">
-                    <a href="#" class="oauth-button google"></a>
-                    <a href="#" class="oauth-button github"></a>
+<div class="content">       
+    <div class="container">
+        <div class="row">
+            <div class="span2"></div>
+            <div class="span8">
+                <div class="container dark login rounded shadow">
+                    <div class="error-container"></div>
+                    <h2 class="shiny center">Welcome back!</h2>
+                    <hr class="short-line">
+                    <form class="login-form" method="post">
+                        <div class="field">
+                            <input name="email" type="text" class="required email" placeholder="email">
+                        </div>
+                        <div class="field">
+                            <input name="password" type="password" placeholder="password">
+                        </div>
+                        <div class="field">
+                            <input type="submit" class="signup-button" value="Login">
+                            <div class="working hidden">working...</div>
+                        </div>
+                    </form>
+
+                    <div class="aternative-login">
+                        <a href="#" class="oauth-button google"></a>
+                        <a href="#" class="oauth-button github"></a>
+                    </div>
                 </div>
             </div>
+            <div class="span2"></div>
         </div>
-        <div class="span2"></div>
-    </div>
-    <div class="row">
-        <div class="span2"></div>
-        <div class="span8 center">
-            <a href="forgot-password.html">Forgot your password?</a>
-        </div>
-        <div class="span2">
-        </div>
-        <div class="span2"></div>
-    </div>
 </div>
+
+<footer >
+    <nav>
+        <ul>
+            <li><a class="footer-link" href="forgot-password.html">Forgot your password?<b></a></li>
+            <li><a class="footer-link" href="/">Don't have an account? Sign up.</a></li>        
+        </ul>
+    </nav>
+</footer>
