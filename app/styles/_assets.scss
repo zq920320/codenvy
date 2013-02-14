@@ -342,4 +342,10 @@
     }
 }
 
-
+@mixin image_link_separator {
+    background: {
+        image:url('../images/linkSeparator.png');
+        repeat:no-repeat;
+        position: 0% 12px;
+    }
+}
