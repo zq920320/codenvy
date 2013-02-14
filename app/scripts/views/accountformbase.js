@@ -14,12 +14,12 @@ define(["models/account","views/form","validation"],
         var AccountFormBase = Form.extend({
 
             settings : {
-                noDomainErrorMessage : "Please specify a domain name",
-                noEmailErrorMessage : "You forgot to give us your email",
-                noPasswordErrorMessage : "Please provide your account password",
+                noDomainErrorMessage : "Please specify a domain name.",
+                noEmailErrorMessage : "Please provide an email address.",
+                noPasswordErrorMessage : "Please provide your account password.",
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match.",
-                invalidEmailErrorMessage : "Your email address must be legit",
-                invalidDomainNameErrorMessage : "Please specify a valid name for the domain"
+                invalidEmailErrorMessage : "You must provide a valid email address.",
+                invalidDomainNameErrorMessage : "Your domain name cannot start with a number and must only contain digits and characters. "
             },
 
             __validationRules : function(){
