@@ -362,6 +362,10 @@ h1.enterprise-header-text {
             color: $text-on-dark-color;
             padding-right: 30px;
         }
+
+        &.highlight {
+            @include image_highlight();
+        }
     }
 
 }
@@ -513,7 +517,7 @@ h1.enterprise-header-text {
 }
 
 
-/* 
+/*
 
     Jobs
 
@@ -522,12 +526,12 @@ h1.enterprise-header-text {
 .job-listing {
 
     p.back {
-        
+
         margin-top: 30px;
 
         a {
             color: $link-color-on-dark;
-        }        
+        }
     }
 }
 

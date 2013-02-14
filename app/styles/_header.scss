@@ -26,7 +26,7 @@ header > nav {
 	}
 
 
-    @include respond-to(tablet-desktop){
+    @include respond-to(tablet-desktop) {
         & li:nth-child(1){
             background: none;
         };

@@ -349,3 +349,11 @@
         position: 0% 12px;
     }
 }
+
+@mixin image_highlight{
+    background: {
+        image:url('../images/pricing/sep_grad_small.png');
+        repeat:no-repeat;
+        position: 50% 100%;
+    }
+}
