@@ -455,6 +455,11 @@ h1.enterprise-header-text {
     color:$text-on-dark-color;
     padding: 1.5em;
     a { color: $link-color-on-dark; }
+
+    h3 {
+        margin: 0 0 5px 0;
+        @include shiny-text-gradient();
+    }
 }
 
 .welcome-pack {
