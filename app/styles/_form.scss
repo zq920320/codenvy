@@ -167,7 +167,8 @@ form .field {
 
 input[type='text'],
 select,
-input[type='password']{
+input[type='password'],
+select option{
     @include input-element-text();
 
     height: 2em;
@@ -200,6 +201,10 @@ input[type='password']{
     padding-top: 10px;
     margin-top: 10px;
 }
+
+.error-container.ok-message {  
+    background-color: rgba(0, 255, 0, .4);
+ }
 
 .error-container.expanded {
     opacity: 1.0;

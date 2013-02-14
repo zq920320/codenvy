@@ -47,6 +47,16 @@ header > nav {
     border-radius: 5px;
     @include signin-button-gradient;
     color: $signup-button-font-color;
+
+    &:hover{
+        color: #44484b;
+        @include gray-button-gradient-highlight();
+        @include box-shadow(0px 0px 0px 1px rgba(255, 255, 255, 0.5));        
+    };
+
+    &:active{
+        border-color: #FFF;
+    };
 }
 
 .sign-up-button {
