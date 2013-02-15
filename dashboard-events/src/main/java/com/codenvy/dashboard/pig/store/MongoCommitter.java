@@ -25,51 +25,57 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import java.io.IOException;
 
 /**
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class MyOutCommitter extends OutputCommitter
+public class MongoCommitter extends OutputCommitter
 {
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public void setupJob(JobContext jobContext) throws IOException
    {
-      // TODO Auto-generated method stub
-
    }
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public void cleanupJob(JobContext jobContext) throws IOException
    {
-      // TODO Auto-generated method stub
-
    }
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public void setupTask(TaskAttemptContext taskContext) throws IOException
    {
-      // TODO Auto-generated method stub
-
    }
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public boolean needsTaskCommit(TaskAttemptContext taskContext) throws IOException
    {
-      // TODO Auto-generated method stub
       return false;
    }
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public void commitTask(TaskAttemptContext taskContext) throws IOException
    {
-      // TODO Auto-generated method stub
-
    }
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public void abortTask(TaskAttemptContext taskContext) throws IOException
    {
-      // TODO Auto-generated method stub
-
    }
-
 }

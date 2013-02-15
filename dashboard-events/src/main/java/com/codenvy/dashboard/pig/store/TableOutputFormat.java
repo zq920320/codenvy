@@ -68,7 +68,7 @@ public class TableOutputFormat extends OutputFormat<WritableComparable, Tuple>
    public OutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException, InterruptedException
    {
       // TODO Auto-generated method stub
-      return new MyOutCommitter();
+      return new MongoCommitter();
    }
 
 }

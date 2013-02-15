@@ -27,8 +27,8 @@ import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.distribution.Version;
 
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -46,15 +46,14 @@ public class BaseMongoTest
    
    protected final String serverUrl = "mongodb://localhost:12345/test";
 
-   @BeforeSuite
+   @BeforeClass
    public void setUp() throws Exception
    {
       startMongoServer();
       initClient();
    }
 
-
-   @AfterSuite
+   @AfterClass
    public void tearDown() throws Exception
    {
       mongoClient.close();
