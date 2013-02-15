@@ -18,12 +18,17 @@
  */
 package com.codenvy.dashboard.pig.store;
 
+import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.Mongo;
+import com.mongodb.MongoURI;
+import com.mongodb.WriteConcern;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
 import java.io.IOException;
@@ -34,16 +39,33 @@ import java.io.IOException;
 public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
 {
 
+   /**
+    * Collection to write data in.
+    */
    protected DBCollection dbCollection;
 
+   /**
+    * Mongo client. Have to be closed.
+    */
+   protected Mongo mongo;
+
+   /**
+    * {@link TupleTransformer}.
+    */
    protected TupleTransformer transformer;
 
    /**
     * MongoDbRecordWriter constructor.
     */
-   MongoDbRecordWriter(DBCollection dbCollection, TupleTransformer transformer)
+   MongoDbRecordWriter(String serverUrl, TupleTransformer transformer) throws IOException
    {
-      this.dbCollection = dbCollection;
+      MongoURI uri = new MongoURI(serverUrl);
+
+      this.mongo = new Mongo(uri);
+      DB db = mongo.getDB(uri.getDatabase());
+      db.setWriteConcern(WriteConcern.FSYNCED);
+
+      this.dbCollection = db.getCollection(uri.getCollection());
       this.transformer = transformer;
    }
 
@@ -53,8 +75,15 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
    @Override
    public void write(WritableComparable key, Tuple value) throws IOException, InterruptedException
    {
-      DBObject dbObject = transformer.transform(value);
-      // TODO
+      try
+      {
+         DBObject dbObject = transformer.transform(value);
+         dbCollection.save(dbObject);
+      }
+      catch (ExecException e)
+      {
+         throw new IOException(e);
+      }
    }
 
    /**
@@ -63,6 +92,6 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
    @Override
    public void close(TaskAttemptContext context) throws IOException, InterruptedException
    {
-      // do nothing here
+      mongo.close();
    }
 }

@@ -18,22 +18,32 @@
  */
 package com.codenvy.dashboard.pig.store;
 
+import com.codenvy.dashboard.pig.store.TupleTransformerFactory.ScriptType;
 import com.mongodb.DBObject;
 
+import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
-public class EventOccurrenceTransformer implements TupleTransformer
+public abstract class AbstractTupleTransformer implements TupleTransformer
 {
+   /**
+    * Based script type.
+    */
+   protected final ScriptType type;
 
    /**
-    * {@inheritDoc}
+    * AbstractTupleTransformer constructor.
     */
-   public DBObject transform(Tuple tuple)
+   AbstractTupleTransformer(ScriptType type)
    {
-      // TODO Auto-generated method stub
-      return null;
+      this.type = type;
    }
+   
+   /**
+    * Returns value for "_id" field of {@link DBObject} instance.
+    */
+   protected abstract long getId(Tuple tuple) throws ExecException;
 }

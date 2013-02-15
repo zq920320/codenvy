@@ -18,6 +18,7 @@
  */
 package com.codenvy.dashboard.pig.scripts;
 
+
 /**
  * Constants list. For the record, all parameters will be substituted 
  * in Pig script at runtime.

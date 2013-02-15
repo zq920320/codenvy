@@ -19,9 +19,8 @@
 package com.codenvy.dashboard.pig.store;
 
 import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
-import com.mongodb.WriteConcern;
+import com.mongodb.MongoClientURI;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -33,7 +32,6 @@ import org.testng.annotations.BeforeSuite;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.UUID;
 
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
@@ -45,6 +43,8 @@ public class BaseMongoTest
    private MongodProcess mongoProcess;
 
    private MongoClient mongoClient;
+   
+   protected final String serverUrl = "mongodb://localhost:12345/test";
 
    @BeforeSuite
    public void setUp() throws Exception
@@ -61,40 +61,6 @@ public class BaseMongoTest
       mongoProcess.stop();
    }
 
-   //   public void test() throws Exception
-   //   {
-   //      DBCollection coll = db.getCollection("test");
-   //
-   //      BasicDBObject doc =
-   //         new BasicDBObject("name", "MongoDB").append("type", "database").append("count", 1)
-   //            .append("info", new BasicDBObject("x", 203).append("y", 102));
-   //
-   //      coll.insert(doc);
-   //
-   //      BasicDBObject query = new BasicDBObject("type", "database");
-   //      DBCursor cursor = coll.find(query);
-   //
-   //      try
-   //      {
-   //         while (cursor.hasNext())
-   //         {
-   //            System.out.println(cursor.next());
-   //         }
-   //      }
-   //      finally
-   //      {
-   //         cursor.close();
-   //      }
-   //   }
-
-   /**
-    * Creates and returns new collection for testing purpose.
-    */
-   protected DBCollection getCollection()
-   {
-      return db.getCollection(UUID.randomUUID().toString());
-   }
-
    private void startMongoServer() throws IOException, UnknownHostException
    {
       MongodStarter starter = MongodStarter.getDefaultInstance();
@@ -104,8 +70,8 @@ public class BaseMongoTest
 
    private void initClient() throws UnknownHostException
    {
-      mongoClient = new MongoClient("localhost", 12345);
-      mongoClient.setWriteConcern(WriteConcern.JOURNALED);
-      db = mongoClient.getDB("dashboard");
+      MongoClientURI uri = new MongoClientURI(serverUrl);
+      mongoClient = new MongoClient(uri);
+      db = mongoClient.getDB(uri.getDatabase());
    }
 }

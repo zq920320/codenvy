@@ -18,11 +18,11 @@
  */
 package com.codenvy.dashboard.pig.store;
 
-import org.apache.hadoop.fs.Path;
+import com.codenvy.dashboard.pig.store.TupleTransformerFactory.ScriptType;
+
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.RecordWriter;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.pig.StoreFunc;
 import org.apache.pig.data.Tuple;
 
@@ -34,26 +34,68 @@ import java.io.IOException;
 public class MongoStorage extends StoreFunc
 {
 
+   /**
+    * Job parameter where destination server url is stored.
+    * Serve url parameter has the next format: user:password@server:port
+    */
+   public static final String SERVER_URL_PARAM = "server.url";
+
+   /**
+    * Job parameter where script type value is stored. Every Pig-latin
+    * script has its own resulted format to be stored. So, it is needed 
+    * to use special {@link TupleTransformer} then.
+    */
+   public static final String SCRIPT_TYPE_PARAM = "script.type";
+
+   /**
+    * Writer to mongo storage. 
+    */
    private RecordWriter writer;
 
+   /**
+    * Contains Pig-latin script type {@link ScriptType}.
+    */
+   private final String scriptType;
+
+   /**
+    * {@link MongoStorage} constructor.
+    */
+   public MongoStorage(String scriptType)
+   {
+      this.scriptType = scriptType;
+   }
+
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public OutputFormat getOutputFormat() throws IOException
    {
       return new TableOutputFormat();
    }
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public void setStoreLocation(String location, Job job) throws IOException
    {
-      FileOutputFormat.setOutputPath(job, new Path(location));
+      job.getConfiguration().set(SERVER_URL_PARAM, location);
+      job.getConfiguration().set(SCRIPT_TYPE_PARAM, scriptType);
    }
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public void prepareToWrite(RecordWriter writer) throws IOException
    {
       this.writer = writer;
    }
 
+   /**
+    * {@inheritedDoc)
+    */
    @Override
    public void putNext(Tuple t) throws IOException
    {

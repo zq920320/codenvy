@@ -32,8 +32,8 @@ public class TupleTransformerFactory
    {
       switch (type)
       {
-         case EVENT_OCCURRENCE :
-            return new EventOccurrenceTransformer();
+         case SPECIFIC_EVENT_OCCURRENCE :
+            return new SpecificEventOccurrenceTupleTransformer(type);
 
          default :
             throw new IllegalArgumentException("Script type " + type + " is not supported");
@@ -45,6 +45,6 @@ public class TupleTransformerFactory
     */
    public static enum ScriptType
    {
-      EVENT_OCCURRENCE;
+      SPECIFIC_EVENT_OCCURRENCE;
    }
 }

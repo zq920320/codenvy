@@ -133,22 +133,29 @@ public class TestPigScripts extends BaseTest
    public void testReturnAmountEventBetweenDates() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createTenantCreatedEvent("user1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantCreatedEvent("user2").withDate("2010-10-02").build());
-      events.add(Event.Builder.createTenantCreatedEvent("user3").withDate("2010-10-03").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws1-1", "user1").withDate("2010-10-01").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws1-1", "user1").withDate("2010-10-01").build()); // duplicate
+      events.add(Event.Builder.createTenantCreatedEvent("ws4-1", "user4").withDate("2010-10-01").build());
+      events.add(Event.Builder.createTenantDestroyedEvent("ws1-1").withDate("2010-10-01").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws2-2", "user2").withDate("2010-10-02").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws3-1", "user3").withDate("2010-10-03").build());
 
       File log = LogGenerator.generateLog(events);
 
       Iterator<Tuple> iter =
-         runPigScript("event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM, "tenant-created"},
+         runPigScript("specific-event-occurrence.pig", log, new String[][]{
+            {PigConstants.EVENT_PARAM, "tenant-created"},
             {PigConstants.FROM_PARAM, "20101001"}, {PigConstants.TO_PARAM, "20101002"}});
 
       Tuple tuple = iter.next();
-
       Assert.assertEquals(tuple.get(0), "tenant-created");
-      Assert.assertEquals(tuple.get(1), "20101001");
-      Assert.assertEquals(tuple.get(2), "20101002");
-      Assert.assertEquals(tuple.get(3), 2L);
+      Assert.assertEquals(tuple.get(1), 20101001);
+      Assert.assertEquals(tuple.get(2), 2L);
+
+      tuple = iter.next();
+      Assert.assertEquals(tuple.get(0), "tenant-created");
+      Assert.assertEquals(tuple.get(1), 20101002);
+      Assert.assertEquals(tuple.get(2), 1L);
    }
 
    /**
@@ -158,21 +165,30 @@ public class TestPigScripts extends BaseTest
    public void testReturnAmountEventWholePeriod() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createTenantCreatedEvent("user1").build());
-      events.add(Event.Builder.createTenantCreatedEvent("user1").build());
-      events.add(Event.Builder.createTenantCreatedEvent("user2").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-02").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withDate("2010-10-10").build());
 
       File log = LogGenerator.generateLog(events);
       
       Iterator<Tuple> iter =
-         runPigScript("event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM, "tenant-created"}});
+         runPigScript("specific-event-occurrence.pig", log,
+            new String[][]{{PigConstants.EVENT_PARAM, "tenant-created"}});
 
       Tuple tuple = iter.next();
-
       Assert.assertEquals(tuple.get(0), "tenant-created");
-      Assert.assertEquals(tuple.get(1), "00000000");
-      Assert.assertEquals(tuple.get(2), "99999999");
-      Assert.assertEquals(tuple.get(3), 2L);
+      Assert.assertEquals(tuple.get(1), 20101001);
+      Assert.assertEquals(tuple.get(2), 1L);
+
+      tuple = iter.next();
+      Assert.assertEquals(tuple.get(0), "tenant-created");
+      Assert.assertEquals(tuple.get(1), 20101002);
+      Assert.assertEquals(tuple.get(2), 1L);
+
+      tuple = iter.next();
+      Assert.assertEquals(tuple.get(0), "tenant-created");
+      Assert.assertEquals(tuple.get(1), 20101010);
+      Assert.assertEquals(tuple.get(2), 1L);
    }
 
    /**
@@ -187,7 +203,8 @@ public class TestPigScripts extends BaseTest
       File log = LogGenerator.generateLog(events);
 
       Iterator<Tuple> iter =
-         runPigScript("event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM, "unknown-id-event"}});
+         runPigScript("specific-event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM,
+            "unknown-id-event"}});
 
       Assert.assertNull(iter.next());
    }

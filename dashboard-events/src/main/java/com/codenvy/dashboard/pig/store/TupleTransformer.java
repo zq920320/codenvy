@@ -20,6 +20,7 @@ package com.codenvy.dashboard.pig.store;
 
 import com.mongodb.DBObject;
 
+import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
 /**
@@ -32,7 +33,8 @@ public interface TupleTransformer
 {
    /**
     * Transforms {@link Tuple} into {@link DBObject} to be able to write 
-    * to MongoDB.
+    * to MongoDB. It is responsibility of the implementation to set 
+    * particular "_id" field into resulted object. 
     */
-   DBObject transform(Tuple tuple);
+   DBObject transform(Tuple tuple) throws ExecException;
 }

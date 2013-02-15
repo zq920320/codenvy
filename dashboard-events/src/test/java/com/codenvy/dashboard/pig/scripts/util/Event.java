@@ -139,17 +139,17 @@ public class Event
       /**
        * Create 'tenant-created' event.
        */
-      public static Builder createTenantCreatedEvent(String user)
+      public static Builder createTenantCreatedEvent(String ws, String user)
       {
-         return new Builder().withParam("EVENT", "tenant-created").withParam("USER", user);
+         return new Builder().withParam("EVENT", "tenant-created").withParam("WS", ws).withParam("USER", user);
       }
 
       /**
        * Create 'tenant-destroyed' event.
        */
-      public static Builder createTenantDestroyedEvent(String user)
+      public static Builder createTenantDestroyedEvent(String ws)
       {
-         return new Builder().withParam("EVENT", "tenant-destroyed").withParam("USER", user);
+         return new Builder().withParam("EVENT", "tenant-destroyed").withParam("WS", ws);
       }
 
       /**

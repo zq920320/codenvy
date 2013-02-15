@@ -11,19 +11,18 @@
 
 IMPORT 'macros.pig';
 
-%DEFAULT from '00000000'     -- 0000-00-00
+%DEFAULT from '00000000';    -- 0000-00-00
 %DEFAULT to   '99999999';    -- 9999-99-99
 
 log = LOAD '$log' using PigStorage() as (message : chararray);
 filteredByDate = extractAndFilterByDate(log, $from, $to);
 uniqEvents = DISTINCT filteredByDate;
 
-resA = FILTER uniqEvents BY INDEXOF(message, 'EVENT#$event#', 0) != -1;
+a1 = FILTER uniqEvents BY INDEXOF(message, 'EVENT#$event#', 0) != -1;
 
---
--- Do like: select count(*) from <table>
---
-g = GROUP resA ALL;
-result = FOREACH g GENERATE '$event', '$from', '$to', COUNT(resA.message);
+a2 = GROUP a1 BY date;
+a3 = FOREACH a2 GENERATE '$event', group AS date, COUNT(a1);
+
+result = ORDER a3 BY date;
 
 DUMP result;

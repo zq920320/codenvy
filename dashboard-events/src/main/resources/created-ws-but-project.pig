@@ -11,7 +11,7 @@
 
 IMPORT 'macros.pig';
 
-%DEFAULT from '00000000'     -- 0000-00-00
+%DEFAULT from '00000000';    -- 0000-00-00
 %DEFAULT to   '99999999';    -- 9999-99-99
 
 log = LOAD '$log' using PigStorage() as (message : chararray);

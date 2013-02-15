@@ -18,24 +18,53 @@
  */
 package com.codenvy.dashboard.pig.store;
 
+import com.codenvy.dashboard.pig.store.TupleTransformerFactory.ScriptType;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.UUID;
 
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
 public class TestMongoDbRecordWriter extends BaseMongoTest
 {
+   private AbstractTupleTransformer transformer;
+
+   private TupleFactory tupleFactory;
+
+   private MongoDbRecordWriter writer;
+
    @Test
-   public void testTupleTransform() throws Exception
+   public void testWriterForWithSpecificEventTupleTransformer() throws Exception
    {
-      TupleFactory tupleFactory = TupleFactory.getInstance();
+      final String collection = UUID.randomUUID().toString();
+      final DBCollection dbCollection = db.getCollection(collection);
+
+      transformer =
+         (AbstractTupleTransformer)TupleTransformerFactory.createTupleTransformer(ScriptType.SPECIFIC_EVENT_OCCURRENCE);
+      tupleFactory = TupleFactory.getInstance();
+      writer = new MongoDbRecordWriter(serverUrl + "." + collection, transformer);
+
       Tuple tuple = tupleFactory.newTuple();
-
-      tuple.append("event");
-      tuple.append("");
-
-      //      writer.write(null, value);
+      tuple.append("tenant-created");
+      tuple.append(20101010L);
+      tuple.append(5L);
+      
+      writer.write(null, tuple);
+      
+      DBCursor dbCursor = dbCollection.find(new BasicDBObject("_id", transformer.getId(tuple)));
+      Assert.assertTrue(dbCursor.hasNext());
+      
+      DBObject dbObject = dbCursor.next();
+      Assert.assertEquals(transformer.transform(tuple), dbObject);
+      Assert.assertFalse(dbCursor.hasNext());
    }
 }
