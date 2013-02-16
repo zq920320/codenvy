@@ -19,6 +19,21 @@ jekyll --auto --server
 
 The site will be available at localhost:3501/_site/
 
+Testing
+========
+
+Before running tests, make sure you link app/scripts directory symbolically in the test directory
+
+```
+cd test
+ln -s ../app/scripts scripts
+```
+
+To run the test suite
+
+```
+yeoman test
+```
 
 How to build
 =======
