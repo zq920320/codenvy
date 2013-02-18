@@ -16,9 +16,9 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store;
+package com.codenvy.dashboard.pig.store.mongodb;
 
-import com.codenvy.dashboard.pig.store.TupleTransformerFactory.ScriptType;
+import com.codenvy.dashboard.pig.store.mongodb.TupleTransformerFactory.ScriptType;
 
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.OutputFormat;

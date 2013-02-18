@@ -46,7 +46,7 @@ resA = FOREACH a3 GENERATE $0, SUBSTRING($1,1,1000) AS ws, SUBSTRING($2,1,1000) 
 g = COGROUP resB BY user, resA BY user;
 k = FILTER g BY IsEmpty($1);
 
-result = foreach k generate user, flatten($2.$1) AS ws;
+result = foreach k generate group, flatten($2.$1) AS ws;
 
 DUMP result;
 

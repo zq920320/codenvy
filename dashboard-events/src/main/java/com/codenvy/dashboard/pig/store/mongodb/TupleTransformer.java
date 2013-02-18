@@ -16,34 +16,25 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store;
+package com.codenvy.dashboard.pig.store.mongodb;
 
-import com.codenvy.dashboard.pig.store.TupleTransformerFactory.ScriptType;
 import com.mongodb.DBObject;
 
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
 /**
+ * Represents common interface for tuple transformation. Implementation
+ * depends on specific type of Pig-latin script. 
+ * 
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
-public abstract class AbstractTupleTransformer implements TupleTransformer
+public interface TupleTransformer
 {
    /**
-    * Based script type.
+    * Transforms {@link Tuple} into {@link DBObject} to be able to write 
+    * to MongoDB. It is responsibility of the implementation to set 
+    * particular "_id" field into resulted object. 
     */
-   protected final ScriptType type;
-
-   /**
-    * AbstractTupleTransformer constructor.
-    */
-   AbstractTupleTransformer(ScriptType type)
-   {
-      this.type = type;
-   }
-   
-   /**
-    * Returns value for "_id" field of {@link DBObject} instance.
-    */
-   protected abstract long getId(Tuple tuple) throws ExecException;
+   DBObject transform(Tuple tuple) throws ExecException;
 }

@@ -63,8 +63,8 @@ public class TestPigScripts extends BasePigTest
 
       Tuple tuple = iter.next();
 
-      Assert.assertEquals(tuple.get(1), "user3");
-      Assert.assertEquals(tuple.get(2), "ws2");
+      Assert.assertEquals(tuple.get(0), "user3");
+      Assert.assertEquals(tuple.get(1), "ws2");
       Assert.assertNull(iter.next());
    }
 
@@ -95,8 +95,8 @@ public class TestPigScripts extends BasePigTest
 
       Tuple tuple = iter.next();
 
-      Assert.assertEquals(tuple.get(1), "user2");
-      Assert.assertEquals(tuple.get(2), "ws2");
+      Assert.assertEquals(tuple.get(0), "user2");
+      Assert.assertEquals(tuple.get(1), "ws2");
       Assert.assertNull(iter.next());
    }
 

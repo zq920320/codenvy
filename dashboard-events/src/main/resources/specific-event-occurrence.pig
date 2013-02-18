@@ -30,4 +30,3 @@ a3 = FOREACH a2 GENERATE '$event', group AS date, COUNT(a1);
 result = ORDER a3 BY date;
 
 DUMP result;
-STORE result INTO '$storeInto' USING com.codenvy.dashboard.pig.store.MongoStorage('specific_event_occurrence');
