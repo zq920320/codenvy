@@ -1,12 +1,15 @@
 ------------------------------------------------------------------
 -- Returns list of users who have been added to workspace but did 
--- not create project. Runtime parameters:
--- log   - (mandatory) the list of resources to load
--- from  - the first date occurred event
--- to    - the last date occurred event
+-- not create project. Incoming parameters:
+-- log       - (mandatory) the list of resources to load
+-- from      - the beginning of the time-frame
+-- to        - the ending of the time-frame
+-- storeInto - mongoDb server URI where result being stored
 --
 -- How to run:
--- pig -x local -param log="<DIRECTORY1>,<DIRECTORY2>..." -param from=<YYYYMMDD> -param to=<YYYYMMDD> created-ws-but-project.pig
+-- pig -x local -param log="<DIRECTORY1>,<DIRECTORY2>..." 
+--              -param from=<YYYYMMDD> -param to=<YYYYMMDD> 
+--              -param storeInto=<MONGO_DB_SERVER_URI> created-ws-but-project.pig
 ------------------------------------------------------------------
 
 IMPORT 'macros.pig';
@@ -43,6 +46,7 @@ resA = FOREACH a3 GENERATE $0, SUBSTRING($1,1,1000) AS ws, SUBSTRING($2,1,1000) 
 g = COGROUP resB BY user, resA BY user;
 k = FILTER g BY IsEmpty($1);
 
-result = foreach k generate 'user who created workspace by did not create project', $0, flatten($2.$1);
+result = foreach k generate user, flatten($2.$1) AS ws;
 
 DUMP result;
+

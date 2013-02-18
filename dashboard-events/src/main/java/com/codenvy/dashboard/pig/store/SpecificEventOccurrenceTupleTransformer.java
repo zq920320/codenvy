@@ -26,17 +26,16 @@ import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
 /**
- * Transform into the {@link DBObject} the result of specific-event-occurrence.pig 
- * script.<br>
+ * Transform the result of specific-event-occurrence.pig into the {@link DBObject}<br>  
  * 
- * Incoming tuple: (chararray: event, int: date, int: number)<br>
- * Outcoming jason: { "_id" : long: ..., <br>  
- *                    "type" : "SPECIFIC_EVENT_OCCURRENCE" ,<br>
+ * Incoming tuple: (chararray: event, int: date, long: number)<br>
+ * Outcoming jason: { "_id"   : long: ..., <br>  
+ *                    "type"  : String: "SPECIFIC_EVENT_OCCURRENCE" ,<br>
  *                    "event" : String: ... ,<br>
- *                    "date" : long: ... ,<br> 
+ *                    "date"  : int: ... ,<br> 
  *                    "count" : long: ...}<br>
  * 
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class SpecificEventOccurrenceTupleTransformer extends AbstractTupleTransformer
 {
@@ -69,9 +68,9 @@ public class SpecificEventOccurrenceTupleTransformer extends AbstractTupleTransf
       return (Long)tuple.get(2);
    }
 
-   private long getDate(Tuple tuple) throws ExecException
+   private int getDate(Tuple tuple) throws ExecException
    {
-      return (Long)tuple.get(1);
+      return (Integer)tuple.get(1);
    }
 
    private String getEvent(Tuple tuple) throws ExecException

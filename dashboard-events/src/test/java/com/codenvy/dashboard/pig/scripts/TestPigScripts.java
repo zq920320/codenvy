@@ -21,46 +21,20 @@ package com.codenvy.dashboard.pig.scripts;
 import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.ExecType;
-import org.apache.pig.PigServer;
 import org.apache.pig.data.Tuple;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
-public class TestPigScripts extends BaseTest
+public class TestPigScripts extends BasePigTest
 {
-   protected PigServer pigServer;
-
-   @BeforeMethod
-   public void setUp() throws Exception
-   {
-      Properties props = new Properties();
-      pigServer = new PigServer(ExecType.LOCAL, props);
-   }
-   
-   @AfterMethod
-   public void tearDown() throws Exception
-   {
-      pigServer.shutdown();
-   }
 
    /**
     * Finds users who created workspace but did not create project.
@@ -85,7 +59,7 @@ public class TestPigScripts extends BaseTest
 
       File log = LogGenerator.generateLog(events);
 
-      Iterator<Tuple> iter = runPigScript("created-ws-but-project.pig", log, new String[][]{});
+      Iterator<Tuple> iter = runPigScriptAndGetResult("created-ws-but-project.pig", log, new String[][]{});
 
       Tuple tuple = iter.next();
 
@@ -116,7 +90,7 @@ public class TestPigScripts extends BaseTest
       File log = LogGenerator.generateLog(events);
 
       Iterator<Tuple> iter =
-         runPigScript("created-ws-but-project.pig", log, new String[][]{{PigConstants.FROM_PARAM, "20101001"},
+         runPigScriptAndGetResult("created-ws-but-project.pig", log, new String[][]{{PigConstants.FROM_PARAM, "20101001"},
             {PigConstants.TO_PARAM, "20101002"}});
 
       Tuple tuple = iter.next();
@@ -143,7 +117,7 @@ public class TestPigScripts extends BaseTest
       File log = LogGenerator.generateLog(events);
 
       Iterator<Tuple> iter =
-         runPigScript("specific-event-occurrence.pig", log, new String[][]{
+         runPigScriptAndGetResult("specific-event-occurrence.pig", log, new String[][]{
             {PigConstants.EVENT_PARAM, "tenant-created"},
             {PigConstants.FROM_PARAM, "20101001"}, {PigConstants.TO_PARAM, "20101002"}});
 
@@ -172,7 +146,7 @@ public class TestPigScripts extends BaseTest
       File log = LogGenerator.generateLog(events);
       
       Iterator<Tuple> iter =
-         runPigScript("specific-event-occurrence.pig", log,
+         runPigScriptAndGetResult("specific-event-occurrence.pig", log,
             new String[][]{{PigConstants.EVENT_PARAM, "tenant-created"}});
 
       Tuple tuple = iter.next();
@@ -203,38 +177,9 @@ public class TestPigScripts extends BaseTest
       File log = LogGenerator.generateLog(events);
 
       Iterator<Tuple> iter =
-         runPigScript("specific-event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM,
+         runPigScriptAndGetResult("specific-event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM,
             "unknown-id-event"}});
 
       Assert.assertNull(iter.next());
-   }
-
-   /**
-    * Run pig script with parameters.
-    */
-   private Iterator<Tuple> runPigScript(String script, File log, String[][] data) throws IOException
-   {
-      InputStream scriptContent = Thread.currentThread().getContextClassLoader().getResourceAsStream(script);
-      scriptContent = replaceImportCommand(scriptContent);
-
-      Map<String, String> params = new HashMap<String, String>(data.length);
-      params.put(PigConstants.LOG_PARAM, log.getAbsolutePath());
-
-      for (String[] str : data)
-      {
-         params.put(str[0], str[1]);
-      }
-
-      pigServer.registerScript(scriptContent, params);
-      return pigServer.openIterator(PigConstants.FINAL_RELATION);
-   }
-
-   private InputStream replaceImportCommand(InputStream scriptContent) throws IOException, UnsupportedEncodingException
-   {
-      URL url = Thread.currentThread().getContextClassLoader().getResource("macros.pig");
-      String content = getStreamContentAsString(scriptContent);
-      content = content.replace("macros.pig", url.getFile());
-
-      return new ByteArrayInputStream(content.getBytes("UTF-8"));
    }
 }

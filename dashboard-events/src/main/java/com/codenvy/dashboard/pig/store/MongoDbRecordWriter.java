@@ -63,7 +63,13 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
 
       this.mongo = new Mongo(uri);
       DB db = mongo.getDB(uri.getDatabase());
-      db.setWriteConcern(WriteConcern.FSYNCED);
+
+      if (uri.getUsername() != null)
+      {
+         db.authenticate(uri.getUsername(), uri.getPassword());
+      }
+
+      db.setWriteConcern(WriteConcern.ACKNOWLEDGED);
 
       this.dbCollection = db.getCollection(uri.getCollection());
       this.transformer = transformer;

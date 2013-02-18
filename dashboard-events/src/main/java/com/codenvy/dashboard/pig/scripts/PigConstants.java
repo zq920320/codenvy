@@ -57,6 +57,12 @@ public class PigConstants
    public static final String LOG_PARAM = "log";
 
    /**
+    * MongoDb server URI where result will be stored. Should meet the requirement:
+    * mongodb://user:password@host:port/database.collection
+    */
+   public static final String STORE_INTO_PARAM = "storeInto";
+
+   /**
     * Private constructor.
     */
    private PigConstants()

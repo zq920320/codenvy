@@ -19,53 +19,51 @@
 package com.codenvy.dashboard.pig.store;
 
 import com.codenvy.dashboard.pig.scripts.BasePigTest;
+import com.codenvy.dashboard.pig.scripts.PigConstants;
+import com.codenvy.dashboard.pig.scripts.util.Event;
+import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 import com.codenvy.dashboard.pig.store.TupleTransformerFactory.ScriptType;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
-public class TestMongoDbRecordWriter extends BasePigTest
+public class TestMongoStorage extends BasePigTest
 {
-   private AbstractTupleTransformer transformer;
-
-   private TupleFactory tupleFactory;
-
-   private MongoDbRecordWriter writer;
-
    @Test
-   public void testWriterForSpecificEventOccurrenceTupleTransformer() throws Exception
+   public void testStoreDataIntoDbSpecificEventOccurrenceUsecase() throws Exception
    {
-      final String collection = UUID.randomUUID().toString();
-      final DBCollection dbCollection = db.getCollection(collection);
+      List<Event> events = new ArrayList<Event>();
+      events.add(Event.Builder.createTenantCreatedEvent("ws1-1", "user1").withDate("2010-10-01").build());
 
-      transformer =
-         (AbstractTupleTransformer)TupleTransformerFactory.createTupleTransformer(ScriptType.SPECIFIC_EVENT_OCCURRENCE);
-      tupleFactory = TupleFactory.getInstance();
-      writer = new MongoDbRecordWriter(SERVER_URI + "." + collection, transformer);
+      File log = LogGenerator.generateLog(events);
 
-      Tuple tuple = tupleFactory.newTuple();
-      tuple.append("tenant-created");
-      tuple.append(20101010);
-      tuple.append(5L);
-      
-      writer.write(null, tuple);
-      
-      DBCursor dbCursor = dbCollection.find(new BasicDBObject("_id", transformer.getId(tuple)));
+      String collection = UUID.randomUUID().toString();
+
+      runPigScript("specific-event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM, "tenant-created"},
+         {PigConstants.STORE_INTO_PARAM, SERVER_URI + "." + collection}});
+
+      DBCollection dbCollection = db.getCollectionFromString(collection);
+      DBCursor dbCursor = dbCollection.find();
+
       Assert.assertTrue(dbCursor.hasNext());
-      
+
       DBObject dbObject = dbCursor.next();
-      Assert.assertEquals(transformer.transform(tuple), dbObject);
+      Assert.assertEquals(dbObject.get("event"), "tenant-created");
+      Assert.assertEquals(dbObject.get("type"), ScriptType.SPECIFIC_EVENT_OCCURRENCE.toString());
+      Assert.assertEquals(dbObject.get("date"), 20101001);
+      Assert.assertEquals(dbObject.get("count"), 1L);
+
       Assert.assertFalse(dbCursor.hasNext());
    }
 }

@@ -18,6 +18,7 @@
  */
 package com.codenvy.dashboard.pig.store;
 
+import com.codenvy.dashboard.pig.scripts.BasePigTest;
 import com.codenvy.dashboard.pig.store.TupleTransformerFactory.ScriptType;
 import com.mongodb.DBObject;
 
@@ -30,7 +31,7 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
-public class TestSpecificEventOccurrenceTupleTransform extends BaseMongoTest
+public class TestSpecificEventOccurrenceTupleTransform extends BasePigTest
 {
    private TupleFactory tupleFactory;
 
@@ -38,14 +39,14 @@ public class TestSpecificEventOccurrenceTupleTransform extends BaseMongoTest
 
    private final String event = "tenant-created";
 
-   private final long date = 20101010L;
+   private final int date = 20101010;
 
    private final long count = 5L;
 
    private Tuple tuple;
    
    @BeforeMethod
-   public void setUpMethod() throws Exception
+   public void prepare() throws Exception
    {
       tupleFactory = TupleFactory.getInstance();
       transformer =
@@ -93,7 +94,7 @@ public class TestSpecificEventOccurrenceTupleTransform extends BaseMongoTest
    public void idShouldChangedWithDate() throws Exception
    {
       final long oldId = transformer.getId(tuple);
-      final long newDate = 20201010L;
+      final int newDate = 20201010;
       tuple.set(1, newDate);
 
       DBObject dbObject = transformer.transform(tuple);
