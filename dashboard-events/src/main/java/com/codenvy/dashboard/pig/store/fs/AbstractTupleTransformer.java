@@ -16,17 +16,14 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.mongodb;
+package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.mongodb.TupleTransformerFactory.ScriptType;
+import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
 
-import com.mongodb.DBObject;
-
-import org.apache.pig.backend.executionengine.ExecException;
-import org.apache.pig.data.Tuple;
+import java.io.File;
 
 /**
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public abstract class AbstractTupleTransformer implements TupleTransformer
 {
@@ -42,9 +39,32 @@ public abstract class AbstractTupleTransformer implements TupleTransformer
    {
       this.type = type;
    }
-   
+
    /**
-    * Returns value for "_id" field of {@link DBObject} instance.
+    * Parses date represented like YYYYMMDD and returns date
+    * like YYYY/MM/DD delimited by {@link File#separatorChar} character.
     */
-   protected abstract long getId(Tuple tuple) throws ExecException;
+   protected String parseDate(int date)
+   {
+      int year = date / 10000;
+      int month = (date - year * 10000) / 100;
+      int day = date - year * 10000 - month * 100;
+
+      StringBuilder dateInStr = new StringBuilder();
+      dateInStr.append(year).append(File.separatorChar);
+
+      if (month < 10)
+      {
+         dateInStr.append("0");
+      }
+      dateInStr.append(month).append(File.separatorChar);
+
+      if (day < 10)
+      {
+         dateInStr.append("0");
+      }
+      dateInStr.append(day);
+
+      return dateInStr.toString();
+   }
 }

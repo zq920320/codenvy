@@ -16,19 +16,11 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.mongodb;
-
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
-import com.mongodb.MongoURI;
-import com.mongodb.WriteConcern;
+package com.codenvy.dashboard.pig.store.fs;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
 import java.io.IOException;
@@ -36,42 +28,25 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
+public class FileRecordWriter extends RecordWriter<WritableComparable, Tuple>
 {
 
    /**
-    * Collection to write data in.
+    * Contains {@link FileStorage#BASE_FILE_DIR_PARAM} value.
     */
-   protected DBCollection dbCollection;
-
-   /**
-    * Mongo client. Have to be closed.
-    */
-   protected Mongo mongo;
+   protected final String baseDir;
 
    /**
     * {@link TupleTransformer}.
     */
-   protected TupleTransformer transformer;
+   protected final TupleTransformer transformer;
 
    /**
     * MongoDbRecordWriter constructor.
     */
-   MongoDbRecordWriter(String serverUrl, TupleTransformer transformer) throws IOException
+   FileRecordWriter(String baseDir, TupleTransformer transformer) throws IOException
    {
-      MongoURI uri = new MongoURI(serverUrl);
-
-      this.mongo = new Mongo(uri);
-      DB db = mongo.getDB(uri.getDatabase());
-
-      if (uri.getUsername() != null)
-      {
-         db.authenticate(uri.getUsername(), uri.getPassword());
-      }
-
-      db.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-
-      this.dbCollection = db.getCollection(uri.getCollection());
+      this.baseDir = baseDir;
       this.transformer = transformer;
    }
 
@@ -81,15 +56,8 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
    @Override
    public void write(WritableComparable key, Tuple value) throws IOException, InterruptedException
    {
-      try
-      {
-         DBObject dbObject = transformer.transform(value);
-         dbCollection.save(dbObject);
-      }
-      catch (ExecException e)
-      {
-         throw new IOException(e);
-      }
+      FileObject props = transformer.transform(value);
+      props.store(baseDir);
    }
 
    /**
@@ -98,6 +66,6 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
    @Override
    public void close(TaskAttemptContext context) throws IOException, InterruptedException
    {
-      mongo.close();
+      // do nothing
    }
 }

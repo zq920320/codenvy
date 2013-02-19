@@ -16,66 +16,57 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.mongodb;
+package com.codenvy.dashboard.pig.store.fs;
 
+import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
+
+import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.OutputCommitter;
+import org.apache.hadoop.mapreduce.OutputFormat;
+import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.pig.data.Tuple;
 
 import java.io.IOException;
 
 /**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
-public class MongoCommitter extends OutputCommitter
+public class FileOutputFormat extends OutputFormat<WritableComparable, Tuple>
 {
 
    /**
     * {@inheritedDoc)
     */
    @Override
-   public void setupJob(JobContext jobContext) throws IOException
+   public RecordWriter<WritableComparable, Tuple> getRecordWriter(TaskAttemptContext context) throws IOException,
+      InterruptedException
    {
+      ScriptType type = ScriptType.valueOf(context.getConfiguration().get(FileStorage.SCRIPT_TYPE_PARAM).toUpperCase());
+      TupleTransformer transformer = TupleTransformerFactory.createTupleTransformer(type);
+
+      String baseDir = context.getConfiguration().get(FileStorage.BASE_FILE_DIR_PARAM);
+
+      return new FileRecordWriter(baseDir, transformer);
    }
 
    /**
     * {@inheritedDoc)
     */
    @Override
-   public void cleanupJob(JobContext jobContext) throws IOException
+   public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException
    {
+      // do nothing
    }
 
    /**
     * {@inheritedDoc)
     */
    @Override
-   public void setupTask(TaskAttemptContext taskContext) throws IOException
+   public OutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException, InterruptedException
    {
+      return new DummyCommitter();
    }
 
-   /**
-    * {@inheritedDoc)
-    */
-   @Override
-   public boolean needsTaskCommit(TaskAttemptContext taskContext) throws IOException
-   {
-      return false;
-   }
-
-   /**
-    * {@inheritedDoc)
-    */
-   @Override
-   public void commitTask(TaskAttemptContext taskContext) throws IOException
-   {
-   }
-
-   /**
-    * {@inheritedDoc)
-    */
-   @Override
-   public void abortTask(TaskAttemptContext taskContext) throws IOException
-   {
-   }
 }

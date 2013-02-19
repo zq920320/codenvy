@@ -16,9 +16,7 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.mongodb;
-
-import com.mongodb.DBObject;
+package com.codenvy.dashboard.pig.store.fs;
 
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
@@ -27,14 +25,13 @@ import org.apache.pig.data.Tuple;
  * Represents common interface for tuple transformation. Implementation
  * depends on specific type of Pig-latin script. 
  * 
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public interface TupleTransformer
 {
    /**
-    * Transforms {@link Tuple} into {@link DBObject} to be able to write 
-    * to MongoDB. It is responsibility of the implementation to set 
-    * particular "_id" field into resulted object. 
+    * Transforms {@link Tuple} into {@link FileObject} to be able 
+    * to write to FS. 
     */
-   DBObject transform(Tuple tuple) throws ExecException;
+   FileObject transform(Tuple tuple) throws ExecException;
 }

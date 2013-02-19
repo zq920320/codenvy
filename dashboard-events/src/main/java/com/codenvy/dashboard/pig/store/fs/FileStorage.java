@@ -16,9 +16,9 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.mongodb;
+package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.mongodb.TupleTransformerFactory.ScriptType;
+import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
 
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.OutputFormat;
@@ -31,36 +31,33 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
-public class MongoStorage extends StoreFunc
+public class FileStorage extends StoreFunc
 {
 
    /**
-    * Job parameter where destination server url is stored.
-    * Serve url parameter has the next format: user:password@server:port
+    * Job parameter with destination file path.
     */
-   public static final String SERVER_URL_PARAM = "server.url";
+   public static final String BASE_FILE_DIR_PARAM = "base.file.dir";
 
    /**
-    * Job parameter where script type value is stored. Every Pig-latin
-    * script has its own resulted format to be stored. So, it is needed 
-    * to use special {@link TupleTransformer} then.
+    * Job parameter with containing {@link ScriptType}. 
     */
    public static final String SCRIPT_TYPE_PARAM = "script.type";
 
    /**
-    * Writer to mongo storage. 
+    * Writer to file storage. 
     */
    private RecordWriter writer;
 
    /**
-    * Contains Pig-latin script type {@link ScriptType}.
+    * {@link ScriptType}. 
     */
    private final String scriptType;
 
    /**
-    * {@link MongoStorage} constructor.
+    * {@link FileStorage} constructor.
     */
-   public MongoStorage(String scriptType)
+   public FileStorage(String scriptType)
    {
       this.scriptType = scriptType;
    }
@@ -71,7 +68,7 @@ public class MongoStorage extends StoreFunc
    @Override
    public OutputFormat getOutputFormat() throws IOException
    {
-      return new TableOutputFormat();
+      return new FileOutputFormat();
    }
 
    /**
@@ -80,7 +77,7 @@ public class MongoStorage extends StoreFunc
    @Override
    public void setStoreLocation(String location, Job job) throws IOException
    {
-      job.getConfiguration().set(SERVER_URL_PARAM, location);
+      job.getConfiguration().set(BASE_FILE_DIR_PARAM, location);
       job.getConfiguration().set(SCRIPT_TYPE_PARAM, scriptType);
    }
 
@@ -96,6 +93,7 @@ public class MongoStorage extends StoreFunc
    /**
     * {@inheritedDoc)
     */
+   @SuppressWarnings("unchecked")
    @Override
    public void putNext(Tuple t) throws IOException
    {

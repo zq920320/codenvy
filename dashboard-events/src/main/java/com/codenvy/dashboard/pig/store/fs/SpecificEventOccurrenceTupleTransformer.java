@@ -16,25 +16,24 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.mongodb;
+package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.mongodb.TupleTransformerFactory.ScriptType;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
 
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
+import java.io.File;
+import java.util.Properties;
+
 /**
- * Transform the result of specific-event-occurrence.pig into the {@link DBObject}<br>  
+ * Transform the result of specific-event-occurrence.pig into the {@link Properties}<br>  
  * 
  * Incoming tuple: (chararray: event, int: date, long: number)<br>
- * Outcoming jason: { "_id"   : long: ..., <br>  
- *                    "type"  : String: "SPECIFIC_EVENT_OCCURRENCE" ,<br>
- *                    "event" : String: ... ,<br>
- *                    "date"  : int: ... ,<br> 
- *                    "count" : long: ...}<br>
+ * Outcoming properties: { "type"  : String: "SPECIFIC_EVENT_OCCURRENCE" ,<br>
+ *                         "event" : String: ... ,<br>
+ *                         "date"  : String: ... ,<br> 
+ *                         "count" : String: ...}<br>
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
@@ -52,24 +51,38 @@ public class SpecificEventOccurrenceTupleTransformer extends AbstractTupleTransf
    /**
     * {@inheritDoc}
     */
-   public DBObject transform(Tuple tuple) throws ExecException
+   public FileObject transform(Tuple tuple) throws ExecException
    {
-      DBObject dbObject = new BasicDBObject(tuple.size() + 2);
-      dbObject.put("_id", getId(tuple));
-      dbObject.put("type", type.toString());
-      dbObject.put("event", getEvent(tuple));
-      dbObject.put("date", getDate(tuple));
-      dbObject.put("count", getCount(tuple));
+      String id = getId(getEvent(tuple), getDate(tuple));
 
-      return dbObject;
+      FileObject props = new FileObject(id);
+      props.put("type", type.toString());
+      props.put("event", getEvent(tuple));
+      props.put("date", getDate(tuple).toString());
+      props.put("count", getCount(tuple).toString());
+
+      return props;
+   }
+   
+   /**
+    * Returns the unique identifier of the calculated data.
+    */
+   public String getId(String event, int date)
+   {
+      StringBuilder id = new StringBuilder();
+      id.append(type.toString().toLowerCase()).append(File.separatorChar);
+      id.append(event.replace('-', File.separatorChar)).append(File.separatorChar);
+      id.append(parseDate(date));
+
+      return id.toString();
    }
 
-   private long getCount(Tuple tuple) throws ExecException
+   private Long getCount(Tuple tuple) throws ExecException
    {
       return (Long)tuple.get(2);
    }
 
-   private int getDate(Tuple tuple) throws ExecException
+   private Integer getDate(Tuple tuple) throws ExecException
    {
       return (Integer)tuple.get(1);
    }
@@ -77,17 +90,5 @@ public class SpecificEventOccurrenceTupleTransformer extends AbstractTupleTransf
    private String getEvent(Tuple tuple) throws ExecException
    {
       return (String)tuple.get(0);
-   }
-
-   /**
-    * {@inheritedDoc)
-    */
-   @Override
-   protected long getId(Tuple tuple) throws ExecException
-   {
-      long hash = getEvent(tuple).hashCode();
-      hash = hash * 31 + getDate(tuple);
-
-      return hash;
    }
 }

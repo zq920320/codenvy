@@ -18,23 +18,12 @@
  */
 package com.codenvy.dashboard.pig.scripts;
 
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.distribution.Version;
-
 import org.apache.pig.ExecType;
 import org.apache.pig.PigServer;
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.ByteArrayInputStream;
@@ -44,26 +33,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
 public class BasePigTest
 {
-   public static final String SERVER_URI = "mongodb://localhost:12345/test";
+   public static final String BASE_DIR = "target";
 
    protected static final Logger LOG = LoggerFactory.getLogger(BasePigTest.class);
-
-   protected DB db;
-
-   private MongodProcess mongoProcess;
-
-   private MongoClient mongoClient;
 
    private PigServer pigServer;
 
@@ -79,34 +60,6 @@ public class BasePigTest
       pigServer.shutdown();
    }
 
-   @BeforeClass
-   public void setUp() throws Exception
-   {
-      startMongoServer();
-      initClient();
-   }
-
-   @AfterClass
-   public void tearDown() throws Exception
-   {
-      mongoClient.close();
-      mongoProcess.stop();
-   }
-
-   private void startMongoServer() throws IOException, UnknownHostException
-   {
-      MongodStarter starter = MongodStarter.getDefaultInstance();
-      MongodExecutable mongodExe = starter.prepare(new MongodConfig(Version.V2_3_0, 12345, false));
-      mongoProcess = mongodExe.start();
-   }
-
-   private void initClient() throws UnknownHostException
-   {
-      MongoClientURI uri = new MongoClientURI(SERVER_URI);
-      mongoClient = new MongoClient(uri);
-      db = mongoClient.getDB(uri.getDatabase());
-   }
-
    /**
     * Run pig script with parameters. Returns iterator by {@link PigConstants#FINAL_RELATION}.
     */
@@ -117,7 +70,7 @@ public class BasePigTest
 
       Map<String, String> params = new HashMap<String, String>(data.length);
       params.put(PigConstants.LOG_PARAM, log.getAbsolutePath());
-      params.put(PigConstants.STORE_INTO_PARAM, SERVER_URI + "." + UUID.randomUUID());
+      params.put(PigConstants.STORE_INTO_PARAM, BASE_DIR);
 
       for (String[] str : data)
       {
@@ -138,7 +91,7 @@ public class BasePigTest
 
       Map<String, String> params = new HashMap<String, String>(data.length);
       params.put(PigConstants.LOG_PARAM, log.getAbsolutePath());
-      params.put(PigConstants.STORE_INTO_PARAM, SERVER_URI + "." + UUID.randomUUID());
+      params.put(PigConstants.STORE_INTO_PARAM, BASE_DIR);
 
       for (String[] str : data)
       {

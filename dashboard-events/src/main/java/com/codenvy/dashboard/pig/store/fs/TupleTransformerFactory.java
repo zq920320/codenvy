@@ -16,10 +16,10 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.mongodb;
+package com.codenvy.dashboard.pig.store.fs;
 
 /**
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class TupleTransformerFactory
 {
@@ -45,6 +45,6 @@ public class TupleTransformerFactory
     */
    public static enum ScriptType
    {
-      SPECIFIC_EVENT_OCCURRENCE;
+      SPECIFIC_EVENT_OCCURRENCE
    }
 }
