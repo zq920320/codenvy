@@ -35,7 +35,15 @@ To run the test suite
 yeoman test
 ```
 
-How to build
+How to build (Proposal)
 =======
 
-Coming soon
+To build:
+
+```
+grunt build
+```
+
+Build populates dist/ with two sets of builds : stage (for staging) and prod (for production). Both sets contain all the static content needed to run the site. Production set can later be deployed to S3.
+
+Templates currently come from app/_site/*.html. This should be replaced with a set of Jekyll includes that can then be integrated into jsp pages (header-body-footer style).
