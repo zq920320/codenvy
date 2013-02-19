@@ -194,10 +194,51 @@ module.exports = function( grunt ) {
 
     min: {
       dist: ''
+    },
+
+    copy: {
+        main: {
+            files: [
+                //{src: ['app/styles/main.css'], dest: 'dist/stage/styles/', flatten: true},
+
+                /*
+                    Staging
+                */
+
+                // scripts
+
+                {expand: true, cwd: 'app/scripts/', src: ['**'], dest: 'dist/stage/scripts/'},
+
+                // styles
+
+                {expand: true, cwd: 'app/styles/', src : '*.css', dest: 'dist/stage/styles/'},
+
+                // images
+
+                {expand: true, cwd: 'app/images/', src: ['**'], dest: 'dist/stage/images/'},
+
+                // fonts
+
+                {expand: true, cwd: 'app/fonts/', src: ['**'], dest: 'dist/stage/fonts/'},
+
+                // templates
+
+                {expand: true, cwd: 'app/_site/', src: ['*.html'], dest: 'dist/stage/templates/'}
+
+                /* Production */
+            ]
+        }
     }
+
   });
+
+  grunt.loadNpmTasks('grunt-contrib-copy');
+
+
 
   // Alias the `test` task to run the `mocha` task instead
   grunt.registerTask('test', 'server:test');
+
+  grunt.registerTask('build', 'copy');
 
 };
