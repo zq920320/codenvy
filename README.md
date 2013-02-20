@@ -1,19 +1,10 @@
-Odyssey
-=======
-
-Hybrid setup with [Yeoman](http://yeoman.io/) and [Jekyll](http://jekyllrb.com/).
-
-This is a pretty standard  setup. You will need yeoman to run it locally. You can get it [here](http://yeoman.io/installation.html).
-
 Dependencies
 =======
 
-Yeoman and Jekyll
+[package.json](https://github.com/codenvy/odyssey/blob/master/package.json) contains detailed information on both runtime and development dependencies.
 
-```
-curl -L get.yeoman.io | bash
-gem install jekyll
-```
+
+In addition to packages listed in package.json, [Jekyll](http://jekyllrb.com/) is used to organize pages.
 
 Running locally
 =======
@@ -25,3 +16,26 @@ yeoman server
 cd ./app
 jekyll --auto --server
 ```
+
+The site will be available at localhost:3501/_site/
+
+Testing
+========
+
+Before running tests, make sure you link app/scripts directory symbolically in the test directory
+
+```
+cd test
+ln -s ../app/scripts scripts
+```
+
+To run the test suite
+
+```
+yeoman test
+```
+
+How to build
+=======
+
+Coming soon

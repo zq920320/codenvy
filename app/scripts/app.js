@@ -40,7 +40,6 @@ define(["jquery",
 
                     modernize();
 
-
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
                         forgotPasswordForm = $(".forgotpassword-form"),
@@ -78,9 +77,9 @@ define(["jquery",
                                 errorReport.hide();
                             });
 
-                            form.on("success", function(){
-                                alert("logged in");
-                            });
+                            // form.on("success", function(){
+                            //     alert("logged in");
+                            // });
 
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
