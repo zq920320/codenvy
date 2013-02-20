@@ -18,8 +18,6 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
-
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
@@ -28,6 +26,7 @@ import org.testng.annotations.Test;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.Reader;
 import java.util.Properties;
 
@@ -36,18 +35,19 @@ import java.util.Properties;
  */
 public class TestFileRecordWriter
 {
-   private TupleTransformer transformer;
-
    private TupleFactory tupleFactory;
 
    private FileRecordWriter writer;
 
+   /**
+    * Check if {@link FileWriter} works as expected. It should create a file
+    * with correct content.
+    */
    @Test
-   public void testWriterForSpecificEventOccurrenceTupleTransformer() throws Exception
+   public void testWriter() throws Exception
    {
-      transformer = TupleTransformerFactory.createTupleTransformer(ScriptType.SPECIFIC_EVENT_OCCURRENCE);
       tupleFactory = TupleFactory.getInstance();
-      writer = new FileRecordWriter("target", transformer);
+      writer = new FileRecordWriter("target", "event_occurrence");
 
       Tuple tuple = tupleFactory.newTuple();
       tuple.append(20101010);
@@ -56,7 +56,7 @@ public class TestFileRecordWriter
 
       writer.write(null, tuple);
 
-      File file = new File("target/specific_event_occurrence/tenant/created/2010/10/10/value");
+      File file = new File("target/event_occurrence/tenant/created/2010/10/10/value");
       Assert.assertTrue(file.exists());
 
       Reader reader = new BufferedReader(new FileReader(file));
@@ -66,6 +66,6 @@ public class TestFileRecordWriter
 
       reader.close();
 
-      Assert.assertEquals(props, transformer.transform(tuple));
+      Assert.assertEquals(props, EventOccurrenceFileObject.valueOf(tuple));
    }
 }

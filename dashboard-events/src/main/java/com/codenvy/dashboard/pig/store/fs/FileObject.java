@@ -18,6 +18,8 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
+import com.codenvy.dashboard.pig.store.fs.FileObjectFactory.ScriptResultType;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,7 +38,7 @@ import java.util.Properties;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 @SuppressWarnings("serial")
-public class FileObject extends Properties
+public abstract class FileObject extends Properties
 {
 
    /**
@@ -45,17 +47,25 @@ public class FileObject extends Properties
    public static final String FILE_NAME = "value";
    
    /**
-    * Contains the unique identifier of the calculated data. 
-    * It will be treated as relative path to file to store properties in there.
+    * Contains the unique identifier of the calculated data relatively to 
+    * {@link #type}. It is used as a part of path to store properties in there. 
     */
    private final String id;
 
    /**
-    * {@link FileObject} constructor. 
+    * It is used as a part of path to store properties in there.
     */
-   public FileObject(String id)
+   private final ScriptResultType type;
+
+   /**
+    * {@link FileObject} constructor. Merely set an id to the 
+    * object. So it is needed to set properties manually than 
+    * either via {@link #put(String, String)} or via {@link #load(String)}.
+    */
+   public FileObject(ScriptResultType type, String id)
    {
       this.id = id;
+      this.type = type;
    }
 
    /**
@@ -65,13 +75,23 @@ public class FileObject extends Properties
    {
       return id;
    }
-   
+
+   /**
+    * @return {@link #type}
+    */
+   public ScriptResultType getType()
+   {
+      return type;
+   }
+
    /**
     * Actually stores properties into the file.
     */
    public void store(String baseDir) throws IOException
    {
-      File dir = getDir(baseDir);
+      File file = getFile(baseDir);
+
+      File dir = file.getParentFile();
       if (!dir.exists())
       {
          if (!dir.mkdirs())
@@ -80,7 +100,6 @@ public class FileObject extends Properties
          }
       }
 
-      File file = new File(dir, FILE_NAME);
       if (file.exists())
       {
          if (!file.delete())
@@ -92,8 +111,10 @@ public class FileObject extends Properties
       doStore(file);
    }
 
-   private File getDir(String baseDir) throws IOException
+   private File getFile(String baseDir) throws IOException
    {
+      File dir;
+
       if (baseDir.startsWith("file://"))
       {
          URI uri;
@@ -106,12 +127,19 @@ public class FileObject extends Properties
             throw new IOException(e);
          }
 
-         return new File(new File(uri), id);
+         dir = new File(uri);
       }
       else
       {
-         return new File(baseDir, id);
+         dir = new File(baseDir);
       }
+      
+      StringBuilder builder = new StringBuilder();
+      builder.append(type.toString().toLowerCase()).append(File.separatorChar);
+      builder.append(id).append(File.separatorChar);
+      builder.append(FILE_NAME);
+
+      return new File(dir, builder.toString());
    }
 
    private synchronized void doStore(File file) throws IOException
@@ -132,9 +160,7 @@ public class FileObject extends Properties
     */
    public void load(String baseDir) throws IOException
    {
-      File dir = getDir(baseDir);
-
-      File file = new File(dir, FILE_NAME);
+      File file = getFile(baseDir);
       if (!file.exists())
       {
          throw new IOException("File does not exist " + file.getAbsolutePath());

@@ -31,4 +31,4 @@ result = ORDER a3 BY date;
 
 DUMP result;
 
-STORE result INTO '$storeInto' USING com.codenvy.dashboard.pig.store.fs.FileStorage('specific_event_occurrence');
+STORE result INTO '$storeInto' USING com.codenvy.dashboard.pig.store.fs.FileStorage('event_occurrence');

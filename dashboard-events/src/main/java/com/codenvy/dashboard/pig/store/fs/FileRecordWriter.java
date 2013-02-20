@@ -37,17 +37,17 @@ public class FileRecordWriter extends RecordWriter<WritableComparable, Tuple>
    protected final String baseDir;
 
    /**
-    * {@link TupleTransformer}.
+    * Contains {@link FileStorage#SCRIPT_TYPE_PARAM} value. 
     */
-   protected final TupleTransformer transformer;
+   private final String scriptType;
 
    /**
-    * MongoDbRecordWriter constructor.
+    * FileRecordWriter constructor.
     */
-   FileRecordWriter(String baseDir, TupleTransformer transformer) throws IOException
+   FileRecordWriter(String baseDir, String scriptType) throws IOException
    {
       this.baseDir = baseDir;
-      this.transformer = transformer;
+      this.scriptType = scriptType;
    }
 
    /**
@@ -56,7 +56,7 @@ public class FileRecordWriter extends RecordWriter<WritableComparable, Tuple>
    @Override
    public void write(WritableComparable key, Tuple value) throws IOException, InterruptedException
    {
-      FileObject props = transformer.transform(value);
+      FileObject props = FileObjectFactory.createFileObject(scriptType, value);
       props.store(baseDir);
    }
 

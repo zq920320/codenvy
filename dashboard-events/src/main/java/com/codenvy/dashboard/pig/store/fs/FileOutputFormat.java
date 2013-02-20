@@ -18,8 +18,6 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
-
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.OutputCommitter;
@@ -43,12 +41,10 @@ public class FileOutputFormat extends OutputFormat<WritableComparable, Tuple>
    public RecordWriter<WritableComparable, Tuple> getRecordWriter(TaskAttemptContext context) throws IOException,
       InterruptedException
    {
-      ScriptType type = ScriptType.valueOf(context.getConfiguration().get(FileStorage.SCRIPT_TYPE_PARAM).toUpperCase());
-      TupleTransformer transformer = TupleTransformerFactory.createTupleTransformer(type);
-
+      String scriptType = context.getConfiguration().get(FileStorage.SCRIPT_TYPE_PARAM);
       String baseDir = context.getConfiguration().get(FileStorage.BASE_FILE_DIR_PARAM);
 
-      return new FileRecordWriter(baseDir, transformer);
+      return new FileRecordWriter(baseDir, scriptType);
    }
 
    /**
@@ -68,5 +64,4 @@ public class FileOutputFormat extends OutputFormat<WritableComparable, Tuple>
    {
       return new DummyCommitter();
    }
-
 }

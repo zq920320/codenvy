@@ -18,22 +18,30 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
+import org.apache.pig.data.Tuple;
+
+import java.io.IOException;
+
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TupleTransformerFactory
+public class FileObjectFactory
 {
    /**
-    * Creates {@link TupleTransformer} based on defined {@link ScriptType}.
+    * Creates {@link FileObject} based on given {@link ScriptResultType}.
     * 
-    * @throws IllegalArgumentException if script type is not supported
+    * @throws IllegalArgumentException if <code>resultType</code> is not supported or unknown
+    * @throws IOException
     */
-   public static TupleTransformer createTupleTransformer(ScriptType type)
+   public static FileObject createFileObject(String resultType, Tuple tuple) throws IllegalArgumentException,
+      IOException
    {
+      ScriptResultType type = ScriptResultType.valueOf(resultType.toUpperCase());
+
       switch (type)
       {
-         case SPECIFIC_EVENT_OCCURRENCE :
-            return new SpecificEventOccurrenceTupleTransformer(type);
+         case EVENT_OCCURRENCE :
+            return EventOccurrenceFileObject.valueOf(tuple);
 
          default :
             throw new IllegalArgumentException("Script type " + type + " is not supported");
@@ -41,10 +49,14 @@ public class TupleTransformerFactory
    }
    
    /**
-    * Enumeration of all Pig-latin script types in usage. 
+    * Enumeration of all Pig-latin script's results. 
     */
-   public static enum ScriptType
+   public static enum ScriptResultType
    {
-      SPECIFIC_EVENT_OCCURRENCE
+      /**
+       * Represent simple result of specific event and date.
+       * See {@link SpecificEventFileObject} more for details.
+       */
+      EVENT_OCCURRENCE
    }
 }

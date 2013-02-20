@@ -18,7 +18,7 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
+import com.codenvy.dashboard.pig.store.fs.FileObjectFactory.ScriptResultType;
 
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.OutputFormat;
@@ -31,16 +31,18 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
+@SuppressWarnings("rawtypes")
 public class FileStorage extends StoreFunc
 {
 
    /**
-    * Job parameter with destination file path.
+    * Job parameter containing destination directory where data
+    * will be stored {@link FileObject#store(String)}.
     */
    public static final String BASE_FILE_DIR_PARAM = "base.file.dir";
 
    /**
-    * Job parameter with containing {@link ScriptType}. 
+    * Job parameter containing executed {@link ScriptResultType}. 
     */
    public static final String SCRIPT_TYPE_PARAM = "script.type";
 
@@ -50,7 +52,7 @@ public class FileStorage extends StoreFunc
    private RecordWriter writer;
 
    /**
-    * {@link ScriptType}. 
+    * {@link ScriptResultType}. 
     */
    private final String scriptType;
 

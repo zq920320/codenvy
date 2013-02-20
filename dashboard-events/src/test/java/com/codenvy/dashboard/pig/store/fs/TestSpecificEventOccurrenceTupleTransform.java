@@ -18,7 +18,7 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
+import com.codenvy.dashboard.pig.store.fs.FileObjectFactory.ScriptResultType;
 
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
@@ -26,16 +26,12 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Properties;
-
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
  */
 public class TestSpecificEventOccurrenceTupleTransform
 {
    private TupleFactory tupleFactory;
-
-   private AbstractTupleTransformer transformer;
 
    private final String event = "tenant-created";
 
@@ -45,31 +41,30 @@ public class TestSpecificEventOccurrenceTupleTransform
 
    private Tuple tuple;
    
+   private FileObject props;
+
    @BeforeMethod
    public void prepare() throws Exception
    {
       tupleFactory = TupleFactory.getInstance();
-      transformer =
-         (AbstractTupleTransformer)TupleTransformerFactory.createTupleTransformer(ScriptType.SPECIFIC_EVENT_OCCURRENCE);
 
       tuple = tupleFactory.newTuple();
       tuple.append(date);
       tuple.append(event);
       tuple.append(count);
+
+      props = EventOccurrenceFileObject.valueOf(tuple);
    }
 
    @Test
    public void transformShouldReturnCorrectProperties() throws Exception
    {
-      FileObject props = transformer.transform(tuple);
-
-      Assert.assertNotNull(props.get("type"));
       Assert.assertNotNull(props.get("event"));
       Assert.assertNotNull(props.get("date"));
       Assert.assertNotNull(props.get("count"));
 
-      Assert.assertEquals(props.getId(), "specific_event_occurrence/tenant/created/2010/10/10");
-      Assert.assertEquals(props.get("type"), ScriptType.SPECIFIC_EVENT_OCCURRENCE.toString());
+      Assert.assertEquals(props.getId(), "tenant/created/2010/10/10");
+      Assert.assertEquals(props.getType(), ScriptResultType.EVENT_OCCURRENCE);
       Assert.assertEquals(props.get("event"), event);
       Assert.assertEquals(props.get("date"), date.toString());
       Assert.assertEquals(props.get("count"), count.toString());
@@ -78,39 +73,39 @@ public class TestSpecificEventOccurrenceTupleTransform
    @Test
    public void idShouldChangedWithEvent() throws Exception
    {
-      final String oldId = transformer.transform(tuple).getId();
+      final String oldId = props.getId();
       final String newEvent = "another-event";
       tuple.set(1, newEvent);
 
-      Properties props = transformer.transform(tuple);
+      FileObject props = EventOccurrenceFileObject.valueOf(tuple);
 
-      Assert.assertNotEquals(transformer.transform(tuple).getId(), oldId);
+      Assert.assertNotEquals(props.getId(), oldId);
       Assert.assertEquals(props.get("event"), newEvent);
    }
    
    @Test
    public void idShouldChangedWithDate() throws Exception
    {
-      final String oldId = transformer.transform(tuple).getId();
+      final String oldId = props.getId();
       final Integer newDate = 20201010;
       tuple.set(0, newDate);
 
-      Properties props = transformer.transform(tuple);
+      FileObject props = EventOccurrenceFileObject.valueOf(tuple);
 
-      Assert.assertNotEquals(transformer.transform(tuple).getId(), oldId);
+      Assert.assertNotEquals(props.getId(), oldId);
       Assert.assertEquals(props.get("date"), newDate.toString());
    }
 
    @Test
    public void idShouldNotChangedWithCount() throws Exception
    {
-      final String oldId = transformer.transform(tuple).getId();
+      final String oldId = props.getId();
       final Long newCount = 20L;
       tuple.set(2, newCount);
 
-      Properties props = transformer.transform(tuple);
+      FileObject props = EventOccurrenceFileObject.valueOf(tuple);
 
-      Assert.assertEquals(transformer.transform(tuple).getId(), oldId);
+      Assert.assertEquals(props.getId(), oldId);
       Assert.assertEquals(props.get("count"), newCount.toString());
    }
 }

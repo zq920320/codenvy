@@ -22,7 +22,6 @@ import com.codenvy.dashboard.pig.scripts.BasePigTest;
 import com.codenvy.dashboard.pig.scripts.PigConstants;
 import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
-import com.codenvy.dashboard.pig.store.fs.TupleTransformerFactory.ScriptType;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -38,11 +37,11 @@ public class TestFileStorage extends BasePigTest
 {
 
    /**
-    * Runs script and check if file with results is created.
-    * Checks the content also. 
+    * Check <code>specific-event-occurrence.pig</code> script.
+    * Runs script and check if file with results is created. Checks the content also. 
     */
    @Test
-   public void testFileStorage() throws Exception
+   public void testFileStorageSpecificEventOccurrencePigScript() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
       events.add(Event.Builder.createTenantCreatedEvent("ws1-1", "user1").withDate("2010-10-01").build());
@@ -52,27 +51,59 @@ public class TestFileStorage extends BasePigTest
 
       runPigScript("specific-event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM, "tenant-created"}});
 
-      SpecificEventOccurrenceTupleTransformer transformer =
-         (SpecificEventOccurrenceTupleTransformer)TupleTransformerFactory
-            .createTupleTransformer(ScriptType.SPECIFIC_EVENT_OCCURRENCE);
-
-      File file = new File("target/specific_event_occurrence/tenant/created/2010/10/01/value");
+      File file = new File("target/event_occurrence/tenant/created/2010/10/01/value");
       Assert.assertTrue(file.exists());
 
-      FileObject fileObject = new FileObject(transformer.getId("tenant-created", 20101001));
+      FileObject fileObject = new EventOccurrenceFileObject("tenant-created", 20101001);
       fileObject.load("target");
 
       Assert.assertEquals(fileObject.get("event"), "tenant-created");
       Assert.assertEquals(fileObject.get("date"), "20101001");
       Assert.assertEquals(fileObject.get("count"), "1");
 
-      file = new File("target/specific_event_occurrence/tenant/created/2010/10/02/value");
+      file = new File("target/event_occurrence/tenant/created/2010/10/02/value");
       Assert.assertTrue(file.exists());
 
-      fileObject = new FileObject(transformer.getId("tenant-created", 20101002));
+      fileObject = new EventOccurrenceFileObject("tenant-created", 20101002);
       fileObject.load("target");
 
       Assert.assertEquals(fileObject.get("event"), "tenant-created");
+      Assert.assertEquals(fileObject.get("date"), "20101002");
+      Assert.assertEquals(fileObject.get("count"), "1");
+   }
+   
+   /**
+    * Check <code>all-event-occurrence.pig</code> script.
+    * Runs script and check if file with results is created. Checks the content also. 
+    */
+   @Test
+   public void testFileStorageAllEventOccurrencePigScript() throws Exception
+   {
+      List<Event> events = new ArrayList<Event>();
+      events.add(Event.Builder.createTenantCreatedEvent("ws1-1", "user1").withDate("2010-10-01").build());
+      events.add(Event.Builder.createTenantDestroyedEvent("ws1-1").withDate("2010-10-02").build());
+
+      File log = LogGenerator.generateLog(events);
+
+      runPigScript("all-event-occurrence.pig", log, new String[][]{{PigConstants.EVENT_PARAM, "tenant-created"}});
+
+      File file = new File("target/event_occurrence/tenant/created/2010/10/01/value");
+      Assert.assertTrue(file.exists());
+
+      FileObject fileObject = new EventOccurrenceFileObject("tenant-created", 20101001);
+      fileObject.load("target");
+
+      Assert.assertEquals(fileObject.get("event"), "tenant-created");
+      Assert.assertEquals(fileObject.get("date"), "20101001");
+      Assert.assertEquals(fileObject.get("count"), "1");
+
+      file = new File("target/event_occurrence/tenant/destroyed/2010/10/02/value");
+      Assert.assertTrue(file.exists());
+
+      fileObject = new EventOccurrenceFileObject("tenant-destroyed", 20101002);
+      fileObject.load("target");
+
+      Assert.assertEquals(fileObject.get("event"), "tenant-destroyed");
       Assert.assertEquals(fileObject.get("date"), "20101002");
       Assert.assertEquals(fileObject.get("count"), "1");
    }
