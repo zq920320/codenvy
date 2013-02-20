@@ -4,12 +4,11 @@
 -- log       - (mandatory) the list of resources to load
 -- from      - the beginning of the time-frame
 -- to        - the ending of the time-frame
--- storeInto - mongoDb server URI where result being stored
 --
 -- How to run:
 -- pig -x local -param log="<DIRECTORY1>,<DIRECTORY2>..." 
 --              -param from=<YYYYMMDD> -param to=<YYYYMMDD> 
---              -param storeInto=<MONGO_DB_SERVER_URI> created-ws-but-project.pig
+--                created-ws-but-project.pig
 ------------------------------------------------------------------
 
 IMPORT 'macros.pig';

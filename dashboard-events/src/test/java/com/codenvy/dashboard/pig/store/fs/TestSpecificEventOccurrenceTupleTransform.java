@@ -53,8 +53,8 @@ public class TestSpecificEventOccurrenceTupleTransform
          (AbstractTupleTransformer)TupleTransformerFactory.createTupleTransformer(ScriptType.SPECIFIC_EVENT_OCCURRENCE);
 
       tuple = tupleFactory.newTuple();
-      tuple.append(event);
       tuple.append(date);
+      tuple.append(event);
       tuple.append(count);
    }
 
@@ -80,7 +80,7 @@ public class TestSpecificEventOccurrenceTupleTransform
    {
       final String oldId = transformer.transform(tuple).getId();
       final String newEvent = "another-event";
-      tuple.set(0, newEvent);
+      tuple.set(1, newEvent);
 
       Properties props = transformer.transform(tuple);
 
@@ -93,7 +93,7 @@ public class TestSpecificEventOccurrenceTupleTransform
    {
       final String oldId = transformer.transform(tuple).getId();
       final Integer newDate = 20201010;
-      tuple.set(1, newDate);
+      tuple.set(0, newDate);
 
       Properties props = transformer.transform(tuple);
 

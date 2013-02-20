@@ -122,13 +122,13 @@ public class TestPigScripts extends BasePigTest
             {PigConstants.FROM_PARAM, "20101001"}, {PigConstants.TO_PARAM, "20101002"}});
 
       Tuple tuple = iter.next();
-      Assert.assertEquals(tuple.get(0), "tenant-created");
-      Assert.assertEquals(tuple.get(1), 20101001);
+      Assert.assertEquals(tuple.get(0), 20101001);
+      Assert.assertEquals(tuple.get(1), "tenant-created");
       Assert.assertEquals(tuple.get(2), 2L);
 
       tuple = iter.next();
-      Assert.assertEquals(tuple.get(0), "tenant-created");
-      Assert.assertEquals(tuple.get(1), 20101002);
+      Assert.assertEquals(tuple.get(0), 20101002);
+      Assert.assertEquals(tuple.get(1), "tenant-created");
       Assert.assertEquals(tuple.get(2), 1L);
    }
 
@@ -150,18 +150,44 @@ public class TestPigScripts extends BasePigTest
             new String[][]{{PigConstants.EVENT_PARAM, "tenant-created"}});
 
       Tuple tuple = iter.next();
-      Assert.assertEquals(tuple.get(0), "tenant-created");
-      Assert.assertEquals(tuple.get(1), 20101001);
+      Assert.assertEquals(tuple.get(0), 20101001);
+      Assert.assertEquals(tuple.get(1), "tenant-created");
       Assert.assertEquals(tuple.get(2), 1L);
 
       tuple = iter.next();
-      Assert.assertEquals(tuple.get(0), "tenant-created");
-      Assert.assertEquals(tuple.get(1), 20101002);
+      Assert.assertEquals(tuple.get(0), 20101002);
+      Assert.assertEquals(tuple.get(1), "tenant-created");
       Assert.assertEquals(tuple.get(2), 1L);
 
       tuple = iter.next();
-      Assert.assertEquals(tuple.get(0), "tenant-created");
-      Assert.assertEquals(tuple.get(1), 20101010);
+      Assert.assertEquals(tuple.get(0), 20101010);
+      Assert.assertEquals(tuple.get(1), "tenant-created");
+      Assert.assertEquals(tuple.get(2), 1L);
+   }
+
+   /**
+    * Run script which find all events between given time-frame.  
+    */
+   @Test
+   public void testReturnAmountAllEventWholePeriod() throws Exception
+   {
+      List<Event> events = new ArrayList<Event>();
+      events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
+      events.add(Event.Builder.createTenantDestroyedEvent("ws3").withDate("2010-10-10").build());
+
+      File log = LogGenerator.generateLog(events);
+
+      Iterator<Tuple> iter = runPigScriptAndGetResult("all-event-occurrence.pig", log, new String[][]{});
+
+      Tuple tuple = iter.next();
+      Assert.assertEquals(tuple.get(0), 20101001);
+      Assert.assertEquals(tuple.get(1), "tenant-created");
+      Assert.assertEquals(tuple.get(2), 2L);
+
+      tuple = iter.next();
+      Assert.assertEquals(tuple.get(0), 20101010);
+      Assert.assertEquals(tuple.get(1), "tenant-destroyed");
       Assert.assertEquals(tuple.get(2), 1L);
    }
 

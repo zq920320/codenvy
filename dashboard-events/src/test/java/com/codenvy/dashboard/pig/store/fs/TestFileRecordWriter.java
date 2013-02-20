@@ -50,8 +50,8 @@ public class TestFileRecordWriter
       writer = new FileRecordWriter("target", transformer);
 
       Tuple tuple = tupleFactory.newTuple();
-      tuple.append("tenant-created");
       tuple.append(20101010);
+      tuple.append("tenant-created");
       tuple.append(5L);
 
       writer.write(null, tuple);

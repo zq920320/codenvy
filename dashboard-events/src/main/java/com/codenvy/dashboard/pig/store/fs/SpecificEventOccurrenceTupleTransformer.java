@@ -29,7 +29,7 @@ import java.util.Properties;
 /**
  * Transform the result of specific-event-occurrence.pig into the {@link Properties}<br>  
  * 
- * Incoming tuple: (chararray: event, int: date, long: number)<br>
+ * Incoming tuple: (int: date, chararray: event, long: number)<br>
  * Outcoming properties: { "type"  : String: "SPECIFIC_EVENT_OCCURRENCE" ,<br>
  *                         "event" : String: ... ,<br>
  *                         "date"  : String: ... ,<br> 
@@ -84,11 +84,11 @@ public class SpecificEventOccurrenceTupleTransformer extends AbstractTupleTransf
 
    private Integer getDate(Tuple tuple) throws ExecException
    {
-      return (Integer)tuple.get(1);
+      return (Integer)tuple.get(0);
    }
 
    private String getEvent(Tuple tuple) throws ExecException
    {
-      return (String)tuple.get(0);
+      return (String)tuple.get(1);
    }
 }
