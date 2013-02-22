@@ -38,6 +38,11 @@ public class PigConstants
    public static final String EVENT_PARAM = "event";
 
    /**
+    * Additional parameter.
+    */
+   public static final String PARAM_NAME_PARAM = "paramName";
+
+   /**
     * Parameter name in Pig script contains the beginning of time frame.
     * For instance: 20101201. What means the first of December in 2010 year.
     */

@@ -23,40 +23,39 @@ import org.apache.pig.data.Tuple;
 import java.io.IOException;
 
 /**
+ * Class represent the result of Pig-latin script execution, which
+ * returns the amount of specific event occurrence for particular
+ * date. Incoming tuple should meet the requirement:<br> 
+ * (chararray: event, int: date, long: value).
+ * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class FileObjectFactory
+public class EventFileObject extends FileObject
 {
+
    /**
-    * Creates {@link FileObject} based on given {@link ScriptResultType}.
-    * 
-    * @throws IllegalArgumentException if <code>resultType</code> is not supported or unknown
-    * @throws IOException
+    * The list of actual key field names.
     */
-   public static FileObject createFileObject(String resultType, Tuple tuple) throws IllegalArgumentException,
-      IOException
+   public final static String[] KEY_FIELDS = {"event", "date"};
+
+   /**
+    * Corresponding {@link ScriptResultType}.
+    */
+   private final static ScriptResultType type = ScriptResultType.EVENT;
+
+   /**
+    * {@link EventFileObject} constructor.
+    */
+   public EventFileObject(String baseDir, String event, int date) throws IOException
    {
-      ScriptResultType type = ScriptResultType.valueOf(resultType.toUpperCase());
-
-      switch (type)
-      {
-         case EVENT_OCCURRENCE :
-            return EventOccurrenceFileObject.valueOf(tuple);
-
-         default :
-            throw new IllegalArgumentException("Script type " + type + " is not supported");
-      }
+      super(baseDir, type, makeKeys(KEY_FIELDS, event, date));
    }
-   
+
    /**
-    * Enumeration of all Pig-latin script's results. 
+    * {@link EventFileObject} constructor.
     */
-   public static enum ScriptResultType
+   public EventFileObject(String baseDir, Tuple tuple) throws IOException
    {
-      /**
-       * Represent simple result of specific event and date.
-       * See {@link SpecificEventFileObject} more for details.
-       */
-      EVENT_OCCURRENCE
+      super(baseDir, type, tuple, KEY_FIELDS);
    }
 }

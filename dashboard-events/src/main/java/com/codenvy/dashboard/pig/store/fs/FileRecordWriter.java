@@ -56,8 +56,8 @@ public class FileRecordWriter extends RecordWriter<WritableComparable, Tuple>
    @Override
    public void write(WritableComparable key, Tuple value) throws IOException, InterruptedException
    {
-      FileObject props = FileObjectFactory.createFileObject(scriptType, value);
-      props.store(baseDir);
+      FileObject props = FileObject.createFileObject(baseDir, scriptType, value);
+      props.store();
    }
 
    /**

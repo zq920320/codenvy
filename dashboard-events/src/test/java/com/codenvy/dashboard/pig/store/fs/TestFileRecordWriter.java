@@ -18,6 +18,9 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
+import com.codenvy.dashboard.pig.scripts.BasePigTest;
+import com.codenvy.dashboard.pig.store.fs.FileObject.ScriptResultType;
+
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
@@ -27,18 +30,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.Reader;
-import java.util.Properties;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class TestFileRecordWriter
 {
-   private TupleFactory tupleFactory;
-
-   private FileRecordWriter writer;
-
    /**
     * Check if {@link FileWriter} works as expected. It should create a file
     * with correct content.
@@ -46,26 +43,23 @@ public class TestFileRecordWriter
    @Test
    public void testWriter() throws Exception
    {
-      tupleFactory = TupleFactory.getInstance();
-      writer = new FileRecordWriter("target", "event_occurrence");
+      TupleFactory tupleFactory = TupleFactory.getInstance();
+      FileRecordWriter writer = new FileRecordWriter(BasePigTest.BASE_DIR, ScriptResultType.EVENT.toString());
 
       Tuple tuple = tupleFactory.newTuple();
-      tuple.append(20101010);
       tuple.append("tenant-created");
+      tuple.append(20101010);
       tuple.append(5L);
 
       writer.write(null, tuple);
 
-      File file = new File("target/event_occurrence/tenant/created/2010/10/10/value");
+      File file = new File("target/event/tenant/created/2010/10/10/value");
       Assert.assertTrue(file.exists());
 
-      Reader reader = new BufferedReader(new FileReader(file));
+      BufferedReader reader = new BufferedReader(new FileReader(file));
 
-      Properties props = new Properties();
-      props.load(reader);
+      Assert.assertEquals(reader.readLine(), "5");
 
       reader.close();
-
-      Assert.assertEquals(props, EventOccurrenceFileObject.valueOf(tuple));
    }
 }

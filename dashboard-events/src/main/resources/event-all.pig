@@ -1,18 +1,17 @@
 ---------------------------------------------------------------------------
--- Is used to calculate amount of specific event. 
+-- Is used to calculate amount of all events.
+--
 -- Incoming parameters:
 -- log       - (mandatory) the list of resources to load
--- event     - (mandatory) the event being inspected
 -- from      - the beginning of the time-frame
 -- to        - the ending of the time-frame
 -- storeInto - (mandatory) the directory where result will be stored
 --
 -- How to run:
--- pig -x local -param log="<DIRECTORY1>,<DIRECTORY2>..." -param event=<EVENT_ID> 
+-- pig -x local -param log="<DIRECTORY1>,<DIRECTORY2>..." 
 --              -param from=<YYYYMMDD> -param to=<YYYYMMDD> 
---              -param storeInto=<DIRECTORY_TO_STORE_RESULT> specific-event-occurrence.pig
+--              -param storeInto=<DIRECTORY_TO_STORE> event-all.pig
 ---------------------------------------------------------------------------
-
 IMPORT 'macros.pig';
 
 %DEFAULT from '00000000';    -- 0000-00-00
@@ -22,13 +21,12 @@ log = LOAD '$log' using PigStorage() as (message : chararray);
 filteredByDate = extractAndFilterByDate(log, $from, $to);
 uniqEvents = DISTINCT filteredByDate;
 
-a1 = FILTER uniqEvents BY INDEXOF(message, 'EVENT#$event#', 0) != -1;
+a1 = FILTER uniqEvents BY INDEXOF(message, 'EVENT#', 0) != -1;
+a2 = FOREACH a1 GENERATE date, FLATTEN(REGEX_EXTRACT_ALL(message, '.*EVENT\\#([^\\#]*)\\#.*')) AS event;
 
-a2 = GROUP a1 BY date;
-a3 = FOREACH a2 GENERATE group AS date, '$event', COUNT(a1);
-
-result = ORDER a3 BY date;
+g1 = GROUP a2 BY (event, date);
+g2 = FOREACH g1 GENERATE FLATTEN(group), COUNT(a2);
+result = ORDER g2 BY event, date;
 
 DUMP result;
-
-STORE result INTO '$storeInto' USING com.codenvy.dashboard.pig.store.fs.FileStorage('event_occurrence');
+STORE result INTO '$storeInto' USING com.codenvy.dashboard.pig.store.fs.FileStorage('event');

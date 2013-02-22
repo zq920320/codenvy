@@ -18,7 +18,8 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.fs.FileObjectFactory.ScriptResultType;
+import org.apache.pig.backend.executionengine.ExecException;
+import org.apache.pig.data.Tuple;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,71 +27,131 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Properties;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-@SuppressWarnings("serial")
-public abstract class FileObject extends Properties
+public abstract class FileObject
 {
 
    /**
-    * The file name where properties will be stored.
+    * The file name where {@link #value} is stored.
     */
    public static final String FILE_NAME = "value";
    
    /**
-    * Contains the unique identifier of the calculated data relatively to 
-    * {@link #type}. It is used as a part of path to store properties in there. 
-    */
-   private final String id;
-
-   /**
-    * It is used as a part of path to store properties in there.
+    * {@link ScriptResultType} related to the partial instance of {@link FileObject}. 
+    * It is used also as a part of path to destination {@link #FILE_NAME}.
     */
    private final ScriptResultType type;
 
    /**
-    * {@link FileObject} constructor. Merely set an id to the 
-    * object. So it is needed to set properties manually than 
-    * either via {@link #put(String, String)} or via {@link #load(String)}.
+    * The sequence of values are used as unique identifier of result
+    * relatively to {@link #type}. They are used also as a part of 
+    * path to destination {@link #FILE_NAME}. 
     */
-   public FileObject(ScriptResultType type, String id)
+   private final LinkedHashMap<String, String> keys;
+
+   /**
+    * The parent directory of the storage. 
+    */
+   private final String baseDir;
+
+   /**
+    * Contains the actual value. 
+    */
+   private final Object value;
+
+   /**
+    * {@link FileObject} constructor. Loads value from the file.
+    */
+   FileObject(String baseDir, ScriptResultType type, LinkedHashMap<String, String> keys)
+      throws IOException
    {
-      this.id = id;
       this.type = type;
+      this.keys = keys;
+      this.baseDir = baseDir;
+      this.value = load();
    }
 
    /**
-    * @return {@link #id}.
+    * {@link FileObject} constructor. Extract keys and value from the passed <code>tuple</code>.
+    * The last fields of the tuple is treated as value. 
     */
-   public String getId()
+   FileObject(String baseDir, ScriptResultType type, Tuple tuple, String[] keyFields) throws IOException
    {
-      return id;
+      if (tuple.size() != keyFields.length + 1)
+      {
+         throw new IOException("The size of the tuple does not corresponds the number of key fields");
+      }
+
+      this.type = type;
+      this.baseDir = baseDir;
+      this.keys = new LinkedHashMap<String, String>(keyFields.length);
+
+      for (int i = 0; i < keyFields.length; i++)
+      {
+         keys.put(keyFields[i], tuple.get(i).toString());
+      }
+
+      this.value = tuple.get(keyFields.length);
    }
 
    /**
-    * @return {@link #type}
+    * @return {@link #keys}.
     */
-   public ScriptResultType getType()
+   public final Map<String, String> getKeys()
+   {
+      return keys;
+   }
+
+   /**
+    * @return {@link #type}.
+    */
+   public final ScriptResultType getType()
    {
       return type;
    }
 
    /**
-    * Actually stores properties into the file.
+    * @return {@link #value}.
     */
-   public void store(String baseDir) throws IOException
+   public final Object getValue() throws IOException
    {
-      File file = getFile(baseDir);
+      return translateValue(value);
+   }
+   
+   /**
+    * If subclass want to return value another type it might be
+    * done here.
+    */
+   protected Object translateValue(Object value) throws IOException
+   {
+      return value;
+   }
 
+   /**
+    * Stores value into the file.
+    */
+   public final synchronized void store() throws IOException
+   {
+      File file = getFile();
+
+      validateDestination(file);
+      doStore(file);
+   }
+
+   /**
+    * Checks if it is possible to write to destination file.
+    * The directory should exist and the file does not.
+    */
+   private void validateDestination(File file) throws IOException
+   {
       File dir = file.getParentFile();
       if (!dir.exists())
       {
@@ -107,11 +168,12 @@ public abstract class FileObject extends Properties
             throw new IOException("File " + file.getAbsolutePath() + " already exists and can not be removed");
          }
       }
-      
-      doStore(file);
    }
 
-   private File getFile(String baseDir) throws IOException
+   /**
+    * Returns the file to store in or load value from.
+    */
+   private File getFile() throws IOException
    {
       File dir;
 
@@ -135,19 +197,73 @@ public abstract class FileObject extends Properties
       }
       
       StringBuilder builder = new StringBuilder();
-      builder.append(type.toString().toLowerCase()).append(File.separatorChar);
-      builder.append(id).append(File.separatorChar);
+      builder.append(type.toString().toLowerCase());
+      builder.append(File.separatorChar);
+      
+      for (Entry<String, String> entry : keys.entrySet())
+      {
+         builder.append(toRelativePath(entry));
+         builder.append(File.separatorChar);
+      }
       builder.append(FILE_NAME);
 
       return new File(dir, builder.toString());
    }
 
-   private synchronized void doStore(File file) throws IOException
+   /**
+    * Translates key into relative path of the destination file.
+    */
+   private String toRelativePath(Entry<String, String> entry)
    {
-      Writer writer = new BufferedWriter(new FileWriter(file));
+      if (entry.getKey().equals("date"))
+      {
+         return translateDateToRelativePath(entry.getValue());
+      }
+      else if (entry.getKey().startsWith("param"))
+      {
+         return entry.getValue().toLowerCase();
+      }
+
+      return entry.getValue().toLowerCase().replace('-', File.separatorChar);
+   }
+
+   private String translateUserToRelativePath(String user)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      for (int i = 0; i < Math.min(user.length(), 3); i++)
+      {
+
+      }
+
+      return builder.toString();
+   }
+
+   /**
+    * Translate date from format YYYYMMDD into format like YYYY/MM/DD 
+    * and {@link File#separatorChar} is used as delimiter.
+    */
+   private String translateDateToRelativePath(String date)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      builder.append(date.substring(0, 4));
+      builder.append(File.separatorChar);
+
+      builder.append(date.substring(4, 6));
+      builder.append(File.separatorChar);
+
+      builder.append(date.substring(6, 8));
+
+      return builder.toString();
+   }
+
+   private void doStore(File file) throws IOException
+   {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
       try
       {
-         super.store(writer, null);
+         doWrite(writer, value);
       }
       finally
       {
@@ -156,25 +272,33 @@ public abstract class FileObject extends Properties
    }
 
    /**
-    * Loads data from file.
+    * Perform write operation. Might be overridden.
     */
-   public void load(String baseDir) throws IOException
+   protected void doWrite(BufferedWriter writer, Object value) throws IOException
    {
-      File file = getFile(baseDir);
+      writer.write(value.toString());
+   }
+
+   /**
+    * Loads value from the file.
+    */
+   private Object load() throws IOException
+   {
+      File file = getFile();
       if (!file.exists())
       {
          throw new IOException("File does not exist " + file.getAbsolutePath());
       }
 
-      doLoad(file);
+      return doLoad(file);
    }
 
-   private synchronized void doLoad(File file) throws IOException
+   private Object doLoad(File file) throws IOException
    {
-      Reader reader = new BufferedReader(new FileReader(file));
+      BufferedReader reader = new BufferedReader(new FileReader(file));
       try
       {
-         super.load(reader);
+         return doRead(reader);
       }
       finally
       {
@@ -183,38 +307,64 @@ public abstract class FileObject extends Properties
    }
 
    /**
-    * {@inheritedDoc)
+    * Perform read operation. Might be overridden.
     */
-   @Override
-   public synchronized void load(Reader reader) throws IOException
+   protected Object doRead(BufferedReader reader) throws IOException
    {
-      throw new UnsupportedOperationException("Method is not supported");
+      return reader.readLine();
    }
 
    /**
-    * {@inheritedDoc)
+    * Prepare keys for {@link FileObject#keys}.
     */
-   @Override
-   public synchronized void load(InputStream inStream) throws IOException
+   protected static LinkedHashMap<String, String> makeKeys(String[] keyNames, Object... keyValues) throws ExecException
    {
-      throw new UnsupportedOperationException("Method is not supported");
+      LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+
+      for (int i = 0; i < keyValues.length; i++)
+      {
+         keys.put(keyNames[i], keyValues[i].toString());
+      }
+
+      return keys;
    }
 
    /**
-    * {@inheritedDoc)
+    * Factory class. Creates specific implementation of {@link FileObject} based on given type.
     */
-   @Override
-   public void store(Writer writer, String comments) throws IOException
+   public static FileObject createFileObject(String baseDir, String scriptType, Tuple tuple)
+      throws IllegalArgumentException, IOException
    {
-      throw new UnsupportedOperationException("Method is not supported");
+      ScriptResultType type = ScriptResultType.valueOf(scriptType.toUpperCase());
+
+      switch (type)
+      {
+         case EVENT :
+            return new EventFileObject(baseDir, tuple);
+
+         case EVENT_PARAM :
+            return new EventParamFileObject(baseDir, tuple);
+
+         default :
+            throw new IllegalArgumentException("Unknown type " + scriptType);
+      }
    }
 
    /**
-    * {@inheritedDoc)
+    * Enumeration of all Pig-latin script's results. See related
+    * implementation {@link FileObject} for details
     */
-   @Override
-   public void store(OutputStream out, String comments) throws IOException
-   {
-      throw new UnsupportedOperationException("Method is not supported");
+   public static enum ScriptResultType {
+
+      /**
+       * Corresponds to {@link SpecificEventFileObject}.
+       */
+      EVENT,
+      
+      /**
+       * 
+       */
+      EVENT_PARAM
    }
+
 }

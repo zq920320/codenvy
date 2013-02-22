@@ -18,7 +18,7 @@
  */
 package com.codenvy.dashboard.pig.store.fs;
 
-import com.codenvy.dashboard.pig.store.fs.FileObjectFactory.ScriptResultType;
+import com.codenvy.dashboard.pig.store.fs.FileObject.ScriptResultType;
 
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.OutputFormat;
