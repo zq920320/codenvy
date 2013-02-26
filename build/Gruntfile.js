@@ -138,22 +138,48 @@ module.exports = function( grunt ) {
         },
     },
 
-    requirejs: {
-        compile: {
-            options: {
-                baseUrl: "app/scripts",
-                mainConfigFile: "app/scripts/main.js",
-                name: "main",
-                out: "dist/prod/scripts/app.js"
+    s3: {
+        key: 'AKIAIHMFFCLYZGNTZWOQ',
+        secret: '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',
+        bucket: 'codenvies',
+        access: 'public-read',
+
+        // Files to be uploaded.
+        upload: [
+            {
+                src: 'dist/prod/fonts/*',
+                dest: 'fonts/',
+                gzip: true
+            },
+            {
+                src: 'dist/prod/images/*',
+                dest: 'images/',
+                gzip: true
+            },
+            {
+                src: 'dist/prod/scripts/*',
+                dest: 'scripts/',
+                gzip: true
+            },
+            {
+                src: 'dist/prod/styles/*',
+                dest: 'styles/',
+                gzip: true
             }
-        }
+        ]
+
+        // Files to be downloaded.
+        //download: [],
+
+        //del: []
     }
 
   });
 
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-s3');
 
   grunt.registerTask('custom_build', ['shell:init','shell:jekyll','shell:yeoman','copy','shell:clean_dist']);
-
+  grunt.registerTask('deploy', ['s3']);
 };
