@@ -3,3 +3,4 @@ temp
 .sass-cache
 _site
 test/scripts
+.bin
