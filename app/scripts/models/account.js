@@ -34,6 +34,7 @@
             isBadGateway : function(jqXHR){
                 return jqXHR.status === 502;
             }
+
         };
 
 
@@ -50,7 +51,17 @@
                 return Utils.getQueryParameterByName("id");
             }
         };
+        function onReceiveUserProfileInfo(request)
+        {
+                 var user = eval("(" + request.responseText + ")");
+                 currentUserName = user.id;
+                 document.getElementsByName("first_name")[0].value = user.firstName || "";
+                 document.getElementsByName("last_name")[0].value = user.lastName || "";
+                 document.getElementsByName("phone_work")[0].value = user.phone || "";
+                 document.getElementsByName("company")[0].value = user.employer || "";
+                 document.getElementsByName("title")[0].value = user.jobtitle || "";
 
+        }
 
         /*
             Every method accepts 0 or more data values and two callbacks (success and error)
@@ -95,10 +106,14 @@
 
             login : function(email,password,success,error){
                 var loginUrl = "/sso/server/gen?authType=jaas",
-                    queryString = window.location.search;
-
-                if(queryString !== null && queryString.length > 4){ ///?key=value >4 symbols
-                    loginUrl += "&" + queryString.substring(1);
+                    queryString = window.location.search,
+                    jaasExists = queryString.match(/authType=jaas/);
+                if (!jaasExists){
+                    if(queryString !== null && queryString.length > 4){ ///?key=value >4 symbols
+                        loginUrl += "&" + queryString.substring(1);
+                    }
+                }else {
+                    loginUrl = queryString;
                 }
 
                 success({ loginUrl: loginUrl });
@@ -109,11 +124,11 @@
                 var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm/";
 
                 var request = $.ajax({
-                    url : tenantServiceUrl + encodeURIComponent(domain) + "/" + email,
+                    url : tenantServiceUrl + encodeURIComponent(domain.toLowerCase()) + "/" + email,
                     type : "POST",
                     data: {},
                     success : function(output, status, xhr){
-                        success({url: 'thank-you.jsp'});
+                        success({url: '/pages/thank-you'});
                     },
                     error : function(xhr, status, err){
                         error([
@@ -148,7 +163,7 @@
                 // implementation based on this:
                 // https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
                 // just like with setupPassword, we expect the id to be in the url:
-                // https://codenvy.com/setup-password.jsp?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
+                // https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
                 var confirmSetupPasswordUrl = "/rest/password/verify",
                     id = PasswordSetupIdProvider.getId();
@@ -180,7 +195,7 @@
                 // implementation based on this:
                 // https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
                 // We assume that uid is part of the url :
-                //  https://codenvy.com/setup-password.jsp?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
+                //  https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
                 var setupPasswordUrl = "/rest/password/setup",
                     id = PasswordSetupIdProvider.getId();
@@ -200,6 +215,104 @@
                     }
                 });
             },
+            // change password in Profile page
+            changePassword : function(password,success,error){
+
+                var changePasswordUrl = "/rest/private/password/change",
+                    id = PasswordSetupIdProvider.getId();
+
+                var request = $.ajax({
+                    url : changePasswordUrl,
+                    type : "POST",
+                    data : { uuid : id, password : password },
+                    success : function(output, status, xhr){
+                        success({url: "/"});
+                    },
+                    error : function(xhr, status, err){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
+                    }
+                });
+            },
+            // update User`s profile in Profile page
+            updateProfile : function(body,success,error){
+
+                var profileUrl = "/rest/private/profile/current";
+
+                var request = $.ajax({
+                    url : profileUrl,
+                    type : "POST",
+                    data : body,
+                    contentType: "application/json",
+                    success : function(output, status, xhr){
+                        success({url: "/"});
+                    },
+                    error : function(xhr, status, err){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
+                    }
+                });
+            },
+
+            // get User`s profile in Profile page
+            getUserProfile : function(error){
+                var profileUrl = "/rest/private/profile/current";
+                var request = $.ajax({
+                    url : profileUrl,
+                    type : "GET",
+                    contentType: "application/json",
+                    success : function(output, status, xhr){
+                        onReceiveUserProfileInfo(xhr);//filling profile page
+                    },
+                    error : function(xhr, status, err){
+                        error(null,xhr.responseText);
+                    }
+                });
+            },
+
+            /**
+             * Encode all special characters including ~!*()'. Replace " " on "+"
+             * @see http://xkr.us/articles/javascript/encode-compare/
+             * @param {Object} string
+             */
+            encodeSpecialSymbolsForPost: function (string)
+            {
+               if (string)
+               {
+                  string = encodeURIComponent(string);
+                  string = string.replace(/~/g, escape("~"));
+                  string = string.replace(/!/g, escape("!"));
+                  string = string.replace(/\*/g, escape("*"));
+                  string = string.replace(/[(]/g, escape("("));
+                  string = string.replace(/[)]/g, escape(")"));
+                  string = string.replace(/'/g, escape("'"));
+                  string = string.replace(/%20/g, escape("+"));
+               }
+
+               return string;
+            }
+          ,
+          /**
+           * Escape special symbols from user input
+           * @param string
+           * @returns
+           */
+          escapeSpecialSymbols : function (string)
+          {
+            if (string)
+                {
+                string = string.replace(/\n/g, "\\n");
+                string = string.replace(/\r/g, "\\r");
+                string = string.replace(/\t/g, "\\t");
+                string = string.replace(/[\b]/g, "\\b");
+                string = string.replace(/\f/g, "\\f");
+                string = string.replace(/\\/g, "\\\\");
+                string = string.replace(/\"/g, "\\\"");
+                }
+            return string;
+            },
 
             getTenants : function(success,error){
                 $.when(Tenant.getTenants()).done(function(tenants){
@@ -216,7 +329,9 @@
 
                var redirectUrl = "";
                if(typeof tenantName === 'undefined'){
-                   var tenantName = Utils.getQueryParameterByName("tenantName");
+                   // Do not add var here. tenantName may be defined in start-tenant.jsp as global
+                   // if you do it, you will always go it this brunch
+                   tenantName = Utils.getQueryParameterByName("tenantName");
                    redirectUrl =  window.location.protocol + "//" +
                                     window.location.host.replace("www.", "") +
                                     "/sso/server/gen?username=" + Utils.getQueryParameterByName("username") +
