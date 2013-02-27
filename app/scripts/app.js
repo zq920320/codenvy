@@ -132,8 +132,15 @@ define(["jquery",
                     }
 
                     if(loader.length !== 0){
-                        new IDELoader.IDELoader().on("ready",function(d){
+                        var ideloader = new IDELoader.IDELoader(),
+                            errorReport = ErrorReport.get(errorContainer);
+
+                        ideloader.on("ready",function(d){
                             window.location.href = d.url;
+                        });
+
+                        ideloader.on("error",function(message){
+                            errorReport.show(message);
                         });
                     }
 
