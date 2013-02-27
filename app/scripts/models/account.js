@@ -89,7 +89,7 @@
                 }
 
                 return (
-                    /^[a-z]{1}[a-z0-9\-]{0,19}\.codenvy\.com/g
+                    /^[A-Za-z]{1}[A-Za-z0-9\-]{0,19}\.codenvy\.com/g
                 ).exec(domain) !== null ;
             },
 
