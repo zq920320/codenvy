@@ -1,0 +1,2006 @@
+/* line 52, _utilities.scss */
+.show-on-mobile,
+.show-on-mobile-tablet,
+.show-on-tablet,
+.show-on-tablet-desktop,
+.show-on-desktop {
+  display: none !important;
+}
+
+@media screen and (max-width: 885px) {
+  /* line 58, _utilities.scss */
+  .show-on-mobile {
+    display: inherit !important;
+  }
+
+  /* line 59, _utilities.scss */
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 947px) {
+  /* line 58, _utilities.scss */
+  .show-on-mobile-tablet {
+    display: inherit !important;
+  }
+
+  /* line 59, _utilities.scss */
+  .hide-on-mobile-tablet {
+    display: none !important;
+  }
+}
+@media screen and (min-width: 886px) and (max-width: 947px) {
+  /* line 58, _utilities.scss */
+  .show-on-tablet {
+    display: inherit !important;
+  }
+
+  /* line 59, _utilities.scss */
+  .hide-on-tablet {
+    display: none !important;
+  }
+}
+@media screen and (min-width: 886px) {
+  /* line 58, _utilities.scss */
+  .show-on-tablet-desktop {
+    display: inherit !important;
+  }
+
+  /* line 59, _utilities.scss */
+  .hide-on-tablet-desktop {
+    display: none !important;
+  }
+}
+@media screen and (min-width: 948px) {
+  /* line 58, _utilities.scss */
+  .show-on-desktop {
+    display: inherit !important;
+  }
+
+  /* line 59, _utilities.scss */
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+/* line 66, _utilities.scss */
+.center {
+  text-align: center;
+}
+
+/* line 70, _utilities.scss */
+.right {
+  text-align: right;
+}
+
+@font-face {
+  font-family: CodeEnvy;
+  src: url("../fonts/regular.otf");
+}
+
+@font-face {
+  font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+/* line 9, _typography.scss */
+html, body {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+/* line 15, _typography.scss */
+p {
+  font-weight: 300;
+  color: #595e62;
+}
+
+/* line 21, _typography.scss */
+.center {
+  text-align: center;
+}
+
+/* line 22, _typography.scss */
+.left {
+  text-align: left;
+}
+
+/* line 23, _typography.scss */
+.right {
+  text-align: right;
+}
+
+/* line 25, _typography.scss */
+h1 {
+  font-weight: 300;
+  line-height: 1em;
+  font-size: 1.625em;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+/* line 32, _typography.scss */
+h1.shiny {
+  background: -webkit-linear-gradient(#e2e5e8, #bec3c4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* line 35, _typography.scss */
+h2 {
+  font-size: 1.9em;
+  font-weight: 300;
+  color: #44484b;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+/* line 41, _typography.scss */
+h2.light {
+  font-weight: 200;
+}
+
+/* line 44, _typography.scss */
+h3 {
+  font-size: 1.4375em;
+  font-weight: 300;
+}
+
+/* line 49, _typography.scss */
+h4 {
+  font-size: 1em;
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+@font-face {
+  font-family: CodeEnvy;
+  src: url("../fonts/regular.otf");
+}
+
+@font-face {
+  font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+/* line 4, _buttons.scss */
+.oauth-button {
+  padding-left: 157px;
+  padding-top: 36px;
+  opacity: 0.7;
+}
+/* line 10, _buttons.scss */
+.oauth-button:hover {
+  opacity: 1;
+}
+/* line 14, _buttons.scss */
+.oauth-button:active {
+  opacity: 0.7;
+}
+
+/* line 19, _buttons.scss */
+.oauth-button.github {
+  background-image: url("../images/buttonoffGithub.png");
+  background-repeat: no-repeat;
+}
+
+/* line 23, _buttons.scss */
+.oauth-button.google {
+  background-image: url("../images/buttonoffGoogle.png");
+  background-repeat: no-repeat;
+}
+
+/* line 28, _buttons.scss */
+.signup-button {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d6e3ed), color-stop(35%, #54aee1));
+  background-image: -webkit-linear-gradient(#d6e3ed, #54aee1 35%);
+  background-image: -moz-linear-gradient(#d6e3ed, #54aee1 35%);
+  background-image: -o-linear-gradient(#d6e3ed, #54aee1 35%);
+  background-image: linear-gradient(#d6e3ed, #54aee1 35%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d6e3ed', endColorstr='#54aee1');
+  border: solid 1px #595e62;
+  border-radius: 5px;
+  color: #f3f3f3;
+  padding: 10px;
+}
+/* line 35, _buttons.scss */
+.signup-button:hover {
+  background: #54aee1;
+}
+/* line 39, _buttons.scss */
+.signup-button:active {
+  opacity: 0.7;
+}
+
+/* line 56, _buttons.scss */
+.button-100 {
+  width: 100px;
+}
+
+/* line 57, _buttons.scss */
+.button-200 {
+  width: 200px;
+}
+
+/* line 59, _buttons.scss */
+.blue-button {
+  display: inline-block;
+  padding: 10px 10px 10px;
+  text-decoration: none;
+  border-radius: 5px;
+  position: relative;
+  cursor: pointer;
+  font-weight: 300;
+  font-size: 1em;
+  line-height: 1em;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(33%, #7bbced), color-stop(70%, #54aee1));
+  background-image: -webkit-linear-gradient(#7bbced 33%, #54aee1 70%);
+  background-image: -moz-linear-gradient(#7bbced 33%, #54aee1 70%);
+  background-image: -o-linear-gradient(#7bbced 33%, #54aee1 70%);
+  background-image: linear-gradient(#7bbced 33%, #54aee1 70%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7bbced', endColorstr='#54aee1');
+  border: solid 1px #233041;
+  color: #233041;
+  text-shadow: 0px 1px 1px rgba(251, 251, 251, 0.5);
+}
+/* line 67, _buttons.scss */
+.blue-button:hover {
+  color: #44484b;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(33%, #c1e3fc), color-stop(70%, #54aee1));
+  background-image: -webkit-linear-gradient(#c1e3fc 33%, #54aee1 70%);
+  background-image: -moz-linear-gradient(#c1e3fc 33%, #54aee1 70%);
+  background-image: -o-linear-gradient(#c1e3fc 33%, #54aee1 70%);
+  background-image: linear-gradient(#c1e3fc 33%, #54aee1 70%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c1e3fc', endColorstr='#54aee1');
+}
+/* line 72, _buttons.scss */
+.blue-button:active {
+  border-color: #FFF;
+}
+
+/* line 77, _buttons.scss */
+.gray-button {
+  display: inline-block;
+  padding: 10px 10px 10px;
+  text-decoration: none;
+  border-radius: 5px;
+  position: relative;
+  cursor: pointer;
+  font-weight: 300;
+  font-size: 1em;
+  line-height: 1em;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f4f4f4), color-stop(100%, #96979a));
+  background-image: -webkit-linear-gradient(#f4f4f4, #96979a);
+  background-image: -moz-linear-gradient(#f4f4f4, #96979a);
+  background-image: -o-linear-gradient(#f4f4f4, #96979a);
+  background-image: linear-gradient(#f4f4f4, #96979a);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#96979a');
+  color: #233041;
+  border: solid 1px #233041;
+}
+/* line 83, _buttons.scss */
+.gray-button:hover {
+  color: #44484b;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f4f4f4), color-stop(100%, #cccdd5));
+  background-image: -webkit-linear-gradient(#f4f4f4, #cccdd5);
+  background-image: -moz-linear-gradient(#f4f4f4, #cccdd5);
+  background-image: -o-linear-gradient(#f4f4f4, #cccdd5);
+  background-image: linear-gradient(#f4f4f4, #cccdd5);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#cccdd5');
+}
+/* line 88, _buttons.scss */
+.gray-button:active {
+  border-color: #FFF;
+}
+
+/* line 93, _buttons.scss */
+.light-button {
+  display: inline-block;
+  padding: 10px 10px 10px;
+  text-decoration: none;
+  border-radius: 5px;
+  position: relative;
+  cursor: pointer;
+  font-weight: 300;
+  font-size: 1em;
+  line-height: 1em;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fdfdfd), color-stop(100%, #d8d9d9));
+  background-image: -webkit-linear-gradient(#fdfdfd, #d8d9d9);
+  background-image: -moz-linear-gradient(#fdfdfd, #d8d9d9);
+  background-image: -o-linear-gradient(#fdfdfd, #d8d9d9);
+  background-image: linear-gradient(#fdfdfd, #d8d9d9);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#d8d9d9');
+  border: solid 1px #d7d7d7;
+  color: #233041;
+}
+/* line 99, _buttons.scss */
+.light-button:hover {
+  color: #44484b;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fdfdfd), color-stop(100%, #f2efef));
+  background-image: -webkit-linear-gradient(#fdfdfd, #f2efef);
+  background-image: -moz-linear-gradient(#fdfdfd, #f2efef);
+  background-image: -o-linear-gradient(#fdfdfd, #f2efef);
+  background-image: linear-gradient(#fdfdfd, #f2efef);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#f2efef');
+}
+/* line 104, _buttons.scss */
+.light-button:active {
+  border-color: #FFF;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+/**
+ * Define consistent border, margin, and padding.
+ */
+/* line 9, _form.scss */
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+/**
+ * 1. Correct `color` not being inherited in IE 8/9.
+ * 2. Remove padding so people aren't caught out if they zero out fieldsets.
+ */
+/* line 23, _form.scss */
+legend {
+  border: 0;
+  /* 1 */
+  padding: 0;
+  /* 2 */
+}
+
+/**
+ * 1. Correct font family not being inherited in all browsers.
+ * 2. Correct font size not being inherited in all browsers.
+ * 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome.
+ */
+/* line 37, _form.scss */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  margin: 0;
+  /* 3 */
+  width: 100%;
+  border-radius: 5px;
+}
+
+/**
+ * Address Firefox 4+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+/* line 52, _form.scss */
+button,
+input,
+select {
+  width: 100%;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ */
+/* line 68, _form.scss */
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  /* 2 */
+  cursor: pointer;
+  /* 3 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+/* line 78, _form.scss */
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to `content-box` in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ */
+/* line 88, _form.scss */
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box;
+  /* 1 */
+  padding: 0;
+  /* 2 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+/* line 99, _form.scss */
+input[type="search"] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  /* 2 */
+  box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+/* line 112, _form.scss */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 4+.
+ */
+/* line 121, _form.scss */
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+/* line 131, _form.scss */
+textarea {
+  overflow: auto;
+  /* 1 */
+  vertical-align: top;
+  /* 2 */
+}
+
+/**
+ * end of normalize
+*/
+/* line 140, _form.scss */
+form {
+  text-align: center;
+  padding: 20px 5px 25px 5px;
+}
+
+/* line 145, _form.scss */
+form .field {
+  padding: 10px;
+  position: relative;
+}
+
+/* line 167, _form.scss */
+input[type='text'],
+select,
+input[type='password'] {
+  font-weight: 200;
+  height: 2em;
+  font-size: 1.2em;
+  background-color: #313a48;
+  border-radius: 5px;
+  border: none;
+  color: #fbfbfb;
+  -webkit-box-shadow: #545e6c 0px 1px 1px, #232834 0px 1px 1px inset;
+  -moz-box-shadow: #545e6c 0px 1px 1px, #232834 0px 1px 1px inset;
+  box-shadow: #545e6c 0px 1px 1px, #232834 0px 1px 1px inset;
+  padding-left: 10px;
+}
+
+/* line 151, _form.scss */
+::-webkit-input-placeholder {
+  color: rgba(251, 251, 251, 0.5);
+}
+
+/* line 154, _form.scss */
+:-moz-placeholder {
+  color: rgba(251, 251, 251, 0.5);
+}
+
+/* line 157, _form.scss */
+::-moz-placeholder {
+  color: rgba(251, 251, 251, 0.5);
+}
+
+/* line 160, _form.scss */
+:-ms-input-placeholder {
+  color: rgba(251, 251, 251, 0.5);
+}
+
+/* line 187, _form.scss */
+.error-container {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40px;
+  text-align: center;
+  background-color: rgba(255, 0, 0, 0.4);
+  border-radius: 5px;
+}
+
+/* line 199, _form.scss */
+.error-container.expanded {
+  opacity: 1.0;
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0.3s;
+  -moz-transition-delay: 0.3s;
+  -o-transition-delay: 0.3s;
+  transition-delay: 0.3s;
+}
+
+/* line 205, _form.scss */
+.working {
+  text-align: center;
+}
+
+/* line 209, _form.scss */
+.working.hidden {
+  display: none;
+}
+
+/* line 216, _form.scss */
+form.light input[type='text'],
+form.light input[type='password'],
+form.light textarea {
+  border: solid 1px #d0d0d0;
+  background-color: #fbfbfb;
+  font-weight: 300;
+  color: #8e979d;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+@font-face {
+  font-family: CodeEnvy;
+  src: url("../fonts/regular.otf");
+}
+
+@font-face {
+  font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+/* line 7, _header.scss */
+header {
+  padding: 20px;
+  min-height: 67px;
+}
+/* line 10, _header.scss */
+header .row {
+  overflow: visible;
+}
+
+/* line 18, _header.scss */
+.main-menu {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  *zoom: 1;
+  overflow: visible;
+}
+/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
+.main-menu li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0;
+  white-space: nowrap;
+  display: inline;
+  float: left;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+/* line 48, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
+.main-menu li:first-child, .main-menu li.first {
+  padding-left: 0;
+}
+/* line 49, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
+.main-menu li:last-child {
+  padding-right: 0;
+}
+/* line 50, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
+.main-menu li.last {
+  padding-right: 0;
+}
+/* line 21, _header.scss */
+.main-menu li {
+  background-image: url("../images/dotLittleguy.png");
+  background-repeat: no-repeat;
+  background-position: 0 12px;
+  padding-left: 10px;
+  margin-left: 10px;
+  padding-top: 5px;
+}
+@media screen and (min-width: 886px) {
+  /* line 29, _header.scss */
+  .main-menu li:nth-child(1) {
+    background-image: url("../images/dotMaous.png");
+    background-repeat: no-repeat;
+    background-position: 0 9px;
+    margin-left: 15px;
+    padding-left: 20px;
+  }
+}
+
+/* line 39, _header.scss */
+.sign-in-button-wrapper.span2 {
+  padding: 0;
+}
+
+/* line 43, _header.scss */
+.sign-in-button {
+  font-weight: 300;
+  border: solid 1px #cbcbcb;
+  padding: 11px;
+  border-radius: 5px;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fcfcfc), color-stop(100%, #f3f3f3));
+  background-image: -webkit-linear-gradient(#fcfcfc, #f3f3f3);
+  background-image: -moz-linear-gradient(#fcfcfc, #f3f3f3);
+  background-image: -o-linear-gradient(#fcfcfc, #f3f3f3);
+  background-image: linear-gradient(#fcfcfc, #f3f3f3);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#f3f3f3');
+  color: #8e979d;
+}
+
+/* line 52, _header.scss */
+.sign-up-button {
+  font-weight: 300;
+  border: solid 1px #cbcbcb;
+  padding: 11px;
+  border-radius: 5px;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fcfcfc), color-stop(100%, #f3f3f3));
+  background-image: -webkit-linear-gradient(#fcfcfc, #f3f3f3);
+  background-image: -moz-linear-gradient(#fcfcfc, #f3f3f3);
+  background-image: -o-linear-gradient(#fcfcfc, #f3f3f3);
+  background-image: linear-gradient(#fcfcfc, #f3f3f3);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#f3f3f3');
+  color: white;
+  background: #54aee1;
+}
+
+/* line 62, _header.scss */
+.span2.logo-wrapper {
+  padding-top: 4px;
+}
+@media screen and (max-width: 885px) {
+  /* line 62, _header.scss */
+  .span2.logo-wrapper {
+    text-align: center;
+  }
+}
+/* line 67, _header.scss */
+.span2.logo-wrapper img {
+  display: inline;
+}
+
+@font-face {
+  font-family: CodeEnvy;
+  src: url("../fonts/regular.otf");
+}
+
+@font-face {
+  font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+/* line 8, _footer.scss */
+footer {
+  padding: 20px 20px 20px 31px;
+  margin-top: 20px;
+}
+
+/* line 14, _footer.scss */
+.footer-link {
+  color: #8e979d;
+  font-size: 0.9em;
+  font-weight: 300;
+}
+
+/* line 20, _footer.scss */
+footer > nav > ul {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  *zoom: 1;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+/* line 27, _footer.scss */
+footer > nav > ul li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0;
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  white-space: nowrap;
+  margin-left: 20px;
+}
+
+@font-face {
+  font-family: CodeEnvy;
+  src: url("../fonts/regular.otf");
+}
+
+@font-face {
+  font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+/* line 6, _signup.scss */
+.signup-form-wrapper {
+  width: 335px;
+  margin: 20px;
+  padding-top: 11px;
+}
+/* line 11, _signup.scss */
+.signup-form-wrapper h1 {
+  padding-left: 16px;
+}
+
+/* line 14, _signup.scss */
+.signup-form {
+  background-image: url("../images/lineFull.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 16, _signup.scss */
+.signup-form .domain-name {
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0.3s;
+  -moz-transition-delay: 0.3s;
+  -o-transition-delay: 0.3s;
+  transition-delay: 0.3s;
+}
+/* line 19, _signup.scss */
+.signup-form .field {
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0.3s;
+  -moz-transition-delay: 0.3s;
+  -o-transition-delay: 0.3s;
+  transition-delay: 0.3s;
+}
+
+/* line 24, _signup.scss */
+.domain-placeholder {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  color: rgba(251, 251, 251, 0.5);
+}
+
+/* line 31, _signup.scss */
+.hidden-text-box {
+  opacity: 0;
+}
+
+/* line 33, _signup.scss */
+.signup-button {
+  opacity: 1;
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0.3s;
+  -moz-transition-delay: 0.3s;
+  -o-transition-delay: 0.3s;
+  transition-delay: 0.3s;
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+/* line 39, _signup.scss */
+.signup-button.hidden-button {
+  opacity: 0;
+}
+
+/* line 41, _signup.scss */
+.signup-terms {
+  position: absolute;
+  left: 33px;
+  bottom: 5px;
+  font-size: 0.8em;
+  line-height: 1.1em;
+  font-weight: 200;
+  opacity: 0.7;
+  color: #f3f3f3;
+}
+
+/* line 4, _grid.scss */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 11, _grid.scss */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* line 16, _grid.scss */
+.container {
+  overflow: hidden;
+  *zoom: 1;
+  width: 947px;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+/* line 24, _grid.scss */
+.responsive .container {
+  width: auto;
+  max-width: 947px;
+}
+@media screen and (min-width: 886px) and (max-width: 947px) {
+  /* line 24, _grid.scss */
+  .responsive .container {
+    margin: 0;
+    padding: 0 20px;
+  }
+}
+@media screen and (max-width: 885px) {
+  /* line 24, _grid.scss */
+  .responsive .container {
+    margin: 0;
+    padding: 0 15px;
+  }
+}
+
+/* line 44, _grid.scss */
+.row {
+  overflow: hidden;
+  *zoom: 1;
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+@media screen and (max-width: 885px) {
+  /* line 53, _grid.scss */
+  .responsive .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+/* line 63, _grid.scss */
+.field-row {
+  overflow: hidden;
+  *zoom: 1;
+  margin-left: -10px;
+  margin-right: -10px;
+}
+/* line 68, _grid.scss */
+.field-row [class*="span"] {
+  padding: 0 10px;
+}
+
+@media screen and (max-width: 885px) {
+  /* line 75, _grid.scss */
+  .responsive .field-row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  /* line 79, _grid.scss */
+  .responsive .field-row [class*="span"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+/* line 90, _grid.scss */
+[class*="span"] {
+  float: left;
+  min-height: 1px;
+  padding: 0 10px;
+}
+/* line 95, _grid.scss */
+[class*="span"]:last-child {
+  float: right;
+}
+
+@media screen and (max-width: 885px) {
+  /* line 101, _grid.scss */
+  .responsive [class*="span"] {
+    float: none;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* line 112, _grid.scss */
+.span1 {
+  width: 8.33333%;
+}
+
+/* line 112, _grid.scss */
+.span2 {
+  width: 16.66667%;
+}
+
+/* line 112, _grid.scss */
+.span3 {
+  width: 25%;
+}
+
+/* line 112, _grid.scss */
+.span4 {
+  width: 33.33333%;
+}
+
+/* line 112, _grid.scss */
+.span5 {
+  width: 41.66667%;
+}
+
+/* line 112, _grid.scss */
+.span6 {
+  width: 50%;
+}
+
+/* line 112, _grid.scss */
+.span7 {
+  width: 58.33333%;
+}
+
+/* line 112, _grid.scss */
+.span8 {
+  width: 66.66667%;
+}
+
+/* line 112, _grid.scss */
+.span9 {
+  width: 75%;
+}
+
+/* line 112, _grid.scss */
+.span10 {
+  width: 83.33333%;
+}
+
+/* line 112, _grid.scss */
+.span11 {
+  width: 91.66667%;
+}
+
+/* line 112, _grid.scss */
+.span12 {
+  width: 100%;
+}
+
+/* line 1, _containers.scss */
+.container.dark {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(30%, #233041), color-stop(100%, #3e495a));
+  background-image: -webkit-linear-gradient(#233041 30%, #3e495a);
+  background-image: -moz-linear-gradient(#233041 30%, #3e495a);
+  background-image: -o-linear-gradient(#233041 30%, #3e495a);
+  background-image: linear-gradient(#233041 30%, #3e495a);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#233041', endColorstr='#3e495a');
+  color: #f3f3f3;
+}
+/* line 4, _containers.scss */
+.container.dark a.more-info {
+  color: #54aee1;
+}
+
+/* line 7, _containers.scss */
+.container.border-line {
+  border-top: solid 4px #d6e3ed;
+}
+
+/* line 15, _containers.scss */
+.container.light-n-framed {
+  border-left: solid 1px #d7d7d7;
+  border-right: solid 1px #d7d7d7;
+  border-bottom: solid 1px #d7d7d7;
+  background-color: #fff;
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+/* line 23, _containers.scss */
+.container.super-light-n-framed {
+  border-left: solid 1px #d7d7d7;
+  border-right: solid 1px #d7d7d7;
+  border-bottom: solid 1px #d7d7d7;
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+/* line 31, _containers.scss */
+.container.light-gradient {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #f7f7f7));
+  background-image: -webkit-linear-gradient(#ffffff, #f7f7f7);
+  background-image: -moz-linear-gradient(#ffffff, #f7f7f7);
+  background-image: -o-linear-gradient(#ffffff, #f7f7f7);
+  background-image: linear-gradient(#ffffff, #f7f7f7);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F7F7F7');
+}
+
+/* line 36, _containers.scss */
+.section-header {
+  margin-bottom: 2em;
+}
+
+/* line 2, _components.scss */
+.content {
+  margin-top: 8px;
+}
+
+/* line 6, _components.scss */
+.short-line {
+  width: 100px;
+}
+
+/*
+
+	Landing page
+
+*/
+/* line 27, _components.scss */
+.scene {
+  position: relative;
+  background-image: url("../images/sceneBackground.png");
+  background-repeat: repeat-x;
+  overflow: hidden;
+  border-radius: 6px;
+  color: #f3f3f3;
+  max-height: 407px;
+}
+/* line 16, _components.scss */
+.scene a {
+  color: #f3f3f3;
+}
+
+/* line 33, _components.scss */
+.totem {
+  background-image: url("../images/codenvyTotem.png");
+  background-repeat: no-repeat;
+  background-position: 65% 40%;
+  min-height: 407px;
+}
+
+/* line 39, _components.scss */
+.overview {
+  margin-top: 10px;
+}
+/* line 43, _components.scss */
+.overview p {
+  text-align: center;
+  padding: 10px 10px 20px 10px;
+  line-height: 1.5em;
+  background-image: url("../images/lineLight.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+/* line 50, _components.scss */
+.overview .icon-head {
+  padding-top: 30px;
+  margin-top: 20px;
+}
+/* line 56, _components.scss */
+.overview .cloud {
+  background-image: url("../images/iconCloud.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 60, _components.scss */
+.overview .lighting {
+  background-image: url("../images/iconLighting.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 64, _components.scss */
+.overview .user {
+  background-image: url("../images/iconUser.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 68, _components.scss */
+.overview .house {
+  background-image: url("../images/iconHouse.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 72, _components.scss */
+.overview .lock {
+  background-image: url("../images/iconLock.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 76, _components.scss */
+.overview .plug {
+  background-image: url("../images/iconPlug.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 80, _components.scss */
+.overview .scale {
+  background-image: url("../images/iconScale.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+/* line 84, _components.scss */
+.overview .browser {
+  background-image: url("../images/iconBrowser.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+}
+
+/*
+
+    Login
+
+*/
+/* line 97, _components.scss */
+.login {
+  position: relative;
+  background-image: url("../images/sceneBackground.png");
+  background-repeat: repeat-x;
+  overflow: hidden;
+  border-radius: 6px;
+  color: #f3f3f3;
+  position: relative;
+  padding-top: 21px;
+}
+/* line 16, _components.scss */
+.login a {
+  color: #f3f3f3;
+}
+
+/*
+
+    Forgot password form
+
+*/
+/* line 109, _components.scss */
+.result-message.hidden {
+  opacity: 0;
+}
+
+/* line 113, _components.scss */
+.data.hidden {
+  opacity: 0;
+}
+
+/*
+
+    Misc
+
+*/
+/* line 122, _components.scss */
+.aternative-login {
+  background-image: url("../images/lineOr.png");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0.6s;
+  -moz-transition-duration: 0.6s;
+  -o-transition-duration: 0.6s;
+  transition-duration: 0.6s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  transition-delay: 0;
+  padding: 10px;
+  text-align: center;
+  opacity: 1;
+  padding-top: 51px;
+}
+
+/* line 131, _components.scss */
+.aternative-login.pulled-up {
+  -webkit-transform: translate(0, -136px);
+  -moz-transform: translate(0, -136px);
+  -ms-transform: translate(0, -136px);
+  -o-transform: translate(0, -136px);
+  transform: translate(0, -136px);
+}
+
+/* line 135, _components.scss */
+.aternative-login.collapsed {
+  opacity: 0;
+  -webkit-transform: translate(0, 0);
+  -moz-transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
+  transform: translate(0, 0);
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  transition-delay: 0;
+}
+
+/*
+    Domain picker
+
+*/
+/* line 147, _components.scss */
+.select-domain {
+  position: relative;
+  background-image: url("../images/sceneBackground.png");
+  background-repeat: repeat-x;
+  overflow: hidden;
+  border-radius: 6px;
+  color: #f3f3f3;
+  position: relative;
+  padding: 20px;
+}
+/* line 16, _components.scss */
+.select-domain a {
+  color: #f3f3f3;
+}
+
+/* line 154, _components.scss */
+.domain-list {
+  background: rgba(251, 251, 251, 0.5);
+  border-radius: 6px;
+  list-style: none;
+  padding: 0;
+}
+
+/* line 161, _components.scss */
+.domain-list li {
+  padding: 0;
+  border-bottom: solid 1px #313a48;
+}
+
+/* line 166, _components.scss */
+.domain-list li a {
+  display: block;
+  padding: 5px 20px;
+}
+
+/* line 171, _components.scss */
+.domain-list li:last-child {
+  border-bottom: none;
+}
+
+/*
+
+    Standard pages
+
+*/
+/* line 182, _components.scss */
+.container.light {
+  background: #f7f7f7;
+  border: solid 1px #d9dbdf;
+  padding: 20px 60px 60px;
+  border-radius: 6px;
+  background-image: url("../images/logo-inlaid.png");
+  background-repeat: no-repeat;
+  background-position: 50% 98%;
+}
+/* line 190, _components.scss */
+.container.light h1 {
+  font-size: 36px;
+  text-align: center;
+  text-transform: uppercase;
+}
+/* line 196, _components.scss */
+.container.light h2 {
+  font-size: 26px;
+  font-weight: normal;
+}
+/* line 201, _components.scss */
+.container.light hr {
+  border: solid 1px #e3e4e7;
+  margin: 30px 0;
+}
+/* line 206, _components.scss */
+.container.light .subtitle-line {
+  width: 50px;
+  border-top: solid 1px #44484b;
+  margin: 0 auto 40px auto;
+}
+/* line 212, _components.scss */
+.container.light ul {
+  font-weight: 300;
+}
+
+/*
+
+    Loader (wait for tenant screen)
+
+*/
+/* line 223, _components.scss */
+body.simple {
+  background-color: #595e62;
+  position: relative;
+}
+
+/* line 228, _components.scss */
+.loader {
+  background-image: url("../images/spriteSpinner.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 30px;
+  width: 300px;
+  margin-left: -150px;
+  margin-top: -15px;
+  opacity: 0;
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+  transition-duration: 0.5s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  transition-delay: 0;
+}
+/* line 243, _components.scss */
+.loader h3 {
+  color: #f3f3f3;
+}
+/* line 247, _components.scss */
+.loader.frame1 {
+  background-position: 50% -100px;
+}
+/* line 248, _components.scss */
+.loader.frame2 {
+  background-position: 50% 0px;
+}
+/* line 249, _components.scss */
+.loader.frame3 {
+  background-position: 50% -29px;
+}
+/* line 250, _components.scss */
+.loader.frame4 {
+  background-position: 50% -58px;
+}
+/* line 252, _components.scss */
+.loader.visible {
+  opacity: 1.0;
+}
+
+/* line 255, _components.scss */
+.loader-text {
+  font-weight: 300;
+  text-transform: uppercase;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 28px;
+  width: 300px;
+  margin-left: -150px;
+  margin-top: -14px;
+  text-align: center;
+  padding-top: 42px;
+  color: #f3f3f3;
+}
+
+/*
+
+    Profile page
+
+*/
+/* line 277, _components.scss */
+.profile-form {
+  position: relative;
+  background-image: url("../images/sceneBackground.png");
+  background-repeat: repeat-x;
+  overflow: hidden;
+  border-radius: 6px;
+  color: #f3f3f3;
+  position: relative;
+  padding: 20px;
+  background: #233040;
+}
+/* line 16, _components.scss */
+.profile-form a {
+  color: #f3f3f3;
+}
+/* line 283, _components.scss */
+.profile-form form {
+  padding: 10px 5px;
+}
+
+/*
+    Enterprise page
+*/
+/* line 293, _components.scss */
+.enterprise-header {
+  background-image: url("../images/enterprise/header.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 410px;
+}
+
+/* line 300, _components.scss */
+.enterprise .icon-head p {
+  height: 150px;
+}
+
+/*
+
+    Pricing
+
+*/
+/* line 313, _components.scss */
+.pricing-feature-list {
+  padding: 0;
+  margin: 2em 0;
+  list-style-type: none;
+  line-height: 2em;
+}
+/* line 318, _components.scss */
+.pricing-feature-list li {
+  padding: 0 0 1em 0;
+  margin: 1em 0;
+  background-image: url("../images/pricing/sep_line_small.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+/* line 322, _components.scss */
+.pricing-feature-list li a {
+  background-image: url("../images/pricing/icon_info.png");
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
+  color: #f3f3f3;
+  padding-right: 30px;
+}
+
+/* line 331, _components.scss */
+.pricing-poetry {
+  font-size: 1em;
+  color: #8e979d;
+  font-weight: 300;
+  padding: 0.5em;
+  margin-top: 30px;
+}
+
+/* line 339, _components.scss */
+.pricing-feature {
+  padding: 15px;
+}
+
+/* line 343, _components.scss */
+.container.open-source {
+  background-color: #2b3748;
+  border: solid 1px #313d4d;
+  padding: 0.8em;
+}
+
+/* line 349, _components.scss */
+.container.open-source-desc {
+  line-height: 2.5em;
+}
+
+/* line 353, _components.scss */
+.pricing-box-open-source {
+  background-image: url("../images/pricing/box_opensource.png");
+  background-repeat: no-repeat;
+  background-position: 50px 50%;
+  height: 128px;
+}
+
+/* line 358, _components.scss */
+.pricing-box-business {
+  background-image: url("../images/pricing/box_business.png");
+  background-repeat: no-repeat;
+  background-position: 22px 50%;
+  margin-bottom: 20px;
+  height: 155px;
+}
+
+/* line 363, _components.scss */
+.header-secure {
+  background: -webkit-linear-gradient(#7bbced, #54aee1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* line 370, _components.scss */
+.header-premium {
+  background: -webkit-linear-gradient(#7bbced, #54aee1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* line 377, _components.scss */
+.header-business {
+  background: -webkit-linear-gradient(#fff000, #c4a000);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* line 384, _components.scss */
+.pricing-box-premium {
+  background-image: url("../images/pricing/box_premium.png");
+  background-repeat: no-repeat;
+  background-position: 22px 50%;
+  margin-bottom: 20px;
+  height: 155px;
+}
+
+/* line 389, _components.scss */
+.pricing-box-secure {
+  background-image: url("../images/pricing/box_secure.png");
+  background-repeat: no-repeat;
+  background-position: 22px 50%;
+  margin-bottom: 20px;
+  height: 155px;
+}
+
+/* line 394, _components.scss */
+.container.enterprise-teaser {
+  background-color: #42617B;
+  color: #f3f3f3;
+  padding: 0.5em;
+}
+/* line 398, _components.scss */
+.container.enterprise-teaser a {
+  color: #54aee1;
+}
+
+/* line 401, _components.scss */
+.welcome-pack {
+  background-image: url("../images/pricing/img_welcomepack.png");
+  background-repeat: no-repeat;
+  background-position: -80px 50%;
+  height: 212px;
+}
+
+/* line 406, _components.scss */
+.container.pricing-dedicated {
+  padding-right: 10px;
+  padding-left: 50px;
+}
+
+/* line 411, _components.scss */
+.cloud-up {
+  background-image: url("../images/pricing/img_cloudup.png");
+  background-repeat: no-repeat;
+  background-position: 117% 50%;
+  min-height: 232px;
+}
+
+/* line 416, _components.scss */
+.key-box {
+  background-image: url("../images/pricing/img_keybox.png");
+  background-repeat: no-repeat;
+  background-position: 65px 50%;
+  height: 250px;
+}
+
+/*
+
+    Features
+
+*/
+/* line 427, _components.scss */
+.container.features {
+  position: relative;
+  z-index: 1;
+  min-height: 353px;
+}
+/* line 429, _components.scss */
+.container.features:after {
+  content: url("../images/features/img_header.png");
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+}
+
+/* line 432, _components.scss */
+.screenshot {
+  padding-bottom: 209px;
+}
+
+/* line 433, _components.scss */
+.screenshot.anywhere {
+  background-image: url("../images/features/img_prntscr_accessanywhere.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 434, _components.scss */
+.screenshot.invite {
+  background-image: url("../images/features/img_prntscr_invite.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 435, _components.scss */
+.screenshot.language {
+  background-image: url("../images/features/img_prntscr_picklanguage.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 437, _components.scss */
+.choose-paas {
+  background-image: url("../images/features/img_choosepaas.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+  padding-bottom: 145px;
+}
+
+/* line 440, _components.scss */
+.screenshot.build-cycle {
+  background-image: url("../images/features/img_prntscr_buildcycle.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 441, _components.scss */
+.screenshot.pair-programming {
+  background-image: url("../images/features/img_prntscr_pair.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 442, _components.scss */
+.screenshot.editor {
+  background-image: url("../images/features/img_prntscr_editor.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 443, _components.scss */
+.screenshot.debug {
+  background-image: url("../images/features/img_prntscr_debug.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
+
+/* line 445, _components.scss */
+.ide-screenshot {
+  margin-top: 2em;
+}
+/* line 447, _components.scss */
+.ide-screenshot img {
+  display: inline;
+}
+
+/* normalize.css v2.0.1 | MIT License | git.io/normalize */
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+/**
+ * Correct `block` display not defined in IE 8/9.
+ */
+/* line 39, main.scss */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section,
+summary {
+  display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 8/9.
+ */
+/* line 49, main.scss */
+audio,
+canvas,
+video {
+  display: inline-block;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+/* line 58, main.scss */
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+/**
+ * Address styling not present in IE 8/9.
+ */
+/* line 67, main.scss */
+[hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+/**
+ * 1. Set default font family to sans-serif.
+ * 2. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+/* line 81, main.scss */
+html {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -ms-text-size-adjust: 100%;
+  /* 2 */
+}
+
+/**
+ * Remove default margin.
+ */
+/* line 94, main.scss */
+body {
+  margin: 0;
+  background-color: #f3f3f3;
+  color: #44484b;
+  letter-spacing: 0.05em;
+}
+
+/* line 101, main.scss */
+html, body {
+  height: 100%;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+/* line 113, main.scss */
+a {
+  text-decoration: none;
+  color: #44484b;
+}
+
+/* line 118, main.scss */
+a:focus {
+  outline: none;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+/* line 128, main.scss */
+a:active,
+a:hover {
+  outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+/**
+ * Address variable `h1` font size within `section` and `article` contexts in
+ * Firefox 4+, Safari 5, and Chrome.
+ */
+/* line 141, main.scss */
+h1 {
+  font-size: 2em;
+  font-weight: 300;
+  line-height: 1.3em;
+}
+
+/**
+ * Address styling not present in IE 8/9, Safari 5, and Chrome.
+ */
+/* line 151, main.scss */
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
+ */
+/* line 160, main.scss */
+b,
+strong {
+  font-weight: bold;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+/* line 168, main.scss */
+dfn {
+  font-style: italic;
+}
+
+/**
+ * Address styling not present in IE 8/9.
+ */
+/* line 176, main.scss */
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+/**
+ * Correct font family set oddly in Safari 5 and Chrome.
+ */
+/* line 188, main.scss */
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+/* line 197, main.scss */
+pre {
+  white-space: pre;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/**
+ * Set consistent quote types.
+ */
+/* line 207, main.scss */
+q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+/* line 224, main.scss */
+sub,
+sup {
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+/* line 231, main.scss */
+sup {
+  top: -0.5em;
+}
+
+/* line 235, main.scss */
+sub {
+  bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+/**
+ * Remove border when inside `a` element in IE 8/9.
+ */
+/* line 247, main.scss */
+img {
+  border: 0;
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+/* line 255, main.scss */
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+/**
+ * Address margin not present in IE 8/9 and Safari 5.
+ */
+/* line 267, main.scss */
+figure {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+/**
+ * Remove most spacing between table cells.
+ */
+/* line 279, main.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* end Normalize */
