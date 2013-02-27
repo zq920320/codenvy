@@ -86,19 +86,16 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${org.slf4j.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${ch.qos.logback.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>${ch.qos.logback.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -113,7 +110,7 @@
          <resource>
             <directory>src/main/resources</directory>
             <includes>
-               <include>**/*.pig</include>
+               <include>**/*</include>
             </includes>
          </resource>
       </resources>
@@ -122,8 +119,7 @@
          <testResource>
             <directory>src/test/resources</directory>
             <includes>
-               <include>**/*.log</include>
-               <include>**/*.xml</include>
+               <include>**/*</include>
             </includes>
          </testResource>
       </testResources>
@@ -133,6 +129,13 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
+                 <systemProperties>
+                    <property>
+                       <name>dashboard.script.directory</name>
+                       <value>scripts</value>
+                    </property>
+                 </systemProperties>
+
                  <excludes>
                     <exclude>com/codenvy/dashboard/**/TestLogCollector.java</exclude>
                  </excludes>

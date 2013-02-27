@@ -16,46 +16,40 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.fs;
+package com.codenvy.dashboard.pig.scripts;
 
 import org.apache.pig.data.Tuple;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 
 /**
- * Class represent the result of Pig-latin script execution, which
- * returns the amount of specific event occurrence for particular
- * date. Incoming tuple should meet the requirement:<br> 
- * (chararray: event, int: date, long: value).
+ * It is used to translate result received from script execution
+ * into the object more useful to operate with. Also it has 
+ * responsibilities to perform read and write in the way more
+ * suitable for given object.
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class EventFileObject extends FileObject
+public interface ValueTranslator
 {
+   /**
+    * Performs write operation. It is supposed the value already translated.
+    */
+   void doWrite(BufferedWriter writer, Object value) throws IOException;
 
    /**
-    * The list of actual key field names.
+    * Performs read operation. 
+    * @return the translated object. 
     */
-   public final static String[] KEY_FIELDS = {"event", "date"};
+   Object doRead(BufferedReader reader) throws IOException;
 
-   /**
-    * Corresponding {@link ScriptResultType}.
+   /** 
+    * Object translation.
+    * 
+    * @param value some object from resulted {@link Tuple}
+    * @return translated object
     */
-   private final static ScriptResultType type = ScriptResultType.EVENT;
-
-   /**
-    * {@link EventFileObject} constructor.
-    */
-   public EventFileObject(String baseDir, String event, int date) throws IOException
-   {
-      super(baseDir, type, makeKeys(KEY_FIELDS, event, date));
-   }
-
-   /**
-    * {@link EventFileObject} constructor.
-    */
-   public EventFileObject(String baseDir, Tuple tuple) throws IOException
-   {
-      super(baseDir, type, tuple, KEY_FIELDS);
-   }
+   Object translate(Object value) throws IOException;
 }

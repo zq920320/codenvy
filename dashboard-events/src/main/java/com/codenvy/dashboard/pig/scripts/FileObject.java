@@ -16,7 +16,7 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.fs;
+package com.codenvy.dashboard.pig.scripts;
 
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
@@ -24,6 +24,7 @@ import org.apache.pig.data.Tuple;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,7 +37,7 @@ import java.util.Map.Entry;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class FileObject
+public class FileObject
 {
 
    /**
@@ -45,14 +46,13 @@ public abstract class FileObject
    public static final String FILE_NAME = "value";
    
    /**
-    * {@link ScriptResultType} related to the partial instance of {@link FileObject}. 
-    * It is used also as a part of path to destination {@link #FILE_NAME}.
+    * {@link ScriptResultType}. It is used also as a part of path to destination {@link #FILE_NAME}.
     */
-   private final ScriptResultType type;
+   private final ScriptResultType typeResult;
 
    /**
     * The sequence of values are used as unique identifier of result
-    * relatively to {@link #type}. They are used also as a part of 
+    * relatively to {@link #typeResult}. They are used also as a part of 
     * path to destination {@link #FILE_NAME}. 
     */
    private final LinkedHashMap<String, String> keys;
@@ -68,14 +68,20 @@ public abstract class FileObject
    private final Object value;
 
    /**
+    * {@link ValueTranslator} instance.
+    */
+   private final ValueTranslator translator;
+
+   /**
     * {@link FileObject} constructor. Loads value from the file.
     */
-   FileObject(String baseDir, ScriptResultType type, LinkedHashMap<String, String> keys)
+   FileObject(String baseDir, ScriptResultType type, Object... keysValues)
       throws IOException
    {
-      this.type = type;
-      this.keys = keys;
+      this.typeResult = type;
+      this.keys = makeKeys(type.getKeyFields(), keysValues);
       this.baseDir = baseDir;
+      this.translator = type.getValueTranslator();
       this.value = load();
    }
 
@@ -83,14 +89,16 @@ public abstract class FileObject
     * {@link FileObject} constructor. Extract keys and value from the passed <code>tuple</code>.
     * The last fields of the tuple is treated as value. 
     */
-   FileObject(String baseDir, ScriptResultType type, Tuple tuple, String[] keyFields) throws IOException
+   FileObject(String baseDir, ScriptResultType type, Tuple tuple) throws IOException
    {
+      final String[] keyFields = type.getKeyFields();
+
       if (tuple.size() != keyFields.length + 1)
       {
          throw new IOException("The size of the tuple does not corresponds the number of key fields");
       }
 
-      this.type = type;
+      this.typeResult = type;
       this.baseDir = baseDir;
       this.keys = new LinkedHashMap<String, String>(keyFields.length);
 
@@ -99,7 +107,8 @@ public abstract class FileObject
          keys.put(keyFields[i], tuple.get(i).toString());
       }
 
-      this.value = tuple.get(keyFields.length);
+      this.translator = type.getValueTranslator();
+      this.value = translator.translate(tuple.get(keyFields.length));
    }
 
    /**
@@ -111,30 +120,13 @@ public abstract class FileObject
    }
 
    /**
-    * @return {@link #type}.
-    */
-   public final ScriptResultType getType()
-   {
-      return type;
-   }
-
-   /**
     * @return {@link #value}.
     */
    public final Object getValue() throws IOException
    {
-      return translateValue(value);
-   }
-   
-   /**
-    * If subclass want to return value another type it might be
-    * done here.
-    */
-   protected Object translateValue(Object value) throws IOException
-   {
       return value;
    }
-
+   
    /**
     * Stores value into the file.
     */
@@ -197,7 +189,7 @@ public abstract class FileObject
       }
       
       StringBuilder builder = new StringBuilder();
-      builder.append(type.toString().toLowerCase());
+      builder.append(typeResult.toString().toLowerCase());
       builder.append(File.separatorChar);
       
       for (Entry<String, String> entry : keys.entrySet())
@@ -215,28 +207,16 @@ public abstract class FileObject
     */
    private String toRelativePath(Entry<String, String> entry)
    {
-      if (entry.getKey().equals("date"))
+      if (entry.getKey().equals(Constants.DATE))
       {
          return translateDateToRelativePath(entry.getValue());
       }
-      else if (entry.getKey().startsWith("param"))
+      else if (entry.getKey().startsWith(Constants.PARAM_NAME))
       {
          return entry.getValue().toLowerCase();
       }
 
       return entry.getValue().toLowerCase().replace('-', File.separatorChar);
-   }
-
-   private String translateUserToRelativePath(String user)
-   {
-      StringBuilder builder = new StringBuilder();
-
-      for (int i = 0; i < Math.min(user.length(), 3); i++)
-      {
-
-      }
-
-      return builder.toString();
    }
 
    /**
@@ -263,20 +243,12 @@ public abstract class FileObject
       BufferedWriter writer = new BufferedWriter(new FileWriter(file));
       try
       {
-         doWrite(writer, value);
+         translator.doWrite(writer, value);
       }
       finally
       {
          writer.close();
       }
-   }
-
-   /**
-    * Perform write operation. Might be overridden.
-    */
-   protected void doWrite(BufferedWriter writer, Object value) throws IOException
-   {
-      writer.write(value.toString());
    }
 
    /**
@@ -287,7 +259,7 @@ public abstract class FileObject
       File file = getFile();
       if (!file.exists())
       {
-         throw new IOException("File does not exist " + file.getAbsolutePath());
+         throw new FileNotFoundException("File does not exist " + file.getAbsolutePath());
       }
 
       return doLoad(file);
@@ -298,7 +270,7 @@ public abstract class FileObject
       BufferedReader reader = new BufferedReader(new FileReader(file));
       try
       {
-         return doRead(reader);
+         return translator.doRead(reader);
       }
       finally
       {
@@ -307,64 +279,46 @@ public abstract class FileObject
    }
 
    /**
-    * Perform read operation. Might be overridden.
-    */
-   protected Object doRead(BufferedReader reader) throws IOException
-   {
-      return reader.readLine();
-   }
-
-   /**
     * Prepare keys for {@link FileObject#keys}.
     */
-   protected static LinkedHashMap<String, String> makeKeys(String[] keyNames, Object... keyValues) throws ExecException
+   private LinkedHashMap<String, String> makeKeys(String[] keyFields, Map<String, String> context) throws IOException
    {
       LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 
-      for (int i = 0; i < keyValues.length; i++)
+      for (String key : keyFields)
       {
-         keys.put(keyNames[i], keyValues[i].toString());
+         String value = context.get(key);
+         if (value == null)
+         {
+            throw new IOException("Parameter " + key + "does not exist in context");
+         }
+
+         keys.put(key, value);
       }
 
       return keys;
    }
 
    /**
-    * Factory class. Creates specific implementation of {@link FileObject} based on given type.
+    * Prepare keys for {@link FileObject#keys}.
     */
-   public static FileObject createFileObject(String baseDir, String scriptType, Tuple tuple)
-      throws IllegalArgumentException, IOException
+   private LinkedHashMap<String, String> makeKeys(String[] keyFields, Object... keyValues) throws ExecException
    {
-      ScriptResultType type = ScriptResultType.valueOf(scriptType.toUpperCase());
+      LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 
-      switch (type)
+      for (int i = 0; i < keyValues.length; i++)
       {
-         case EVENT :
-            return new EventFileObject(baseDir, tuple);
-
-         case EVENT_PARAM :
-            return new EventParamFileObject(baseDir, tuple);
-
-         default :
-            throw new IllegalArgumentException("Unknown type " + scriptType);
+         keys.put(keyFields[i], keyValues[i].toString());
       }
+
+      return keys;
    }
 
    /**
-    * Enumeration of all Pig-latin script's results. See related
-    * implementation {@link FileObject} for details
+    * Getter for {@link #typeResult}.
     */
-   public static enum ScriptResultType {
-
-      /**
-       * Corresponds to {@link SpecificEventFileObject}.
-       */
-      EVENT,
-      
-      /**
-       * 
-       */
-      EVENT_PARAM
+   public Object getTypeResult()
+   {
+      return typeResult;
    }
-
 }

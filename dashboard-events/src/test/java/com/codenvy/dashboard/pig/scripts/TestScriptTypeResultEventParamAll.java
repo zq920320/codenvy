@@ -16,10 +16,7 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.pig.store.fs;
-
-import com.codenvy.dashboard.pig.scripts.BasePigTest;
-import com.codenvy.dashboard.pig.store.fs.FileObject.ScriptResultType;
+package com.codenvy.dashboard.pig.scripts;
 
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DefaultDataBag;
@@ -36,7 +33,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestEventParamFileObject
+public class TestScriptTypeResultEventParamAll extends BasePigTest
 {
 
    private TupleFactory tupleFactory;
@@ -70,31 +67,34 @@ public class TestEventParamFileObject
 
       tuple.append(bag);
 
-      fileObject = new EventParamFileObject(BasePigTest.BASE_DIR, tuple);
+      fileObject = ScriptResultType.EVENT_PARAM_ALL.createFileObject(BASE_DIR, tuple);
    }
 
    @Test
    public void fileObjectShouldReturnCorrectProperties() throws Exception
    {
-      Assert.assertNotNull(fileObject.getKeys().get("event"));
-      Assert.assertNotNull(fileObject.getKeys().get("param"));
-      Assert.assertNotNull(fileObject.getKeys().get("date"));
+      Assert.assertNotNull(fileObject.getKeys().get(Constants.EVENT));
+      Assert.assertNotNull(fileObject.getKeys().get(Constants.PARAM_NAME));
+      Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
 
       Iterator<String> iter = fileObject.getKeys().keySet().iterator();
-      Assert.assertEquals(iter.next(), "event");
-      Assert.assertEquals(iter.next(), "param");
-      Assert.assertEquals(iter.next(), "date");
+      Assert.assertEquals(iter.next(), Constants.EVENT);
+      Assert.assertEquals(iter.next(), Constants.PARAM_NAME);
+      Assert.assertEquals(iter.next(), Constants.DATE);
 
-      Assert.assertEquals(fileObject.getType(), ScriptResultType.EVENT_PARAM);
-      Assert.assertEquals(fileObject.getKeys().get("event"), event);
-      Assert.assertEquals(fileObject.getKeys().get("param"), param);
-      Assert.assertEquals(fileObject.getKeys().get("date"), date.toString());
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptResultType.EVENT_PARAM_ALL);
+      Assert.assertEquals(fileObject.getKeys().get(Constants.EVENT), event);
+      Assert.assertEquals(fileObject.getKeys().get(Constants.PARAM_NAME), param);
+      Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), date.toString());
       Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("user1"), "1");
 
-      File file = new File("target/event_param/tenant/created/user/2011/10/10/value");
+      File file = new File("target/event_param_all/tenant/created/user/2011/10/10/value");
+      file.delete();
+
       Assert.assertFalse(file.exists());
 
       fileObject.store();
+
       Assert.assertTrue(file.exists());
    }
 }

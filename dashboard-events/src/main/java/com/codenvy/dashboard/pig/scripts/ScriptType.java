@@ -18,28 +18,40 @@
  */
 package com.codenvy.dashboard.pig.scripts;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
+ * Enumeration of all available Pig-latin scripts.
+ * 
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class BasePigTest
-{
-   /**
-    * Relative path to temporary files.
-    */
-   public static final String BASE_DIR = "target";
-
-   protected void executePigScript(ScriptType type, File log, String[][] params) throws IOException
-   {
-      ScriptExecutor scriptExecutor = new ScriptExecutor(type);
-      scriptExecutor.setParam(Constants.LOG, log.getAbsolutePath());
-      for (String[] param : params)
+public enum ScriptType {
+   EVENT_ALL {
+      @Override
+      public ScriptResultType getResultType()
       {
-         scriptExecutor.setParam(param[0], param[1]);
+         return ScriptResultType.EVENT_ALL;
       }
+   },
 
-      scriptExecutor.executeAndStoreResult(BASE_DIR);
+   EVENT_PARAM_ALL {
+      @Override
+      public ScriptResultType getResultType()
+      {
+         return ScriptResultType.EVENT_PARAM_ALL;
+      }
+   };
+
+   /**
+    * @return the script file name 
+    */
+   public String getScriptFileName()
+   {
+      return toString().toLowerCase().replace('_', '-') + ".pig";
    }
+
+   /**
+    * Every Pig-latin script return result of specific type. The type define the data format to be stored.
+    * 
+    * @return corresponding {@link ScriptResultType}.
+    */
+   public abstract ScriptResultType getResultType();
 }

@@ -18,58 +18,44 @@
  */
 package com.codenvy.dashboard.pig.scripts;
 
-
 /**
- * Constants list. For the record, all parameters will be substituted 
- * in Pig script at runtime.
- * 
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PigConstants
+public class Constants
 {
    /**
-    * Relation name in Pig script which contains execution results.
+    * The relation name in the Pig script, contains the execution result.
     */
    public static final String FINAL_RELATION = "result";
    
    /**
-    * Parameter name in Pig script contains the event id.
+    * The parameter for Pig script. Contains the value of event identifier.
     */
-   public static final String EVENT_PARAM = "event";
+   public static final String EVENT = "event";
 
    /**
-    * Additional parameter.
+    * The parameter for Pig script.
+    * Contains the name of some additional identifier.
     */
-   public static final String PARAM_NAME_PARAM = "paramName";
+   public static final String PARAM_NAME = "paramName";
 
    /**
-    * Parameter name in Pig script contains the beginning of time frame.
+    * Parameter name in Pig script. Contains the date to check.
     * For instance: 20101201. What means the first of December in 2010 year.
     */
-   public static final String FROM_PARAM = "from";
-
-   /**
-    * Parameter name in Pig script contains the ending of time frame.
-    * For instance: 20101202. What means the second of December in 2010 year.
-    */
-   public static final String TO_PARAM = "to";
+   public static final String DATE = "date";
 
    /**
     * Parameter name in Pig script contains the resources are needed to be loaded.
     * Can be either the name of single resource (file or directory) or the list of 
     * comma separated resources. Wildcard characters are supported.
     */
-   public static final String LOG_PARAM = "log";
-
-   /**
-    * The location where result will be stored.
-    */
-   public static final String STORE_INTO_PARAM = "storeInto";
+   public static final String LOG = "log";
 
    /**
     * Private constructor.
     */
-   private PigConstants()
+   private Constants()
    {
    }
 }
