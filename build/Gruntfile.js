@@ -143,5 +143,5 @@ module.exports = function( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-shell');
 
-  grunt.registerTask('custom_build', ['shell:init','shell:jekyll','shell:yeoman','copy','shell:clean_dist']);
+  grunt.registerTask('build', ['shell:init','shell:jekyll','shell:yeoman','copy','shell:clean_dist']);
 };
