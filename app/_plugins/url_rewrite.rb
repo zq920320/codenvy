@@ -6,7 +6,6 @@ module Jekyll
         else
             input
         end
-      #{}"http://www.example.com/#{input}?#{Time.now.to_i}"
     end
   end
 end
