@@ -1,0 +1,4 @@
+# jekyll configuration used for the build
+
+server_port: 4000
+rewrite_urls : true
