@@ -10,8 +10,23 @@ module.exports = function( grunt ) {
   grunt.initConfig({
 
 
+    buildConfig : {
+        temp : "./temp",
+        jekyllConfig : "_config.yml"
+    },
+
 
     copy: {
+
+        temp: {
+            files: [{expand: true, cwd: '../app/', src: ['**'], dest: '<%= buildConfig.temp %>'}]
+        },
+
+
+        jekyll_config: {
+            files : [{expand: true, cwd: './', src: ['<%= buildConfig.jekyllConfig %>'], dest: '<%= buildConfig.temp %>'}]
+        },
+
         main: {
             files: [
                 //{src: ['app/styles/main.css'], dest: 'dist/stage/styles/', flatten: true},
@@ -97,7 +112,7 @@ module.exports = function( grunt ) {
     shell : {
 
         init : {
-            command: 'rm -r dist',
+            command: 'rm -rf dist',
             options: {
                 stdout: true,
                 failOnError: true
@@ -110,7 +125,7 @@ module.exports = function( grunt ) {
                 stdout: true,
                 failOnError: true,
                 execOptions: {
-                    cwd: '../app/'
+                    cwd: '<%= buildConfig.temp %>'
                 }
             }
         },
@@ -127,12 +142,12 @@ module.exports = function( grunt ) {
         },
 
         clean_dist : {
-            command: 'rm -r dist && rm -r temp',
+            command: 'rm -rf ../dist && rm -rf ../temp && rm -rf <%= buildConfig.temp %>',
             options: {
                 stdout: true,
                 failOnError: true,
                 execOptions: {
-                    cwd: '../'
+                    cwd: './'
                 }
             }
         },
@@ -143,5 +158,15 @@ module.exports = function( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-shell');
 
-  grunt.registerTask('build', ['shell:init','shell:jekyll','shell:yeoman','copy','shell:clean_dist']);
+  grunt.registerTask('build',
+        [
+            'shell:init',
+            'copy:temp',
+            'copy:jekyll_config',
+            'shell:jekyll',
+            'shell:yeoman',
+            'copy:main',
+            'shell:clean_dist'
+        ]
+    );
 };
