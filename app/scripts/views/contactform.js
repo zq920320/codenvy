@@ -1,4 +1,4 @@
-define(["underscore","views/form","models/Contact"],function(_,Form,Contact){
+define(["underscore","views/form","models/contact"],function(_,Form,Contact){
 
     var ContactForm = Form.extend({
 
