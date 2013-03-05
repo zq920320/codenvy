@@ -15,21 +15,26 @@ IMPORT 'macros.pig';
 
 log = LOAD '$log' using PigStorage() as (message : chararray);
 filteredByDate = extractAndFilterByDate(log, $date, $toDate);
-uniqEvents = DISTINCT filteredByDate;
+
+--
+-- Remove events unrelated to active tenant action
+--
+uniq1 = DISTINCT filteredByDate;
+uniq2 = FILTER uniq1 BY INDEXOF(message, 'EVENT#tenant-stopped#', 0) == -1;
+uniq3 = FILTER uniq2 BY INDEXOF(message, 'EVENT#tenant-destroyed#', 0) == -1;
+uniqResult = FILTER uniq3 BY INDEXOF(message, 'EVENT#user-sso-logged-out#', 0) == -1;
 
 --
 -- extract workspace name out of WS identifier
 --
-a1 = FOREACH uniqEvents GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws;
-SPLIT a1 INTO a2 IF ws != '', aOther OTHERWISE;
-aResult = a2;
+a1 = FOREACH uniqResult GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws;
+aResult = FILTER a1 BY ws != '';
 
 --
 -- extract workspace name out of message
 --
-b1 = FOREACH uniqEvents GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws;
-SPLIT b1 INTO b2 IF ws != '', bOther OTHERWISE;
-bResult = b2;
+b1 = FOREACH uniqResult GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws;
+bResult = FILTER b1 BY ws != '';
 
 u1 = UNION aResult, bResult;
 u2 = DISTINCT u1;

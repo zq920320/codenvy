@@ -166,6 +166,14 @@ public class Event
       }
 
       /**
+       * Create 'tenant-stopped' event.
+       */
+      public static Builder createTenantStoppedEvent(String ws)
+      {
+         return new Builder().withParam("EVENT", "tenant-stopped").withParam("WS", ws);
+      }
+
+      /**
        * Create 'project-created' event.
        */
       public static Builder createProjectCreatedEvent(String user, String ws, String session, String project)
@@ -209,7 +217,15 @@ public class Event
          String userParam)
       {
          return new Builder().withContext(user, ws, session).withParam("EVENT", "user-added-to-ws")
-            .withParam("WS", "$" + wsParam).withParam("USER", "$" + userParam);
+            .withParam("WS", wsParam).withParam("USER", userParam);
+      }
+
+      /**
+       * Create 'user-added-to-ws' event.
+       */
+      public static Builder createUserSSOLoggedOutEvent(String user)
+      {
+         return new Builder().withParam("EVENT", "user-sso-logged-out").withParam("USER", user);
       }
    }
 
