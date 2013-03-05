@@ -50,6 +50,14 @@ public enum ScriptType {
       {
          return ScriptResultType.ACTIVE_ENTITY_COUNT;
       }
+   },
+
+   ACTIVE_PROJECT_COUNT {
+      @Override
+      public ScriptResultType getResultType()
+      {
+         return ScriptResultType.ACTIVE_ENTITY_COUNT;
+      }
    };
 
    /**
