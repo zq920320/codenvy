@@ -61,7 +61,7 @@
                     <li><a class="footer-link" href="#">Documentation</a></li>
                     <li><a class="footer-link" href="about.html">About</a></li>
                     <li><a class="footer-link" href="jobs.html">Jobs</a></li>
-                    <li><a class="footer-link" href="contact.html">Contact</a></li>
+                    <li><a class="footer-link" href="#" onclick="UserVoice.showPopupWidget();">Contact</a></li>
                     <li><a class="footer-link" href="http://facebook.com/codenvy">Facebook</a></li>
                     <li><a class="footer-link" href="http://twitter.com/codenvyhq" target="_blank">Twitter</a></li>
                 </ul>
@@ -84,6 +84,8 @@
         </script>
 
         -->
+
+        {% include uservoice.html %}
 
     <!-- build:js scripts/amd-app.js -->
     <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
