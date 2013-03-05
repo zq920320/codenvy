@@ -12,7 +12,8 @@ module.exports = function( grunt ) {
 
     buildConfig : {
         temp : "./temp",
-        jekyllConfig : "_config.yml"
+        jekyllStageConfig : "_config.stage.yml",
+        jekyllProdConfig : "_config.prod.yml"
     },
 
 
@@ -22,20 +23,8 @@ module.exports = function( grunt ) {
             files: [{expand: true, cwd: '../app/', src: ['**'], dest: '<%= buildConfig.temp %>'}]
         },
 
-
-        jekyll_config: {
-            files : [{expand: true, cwd: './', src: ['<%= buildConfig.jekyllConfig %>'], dest: '<%= buildConfig.temp %>'}]
-        },
-
-        main: {
+        stage: {
             files: [
-                //{src: ['app/styles/main.css'], dest: 'dist/stage/styles/', flatten: true},
-
-                /*
-                    Staging
-                    ---------------------------------------------------------------------------------
-                */
-
                 // scripts
 
                 {expand: true, cwd: '../app/scripts/', src: ['**'], dest: 'dist/stage/scripts/'},
@@ -58,13 +47,12 @@ module.exports = function( grunt ) {
 
                 // templates
 
-                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/stage/templates/'},
+                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/stage/templates/'}
+            ]
+        },
 
-                /*
-                    Production
-                    ---------------------------------------------------------------------------------
-                */
-
+        prod: {
+            files: [
                 // scripts
 
                 {
@@ -123,6 +111,22 @@ module.exports = function( grunt ) {
             }
         },
 
+        jekyll_stage_config : {
+            command: 'cp <%= buildConfig.jekyllStageConfig %> <%= buildConfig.temp %>/_config.yml',
+            options: {
+                stdout: true,
+                failOnError: true
+            }
+        },
+
+        jekyll_prod_config : {
+            command: 'cp <%= buildConfig.jekyllProdConfig %> <%= buildConfig.temp %>/_config.yml',
+            options: {
+                stdout: true,
+                failOnError: true
+            }
+        },
+
         jekyll : {
             command: 'jekyll',
             options: {
@@ -164,12 +168,43 @@ module.exports = function( grunt ) {
 
   grunt.registerTask('build',
         [
+            // get ready of the previous dist jazz
             'shell:init',
+
+            // copy all application files to the temporary folder
             'copy:temp',
-            'copy:jekyll_config',
+
+
+            // ------------------ STAGING
+
+            // copy staging _config.yml to the temporary folder
+            'shell:jekyll_stage_config',
+
+            // run jekyll build for staging
             'shell:jekyll',
+
+            // run yeoman build on top of staging Jekyll build
             'shell:yeoman',
-            'copy:main',
+
+            // copy staging build output
+            'copy:stage',
+
+
+            // ------------------ PRODUCTION
+
+            // copy staging _config.yml to the temporary folder
+            'shell:jekyll_prod_config',
+
+            // run jekyll build for production
+            'shell:jekyll',
+
+            // run yeoman build on top of production Jekyll build
+            'shell:yeoman',
+
+            // copy production goodness
+            'copy:prod',
+
+            // clean up
             'shell:clean_dist'
         ]
     );
