@@ -9,7 +9,7 @@
 -- How to run:
 -- pig -x local -param log="<DIRECTORY1>,<DIRECTORY2>..." 
 --              -param date=<YYYYMMDD> -param toDate=<YYYYMMDD>
---              active-tenant-count.pig
+--              active-project-count.pig
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
@@ -18,27 +18,37 @@ filteredByDate = extractAndFilterByDate(log, $date, $toDate);
 uniqEvents = DISTINCT filteredByDate;
 
 --
--- extract workspace name and project name out of WS identifier
+-- Remove events unrelated to active tenant action
 --
-a1 = FOREACH uniqEvents GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*PROJECT\\#([^\\#]*)\\#.*'));
+uniq1 = DISTINCT filteredByDate;
+uniqResult = FILTER uniq1 BY INDEXOF(message, 'EVENT#project-destroyed#', 0) == -1;
+
+--
+-- extract workspace name and project name out of identifiers
+--
+a1 = FOREACH uniqResult GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*PROJECT\\#([^\\#]*)\\#.*'));
 a2 = FOREACH a1 GENERATE $0 AS ws, $1 AS project;
-SPLIT a2 INTO a3 IF ws != '' AND project != '', aOther OTHERWISE;
-aResult = a3;
+aResult = FILTER a2 BY ws != '' AND project != '';
 
 --
--- extract workspace name out of message
+-- extract workspace name and project name out of identifiers
 --
-b1 = FOREACH uniqEvents GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*PROJECT\\#([^\\#]*)\\#.*'));
+c1 = FOREACH uniqResult GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*PROJECT\\#([^\\#]*)\\#.*WS\\#([^\\#]*)\\#.*'));
+c2 = FOREACH c1 GENERATE $1 AS ws, $0 AS project;
+cResult = FILTER c2 BY ws != '' AND project != '';
+
+--
+-- extract workspace name and project name out of message
+--
+b1 = FOREACH uniqResult GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*PROJECT\\#([^\\#]*)\\#.*'));
 b2 = FOREACH b1 GENERATE $0 AS ws, $1 AS project;
-SPLIT b2 INTO b3 IF ws != '' AND project != '', bOther OTHERWISE;
-bResult = b3;
+bResult = FILTER b2 BY ws != '' AND project != '';
 
-u1 = UNION aResult, bResult;
+u1 = UNION aResult, bResult, cResult;
 u2 = DISTINCT u1;
 uResult = FOREACH u2 GENERATE '$date' AS date, ws, project; 
 
 g1 = GROUP uResult BY date;
-gResult = FOREACH g1 GENERATE FLATTEN(group), '$toDate', COUNT(uResult) AS value;
+result = FOREACH g1 GENERATE FLATTEN(group), '$toDate', COUNT(uResult) AS value;
 
-result = gResult;
 DUMP result;

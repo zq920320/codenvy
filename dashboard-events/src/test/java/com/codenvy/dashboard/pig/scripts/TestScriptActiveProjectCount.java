@@ -47,6 +47,10 @@ public class TestScriptActiveProjectCount extends BasePigTest
       events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
          .build());
 
+      // events should be ignored
+      events.add(Event.Builder.createProjectDestroyedEvent("user2", "ws2", "session", "project3")
+         .withDate("2010-10-02").build());
+
       File log = LogGenerator.generateLog(events);
 
       executePigScript(ScriptType.ACTIVE_PROJECT_COUNT, log, new String[][]{{Constants.DATE, "20101001"},
