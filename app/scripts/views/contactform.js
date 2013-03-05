@@ -32,7 +32,7 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
             };
         },
 
-        __submit : function(form){
+        __submit : function(){
 
             this.__showProgress();
 
@@ -55,7 +55,7 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
             );
         },
 
-        __showErrors : function(errorMap, errorList){
+        __showErrors : function(errorMap){
             if(typeof errorMap.email !== 'undefined'){
                 this.trigger("invalid","email",errorMap.email);
                 return;

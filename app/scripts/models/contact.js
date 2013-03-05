@@ -28,8 +28,8 @@ define(["jquery","config","models/originextractor"],function($,Config,OriginExtr
             url: 'https://' + Config.userVoiceSubdomain + '.uservoice.com/api/v1/tickets/create_via_jsonp.json?callback=?',
             data: dataBundle,
             dataType : "jsonp",
-            success: function(data) { success(); },
-            error: function(d, msg) { error(); }
+            success: function() { success(); },
+            error: function() { error(); }
         });
     }
 

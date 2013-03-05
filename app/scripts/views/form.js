@@ -3,7 +3,7 @@ define(["jquery", "underscore", "backbone", "validation"],
     function($,_,Backbone){
 
         var Form = Backbone.View.extend({
-            initialize : function(attributes){
+            initialize : function(){
                 $(this.el).on('submit', function(e){
                     e.preventDefault();
                 });
@@ -27,7 +27,7 @@ define(["jquery", "underscore", "backbone", "validation"],
                 throw new Error("Not implemented");
             },
 
-            __showErrors : function(errorMap, errorList){
+            __showErrors : function(){
                 throw new Error("Not implemented");
             },
 

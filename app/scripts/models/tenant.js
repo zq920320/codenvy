@@ -7,7 +7,7 @@
 
         var Tenant = Backbone.Model.extend({
 
-            initialize : function(attributes){
+            initialize : function(){
                 this.set("url",this.__buildTenantUrl());
             },
 

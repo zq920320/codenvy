@@ -1,3 +1,6 @@
+/*jshint evil:true */
+// fix this in onReceiveUserProfileInfo(request)
+
 (function(window){
     define(["jquery","models/tenant"],function($,Tenant){
 
@@ -54,7 +57,8 @@
         function onReceiveUserProfileInfo(request)
         {
                  var user = eval("(" + request.responseText + ")");
-                 currentUserName = user.id;
+                 // this is reported as defined but never used by JShint
+                 //currentUserName = user.id;
                  document.getElementsByName("first_name")[0].value = user.firstName || "";
                  document.getElementsByName("last_name")[0].value = user.lastName || "";
                  document.getElementsByName("phone_work")[0].value = user.phone || "";
@@ -104,7 +108,7 @@
                 ).exec(domain) !== null ;
             },
 
-            login : function(email,password,success,error){
+            login : function(email,password,success /* ,error */){
                 var loginUrl = "/sso/server/gen?authType=jaas",
                     queryString = window.location.search,
                     jaasExists = queryString.match(/authType=jaas/);
@@ -123,14 +127,14 @@
 
                 var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm/";
 
-                var request = $.ajax({
+                $.ajax({
                     url : tenantServiceUrl + encodeURIComponent(domain.toLowerCase()) + "/" + email,
                     type : "POST",
                     data: {},
-                    success : function(output, status, xhr){
+                    success : function(){
                         success({url: '/pages/thank-you'});
                     },
-                    error : function(xhr, status, err){
+                    error : function(xhr/*, status , err*/){
                         error([
                             new AccountError(null,xhr.responseText)
                         ]);
@@ -144,14 +148,14 @@
 
                 var passwordRecoveryUrl = "/rest/password/recover/" + email;
 
-                var request = $.ajax({
+                $.ajax({
                     url : passwordRecoveryUrl,
                     type : "POST",
                     data: {},
                     success : function(output, status, xhr){
                         success({message: xhr.responseText});
                     },
-                    error : function(xhr, status, err){
+                    error : function(xhr){
                         error([
                             new AccountError(null,xhr.responseText)
                         ]);
@@ -176,13 +180,13 @@
                     return;
                 }
 
-                var request = $.ajax({
+                $.ajax({
                     url : confirmSetupPasswordUrl + "/" + id,
                     type : "GET",
                     success : function(output, status, xhr){
                         success({ email : xhr.responseText });
                     },
-                    error : function(xhr, status, err){
+                    error : function(xhr /*,status , err*/){
                         error([
                             new AccountError(null,xhr.responseText)
                         ]);
@@ -201,14 +205,14 @@
                     id = PasswordSetupIdProvider.getId();
 
 
-                var request = $.ajax({
+                $.ajax({
                     url : setupPasswordUrl,
                     type : "POST",
                     data : { uuid : id, password : password },
-                    success : function(output, status, xhr){
+                    success : function(){
                         success({url: "/"});
                     },
-                    error : function(xhr, status, err){
+                    error : function(xhr){
                         error([
                             new AccountError(null,xhr.responseText)
                         ]);
@@ -221,14 +225,14 @@
                 var changePasswordUrl = "/rest/private/password/change",
                     id = PasswordSetupIdProvider.getId();
 
-                var request = $.ajax({
+                $.ajax({
                     url : changePasswordUrl,
                     type : "POST",
                     data : { uuid : id, password : password },
-                    success : function(output, status, xhr){
+                    success : function(){
                         success({url: "/"});
                     },
-                    error : function(xhr, status, err){
+                    error : function(xhr){
                         error([
                             new AccountError(null,xhr.responseText)
                         ]);
@@ -240,15 +244,15 @@
 
                 var profileUrl = "/rest/private/profile/current";
 
-                var request = $.ajax({
+                $.ajax({
                     url : profileUrl,
                     type : "POST",
                     data : body,
                     contentType: "application/json",
-                    success : function(output, status, xhr){
+                    success : function(){
                         success({url: "/"});
                     },
-                    error : function(xhr, status, err){
+                    error : function(xhr){
                         error([
                             new AccountError(null,xhr.responseText)
                         ]);
@@ -259,14 +263,14 @@
             // get User`s profile in Profile page
             getUserProfile : function(error){
                 var profileUrl = "/rest/private/profile/current";
-                var request = $.ajax({
+                $.ajax({
                     url : profileUrl,
                     type : "GET",
                     contentType: "application/json",
                     success : function(output, status, xhr){
                         onReceiveUserProfileInfo(xhr);//filling profile page
                     },
-                    error : function(xhr, status, err){
+                    error : function(xhr){
                         error(null,xhr.responseText);
                     }
                 });
@@ -292,8 +296,8 @@
                }
 
                return string;
-            }
-          ,
+            },
+
           /**
            * Escape special symbols from user input
            * @param string
@@ -380,7 +384,7 @@
                                 setTimeout(hitServer,PING_TIMEOUT_MILLISECONDS);
                             }
                         },
-                        error : function(xhr, status, err){
+                        error : function(xhr){
                             if(Utils.isBadGateway(xhr)){
                                 error([
                                     new AccountError(null,"The requested domain is not available.")

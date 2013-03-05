@@ -55,7 +55,7 @@ define(["models/account","views/form","validation"],
                 };
             },
 
-            __showErrors : function(errorMap, errorList){
+            __showErrors : function(errorMap){
                 function refocus(el){
                     el.focus();
                 }
