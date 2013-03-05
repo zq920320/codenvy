@@ -35,6 +35,7 @@ $link-color-on-dark:#54aee1;
 
 $container-border-color:#d7d7d7;
 
+$blue-link-color:#54aee1;
 
 @mixin signup-button-gradient {
     @include background-image(linear-gradient(#8ECDF2, #54aee1 35%));
