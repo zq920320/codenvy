@@ -1,4 +1,4 @@
-define(["models/account","models/tenant","underscore"], function(Account,Tenant,_){
+define(["jquery","models/account","models/tenant","underscore"], function($,Account,Tenant,_){
 
     describe("Models : Account", function(){
 
@@ -131,7 +131,7 @@ define(["models/account","models/tenant","underscore"], function(Account,Tenant,
                     success = function(tenants){
                         expect(tenants).to.eql(ts);
                         done();
-                    }
+                    };
 
                 sinon.stub(Tenant,"getTenants",function(){
                     var dfd = $.Deferred();

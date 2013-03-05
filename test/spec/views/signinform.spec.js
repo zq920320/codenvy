@@ -2,42 +2,42 @@ define(["jquery","views/signinform", "models/account", "text!templates/signinfor
 
     function($,SignInForm,Account,formTemplate){
 
-    	describe("Views : SignInForm", function(){
+        describe("Views : SignInForm", function(){
 
-    		describe("module", function(){
+            describe("module", function(){
 
-    			it("can be imported", function(){
-    				expect(SignInForm).to.be.ok;
-    			});
+                it("can be imported", function(){
+                    expect(SignInForm).to.be.ok;
+                });
 
-    			it("exports get", function(){
-    				expect(SignInForm).to.respondTo("get");
-    			});
+                it("exports get", function(){
+                    expect(SignInForm).to.respondTo("get");
+                });
 
-    			it("exports SignInForm", function(){
-    				expect(SignInForm).to.respondTo("SignInForm");
-    			});
-    		});
+                it("exports SignInForm", function(){
+                    expect(SignInForm).to.respondTo("SignInForm");
+                });
+            });
 
-    		describe("get", function(){
+            describe("get", function(){
 
-    			it("requires a dom element", function(){
-    				var fn = function(){
-    					SignInForm.get();
-    				};
+                it("requires a dom element", function(){
+                    var fn = function(){
+                        SignInForm.get();
+                    };
 
-    				expect(fn).to.throw("Need a form");
-    			});
+                    expect(fn).to.throw("Need a form");
+                });
 
-    			it("returns an instance of SignInForm", function(){
-    				expect(SignInForm.get(jQuery("<div>"))).to.be.instanceOf(
-    					SignInForm.SignInForm
-    				);
-    			});
+                it("returns an instance of SignInForm", function(){
+                    expect(SignInForm.get(jQuery("<div>"))).to.be.instanceOf(
+                        SignInForm.SignInForm
+                    );
+                });
 
-    		});
+            });
 
-    		describe("SignInForm", function(){
+            describe("SignInForm", function(){
 
                 function buildForm(){
                     $("body").append(jQuery(formTemplate));
@@ -129,7 +129,7 @@ define(["jquery","views/signinform", "models/account", "text!templates/signinfor
                     $(form.el).valid();
                 });
 
-    			it("calls account login upon successful submit",function(done){
+                it("calls account login upon successful submit",function(done){
 
                     var v = SignInForm.get(buildForm()),
                         e = "bob@gmail.com", p = "password";
@@ -147,9 +147,9 @@ define(["jquery","views/signinform", "models/account", "text!templates/signinfor
 
                     $(v.el).submit();
                 });
-    		});
+            });
 
-    	});
+        });
 
     }
 );

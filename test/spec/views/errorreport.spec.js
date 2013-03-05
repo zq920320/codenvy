@@ -47,7 +47,7 @@ define(["jquery", "views/errorreport"],function($,ErrorReport){
             describe("show", function(){
                 it("requires a message to show", function(){
                     var v = ErrorReport.get(jQuery("<div>")),
-                        fn = function(){ v.show(); }
+                        fn = function(){ v.show(); };
                     expect(fn).to.throw("Need a message");
                 });
 

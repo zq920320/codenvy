@@ -41,7 +41,7 @@ define(["views/ideloader","models/account"],
 
                     sinon.stub(Account,"waitForTenant",function(success,error){
                         setTimeout(function(){
-                            success(successData);    
+                            success(successData);
                         },500);
                     });
 
@@ -62,7 +62,7 @@ define(["views/ideloader","models/account"],
                                 new Account.AccountError(null,errorMessage)
                             ]);
                         },500);
-                    }); 
+                    });
 
                     new IDELoader.IDELoader().on("error", function(e){
                         expect(e).to.equal(errorMessage);

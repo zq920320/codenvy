@@ -49,8 +49,8 @@ define(["jquery","underscore","views/selectdomain",
                     var tenants = ["bob","mark","philip"],
                         selectorEl = jQuery(selectDomainTemplate),
                         urls = _.map(tenants, function(t){
-                            return window.location.protocol
-                                + "//" + t + "." + window.location.host;
+                            return window.location.protocol +
+                                "//" + t + "." + window.location.host;
                         });
 
                     sinon.stub(Account,"getTenants",function(success,error){

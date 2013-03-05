@@ -51,7 +51,7 @@ define(["underscore","config","models/originextractor"],function(_,Config,Origin
                     "?o=pricing-history",
                     "?another+parameter=foo&o=pricing-history",
                     "?o=pricing-history&another+parameter=foo",
-                ], parameterValue = "pricing-history"; 
+                ], parameterValue = "pricing-history";
 
                 _.each(queryStrings, function(q){
                     expect(OriginExtractor.getFromQueryString(q)).to.equal(parameterValue);

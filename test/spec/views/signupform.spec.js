@@ -2,39 +2,39 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
 
     function($,SignUpForm,Account,signupFormTemplate){
 
-    	describe("Views : SignUpForm",function(){
+        describe("Views : SignUpForm",function(){
 
-    		describe("module", function(){
+            describe("module", function(){
 
-    			it("can be imported", function(){
-    				expect(SignUpForm).to.be.ok;
-    			});
+                it("can be imported", function(){
+                    expect(SignUpForm).to.be.ok;
+                });
 
-    			it("exports get method", function(){
-    				expect(SignUpForm).to.respondTo('get');
-    			});
+                it("exports get method", function(){
+                    expect(SignUpForm).to.respondTo('get');
+                });
 
-    		});
+            });
 
-    		describe("get", function(){
+            describe("get", function(){
 
-    			it("requires a form", function(){
+                it("requires a form", function(){
 
-    				var fn = function(){
-    					SignUpForm.get();
-    				};
+                    var fn = function(){
+                        SignUpForm.get();
+                    };
 
-    				expect(fn).to.throw("Need a form");
+                    expect(fn).to.throw("Need a form");
 
-    			});
+                });
 
-    			it("returns a SignUpForm view with el set to form", function(){
-    				var form = jQuery("<form>"), v = SignUpForm.get(form);
-    				expect(v).to.be.ok;
-    				expect(v.el).to.equal(form[0]);
-    			});
+                it("returns a SignUpForm view with el set to form", function(){
+                    var form = jQuery("<form>"), v = SignUpForm.get(form);
+                    expect(v).to.be.ok;
+                    expect(v.el).to.equal(form[0]);
+                });
 
-    		});
+            });
 
             describe("SignUpForm", function(){
 
@@ -222,7 +222,7 @@ define(["jquery","views/signupform","models/account","text!templates/signupform.
 
             });
 
-    	});
+        });
 
     }
 );

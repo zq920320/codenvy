@@ -28,7 +28,7 @@ define(["jquery", "models/contact", "models/originextractor"], function($,Contac
                     getFromLocationStub.restore();
                     getFromLocationStub = null;
                 }
-            })
+            });
 
             it("requires sender argument", function(){
                 var fn = function(){

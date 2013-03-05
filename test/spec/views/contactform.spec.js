@@ -16,15 +16,15 @@ define(["jquery","views/contactform","models/Contact","text!templates/contactfor
 
                 it("exports ContactForm", function(){
                     expect(ContactForm).to.respondTo("ContactForm");
-                }); 
-                           
+                });
+
             });
 
             describe("gets", function(){
                 it("requires a dom element", function(){
                     var fn = function(){
                         ContactForm.get();
-                    };                
+                    };
 
                     expect(fn).to.throw("Need an element");
                 });
@@ -36,8 +36,8 @@ define(["jquery","views/contactform","models/Contact","text!templates/contactfor
             });
 
             describe("ContactForm", function(){
-                
-                var formElement = null, sendMessageStub = null; 
+
+                var formElement = null, sendMessageStub = null;
 
                 function buildForm(){
                     formElement = jQuery(formTemplate);
@@ -114,7 +114,7 @@ define(["jquery","views/contactform","models/Contact","text!templates/contactfor
                 });
 
                 it("calls Contact.sendMessage on form submission", function(done){
-                    
+
                     var sender = "bob@gmail.com", message = "hello", form = ContactForm.get(buildForm());
 
                     sendMessageStub = sinon.stub(Contact,"sendMessage",function(s,m){
@@ -130,7 +130,7 @@ define(["jquery","views/contactform","models/Contact","text!templates/contactfor
                 });
 
                 it("triggers invalid event if Contact.sendMessage fails", function(done){
-                    
+
                     var sender = "bob@gmail.com", message = "hello", form = ContactForm.get(buildForm());
 
                     sendMessageStub = sinon.stub(Contact,"sendMessage",function(s,m,success,error){
@@ -149,7 +149,7 @@ define(["jquery","views/contactform","models/Contact","text!templates/contactfor
                 });
 
                 it("shows success-message panel if Contact.sendMessage succeeds", function(done){
-                    
+
                     var sender = "bob@gmail.com", message = "hello", form = ContactForm.get(buildForm());
 
                     sendMessageStub = sinon.stub(Contact,"sendMessage",function(s,m,success,error){
