@@ -52,9 +52,13 @@ module.exports = function( grunt ) {
 
                 {expand: true, cwd: '../app/fonts/', src: ['**'], dest: 'dist/stage/fonts/'},
 
-                // templates
+                // pages
 
                 {expand: true, cwd: '../app/_site/', src: ['*.html'], dest: 'dist/stage/'},
+
+                // templates
+
+                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/stage/templates/'},
 
                 /*
                     Production
