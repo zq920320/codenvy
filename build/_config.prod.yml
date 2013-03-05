@@ -1,4 +1,4 @@
-# jekyll configuration used for the build
+# jekyll configuration used for the production build
 
 server_port: 4000
 destination: ../../app/_site/
