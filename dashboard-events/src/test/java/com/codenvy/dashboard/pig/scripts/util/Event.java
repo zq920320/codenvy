@@ -54,11 +54,15 @@ public class Event
    public String toString()
    {
       StringBuilder builder = new StringBuilder();
+      
+		builder.append("127.0.0.1");
+      builder.append(' ');
+      
       builder.append(date == null ? "2010-10-10" : date);
       builder.append(' ');
 
       builder.append(time == null ? "10:10:10,000" : time + ",000");
-      builder.append("[main] [INFO] [HelloWorld 1010]");
+      builder.append("[main] [INFO] [HelloWorld 1010] ");
 
       if (context.user != null)
       {
@@ -142,6 +146,15 @@ public class Event
       public static Builder createTenantCreatedEvent(String ws, String user)
       {
          return new Builder().withParam("EVENT", "tenant-created").withParam("WS", ws).withParam("USER", user);
+      }
+
+      /**
+       * Create 'user-created' event.
+       */
+      public static Builder createUserCreatedEvent(String userId, String aliases)
+      {
+         return new Builder().withParam("EVENT", "user-created").withParam("USER-ID", userId)
+            .withParam("ALIASES", aliases);
       }
 
       /**

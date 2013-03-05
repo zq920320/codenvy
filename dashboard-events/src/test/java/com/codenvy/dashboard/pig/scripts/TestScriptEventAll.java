@@ -21,11 +21,17 @@ package com.codenvy.dashboard.pig.scripts;
 import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 
+import org.apache.pig.data.DataBag;
+import org.apache.pig.data.DefaultDataBag;
+import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +40,34 @@ import java.util.Properties;
  */
 public class TestScriptEventAll extends BasePigTest
 {
+
+   private TupleFactory tupleFactory;
+
+   private final Integer date = 20111010;
+
+   private Tuple tuple;
+
+   private FileObject fileObject;
+
+   @BeforeMethod
+   public void prepare() throws Exception
+   {
+      tupleFactory = TupleFactory.getInstance();
+
+      tuple = tupleFactory.newTuple();
+      tuple.append(date);
+
+      Tuple innerTuple = tupleFactory.newTuple();
+      innerTuple.append("tenant-created");
+      innerTuple.append(1L);
+
+      DataBag bag = new DefaultDataBag();
+      bag.add(innerTuple);
+
+      tuple.append(bag);
+
+      fileObject = ScriptType.EVENT_ALL.createFileObject(BASE_DIR, tuple);
+   }
 
    /**
     * Run script which find all events.  
@@ -50,7 +84,7 @@ public class TestScriptEventAll extends BasePigTest
 
       executePigScript(ScriptType.EVENT_ALL, log, new String[][]{{Constants.DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_ALL.getResultType().createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.EVENT_ALL.createFileObject(BASE_DIR, 20101001);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("tenant-created"), "2");
@@ -69,8 +103,30 @@ public class TestScriptEventAll extends BasePigTest
 
       executePigScript(ScriptType.EVENT_ALL, log, new String[][]{{Constants.DATE, "20101002"}});
 
-      FileObject fileObject = ScriptType.EVENT_ALL.getResultType().createFileObject(BASE_DIR, 20101002);
+      FileObject fileObject = ScriptType.EVENT_ALL.createFileObject(BASE_DIR, 20101002);
       Properties props = (Properties)fileObject.getValue();
       Assert.assertTrue(props.isEmpty());
+   }
+
+   @Test
+   public void fileObjectShouldReturnCorrectProperties() throws Exception
+   {
+      Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
+
+      Iterator<String> iter = fileObject.getKeys().keySet().iterator();
+      Assert.assertEquals(iter.next(), Constants.DATE);
+
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptResultType.EVENT_ALL);
+      Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), date.toString());
+      Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("tenant-created"), "1");
+
+      File file = new File(BASE_DIR + "/event_all/2011/10/10/value");
+      file.delete();
+
+      Assert.assertFalse(file.exists());
+
+      fileObject.store();
+
+      Assert.assertTrue(file.exists());
    }
 }

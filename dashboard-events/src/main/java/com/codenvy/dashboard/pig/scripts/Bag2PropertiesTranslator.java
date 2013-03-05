@@ -34,7 +34,7 @@ import java.util.Properties;
 /**
  * Translate any {@link DataBag} into the {@link Properties}.
  * The key is instance of {@link String}, and the value is
- * instance of {@link Long}.
+ * instance of {@link String}.
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */

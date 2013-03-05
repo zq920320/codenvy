@@ -46,13 +46,18 @@ public class FileObject
    public static final String FILE_NAME = "value";
    
    /**
-    * {@link ScriptResultType}. It is used also as a part of path to destination {@link #FILE_NAME}.
+    * {@link ScriptType}. It is used also as a part of path to destination {@link #FILE_NAME}.
     */
-   private final ScriptResultType typeResult;
+   private final ScriptType scriptType;
+
+   /**
+    * {@link ScriptResultType}.
+    */
+   private final ScriptResultType scriptResultType;
 
    /**
     * The sequence of values are used as unique identifier of result
-    * relatively to {@link #typeResult}. They are used also as a part of 
+    * relatively to {@link #type}. They are used also as a part of 
     * path to destination {@link #FILE_NAME}. 
     */
    private final LinkedHashMap<String, String> keys;
@@ -75,13 +80,14 @@ public class FileObject
    /**
     * {@link FileObject} constructor. Loads value from the file.
     */
-   FileObject(String baseDir, ScriptResultType type, Object... keysValues)
+   FileObject(String baseDir, ScriptType scriptType, Object... keysValues)
       throws IOException
    {
-      this.typeResult = type;
-      this.keys = makeKeys(type.getKeyFields(), keysValues);
+      this.scriptType = scriptType;
+      this.scriptResultType = scriptType.getResultType();
+      this.keys = makeKeys(scriptResultType.getKeyFields(), keysValues);
       this.baseDir = baseDir;
-      this.translator = type.getValueTranslator();
+      this.translator = scriptResultType.getValueTranslator();
       this.value = load();
    }
 
@@ -89,16 +95,17 @@ public class FileObject
     * {@link FileObject} constructor. Extract keys and value from the passed <code>tuple</code>.
     * The last fields of the tuple is treated as value. 
     */
-   FileObject(String baseDir, ScriptResultType type, Tuple tuple) throws IOException
+   FileObject(String baseDir, ScriptType scriptType, Tuple tuple) throws IOException
    {
-      final String[] keyFields = type.getKeyFields();
+      this.scriptResultType = scriptType.getResultType();
+      final String[] keyFields = scriptResultType.getKeyFields();
 
       if (tuple.size() != keyFields.length + 1)
       {
          throw new IOException("The size of the tuple does not corresponds the number of key fields");
       }
 
-      this.typeResult = type;
+      this.scriptType = scriptType;
       this.baseDir = baseDir;
       this.keys = new LinkedHashMap<String, String>(keyFields.length);
 
@@ -107,7 +114,7 @@ public class FileObject
          keys.put(keyFields[i], tuple.get(i).toString());
       }
 
-      this.translator = type.getValueTranslator();
+      this.translator = scriptResultType.getValueTranslator();
       this.value = translator.translate(tuple.get(keyFields.length));
    }
 
@@ -189,7 +196,7 @@ public class FileObject
       }
       
       StringBuilder builder = new StringBuilder();
-      builder.append(typeResult.toString().toLowerCase());
+      builder.append(scriptType.toString().toLowerCase());
       builder.append(File.separatorChar);
       
       for (Entry<String, String> entry : keys.entrySet())
@@ -211,7 +218,7 @@ public class FileObject
       {
          return translateDateToRelativePath(entry.getValue());
       }
-      else if (entry.getKey().startsWith(Constants.PARAM_NAME))
+      else if (entry.getKey().equals(Constants.PARAM_NAME))
       {
          return entry.getValue().toLowerCase();
       }
@@ -315,10 +322,10 @@ public class FileObject
    }
 
    /**
-    * Getter for {@link #typeResult}.
+    * Getter for {@link #type}.
     */
-   public Object getTypeResult()
+   public ScriptResultType getTypeResult()
    {
-      return typeResult;
+      return scriptResultType;
    }
 }

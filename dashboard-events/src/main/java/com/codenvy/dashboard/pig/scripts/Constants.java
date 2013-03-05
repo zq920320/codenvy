@@ -46,6 +46,11 @@ public class Constants
    public static final String DATE = "date";
 
    /**
+    * Time-frame ending date. Has format YYYYMMDD.
+    */
+   public static final String TO_DATE = "toDate";
+
+   /**
     * Parameter name in Pig script contains the resources are needed to be loaded.
     * Can be either the name of single resource (file or directory) or the list of 
     * comma separated resources. Wildcard characters are supported.

@@ -18,6 +18,10 @@
  */
 package com.codenvy.dashboard.pig.scripts;
 
+import org.apache.pig.data.Tuple;
+
+import java.io.IOException;
+
 /**
  * Enumeration of all available Pig-latin scripts.
  * 
@@ -38,6 +42,14 @@ public enum ScriptType {
       {
          return ScriptResultType.EVENT_PARAM_ALL;
       }
+   },
+
+   ACTIVE_TENANT_COUNT {
+      @Override
+      public ScriptResultType getResultType()
+      {
+         return ScriptResultType.ACTIVE_ENTITY_COUNT;
+      }
    };
 
    /**
@@ -54,4 +66,22 @@ public enum ScriptType {
     * @return corresponding {@link ScriptResultType}.
     */
    public abstract ScriptResultType getResultType();
+
+   /**
+    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptResultType}.
+    * The value will be obtained from {@link Tuple}.
+    */
+   public FileObject createFileObject(String baseDir, Tuple tuple) throws IOException
+   {
+      return new FileObject(baseDir, this, tuple);
+   }
+
+   /**
+    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptResultType}.
+    * The value will be loaded from the file.
+    */
+   public FileObject createFileObject(String baseDir, Object... keysValues) throws IOException
+   {
+      return new FileObject(baseDir, this, keysValues);
+   }
 }

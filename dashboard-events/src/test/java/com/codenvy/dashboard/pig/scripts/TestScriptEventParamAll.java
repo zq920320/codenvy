@@ -21,11 +21,17 @@ package com.codenvy.dashboard.pig.scripts;
 import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 
+import org.apache.pig.data.DataBag;
+import org.apache.pig.data.DefaultDataBag;
+import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +40,68 @@ import java.util.Properties;
  */
 public class TestScriptEventParamAll extends BasePigTest
 {
+   private TupleFactory tupleFactory;
+
+   private final String event = "tenant-created";
+
+   private final String param = "USER";
+
+   private final Integer date = 20111010;
+
+   private Tuple tuple;
+
+   private FileObject fileObject;
+
+   @BeforeMethod
+   public void prepare() throws Exception
+   {
+      tupleFactory = TupleFactory.getInstance();
+
+      tuple = tupleFactory.newTuple();
+      tuple.append(event);
+      tuple.append(param);
+      tuple.append(date);
+
+      Tuple innerTuple = tupleFactory.newTuple();
+      innerTuple.append("user1");
+      innerTuple.append(1L);
+
+      DataBag bag = new DefaultDataBag();
+      bag.add(innerTuple);
+
+      tuple.append(bag);
+
+      fileObject = ScriptType.EVENT_PARAM_ALL.createFileObject(BASE_DIR, tuple);
+   }
+
+   @Test
+   public void fileObjectShouldReturnCorrectProperties() throws Exception
+   {
+      Assert.assertNotNull(fileObject.getKeys().get(Constants.EVENT));
+      Assert.assertNotNull(fileObject.getKeys().get(Constants.PARAM_NAME));
+      Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
+
+      Iterator<String> iter = fileObject.getKeys().keySet().iterator();
+      Assert.assertEquals(iter.next(), Constants.EVENT);
+      Assert.assertEquals(iter.next(), Constants.PARAM_NAME);
+      Assert.assertEquals(iter.next(), Constants.DATE);
+
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptResultType.EVENT_PARAM_ALL);
+      Assert.assertEquals(fileObject.getKeys().get(Constants.EVENT), event);
+      Assert.assertEquals(fileObject.getKeys().get(Constants.PARAM_NAME), param);
+      Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), date.toString());
+      Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("user1"), "1");
+
+      File file = new File("target/event_param_all/tenant/created/user/2011/10/10/value");
+      file.delete();
+
+      Assert.assertFalse(file.exists());
+
+      fileObject.store();
+
+      Assert.assertTrue(file.exists());
+   }
+
    @Test
    public void testEventFound() throws Exception
    {
@@ -53,7 +121,7 @@ public class TestScriptEventParamAll extends BasePigTest
          {Constants.PARAM_NAME, "PROJECT"}, {Constants.DATE, "20101001"}});
       
       FileObject fileObject =
-         ScriptType.EVENT_PARAM_ALL.getResultType().createFileObject(BASE_DIR, "project-created", "project", 20101001);
+         ScriptType.EVENT_PARAM_ALL.createFileObject(BASE_DIR, "project-created", "project", 20101001);
       Properties props = (Properties)fileObject.getValue();
       
       Assert.assertNotNull(props.get("project1"));
@@ -82,7 +150,7 @@ public class TestScriptEventParamAll extends BasePigTest
          {Constants.PARAM_NAME, "PROJECT"}, {Constants.DATE, "20101002"}});
 
       FileObject fileObject =
-         ScriptType.EVENT_PARAM_ALL.getResultType().createFileObject(BASE_DIR, "project-created", "project", 20101002);
+         ScriptType.EVENT_PARAM_ALL.createFileObject(BASE_DIR, "project-created", "project", 20101002);
       Properties props = (Properties)fileObject.getValue();
       Assert.assertTrue(props.isEmpty());
    }

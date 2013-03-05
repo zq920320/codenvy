@@ -23,7 +23,6 @@ import org.apache.pig.data.DefaultDataBag;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -95,25 +94,32 @@ public enum ScriptResultType {
 
          return tuple;
       }
+   },
+
+   ACTIVE_ENTITY_COUNT {
+      @Override
+      public String[] getKeyFields()
+      {
+         return new String[]{Constants.DATE, Constants.TO_DATE};
+      }
+
+      @Override
+      public ValueTranslator getValueTranslator()
+      {
+         return new Object2LongTranslator();
+      }
+
+      @Override
+      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      {
+         Tuple tuple = TupleFactory.getInstance().newTuple(3);
+         tuple.set(0, executionContext.get(Constants.DATE));
+         tuple.set(1, executionContext.get(Constants.TO_DATE));
+         tuple.set(2, Long.valueOf(0));
+
+         return tuple;
+      }
    };
-
-   /**
-    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptResultType}.
-    * The value will be obtained from {@link Tuple}.
-    */
-   public FileObject createFileObject(String baseDir, Tuple tuple) throws IOException
-   {
-      return new FileObject(baseDir, this, tuple);
-   }
-
-   /**
-    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptResultType}.
-    * The value will be loaded from the file.
-    */
-   public FileObject createFileObject(String baseDir, Object... keysValues) throws IOException
-   {
-      return new FileObject(baseDir, this, keysValues);
-   }
 
    /**
     * @return the list of actual key field names.

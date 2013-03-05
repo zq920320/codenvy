@@ -126,7 +126,7 @@ public class ScriptExecutor
          tuple = scriptType.getResultType().getDefaultValue(context);
       }
 
-      FileObject fileObject = scriptType.getResultType().createFileObject(storeLocation, tuple);
+      FileObject fileObject = scriptType.createFileObject(storeLocation, tuple);
       fileObject.store();
    }
 
