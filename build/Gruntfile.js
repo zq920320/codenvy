@@ -17,6 +17,69 @@ module.exports = function( grunt ) {
     },
 
 
+    jshint: {
+        // all: [
+
+        // ],
+
+        app : {
+            files: {
+                src: [
+                    'Gruntfile.js',
+                    '../app/scripts/*.js',
+                    '../app/scripts/models/**/*.js',
+                    '../app/scripts/views/**/*.js'
+                ]
+            },
+            options: {
+                curly: true,
+                eqeqeq: true,
+                immed: true,
+                latedef: true,
+                newcap: true,
+                noarg: true,
+                sub: true,
+                undef: true,
+                boss: true,
+                eqnull: true,
+                browser: true,
+                unused: true,
+
+                globals: {
+                    jQuery: true,
+                    define: true,
+                    require: true,
+                    Modernizr: true,
+                    escape: true,
+                    tenantName: true //fix this in models/account.js
+                }
+            }
+        },
+
+        test: {
+          options: {
+            unused : false,
+            expr : true,
+            es5 : true,
+            globals: {
+                jQuery: true,
+                define: true,
+                require: true,
+                Modernizr: true,
+                describe: true,
+                it: true,
+                expect: true,
+                sinon: true,
+                afterEach: true,
+                beforeEach: true
+            }
+          },
+          files: {
+            src: ['../test/spec/**/*.js']
+          }
+        }
+    },
+
     copy: {
 
         temp: {
@@ -158,16 +221,20 @@ module.exports = function( grunt ) {
                     cwd: './'
                 }
             }
-        },
+        }
     }
 
   });
 
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
 
   grunt.registerTask('build',
         [
+            //check code quality before building
+            'jshint:test', 'jshint:app',
+
             // get ready of the previous dist jazz
             'shell:init',
 
