@@ -1,9 +1,12 @@
 module Jekyll
   module Resources
     def resource(input)
-        if @context.registers[:site].config['yeoman']
-            #if running with Yeoman, use /_site prefix
+        case @context.registers[:site].config['profile']
+        when "yeoman"
             "/_site" + input
+        when "gh"
+            # use relative paths for github pages
+            input.sub(/^\//,"")
         else
             input
         end
