@@ -13,7 +13,8 @@ module.exports = function( grunt ) {
     buildConfig : {
         temp : "./temp",
         jekyllStageConfig : "_config.stage.yml",
-        jekyllProdConfig : "_config.prod.yml"
+        jekyllProdConfig : "_config.prod.yml",
+        jekyllGHConfig : "_config.gh.yml"
     },
 
 
@@ -80,6 +81,34 @@ module.exports = function( grunt ) {
 
         temp: {
             files: [{expand: true, cwd: '../app/', src: ['**'], dest: '<%= buildConfig.temp %>'}]
+        },
+
+        gh_stage: {
+            files: [
+                // scripts
+
+                {expand: true, cwd: '../app/scripts/', src: ['**'], dest: 'dist/gh/scripts/'},
+
+                // styles
+
+                {expand: true, cwd: '../app/_site/styles/', src : '*.css', dest: 'dist/gh/styles/'},
+
+                // images
+
+                {expand: true, cwd: '../app/images/', src: ['**'], dest: 'dist/gh/images/'},
+
+                // fonts
+
+                {expand: true, cwd: '../app/fonts/', src: ['**'], dest: 'dist/gh/fonts/'},
+
+                // pages
+
+                {expand: true, cwd: '../app/_site/', src: ['*.html'], dest: 'dist/gh/'},
+
+                // templates
+
+                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/gh/templates/'}
+            ]
         },
 
         stage: {
@@ -178,6 +207,14 @@ module.exports = function( grunt ) {
             }
         },
 
+        jekyll_gh_config : {
+            command: 'cp <%= buildConfig.jekyllGHConfig %> <%= buildConfig.temp %>/_config.yml',
+            options: {
+                stdout: true,
+                failOnError: true
+            }
+        },
+
         jekyll_prod_config : {
             command: 'cp <%= buildConfig.jekyllProdConfig %> <%= buildConfig.temp %>/_config.yml',
             options: {
@@ -236,6 +273,21 @@ module.exports = function( grunt ) {
 
             // copy all application files to the temporary folder
             'copy:temp',
+
+
+            // ------------------ Github pages STAGING
+
+            // copy staging _config.yml to the temporary folder
+            'shell:jekyll_gh_config',
+
+            // run jekyll build for github staging
+            'shell:jekyll',
+
+            // run yeoman build on top of staging Jekyll build
+            'shell:yeoman',
+
+            // copy staging build output
+            'copy:gh_stage',
 
 
             // ------------------ STAGING
