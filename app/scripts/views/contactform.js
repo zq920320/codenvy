@@ -44,9 +44,8 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
                 _.bind(function(){
                     this.$(".success-message").removeClass("hidden");
                     this.__restoreForm();
-                    var cleanContactForm = document.forms[0];
-                    cleanContactForm.elements["email"].value = "";
-                    cleanContactForm.elements["message"].value = "";
+                    this.$("input[name='email']").val("");
+                    this.$("textarea[name='message']").val("");
                 },this),
                 _.bind(function(){
                     this.trigger("invalid",null,this.settings.failedToSendErrorMessage);
