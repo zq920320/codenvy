@@ -69,13 +69,13 @@ $blue-link-color:#54aee1;
 }
 
 @mixin gray-button-gradient {
-    @include background-image(linear-gradient(#f4f4f4, #96979a));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#96979a');
+    @include background-image(linear-gradient(#f7f7f7 50%, #d7e4ed 50%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#d7e4ed');
 }
 
 @mixin gray-button-gradient-highlight {
-    @include background-image(linear-gradient(#f4f4f4, #cccdd5));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#cccdd5');
+    @include background-image(linear-gradient(#b3d5e8 0%, #f7f7f7 50%, #d7e4ed 50%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b3d5e8', endColorstr='#d7e4ed');
 }
 
 @mixin light-button-gradient {
