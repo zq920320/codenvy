@@ -1,2 +1,3 @@
 server_port: 4000
 rewrite_urls : false
+yeoman : true
