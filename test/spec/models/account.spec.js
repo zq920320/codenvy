@@ -59,14 +59,14 @@ define(["jquery","models/account","models/tenant","underscore"], function($,Acco
                 expect(Account.isValidDomain("bob.google.com")).to.be.false;
             });
 
-            it("only allows names that contain lower-case letters, digits, and dash ('-')", function(){
+            it("only allows names that contain letters, digits, and dash ('-')", function(){
                 var invalidChars = "~`!@#$%^&*()_=+;:\\|/?.,><";
 
                 _.each(invalidChars,function(c){
                     expect(Account.isValidDomain("bob" + c + ".codenvy.com")).to.be.false;
                 });
 
-                expect(Account.isValidDomain("BOB.codenvy.com")).to.be.false;
+                expect(Account.isValidDomain("BOB.codenvy.com")).to.be.true;
                 expect(Account.isValidDomain("bob1.codenvy.com")).to.be.true;
                 expect(Account.isValidDomain("bob123.codenvy.com")).to.be.true;
                 expect(Account.isValidDomain("bob-124.codenvy.com")).to.be.true;
