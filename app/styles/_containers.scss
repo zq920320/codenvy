@@ -57,8 +57,7 @@
 
 
 .container.light-gradient {
-    @include background-image(linear-gradient(#FFFFFF, #F7F7F7));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F7F7F7');
+    @include light-gradient;
 }
 
 .section-header {
