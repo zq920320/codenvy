@@ -379,7 +379,15 @@ h1.enterprise-header-text {
     color:#8e979d;
     font-weight:300;
     padding:0.5em;
-    margin-top: 30px;
+    margin-top: 36px;
+}
+
+.pricing-poetry.opensource {
+    margin-bottom: 14px;
+}
+
+.signup-opensource-button{
+    margin-top: 14px;
 }
 
 .pricing-feature {
@@ -390,6 +398,10 @@ h1.enterprise-header-text {
     }
 }
 
+.pricing-plans {
+    margin-top: -8px;
+}
+
 .container.open-source {
     background-color:#2b3748;
     border: solid 1px #313d4d;
@@ -397,7 +409,7 @@ h1.enterprise-header-text {
 }
 
 .container.open-source-desc {
-    line-height: 2.5em;
+    padding-top: 7px;
 }
 
 .pricing-box-open-source {
