@@ -2,4 +2,3 @@
 
 server_port: 4000
 destination: ../../app/_site/
-rewrite_urls : false
