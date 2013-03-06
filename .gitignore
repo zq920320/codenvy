@@ -5,3 +5,4 @@ dist
 _site
 test/scripts
 .bin
+app/**/*.css
