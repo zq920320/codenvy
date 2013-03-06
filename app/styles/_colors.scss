@@ -88,6 +88,11 @@ $blue-link-color:#54aee1;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#f2efef');
 }
 
+@mixin light-gradient  {
+    @include background-image(linear-gradient(#FFFFFF, #F7F7F7));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F7F7F7');
+}
+
 
 // Noir et blanc:
 // – Faux Black: #44484b
