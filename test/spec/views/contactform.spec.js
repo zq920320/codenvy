@@ -1,4 +1,4 @@
-define(["jquery","views/contactform","models/Contact","text!templates/contactform.html"],
+define(["jquery","views/contactform","models/contact","text!templates/contactform.html"],
 
     function($,ContactForm,Contact,formTemplate){
 
