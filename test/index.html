@@ -4,6 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Mocha Spec Runner</title>
     <link rel="stylesheet" href="lib/mocha/mocha.css">
+    <script src="scripts/vendor/modernizr.custom.29458.js"></script>
 </head>
 <body>
     <div id="mocha"></div>
@@ -35,6 +36,8 @@
             "../spec/views/selectdomain.spec",
             "../spec/views/ideloader.spec"
         ];
+
+
 
         require(specs,function(){
             setTimeout(function(){
