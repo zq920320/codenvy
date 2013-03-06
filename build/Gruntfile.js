@@ -18,10 +18,6 @@ module.exports = function( grunt ) {
 
 
     jshint: {
-        // all: [
-
-        // ],
-
         app : {
             files: {
                 src: [
