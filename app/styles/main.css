@@ -72,6 +72,12 @@
   text-align: right;
 }
 
+/* line 77, _utilities.scss */
+.hidden {
+  opacity: 0;
+  height: 0px;
+}
+
 @font-face {
   font-family: CodeEnvy;
   src: url("../fonts/regular.otf");
@@ -79,6 +85,11 @@
 
 @font-face {
   font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+@font-face {
+  font-family: HelveticaNeue;
   src: url("../fonts/proximanova/ProximaNova-Regular.otf");
 }
 
@@ -136,14 +147,20 @@ h2 {
 h2.light {
   font-weight: 200;
 }
+/* line 42, _typography.scss */
+h2.shiny {
+  background: -webkit-linear-gradient(#e2e5e8, #bec3c4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
-/* line 44, _typography.scss */
+/* line 45, _typography.scss */
 h3 {
   font-size: 1.4375em;
   font-weight: 300;
 }
 
-/* line 49, _typography.scss */
+/* line 50, _typography.scss */
 h4 {
   font-size: 1em;
   font-weight: 400;
@@ -157,6 +174,11 @@ h4 {
 
 @font-face {
   font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+@font-face {
+  font-family: HelveticaNeue;
   src: url("../fonts/proximanova/ProximaNova-Regular.otf");
 }
 
@@ -189,38 +211,69 @@ h4 {
 
 /* line 28, _buttons.scss */
 .signup-button {
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d6e3ed), color-stop(35%, #54aee1));
-  background-image: -webkit-linear-gradient(#d6e3ed, #54aee1 35%);
-  background-image: -moz-linear-gradient(#d6e3ed, #54aee1 35%);
-  background-image: -o-linear-gradient(#d6e3ed, #54aee1 35%);
-  background-image: linear-gradient(#d6e3ed, #54aee1 35%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d6e3ed', endColorstr='#54aee1');
-  border: solid 1px #595e62;
-  border-radius: 5px;
-  color: #f3f3f3;
+  font-weight: 500;
+  font-size: 1em;
+  font-color: #233041;
+  text-shadow: 0px 1px 1px rgba 255, 255, 255, 1;
   padding: 10px;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(50%, #7bbced), color-stop(50%, #54aee1));
+  background-image: -webkit-linear-gradient(#7bbced 50%, #54aee1 50%);
+  background-image: -moz-linear-gradient(#7bbced 50%, #54aee1 50%);
+  background-image: -o-linear-gradient(#7bbced 50%, #54aee1 50%);
+  background-image: linear-gradient(#7bbced 50%, #54aee1 50%);
+  -webkit-box-shadow: 0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset;
+  -moz-box-shadow: 0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset;
+  box-shadow: 0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset;
+  border: solid 1px #233041;
 }
-/* line 35, _buttons.scss */
+/* line 40, _buttons.scss */
 .signup-button:hover {
-  background: #54aee1;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b3d5e8), color-stop(50%, #7bbced), color-stop(50%, #54aee1));
+  background-image: -webkit-linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%);
+  background-image: -moz-linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%);
+  background-image: -o-linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%);
+  background-image: linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%);
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  -moz-box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  border: solid 1px #233041;
 }
-/* line 39, _buttons.scss */
+/* line 46, _buttons.scss */
 .signup-button:active {
-  opacity: 0.7;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #54aee1), color-stop(60%, #7bbced));
+  background-image: -webkit-linear-gradient(#54aee1 0%, #7bbced 60%);
+  background-image: -moz-linear-gradient(#54aee1 0%, #7bbced 60%);
+  background-image: -o-linear-gradient(#54aee1 0%, #7bbced 60%);
+  background-image: linear-gradient(#54aee1 0%, #7bbced 60%);
+  -webkit-box-shadow: 0px 2px 5px 0px black inset;
+  -moz-box-shadow: 0px 2px 5px 0px black inset;
+  box-shadow: 0px 2px 5px 0px black inset;
+  border: solid 1px #233041;
+}
+/* line 53, _buttons.scss */
+.signup-button:disabled {
+  background-color: #455971;
+  background-image: none;
 }
 
-/* line 56, _buttons.scss */
+/* line 68, _buttons.scss */
 .button-100 {
   width: 100px;
 }
 
-/* line 57, _buttons.scss */
+/* line 69, _buttons.scss */
 .button-200 {
   width: 200px;
 }
 
-/* line 59, _buttons.scss */
+/* line 71, _buttons.scss */
 .blue-button {
+  font-weight: 500;
+  font-size: 1em;
+  font-color: #233041;
+  text-shadow: 0px 1px 3px #98ceed;
+  padding: 10px;
+  margin: 1px;
   display: inline-block;
   padding: 10px 10px 10px;
   text-decoration: none;
@@ -230,32 +283,52 @@ h4 {
   font-weight: 300;
   font-size: 1em;
   line-height: 1em;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(33%, #7bbced), color-stop(70%, #54aee1));
-  background-image: -webkit-linear-gradient(#7bbced 33%, #54aee1 70%);
-  background-image: -moz-linear-gradient(#7bbced 33%, #54aee1 70%);
-  background-image: -o-linear-gradient(#7bbced 33%, #54aee1 70%);
-  background-image: linear-gradient(#7bbced 33%, #54aee1 70%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7bbced', endColorstr='#54aee1');
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(50%, #7bbced), color-stop(50%, #54aee1));
+  background-image: -webkit-linear-gradient(#7bbced 50%, #54aee1 50%);
+  background-image: -moz-linear-gradient(#7bbced 50%, #54aee1 50%);
+  background-image: -o-linear-gradient(#7bbced 50%, #54aee1 50%);
+  background-image: linear-gradient(#7bbced 50%, #54aee1 50%);
+  -webkit-box-shadow: 0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset;
+  -moz-box-shadow: 0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset;
+  box-shadow: 0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset;
   border: solid 1px #233041;
-  color: #233041;
-  text-shadow: 0px 1px 1px rgba(251, 251, 251, 0.5);
 }
-/* line 67, _buttons.scss */
+/* line 85, _buttons.scss */
 .blue-button:hover {
-  color: #44484b;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(33%, #c1e3fc), color-stop(70%, #54aee1));
-  background-image: -webkit-linear-gradient(#c1e3fc 33%, #54aee1 70%);
-  background-image: -moz-linear-gradient(#c1e3fc 33%, #54aee1 70%);
-  background-image: -o-linear-gradient(#c1e3fc 33%, #54aee1 70%);
-  background-image: linear-gradient(#c1e3fc 33%, #54aee1 70%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c1e3fc', endColorstr='#54aee1');
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #b3d5e8), color-stop(50%, #7bbced), color-stop(50%, #54aee1));
+  background-image: -webkit-linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%);
+  background-image: -moz-linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%);
+  background-image: -o-linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%);
+  background-image: linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%);
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  -moz-box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  border: solid 1px #233041;
 }
-/* line 72, _buttons.scss */
+/* line 91, _buttons.scss */
 .blue-button:active {
-  border-color: #FFF;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #54aee1), color-stop(60%, #7bbced));
+  background-image: -webkit-linear-gradient(#54aee1 0%, #7bbced 60%);
+  background-image: -moz-linear-gradient(#54aee1 0%, #7bbced 60%);
+  background-image: -o-linear-gradient(#54aee1 0%, #7bbced 60%);
+  background-image: linear-gradient(#54aee1 0%, #7bbced 60%);
+  -webkit-box-shadow: 0px 2px 5px 0px black inset;
+  -moz-box-shadow: 0px 2px 5px 0px black inset;
+  box-shadow: 0px 2px 5px 0px black inset;
+  border: solid 1px #233041;
+}
+/* line 98, _buttons.scss */
+.blue-button:disabled {
+  background-color: #455971;
+  background-image: none;
 }
 
-/* line 77, _buttons.scss */
+/* line 101, _buttons.scss */
+.blue-button.hidden-button {
+  opacity: 0;
+}
+
+/* line 103, _buttons.scss */
 .gray-button {
   display: inline-block;
   padding: 10px 10px 10px;
@@ -274,8 +347,9 @@ h4 {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#96979a');
   color: #233041;
   border: solid 1px #233041;
+  margin: 1px;
 }
-/* line 83, _buttons.scss */
+/* line 110, _buttons.scss */
 .gray-button:hover {
   color: #44484b;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f4f4f4), color-stop(100%, #cccdd5));
@@ -284,13 +358,17 @@ h4 {
   background-image: -o-linear-gradient(#f4f4f4, #cccdd5);
   background-image: linear-gradient(#f4f4f4, #cccdd5);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#cccdd5');
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  -moz-box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  border: solid 1px #233041;
 }
-/* line 88, _buttons.scss */
+/* line 117, _buttons.scss */
 .gray-button:active {
   border-color: #FFF;
 }
 
-/* line 93, _buttons.scss */
+/* line 122, _buttons.scss */
 .light-button {
   display: inline-block;
   padding: 10px 10px 10px;
@@ -310,7 +388,7 @@ h4 {
   border: solid 1px #d7d7d7;
   color: #233041;
 }
-/* line 99, _buttons.scss */
+/* line 128, _buttons.scss */
 .light-button:hover {
   color: #44484b;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fdfdfd), color-stop(100%, #f2efef));
@@ -320,9 +398,13 @@ h4 {
   background-image: linear-gradient(#fdfdfd, #f2efef);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#f2efef');
 }
-/* line 104, _buttons.scss */
+/* line 133, _buttons.scss */
 .light-button:active {
   border-color: #FFF;
+}
+/* line 137, _buttons.scss */
+.light-button:disabled {
+  background-color: #5e6574;
 }
 
 /* ==========================================================================
@@ -464,30 +546,35 @@ textarea {
   /* 1 */
   vertical-align: top;
   /* 2 */
+  font-weight: 200;
+  font-size: 1.2em;
+  padding-left: 10px;
 }
 
 /**
  * end of normalize
 */
-/* line 140, _form.scss */
+/* line 142, _form.scss */
 form {
   text-align: center;
   padding: 20px 5px 25px 5px;
+  position: relative;
 }
 
-/* line 145, _form.scss */
+/* line 148, _form.scss */
 form .field {
   padding: 10px;
   position: relative;
 }
 
-/* line 167, _form.scss */
+/* line 171, _form.scss */
 input[type='text'],
 select,
-input[type='password'] {
+input[type='password'],
+select option {
   font-weight: 200;
-  height: 2em;
   font-size: 1.2em;
+  height: 2em;
   background-color: #313a48;
   border-radius: 5px;
   border: none;
@@ -498,27 +585,27 @@ input[type='password'] {
   padding-left: 10px;
 }
 
-/* line 151, _form.scss */
+/* line 154, _form.scss */
 ::-webkit-input-placeholder {
   color: rgba(251, 251, 251, 0.5);
 }
 
-/* line 154, _form.scss */
+/* line 157, _form.scss */
 :-moz-placeholder {
   color: rgba(251, 251, 251, 0.5);
 }
 
-/* line 157, _form.scss */
+/* line 160, _form.scss */
 ::-moz-placeholder {
   color: rgba(251, 251, 251, 0.5);
 }
 
-/* line 160, _form.scss */
+/* line 163, _form.scss */
 :-ms-input-placeholder {
   color: rgba(251, 251, 251, 0.5);
 }
 
-/* line 187, _form.scss */
+/* line 191, _form.scss */
 .error-container {
   opacity: 0;
   position: absolute;
@@ -529,9 +616,16 @@ input[type='password'] {
   text-align: center;
   background-color: rgba(255, 0, 0, 0.4);
   border-radius: 5px;
+  padding-top: 10px;
+  margin-top: 10px;
 }
 
-/* line 199, _form.scss */
+/* line 205, _form.scss */
+.error-container.ok-message {
+  background-color: rgba(0, 255, 0, 0.4);
+}
+
+/* line 209, _form.scss */
 .error-container.expanded {
   opacity: 1.0;
   -webkit-transition-property: opacity;
@@ -552,17 +646,17 @@ input[type='password'] {
   transition-delay: 0.3s;
 }
 
-/* line 205, _form.scss */
+/* line 215, _form.scss */
 .working {
   text-align: center;
 }
 
-/* line 209, _form.scss */
+/* line 219, _form.scss */
 .working.hidden {
   display: none;
 }
 
-/* line 216, _form.scss */
+/* line 226, _form.scss */
 form.light input[type='text'],
 form.light input[type='password'],
 form.light textarea {
@@ -585,6 +679,11 @@ form.light textarea {
   src: url("../fonts/proximanova/ProximaNova-Regular.otf");
 }
 
+@font-face {
+  font-family: HelveticaNeue;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
 /* line 7, _header.scss */
 header {
   padding: 20px;
@@ -604,7 +703,7 @@ header .row {
   *zoom: 1;
   overflow: visible;
 }
-/* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
+/* line 60, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
 .main-menu li {
   list-style-image: none;
   list-style-type: none;
@@ -615,35 +714,32 @@ header .row {
   padding-left: 4px;
   padding-right: 4px;
 }
-/* line 48, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
+/* line 48, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
 .main-menu li:first-child, .main-menu li.first {
   padding-left: 0;
 }
-/* line 49, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
+/* line 49, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
 .main-menu li:last-child {
   padding-right: 0;
 }
-/* line 50, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
+/* line 50, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_horizontal-list.scss */
 .main-menu li.last {
   padding-right: 0;
 }
 /* line 21, _header.scss */
 .main-menu li {
-  background-image: url("../images/dotLittleguy.png");
+  background-image: url("../images/linkSeparator.png");
   background-repeat: no-repeat;
-  background-position: 0 12px;
-  padding-left: 10px;
-  margin-left: 10px;
-  padding-top: 5px;
+  background-position: 0% 10px;
+  padding-left: 20px;
+  margin-left: 20px;
+  padding-top: 6px;
+  font-size: 0.9em;
 }
 @media screen and (min-width: 886px) {
-  /* line 29, _header.scss */
+  /* line 31, _header.scss */
   .main-menu li:nth-child(1) {
-    background-image: url("../images/dotMaous.png");
-    background-repeat: no-repeat;
-    background-position: 0 9px;
-    margin-left: 15px;
-    padding-left: 20px;
+    background: none;
   }
 }
 
@@ -666,36 +762,72 @@ header .row {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#f3f3f3');
   color: #8e979d;
 }
-
-/* line 52, _header.scss */
-.sign-up-button {
-  font-weight: 300;
-  border: solid 1px #cbcbcb;
-  padding: 11px;
-  border-radius: 5px;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fcfcfc), color-stop(100%, #f3f3f3));
-  background-image: -webkit-linear-gradient(#fcfcfc, #f3f3f3);
-  background-image: -moz-linear-gradient(#fcfcfc, #f3f3f3);
-  background-image: -o-linear-gradient(#fcfcfc, #f3f3f3);
-  background-image: linear-gradient(#fcfcfc, #f3f3f3);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#f3f3f3');
-  color: white;
-  background: #54aee1;
+/* line 51, _header.scss */
+.sign-in-button:hover {
+  color: #44484b;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f4f4f4), color-stop(100%, #cccdd5));
+  background-image: -webkit-linear-gradient(#f4f4f4, #cccdd5);
+  background-image: -moz-linear-gradient(#f4f4f4, #cccdd5);
+  background-image: -o-linear-gradient(#f4f4f4, #cccdd5);
+  background-image: linear-gradient(#f4f4f4, #cccdd5);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#cccdd5');
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  -moz-box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5);
+}
+/* line 57, _header.scss */
+.sign-in-button:active {
+  border-color: #FFF;
 }
 
 /* line 62, _header.scss */
+.sign-up-button {
+  font-weight: 300;
+  border: solid 1px #8ecdf2;
+  padding: 11px;
+  border-radius: 5px;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8ecdf2), color-stop(35%, #54aee1));
+  background-image: -webkit-linear-gradient(#8ecdf2, #54aee1 35%);
+  background-image: -moz-linear-gradient(#8ecdf2, #54aee1 35%);
+  background-image: -o-linear-gradient(#8ecdf2, #54aee1 35%);
+  background-image: linear-gradient(#8ecdf2, #54aee1 35%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#8ECDF2', endColorstr='#54aee1');
+  color: white;
+}
+/* line 70, _header.scss */
+.sign-up-button:hover {
+  background: #54aee1;
+}
+/* line 74, _header.scss */
+.sign-up-button:active {
+  opacity: 0.7;
+}
+
+/* line 79, _header.scss */
 .span2.logo-wrapper {
   padding-top: 4px;
 }
 @media screen and (max-width: 885px) {
-  /* line 62, _header.scss */
+  /* line 79, _header.scss */
   .span2.logo-wrapper {
     text-align: center;
   }
 }
-/* line 67, _header.scss */
+/* line 84, _header.scss */
 .span2.logo-wrapper img {
   display: inline;
+}
+
+/*
+
+    Focused
+
+*/
+/* line 97, _header.scss */
+.focused-logo {
+  margin: 30px auto 0 auto;
+  height: 30px;
+  width: 205px;
 }
 
 @font-face {
@@ -705,6 +837,11 @@ header .row {
 
 @font-face {
   font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+@font-face {
+  font-family: HelveticaNeue;
   src: url("../fonts/proximanova/ProximaNova-Regular.otf");
 }
 
@@ -747,6 +884,19 @@ footer > nav > ul li {
   margin-left: 20px;
 }
 
+/*
+
+	sticky footer
+
+*/
+/* line 40, _footer.scss */
+footer.sticky {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  z-index: 1;
+}
+
 @font-face {
   font-family: CodeEnvy;
   src: url("../fonts/regular.otf");
@@ -754,6 +904,11 @@ footer > nav > ul li {
 
 @font-face {
   font-family: ProximaNova;
+  src: url("../fonts/proximanova/ProximaNova-Regular.otf");
+}
+
+@font-face {
+  font-family: HelveticaNeue;
   src: url("../fonts/proximanova/ProximaNova-Regular.otf");
 }
 
@@ -773,6 +928,7 @@ footer > nav > ul li {
   background-image: url("../images/lineFull.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
+  min-height: 231px;
 }
 /* line 16, _signup.scss */
 .signup-form .domain-name {
@@ -813,22 +969,23 @@ footer > nav > ul li {
   transition-delay: 0.3s;
 }
 
-/* line 24, _signup.scss */
+/* line 25, _signup.scss */
 .domain-placeholder {
+  font-size: 0.8em;
+  font-weight: 200;
   position: absolute;
-  top: 14px;
-  right: 14px;
-  color: rgba(251, 251, 251, 0.5);
+  top: 21px;
+  right: 19px;
+  color: rgba(251, 251, 251, 0.2);
 }
 
-/* line 31, _signup.scss */
+/* line 34, _signup.scss */
 .hidden-text-box {
   opacity: 0;
 }
 
-/* line 33, _signup.scss */
+/* line 36, _signup.scss */
 .signup-button {
-  opacity: 1;
   -webkit-transition-property: opacity;
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -845,16 +1002,9 @@ footer > nav > ul li {
   -moz-transition-delay: 0.3s;
   -o-transition-delay: 0.3s;
   transition-delay: 0.3s;
-  font-weight: bold;
-  font-size: 1.3em;
 }
 
-/* line 39, _signup.scss */
-.signup-button.hidden-button {
-  opacity: 0;
-}
-
-/* line 41, _signup.scss */
+/* line 40, _signup.scss */
 .signup-terms {
   position: absolute;
   left: 33px;
@@ -1028,7 +1178,33 @@ img {
   width: 100%;
 }
 
-/* line 1, _containers.scss */
+/* line 11, _containers.scss */
+.container.shadow {
+  -webkit-box-shadow: 0 0 0 1px rgba(14, 41, 57, 0.12), 0 2px 5px rgba(14, 41, 57, 0.44), inset 0 -1px 2px rgba(14, 41, 57, 0.15);
+  -moz-box-shadow: 0 0 0 1px rgba(14, 41, 57, 0.12), 0 2px 5px rgba(14, 41, 57, 0.44), inset 0 -1px 2px rgba(14, 41, 57, 0.15);
+  -ms-box-shadow: 0 0 0 1px rgba(14, 41, 57, 0.12), 0 2px 5px rgba(14, 41, 57, 0.44), inset 0 -1px 2px rgba(14, 41, 57, 0.15);
+  -o-box-shadow: 0 0 0 1px rgba(14, 41, 57, 0.12), 0 2px 5px rgba(14, 41, 57, 0.44), inset 0 -1px 2px rgba(14, 41, 57, 0.15);
+  box-shadow: 0 0 0 1px rgba(14, 41, 57, 0.12), 0 2px 5px rgba(14, 41, 57, 0.44), inset 0 -1px 2px rgba(14, 41, 57, 0.15);
+}
+
+/* line 15, _containers.scss */
+.container.top {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+/* line 20, _containers.scss */
+.container.bottom {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+/* line 25, _containers.scss */
+.container.rounded {
+  border-radius: 6px;
+}
+
+/* line 29, _containers.scss */
 .container.dark {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(30%, #233041), color-stop(100%, #3e495a));
   background-image: -webkit-linear-gradient(#233041 30%, #3e495a);
@@ -1038,17 +1214,17 @@ img {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#233041', endColorstr='#3e495a');
   color: #f3f3f3;
 }
-/* line 4, _containers.scss */
+/* line 32, _containers.scss */
 .container.dark a.more-info {
   color: #54aee1;
 }
 
-/* line 7, _containers.scss */
+/* line 35, _containers.scss */
 .container.border-line {
   border-top: solid 4px #d6e3ed;
 }
 
-/* line 15, _containers.scss */
+/* line 43, _containers.scss */
 .container.light-n-framed {
   border-left: solid 1px #d7d7d7;
   border-right: solid 1px #d7d7d7;
@@ -1058,7 +1234,7 @@ img {
   padding-bottom: 2em;
 }
 
-/* line 23, _containers.scss */
+/* line 51, _containers.scss */
 .container.super-light-n-framed {
   border-left: solid 1px #d7d7d7;
   border-right: solid 1px #d7d7d7;
@@ -1067,7 +1243,7 @@ img {
   padding-bottom: 2em;
 }
 
-/* line 31, _containers.scss */
+/* line 59, _containers.scss */
 .container.light-gradient {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #f7f7f7));
   background-image: -webkit-linear-gradient(#ffffff, #f7f7f7);
@@ -1077,7 +1253,7 @@ img {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F7F7F7');
 }
 
-/* line 36, _containers.scss */
+/* line 64, _containers.scss */
 .section-header {
   margin-bottom: 2em;
 }
@@ -1097,22 +1273,20 @@ img {
 	Landing page
 
 */
-/* line 27, _components.scss */
+/* line 19, _components.scss */
 .scene {
   position: relative;
-  background-image: url("../images/sceneBackground.png");
-  background-repeat: repeat-x;
   overflow: hidden;
   border-radius: 6px;
   color: #f3f3f3;
   max-height: 407px;
 }
-/* line 16, _components.scss */
+/* line 24, _components.scss */
 .scene a {
-  color: #f3f3f3;
+  color: #54aee1;
 }
 
-/* line 33, _components.scss */
+/* line 29, _components.scss */
 .totem {
   background-image: url("../images/codenvyTotem.png");
   background-repeat: no-repeat;
@@ -1120,11 +1294,11 @@ img {
   min-height: 407px;
 }
 
-/* line 39, _components.scss */
+/* line 35, _components.scss */
 .overview {
   margin-top: 10px;
 }
-/* line 43, _components.scss */
+/* line 39, _components.scss */
 .overview p {
   text-align: center;
   padding: 10px 10px 20px 10px;
@@ -1133,54 +1307,54 @@ img {
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
-/* line 50, _components.scss */
+/* line 46, _components.scss */
 .overview .icon-head {
   padding-top: 30px;
   margin-top: 20px;
 }
-/* line 56, _components.scss */
+/* line 52, _components.scss */
 .overview .cloud {
   background-image: url("../images/iconCloud.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 60, _components.scss */
+/* line 56, _components.scss */
 .overview .lighting {
   background-image: url("../images/iconLighting.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 64, _components.scss */
+/* line 60, _components.scss */
 .overview .user {
   background-image: url("../images/iconUser.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 68, _components.scss */
+/* line 64, _components.scss */
 .overview .house {
   background-image: url("../images/iconHouse.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 72, _components.scss */
+/* line 68, _components.scss */
 .overview .lock {
   background-image: url("../images/iconLock.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 76, _components.scss */
+/* line 72, _components.scss */
 .overview .plug {
   background-image: url("../images/iconPlug.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 80, _components.scss */
+/* line 76, _components.scss */
 .overview .scale {
   background-image: url("../images/iconScale.png");
   background-repeat: no-repeat;
   background-position: 50% 0;
 }
-/* line 84, _components.scss */
+/* line 80, _components.scss */
 .overview .browser {
   background-image: url("../images/iconBrowser.png");
   background-repeat: no-repeat;
@@ -1192,20 +1366,20 @@ img {
     Login
 
 */
-/* line 97, _components.scss */
+/* line 94, _components.scss */
 .login {
   position: relative;
-  background-image: url("../images/sceneBackground.png");
-  background-repeat: repeat-x;
-  overflow: hidden;
-  border-radius: 6px;
-  color: #f3f3f3;
-  position: relative;
   padding-top: 21px;
+  margin: 10px;
 }
-/* line 16, _components.scss */
-.login a {
-  color: #f3f3f3;
+/* line 99, _components.scss */
+.login form {
+  padding: 25px;
+}
+/* line 103, _components.scss */
+.login hr.short-line {
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 /*
@@ -1213,12 +1387,12 @@ img {
     Forgot password form
 
 */
-/* line 109, _components.scss */
+/* line 117, _components.scss */
 .result-message.hidden {
   opacity: 0;
 }
 
-/* line 113, _components.scss */
+/* line 121, _components.scss */
 .data.hidden {
   opacity: 0;
 }
@@ -1228,7 +1402,7 @@ img {
     Misc
 
 */
-/* line 122, _components.scss */
+/* line 130, _components.scss */
 .aternative-login {
   background-image: url("../images/lineOr.png");
   background-repeat: no-repeat;
@@ -1253,9 +1427,10 @@ img {
   text-align: center;
   opacity: 1;
   padding-top: 51px;
+  min-height: 100px;
 }
 
-/* line 131, _components.scss */
+/* line 140, _components.scss */
 .aternative-login.pulled-up {
   -webkit-transform: translate(0, -136px);
   -moz-transform: translate(0, -136px);
@@ -1264,7 +1439,7 @@ img {
   transform: translate(0, -136px);
 }
 
-/* line 135, _components.scss */
+/* line 144, _components.scss */
 .aternative-login.collapsed {
   opacity: 0;
   -webkit-transform: translate(0, 0);
@@ -1294,23 +1469,13 @@ img {
     Domain picker
 
 */
-/* line 147, _components.scss */
+/* line 156, _components.scss */
 .select-domain {
-  position: relative;
-  background-image: url("../images/sceneBackground.png");
-  background-repeat: repeat-x;
-  overflow: hidden;
-  border-radius: 6px;
-  color: #f3f3f3;
   position: relative;
   padding: 20px;
 }
-/* line 16, _components.scss */
-.select-domain a {
-  color: #f3f3f3;
-}
 
-/* line 154, _components.scss */
+/* line 161, _components.scss */
 .domain-list {
   background: rgba(251, 251, 251, 0.5);
   border-radius: 6px;
@@ -1318,19 +1483,19 @@ img {
   padding: 0;
 }
 
-/* line 161, _components.scss */
+/* line 168, _components.scss */
 .domain-list li {
   padding: 0;
   border-bottom: solid 1px #313a48;
 }
 
-/* line 166, _components.scss */
+/* line 173, _components.scss */
 .domain-list li a {
   display: block;
   padding: 5px 20px;
 }
 
-/* line 171, _components.scss */
+/* line 178, _components.scss */
 .domain-list li:last-child {
   border-bottom: none;
 }
@@ -1340,39 +1505,39 @@ img {
     Standard pages
 
 */
-/* line 182, _components.scss */
+/* line 189, _components.scss */
 .container.light {
   background: #f7f7f7;
   border: solid 1px #d9dbdf;
-  padding: 20px 60px 60px;
+  padding: 20px 60px 80px;
   border-radius: 6px;
   background-image: url("../images/logo-inlaid.png");
   background-repeat: no-repeat;
-  background-position: 50% 98%;
+  background-position: 50% 97%;
 }
-/* line 190, _components.scss */
+/* line 197, _components.scss */
 .container.light h1 {
   font-size: 36px;
   text-align: center;
   text-transform: uppercase;
 }
-/* line 196, _components.scss */
+/* line 203, _components.scss */
 .container.light h2 {
   font-size: 26px;
   font-weight: normal;
 }
-/* line 201, _components.scss */
+/* line 208, _components.scss */
 .container.light hr {
   border: solid 1px #e3e4e7;
   margin: 30px 0;
 }
-/* line 206, _components.scss */
+/* line 213, _components.scss */
 .container.light .subtitle-line {
   width: 50px;
   border-top: solid 1px #44484b;
   margin: 0 auto 40px auto;
 }
-/* line 212, _components.scss */
+/* line 219, _components.scss */
 .container.light ul {
   font-weight: 300;
 }
@@ -1382,13 +1547,13 @@ img {
     Loader (wait for tenant screen)
 
 */
-/* line 223, _components.scss */
+/* line 230, _components.scss */
 body.simple {
   background-color: #595e62;
   position: relative;
 }
 
-/* line 228, _components.scss */
+/* line 235, _components.scss */
 .loader {
   background-image: url("../images/spriteSpinner.png");
   background-repeat: no-repeat;
@@ -1418,32 +1583,32 @@ body.simple {
   -o-transition-delay: 0;
   transition-delay: 0;
 }
-/* line 243, _components.scss */
+/* line 250, _components.scss */
 .loader h3 {
   color: #f3f3f3;
 }
-/* line 247, _components.scss */
+/* line 254, _components.scss */
 .loader.frame1 {
   background-position: 50% -100px;
 }
-/* line 248, _components.scss */
+/* line 255, _components.scss */
 .loader.frame2 {
   background-position: 50% 0px;
 }
-/* line 249, _components.scss */
+/* line 256, _components.scss */
 .loader.frame3 {
   background-position: 50% -29px;
 }
-/* line 250, _components.scss */
+/* line 257, _components.scss */
 .loader.frame4 {
   background-position: 50% -58px;
 }
-/* line 252, _components.scss */
+/* line 259, _components.scss */
 .loader.visible {
   opacity: 1.0;
 }
 
-/* line 255, _components.scss */
+/* line 262, _components.scss */
 .loader-text {
   font-weight: 300;
   text-transform: uppercase;
@@ -1464,41 +1629,71 @@ body.simple {
     Profile page
 
 */
-/* line 277, _components.scss */
+/* line 284, _components.scss */
 .profile-form {
-  position: relative;
-  background-image: url("../images/sceneBackground.png");
-  background-repeat: repeat-x;
-  overflow: hidden;
-  border-radius: 6px;
-  color: #f3f3f3;
   position: relative;
   padding: 20px;
   background: #233040;
 }
-/* line 16, _components.scss */
-.profile-form a {
-  color: #f3f3f3;
-}
-/* line 283, _components.scss */
+/* line 289, _components.scss */
 .profile-form form {
   padding: 10px 5px;
+}
+
+/* line 295, _components.scss */
+.error-container.ok-message {
+  background-color: rgba(0, 255, 0, 0.4);
 }
 
 /*
     Enterprise page
 */
-/* line 293, _components.scss */
-.enterprise-header {
-  background-image: url("../images/enterprise/header.png");
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
+/* line 303, _components.scss */
+.enterprise {
+  position: relative;
   height: 410px;
+  padding: 0;
 }
 
-/* line 300, _components.scss */
-.enterprise .icon-head p {
+/* line 310, _components.scss */
+.enterprise-header {
+  min-height: 410px;
+  min-width: 947px;
+  background-image: url("../images/enterprise/header_enterprise.png");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-position: 0% 40%;
+  position: absolute;
+  z-index: 1;
+}
+
+/* line 319, _components.scss */
+.enterprise-header-ground {
+  min-height: 70px;
+  min-width: 947px;
+  background-color: #3e495a;
+  position: absolute;
+  bottom: 0;
+}
+
+/* line 327, _components.scss */
+h1.enterprise-header-text {
+  min-height: 70px;
+  min-width: 947px;
+  background-color: #3e495a;
+  position: absolute;
+  top: 150px;
+  left: 400px;
+}
+
+/* line 338, _components.scss */
+.enterprise-features .icon-head p {
   height: 150px;
+}
+/* line 342, _components.scss */
+.enterprise-features .row:last-child .icon-head p {
+  background: none;
+  height: 130px;
 }
 
 /*
@@ -1506,14 +1701,14 @@ body.simple {
     Pricing
 
 */
-/* line 313, _components.scss */
+/* line 355, _components.scss */
 .pricing-feature-list {
   padding: 0;
   margin: 2em 0;
   list-style-type: none;
   line-height: 2em;
 }
-/* line 318, _components.scss */
+/* line 360, _components.scss */
 .pricing-feature-list li {
   padding: 0 0 1em 0;
   margin: 1em 0;
@@ -1521,7 +1716,7 @@ body.simple {
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
-/* line 322, _components.scss */
+/* line 364, _components.scss */
 .pricing-feature-list li a {
   background-image: url("../images/pricing/icon_info.png");
   background-repeat: no-repeat;
@@ -1529,8 +1724,14 @@ body.simple {
   color: #f3f3f3;
   padding-right: 30px;
 }
+/* line 370, _components.scss */
+.pricing-feature-list li.highlight {
+  background-image: url("../images/pricing/sep_grad_small.png");
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+}
 
-/* line 331, _components.scss */
+/* line 377, _components.scss */
 .pricing-poetry {
   font-size: 1em;
   color: #8e979d;
@@ -1539,24 +1740,28 @@ body.simple {
   margin-top: 30px;
 }
 
-/* line 339, _components.scss */
+/* line 385, _components.scss */
 .pricing-feature {
   padding: 15px;
 }
+/* line 388, _components.scss */
+.pricing-feature p {
+  margin-top: 5px;
+}
 
-/* line 343, _components.scss */
+/* line 393, _components.scss */
 .container.open-source {
   background-color: #2b3748;
   border: solid 1px #313d4d;
   padding: 0.8em;
 }
 
-/* line 349, _components.scss */
+/* line 399, _components.scss */
 .container.open-source-desc {
   line-height: 2.5em;
 }
 
-/* line 353, _components.scss */
+/* line 403, _components.scss */
 .pricing-box-open-source {
   background-image: url("../images/pricing/box_opensource.png");
   background-repeat: no-repeat;
@@ -1564,7 +1769,14 @@ body.simple {
   height: 128px;
 }
 
-/* line 358, _components.scss */
+/* line 408, _components.scss */
+.paid-plan {
+  background-color: #2b3748;
+  border: solid 1px #313d4d;
+  padding: 0.8em;
+}
+
+/* line 414, _components.scss */
 .pricing-box-business {
   background-image: url("../images/pricing/box_business.png");
   background-repeat: no-repeat;
@@ -1573,31 +1785,34 @@ body.simple {
   height: 155px;
 }
 
-/* line 363, _components.scss */
+/* line 419, _components.scss */
 .header-secure {
   background: -webkit-linear-gradient(#7bbced, #54aee1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+  font-weight: 400;
 }
 
-/* line 370, _components.scss */
+/* line 427, _components.scss */
 .header-premium {
   background: -webkit-linear-gradient(#7bbced, #54aee1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+  font-weight: 400;
 }
 
-/* line 377, _components.scss */
+/* line 435, _components.scss */
 .header-business {
   background: -webkit-linear-gradient(#fff000, #c4a000);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+  font-weight: 400;
 }
 
-/* line 384, _components.scss */
+/* line 443, _components.scss */
 .pricing-box-premium {
   background-image: url("../images/pricing/box_premium.png");
   background-repeat: no-repeat;
@@ -1606,7 +1821,7 @@ body.simple {
   height: 155px;
 }
 
-/* line 389, _components.scss */
+/* line 448, _components.scss */
 .pricing-box-secure {
   background-image: url("../images/pricing/box_secure.png");
   background-repeat: no-repeat;
@@ -1615,18 +1830,25 @@ body.simple {
   height: 155px;
 }
 
-/* line 394, _components.scss */
+/* line 457, _components.scss */
 .container.enterprise-teaser {
   background-color: #42617B;
   color: #f3f3f3;
-  padding: 0.5em;
+  padding: 1.5em;
 }
-/* line 398, _components.scss */
+/* line 461, _components.scss */
 .container.enterprise-teaser a {
   color: #54aee1;
 }
+/* line 463, _components.scss */
+.container.enterprise-teaser h3 {
+  margin: 0 0 5px 0;
+  background: -webkit-linear-gradient(#e2e5e8, #bec3c4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
-/* line 401, _components.scss */
+/* line 469, _components.scss */
 .welcome-pack {
   background-image: url("../images/pricing/img_welcomepack.png");
   background-repeat: no-repeat;
@@ -1634,13 +1856,13 @@ body.simple {
   height: 212px;
 }
 
-/* line 406, _components.scss */
+/* line 474, _components.scss */
 .container.pricing-dedicated {
   padding-right: 10px;
   padding-left: 50px;
 }
 
-/* line 411, _components.scss */
+/* line 479, _components.scss */
 .cloud-up {
   background-image: url("../images/pricing/img_cloudup.png");
   background-repeat: no-repeat;
@@ -1648,7 +1870,7 @@ body.simple {
   min-height: 232px;
 }
 
-/* line 416, _components.scss */
+/* line 484, _components.scss */
 .key-box {
   background-image: url("../images/pricing/img_keybox.png");
   background-repeat: no-repeat;
@@ -1661,13 +1883,13 @@ body.simple {
     Features
 
 */
-/* line 427, _components.scss */
+/* line 495, _components.scss */
 .container.features {
   position: relative;
   z-index: 1;
-  min-height: 353px;
+  min-height: 300px;
 }
-/* line 429, _components.scss */
+/* line 497, _components.scss */
 .container.features:after {
   content: url("../images/features/img_header.png");
   position: absolute;
@@ -1679,75 +1901,101 @@ body.simple {
   text-align: center;
 }
 
-/* line 432, _components.scss */
+/* line 500, _components.scss */
 .screenshot {
   padding-bottom: 209px;
 }
 
-/* line 433, _components.scss */
+/* line 501, _components.scss */
 .screenshot.anywhere {
   background-image: url("../images/features/img_prntscr_accessanywhere.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 434, _components.scss */
+/* line 502, _components.scss */
 .screenshot.invite {
   background-image: url("../images/features/img_prntscr_invite.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 435, _components.scss */
+/* line 503, _components.scss */
 .screenshot.language {
   background-image: url("../images/features/img_prntscr_picklanguage.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 437, _components.scss */
+/* line 505, _components.scss */
 .choose-paas {
   background-image: url("../images/features/img_choosepaas.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
-  padding-bottom: 145px;
+  padding-bottom: 170px;
 }
 
-/* line 440, _components.scss */
+/* line 508, _components.scss */
 .screenshot.build-cycle {
   background-image: url("../images/features/img_prntscr_buildcycle.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 441, _components.scss */
+/* line 509, _components.scss */
 .screenshot.pair-programming {
   background-image: url("../images/features/img_prntscr_pair.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 442, _components.scss */
+/* line 510, _components.scss */
 .screenshot.editor {
   background-image: url("../images/features/img_prntscr_editor.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 443, _components.scss */
+/* line 511, _components.scss */
 .screenshot.debug {
   background-image: url("../images/features/img_prntscr_debug.png");
   background-repeat: no-repeat;
   background-position: 50% 100%;
 }
 
-/* line 445, _components.scss */
+/* line 513, _components.scss */
 .ide-screenshot {
   margin-top: 2em;
 }
-/* line 447, _components.scss */
+/* line 515, _components.scss */
 .ide-screenshot img {
   display: inline;
+}
+
+/* line 518, _components.scss */
+.feature-left {
+  text-align: left;
+  padding-right: 20px;
+}
+
+/* line 523, _components.scss */
+.feature-right {
+  text-align: left;
+  padding-left: 20px;
+}
+
+/*
+
+    Jobs
+
+*/
+/* line 537, _components.scss */
+.job-listing p.back {
+  margin-top: 30px;
+}
+/* line 541, _components.scss */
+.job-listing p.back a {
+  color: #54aee1;
 }
 
 /* normalize.css v2.0.1 | MIT License | git.io/normalize */
@@ -1810,8 +2058,8 @@ audio:not([controls]) {
  */
 /* line 81, main.scss */
 html {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 400;
+  font-family: "Roboto", sans-serif;
+  font-weight: 350;
   -webkit-text-size-adjust: 100%;
   /* 2 */
   -ms-text-size-adjust: 100%;
@@ -1821,7 +2069,7 @@ html {
 /**
  * Remove default margin.
  */
-/* line 94, main.scss */
+/* line 95, main.scss */
 body {
   margin: 0;
   background-color: #f3f3f3;
@@ -1829,7 +2077,7 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* line 101, main.scss */
+/* line 102, main.scss */
 html, body {
   height: 100%;
 }
@@ -1840,13 +2088,13 @@ html, body {
 /**
  * Address `outline` inconsistency between Chrome and other browsers.
  */
-/* line 113, main.scss */
+/* line 114, main.scss */
 a {
   text-decoration: none;
   color: #44484b;
 }
 
-/* line 118, main.scss */
+/* line 119, main.scss */
 a:focus {
   outline: none;
 }
@@ -1854,10 +2102,15 @@ a:focus {
 /**
  * Improve readability when focused and also mouse hovered in all browsers.
  */
-/* line 128, main.scss */
+/* line 129, main.scss */
 a:active,
 a:hover {
   outline: 0;
+}
+
+/* line 133, main.scss */
+a.blue {
+  color: #54aee1;
 }
 
 /* ==========================================================================
@@ -1867,7 +2120,7 @@ a:hover {
  * Address variable `h1` font size within `section` and `article` contexts in
  * Firefox 4+, Safari 5, and Chrome.
  */
-/* line 141, main.scss */
+/* line 144, main.scss */
 h1 {
   font-size: 2em;
   font-weight: 300;
@@ -1877,7 +2130,7 @@ h1 {
 /**
  * Address styling not present in IE 8/9, Safari 5, and Chrome.
  */
-/* line 151, main.scss */
+/* line 154, main.scss */
 abbr[title] {
   border-bottom: 1px dotted;
 }
@@ -1885,7 +2138,7 @@ abbr[title] {
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 160, main.scss */
+/* line 163, main.scss */
 b,
 strong {
   font-weight: bold;
@@ -1894,7 +2147,7 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 168, main.scss */
+/* line 171, main.scss */
 dfn {
   font-style: italic;
 }
@@ -1902,7 +2155,7 @@ dfn {
 /**
  * Address styling not present in IE 8/9.
  */
-/* line 176, main.scss */
+/* line 179, main.scss */
 mark {
   background: #ff0;
   color: #000;
@@ -1911,7 +2164,7 @@ mark {
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 188, main.scss */
+/* line 191, main.scss */
 code,
 kbd,
 pre,
@@ -1922,7 +2175,7 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 197, main.scss */
+/* line 200, main.scss */
 pre {
   white-space: pre;
   white-space: pre-wrap;
@@ -1932,7 +2185,7 @@ pre {
 /**
  * Set consistent quote types.
  */
-/* line 207, main.scss */
+/* line 210, main.scss */
 q {
   quotes: "\201C" "\201D" "\2018" "\2019";
 }
@@ -1943,7 +2196,7 @@ q {
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 224, main.scss */
+/* line 227, main.scss */
 sub,
 sup {
   line-height: 0;
@@ -1951,12 +2204,12 @@ sup {
   vertical-align: baseline;
 }
 
-/* line 231, main.scss */
+/* line 234, main.scss */
 sup {
   top: -0.5em;
 }
 
-/* line 235, main.scss */
+/* line 238, main.scss */
 sub {
   bottom: -0.25em;
 }
@@ -1967,7 +2220,7 @@ sub {
 /**
  * Remove border when inside `a` element in IE 8/9.
  */
-/* line 247, main.scss */
+/* line 250, main.scss */
 img {
   border: 0;
 }
@@ -1975,7 +2228,7 @@ img {
 /**
  * Correct overflow displayed oddly in IE 9.
  */
-/* line 255, main.scss */
+/* line 258, main.scss */
 svg:not(:root) {
   overflow: hidden;
 }
@@ -1986,7 +2239,7 @@ svg:not(:root) {
 /**
  * Address margin not present in IE 8/9 and Safari 5.
  */
-/* line 267, main.scss */
+/* line 270, main.scss */
 figure {
   margin: 0;
 }
@@ -1997,7 +2250,7 @@ figure {
 /**
  * Remove most spacing between table cells.
  */
-/* line 279, main.scss */
+/* line 282, main.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
