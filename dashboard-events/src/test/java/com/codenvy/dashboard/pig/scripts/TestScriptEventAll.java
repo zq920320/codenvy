@@ -116,7 +116,7 @@ public class TestScriptEventAll extends BasePigTest
       Iterator<String> iter = fileObject.getKeys().keySet().iterator();
       Assert.assertEquals(iter.next(), Constants.DATE);
 
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptResultType.EVENT_ALL);
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.DATE_FOR_PROPERTIES);
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), date.toString());
       Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("tenant-created"), "1");
 

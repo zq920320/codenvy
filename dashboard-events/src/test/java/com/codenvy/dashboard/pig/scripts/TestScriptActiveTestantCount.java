@@ -51,15 +51,15 @@ public class TestScriptActiveTestantCount extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ACTIVE_TENANT_COUNT, log, new String[][]{{Constants.DATE, "20101001"},
+      executePigScript(ScriptType.ACTIVE_WS_COUNT, log, new String[][]{{Constants.DATE, "20101001"},
          {Constants.TO_DATE, "20101005"}});
 
-      FileObject fileObject = ScriptType.ACTIVE_TENANT_COUNT.createFileObject(BASE_DIR, 20101001, 20101005);
+      FileObject fileObject = ScriptType.ACTIVE_WS_COUNT.createFileObject(BASE_DIR, 20101001, 20101005);
 
       Long value = (Long)fileObject.getValue();
       Assert.assertEquals(value, Long.valueOf(3));
    }
-   
+
    @Test
    public void testEventFound2UseCase() throws Exception
    {
@@ -75,10 +75,10 @@ public class TestScriptActiveTestantCount extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ACTIVE_TENANT_COUNT, log, new String[][]{{Constants.DATE, "20101001"},
+      executePigScript(ScriptType.ACTIVE_WS_COUNT, log, new String[][]{{Constants.DATE, "20101001"},
          {Constants.TO_DATE, "20101005"}});
 
-      FileObject fileObject = ScriptType.ACTIVE_TENANT_COUNT.createFileObject(BASE_DIR, 20101001, 20101005);
+      FileObject fileObject = ScriptType.ACTIVE_WS_COUNT.createFileObject(BASE_DIR, 20101001, 20101005);
 
       Long value = (Long)fileObject.getValue();
       Assert.assertEquals(value, Long.valueOf(3));
@@ -92,10 +92,10 @@ public class TestScriptActiveTestantCount extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ACTIVE_TENANT_COUNT, log, new String[][]{{Constants.DATE, "20101002"},
+      executePigScript(ScriptType.ACTIVE_WS_COUNT, log, new String[][]{{Constants.DATE, "20101002"},
          {Constants.TO_DATE, "20101005"}});
 
-      FileObject fileObject = ScriptType.ACTIVE_TENANT_COUNT.createFileObject(BASE_DIR, 20101002, 20101005);
+      FileObject fileObject = ScriptType.ACTIVE_WS_COUNT.createFileObject(BASE_DIR, 20101002, 20101005);
 
       Long value = (Long)fileObject.getValue();
       Assert.assertEquals(value, Long.valueOf(0));
@@ -109,7 +109,7 @@ public class TestScriptActiveTestantCount extends BasePigTest
       tuple.append(20100204);
       tuple.append(1);
 
-      FileObject fileObject = ScriptType.ACTIVE_TENANT_COUNT.createFileObject(BASE_DIR, tuple);
+      FileObject fileObject = ScriptType.ACTIVE_WS_COUNT.createFileObject(BASE_DIR, tuple);
 
       Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
       Assert.assertNotNull(fileObject.getKeys().get(Constants.TO_DATE));
@@ -118,12 +118,13 @@ public class TestScriptActiveTestantCount extends BasePigTest
       Assert.assertEquals(iter.next(), Constants.DATE);
       Assert.assertEquals(iter.next(), Constants.TO_DATE);
 
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptResultType.ACTIVE_ENTITY_COUNT);
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_FOR_LONG);
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20100203");
       Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20100204");
       Assert.assertEquals(fileObject.getValue(), 1L);
 
-      File file = new File("target/active_tenant_count/2010/02/03/20100204/value");
+      File file =
+         new File(BASE_DIR + "/" + ScriptType.ACTIVE_WS_COUNT.toString().toLowerCase() + "/2010/02/03/20100204/value");
       file.delete();
 
       Assert.assertFalse(file.exists());

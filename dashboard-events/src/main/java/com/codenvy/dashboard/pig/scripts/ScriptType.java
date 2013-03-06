@@ -28,43 +28,71 @@ import java.io.IOException;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum ScriptType {
+
+   /**
+    * Find total number occurrence of every event per day.
+    */
    EVENT_ALL {
       @Override
-      public ScriptResultType getResultType()
+      public ScriptTypeResult getResultType()
       {
-         return ScriptResultType.EVENT_ALL;
+         return ScriptTypeResult.DATE_FOR_PROPERTIES;
       }
    },
 
+   /**
+    * Find total number occurrence of every value of additional parameter
+    * for given event per day.
+    */
    EVENT_PARAM_ALL {
       @Override
-      public ScriptResultType getResultType()
+      public ScriptTypeResult getResultType()
       {
-         return ScriptResultType.EVENT_PARAM_ALL;
+         return ScriptTypeResult.EVENT_PARAM_DATE_FOR_PROPERTIES;
       }
    },
 
-   ACTIVE_TENANT_COUNT {
+   /**
+    * Find total number of active workspaces per time frame.
+    */
+   ACTIVE_WS_COUNT {
       @Override
-      public ScriptResultType getResultType()
+      public ScriptTypeResult getResultType()
       {
-         return ScriptResultType.ACTIVE_ENTITY_COUNT;
+         return ScriptTypeResult.TIMEFRAME_FOR_LONG;
       }
    },
 
+   /**
+    * Find total number of active projects per time frame.
+    */
    ACTIVE_PROJECT_COUNT {
       @Override
-      public ScriptResultType getResultType()
+      public ScriptTypeResult getResultType()
       {
-         return ScriptResultType.ACTIVE_ENTITY_COUNT;
+         return ScriptTypeResult.TIMEFRAME_FOR_LONG;
       }
    },
 
+   /**
+    * Find total number of active users per time frame.
+    */
    ACTIVE_USER_COUNT {
       @Override
-      public ScriptResultType getResultType()
+      public ScriptTypeResult getResultType()
       {
-         return ScriptResultType.ACTIVE_ENTITY_COUNT;
+         return ScriptTypeResult.TIMEFRAME_FOR_LONG;
+      }
+   },
+
+   /**
+    * Find total number of unique occurrence event and its parameter per time frame.
+    */
+   EVENT_PARAM_UNIQUE_COUNT {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.EVENT_PARAM_TIMEFRAME_FOR_LONG;
       }
    };
 
@@ -79,12 +107,12 @@ public enum ScriptType {
    /**
     * Every Pig-latin script return result of specific type. The type define the data format to be stored.
     * 
-    * @return corresponding {@link ScriptResultType}.
+    * @return corresponding {@link ScriptTypeResult}.
     */
-   public abstract ScriptResultType getResultType();
+   public abstract ScriptTypeResult getResultType();
 
    /**
-    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptResultType}.
+    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptTypeResult}.
     * The value will be obtained from {@link Tuple}.
     */
    public FileObject createFileObject(String baseDir, Tuple tuple) throws IOException
@@ -93,7 +121,7 @@ public enum ScriptType {
    }
 
    /**
-    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptResultType}.
+    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptTypeResult}.
     * The value will be loaded from the file.
     */
    public FileObject createFileObject(String baseDir, Object... keysValues) throws IOException

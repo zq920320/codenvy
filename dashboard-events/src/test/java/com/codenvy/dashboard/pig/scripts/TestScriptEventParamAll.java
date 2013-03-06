@@ -86,7 +86,7 @@ public class TestScriptEventParamAll extends BasePigTest
       Assert.assertEquals(iter.next(), Constants.PARAM_NAME);
       Assert.assertEquals(iter.next(), Constants.DATE);
 
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptResultType.EVENT_PARAM_ALL);
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.EVENT_PARAM_DATE_FOR_PROPERTIES);
       Assert.assertEquals(fileObject.getKeys().get(Constants.EVENT), event);
       Assert.assertEquals(fileObject.getKeys().get(Constants.PARAM_NAME), param);
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), date.toString());

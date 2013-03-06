@@ -13,5 +13,6 @@ DEFINE extractAndFilterByDate(X, fromDateParam, toDateParam) RETURNS Y {
   x2 = FOREACH x1 GENERATE FLATTEN($0);
 
   x3 = FOREACH x2 GENERATE (int)$0 * 10000 + (int)$1 * 100 + (int)$2 AS date, $3 AS message;
-  $Y = FILTER x3 BY (int) $fromDateParam <= date AND date <= (int) $toDateParam;
+  x4 = FILTER x3 BY (int) $fromDateParam <= date AND date <= (int) $toDateParam;
+  $Y = DISTINCT x4;
 };

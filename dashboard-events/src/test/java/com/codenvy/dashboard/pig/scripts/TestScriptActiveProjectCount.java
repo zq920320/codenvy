@@ -98,7 +98,7 @@ public class TestScriptActiveProjectCount extends BasePigTest
       Assert.assertEquals(iter.next(), Constants.DATE);
       Assert.assertEquals(iter.next(), Constants.TO_DATE);
 
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptResultType.ACTIVE_ENTITY_COUNT);
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_FOR_LONG);
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20100203");
       Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20100204");
       Assert.assertEquals(fileObject.getValue(), 1L);

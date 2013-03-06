@@ -51,9 +51,9 @@ public class FileObject
    private final ScriptType scriptType;
 
    /**
-    * {@link ScriptResultType}.
+    * {@link ScriptTypeResult}.
     */
-   private final ScriptResultType scriptResultType;
+   private final ScriptTypeResult scriptResultType;
 
    /**
     * The sequence of values are used as unique identifier of result
@@ -324,7 +324,7 @@ public class FileObject
    /**
     * Getter for {@link #type}.
     */
-   public ScriptResultType getTypeResult()
+   public ScriptTypeResult getTypeResult()
    {
       return scriptResultType;
    }

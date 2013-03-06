@@ -196,7 +196,7 @@ public class Event
        */
       public static Builder createProjectBuiltEvent(String user, String ws, String session, String project, String type)
       {
-         return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
+         return new Builder().withContext(user, ws, session).withParam("EVENT", "project-built")
             .withParam("PROJECT", project).withParam("TYPE", type);
       }
 

@@ -14,41 +14,39 @@
 IMPORT 'macros.pig';
 
 log = LOAD '$log' using PigStorage() as (message : chararray);
-filteredByDate = extractAndFilterByDate(log, $date, $toDate);
-uniqEvents = DISTINCT filteredByDate;
 
 --
 -- Remove events unrelated to active tenant action
 --
-uniq1 = DISTINCT filteredByDate;
-uniqResult = FILTER uniq1 BY INDEXOF(message, 'EVENT#project-destroyed#', 0) == -1;
+f1 = extractAndFilterByDate(log, $date, $toDate);
+fR = FILTER f1 BY INDEXOF(message, 'EVENT#project-destroyed#', 0) == -1;
 
 --
 -- extract workspace name and project name out of identifiers
 --
-a1 = FOREACH uniqResult GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*PROJECT\\#([^\\#]*)\\#.*'));
+a1 = FOREACH fR GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*PROJECT\\#([^\\#]*)\\#.*'));
 a2 = FOREACH a1 GENERATE $0 AS ws, $1 AS project;
-aResult = FILTER a2 BY ws != '' AND project != '';
+aR = FILTER a2 BY ws != '' AND project != '';
 
 --
 -- extract workspace name and project name out of identifiers
 --
-c1 = FOREACH uniqResult GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*PROJECT\\#([^\\#]*)\\#.*WS\\#([^\\#]*)\\#.*'));
+c1 = FOREACH fR GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*PROJECT\\#([^\\#]*)\\#.*WS\\#([^\\#]*)\\#.*'));
 c2 = FOREACH c1 GENERATE $1 AS ws, $0 AS project;
-cResult = FILTER c2 BY ws != '' AND project != '';
+cR = FILTER c2 BY ws != '' AND project != '';
 
 --
 -- extract workspace name and project name out of message
 --
-b1 = FOREACH uniqResult GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*PROJECT\\#([^\\#]*)\\#.*'));
+b1 = FOREACH fR GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*PROJECT\\#([^\\#]*)\\#.*'));
 b2 = FOREACH b1 GENERATE $0 AS ws, $1 AS project;
-bResult = FILTER b2 BY ws != '' AND project != '';
+bR = FILTER b2 BY ws != '' AND project != '';
 
-u1 = UNION aResult, bResult, cResult;
+u1 = UNION aR, bR, cR;
 u2 = DISTINCT u1;
-uResult = FOREACH u2 GENERATE '$date' AS date, ws, project; 
+uR = FOREACH u2 GENERATE '$date' AS date, ws, project; 
 
-g1 = GROUP uResult BY date;
-result = FOREACH g1 GENERATE FLATTEN(group), '$toDate', COUNT(uResult) AS value;
+g1 = GROUP uR BY date;
+result = FOREACH g1 GENERATE FLATTEN(group), '$toDate', COUNT(uR) AS value;
 
 DUMP result;

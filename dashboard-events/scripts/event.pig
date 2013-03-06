@@ -13,13 +13,11 @@
 IMPORT 'macros.pig';
 
 log = LOAD '$log' using PigStorage() as (message : chararray);
-filteredByDate = extractAndFilterByDate(log, $date, $date);
-uniqEvents = DISTINCT filteredByDate;
+fR = extractAndFilterByDate(log, $date, $date);
 
-a1 = FILTER uniqEvents BY INDEXOF(message, 'EVENT#$event#', 0) != -1;
+a1 = FILTER fR BY INDEXOF(message, 'EVENT#$event#', 0) != -1;
 
 a2 = GROUP a1 BY date;
-a3 = FOREACH a2 GENERATE '$event', group AS date, COUNT(a1);
+result = FOREACH a2 GENERATE '$event', group AS date, COUNT(a1);
 
-result = a3;
 DUMP result;

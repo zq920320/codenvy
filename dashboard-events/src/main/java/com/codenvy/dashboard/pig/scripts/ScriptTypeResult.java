@@ -30,15 +30,13 @@ import java.util.Map;
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public enum ScriptResultType {
+public enum ScriptTypeResult {
 
    /**
-    * Represents the result of Pig-latin script execution, which
-    * returns the amount of specific event occurrence for particular
-    * date. Incoming tuple should meet the requirement:<br> 
-    * (int: date, bag: {(chararray: event, long: value)}).
+    * Resulted tuple should meet the requirement:<br> 
+    * (int: date, bag: {(chararray: key, long: value)}).
     */
-   EVENT_ALL {
+   DATE_FOR_PROPERTIES {
       @Override
       public String[] getKeyFields()
       {
@@ -63,14 +61,10 @@ public enum ScriptResultType {
    },
 
    /**
-    * Represents the result of Pig-latin script execution, which
-    * returns amount of every value of additional parameter
-    * relatively to particular event and date.<br>
-    *  
-    * Incoming tuple should meet the requirement:<br> 
-    * (chararray: event, chararray: paramName, int: date, bag: {(chararray: paramValue, long: value)}).
+    * Resulted tuple should meet the requirement:<br> 
+    * (chararray: event, chararray: paramName, int: date, bag: {(chararray: key, long: value)}).
     */
-   EVENT_PARAM_ALL {
+   EVENT_PARAM_DATE_FOR_PROPERTIES {
       @Override
       public String[] getKeyFields()
       {
@@ -96,7 +90,11 @@ public enum ScriptResultType {
       }
    },
 
-   ACTIVE_ENTITY_COUNT {
+   /**
+    * Resulted tuple should meet the requirement:<br> 
+    * (int: date, int: toDate, long: value).
+    */
+   TIMEFRAME_FOR_LONG {
       @Override
       public String[] getKeyFields()
       {
@@ -116,6 +114,37 @@ public enum ScriptResultType {
          tuple.set(0, executionContext.get(Constants.DATE));
          tuple.set(1, executionContext.get(Constants.TO_DATE));
          tuple.set(2, Long.valueOf(0));
+
+         return tuple;
+      }
+   },
+
+   /**
+    * Incoming tuple should meet the requirement:<br> 
+    * (chararray: event, chararray: paramName, int: date, int: toDate, long: value).
+    */
+   EVENT_PARAM_TIMEFRAME_FOR_LONG {
+      @Override
+      public String[] getKeyFields()
+      {
+         return new String[]{Constants.EVENT, Constants.PARAM_NAME, Constants.DATE, Constants.TO_DATE};
+      }
+
+      @Override
+      public ValueTranslator getValueTranslator()
+      {
+         return new Object2LongTranslator();
+      }
+
+      @Override
+      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      {
+         Tuple tuple = TupleFactory.getInstance().newTuple(5);
+         tuple.set(0, executionContext.get(Constants.EVENT));
+         tuple.set(1, executionContext.get(Constants.PARAM_NAME));
+         tuple.set(2, executionContext.get(Constants.DATE));
+         tuple.set(3, executionContext.get(Constants.TO_DATE));
+         tuple.set(4, Long.valueOf(0));
 
          return tuple;
       }
