@@ -2,7 +2,7 @@
 // fix this in onReceiveUserProfileInfo(request)
 
 (function(window){
-    define(["jquery","models/tenant"],function($,Tenant){
+    define(["jquery","json", "models/tenant"],function($,JSON,Tenant){
 
         /*
             AccountError is used to report errors through error callback function
@@ -56,15 +56,12 @@
         };
         function onReceiveUserProfileInfo(request)
         {
-                 var user = eval("(" + request.responseText + ")");
-                 // this is reported as defined but never used by JShint
-                 //currentUserName = user.id;
-                 document.getElementsByName("first_name")[0].value = user.firstName || "";
-                 document.getElementsByName("last_name")[0].value = user.lastName || "";
-                 document.getElementsByName("phone_work")[0].value = user.phone || "";
-                 document.getElementsByName("company")[0].value = user.employer || "";
-                 document.getElementsByName("title")[0].value = user.jobtitle || "";
-
+                var user = JSON.parse(request.responseText);
+                document.getElementsByName("first_name")[0].value = user.firstName || "";
+                document.getElementsByName("last_name")[0].value = user.lastName || "";
+                document.getElementsByName("phone_work")[0].value = user.phone || "";
+                document.getElementsByName("company")[0].value = user.employer || "";
+                document.getElementsByName("title")[0].value = user.jobtitle || "";
         }
 
         /*
