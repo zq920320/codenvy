@@ -268,7 +268,7 @@ module.exports = function( grunt ) {
             //check code quality before building
             'jshint:test', 'jshint:app',
 
-            // get ready of the previous dist jazz
+            // get rid of the previous dist jazz
             'shell:init',
 
             // copy all application files to the temporary folder
