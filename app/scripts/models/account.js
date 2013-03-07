@@ -1,6 +1,3 @@
-/*jshint evil:true */
-// fix this in onReceiveUserProfileInfo(request)
-
 (function(window){
     define(["jquery","json", "models/tenant"],function($,JSON,Tenant){
 
