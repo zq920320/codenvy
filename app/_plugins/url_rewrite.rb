@@ -1,6 +1,6 @@
 module Jekyll
   module URLFilter
-    def rewrite_url(input)
+    def url(input)
         case @context.registers[:site].config['profile']
         when "production"
             input.sub(".html","")
