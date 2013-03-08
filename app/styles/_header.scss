@@ -12,8 +12,7 @@ header {
   }
 }
 
-header > nav {
-}
+header > nav {}
 
 .main-menu {
 	@include horizontal-list;
@@ -24,7 +23,22 @@ header > nav {
         margin-left: 20px;
         padding-top: 6px;
         font-size: 0.9em;
+
+        a{
+            @include transition(0.2s,ease-in,color);
+            color: $header-link-color;
+        };
+
+        a:hover{
+            color: $header-link-hover-color;
+        };
 	}
+
+    li:nth-child(1){
+        a:hover{
+            color: $header-link-special-hover-color;
+        };
+    }
 
 
     @include respond-to(tablet-desktop) {
@@ -51,7 +65,7 @@ header > nav {
     &:hover{
         color: #44484b;
         @include gray-button-gradient-highlight();
-        @include box-shadow(0px 0px 0px 1px rgba(255, 255, 255, 0.5));        
+        @include box-shadow(0px 0px 0px 1px rgba(255, 255, 255, 0.5));
     };
 
     &:active{
