@@ -16,6 +16,14 @@ define(["jquery","models/account","models/tenant","underscore"], function($,Acco
                 expect(Account).to.respondTo("login");
             });
 
+            it("exports loginWithGoogle method", function(){
+                expect(Account).to.respondTo("loginWithGoogle");
+            });
+
+            it("exports loginWithGithub method", function(){
+                expect(Account).to.respondTo("loginWithGithub");
+            });
+
             it("exports createTenant method", function(){
                 expect(Account).to.respondTo("createTenant");
             });

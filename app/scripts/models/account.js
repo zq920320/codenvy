@@ -1,5 +1,7 @@
-/*global _gaq:true */
-(function(window,_gaq){
+(function(window){
+
+    var _gaq = _gaq || [];
+
     define(["jquery","json", "models/tenant"],function($,JSON,Tenant){
 
         /*
@@ -424,4 +426,4 @@
 
         };
     });
-}(window, _gaq || []));
+}(window));
