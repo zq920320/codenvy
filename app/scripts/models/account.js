@@ -1,4 +1,5 @@
-(function(window){
+/*global _gaq:true */
+(function(window,_gaq){
     define(["jquery","json", "models/tenant"],function($,JSON,Tenant){
 
         /*
@@ -61,6 +62,29 @@
                 document.getElementsByName("title")[0].value = user.jobtitle || "";
         }
 
+
+        var loginWithGoogle = function(page,callback){
+           _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
+            var url = "/rest/ide/oauth/authenticate?oauth_provider=google&mode=federated_login" +
+               "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" +
+               "&scope=https://www.googleapis.com/auth/appengine.admin&scope=https://www.google.com/m8/feeds" +
+               "&redirect_after_login=/oauth/" + new Date().getTime();
+            //window.location = url;
+            if(typeof callback !== 'undefined'){
+                callback(url);
+            }
+        };
+
+        var loginWithGithub = function(page,callback){
+            _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
+            var url = "/rest/ide/oauth/authenticate?oauth_provider=github&mode=federated_login&" +
+            "scope=user&scope=repo&redirect_after_login=/oauth/" + new Date().getTime();
+            //window.location = url;
+            if(typeof callback !== 'undefined'){
+                callback(url);
+            }
+        };
+
         /*
             Every method accepts 0 or more data values and two callbacks (success and error)
 
@@ -116,6 +140,9 @@
 
                 success({ loginUrl: loginUrl });
             },
+
+            loginWithGoogle : loginWithGoogle,
+            loginWithGithub : loginWithGithub,
 
             createTenant : function(email,domain,success,error){
 
@@ -397,4 +424,4 @@
 
         };
     });
-}(window));
+}(window, _gaq || []));
