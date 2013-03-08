@@ -1,64 +1,80 @@
-define(["jquery", "underscore", "views/accountformbase", "models/account"],
+(function(window){
+    define(["jquery", "underscore", "views/accountformbase", "models/account"],
 
-    function($,_,AccountFormBase,Account){
+        function($,_,AccountFormBase,Account){
 
-        var SignInForm = AccountFormBase.extend({
+            var SignInForm = AccountFormBase.extend({
 
-            initialize : function(attributes){
-                AccountFormBase.prototype.initialize.apply(this,attributes);
-            },
+                initialize : function(attributes){
+                    AccountFormBase.prototype.initialize.apply(this,attributes);
 
-            __validationRules : function(){
-                return {
-                    password : {
-                        required: true
-                    },
-                    email: {
-                        required: true,
-                        email: true
-                    }
-                };
-            },
+                    //bind onclick to Google and GitHub buttons
 
-            __submit : function(form){
-                Account.login(
-                    this.$("input[name='email']").val(),
-                    this.$("input[name='password']").val(),
-                    _.bind(function(data){
-                        $(this.el).attr('action',data.loginUrl);
-                        form.submit();
-                    },this),
-                    _.bind(function(errors){
+                    $(".oauth-button.google").click(function(){
+                        Account.loginWithGoogle("Login page", function(url){
+                            window.location = url;
+                        });
+                    });
 
-                        this.__restoreForm();
+                    $(".oauth-button.github").click(function(){
+                        Account.loginWithGithub("Login page", function(url){
+                            window.location = url;
+                        });
+                    });
+                },
 
-                        if(errors.length !== 0){
-                            this.trigger(
-                                "invalid",
-                                errors[0].getFieldName(),
-                                errors[0].getErrorDescription()
-                            );
+                __validationRules : function(){
+                    return {
+                        password : {
+                            required: true
+                        },
+                        email: {
+                            required: true,
+                            email: true
                         }
-                    },this)
-                );
+                    };
+                },
 
-                return false;
-            }
+                __submit : function(form){
+                    Account.login(
+                        this.$("input[name='email']").val(),
+                        this.$("input[name='password']").val(),
+                        _.bind(function(data){
+                            $(this.el).attr('action',data.loginUrl);
+                            form.submit();
+                        },this),
+                        _.bind(function(errors){
 
-        });
+                            this.__restoreForm();
 
-        return {
-            get : function(form){
-                if(typeof form === 'undefined'){
-                    throw new Error("Need a form");
+                            if(errors.length !== 0){
+                                this.trigger(
+                                    "invalid",
+                                    errors[0].getFieldName(),
+                                    errors[0].getErrorDescription()
+                                );
+                            }
+                        },this)
+                    );
+
+                    return false;
                 }
 
-                return new SignInForm({
-                    el : form
-                });
-            },
+            });
 
-            SignInForm : SignInForm
-        };
-    }
-);
+            return {
+                get : function(form){
+                    if(typeof form === 'undefined'){
+                        throw new Error("Need a form");
+                    }
+
+                    return new SignInForm({
+                        el : form
+                    });
+                },
+
+                SignInForm : SignInForm
+            };
+        }
+    );
+}(window));

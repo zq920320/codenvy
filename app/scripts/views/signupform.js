@@ -60,6 +60,20 @@ define(["jquery","underscore","models/account","views/accountformbase","validati
 
             initialize : function(attributes){
                 ProgressiveForm.prototype.initialize.apply(this,attributes);
+
+                //bind onclick to Google and GitHub buttons
+
+                $(".oauth-button.google").click(function(){
+                    Account.loginWithGoogle("Main page", function(url){
+                        window.location = url;
+                    });
+                });
+
+                $(".oauth-button.github").click(function(){
+                    Account.loginWithGithub("Main page", function(url){
+                        window.location = url;
+                    });
+                });
             },
 
             __submit : function(form){
