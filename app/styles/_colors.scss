@@ -47,8 +47,8 @@ $blue-link-color:#54aee1;
 }
 
 @mixin signin-button-gradient {
-    @include background-image(linear-gradient(#fcfcfc, #f3f3f3));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#f3f3f3');
+    @include background-image(linear-gradient(#f3f3f3,#e8e8e8));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f3f3f3', endColorstr='#e8e8e8');
 }
 
 @mixin dark-container-gradient {

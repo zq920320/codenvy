@@ -63,6 +63,7 @@
     font-weight:300;
     font-size: 1em;
     line-height: 1em;
+    text-align: center;
 }
 
 .button-100 { width: 100px; }
@@ -138,6 +139,27 @@
     };
 }
 
+.sign-in-button {
+
+    @include button();
+
+    font-size: 0.8em;
+
+    @include signin-button-gradient;
+    color: $signup-button-font-color;
+
+    border: solid 1px #d6e3ed;
+
+    &:hover{
+        color: #44484b;
+        @include gray-button-gradient-highlight();
+        @include box-shadow(0px 0px 0px 1px rgba(255, 255, 255, 0.5));
+    };
+
+    &:active{
+        border-color: #FFF;
+    };
+}
 
 // a {
 
