@@ -6,13 +6,20 @@
 @import "compass/css3/images";
 
 footer {
+    @include transition(0.2s,ease-in,opacity);
+
 	padding: 20px 20px 20px 31px;
 	margin-top: 20px;
-	//border-top: solid 1px #CCC;
+
+    opacity:0.6;
+
+    &:hover{
+        opacity:1.0;
+    };
 }
 
 .footer-link {
-    @include transition(0.2s);
+    @include transition(0.2s,ease-in,color);
 
 	color: $footer-link-color;
     font-size: 0.9em;
