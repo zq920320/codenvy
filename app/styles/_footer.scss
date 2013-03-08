@@ -12,9 +12,15 @@ footer {
 }
 
 .footer-link {
+    @include transition(0.2s);
+
 	color: $footer-link-color;
     font-size: 0.9em;
     font-weight: 300;
+
+    &:hover{
+        color: $footer-link-hover-color;
+    };
 }
 
 footer > nav > ul {
