@@ -10,9 +10,6 @@ fieldset {
     border: none;
     margin: 0;
     padding: 0;
-    // border: 1px solid #c0c0c0;
-    // margin: 0 2px;
-    // padding: 0.35em 0.625em 0.75em;
 }
 
 /**
@@ -36,7 +33,6 @@ input,
 select,
 textarea {
     font-family: inherit; /* 1 */
-    //font-size: 100%; /* 2 */
     margin: 0; /* 3 */
     width: 100%;
     border-radius: 5px;
@@ -202,7 +198,7 @@ select option{
     margin-top: 10px;
 }
 
-.error-container.ok-message {  
+.error-container.ok-message {
     background-color: rgba(0, 255, 0, .4);
  }
 
