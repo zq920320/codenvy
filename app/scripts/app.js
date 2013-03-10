@@ -7,7 +7,11 @@ define(["jquery",
         "views/errorreport",
         "views/selectdomain",
         "views/ideloader",
-        "views/contactform"
+        "views/contactform",
+        "views/setprofilepasswordform",
+        "views/setprofileuserform",
+        "views/inviteorganization",
+        "views/errorresponse"
         ],
 
     function($,
@@ -19,7 +23,11 @@ define(["jquery",
         ErrorReport,
         SelectDomain,
         IDELoader,
-        ContactForm){
+        ContactForm,
+        SetProfilePassword,
+        SetProfileUser,
+        InviteOrganization,
+        ErrorResponse){
 
         function modernize(){
             Modernizr.load({
@@ -47,7 +55,11 @@ define(["jquery",
                         errorContainer = $(".error-container"),
                         domainSelector = $(".select-domain"),
                         loader = $(".loader"),
-                        contactForm = $(".contact-form");
+                        contactForm = $(".contact-form"),
+                        setProfilePassword = $(".change-password-form"),
+                        setProfileUserForm = $(".cloud-ide-profile"),
+                        inviteOrganization = $(".organization"),
+                        errorResponse = $(".ErrorIcon");
 
                     if(signupForm.length !== 0){
                         (function(){
@@ -158,6 +170,70 @@ define(["jquery",
                             });
 
                         }());
+                    }
+
+                    //setProfileUser
+                    if(setProfileUserForm.length !== 0){
+                        (function(){
+
+                            var form = SetProfileUser.get(setProfileUserForm),
+                                errorReport = ErrorReport.get(errorContainer),
+                                successReport = SuccessReport.get(errorContainer);
+                            form.getUserProfileInfo(function(field,message){
+                                errorReport.show(message);
+                                });
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+
+                            form.on("success", function(){
+                                successReport.show(form.settings.successUpdatingProfile);
+
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+
+                            });
+
+                        }());
+                    }
+
+                    if(setProfilePassword.length !== 0){
+                        (function(){
+
+                            var form = SetProfilePassword.get(setProfilePassword),
+                                errorReport = ErrorReport.get(errorContainer),
+                                successReport = SuccessReport.get(errorContainer);
+
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+
+                            form.on("success", function(){
+                                successReport.show(form.settings.successChangingPassword);
+                                changePasswordForm = document.forms[0];
+                                changePasswordForm.elements["change_password"].value = "";
+                                changePasswordForm.elements["confirm_password"].value = "";
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+
+                        }());
+                    }
+
+                    // success invite organization
+                    if(inviteOrganization.length !== 0){
+                        var element = InviteOrganization.get(inviteOrganization);
+                        element.setOrganization();
+                    }
+
+                    // put error to page from response
+                    if(errorResponse.length !== 0){
+                        var element = ErrorResponse.get(errorResponse);
+                        element.setError();
                     }
 
                 });
