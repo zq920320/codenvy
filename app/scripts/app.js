@@ -5,6 +5,7 @@ define(["jquery",
         "views/forgotpasswordform",
         "views/resetpasswordform",
         "views/errorreport",
+        "views/successreport",
         "views/selectdomain",
         "views/ideloader",
         "views/contactform",
@@ -21,6 +22,7 @@ define(["jquery",
         ForgotPasswordForm,
         ResetPasswordForm,
         ErrorReport,
+        SuccessReport,
         SelectDomain,
         IDELoader,
         ContactForm,
@@ -212,9 +214,6 @@ define(["jquery",
 
                             form.on("success", function(){
                                 successReport.show(form.settings.successChangingPassword);
-                                changePasswordForm = document.forms[0];
-                                changePasswordForm.elements["change_password"].value = "";
-                                changePasswordForm.elements["confirm_password"].value = "";
                             });
 
                             form.on("invalid", function(field,message){
@@ -226,14 +225,18 @@ define(["jquery",
 
                     // success invite organization
                     if(inviteOrganization.length !== 0){
-                        var element = InviteOrganization.get(inviteOrganization);
-                        element.setOrganization();
+                        (function(){
+                            var element = InviteOrganization.get(inviteOrganization);
+                            element.setOrganization();
+                        }());
                     }
 
                     // put error to page from response
                     if(errorResponse.length !== 0){
-                        var element = ErrorResponse.get(errorResponse);
-                        element.setError();
+                        (function(){
+                            var element = ErrorResponse.get(errorResponse);
+                            element.setError();
+                        }());
                     }
 
                 });

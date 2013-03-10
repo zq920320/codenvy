@@ -39,7 +39,10 @@ define(["underscore", "views/accountformbase","models/account"],
 
                 Account.changePassword(
                     this.$("input[name='change_password']").val(),
-                    _.bind(function(){
+                    _.bind(function(){                        
+                        this.$("input[name='change_password']").val("");
+                        this.$("input[name='confirm_password']").val("");
+
                         this.trigger("success");
                     },this),
                     _.bind(function(errors){

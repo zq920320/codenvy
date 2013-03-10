@@ -1,4 +1,4 @@
-define(["models/account"], function(Account){
+define(["models/account","backbone"], function(Account,Backbone){
 
     var ErrorResponse = Backbone.View.extend({
         setError : function(){

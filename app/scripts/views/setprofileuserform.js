@@ -1,10 +1,9 @@
-define(["underscore", "views/accountformbase","models/account"],
+define(["jquery","underscore","views/accountformbase","models/account"], function($,_,AccountFormBase,Account){
 
-        function(_,AccountFormBase,Account){
-            jQuery.validator.addMethod("phone", function(phone_number, element) {
-                phone_number = phone_number.replace(/\s+/g, ""); 
-                return this.optional(element) || /^[+]?[\d\-\s()]+$/.test(phone_number);
-             }, "Please, specify a phone number only with digits, '-', '()' or started '+' symbols");
+        jQuery.validator.addMethod("phone", function(phone_number, element) {
+            phone_number = phone_number.replace(/\s+/g, ""); 
+            return this.optional(element) || /^[+]?[\d\-\s()]+$/.test(phone_number);
+        }, "Please, specify a phone number only with digits, '-', '()' or started '+' symbols");
 
         var SetProfileUserForm = AccountFormBase.extend({
             settings : {
@@ -72,23 +71,24 @@ define(["underscore", "views/accountformbase","models/account"],
                            '"employer" : "' + Account.escapeSpecialSymbols(submitProfileForm["company"].value.trim()) + '",' +
                            '"jobtitle" : "' + Account.escapeSpecialSymbols(submitProfileForm["title"].value) + '"' +
                      '}';
+
+                    Account.updateProfile(
+                        body,
+                        _.bind(function(){
+                            this.trigger("success");
+                        },this),
+                        _.bind(function(errors){
+                            this.__restoreForm();
+                            if(errors.length !== 0){
+                                this.trigger(
+                                    "invalid",
+                                    errors[0].getFieldName(),
+                                    errors[0].getErrorDescription()
+                                );
+                            }
+                        },this)
+                    );
                 }
-                Account.updateProfile(
-                    body,
-                    _.bind(function(){
-                        this.trigger("success");
-                    },this),
-                    _.bind(function(errors){
-                        this.__restoreForm();
-                        if(errors.length !== 0){
-                            this.trigger(
-                                "invalid",
-                                errors[0].getFieldName(),
-                                errors[0].getErrorDescription()
-                            );
-                        }
-                    },this)
-                );
             },
             
             getUserProfileInfo : function(error){
