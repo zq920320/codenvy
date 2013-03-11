@@ -103,7 +103,7 @@ module.exports = function( grunt ) {
 
                 // pages
 
-                {expand: true, cwd: '../app/_site/', src: ['*.html'], dest: 'dist/gh/'},
+                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html'], dest: 'dist/gh/'},
 
                 // templates
 
@@ -131,7 +131,7 @@ module.exports = function( grunt ) {
 
                 // pages
 
-                {expand: true, cwd: '../app/_site/', src: ['*.html'], dest: 'dist/stage/'},
+                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html'], dest: 'dist/stage/'},
 
                 // templates
 
@@ -177,12 +177,12 @@ module.exports = function( grunt ) {
                     dest: 'dist/prod/fonts/'
                 },
 
-                // templates
+                // pages
 
                 {
                     expand: true,
                     cwd: '../dist/_site/',
-                    src: ['*.html'],
+                    src: ['*.html','**/*.html'],
                     dest: 'dist/prod/'
                 }
             ]
