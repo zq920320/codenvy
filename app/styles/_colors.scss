@@ -47,8 +47,19 @@ $blue-link-color:#54aee1;
 }
 
 @mixin signin-button-gradient {
-    @include background-image(linear-gradient(#f3f3f3,#e8e8e8));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f3f3f3', endColorstr='#e8e8e8');
+    $top-color:#fcfcfc; $bottom-color:#ededed;
+    @include background-image(linear-gradient($top-color 10%,$bottom-color 66%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
+}
+
+@mixin signin-button-hover-gradient {
+    background: #ededed;
+}
+
+@mixin signin-button-active-gradient {
+    $top-color:#bfbfbf; $bottom-color:#dedcdc;
+    @include background-image(linear-gradient($top-color 0%,$bottom-color 100%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
 }
 
 @mixin dark-container-gradient {
