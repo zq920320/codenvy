@@ -80,7 +80,7 @@ $blue-link-color:#54aee1;
 }
 
 @mixin shiny-text-gradient {
-    background: -webkit-linear-gradient(#e2e5e8,#bec3c4);
+    background: -webkit-linear-gradient(#88c8f9 30%,#54aee1 70%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
