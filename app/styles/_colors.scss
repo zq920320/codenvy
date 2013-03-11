@@ -41,17 +41,17 @@ $container-border-color:#d7d7d7;
 
 $blue-link-color:#54aee1;
 
-@mixin signin-button-gradient {
+@mixin light-button-gradient {
     $top-color:#fcfcfc; $bottom-color:#ededed;
     @include background-image(linear-gradient($top-color 10%,$bottom-color 66%));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
 }
 
-@mixin signin-button-hover-gradient {
+@mixin light-button-hover-gradient {
     background: #ededed;
 }
 
-@mixin signin-button-active-gradient {
+@mixin light-button-active-gradient {
     $top-color:#bfbfbf; $bottom-color:#dedcdc;
     @include background-image(linear-gradient($top-color 0%,$bottom-color 100%));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
@@ -105,15 +105,15 @@ $blue-link-color:#54aee1;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b3d5e8', endColorstr='#d7e4ed');
 }
 
-@mixin light-button-gradient {
-    @include background-image(linear-gradient(#fdfdfd, #d8d9d9));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#d8d9d9');
-}
+// @mixin light-button-gradient {
+//     @include background-image(linear-gradient(#fdfdfd, #d8d9d9));
+//     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#d8d9d9');
+// }
 
-@mixin light-button-gradient-highlight {
-    @include background-image(linear-gradient(#fdfdfd,  #f2efef));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#f2efef');
-}
+// @mixin light-button-gradient-highlight {
+//     @include background-image(linear-gradient(#fdfdfd,  #f2efef));
+//     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#f2efef');
+// }
 
 @mixin light-gradient  {
     @include background-image(linear-gradient(#FFFFFF, #F7F7F7));

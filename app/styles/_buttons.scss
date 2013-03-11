@@ -92,21 +92,21 @@
 
 .light-button {
     @include button();
-    @include light-button-gradient();
-    border: solid 1px #d7d7d7;
-    color:#233041;
+
+    font-size: 0.8em;
+    font-weight: 400;
+
+    @include light-button-gradient;
+
+    border: solid 1px #cfd2d6;
 
     &:hover{
-        color: #44484b;
-        @include light-button-gradient-highlight();
+        @include light-button-hover-gradient;
     };
 
     &:active{
-        border-color: #FFF;
-    };
-
-    &:disabled{
-        background-color:#5e6574;
+        @include light-button-active-gradient;
+        @include box-shadow(0px 1px 3px 0px rgba(80, 80, 80, 0.6) inset);
     };
 }
 
@@ -133,25 +133,4 @@
 
 
     &:disabled{ background-color: #455971; background-image:none; };
-}
-
-.sign-in-button {
-
-    @include button();
-
-    font-size: 0.8em;
-    font-weight: 400;
-
-    @include signin-button-gradient;
-
-    border: solid 1px #cfd2d6;
-
-    &:hover{
-        @include signin-button-hover-gradient;
-    };
-
-    &:active{
-        @include signin-button-active-gradient;
-        @include box-shadow(0px 1px 3px 0px rgba(80, 80, 80, 0.6) inset);
-    };
 }
