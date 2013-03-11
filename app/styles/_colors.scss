@@ -41,11 +41,6 @@ $container-border-color:#d7d7d7;
 
 $blue-link-color:#54aee1;
 
-@mixin signup-button-gradient {
-    @include background-image(linear-gradient(#8ECDF2, #54aee1 35%));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#8ECDF2', endColorstr='#54aee1');
-}
-
 @mixin signin-button-gradient {
     $top-color:#fcfcfc; $bottom-color:#ededed;
     @include background-image(linear-gradient($top-color 10%,$bottom-color 66%));
@@ -58,6 +53,23 @@ $blue-link-color:#54aee1;
 
 @mixin signin-button-active-gradient {
     $top-color:#bfbfbf; $bottom-color:#dedcdc;
+    @include background-image(linear-gradient($top-color 0%,$bottom-color 100%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
+}
+
+
+@mixin signup-button-gradient {
+    $top-color:#54aee1; $bottom-color:#0a54a9;
+    @include background-image(linear-gradient($top-color 8%,$bottom-color 72%));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
+}
+
+@mixin signup-button-hover-gradient {
+    background: #54aee1;
+}
+
+@mixin signup-button-active-gradient {
+    $top-color:#0a54a9; $bottom-color:#0f7fff;
     @include background-image(linear-gradient($top-color 0%,$bottom-color 100%));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
 }
