@@ -89,6 +89,38 @@ public enum ScriptTypeResult {
          return tuple;
       }
    },
+   
+   /**
+    * Resulted tuple should meet the requirement:<br> 
+    * (chararray: event, chararray: firstParamName, chararray: firstParamName, int: date, int: toDate, bag: {(chararray: key, long: value)}).
+    */
+   EVENT_2PARAM_TIMEFRAME_FOR_BAG {
+      @Override
+      public String[] getKeyFields()
+      {
+         return new String[]{Constants.EVENT, Constants.PARAM_NAME, Constants.SECOND_PARAM_NAME, Constants.DATE, Constants.TO_DATE};
+      }
+
+      @Override
+      public ValueTranslator getValueTranslator()
+      {
+         return new Bag2PropertiesTranslator();
+      }
+
+      @Override
+      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      {
+         Tuple tuple = TupleFactory.getInstance().newTuple(6);
+         tuple.set(0, executionContext.get(Constants.EVENT));
+         tuple.set(1, executionContext.get(Constants.PARAM_NAME));
+         tuple.set(2, executionContext.get(Constants.SECOND_PARAM_NAME));
+         tuple.set(3, executionContext.get(Constants.DATE));
+         tuple.set(4, executionContext.get(Constants.TO_DATE));
+         tuple.set(5, new DefaultDataBag());
+
+         return tuple;
+      }
+   },
 
    /**
     * Resulted tuple should meet the requirement:<br> 

@@ -199,6 +199,15 @@ public class Event
          return new Builder().withContext(user, ws, session).withParam("EVENT", "project-built")
             .withParam("PROJECT", project).withParam("TYPE", type);
       }
+      
+      /**
+       * Create 'application-created' event.
+       */
+      public static Builder createApplicationCreatedEvent(String user, String ws, String session, String project, String type, String paas)
+      {
+         return new Builder().withContext(user, ws, session).withParam("EVENT", "application-created")
+            .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
+      }
 
       /**
        * Create 'project-deployed' event.

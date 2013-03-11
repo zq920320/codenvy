@@ -94,6 +94,18 @@ public enum ScriptType {
       {
          return ScriptTypeResult.EVENT_PARAM_TIMEFRAME_FOR_LONG;
       }
+   },
+   
+   /**
+    * Find number unique pairs: workspace name + first parameter value for every second parameter value
+    * in time frame.
+    */
+   EVENT_2PARAM_UNIQUE_ALL {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_BAG;
+      }
    };
 
    /**

@@ -38,7 +38,13 @@ public class Constants
     * Contains the name of some additional identifier.
     */
    public static final String PARAM_NAME = "paramName";
-
+   
+   /**
+    * The parameter for Pig script.
+    * Contains the name of some additional identifier.
+    */
+   public static final String SECOND_PARAM_NAME = "secondParamName";
+   
    /**
     * Parameter name in Pig script. Contains the date to check.
     * For instance: 20101201. What means the first of December in 2010 year.
