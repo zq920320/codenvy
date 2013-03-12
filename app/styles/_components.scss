@@ -565,3 +565,14 @@ h1.enterprise-header-text {
     }
 }
 
+/*
+
+    Uservoice
+
+*/
+
+#uvTab {
+    @include respond-to(mobile){
+        display: none !important;
+    };
+}
