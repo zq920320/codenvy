@@ -1,14 +1,7 @@
-@import "assets";
-@import "colors";
-@import "compass/utilities/general/clearfix";
-@import "compass/typography/lists/horizontal-list";
-@import "compass/typography/lists/inline-block-list";
-@import "compass/css3/images";
-
 footer {
     @include transition(0.2s,ease-in,opacity);
 
-	padding: 20px 20px 20px 31px;
+	padding: 20px 20px 20px 30px;
 	margin-top: 20px;
 
     opacity:0.6;
@@ -33,26 +26,13 @@ footer {
 footer > nav > ul {
 
 	@include inline-block-list-container();
+    display: inline-block;
 
-	padding: 0; margin: 0;
+	padding: 0; margin: 0; margin-left: -20px;
 	text-align: center;
 
-	li{
+	li {
 		@include inline-block-list-item();
 		margin-left: 20px;
 	}
-}
-
-
-/*
-
-	sticky footer
-
-*/
-
-footer.sticky {
-	position: absolute;
-	bottom: 20px;
-	width: 100%;
-	z-index: 1;
 }
