@@ -134,6 +134,10 @@
                        <name>dashboard.script.directory</name>
                        <value>scripts</value>
                     </property>
+                    <property>
+                       <name>dashboard.tasks.directory</name>
+                       <value>tasks</value>
+                    </property>
                  </systemProperties>
 
                  <excludes>

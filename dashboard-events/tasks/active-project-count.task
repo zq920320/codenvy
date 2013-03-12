@@ -1,0 +1,3 @@
+script-type=ACTIVE_PROJECT_COUNT
+time-frame=7
+description=find the number of unique active projects in time frame

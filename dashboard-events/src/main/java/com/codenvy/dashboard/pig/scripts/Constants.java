@@ -48,6 +48,7 @@ public class Constants
    /**
     * Parameter name in Pig script. Contains the date to check.
     * For instance: 20101201. What means the first of December in 2010 year.
+    * Als is used as beginning of the time frame.
     */
    public static final String DATE = "date";
 
