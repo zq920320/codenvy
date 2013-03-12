@@ -30,6 +30,12 @@ $desktop-start: $tablet-end + 1;
     }
 }
 
+@mixin retina(){
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+        @content
+    }
+}
+
 @mixin clearfix {
     &:before,
     &:after {
@@ -52,6 +58,8 @@ $desktop-start: $tablet-end + 1;
 .show-on-desktop {
     display: none !important;
 }
+
+
 
 @each $device in $devices {
     @include respond-to($device) {

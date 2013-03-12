@@ -12,7 +12,9 @@ header {
   }
 }
 
-header > nav {}
+nav {
+    text-align: center;
+}
 
 .main-menu {
 	@include horizontal-list;
@@ -48,6 +50,12 @@ header > nav {}
     };
 
 	overflow: visible;
+
+    @include respond-to(mobile) {
+        display: inline-block;
+        margin-top: 1em;
+        text-align: center;
+    }
 }
 
 .span2.logo-wrapper{

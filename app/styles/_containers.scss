@@ -13,17 +13,23 @@
 }
 
 .container.top {
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+    @include respond-to(tablet-desktop){
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
 }
 
 .container.bottom {
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
+    @include respond-to(tablet-desktop){
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
 }
 
 .container.rounded {
-    border-radius: 6px;
+    @include respond-to(tablet-desktop){
+        border-radius: 6px;
+    }
 }
 
 .container.dark {
@@ -39,6 +45,40 @@
     border-right: solid 1px $container-border-color;
     border-bottom: solid 1px $container-border-color;
 };
+
+.container.light {
+    background: $light-background-color;
+    border: solid 1px $light-background-border;
+    padding: 20px 60px 80px;
+
+    @include image_logo_inlaid();
+
+    h1 {
+        font-size: 36px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    h2 {
+        font-size: 26px;
+        font-weight: normal;
+    }
+
+    hr {
+        border: solid 1px $light-background-line;
+        margin: 30px 0;
+    }
+
+    .subtitle-line   {
+        width: 50px;
+        border-top: solid 1px $text-color;
+        margin: 0 auto 40px auto;
+    }
+
+    ul {
+        font-weight: 300;
+    }
+}
 
 .container.light-n-framed {
     @include framing;
