@@ -20,13 +20,21 @@ nav {
 	@include horizontal-list;
 
 	li {
-        @include image_link_separator;
-        padding-left: 20px;
-        margin-left: 20px;
+
+        @include respond-to(tablet-desktop) {
+            @include image_link_separator;
+            padding-left: 20px;
+            margin-left: 20px;
+        }
+
+        @include respond-to(mobile){
+            margin-left: 1.5em;
+        }
+
         padding-top: 6px;
         font-size: 0.9em;
 
-        a{
+        a {
             @include transition(0.2s,ease-in,color);
             color: $header-link-color;
         };
@@ -37,17 +45,9 @@ nav {
 	}
 
     li:nth-child(1){
-        a:hover{
-            color: $header-link-special-hover-color;
-        };
+        a:hover{ color: $header-link-special-hover-color; };
+        background: none;
     }
-
-
-    @include respond-to(tablet-desktop) {
-        & li:nth-child(1){
-            background: none;
-        };
-    };
 
 	overflow: visible;
 
@@ -55,6 +55,7 @@ nav {
         display: inline-block;
         margin-top: 1em;
         text-align: center;
+        margin-left:-1.5em;
     }
 }
 
