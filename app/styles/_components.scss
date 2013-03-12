@@ -191,47 +191,6 @@ $scene-height:407px;
 
 /*
 
-    Standard pages
-
-*/
-
-.container.light {
-    background: $light-background-color;
-    border: solid 1px $light-background-border;
-    padding: 20px 60px 80px;
-    border-radius: 6px;
-
-    @include image_logo_inlaid();
-
-    h1 {
-        font-size: 36px;
-        text-align: center;
-        text-transform: uppercase;
-    }
-
-    h2 {
-        font-size: 26px;
-        font-weight: normal;
-    }
-
-    hr {
-        border: solid 1px $light-background-line;
-        margin: 30px 0;
-    }
-
-    .subtitle-line   {
-        width: 50px;
-        border-top: solid 1px $text-color;
-        margin: 0 auto 40px auto;
-    }
-
-    ul {
-        font-weight: 300;
-    }
-}
-
-/*
-
     Loader (wait for tenant screen)
 
 */
