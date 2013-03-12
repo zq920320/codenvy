@@ -154,7 +154,7 @@ module.exports = function( grunt ) {
 
                 {
                     expand: true,
-                    cwd: '../dist/_site/styles/',
+                    cwd: '../dist/styles/',
                     src : '*.css',
                     dest: 'dist/prod/styles/'
                 },
