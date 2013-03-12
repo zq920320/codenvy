@@ -154,7 +154,7 @@ public class Event
       public static Builder createUserCreatedEvent(String userId, String aliases)
       {
          return new Builder().withParam("EVENT", "user-created").withParam("USER-ID", userId)
-            .withParam("ALIASES", aliases);
+            .withParam("ALIASES", "[" + aliases + "]");
       }
 
       /**

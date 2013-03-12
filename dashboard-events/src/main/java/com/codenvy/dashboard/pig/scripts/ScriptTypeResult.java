@@ -152,6 +152,35 @@ public enum ScriptTypeResult {
    },
 
    /**
+    * Resulted tuple should meet the requirement:<br> 
+    * (int: date, int: toDate, bag: {(chararray: value)}).
+    */
+   TIMEFRAME_FOR_LIST {
+      @Override
+      public String[] getKeyFields()
+      {
+         return new String[]{Constants.DATE, Constants.TO_DATE};
+      }
+
+      @Override
+      public ValueTranslator getValueTranslator()
+      {
+         return new Bag2ListTranslator();
+      }
+
+      @Override
+      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      {
+         Tuple tuple = TupleFactory.getInstance().newTuple(3);
+         tuple.set(0, executionContext.get(Constants.DATE));
+         tuple.set(1, executionContext.get(Constants.TO_DATE));
+         tuple.set(2, new DefaultDataBag());
+
+         return tuple;
+      }
+   },
+
+   /**
     * Incoming tuple should meet the requirement:<br> 
     * (chararray: event, chararray: paramName, int: date, int: toDate, long: value).
     */

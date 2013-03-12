@@ -106,6 +106,18 @@ public enum ScriptType {
       {
          return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_BAG;
       }
+   },
+
+   /**
+    * Find users who was created in given day but did not created project in
+    * the follow time frame.
+    */
+   USERS_WITHOUT_PROJECTS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.TIMEFRAME_FOR_LIST;
+      }
    };
 
    /**
