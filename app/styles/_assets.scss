@@ -19,15 +19,13 @@
 	background:{
 		image:url('../images/logoCodenvy.png');
 		repeat:no-repeat;
-	}
-}
-
-@mixin image_logo_big {
-    background:{
-        image:url('../images/logoCodenvyBig.png');
-        repeat:no-repeat;
         position: 50% 50%;
-    }
+        size:130px 19px;
+	}
+
+    @include retina(){
+        background-image:url('../images/logoCodenvy2x.png');
+    };
 }
 
 @mixin image_totem {
