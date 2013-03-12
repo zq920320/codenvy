@@ -479,8 +479,10 @@ h1.enterprise-header-text {
 */
 
 .container.features {
-    position:relative; z-index:1; min-height: 300px;
-    &:after{ @include content_features_header(); };
+    @include respond-to(tablet-desktop){
+        position:relative; z-index:1; min-height: 300px;
+        &:after{ @include content_features_header(); };
+    }
 }
 
 .screenshot { padding-bottom: 209px; }
@@ -488,7 +490,11 @@ h1.enterprise-header-text {
 .screenshot.invite { @include image_screenshot_invite(); }
 .screenshot.language { @include image_screenshot_picklanguage(); }
 
-.choose-paas{ @include image_choose_paas(); padding-bottom: 170px; }
+.choose-paas{
+    @include respond-to(tablet-desktop){
+        @include image_choose_paas(); padding-bottom: 170px;
+    }
+}
 
 
 .screenshot.build-cycle{ @include image_screenshot_build_cycle(); }
