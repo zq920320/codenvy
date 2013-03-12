@@ -38,6 +38,9 @@ $scene-height:407px;
 .totem {
 	@include image_totem();
 	min-height: $scene-height;
+    @include respond-to(mobile){
+        min-height: $mobile-scene-height;
+    }
 }
 
 
@@ -49,7 +52,10 @@ $scene-height:407px;
 		text-align: center;
 		padding:10px 10px 20px 10px;
 		line-height: 1.5em;
-		@include image_line_light;
+
+        @include respond-to(tablet-desktop){
+            @include image_line_light;
+        }
 	}
 
 	.icon-head {

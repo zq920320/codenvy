@@ -34,6 +34,11 @@
 		repeat:no-repeat;
         position: 65% 39%;
 	}
+
+    @include respond-to(mobile){
+        background-size:310px 308px;
+        background-position: 24% 53%;
+    }
 }
 
 @mixin image_small_dot {
