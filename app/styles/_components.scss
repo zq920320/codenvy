@@ -366,11 +366,17 @@ h1.enterprise-header-text {
 
 .pricing-feature {
     padding: 15px;
-
-    p {
-        margin-top: 5px;
+    p { margin-top: 5px; }
+    @include respond-to(mobile){
+        padding-bottom: 0;
     }
 }
+
+.pricing-feature:nth-child(2){
+    @include respond-to(mobile){
+        padding-top: 0;
+    }
+};
 
 .pricing-plans {
     margin-top: 1em;
