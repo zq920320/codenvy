@@ -1,0 +1,3 @@
+script-type=users_without_projects
+time-frame=10
+description=Finds the users who was registered but did not created project in the given time frame.

@@ -1,0 +1,5 @@
+script-type=event_param_all
+time-frame=1
+event=project-created
+paramName=TYPE
+description=Finds number of created project of every type.

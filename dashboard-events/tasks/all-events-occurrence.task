@@ -1,0 +1,3 @@
+script-type=event_all
+time-frame=1
+description=Finds number occurrence of every events per day.

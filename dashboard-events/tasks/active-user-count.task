@@ -1,0 +1,3 @@
+script-type=active_user_count
+time-frame=7
+description=Finds the number of unique active users in time frame.

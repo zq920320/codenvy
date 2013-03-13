@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------
--- Is used to calculate amount of active projects per time-frame.
+-- Is used to calculate number of active projects per time-frame.
 --
 -- Incoming parameters:
 -- log        - the list of resources to load
