@@ -59,17 +59,17 @@ $blue-link-color:#54aee1;
 
 
 @mixin signup-button-gradient {
-    $top-color:#54aee1; $bottom-color:#0a54a9;
-    @include background-image(linear-gradient($top-color 8%,$bottom-color 72%));
+    $top-color:#88c8f9; $bottom-color:#54aee1;
+    @include background-image(linear-gradient($top-color 28%,$bottom-color 63%));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
 }
 
 @mixin signup-button-hover-gradient {
-    background: #54aee1;
+    background: #7bbced;
 }
 
 @mixin signup-button-active-gradient {
-    $top-color:#0a54a9; $bottom-color:#0f7fff;
+    $top-color:#687396; $bottom-color:#9299ad;
     @include background-image(linear-gradient($top-color 0%,$bottom-color 100%));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-color', endColorstr='$bottom-color');
 }
