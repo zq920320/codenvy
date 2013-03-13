@@ -31,7 +31,7 @@
         </div>
 
         <div class="row">
-            <div class="span12">
+            <div class="span6">
 
                 <li class="mktFormReq mktField">
                     <label>
@@ -43,6 +43,23 @@
                         <span class="mktFormMsg"></span>
                     </span>
                 </li>
+            </div>
+            <div class="span6">
+
+                <li  class='mktField' >
+                <label>Reason for Contact:</label>
+                <span class='mktInput'>
+                  <select class='mktFormSelect' name="CE_Contact_Reason__c" id="CE_Contact_Reason__c" size='1'   tabIndex='8'>
+                    <option value='--Please Select--' selected='selected'>--Please Select--</option>
+                    <option value='Sales'>Sales</option>
+                    <option value='Support'>Support</option>
+                    <option value='Partner'>Partner</option>
+                    <option value='ISV Features'>ISV Features</option>
+                    <option value='Other'>Other</option>
+                  </select>
+                  <span class='mktFormMsg'></span>
+                </span>
+              </li>
             </div>
         </div>
 
@@ -125,6 +142,8 @@
 
 <script src="scripts/vendor/jquery.min.js"></script>
 
+<script type="text/javascript" src="http://learn.exoplatform.com/js/mktFormSupport.js"></script>
+
 <script type="text/javascript">
 
     function formSubmit(elt) {
@@ -132,6 +151,7 @@
         leadSource.value= window.location.href;
         return Mkto.formSubmit(elt);
     }
+
     function formReset(elt) {
         return Mkto.formReset(elt);
     }
