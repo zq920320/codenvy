@@ -37,7 +37,13 @@
 
     @include respond-to(mobile){
         background-size:310px 308px;
-        background-position: 24% 53%;
+        background-position: 50% 50%;
+        background-size: 320px 617px;
+        background-image:url('../images/mobileTotem.png');
+    }
+
+    @include retina(){
+        background-image:url('../images/mobileTotem@2X.png');
     }
 }
 

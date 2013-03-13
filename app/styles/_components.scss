@@ -31,7 +31,10 @@ $scene-height:407px;
     border-radius: 6px;
     color: $text-on-dark-color;
     a { color: $link-color-on-dark; }
-    max-height: $scene-height;
+
+    @include respond-to(tablet-desktop){
+        max-height: $scene-height;
+    }
 }
 
 
