@@ -194,7 +194,7 @@
     background: {
         image:url('../images/pricing/box_opensource.png');
         repeat:no-repeat;
-        position: 50px 50%;
+        position: 50% 50%;
     }
 }
 
@@ -202,7 +202,7 @@
     background: {
         image:url('../images/pricing/box_business.png');
         repeat:no-repeat;
-        position: 22px 50%;
+        position: 50% 50%;
     }
     margin-bottom: 20px;
 }
@@ -211,7 +211,7 @@
     background: {
         image:url('../images/pricing/box_premium.png');
         repeat:no-repeat;
-        position: 22px 50%;
+        position: 50% 50%;
     }
     margin-bottom: 20px;
 }
@@ -220,7 +220,7 @@
     background: {
         image:url('../images/pricing/box_secure.png');
         repeat:no-repeat;
-        position: 22px 50%;
+        position: 50% 50%;
     }
     margin-bottom: 20px;
 }
@@ -355,7 +355,6 @@
 
 @mixin image_highlight{
     background: {
-        //image:url('../images/pricing/sep_grad_small.png');
         image:url('../images/pricing/sep_grad.png');
         repeat:no-repeat;
         position: 50% 100%;
