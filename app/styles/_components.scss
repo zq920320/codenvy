@@ -429,23 +429,31 @@ h1.enterprise-header-text {
 }
 
 .welcome-pack {
-    @include image_welcome_pack();
-    height: 212px;
+    @include respond-to(tablet-desktop){
+        @include image_welcome_pack();
+        height: 212px;
+    }
 }
 
 .container.pricing-dedicated {
-    padding-right: 10px;
-    padding-left: 50px;
+    @include respond-to(tablet-desktop){
+        padding-right: 10px;
+        padding-left: 50px;
+    }
 }
 
 .cloud-up {
-    @include image_cloud_up();
-    min-height: 232px;
+    @include respond-to(tablet-desktop){
+        @include image_cloud_up();
+        min-height: 232px;
+    }
 }
 
 .key-box {
-    @include image_key_box();
-    height: 250px;
+    @include respond-to(tablet-desktop){
+        @include image_key_box();
+        height: 250px;
+    }
 }
 
 /*
