@@ -373,7 +373,7 @@ h1.enterprise-header-text {
 }
 
 .pricing-plans {
-    margin-top: -8px;
+    margin-top: 1em;
 }
 
 .container.open-source {
@@ -399,41 +399,17 @@ h1.enterprise-header-text {
 
 .pricing-box-business {
     @include image_pricing_box_business();
-    height: 155px;
-}
-
-.header-secure {
-    background: -webkit-linear-gradient(#7bbced, #54aee1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
-    font-weight: 400;
-}
-
-.header-premium {
-    background: -webkit-linear-gradient(#7bbced, #54aee1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
-    font-weight: 400;
-}
-
-.header-business {
-    background: -webkit-linear-gradient(#fff000, #c4a000);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
-    font-weight: 400;
+    height: 213px;
 }
 
 .pricing-box-premium {
     @include image_pricing_box_premium();
-    height: 155px;
+    height: 213px;
 }
 
 .pricing-box-secure {
     @include image_pricing_box_secure();
-    height: 155px;
+    height: 213px;
 }
 
 .pricing-enterprise-header {

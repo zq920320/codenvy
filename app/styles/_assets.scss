@@ -355,7 +355,8 @@
 
 @mixin image_highlight{
     background: {
-        image:url('../images/pricing/sep_grad_small.png');
+        //image:url('../images/pricing/sep_grad_small.png');
+        image:url('../images/pricing/sep_grad.png');
         repeat:no-repeat;
         position: 50% 100%;
     }
