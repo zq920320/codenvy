@@ -128,7 +128,7 @@
                 ).exec(domain) !== null ;
             },
 
-            login : function(email,password,success /* ,error */){
+            login : function(email,password,success,error){
                 var loginUrl = "/sso/server/gen?authType=jaas",
                     queryString = window.location.search,
                     jaasExists = queryString.match(/authType=jaas/);
@@ -140,7 +140,35 @@
                     loginUrl = queryString;
                 }
 
-                success({ loginUrl: loginUrl });
+                $.ajax({
+                    url : loginUrl,
+                    type : "POST",
+                    data: {'email':email,'password':password},
+                    // success : function(output, status, xhr){
+                    //     //success();
+                    // },
+                    error : function(xhr){
+                        switch (xhr.status) {
+                            case 0:
+                                // we assume this is the case of successful authentication
+                                success({ url : "/sso/server/grant?authType=jaas" });
+                                break;
+                            case 400:
+                                error([new AccountError(null,"This kind of authentication is not supported.")]);
+                                break;
+                            case 403:
+                                error([new AccountError(null,xhr.responseText)]);
+                                break;
+                            case 500:
+                                error([new AccountError(null,"Internal server error. Please contact support.")]);
+                                break;
+                            default :
+                                error([new AccountError(null,xhr.status + " Something went wrong. Please contact support.")]);
+                                break;
+                        }
+                    }
+                });
+
             },
 
             loginWithGoogle : loginWithGoogle,
