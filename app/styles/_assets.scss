@@ -36,7 +36,6 @@
 	}
 
     @include respond-to(mobile){
-        background-size:310px 308px;
         background-position: 50% 50%;
         background-size: 320px 617px;
         background-image:url('../images/mobileTotem.png');
@@ -72,15 +71,27 @@
 
 @mixin image_button_github {
     background:{
-        image:url('../images/buttonoffGithub.png');
+        image:url('../images/buttonGithub.png');
         repeat:no-repeat;
+        position: 50% 100%;
+        background-size: 289px 40px;
+    }
+
+    @include retina(){
+        image:url('../images/buttonGithub@2X.png');
     }
 }
 
 @mixin image_button_google {
     background:{
-        image:url('../images/buttonoffGoogle.png');
+        image:url('../images/buttonGoogle.png');
         repeat:no-repeat;
+        position: 50% 100%;
+        background-size: 289px 40px;
+    }
+
+    @include retina(){
+        image:url('../images/buttonGoogle@2X.png');
     }
 }
 
@@ -92,9 +103,9 @@
     }
 }
 
-@mixin image_line_or {
+@mixin image_line_small {
     background:{
-        image:url('../images/lineOr.png');
+        image:url('../images/lineSmall.png');
         repeat:no-repeat;
         position: 50% 0;
     }
