@@ -1,5 +1,4 @@
-define(["jquery",
-        "config",
+define(["jquery","config","marketo",
         "views/signupform",
         "views/signinform",
         "views/forgotpasswordform",
@@ -15,8 +14,7 @@ define(["jquery",
         "views/errorresponse"
         ],
 
-    function($,
-        Config,
+    function($,Config,Munchkin,
         SignupForm,
         SigninForm,
         ForgotPasswordForm,
@@ -49,6 +47,8 @@ define(["jquery",
                 $(document).ready(function(){
 
                     modernize();
+
+                    Munchkin.init('577-PCT-880');
 
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
