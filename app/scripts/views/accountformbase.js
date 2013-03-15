@@ -1,6 +1,6 @@
-define(["models/account","views/form","validation"],
+define(["jquery","models/account","views/form","validation"],
 
-    function(Account,Form){
+    function($,Account,Form){
 
         /*
             Custom validator for .codenvy.com tenant names
