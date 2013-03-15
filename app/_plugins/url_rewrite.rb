@@ -2,7 +2,7 @@ module Jekyll
   module URLFilter
     def url(input)
         case @context.registers[:site].config['profile']
-        when "production"
+        when "production", "stage"
             input.sub(".html","")
         else
             input
