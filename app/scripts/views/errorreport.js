@@ -7,7 +7,7 @@ define(["jquery", "backbone"],function($,Backbone){
                 throw new Error("Need a message");
             }
 
-            $(this.el).html(message).addClass("expanded");
+            $(this.el).html(message).removeClass("ok-message").addClass("expanded");
         },
 
         hide : function(){

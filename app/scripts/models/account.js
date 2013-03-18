@@ -144,9 +144,9 @@
                     url : loginUrl,
                     type : "POST",
                     data: {'email':email,'password':password},
-                    // success : function(output, status, xhr){
-                    //     //success();
-                    // },
+                    success : function(){
+						success({url : "/pages/private/select-tenant?authType=jaas"});
+                    },
                     error : function(xhr){
                         switch (xhr.status) {
                             case 0:
@@ -183,7 +183,7 @@
                     type : "POST",
                     data: {},
                     success : function(){
-                        success({url: '/pages/thank-you'});
+                        success({url: '../thank-you'});
                     },
                     error : function(xhr/*, status , err*/){
                         error([
@@ -379,28 +379,18 @@
                 });
             },
 
-            waitForTenant : function(success, error){
-                //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
+			waitForTenant : function(success, error){
+			//based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
+			var errorType = Utils.getQueryParameterByName("errorType");//create OR start
+			var redirectUrl = Utils.getQueryParameterByName("redirect_url");
+			var tenantName = Utils.getQueryParameterByName("tenantName");
+			if(typeof tenantName === 'undefined'){
+				error([
+			new AccountError(null,"This is not a valid url")
+				]);
+			}
 
-               var redirectUrl = "";
-               if(typeof tenantName === 'undefined'){
-                   // Do not add var here. tenantName may be defined in start-tenant.jsp as global
-                   // if you do it, you will always go it this brunch
-                   tenantName = Utils.getQueryParameterByName("tenantName");
-                   redirectUrl =  window.location.protocol + "//" +
-                                    window.location.host.replace("www.", "") +
-                                    "/sso/server/gen?username=" + Utils.getQueryParameterByName("username") +
-                                    "&signature=" + encodeURIComponent(Utils.getQueryParameterByName("signature")) +
-                                    "&redirectTenantName="+tenantName +
-                                    "&authType=signed";
-                   if(typeof tenantName === 'undefined'){
-                       error([
-                           new AccountError(null,"This is not a valid url")
-                       ]);
-                   }
-               }else{
-                  redirectUrl = window.location;
-               }
+               
 
                 var MAX_WAIT_TIME_SECONDS = 120,
                     PING_TIMEOUT_MILLISECONDS = 2000,
@@ -413,13 +403,25 @@
                 function hitServer(){
 
                     if(new Date().getTime() >= endTime){
-                        error([
-                            new AccountError(
-                                null,
-                                "Tenant creation delayed, we will send credentials on your email when tenant started."
-                            )
+						if (errorType === "create"){
+						error([
+							new AccountError(
+								null,
+								"Tenant creation delayed, we will send credentials on your email when tenant started."
+								)
+								]);
 
-                        ]);
+					}else{
+						error([
+						new AccountError(
+						null,
+						"The requested tenant <strong>'" + tenantName + "'</strong> is not available. Please, contact support."
+						)
+						
+						]);
+					}
+	
+	
                         return;
                     }
 
@@ -438,7 +440,7 @@
                         error : function(xhr){
                             if(Utils.isBadGateway(xhr)){
                                 error([
-                                    new AccountError(null,"The requested domain is not available.")
+                                    new AccountError(null,"The requested domain is not available. Please, contact support.")
                                 ]);
                             } else {
                                 error([
