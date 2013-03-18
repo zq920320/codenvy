@@ -38,7 +38,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestScriptEventAll extends BasePigTest
+public class TestScriptAllEvents extends BasePigTest
 {
 
    private TupleFactory tupleFactory;
@@ -66,7 +66,7 @@ public class TestScriptEventAll extends BasePigTest
 
       tuple.append(bag);
 
-      fileObject = ScriptType.EVENT_ALL.createFileObject(BASE_DIR, tuple);
+      fileObject = ScriptType.ALL_EVENTS.createFileObject(BASE_DIR, tuple);
    }
 
    /**
@@ -82,9 +82,9 @@ public class TestScriptEventAll extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_ALL, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.ALL_EVENTS, log, new String[][]{{Constants.DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_ALL.createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.ALL_EVENTS.createFileObject(BASE_DIR, 20101001);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("tenant-created"), "2");
@@ -101,9 +101,9 @@ public class TestScriptEventAll extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_ALL, log, new String[][]{{Constants.DATE, "20101002"}});
+      executePigScript(ScriptType.ALL_EVENTS, log, new String[][]{{Constants.DATE, "20101002"}});
 
-      FileObject fileObject = ScriptType.EVENT_ALL.createFileObject(BASE_DIR, 20101002);
+      FileObject fileObject = ScriptType.ALL_EVENTS.createFileObject(BASE_DIR, 20101002);
       Properties props = (Properties)fileObject.getValue();
       Assert.assertTrue(props.isEmpty());
    }
@@ -120,7 +120,7 @@ public class TestScriptEventAll extends BasePigTest
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), date.toString());
       Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("tenant-created"), "1");
 
-      File file = new File(BASE_DIR + "/event_all/2011/10/10/value");
+      File file = new File(BASE_DIR + "/" + ScriptType.ALL_EVENTS.toString().toLowerCase() + "/2011/10/10/value");
       file.delete();
 
       Assert.assertFalse(file.exists());

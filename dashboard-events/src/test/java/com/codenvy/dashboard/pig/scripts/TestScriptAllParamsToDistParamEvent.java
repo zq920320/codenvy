@@ -37,7 +37,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestScriptEvent2ParamUniqueAll extends BasePigTest
+public class TestScriptAllParamsToDistParamEvent extends BasePigTest
 {
 
    @Test
@@ -57,12 +57,12 @@ public class TestScriptEvent2ParamUniqueAll extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_2PARAM_UNIQUE_ALL, log, new String[][]{
+      executePigScript(ScriptType.ALL_PARAMS_TO_DIST_PARAM_EVENT, log, new String[][]{
          {Constants.EVENT, "application-created"}, {Constants.PARAM_NAME, "PROJECT"},
          {Constants.SECOND_PARAM_NAME, "PAAS"}, {Constants.DATE, "20101001"}, {Constants.TO_DATE, "20101003"}});
 
       FileObject fileObject =
-         ScriptType.EVENT_2PARAM_UNIQUE_ALL.createFileObject(BASE_DIR, "application-created", "PROJECT", "PAAS", 20101001,
+         ScriptType.ALL_PARAMS_TO_DIST_PARAM_EVENT.createFileObject(BASE_DIR, "application-created", "PROJECT", "PAAS", 20101001,
             20101003);
 
       Properties props = (Properties)fileObject.getValue();
@@ -81,12 +81,12 @@ public class TestScriptEvent2ParamUniqueAll extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_2PARAM_UNIQUE_ALL, log, new String[][]{
+      executePigScript(ScriptType.ALL_PARAMS_TO_DIST_PARAM_EVENT, log, new String[][]{
          {Constants.EVENT, "application-created"}, {Constants.PARAM_NAME, "PROJECT"},
          {Constants.SECOND_PARAM_NAME, "PAAS"}, {Constants.DATE, "20101003"}, {Constants.TO_DATE, "20101003"}});
 
       FileObject fileObject =
-         ScriptType.EVENT_2PARAM_UNIQUE_ALL.createFileObject(BASE_DIR, "application-created", "PROJECT", "PAAS", 20101003,
+         ScriptType.ALL_PARAMS_TO_DIST_PARAM_EVENT.createFileObject(BASE_DIR, "application-created", "PROJECT", "PAAS", 20101003,
             20101003);
 
       Properties props = (Properties)fileObject.getValue();
@@ -111,7 +111,7 @@ public class TestScriptEvent2ParamUniqueAll extends BasePigTest
       
       tuple.append(bag);
 
-      FileObject fileObject = ScriptType.EVENT_2PARAM_UNIQUE_ALL.createFileObject(BASE_DIR, tuple);
+      FileObject fileObject = ScriptType.ALL_PARAMS_TO_DIST_PARAM_EVENT.createFileObject(BASE_DIR, tuple);
 
       Assert.assertNotNull(fileObject.getKeys().get(Constants.EVENT));
       Assert.assertNotNull(fileObject.getKeys().get(Constants.PARAM_NAME));
@@ -135,7 +135,7 @@ public class TestScriptEvent2ParamUniqueAll extends BasePigTest
       Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("GAE"), "2");
 
       File file =
-         new File(BASE_DIR + "/" + ScriptType.EVENT_2PARAM_UNIQUE_ALL.toString().toLowerCase()
+         new File(BASE_DIR + "/" + ScriptType.ALL_PARAMS_TO_DIST_PARAM_EVENT.toString().toLowerCase()
             + "/application/created/project/paas/2012/11/03/20121105/value");
       file.delete();
 

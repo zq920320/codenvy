@@ -34,30 +34,56 @@ import java.util.List;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestScriptActiveUserCount extends BasePigTest
+public class TestScriptActiveWorkspaces extends BasePigTest
 {
    @Test
-   public void testEventFound() throws Exception
+   public void testEventFound1UseCase() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
       events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
       events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-02").build());
-      events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-02").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withDate("2010-10-02").build());
 
       // events should not be taken in account
-      events.add(Event.Builder.createUserSSOLoggedOutEvent("user3").withDate("2010-10-05").build());
+      events.add(Event.Builder.createTenantDestroyedEvent("ws3").withDate("2010-10-05").build());
+      events.add(Event.Builder.createTenantStoppedEvent("ws4").withDate("2010-10-05").build());
+      events.add(Event.Builder.createUserSSOLoggedOutEvent("user1").withDate("2010-10-05").build());
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ACTIVE_USER_COUNT, log, new String[][]{{Constants.DATE, "20101001"},
+      executePigScript(ScriptType.ACTIVE_WORKSPACES, log, new String[][]{{Constants.DATE, "20101001"},
          {Constants.TO_DATE, "20101005"}});
 
-      FileObject fileObject = ScriptType.ACTIVE_USER_COUNT.createFileObject(BASE_DIR, 20101001, 20101005);
+      FileObject fileObject = ScriptType.ACTIVE_WORKSPACES.createFileObject(BASE_DIR, 20101001, 20101005);
 
       Long value = (Long)fileObject.getValue();
-      Assert.assertEquals(value, Long.valueOf(2));
+      Assert.assertEquals(value, Long.valueOf(3));
    }
-   
+
+   @Test
+   public void testEventFound2UseCase() throws Exception
+   {
+      List<Event> events = new ArrayList<Event>();
+      events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
+      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project").withDate("2010-10-02")
+         .build());
+      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session", "project").withDate("2010-10-02")
+         .build());
+      events.add(Event.Builder.createUserCreatedEvent("userId", "hello@gmail").withDate("2010-10-03").build());
+      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws5", "session", "project").withDate("2010-10-11")
+         .build());
+
+      File log = LogGenerator.generateLog(events);
+
+      executePigScript(ScriptType.ACTIVE_WORKSPACES, log, new String[][]{{Constants.DATE, "20101001"},
+         {Constants.TO_DATE, "20101005"}});
+
+      FileObject fileObject = ScriptType.ACTIVE_WORKSPACES.createFileObject(BASE_DIR, 20101001, 20101005);
+
+      Long value = (Long)fileObject.getValue();
+      Assert.assertEquals(value, Long.valueOf(3));
+   }
+
    @Test
    public void testEventNotFoundStoredDefaultValue() throws Exception
    {
@@ -66,10 +92,10 @@ public class TestScriptActiveUserCount extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ACTIVE_USER_COUNT, log, new String[][]{{Constants.DATE, "20101002"},
+      executePigScript(ScriptType.ACTIVE_WORKSPACES, log, new String[][]{{Constants.DATE, "20101002"},
          {Constants.TO_DATE, "20101005"}});
 
-      FileObject fileObject = ScriptType.ACTIVE_USER_COUNT.createFileObject(BASE_DIR, 20101002, 20101005);
+      FileObject fileObject = ScriptType.ACTIVE_WORKSPACES.createFileObject(BASE_DIR, 20101002, 20101005);
 
       Long value = (Long)fileObject.getValue();
       Assert.assertEquals(value, Long.valueOf(0));
@@ -83,7 +109,7 @@ public class TestScriptActiveUserCount extends BasePigTest
       tuple.append(20100204);
       tuple.append(1);
 
-      FileObject fileObject = ScriptType.ACTIVE_USER_COUNT.createFileObject(BASE_DIR, tuple);
+      FileObject fileObject = ScriptType.ACTIVE_WORKSPACES.createFileObject(BASE_DIR, tuple);
 
       Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
       Assert.assertNotNull(fileObject.getKeys().get(Constants.TO_DATE));
@@ -97,7 +123,8 @@ public class TestScriptActiveUserCount extends BasePigTest
       Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20100204");
       Assert.assertEquals(fileObject.getValue(), 1L);
 
-      File file = new File(BASE_DIR + "/active_user_count/2010/02/03/20100204/value");
+      File file =
+         new File(BASE_DIR + "/" + ScriptType.ACTIVE_WORKSPACES.toString().toLowerCase() + "/2010/02/03/20100204/value");
       file.delete();
 
       Assert.assertFalse(file.exists());

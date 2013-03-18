@@ -71,7 +71,7 @@ public class TestScriptEventParamAll extends BasePigTest
 
       tuple.append(bag);
 
-      fileObject = ScriptType.EVENT_PARAM_ALL.createFileObject(BASE_DIR, tuple);
+      fileObject = ScriptType.ALL_PARAMS_TO_EVENT.createFileObject(BASE_DIR, tuple);
    }
 
    @Test
@@ -92,7 +92,9 @@ public class TestScriptEventParamAll extends BasePigTest
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), date.toString());
       Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("user1"), "1");
 
-      File file = new File("target/event_param_all/tenant/created/user/2011/10/10/value");
+      File file =
+         new File(BASE_DIR + "/" + ScriptType.ALL_PARAMS_TO_EVENT.toString().toLowerCase()
+            + "/tenant/created/user/2011/10/10/value");
       file.delete();
 
       Assert.assertFalse(file.exists());
@@ -117,11 +119,11 @@ public class TestScriptEventParamAll extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_PARAM_ALL, log, new String[][]{{Constants.EVENT, "project-created"},
+      executePigScript(ScriptType.ALL_PARAMS_TO_EVENT, log, new String[][]{{Constants.EVENT, "project-created"},
          {Constants.PARAM_NAME, "PROJECT"}, {Constants.DATE, "20101001"}});
       
       FileObject fileObject =
-         ScriptType.EVENT_PARAM_ALL.createFileObject(BASE_DIR, "project-created", "project", 20101001);
+         ScriptType.ALL_PARAMS_TO_EVENT.createFileObject(BASE_DIR, "project-created", "project", 20101001);
       Properties props = (Properties)fileObject.getValue();
       
       Assert.assertNotNull(props.get("project1"));
@@ -146,11 +148,11 @@ public class TestScriptEventParamAll extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_PARAM_ALL, log, new String[][]{{Constants.EVENT, "project-created"},
+      executePigScript(ScriptType.ALL_PARAMS_TO_EVENT, log, new String[][]{{Constants.EVENT, "project-created"},
          {Constants.PARAM_NAME, "PROJECT"}, {Constants.DATE, "20101002"}});
 
       FileObject fileObject =
-         ScriptType.EVENT_PARAM_ALL.createFileObject(BASE_DIR, "project-created", "project", 20101002);
+         ScriptType.ALL_PARAMS_TO_EVENT.createFileObject(BASE_DIR, "project-created", "project", 20101002);
       Properties props = (Properties)fileObject.getValue();
       Assert.assertTrue(props.isEmpty());
    }

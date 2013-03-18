@@ -1,4 +1,4 @@
-script-type=event_2param_unique_all
+script-type=all_params_to_dist_param_event
 time-frame=7
 event=application-created
 paramName=PROJECT

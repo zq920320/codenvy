@@ -32,7 +32,7 @@ public enum ScriptType {
    /**
     * Find total number occurrence of every event per day.
     */
-   EVENT_ALL {
+   ALL_EVENTS {
       @Override
       public ScriptTypeResult getResultType()
       {
@@ -44,7 +44,7 @@ public enum ScriptType {
     * Find total number occurrence of every value of additional parameter
     * for given event per day.
     */
-   EVENT_PARAM_ALL {
+   ALL_PARAMS_TO_EVENT {
       @Override
       public ScriptTypeResult getResultType()
       {
@@ -55,7 +55,7 @@ public enum ScriptType {
    /**
     * Find total number of active workspaces per time frame.
     */
-   ACTIVE_WS_COUNT {
+   ACTIVE_WORKSPACES {
       @Override
       public ScriptTypeResult getResultType()
       {
@@ -66,7 +66,7 @@ public enum ScriptType {
    /**
     * Find total number of active projects per time frame.
     */
-   ACTIVE_PROJECT_COUNT {
+   ACTIVE_PROJECTS {
       @Override
       public ScriptTypeResult getResultType()
       {
@@ -77,7 +77,7 @@ public enum ScriptType {
    /**
     * Find total number of active users per time frame.
     */
-   ACTIVE_USER_COUNT {
+   ACTIVE_USERS {
       @Override
       public ScriptTypeResult getResultType()
       {
@@ -88,7 +88,7 @@ public enum ScriptType {
    /**
     * Find total number of unique occurrence event and its parameter per time frame.
     */
-   EVENT_PARAM_UNIQUE_COUNT {
+   DIST_PARAM_EVENT {
       @Override
       public ScriptTypeResult getResultType()
       {
@@ -100,7 +100,7 @@ public enum ScriptType {
     * Find number unique pairs: workspace name + first parameter value for every second parameter value
     * in time frame.
     */
-   EVENT_2PARAM_UNIQUE_ALL {
+   ALL_PARAMS_TO_DIST_PARAM_EVENT {
       @Override
       public ScriptTypeResult getResultType()
       {

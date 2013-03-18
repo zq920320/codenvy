@@ -1,4 +1,4 @@
-script-type=event_param_unique_count
+script-type=dist_param_event
 time-frame=7
 event=project-built
 paramName=PROJECT

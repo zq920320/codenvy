@@ -18,16 +18,6 @@
  */
 package com.codenvy.dashboard.tasks;
 
-import java.io.File;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.testng.annotations.Test;
-
 import com.codenvy.dashboard.pig.scripts.BasePigTest;
 import com.codenvy.dashboard.pig.scripts.Constants;
 import com.codenvy.dashboard.pig.scripts.FileObject;
@@ -37,6 +27,16 @@ import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 import com.codenvy.dashboard.pig.tasks.Task;
 import com.codenvy.dashboard.pig.tasks.TaskManager;
+
+import org.junit.Assert;
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -74,7 +74,7 @@ public class TestTaskManager extends  BasePigTest
       Assert.assertNotNull(task.getDescription());
       
       Assert.assertEquals("active-project-count", task.getName());
-      Assert.assertEquals(ScriptType.ACTIVE_PROJECT_COUNT, task.getScriptType());
+      Assert.assertEquals(ScriptType.ACTIVE_PROJECTS, task.getScriptType());
       Assert.assertEquals(7, task.getTimeFrame());
       
       Map<String, String> context = task.getContext();
@@ -86,11 +86,11 @@ public class TestTaskManager extends  BasePigTest
    public void testExecuteTask() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
+      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2013-09-26")
          .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project2").withDate("2010-10-03")
+      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2013-10-02")
          .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-09-26")
+      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project2").withDate("2013-10-03")
          .build());
       File log = LogGenerator.generateLog(events);
 
@@ -102,9 +102,9 @@ public class TestTaskManager extends  BasePigTest
             
       executor.executeAndStoreResult(BASE_DIR);
       
-      FileObject fileObject = ScriptType.ACTIVE_PROJECT_COUNT.createFileObject(BASE_DIR, 20100926, 20101002);
+      FileObject fileObject = ScriptType.ACTIVE_PROJECTS.createFileObject(BASE_DIR, 20130926, 20131002);
 
       Long value = (Long)fileObject.getValue();
-      Assert.assertEquals(value, Long.valueOf(2));
+      Assert.assertEquals(Long.valueOf(1), value);
    }
 }

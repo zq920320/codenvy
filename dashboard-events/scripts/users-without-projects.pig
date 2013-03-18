@@ -1,16 +1,10 @@
 -----------------------------------------------------------------------------
--- Find users who was created in given day but did not created project in
--- the follow time frame.
+-- Finds users who did not create any projects in time frame.
 --
 -- Incoming parameters:
 -- log        - the list of resources to load
--- date       - beginning of the timeframe
--- toDate     - ending of the timeframe
---
--- How to run:
--- pig -x local -param log="<DIRECTORY1>,<DIRECTORY2>..." 
---              -param date=<YYYYMMDD> -param toDate=<YYYYMMDD>
---              users-without-projects.pig
+-- date       - beginning of the time frame
+-- toDate     - ending of the time frame
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 

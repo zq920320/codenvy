@@ -1,4 +1,4 @@
-script-type=event_param_all
+script-type=all_params_to_event
 time-frame=1
 event=user-sso-logged-in
 paramName=USING

@@ -1,3 +1,3 @@
-script-type=event_all
+script-type=all_events
 time-frame=1
 description=Finds number occurrence of every events per day.

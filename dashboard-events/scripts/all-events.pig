@@ -1,0 +1,25 @@
+---------------------------------------------------------------------------
+-- Finds amount of every occurred event.
+--
+-- Incoming parameters:
+-- log        - the list of resources to load
+-- date       - the time frame
+---------------------------------------------------------------------------
+IMPORT 'macros.pig';
+
+log = LOAD '$log' using PigStorage() as (message : chararray);
+fR = extractAndFilterByDate(log, $date, $date);
+
+a1 = FILTER fR BY INDEXOF(message, 'EVENT#', 0) != -1;
+resa = FOREACH a1 GENERATE date, FLATTEN(REGEX_EXTRACT_ALL(message, '.*EVENT\\#([^\\#]*)\\#.*')) AS event;
+
+g1 = GROUP resa BY (event, date);
+g2 = FOREACH g1 GENERATE FLATTEN(group), COUNT(resa) AS value;
+g3 = GROUP g2 BY date;
+
+result = FOREACH g3 {
+	g4 = FOREACH g2 GENERATE event, value; -- removes 'date' from tuple
+	GENERATE group AS date, g4;
+       }
+
+DUMP result;

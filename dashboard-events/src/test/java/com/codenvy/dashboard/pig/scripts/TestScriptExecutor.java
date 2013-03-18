@@ -41,7 +41,7 @@ public class TestScriptExecutor extends BasePigTest
       events.add(Event.Builder.createTenantCreatedEvent("ws1-1", "user1").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      ScriptExecutor scriptExecutor = new ScriptExecutor(ScriptType.EVENT_ALL);
+      ScriptExecutor scriptExecutor = new ScriptExecutor(ScriptType.ALL_EVENTS);
       scriptExecutor.setParam(Constants.DATE, "20101001");
       scriptExecutor.setParam(Constants.LOG, log.getAbsolutePath());
       Tuple tuple = scriptExecutor.executeAndReturnResult();
@@ -56,11 +56,11 @@ public class TestScriptExecutor extends BasePigTest
       events.add(Event.Builder.createTenantCreatedEvent("ws1-1", "user1").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      ScriptExecutor scriptExecutor = new ScriptExecutor(ScriptType.EVENT_ALL);
+      ScriptExecutor scriptExecutor = new ScriptExecutor(ScriptType.ALL_EVENTS);
       scriptExecutor.setParam(Constants.DATE, "20101001");
       scriptExecutor.setParam(Constants.LOG, log.getAbsolutePath());
 
-      File file = new File(BASE_DIR + "/event_all/2010/10/01/value");
+      File file = new File(BASE_DIR + "/" + ScriptType.ALL_EVENTS.toString().toLowerCase() + "/2010/10/01/value");
       file.delete();
 
       Assert.assertFalse(file.exists());
@@ -77,12 +77,12 @@ public class TestScriptExecutor extends BasePigTest
       events.add(Event.Builder.createTenantCreatedEvent("ws1-1", "user1").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      ScriptExecutor scriptExecutor = new ScriptExecutor(ScriptType.EVENT_ALL);
+      ScriptExecutor scriptExecutor = new ScriptExecutor(ScriptType.ALL_EVENTS);
       scriptExecutor.setParam(Constants.DATE, "20101002"); // there are no events for given time frame
       scriptExecutor.setParam(Constants.LOG, log.getAbsolutePath());
 
-      File file1 = new File(BASE_DIR + "/event_all/2010/10/01/value");
-      File file2 = new File(BASE_DIR + "/event_all/2010/10/02/value");
+      File file1 = new File(BASE_DIR + "/" + ScriptType.ALL_EVENTS.toString().toLowerCase() + "/2010/10/01/value");
+      File file2 = new File(BASE_DIR + "/" + ScriptType.ALL_EVENTS.toString().toLowerCase() + "/2010/10/02/value");
 
       file1.delete();
       file2.delete();

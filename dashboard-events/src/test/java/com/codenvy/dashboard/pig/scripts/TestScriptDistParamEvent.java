@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestScriptEventParamWsUniqueCount extends BasePigTest
+public class TestScriptDistParamEvent extends BasePigTest
 {
 
    @Test
@@ -52,11 +52,11 @@ public class TestScriptEventParamWsUniqueCount extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_PARAM_UNIQUE_COUNT, log, new String[][]{{Constants.EVENT, "project-built"},
+      executePigScript(ScriptType.DIST_PARAM_EVENT, log, new String[][]{{Constants.EVENT, "project-built"},
          {Constants.PARAM_NAME, "PROJECT"}, {Constants.DATE, "20101001"}, {Constants.TO_DATE, "20101003"}});
 
       FileObject fileObject =
-         ScriptType.EVENT_PARAM_UNIQUE_COUNT.createFileObject(BASE_DIR, "project-built", "PROJECT", 20101001,
+         ScriptType.DIST_PARAM_EVENT.createFileObject(BASE_DIR, "project-built", "PROJECT", 20101001,
             20101003);
 
       Assert.assertEquals(fileObject.getValue(), 3L);
@@ -71,11 +71,11 @@ public class TestScriptEventParamWsUniqueCount extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_PARAM_UNIQUE_COUNT, log, new String[][]{{Constants.EVENT, "project-built"},
+      executePigScript(ScriptType.DIST_PARAM_EVENT, log, new String[][]{{Constants.EVENT, "project-built"},
          {Constants.PARAM_NAME, "PROJECT"}, {Constants.DATE, "20101002"}, {Constants.TO_DATE, "20101003"}});
 
       FileObject fileObject =
-         ScriptType.EVENT_PARAM_UNIQUE_COUNT.createFileObject(BASE_DIR, "project-built", "PROJECT", 20101002,
+         ScriptType.DIST_PARAM_EVENT.createFileObject(BASE_DIR, "project-built", "PROJECT", 20101002,
             20101003);
 
       Assert.assertEquals(fileObject.getValue(), 0L);
@@ -91,7 +91,7 @@ public class TestScriptEventParamWsUniqueCount extends BasePigTest
       tuple.append(20121105);
       tuple.append(1L);
 
-      FileObject fileObject = ScriptType.EVENT_PARAM_UNIQUE_COUNT.createFileObject(BASE_DIR, tuple);
+      FileObject fileObject = ScriptType.DIST_PARAM_EVENT.createFileObject(BASE_DIR, tuple);
 
       Assert.assertNotNull(fileObject.getKeys().get(Constants.EVENT));
       Assert.assertNotNull(fileObject.getKeys().get(Constants.PARAM_NAME));
@@ -112,7 +112,7 @@ public class TestScriptEventParamWsUniqueCount extends BasePigTest
       Assert.assertEquals(fileObject.getValue(), 1L);
 
       File file =
-         new File(BASE_DIR + "/" + ScriptType.EVENT_PARAM_UNIQUE_COUNT.toString().toLowerCase()
+         new File(BASE_DIR + "/" + ScriptType.DIST_PARAM_EVENT.toString().toLowerCase()
             + "/project/built/project/2012/11/03/20121105/value");
       file.delete();
 
