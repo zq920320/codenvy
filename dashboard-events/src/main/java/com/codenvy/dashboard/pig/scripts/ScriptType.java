@@ -100,7 +100,19 @@ public enum ScriptType {
     * Find number unique pairs: workspace name + first parameter value for every second parameter value
     * in time frame.
     */
-   ALL_PARAMS_TO_DIST_PARAM_EVENT {
+   ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_BAG;
+      }
+   },
+
+   /**
+    * Finds amount of particular events distributed by parameter's value. 
+    * All events in question are distinct by the values of two additional parameters.
+    */
+   ALL_PARAMS_TO_DIST_2PARAMS_EVENT {
       @Override
       public ScriptTypeResult getResultType()
       {

@@ -1,5 +1,6 @@
-script-type=all_params_to_event
+script-type=all_params_to_dist_2params_event
 time-frame=1
 event=user-added-to-ws
-paramName=FROM
+paramName=USER
+secondParamName=USING
 description=Finds the way how users have been added to workspace: as creator, via invitation etc.

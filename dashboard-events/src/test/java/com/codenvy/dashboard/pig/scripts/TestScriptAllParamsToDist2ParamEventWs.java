@@ -37,46 +37,57 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestScriptAllParamsToDistParamEvent extends BasePigTest
+public class TestScriptAllParamsToDist2ParamEventWs extends BasePigTest
 {
 
    @Test
    public void testEventFound() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "jaas").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google").withDate("2010-10-01").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "paas1")
+         .withDate("2010-10-01").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "paas1")
+         .withDate("2010-10-01").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws2", "session", "project1", "type1", "paas1")
+         .withDate("2010-10-02").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project2", "type1", "paas2")
+         .withDate("2010-10-03").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "paas3")
+         .withDate("2010-10-04").build());
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT, log, new String[][]{
-         {Constants.EVENT, "user-sso-logged-in"}, {Constants.PARAM_NAME, "USER"},
-         {Constants.SECOND_PARAM_NAME, "USING"}, {Constants.DATE, "20101001"}, {Constants.TO_DATE, "20101003"}});
+      executePigScript(ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS, log, new String[][]{
+         {Constants.EVENT, "application-created"}, {Constants.PARAM_NAME, "PROJECT"},
+         {Constants.SECOND_PARAM_NAME, "PAAS"}, {Constants.DATE, "20101001"}, {Constants.TO_DATE, "20101003"}});
 
       FileObject fileObject =
-         ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT.createFileObject(BASE_DIR, "user-sso-logged-in", "USER", "USING",
-            20101001, 20101003);
+         ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS.createFileObject(BASE_DIR, "application-created", "PROJECT", "PAAS", 20101001,
+            20101003);
 
       Properties props = (Properties)fileObject.getValue();
-      Assert.assertEquals(props.getProperty("google"), "2");
-      Assert.assertEquals(props.getProperty("jaas"), "1");
-      Assert.assertNull(props.getProperty("github"));
+      Assert.assertEquals(props.getProperty("paas1"), "2");
+      Assert.assertEquals(props.getProperty("paas2"), "1");
+      Assert.assertNull(props.getProperty("paas3"));
    }
 
    @Test
    public void testEventNotFoundStoredDefaultValue() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
+      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "paas1")
+         .withDate("2010-10-01").build());
+
+
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT, log, new String[][]{
-         {Constants.EVENT, "user-sso-logged-in"}, {Constants.PARAM_NAME, "USER"},
-         {Constants.SECOND_PARAM_NAME, "USING"}, {Constants.DATE, "20101001"}, {Constants.TO_DATE, "20101003"}});
+      executePigScript(ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS, log, new String[][]{
+         {Constants.EVENT, "application-created"}, {Constants.PARAM_NAME, "PROJECT"},
+         {Constants.SECOND_PARAM_NAME, "PAAS"}, {Constants.DATE, "20101003"}, {Constants.TO_DATE, "20101003"}});
 
       FileObject fileObject =
-         ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT.createFileObject(BASE_DIR, "user-sso-logged-in", "USER", "USING",
-            20101001, 20101003);
+         ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS.createFileObject(BASE_DIR, "application-created", "PROJECT", "PAAS", 20101003,
+            20101003);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertTrue(props.isEmpty());
@@ -86,21 +97,21 @@ public class TestScriptAllParamsToDistParamEvent extends BasePigTest
    public void fileObjectShouldReturnCorrectProperties() throws Exception
    {
       Tuple tuple = TupleFactory.getInstance().newTuple();
-      tuple.append("user-sso-logged-in");
-      tuple.append("USER");
-      tuple.append("USING");
+      tuple.append("application-created");
+      tuple.append("PROJECT");
+      tuple.append("PAAS");
       tuple.append(20121103);
       tuple.append(20121105);
       
       Tuple innerTuple = TupleFactory.getInstance().newTuple();
-      innerTuple.append("google");
+      innerTuple.append("GAE");
       innerTuple.append(2L);
       DataBag bag = new DefaultDataBag();
       bag.add(innerTuple);
       
       tuple.append(bag);
 
-      FileObject fileObject = ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT.createFileObject(BASE_DIR, tuple);
+      FileObject fileObject = ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS.createFileObject(BASE_DIR, tuple);
 
       Assert.assertNotNull(fileObject.getKeys().get(Constants.EVENT));
       Assert.assertNotNull(fileObject.getKeys().get(Constants.PARAM_NAME));
@@ -116,16 +127,16 @@ public class TestScriptAllParamsToDistParamEvent extends BasePigTest
       Assert.assertEquals(iter.next(), Constants.TO_DATE);
 
       Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_BAG);
-      Assert.assertEquals(fileObject.getKeys().get(Constants.EVENT), "user-sso-logged-in");
-      Assert.assertEquals(fileObject.getKeys().get(Constants.PARAM_NAME), "USER");
-      Assert.assertEquals(fileObject.getKeys().get(Constants.SECOND_PARAM_NAME), "USING");
+      Assert.assertEquals(fileObject.getKeys().get(Constants.EVENT), "application-created");
+      Assert.assertEquals(fileObject.getKeys().get(Constants.PARAM_NAME), "PROJECT");
+      Assert.assertEquals(fileObject.getKeys().get(Constants.SECOND_PARAM_NAME), "PAAS");
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20121103");
       Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20121105");
-      Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("google"), "2");
+      Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("GAE"), "2");
 
       File file =
-         new File(BASE_DIR + "/" + ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT.toString().toLowerCase()
-            + "/user/sso/logged/in/user/using/2012/11/03/20121105/value");
+         new File(BASE_DIR + "/" + ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS.toString().toLowerCase()
+            + "/application/created/project/paas/2012/11/03/20121105/value");
       file.delete();
 
       Assert.assertFalse(file.exists());

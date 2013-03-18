@@ -229,12 +229,15 @@ public class Event
             .withParam("WS", wsParam).withParam("USER", userParam);
       }
 
-      /**
-       * Create 'user-added-to-ws' event.
-       */
       public static Builder createUserSSOLoggedOutEvent(String user)
       {
          return new Builder().withParam("EVENT", "user-sso-logged-out").withParam("USER", user);
+      }
+
+      public static Builder createUserSSOLoggedInEvent(String user, String using)
+      {
+         return new Builder().withParam("EVENT", "user-sso-logged-in").withParam("USING", using)
+            .withParam("USER", user);
       }
    }
 

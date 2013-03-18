@@ -16,3 +16,33 @@ DEFINE extractAndFilterByDate(X, fromDateParam, toDateParam) RETURNS Y {
   x4 = FILTER x3 BY (int) $fromDateParam <= date AND date <= (int) $toDateParam;
   $Y = DISTINCT x4;
 };
+
+DEFINE extractWs(X) RETURNS Y {
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws;
+  x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws;
+  x3 = UNION x1, x2;
+  $Y = FILTER x3 BY ws != '';
+};
+
+DEFINE extractUser(X) RETURNS Y {
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user;
+  x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user;
+  x3 = UNION x1, x2;
+  $Y = FILTER x3 BY user != '';
+};
+
+DEFINE extractParam(X, paramNameParam, paramValueParam) RETURNS Y {
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramValueParam;
+  $Y = FILTER x1 BY $paramValueParam != '';
+};
+
+DEFINE filterByEvent(X, eventNameParam) RETURNS Y {
+  $Y = FILTER $X BY INDEXOF(message, 'EVENT#$eventNameParam#', 0) > 0;
+};
+
+DEFINE count(X, fieldParam) RETURNS Y {
+  x1 = GROUP $X BY $fieldParam;
+  x2 = FOREACH x1 GENERATE FLATTEN(group), COUNT($X);
+  x3 = GROUP x2 ALL;
+  $Y = FOREACH x3 GENERATE x2;
+};

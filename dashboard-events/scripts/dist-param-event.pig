@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------
--- Finds amount of unique sequences consisting of fixed event 
+-- Finds amount of distinct sequences consisting of fixed event 
 -- and every parameter's value in time frame.
 --
 -- Incoming parameters:
