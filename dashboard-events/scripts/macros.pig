@@ -40,9 +40,14 @@ DEFINE filterByEvent(X, eventNameParam) RETURNS Y {
   $Y = FILTER $X BY INDEXOF(message, 'EVENT#$eventNameParam#', 0) > 0;
 };
 
-DEFINE count(X, fieldParam) RETURNS Y {
+DEFINE countByParam(X, fieldParam) RETURNS Y {
   x1 = GROUP $X BY $fieldParam;
   x2 = FOREACH x1 GENERATE FLATTEN(group), COUNT($X);
   x3 = GROUP x2 ALL;
   $Y = FOREACH x3 GENERATE x2;
+};
+
+DEFINE countAll(X) RETURNS Y {
+  x1 = GROUP $X ALL;
+  $Y = FOREACH x1 GENERATE COUNT($X);
 };

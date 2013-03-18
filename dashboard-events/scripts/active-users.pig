@@ -10,29 +10,14 @@ IMPORT 'macros.pig';
 
 log = LOAD '$log' using PigStorage() as (message : chararray);
 
---
--- Remove unrelated events
---
 f1 = extractAndFilterByDate(log, $date, $toDate);
 fR = FILTER f1 BY INDEXOF(message, 'EVENT#user-sso-logged-out#', 0) == -1;
 
---
--- extract user name out of USER identifier
---
-a1 = FOREACH fR GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user;
-aR = FILTER a1 BY user != '';
+a1 = extractUser(fR);
+a2 = FOREACH a1 GENERATE user;
+aR = DISTINCT a2;
 
---
--- extract user name out of message
---
-b1 = FOREACH fR GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user;
-bR = FILTER b1 BY user != '';
-
-u1 = UNION aR, bR;
-u2 = DISTINCT u1;
-uR = FOREACH u2 GENERATE '$date' AS date, user; 
-
-g1 = GROUP uR BY date;
-result = FOREACH g1 GENERATE FLATTEN(group), '$toDate', COUNT(uR) AS value;
+r1 = countAll(aR);
+result = FOREACH r1 GENERATE '$date', '$toDate', *;
 
 DUMP result;

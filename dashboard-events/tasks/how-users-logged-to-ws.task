@@ -1,5 +1,6 @@
-script-type=all-params-to-dist-2params-event
-time-frame=1
+script-type=all_params_to_dist_2params_event
+time-frame=7
 event=user-sso-logged-in
-paramName=USING
+paramName=USER
+secondParamName=USING
 description=Preferable ways for users to log in: google, github or form authentication.
