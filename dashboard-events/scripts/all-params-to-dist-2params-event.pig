@@ -12,10 +12,9 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-log = LOAD '$log' using PigStorage() as (message : chararray);
-
-f1 = extractAndFilterByDate(log, $date, $toDate);
-fR = filterByEvent(f1, '$event');
+f1 = loadResources('$log');
+f2 = filterByDate(f1, '$date', '$toDate');
+fR = filterByEvent(f2, '$event');
 
 a1 = extractParam(fR, '$paramName', 'paramValue');
 a2 = extractParam(a1, '$secondParamName', 'secondParamValue');

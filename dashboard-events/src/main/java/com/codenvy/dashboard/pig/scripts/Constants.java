@@ -58,6 +58,12 @@ public class Constants
    public static final String TO_DATE = "toDate";
 
    /**
+    * If the user becomes inactive for given amount of time, 
+    * the "coding session" is considered finished.
+    */
+   public static final String INACTIVE_INTERVAL = "inactiveInterval";
+
+   /**
     * Parameter name in Pig script contains the resources are needed to be loaded.
     * Can be either the name of single resource (file or directory) or the list of 
     * comma separated resources. Wildcard characters are supported.

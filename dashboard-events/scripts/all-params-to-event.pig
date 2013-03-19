@@ -9,13 +9,12 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-log = LOAD '$log' using PigStorage() as (message : chararray);
-fR = extractAndFilterByDate(log, $date, $date);
+f1 = loadResources('$log');
+f2 = filterByDate(f1, '$date', '$date');
+fR = filterByEvent(f2, '$event');
 
-a1 = filterByEvent(fR, '$event');
-aR = extractParam(a1, '$paramName', 'paramValue');
-
-r1 = countByParam(aR, 'paramValue');
-result = FOREACH r1 GENERATE '$event', '$paramName', '$date', *;
+r1 = extractParam(fR, '$paramName', 'paramValue');
+r2 = countByParam(r1, 'paramValue');
+result = FOREACH r2 GENERATE '$event', '$paramName', '$date', *;
 
 DUMP result;

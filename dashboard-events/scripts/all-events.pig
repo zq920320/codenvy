@@ -7,8 +7,8 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-log = LOAD '$log' using PigStorage() as (message : chararray);
-fR = extractAndFilterByDate(log, $date, $date);
+f1 = loadResources('$log');
+fR = filterByDate(f1, '$date', '$date');
 
 a1 = extractParam(fR, 'EVENT', 'event');
 aR = countByParam(a1, 'event');

@@ -1,0 +1,4 @@
+script-type=product_usage_time
+time-frame=7
+inactiveInterval=600
+description=Finds how much time users spent in product.

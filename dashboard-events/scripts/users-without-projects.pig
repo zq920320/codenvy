@@ -8,12 +8,12 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-log = LOAD '$log' using PigStorage() as (message : chararray);
+log = loadResources('$log');
 
 --
 -- prepare list of created users in given day
 --
-a1 = extractAndFilterByDate(log, $date, $date);
+a1 = filterByDate(log, $date, $date);
 a2 = FILTER a1 BY INDEXOF(message, 'EVENT#user-created#', 0) != -1;
 a3 = FOREACH a2 GENERATE 'user-created', FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#\\[([^\\#]*)\\]\\#.*')) AS user;
 aR = DISTINCT a3;
@@ -21,7 +21,7 @@ aR = DISTINCT a3;
 --
 -- prepare list of users who created projects in time frame
 --
-b1 = extractAndFilterByDate(log, $date, $toDate);
+b1 = filterByDate(log, $date, $toDate);
 b2 = FILTER b1 BY INDEXOF(message, 'EVENT#project-created#', 0) != -1;
 b3 = FOREACH b2 GENERATE 'project-created', FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user;
 bR = DISTINCT b3;

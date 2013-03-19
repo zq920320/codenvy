@@ -8,10 +8,9 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-log = LOAD '$log' using PigStorage() as (message : chararray);
-
-f1 = extractAndFilterByDate(log, $date, $toDate);
-fR = FILTER f1 BY INDEXOF(message, 'EVENT#user-sso-logged-out#', 0) == -1;
+f1 = loadResources('$log');
+f2 = filterByDate(f1, '$date', '$toDate');
+fR = skipEvent(f2, 'user-sso-logged-out');
 
 a1 = extractUser(fR);
 a2 = FOREACH a1 GENERATE user;

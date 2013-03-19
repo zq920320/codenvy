@@ -8,10 +8,9 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-log = LOAD '$log' using PigStorage() as (message : chararray);
-
-f1 = extractAndFilterByDate(log, $date, $toDate);
-fR = FILTER f1 BY INDEXOF(message, 'EVENT#project-destroyed#', 0) == -1;
+f1 = loadResources('$log');
+f2 = filterByDate(f1, '$date', '$toDate');
+fR = skipEvent(f2, 'project-destroyed');
 
 a1 = extractWs(fR);
 a2 = extractParam(a1, 'PROJECT', 'project');

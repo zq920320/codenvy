@@ -130,6 +130,18 @@ public enum ScriptType {
       {
          return ScriptTypeResult.TIMEFRAME_FOR_LIST;
       }
+   },
+
+   /**
+    * Finds total working time for all users in workspace.
+    * the follow time frame.
+    */
+   PRODUCT_USAGE_TIME {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.TIMEFRAME_INTERVAL_FOR_LONG;
+      }
    };
 
    /**

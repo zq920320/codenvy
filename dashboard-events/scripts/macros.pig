@@ -3,18 +3,33 @@
 --
 
 --
--- Filters messages by date. Bordered dates are included. Input parameters represent date
--- in the next format: YYYYMMDD.
+-- Loads resources and returns returns in format: {ip : bytearray, date : int, time : int, message : chararray} 
+-- In details:
+--   field 'date' contains date in format 'YYYYMMDD'
+--   field 'time' contains seconds from midnight
 --
--- Returns relation (date : int, message : chararry)
---
-DEFINE extractAndFilterByDate(X, fromDateParam, toDateParam) RETURNS Y {
-  x1 = FOREACH $X GENERATE REGEX_EXTRACT_ALL($0, '[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3} ([0-9]{4})-([0-9]{2})-([0-9]{2}) (.*)');
-  x2 = FOREACH x1 GENERATE FLATTEN($0);
+DEFINE loadResources(resourceParam) RETURNS Y {
+  l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
+  l2 = DISTINCT l1;
+  l3 = FOREACH l2 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}).*') 
+                          AS pattern, message;
 
-  x3 = FOREACH x2 GENERATE (int)$0 * 10000 + (int)$1 * 100 + (int)$2 AS date, $3 AS message;
-  x4 = FILTER x3 BY (int) $fromDateParam <= date AND date <= (int) $toDateParam;
-  $Y = DISTINCT x4;
+  $Y = FOREACH l3 GENERATE pattern.$0 AS ip, 
+                          (int)pattern.$1 * 10000 + (int)pattern.$2 * 100 + (int)pattern.$3 AS date, 
+                          (int)pattern.$4 * 3600 + (int)pattern.$5 * 60 + (int)pattern.$6 AS time, 
+                          message;
+};
+
+DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
+  $Y = FILTER $X BY (int) $fromDateParam <= date AND date <= (int) $toDateParam;
+};
+
+DEFINE filterByEvent(X, eventNameParam) RETURNS Y {
+  $Y = FILTER $X BY INDEXOF(message, 'EVENT#$eventNameParam#', 0) >= 0;
+};
+
+DEFINE skipEvent(X, eventNameParam) RETURNS Y {
+  $Y = FILTER $X BY INDEXOF(message, 'EVENT#$eventNameParam#', 0) < 0;
 };
 
 DEFINE extractWs(X) RETURNS Y {
@@ -34,10 +49,6 @@ DEFINE extractUser(X) RETURNS Y {
 DEFINE extractParam(X, paramNameParam, paramValueParam) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramValueParam;
   $Y = FILTER x1 BY $paramValueParam != '';
-};
-
-DEFINE filterByEvent(X, eventNameParam) RETURNS Y {
-  $Y = FILTER $X BY INDEXOF(message, 'EVENT#$eventNameParam#', 0) > 0;
 };
 
 DEFINE countByParam(X, fieldParam) RETURNS Y {
