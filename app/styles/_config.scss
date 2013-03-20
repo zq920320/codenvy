@@ -18,6 +18,11 @@ $enterprise-header-ground:70px;
 $enterprise-header-width: 947px;
 
 
+@mixin enterprise-icon-position(){
+	position: 50% 30%;
+}
+
+
 @mixin input-element-text(){
     font-weight: 200; font-size: 1.2em;
 }

@@ -131,7 +131,7 @@
     background:{
         image:url('../images/iconHouse.png');
         repeat:no-repeat;
-        position: 50% 0;
+        @include enterprise-icon-position;
     }
 }
 
@@ -139,7 +139,7 @@
     background:{
         image:url('../images/iconLock.png');
         repeat:no-repeat;
-        position: 50% 0;
+        @include enterprise-icon-position;
     }
 }
 
@@ -147,7 +147,7 @@
     background:{
         image:url('../images/iconPlug.png');
         repeat:no-repeat;
-        position: 50% 0;
+        @include enterprise-icon-position;
     }
 }
 
@@ -155,7 +155,7 @@
     background:{
         image:url('../images/iconScale.png');
         repeat:no-repeat;
-        position: 50% 0;
+        @include enterprise-icon-position;
     }
 }
 
@@ -163,7 +163,15 @@
     background:{
         image:url('../images/iconBrowser.png');
         repeat:no-repeat;
-        position: 50% 0;
+        @include enterprise-icon-position;
+    }
+}
+
+@mixin icon_lighting_enterprise {
+    background:{
+        image:url('../images/iconLighting.png');
+        repeat:no-repeat;
+        @include enterprise-icon-position;
     }
 }
 
@@ -171,7 +179,7 @@
     background:{
         image:url('../images/iconLighting.png');
         repeat:no-repeat;
-        position: 50% 0;
+        position: 50% 0;;
     }
 }
 
