@@ -11,6 +11,15 @@ module Jekyll
             input
         end
     end
+
+    def script(input)
+        case @context.registers[:site].config['profile']
+        when "stage"
+            "/" + input
+        else
+            input
+        end
+    end
   end
 end
 
