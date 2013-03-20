@@ -63,25 +63,6 @@ public class TestScriptDistParamEvent extends BasePigTest
    }
 
    @Test
-   public void testEventNotFoundStoredDefaultValue() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "session", "project1", "type")
-         .withDate("2010-10-01").build());
-
-      File log = LogGenerator.generateLog(events);
-
-      executePigScript(ScriptType.DIST_PARAM_EVENT, log, new String[][]{{Constants.EVENT, "project-built"},
-         {Constants.PARAM_NAME, "PROJECT"}, {Constants.DATE, "20101002"}, {Constants.TO_DATE, "20101003"}});
-
-      FileObject fileObject =
-         ScriptType.DIST_PARAM_EVENT.createFileObject(BASE_DIR, "project-built", "PROJECT", 20101002,
-            20101003);
-
-      Assert.assertEquals(fileObject.getValue(), 0L);
-   }
-
-   @Test
    public void fileObjectShouldReturnCorrectProperties() throws Exception
    {
       Tuple tuple = TupleFactory.getInstance().newTuple();

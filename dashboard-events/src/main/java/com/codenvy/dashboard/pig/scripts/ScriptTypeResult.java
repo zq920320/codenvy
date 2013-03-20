@@ -94,7 +94,7 @@ public enum ScriptTypeResult {
     * Resulted tuple should meet the requirement:<br> 
     * (chararray: event, chararray: firstParamName, chararray: firstParamName, int: date, int: toDate, bag: {(chararray: key, long: value)}).
     */
-   EVENT_2PARAM_TIMEFRAME_FOR_BAG {
+   EVENT_2PARAM_TIMEFRAME_FOR_PROPERTIES {
       @Override
       public String[] getKeyFields()
       {
@@ -215,11 +215,11 @@ public enum ScriptTypeResult {
     * Incoming tuple should meet the requirement:<br> 
     * (int: date, int: toDate, int: inactiveInterval, long: value).
     */
-   TIMEFRAME_INTERVAL_FOR_LONG {
+   TIMEFRAME_CLAUSE_FOR_LONG {
       @Override
       public String[] getKeyFields()
       {
-         return new String[]{Constants.DATE, Constants.TO_DATE, Constants.INACTIVE_INTERVAL};
+         return new String[]{Constants.DATE, Constants.TO_DATE, Constants.TOP};
       }
 
       @Override
@@ -235,6 +235,36 @@ public enum ScriptTypeResult {
          tuple.set(0, executionContext.get(Constants.DATE));
          tuple.set(1, executionContext.get(Constants.TO_DATE));
          tuple.set(2, executionContext.get(Constants.INACTIVE_INTERVAL));
+         tuple.set(3, Long.valueOf(0));
+
+         return tuple;
+      }
+   },
+   
+   /**
+    * Incoming tuple should meet the requirement:<br> 
+    * (int: date, int: toDate, int: clause, long: value).
+    */
+   TIMEFRAME_CLAUSE_FOR_PROPERTIES {
+      @Override
+      public String[] getKeyFields()
+      {
+         return new String[]{Constants.DATE, Constants.TO_DATE, Constants.TOP};
+      }
+
+      @Override
+      public ValueTranslator getValueTranslator()
+      {
+         return new Bag2PropertiesTranslator();
+      }
+
+      @Override
+      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      {
+         Tuple tuple = TupleFactory.getInstance().newTuple(4);
+         tuple.set(0, executionContext.get(Constants.DATE));
+         tuple.set(1, executionContext.get(Constants.TO_DATE));
+         tuple.set(2, executionContext.get(Constants.TOP));
          tuple.set(3, Long.valueOf(0));
 
          return tuple;

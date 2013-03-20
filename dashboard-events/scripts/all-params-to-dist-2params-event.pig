@@ -21,7 +21,7 @@ a2 = extractParam(a1, '$secondParamName', 'secondParamValue');
 a3 = FOREACH a2 GENERATE paramValue, secondParamValue;
 aR = DISTINCT a3;
 
-r1 = countByParam(aR, 'secondParamValue');
+r1 = countByField(aR, 'secondParamValue');
 result = FOREACH r1 GENERATE '$event', '$paramName', '$secondParamName', '$date', '$toDate', *;
 
 DUMP result;

@@ -66,19 +66,6 @@ public class TestScriptProductUsageTime extends BasePigTest
    }
 
    @Test
-   public void testEventNotFoundStoredDefaultValue() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      File log = LogGenerator.generateLog(events);
-
-      executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, new String[][]{{Constants.DATE, "20101001"},
-         {Constants.TO_DATE, "20101003"}, {Constants.INACTIVE_INTERVAL, "600"}});
-
-      FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, 20101001, 20101003, 600);
-      Assert.assertEquals(fileObject.getValue(), 0L);
-   }
-
-   @Test
    public void fileObjectShouldReturnCorrectProperties() throws Exception
    {
       Tuple tuple = TupleFactory.getInstance().newTuple();
@@ -98,7 +85,7 @@ public class TestScriptProductUsageTime extends BasePigTest
       Assert.assertEquals(iter.next(), Constants.TO_DATE);
       Assert.assertEquals(iter.next(), Constants.INACTIVE_INTERVAL);
 
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_INTERVAL_FOR_LONG);
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_LONG);
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20121103");
       Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20121105");
       Assert.assertEquals(fileObject.getKeys().get(Constants.INACTIVE_INTERVAL), "600");

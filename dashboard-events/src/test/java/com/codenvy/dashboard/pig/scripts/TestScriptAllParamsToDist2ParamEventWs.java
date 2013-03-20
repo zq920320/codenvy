@@ -72,28 +72,6 @@ public class TestScriptAllParamsToDist2ParamEventWs extends BasePigTest
    }
 
    @Test
-   public void testEventNotFoundStoredDefaultValue() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "paas1")
-         .withDate("2010-10-01").build());
-
-
-      File log = LogGenerator.generateLog(events);
-
-      executePigScript(ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS, log, new String[][]{
-         {Constants.EVENT, "application-created"}, {Constants.PARAM_NAME, "PROJECT"},
-         {Constants.SECOND_PARAM_NAME, "PAAS"}, {Constants.DATE, "20101003"}, {Constants.TO_DATE, "20101003"}});
-
-      FileObject fileObject =
-         ScriptType.ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS.createFileObject(BASE_DIR, "application-created", "PROJECT", "PAAS", 20101003,
-            20101003);
-
-      Properties props = (Properties)fileObject.getValue();
-      Assert.assertTrue(props.isEmpty());
-   }
-
-   @Test
    public void fileObjectShouldReturnCorrectProperties() throws Exception
    {
       Tuple tuple = TupleFactory.getInstance().newTuple();
@@ -126,7 +104,7 @@ public class TestScriptAllParamsToDist2ParamEventWs extends BasePigTest
       Assert.assertEquals(iter.next(), Constants.DATE);
       Assert.assertEquals(iter.next(), Constants.TO_DATE);
 
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_BAG);
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_PROPERTIES);
       Assert.assertEquals(fileObject.getKeys().get(Constants.EVENT), "application-created");
       Assert.assertEquals(fileObject.getKeys().get(Constants.PARAM_NAME), "PROJECT");
       Assert.assertEquals(fileObject.getKeys().get(Constants.SECOND_PARAM_NAME), "PAAS");

@@ -20,6 +20,7 @@ DEFINE loadResources(resourceParam) RETURNS Y {
                           message;
 };
 
+
 DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
   $Y = FILTER $X BY (int) $fromDateParam <= date AND date <= (int) $toDateParam;
 };
@@ -36,14 +37,16 @@ DEFINE extractWs(X) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws;
   x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws;
   x3 = UNION x1, x2;
-  $Y = FILTER x3 BY ws != '';
+  x4 = DISTINCT x3;
+  $Y = FILTER x4 BY ws != '' AND ws != 'default';
 };
 
 DEFINE extractUser(X) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user;
   x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user;
   x3 = UNION x1, x2;
-  $Y = FILTER x3 BY user != '';
+  x4 = DISTINCT x3;
+  $Y = FILTER x4 BY user != '';
 };
 
 DEFINE extractParam(X, paramNameParam, paramValueParam) RETURNS Y {
@@ -51,14 +54,55 @@ DEFINE extractParam(X, paramNameParam, paramValueParam) RETURNS Y {
   $Y = FILTER x1 BY $paramValueParam != '';
 };
 
-DEFINE countByParam(X, fieldParam) RETURNS Y {
+--
+-- $Y: {countByField::group: bytearray,countByField::count: long}
+--
+DEFINE countByField(X, fieldParam) RETURNS Y {
   x1 = GROUP $X BY $fieldParam;
-  x2 = FOREACH x1 GENERATE FLATTEN(group), COUNT($X);
+  x2 = FOREACH x1 GENERATE FLATTEN(group), COUNT($X) AS count;
   x3 = GROUP x2 ALL;
-  $Y = FOREACH x3 GENERATE x2;
+  $Y = FOREACH x3 GENERATE x2 AS countByField;
 };
 
 DEFINE countAll(X) RETURNS Y {
   x1 = GROUP $X ALL;
   $Y = FOREACH x1 GENERATE COUNT($X);
+};
+
+
+-- comma sep
+DEFINE countEventsInWs(X, eventsParam) RETURNS Y {
+  z1 = extractParam($X, 'EVENT', 'event');
+  z2 = FILTER z1 BY INDEXOF('$eventsParam', event, 0) >= 0;
+  z3 = extractWs(z2);
+  $Y = countByField(z3, 'ws');
+};
+
+
+-- comma sep
+DEFINE countEventsInWsFlatten(X, eventsParam) RETURNS Y {
+  w1 = countEventsInWs($X, '$eventsParam');
+  w2 = FOREACH w1 GENERATE FLATTEN(countByField);
+  $Y = FOREACH w2 GENERATE countByField::group AS ws, countByField::count AS count;
+};
+
+
+-----------------------------------------------------------------------------
+-- Finds top workspaces in which events had place.
+--
+-- Incoming parameters:
+-- logParam        - the list of resources to load
+-- dateParam       - beginning of the time frame
+-- toDateParam     - ending of the time frame
+-- topParam        - how many workspaces should be left in result
+-- eventsParam     - which events should be taken in account
+---------------------------------------------------------------------------
+DEFINE topWsByEvents(logParam, dateParam, toDateParam, topParam, eventsParam) RETURNS Y {
+  w1 = loadResources('$logParam');
+  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
+  wR = countEventsInWs(w2, '$eventsParam');
+
+  $Y = FOREACH wR {
+    GENERATE '$dateParam', '$toDateParam', '$topParam', TOP($topParam, 1, countByField);
+  }
 };

@@ -14,7 +14,7 @@ f2 = filterByDate(f1, '$date', '$date');
 fR = filterByEvent(f2, '$event');
 
 r1 = extractParam(fR, '$paramName', 'paramValue');
-r2 = countByParam(r1, 'paramValue');
+r2 = countByField(r1, 'paramValue');
 result = FOREACH r2 GENERATE '$event', '$paramName', '$date', *;
 
 DUMP result;

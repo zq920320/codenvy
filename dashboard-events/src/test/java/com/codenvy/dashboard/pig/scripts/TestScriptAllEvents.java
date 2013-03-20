@@ -92,23 +92,6 @@ public class TestScriptAllEvents extends BasePigTest
    }
 
    @Test
-   public void testEventNotFoundStoredDefaultValue() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantDestroyedEvent("ws3").withDate("2010-10-01").build());
-
-      File log = LogGenerator.generateLog(events);
-
-      executePigScript(ScriptType.ALL_EVENTS, log, new String[][]{{Constants.DATE, "20101002"}});
-
-      FileObject fileObject = ScriptType.ALL_EVENTS.createFileObject(BASE_DIR, 20101002);
-      Properties props = (Properties)fileObject.getValue();
-      Assert.assertTrue(props.isEmpty());
-   }
-
-   @Test
    public void fileObjectShouldReturnCorrectProperties() throws Exception
    {
       Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));

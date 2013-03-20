@@ -31,7 +31,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -72,36 +71,6 @@ public class TestScriptEventParamAll extends BasePigTest
       tuple.append(bag);
 
       fileObject = ScriptType.ALL_PARAMS_TO_EVENT.createFileObject(BASE_DIR, tuple);
-   }
-
-   @Test
-   public void fileObjectShouldReturnCorrectProperties() throws Exception
-   {
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.EVENT));
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.PARAM_NAME));
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
-
-      Iterator<String> iter = fileObject.getKeys().keySet().iterator();
-      Assert.assertEquals(iter.next(), Constants.EVENT);
-      Assert.assertEquals(iter.next(), Constants.PARAM_NAME);
-      Assert.assertEquals(iter.next(), Constants.DATE);
-
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.EVENT_PARAM_DATE_FOR_PROPERTIES);
-      Assert.assertEquals(fileObject.getKeys().get(Constants.EVENT), event);
-      Assert.assertEquals(fileObject.getKeys().get(Constants.PARAM_NAME), param);
-      Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), date.toString());
-      Assert.assertEquals(((Properties)fileObject.getValue()).getProperty("user1"), "1");
-
-      File file =
-         new File(BASE_DIR + "/" + ScriptType.ALL_PARAMS_TO_EVENT.toString().toLowerCase()
-            + "/tenant/created/user/2011/10/10/value");
-      file.delete();
-
-      Assert.assertFalse(file.exists());
-
-      fileObject.store();
-
-      Assert.assertTrue(file.exists());
    }
 
    @Test

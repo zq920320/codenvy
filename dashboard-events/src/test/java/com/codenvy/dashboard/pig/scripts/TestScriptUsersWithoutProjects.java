@@ -68,23 +68,6 @@ public class TestScriptUsersWithoutProjects extends BasePigTest
    }
 
    @Test
-   public void testEventNotFoundStoredDefaultValue() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2010-10-01").build());
-
-      File log = LogGenerator.generateLog(events);
-
-      executePigScript(ScriptType.USERS_WITHOUT_PROJECTS, log, new String[][]{{Constants.DATE, "20101002"},
-         {Constants.TO_DATE, "20101002"}});
-
-      FileObject fileObject = ScriptType.USERS_WITHOUT_PROJECTS.createFileObject(BASE_DIR, 20101002, 20101002);
-
-      List<String> list = (List)fileObject.getValue();
-      Assert.assertEquals(list.size(), 0);
-   }
-
-   @Test
    public void fileObjectShouldReturnCorrectProperties() throws Exception
    {
       Tuple tuple = TupleFactory.getInstance().newTuple();

@@ -58,10 +58,14 @@ public class Constants
    public static final String TO_DATE = "toDate";
 
    /**
-    * If the user becomes inactive for given amount of time, 
-    * the "coding session" is considered finished.
+    * Parameter for 'top workspaces' scripts.  
     */
-   public static final String INACTIVE_INTERVAL = "inactiveInterval";
+   public static final String TOP = "top";
+
+   /**
+    * Parameter for {@link ScriptType#PRODUCT_USAGE_TIME}.
+    */
+   protected static final String INACTIVE_INTERVAL = "inactiveInterval";
 
    /**
     * Parameter name in Pig script contains the resources are needed to be loaded.
@@ -69,6 +73,7 @@ public class Constants
     * comma separated resources. Wildcard characters are supported.
     */
    public static final String LOG = "log";
+
 
    /**
     * Private constructor.

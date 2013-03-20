@@ -104,7 +104,7 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_BAG;
+         return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_PROPERTIES;
       }
    },
 
@@ -116,7 +116,7 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_BAG;
+         return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_PROPERTIES;
       }
    },
 
@@ -140,7 +140,52 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_INTERVAL_FOR_LONG;
+         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_LONG;
+      }
+   },
+
+   /**
+   * Find top workspaces by amount of users.
+   */
+   TOP_WS_BY_USERS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_PROPERTIES;
+      }
+   },
+
+   /**
+   * Find top workspaces by amount of invitations sent.
+   */
+   TOP_WS_BY_INVITATIONS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_PROPERTIES;
+      }
+   },
+
+   /**
+   * Find top workspaces by amount of created projects.
+   * If project was removed, then it will not be calculated.
+   */
+   TOP_WS_BY_PROJECTS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_PROPERTIES;
+      }
+   },
+
+   /**
+   * Find top workspaces by amount of compile and run action.
+   */
+   TOP_WS_BY_BUILDS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_PROPERTIES;
       }
    };
 

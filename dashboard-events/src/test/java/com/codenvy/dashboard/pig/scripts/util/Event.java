@@ -215,7 +215,7 @@ public class Event
       public static Builder createProjectDeployedEvent(String user, String ws, String session, String project,
          String type, String paas)
       {
-         return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
+         return new Builder().withContext(user, ws, session).withParam("EVENT", "project-deployed")
             .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
       }
 
@@ -238,6 +238,12 @@ public class Event
       {
          return new Builder().withParam("EVENT", "user-sso-logged-in").withParam("USING", using)
             .withParam("USER", user);
+      }
+
+      public static Builder createUserInviteEvent(String user, String ws, String session, String email)
+      {
+         return new Builder().withContext(user, ws, session).withParam("EVENT", "user-invite")
+            .withParam("EMAIL", email);
       }
    }
 
