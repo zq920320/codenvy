@@ -28,13 +28,6 @@
 
         {% include uservoice.html %}
         {% include google-analytics.html %}
-
-        {% if site.profile != "gh" %}
-            <!-- build:js /scripts/amd-app.js -->
-            <script data-main="{{ 'scripts/main' | script }}" src="{{ 'scripts/vendor/require.js' | script }}"></script>
-            <!-- endbuild -->
-        {% else %}
-            <script data-main="{{ 'scripts/main.gh' | script }}" src="{{ 'scripts/vendor/require.js' | script }}"></script>
-        {% endif %}
+        {% include application-script.html %}
 </body>
 </html>
