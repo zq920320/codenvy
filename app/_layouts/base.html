@@ -79,8 +79,8 @@
         {% include uservoice.html %}
         {% include google-analytics.html %}
 
-        <!-- build:js scripts/amd-app.js -->
-        <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+        <!-- build:js /scripts/amd-app.js -->
+        <script data-main="{{ 'scripts/main' | script }}" src="{{ 'scripts/vendor/require.js' | script }}"></script>
         <!-- endbuild -->
 
 </body>
