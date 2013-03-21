@@ -157,6 +157,11 @@ public class Event
             .withParam("ALIASES", "[" + aliases + "]");
       }
 
+      public static Builder createUserRemovedEvent(String userId)
+      {
+         return new Builder().withParam("EVENT", "user-removed").withParam("USER-ID", userId);
+      }
+
       /**
        * Create 'tenant-destroyed' event.
        */
@@ -223,10 +228,10 @@ public class Event
        * Create 'user-added-to-ws' event.
        */
       public static Builder createUserAddedToWsEvent(String user, String ws, String session, String wsParam,
-         String userParam)
+         String userParam, String from)
       {
          return new Builder().withContext(user, ws, session).withParam("EVENT", "user-added-to-ws")
-            .withParam("WS", wsParam).withParam("USER", userParam);
+            .withParam("WS", wsParam).withParam("USER", userParam).withParam("FROM", from);
       }
 
       public static Builder createUserSSOLoggedOutEvent(String user)

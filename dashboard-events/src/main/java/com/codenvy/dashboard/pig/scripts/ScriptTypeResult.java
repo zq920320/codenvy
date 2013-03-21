@@ -62,6 +62,36 @@ public enum ScriptTypeResult {
 
    /**
     * Resulted tuple should meet the requirement:<br> 
+    * (int: date, bag: {(chararray: key, long: value)}).
+    * 
+    * TODO
+    */
+   DATE_FOR_LONG {
+      @Override
+      public String[] getKeyFields()
+      {
+         return new String[]{Constants.DATE};
+      }
+
+      @Override
+      public ValueTranslator getValueTranslator()
+      {
+         return new Object2LongTranslator();
+      }
+
+      @Override
+      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      {
+         Tuple tuple = TupleFactory.getInstance().newTuple(2);
+         tuple.set(0, executionContext.get(Constants.DATE));
+         tuple.set(1, Long.valueOf(0));
+
+         return tuple;
+      }
+   },
+
+   /**
+    * Resulted tuple should meet the requirement:<br> 
     * (chararray: event, chararray: paramName, int: date, bag: {(chararray: key, long: value)}).
     */
    EVENT_PARAM_DATE_FOR_PROPERTIES {
@@ -91,14 +121,16 @@ public enum ScriptTypeResult {
    },
    
    /**
+    * TODO
+    * 
     * Resulted tuple should meet the requirement:<br> 
     * (chararray: event, chararray: firstParamName, chararray: firstParamName, int: date, int: toDate, bag: {(chararray: key, long: value)}).
     */
-   EVENT_2PARAM_TIMEFRAME_FOR_PROPERTIES {
+   TIMEFRAME_FOR_PROPERTIES {
       @Override
       public String[] getKeyFields()
       {
-         return new String[]{Constants.EVENT, Constants.PARAM_NAME, Constants.SECOND_PARAM_NAME, Constants.DATE, Constants.TO_DATE};
+         return new String[]{Constants.DATE, Constants.TO_DATE};
       }
 
       @Override
@@ -110,13 +142,10 @@ public enum ScriptTypeResult {
       @Override
       public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
       {
-         Tuple tuple = TupleFactory.getInstance().newTuple(6);
-         tuple.set(0, executionContext.get(Constants.EVENT));
-         tuple.set(1, executionContext.get(Constants.PARAM_NAME));
-         tuple.set(2, executionContext.get(Constants.SECOND_PARAM_NAME));
-         tuple.set(3, executionContext.get(Constants.DATE));
-         tuple.set(4, executionContext.get(Constants.TO_DATE));
-         tuple.set(5, new DefaultDataBag());
+         Tuple tuple = TupleFactory.getInstance().newTuple(3);
+         tuple.set(0, executionContext.get(Constants.DATE));
+         tuple.set(1, executionContext.get(Constants.TO_DATE));
+         tuple.set(2, new DefaultDataBag());
 
          return tuple;
       }
@@ -215,11 +244,11 @@ public enum ScriptTypeResult {
     * Incoming tuple should meet the requirement:<br> 
     * (int: date, int: toDate, int: inactiveInterval, long: value).
     */
-   TIMEFRAME_CLAUSE_FOR_LONG {
+   TIMEFRAME_INTERVAL_FOR_LONG {
       @Override
       public String[] getKeyFields()
       {
-         return new String[]{Constants.DATE, Constants.TO_DATE, Constants.TOP};
+         return new String[]{Constants.DATE, Constants.TO_DATE, Constants.INACTIVE_INTERVAL};
       }
 
       @Override
@@ -245,7 +274,7 @@ public enum ScriptTypeResult {
     * Incoming tuple should meet the requirement:<br> 
     * (int: date, int: toDate, int: clause, long: value).
     */
-   TIMEFRAME_CLAUSE_FOR_PROPERTIES {
+   TIMEFRAME_TOP_FOR_PROPERTIES {
       @Override
       public String[] getKeyFields()
       {

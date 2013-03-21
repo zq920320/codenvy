@@ -25,8 +25,6 @@ import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codenvy.dashboard.pig.tasks.Task;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,8 +37,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.script.ScriptException;
 
 /**
  * The Pig-latin script executor.
@@ -86,17 +82,6 @@ public class ScriptExecutor
    {
       this.scriptType = scriptType;
       this.execType = ExecType.LOCAL;
-   }
-   
-   /**
-    * Creates {@link ScriptExecutor} from {@link Task}.
-    */
-   public static ScriptExecutor valueOf(Task task) throws ExecException
-   {
-      ScriptExecutor executor = new ScriptExecutor(task.getScriptType());
-      executor.setParams(task.getContext());
-      
-      return executor;
    }
 
    /**

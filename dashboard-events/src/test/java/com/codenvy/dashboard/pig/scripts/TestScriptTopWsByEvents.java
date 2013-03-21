@@ -39,15 +39,20 @@ public class TestScriptTopWsByEvents extends BasePigTest
    public void testTopWsByUsers() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws1", "ses", "ws1", "user1").withDate("2010-10-01")
+      events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws1", "ses", "ws1", "user1", "website")
+         .withDate("2010-10-01")
          .build());
-      events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws1", "ses", "ws1", "user2").withDate("2010-10-01")
+      events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws1", "ses", "ws1", "user2", "website")
+         .withDate("2010-10-01")
          .build());
-      events.add(Event.Builder.createUserAddedToWsEvent("user3", "ws1", "ses", "ws1", "user3").withDate("2010-10-01")
+      events.add(Event.Builder.createUserAddedToWsEvent("user3", "ws1", "ses", "ws1", "user3", "website")
+         .withDate("2010-10-01")
          .build());
-      events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws2", "ses", "ws2", "user1").withDate("2010-10-01")
+      events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws2", "ses", "ws2", "user1", "website")
+         .withDate("2010-10-01")
          .build());
-      events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws2", "ses", "ws2", "user2").withDate("2010-10-01")
+      events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws2", "ses", "ws2", "user2", "website")
+         .withDate("2010-10-01")
          .build());
 
       File log = LogGenerator.generateLog(events);

@@ -30,25 +30,68 @@ import java.io.IOException;
 public enum ScriptType {
 
    /**
-    * Find total number occurrence of every event per day.
+    * Finds total number of 'tenant-created' events in given day.
     */
-   ALL_EVENTS {
+   EVENT_COUNT_TENANT_CREATED {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_PROPERTIES;
+         return ScriptTypeResult.DATE_FOR_LONG;
       }
    },
 
    /**
-    * Find total number occurrence of every value of additional parameter
-    * for given event per day.
+    * Finds total number of 'tenant-created' events in given day.
     */
-   ALL_PARAMS_TO_EVENT {
+   EVENT_COUNT_USER_CREATED {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.EVENT_PARAM_DATE_FOR_PROPERTIES;
+         return ScriptTypeResult.DATE_FOR_LONG;
+      }
+   },
+
+   /**
+    * Finds total number of 'user-removed' events in given day.
+    */
+   EVENT_COUNT_USER_REMOVED {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.DATE_FOR_LONG;
+      }
+   },
+
+   /**
+    * Finds total number of 'project-created' events in given day.
+    */
+   EVENT_COUNT_PROJECT_CREATED {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.DATE_FOR_LONG;
+      }
+   },
+
+   /**
+    * Finds total number of 'tenant-destroyed' events in given day.
+    */
+   EVENT_COUNT_TENANT_DESTROYED {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.DATE_FOR_LONG;
+      }
+   },
+
+   /**
+    * TODO
+    */
+   EVENT_COUNT_PROJECT_DESTROYED {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.DATE_FOR_LONG;
       }
    },
 
@@ -84,39 +127,37 @@ public enum ScriptType {
          return ScriptTypeResult.TIMEFRAME_FOR_LONG;
       }
    },
-
-   /**
-    * Find total number of unique occurrence event and its parameter per time frame.
-    */
-   DIST_PARAM_EVENT {
-      @Override
-      public ScriptTypeResult getResultType()
-      {
-         return ScriptTypeResult.EVENT_PARAM_TIMEFRAME_FOR_LONG;
-      }
-   },
    
    /**
-    * Find number unique pairs: workspace name + first parameter value for every second parameter value
-    * in time frame.
+    * TODO
     */
-   ALL_PARAMS_TO_DIST_2PARAMS_EVENT_WS {
+   DETAILS_USER_ADDED_TO_WS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_PROPERTIES;
+         return ScriptTypeResult.DATE_FOR_PROPERTIES;
       }
    },
 
    /**
-    * Finds amount of particular events distributed by parameter's value. 
-    * All events in question are distinct by the values of two additional parameters.
+    * TODO
     */
-   ALL_PARAMS_TO_DIST_2PARAMS_EVENT {
+   DETAILS_PROJECT_CREATED_TYPES {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.EVENT_2PARAM_TIMEFRAME_FOR_PROPERTIES;
+         return ScriptTypeResult.DATE_FOR_PROPERTIES;
+      }
+   },
+
+   /**
+    * TODO
+    */
+   DETAILS_USER_SSO_LOGGED_IN {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.TIMEFRAME_FOR_PROPERTIES;
       }
    },
 
@@ -140,7 +181,7 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_LONG;
+         return ScriptTypeResult.TIMEFRAME_INTERVAL_FOR_LONG;
       }
    },
 
@@ -151,7 +192,7 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_PROPERTIES;
+         return ScriptTypeResult.TIMEFRAME_TOP_FOR_PROPERTIES;
       }
    },
 
@@ -162,7 +203,7 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_PROPERTIES;
+         return ScriptTypeResult.TIMEFRAME_TOP_FOR_PROPERTIES;
       }
    },
 
@@ -174,7 +215,7 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_PROPERTIES;
+         return ScriptTypeResult.TIMEFRAME_TOP_FOR_PROPERTIES;
       }
    },
 
@@ -185,7 +226,7 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_PROPERTIES;
+         return ScriptTypeResult.TIMEFRAME_TOP_FOR_PROPERTIES;
       }
    };
 

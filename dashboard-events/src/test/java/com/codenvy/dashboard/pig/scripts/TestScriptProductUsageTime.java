@@ -85,7 +85,7 @@ public class TestScriptProductUsageTime extends BasePigTest
       Assert.assertEquals(iter.next(), Constants.TO_DATE);
       Assert.assertEquals(iter.next(), Constants.INACTIVE_INTERVAL);
 
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_CLAUSE_FOR_LONG);
+      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_INTERVAL_FOR_LONG);
       Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20121103");
       Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20121105");
       Assert.assertEquals(fileObject.getKeys().get(Constants.INACTIVE_INTERVAL), "600");

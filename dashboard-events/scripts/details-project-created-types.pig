@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------
--- Finds amount of every occurred event.
+-- Reveals detail information what project types were created.
 --
 -- Incoming parameters:
 -- log        - the list of resources to load
@@ -7,11 +7,9 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-f1 = loadResources('$log');
-fR = filterByDate(f1, '$date', '$date');
+%DEFAULT toDate '$date';
 
-a1 = extractParam(fR, 'EVENT', 'event');
-aR = countByField(a1, 'event');
+r1 = countParamInParamEvent('$log', '$date', '$toDate', 'project-created', 'TYPE');
+result = FOREACH r1 GENERATE '$date',  *;
 
-result = FOREACH aR GENERATE '$date', *;
 DUMP result;

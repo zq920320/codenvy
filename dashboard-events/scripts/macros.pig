@@ -66,7 +66,7 @@ DEFINE countByField(X, fieldParam) RETURNS Y {
 
 DEFINE countAll(X) RETURNS Y {
   x1 = GROUP $X ALL;
-  $Y = FOREACH x1 GENERATE COUNT($X);
+  $Y = FOREACH x1 GENERATE COUNT($X) AS count;
 };
 
 
@@ -105,4 +105,94 @@ DEFINE topWsByEvents(logParam, dateParam, toDateParam, topParam, eventsParam) RE
   $Y = FOREACH wR {
     GENERATE '$dateParam', '$toDateParam', '$topParam', TOP($topParam, 1, countByField);
   }
+};
+
+-----------------------------------------------------------------------------
+-- Finds the amount of occurred events in all workspaces.
+--
+-- Incoming parameters:
+-- logParam        - the list of resources to load
+-- dateParam       - beginning of the time frame
+-- toDateParam     - ending of the time frame
+-- eventsParam     - which events should be taken in account
+---------------------------------------------------------------------------
+DEFINE countEvents(logParam, dateParam, toDateParam, eventsParam) RETURNS Y {
+  w1 = loadResources('$logParam');
+  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
+  w3 = extractParam(w2, 'EVENT', 'event');
+  w4 = FILTER w3 BY INDEXOF('$eventsParam', event, 0) >= 0;
+  w5 = countAll(w4);
+
+  $Y = FOREACH w5 GENERATE '$dateParam', count;
+};
+
+---------------------------------------------------------------------------
+-- Finds amount of occurence of every parameter's value in
+-- unique sequences consisting of fixed event, workspace and two parameter's value.
+--
+-- Incoming parameters:
+-- logParam        - the list of resources to load
+-- dateParam       - beginning of the time frame
+-- toDateParam     - ending of the time frame
+-- eventParam      - which event should be taken in account
+-- paramNameParam  - the first parameter name
+-- secondParamNameParam - the second parameter name
+---------------------------------------------------------------------------
+DEFINE countSecondParamInDist2ParamsEventWs(logParam, dateParam, toDateParam, eventParam, paramNameParam, secondParamNameParam) RETURNS Y {
+  w1 = loadResources('$logParam');
+  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
+  w3 = filterByEvent(w2, '$eventParam');
+
+  w4 = extractWs(w3);
+  w5 = extractParam(w4, '$paramNameParam', 'paramValue');
+  w6 = extractParam(w5, '$secondParamNameParam', 'secondParamValue');
+  w7 = FOREACH w6 GENERATE ws, paramValue, secondParamValue;
+  w8 = DISTINCT w7;
+
+  $Y = countByField(w8, 'secondParamValue');
+};
+
+---------------------------------------------------------------------------
+-- Finds amount of occurence of every parameter's value in
+-- unique sequences consisting of fixed event and two parameter's value.
+--
+-- Incoming parameters:
+-- logParam        - the list of resources to load
+-- dateParam       - beginning of the time frame
+-- toDateParam     - ending of the time frame
+-- eventParam      - which event should be taken in account
+-- paramNameParam  - the first parameter name
+-- secondParamNameParam - the second parameter name
+---------------------------------------------------------------------------
+DEFINE countSecondParamInDist2ParamsEvent(logParam, dateParam, toDateParam, eventParam, paramNameParam, secondParamNameParam) RETURNS Y {
+  w1 = loadResources('$logParam');
+  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
+  w3 = filterByEvent(w2, '$eventParam');
+
+  w5 = extractParam(w3, '$paramNameParam', 'paramValue');
+  w6 = extractParam(w5, '$secondParamNameParam', 'secondParamValue');
+  w7 = FOREACH w6 GENERATE paramValue, secondParamValue;
+  w8 = DISTINCT w7;
+
+  $Y = countByField(w8, 'secondParamValue');
+};
+
+
+---------------------------------------------------------------------------
+-- Finds amount of occurence of every parameter's value in
+-- sequences consisting of fixed event and parameter's value.
+--
+-- Incoming parameters:
+-- logParam        - the list of resources to load
+-- dateParam       - beginning of the time frame
+-- toDateParam     - ending of the time frame
+-- eventParam      - which event should be taken in account
+-- paramNameParam  - the parameter name
+---------------------------------------------------------------------------
+DEFINE countParamInParamEvent(logParam, dateParam, toDateParam, eventParam, paramNameParam) RETURNS Y {
+  w1 = loadResources('$logParam');
+  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
+  w3 = filterByEvent(w2, '$eventParam');
+  w4 = extractParam(w3, '$paramNameParam', 'paramValue');
+  $Y = countByField(w4, 'paramValue');
 };
