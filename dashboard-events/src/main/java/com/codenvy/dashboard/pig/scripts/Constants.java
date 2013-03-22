@@ -29,43 +29,14 @@ public class Constants
    public static final String FINAL_RELATION = "result";
    
    /**
-    * The parameter for Pig script. Contains the value of event identifier.
+    * Beginning of the time frame. Has format YYYYMMDD.
     */
-   public static final String EVENT = "event";
+   public static final String FROM_DATE = "fromDate";
 
    /**
-    * The parameter for Pig script.
-    * Contains the name of some additional identifier.
-    */
-   public static final String PARAM_NAME = "paramName";
-   
-   /**
-    * The parameter for Pig script.
-    * Contains the name of some additional identifier.
-    */
-   public static final String SECOND_PARAM_NAME = "secondParamName";
-   
-   /**
-    * Parameter name in Pig script. Contains the date to check.
-    * For instance: 20101201. What means the first of December in 2010 year.
-    * Als is used as beginning of the time frame.
-    */
-   public static final String DATE = "date";
-
-   /**
-    * Time-frame ending date. Has format YYYYMMDD.
+    * Ending of the time frame. Has format YYYYMMDD.
     */
    public static final String TO_DATE = "toDate";
-
-   /**
-    * Parameter for 'top workspaces' scripts.  
-    */
-   public static final String TOP = "top";
-
-   /**
-    * Parameter for {@link ScriptType#PRODUCT_USAGE_TIME}.
-    */
-   protected static final String INACTIVE_INTERVAL = "inactiveInterval";
 
    /**
     * Parameter name in Pig script contains the resources are needed to be loaded.
@@ -73,6 +44,16 @@ public class Constants
     * comma separated resources. Wildcard characters are supported.
     */
    public static final String LOG = "log";
+
+   /**
+    * Not mandatory parameter for {@link ScriptType#PRODUCT_USAGE_TIME}.
+    */
+   protected static final String INACTIVE_INTERVAL = "inactiveInterval";
+
+   /**
+    * Not mandatory parameter for 'top workspaces by event' scripts.
+    */
+   protected static final String TOP = "top";
 
 
    /**

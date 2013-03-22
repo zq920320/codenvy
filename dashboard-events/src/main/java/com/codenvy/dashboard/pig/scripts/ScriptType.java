@@ -29,204 +29,163 @@ import java.io.IOException;
  */
 public enum ScriptType {
 
-   /**
-    * Finds total number of 'tenant-created' events in given day.
-    */
    EVENT_COUNT_TENANT_CREATED {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-    * Finds total number of 'tenant-created' events in given day.
-    */
    EVENT_COUNT_USER_CREATED {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-    * Finds total number of 'user-removed' events in given day.
-    */
    EVENT_COUNT_USER_REMOVED {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-    * Finds total number of 'project-created' events in given day.
-    */
    EVENT_COUNT_PROJECT_CREATED {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-    * Finds total number of 'tenant-destroyed' events in given day.
-    */
+   EVENT_COUNT_DIST_PROJECT_BUILD {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.LONG;
+      }
+   },
+
    EVENT_COUNT_TENANT_DESTROYED {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-    * TODO
-    */
    EVENT_COUNT_PROJECT_DESTROYED {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-    * Find total number of active workspaces per time frame.
-    */
    ACTIVE_WORKSPACES {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-    * Find total number of active projects per time frame.
-    */
    ACTIVE_PROJECTS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-    * Find total number of active users per time frame.
-    */
    ACTIVE_USERS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
    
-   /**
-    * TODO
-    */
    DETAILS_USER_ADDED_TO_WS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_PROPERTIES;
+         return ScriptTypeResult.PROPERTIES;
       }
    },
 
-   /**
-    * TODO
-    */
    DETAILS_PROJECT_CREATED_TYPES {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.DATE_FOR_PROPERTIES;
+         return ScriptTypeResult.PROPERTIES;
       }
    },
 
-   /**
-    * TODO
-    */
+   DETAILS_APPLICATION_CREATED_PAAS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.PROPERTIES;
+      }
+   },
+
    DETAILS_USER_SSO_LOGGED_IN {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_FOR_PROPERTIES;
+         return ScriptTypeResult.PROPERTIES;
       }
    },
 
-   /**
-    * Find users who was created in given day but did not created project in
-    * the follow time frame.
-    */
    USERS_WITHOUT_PROJECTS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_FOR_LIST;
+         return ScriptTypeResult.LIST;
       }
    },
 
-   /**
-    * Finds total working time for all users in workspace.
-    * the follow time frame.
-    */
    PRODUCT_USAGE_TIME {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_INTERVAL_FOR_LONG;
+         return ScriptTypeResult.LONG;
       }
    },
 
-   /**
-   * Find top workspaces by amount of users.
-   */
    TOP_WS_BY_USERS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_TOP_FOR_PROPERTIES;
+         return ScriptTypeResult.PROPERTIES;
       }
    },
 
-   /**
-   * Find top workspaces by amount of invitations sent.
-   */
    TOP_WS_BY_INVITATIONS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_TOP_FOR_PROPERTIES;
+         return ScriptTypeResult.PROPERTIES;
       }
    },
 
-   /**
-   * Find top workspaces by amount of created projects.
-   * If project was removed, then it will not be calculated.
-   */
    TOP_WS_BY_PROJECTS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_TOP_FOR_PROPERTIES;
+         return ScriptTypeResult.PROPERTIES;
       }
    },
 
-   /**
-   * Find top workspaces by amount of compile and run action.
-   */
    TOP_WS_BY_BUILDS {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.TIMEFRAME_TOP_FOR_PROPERTIES;
+         return ScriptTypeResult.PROPERTIES;
       }
    };
 

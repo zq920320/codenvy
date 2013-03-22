@@ -1,13 +1,9 @@
 ---------------------------------------------------------------------------
--- Finds total number of 'user-removed' events in given day.
---
--- Incoming parameters:
--- log        - the list of resources to load
--- date       - the time frame
+-- Finds total number of 'user-removed' events.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-%default toDate '$date';
+r1 = countEvents('$log', '$fromDate', '$toDate', 'user-removed');
+result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
 
-result = countEvents('$log', '$date', '$toDate', 'user-removed');
 DUMP result;

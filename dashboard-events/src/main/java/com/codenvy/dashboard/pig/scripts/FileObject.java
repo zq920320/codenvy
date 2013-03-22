@@ -214,13 +214,9 @@ public class FileObject
     */
    private String toRelativePath(Entry<String, String> entry)
    {
-      if (entry.getKey().equals(Constants.DATE))
+      if (entry.getKey().equals(Constants.FROM_DATE))
       {
          return translateDateToRelativePath(entry.getValue());
-      }
-      else if (entry.getKey().equals(Constants.PARAM_NAME))
-      {
-         return entry.getValue().toLowerCase();
       }
 
       return entry.getValue().toLowerCase().replace('-', File.separatorChar);
@@ -283,27 +279,6 @@ public class FileObject
       {
          reader.close();
       }
-   }
-
-   /**
-    * Prepare keys for {@link FileObject#keys}.
-    */
-   private LinkedHashMap<String, String> makeKeys(String[] keyFields, Map<String, String> context) throws IOException
-   {
-      LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
-
-      for (String key : keyFields)
-      {
-         String value = context.get(key);
-         if (value == null)
-         {
-            throw new IOException("Parameter " + key + "does not exist in context");
-         }
-
-         keys.put(key, value);
-      }
-
-      return keys;
    }
 
    /**

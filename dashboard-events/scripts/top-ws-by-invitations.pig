@@ -1,13 +1,10 @@
 -----------------------------------------------------------------------------
--- Find top workspaces by amount of invitations sent
---
--- Incoming parameters:
--- log        - the list of resources to load
--- date       - beginning of the time frame
--- toDate     - ending of the time frame
--- top        - how many workspaces should be returned
+-- Find top workspaces by amount of invitations sent.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
+%DEFAULT top '10';
 
-result = topWsByEvents('$log', '$date', '$toDate', '$top', 'user-invite');
+r1 = topWsByEvents('$log', '$fromDate', '$toDate', '$top', 'user-invite');
+result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
+
 DUMP result;

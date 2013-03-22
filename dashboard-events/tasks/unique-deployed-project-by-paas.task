@@ -1,6 +1,0 @@
-script-type=all_params_to_dist_2params_event_ws
-time-frame=7
-event=application-created
-paramName=PROJECT
-secondParamName=PAAS
-description=Finds number of used paas for projects deployment. If the same project was deployed to the same paas several times, it will be calculated only once.

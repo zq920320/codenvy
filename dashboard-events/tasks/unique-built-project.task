@@ -1,5 +1,0 @@
-script-type=dist_param_event
-time-frame=7
-event=project-built
-paramName=PROJECT
-description=Finds number of unique projects that were built by users.

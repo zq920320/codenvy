@@ -3,28 +3,20 @@
 -- If the user becomes inactive for 'inactiveInterval' amount of time, 
 -- the 'coding session' is considered finished and a new coding session 
 -- is started at the next interaction.
--- 
--- Incoming parameters:
--- log        - the list of resources to load
--- date       - beginning of the time frame
--- toDate     - ending of the time frame
--- inactiveInterval - the inactive interval for user's actions
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
+%DEFAULT inactiveInterval '600';
 
 -------------------------------------------------------
 -- Let's keep only needed events in given time frame
 -------------------------------------------------------
 f1 = loadResources('$log');
-f2 = filterByDate(f1, '$date', '$toDate');
-f3 = skipEvent(f2, 'user-added-to-ws');
-f4 = skipEvent(f3, 'user-created');
-fR = skipEvent(f4, 'user-removed');
+f2 = filterByDate(f1, '$fromDate', '$toDate');
+fR = removeEvent(f2, 'user-added-to-ws,user-created,user-removed');
 
 a1 = extractUser(fR);
-a2 = extractParam(a1, 'EVENT', 'event');
-aR = FOREACH a2 GENERATE date, user, time, event;
-bR = FOREACH a2 GENERATE date, user, time, event;
+aR = FOREACH a1 GENERATE date, user, time, event;
+bR = FOREACH a1 GENERATE date, user, time, event;
 
 -------------------------------------------------------
 -- Finds for every event the closest next one 
@@ -44,7 +36,7 @@ gR = FOREACH g1 GENERATE MIN(jR.interval) AS interval;
 -- Calculates to total time in minutes
 -------------------------------------------------------
 r1 = GROUP gR ALL;
-result = FOREACH r1 GENERATE '$date', '$toDate', '$inactiveInterval', SUM(gR.interval) / 60;
+result = FOREACH r1 GENERATE '$fromDate', '$toDate', SUM(gR.interval) / 60;
 
 DUMP result;
 

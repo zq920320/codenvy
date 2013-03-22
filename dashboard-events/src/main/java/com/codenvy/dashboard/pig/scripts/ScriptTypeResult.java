@@ -27,22 +27,11 @@ import java.util.Map;
 
 /**
  * Enumeration of all Pig-latin script's results. 
- * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum ScriptTypeResult {
 
-   /**
-    * Resulted tuple should meet the requirement:<br> 
-    * (int: date, bag: {(chararray: key, long: value)}).
-    */
-   DATE_FOR_PROPERTIES {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.DATE};
-      }
-
+   PROPERTIES {
       @Override
       public ValueTranslator getValueTranslator()
       {
@@ -50,29 +39,13 @@ public enum ScriptTypeResult {
       }
 
       @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      public Object getEmptyObject()
       {
-         Tuple tuple = TupleFactory.getInstance().newTuple(2);
-         tuple.set(0, executionContext.get(Constants.DATE));
-         tuple.set(1, new DefaultDataBag());
-
-         return tuple;
+         return new DefaultDataBag();
       }
    },
 
-   /**
-    * Resulted tuple should meet the requirement:<br> 
-    * (int: date, bag: {(chararray: key, long: value)}).
-    * 
-    * TODO
-    */
-   DATE_FOR_LONG {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.DATE};
-      }
-
+   LONG {
       @Override
       public ValueTranslator getValueTranslator()
       {
@@ -80,117 +53,13 @@ public enum ScriptTypeResult {
       }
 
       @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      public Object getEmptyObject()
       {
-         Tuple tuple = TupleFactory.getInstance().newTuple(2);
-         tuple.set(0, executionContext.get(Constants.DATE));
-         tuple.set(1, Long.valueOf(0));
-
-         return tuple;
+         return Long.valueOf(0);
       }
    },
 
-   /**
-    * Resulted tuple should meet the requirement:<br> 
-    * (chararray: event, chararray: paramName, int: date, bag: {(chararray: key, long: value)}).
-    */
-   EVENT_PARAM_DATE_FOR_PROPERTIES {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.EVENT, Constants.PARAM_NAME, Constants.DATE};
-      }
-
-      @Override
-      public ValueTranslator getValueTranslator()
-      {
-         return new Bag2PropertiesTranslator();
-      }
-
-      @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
-      {
-         Tuple tuple = TupleFactory.getInstance().newTuple(4);
-         tuple.set(0, executionContext.get(Constants.EVENT));
-         tuple.set(1, executionContext.get(Constants.PARAM_NAME));
-         tuple.set(2, executionContext.get(Constants.DATE));
-         tuple.set(3, new DefaultDataBag());
-
-         return tuple;
-      }
-   },
-   
-   /**
-    * TODO
-    * 
-    * Resulted tuple should meet the requirement:<br> 
-    * (chararray: event, chararray: firstParamName, chararray: firstParamName, int: date, int: toDate, bag: {(chararray: key, long: value)}).
-    */
-   TIMEFRAME_FOR_PROPERTIES {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.DATE, Constants.TO_DATE};
-      }
-
-      @Override
-      public ValueTranslator getValueTranslator()
-      {
-         return new Bag2PropertiesTranslator();
-      }
-
-      @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
-      {
-         Tuple tuple = TupleFactory.getInstance().newTuple(3);
-         tuple.set(0, executionContext.get(Constants.DATE));
-         tuple.set(1, executionContext.get(Constants.TO_DATE));
-         tuple.set(2, new DefaultDataBag());
-
-         return tuple;
-      }
-   },
-
-   /**
-    * Resulted tuple should meet the requirement:<br> 
-    * (int: date, int: toDate, long: value).
-    */
-   TIMEFRAME_FOR_LONG {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.DATE, Constants.TO_DATE};
-      }
-
-      @Override
-      public ValueTranslator getValueTranslator()
-      {
-         return new Object2LongTranslator();
-      }
-
-      @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
-      {
-         Tuple tuple = TupleFactory.getInstance().newTuple(3);
-         tuple.set(0, executionContext.get(Constants.DATE));
-         tuple.set(1, executionContext.get(Constants.TO_DATE));
-         tuple.set(2, Long.valueOf(0));
-
-         return tuple;
-      }
-   },
-
-   /**
-    * Resulted tuple should meet the requirement:<br> 
-    * (int: date, int: toDate, bag: {(chararray: value)}).
-    */
-   TIMEFRAME_FOR_LIST {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.DATE, Constants.TO_DATE};
-      }
-
+   LIST {
       @Override
       public ValueTranslator getValueTranslator()
       {
@@ -198,112 +67,19 @@ public enum ScriptTypeResult {
       }
 
       @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
+      public Object getEmptyObject()
       {
-         Tuple tuple = TupleFactory.getInstance().newTuple(3);
-         tuple.set(0, executionContext.get(Constants.DATE));
-         tuple.set(1, executionContext.get(Constants.TO_DATE));
-         tuple.set(2, new DefaultDataBag());
-
-         return tuple;
-      }
-   },
-
-   /**
-    * Incoming tuple should meet the requirement:<br> 
-    * (chararray: event, chararray: paramName, int: date, int: toDate, long: value).
-    */
-   EVENT_PARAM_TIMEFRAME_FOR_LONG {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.EVENT, Constants.PARAM_NAME, Constants.DATE, Constants.TO_DATE};
-      }
-
-      @Override
-      public ValueTranslator getValueTranslator()
-      {
-         return new Object2LongTranslator();
-      }
-
-      @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
-      {
-         Tuple tuple = TupleFactory.getInstance().newTuple(5);
-         tuple.set(0, executionContext.get(Constants.EVENT));
-         tuple.set(1, executionContext.get(Constants.PARAM_NAME));
-         tuple.set(2, executionContext.get(Constants.DATE));
-         tuple.set(3, executionContext.get(Constants.TO_DATE));
-         tuple.set(4, Long.valueOf(0));
-
-         return tuple;
-      }
-   },
-
-   /**
-    * Incoming tuple should meet the requirement:<br> 
-    * (int: date, int: toDate, int: inactiveInterval, long: value).
-    */
-   TIMEFRAME_INTERVAL_FOR_LONG {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.DATE, Constants.TO_DATE, Constants.INACTIVE_INTERVAL};
-      }
-
-      @Override
-      public ValueTranslator getValueTranslator()
-      {
-         return new Object2LongTranslator();
-      }
-
-      @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
-      {
-         Tuple tuple = TupleFactory.getInstance().newTuple(4);
-         tuple.set(0, executionContext.get(Constants.DATE));
-         tuple.set(1, executionContext.get(Constants.TO_DATE));
-         tuple.set(2, executionContext.get(Constants.INACTIVE_INTERVAL));
-         tuple.set(3, Long.valueOf(0));
-
-         return tuple;
-      }
-   },
-   
-   /**
-    * Incoming tuple should meet the requirement:<br> 
-    * (int: date, int: toDate, int: clause, long: value).
-    */
-   TIMEFRAME_TOP_FOR_PROPERTIES {
-      @Override
-      public String[] getKeyFields()
-      {
-         return new String[]{Constants.DATE, Constants.TO_DATE, Constants.TOP};
-      }
-
-      @Override
-      public ValueTranslator getValueTranslator()
-      {
-         return new Bag2PropertiesTranslator();
-      }
-
-      @Override
-      public Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException
-      {
-         Tuple tuple = TupleFactory.getInstance().newTuple(4);
-         tuple.set(0, executionContext.get(Constants.DATE));
-         tuple.set(1, executionContext.get(Constants.TO_DATE));
-         tuple.set(2, executionContext.get(Constants.TOP));
-         tuple.set(3, Long.valueOf(0));
-
-         return tuple;
+         return new DefaultDataBag();
       }
    };
-
+   
    /**
     * @return the list of actual key field names.
     */
-   public abstract String[] getKeyFields();
+   public String[] getKeyFields()
+   {
+      return new String[]{Constants.FROM_DATE, Constants.TO_DATE};
+   }
 
    /**
     * @return corresponding {@link ValueTranslator} instance
@@ -311,7 +87,20 @@ public enum ScriptTypeResult {
    public abstract ValueTranslator getValueTranslator();
 
    /**
+    * @return particular object for default value
+    */
+   public abstract Object getEmptyObject();
+
+   /**
     * @return the default value
     */
-   public abstract Tuple getDefaultValue(Map<String, String> executionContext) throws ExecException;
+   public Tuple getEmptyResult(Map<String, String> executionContext) throws ExecException
+   {
+      Tuple tuple = TupleFactory.getInstance().newTuple(3);
+      tuple.set(0, executionContext.get(Constants.FROM_DATE));
+      tuple.set(1, executionContext.get(Constants.TO_DATE));
+      tuple.set(2, getEmptyObject());
+
+      return tuple;
+   }
 }

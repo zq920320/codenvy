@@ -21,14 +21,11 @@ package com.codenvy.dashboard.pig.scripts;
 import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -41,53 +38,19 @@ public class TestScriptActiveUsers extends BasePigTest
    {
       List<Event> events = new ArrayList<Event>();
       events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-02").build());
-      events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-02").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
+      events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-01").build());
 
       // events should not be taken in account
-      events.add(Event.Builder.createUserSSOLoggedOutEvent("user3").withDate("2010-10-05").build());
+      events.add(Event.Builder.createUserSSOLoggedOutEvent("user3").withDate("2010-10-01").build());
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ACTIVE_USERS, log, new String[][]{{Constants.DATE, "20101001"},
-         {Constants.TO_DATE, "20101005"}});
+      executePigScript(ScriptType.ACTIVE_USERS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.ACTIVE_USERS.createFileObject(BASE_DIR, 20101001, 20101005);
+      FileObject fileObject = ScriptType.ACTIVE_USERS.createFileObject(BASE_DIR, 20101001, 20101001);
 
-      Long value = (Long)fileObject.getValue();
-      Assert.assertEquals(value, Long.valueOf(2));
-   }
-   
-   @Test
-   public void fileObjectShouldReturnCorrectValue() throws Exception
-   {
-      Tuple tuple = TupleFactory.getInstance().newTuple();
-      tuple.append(20100203);
-      tuple.append(20100204);
-      tuple.append(1);
-
-      FileObject fileObject = ScriptType.ACTIVE_USERS.createFileObject(BASE_DIR, tuple);
-
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.TO_DATE));
-
-      Iterator<String> iter = fileObject.getKeys().keySet().iterator();
-      Assert.assertEquals(iter.next(), Constants.DATE);
-      Assert.assertEquals(iter.next(), Constants.TO_DATE);
-
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_FOR_LONG);
-      Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20100203");
-      Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20100204");
-      Assert.assertEquals(fileObject.getValue(), 1L);
-
-      File file =
-         new File(BASE_DIR + "/" + ScriptType.ACTIVE_USERS.toString().toLowerCase() + "/2010/02/03/20100204/value");
-      file.delete();
-
-      Assert.assertFalse(file.exists());
-
-      fileObject.store();
-
-      Assert.assertTrue(file.exists());
+      Assert.assertEquals(fileObject.getValue(), Long.valueOf(2));
    }
 }

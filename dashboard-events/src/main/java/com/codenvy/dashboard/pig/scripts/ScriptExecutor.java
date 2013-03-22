@@ -123,7 +123,7 @@ public class ScriptExecutor
 
       if (tuple == null)
       {
-         tuple = scriptType.getResultType().getDefaultValue(context);
+         tuple = scriptType.getResultType().getEmptyResult(context);
       }
 
       FileObject fileObject = scriptType.createFileObject(storeLocation, tuple);

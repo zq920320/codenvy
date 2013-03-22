@@ -21,14 +21,11 @@ package com.codenvy.dashboard.pig.scripts;
 import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -58,48 +55,10 @@ public class TestScriptProductUsageTime extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, new String[][]{{Constants.DATE, "20101001"},
-         {Constants.TO_DATE, "20101003"}, {Constants.INACTIVE_INTERVAL, "600"}});
+      executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101003"}});
 
-      FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, 20101001, 20101003, 600);
+      FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, 20101001, 20101003);
       Assert.assertEquals(fileObject.getValue(), 11L);
-   }
-
-   @Test
-   public void fileObjectShouldReturnCorrectProperties() throws Exception
-   {
-      Tuple tuple = TupleFactory.getInstance().newTuple();
-      tuple.append(20121103);
-      tuple.append(20121105);
-      tuple.append(600);
-      tuple.append(300L);
-
-      FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, tuple);
-
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.TO_DATE));
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.INACTIVE_INTERVAL));
-
-      Iterator<String> iter = fileObject.getKeys().keySet().iterator();
-      Assert.assertEquals(iter.next(), Constants.DATE);
-      Assert.assertEquals(iter.next(), Constants.TO_DATE);
-      Assert.assertEquals(iter.next(), Constants.INACTIVE_INTERVAL);
-
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_INTERVAL_FOR_LONG);
-      Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20121103");
-      Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20121105");
-      Assert.assertEquals(fileObject.getKeys().get(Constants.INACTIVE_INTERVAL), "600");
-      Assert.assertEquals(fileObject.getValue(), 300L);
-
-      File file =
-         new File(BASE_DIR + "/" + ScriptType.PRODUCT_USAGE_TIME.toString().toLowerCase()
-            + "/2012/11/03/20121105/600/value");
-      file.delete();
-
-      Assert.assertFalse(file.exists());
-
-      fileObject.store();
-
-      Assert.assertTrue(file.exists());
    }
 }

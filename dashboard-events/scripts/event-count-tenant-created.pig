@@ -1,13 +1,9 @@
 ---------------------------------------------------------------------------
--- Finds total number of 'tenant-created' events in given day.
---
--- Incoming parameters:
--- log        - the list of resources to load
--- date       - the time frame
+-- Finds total number of 'tenant-created' events.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-%default toDate '$date';
+r1 = countEvents('$log', '$fromDate', '$toDate', 'tenant-created');
+result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
 
-result = countEvents('$log', '$date', '$toDate', 'tenant-created');
 DUMP result;

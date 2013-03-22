@@ -42,9 +42,11 @@ public class TestScriptEventCount extends BasePigTest
       events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-02").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_COUNT_TENANT_CREATED, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.EVENT_COUNT_TENANT_CREATED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_TENANT_CREATED.createFileObject(BASE_DIR, 20101001);
+
+      FileObject fileObject = ScriptType.EVENT_COUNT_TENANT_CREATED.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 2L);
    }
@@ -57,9 +59,10 @@ public class TestScriptEventCount extends BasePigTest
       events.add(Event.Builder.createTenantDestroyedEvent("ws2").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_COUNT_TENANT_DESTROYED, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.EVENT_COUNT_TENANT_DESTROYED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_TENANT_DESTROYED.createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.EVENT_COUNT_TENANT_DESTROYED.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 2L);
    }
@@ -73,9 +76,10 @@ public class TestScriptEventCount extends BasePigTest
       events.add(Event.Builder.createUserCreatedEvent("user3", "user@user3").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_COUNT_USER_CREATED, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.EVENT_COUNT_USER_CREATED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_USER_CREATED.createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.EVENT_COUNT_USER_CREATED.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 3L);
    }
@@ -87,9 +91,10 @@ public class TestScriptEventCount extends BasePigTest
       events.add(Event.Builder.createUserRemovedEvent("user1").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_COUNT_USER_REMOVED, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.EVENT_COUNT_USER_REMOVED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_USER_REMOVED.createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.EVENT_COUNT_USER_REMOVED.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 1L);
    }
@@ -102,9 +107,10 @@ public class TestScriptEventCount extends BasePigTest
          .build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_COUNT_PROJECT_CREATED, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.EVENT_COUNT_PROJECT_CREATED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_CREATED.createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_CREATED.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 1L);
    }
@@ -117,10 +123,31 @@ public class TestScriptEventCount extends BasePigTest
          .build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_DESTROYED.createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_DESTROYED.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 1L);
+   }
+
+   @Test
+   public void testEventCountProjectBuild() throws Exception
+   {
+      List<Event> events = new ArrayList<Event>();
+      events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "ses", "project1", "type")
+         .withDate("2010-10-01").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "ses", "project2", "type", "paas")
+         .withDate("2010-10-01").build());
+      events.add(Event.Builder.createProjectDeployedEvent("user1", "ws1", "ses", "project3", "type", "paas")
+         .withDate("2010-10-01").build());
+      File log = LogGenerator.generateLog(events);
+
+      executePigScript(ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
+
+      FileObject fileObject = ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD.createFileObject(BASE_DIR, 20101001, 20101001);
+
+      Assert.assertEquals(fileObject.getValue(), 3L);
    }
 }

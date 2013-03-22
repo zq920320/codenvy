@@ -21,14 +21,11 @@ package com.codenvy.dashboard.pig.scripts;
 import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -40,11 +37,15 @@ public class TestActiveProjects extends BasePigTest
    public void testEventFound() throws Exception
    {
       List<Event> events = new ArrayList<Event>();
+
+      // 2 active projects
       events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
          .build());
       events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project2").withDate("2010-10-02")
          .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
+
+      // project already mentioned
+      events.add(Event.Builder.createProjectCreatedEvent("user3", "ws2", "session", "project1").withDate("2010-10-02")
          .build());
 
       // events should be ignored
@@ -53,64 +54,11 @@ public class TestActiveProjects extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ACTIVE_PROJECTS, log, new String[][]{{Constants.DATE, "20101001"},
-         {Constants.TO_DATE, "20101005"}});
+      executePigScript(ScriptType.ACTIVE_PROJECTS, log, new String[][]{{Constants.FROM_DATE, "20101002"},
+         {Constants.TO_DATE, "20101002"}});
 
-      FileObject fileObject = ScriptType.ACTIVE_PROJECTS.createFileObject(BASE_DIR, 20101001, 20101005);
+      FileObject fileObject = ScriptType.ACTIVE_PROJECTS.createFileObject(BASE_DIR, 20101002, 20101002);
 
-      Long value = (Long)fileObject.getValue();
-      Assert.assertEquals(value, Long.valueOf(2));
-   }
-
-
-   @Test
-   public void testEventNotFoundStoredDefaultValue() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
-         .build());
-
-      File log = LogGenerator.generateLog(events);
-
-      executePigScript(ScriptType.ACTIVE_PROJECTS, log, new String[][]{{Constants.DATE, "20101004"},
-         {Constants.TO_DATE, "20101005"}});
-
-      FileObject fileObject = ScriptType.ACTIVE_PROJECTS.createFileObject(BASE_DIR, 20101004, 20101005);
-
-      Long value = (Long)fileObject.getValue();
-      Assert.assertEquals(value, Long.valueOf(0));
-   }
-
-   @Test
-   public void fileObjectShouldReturnCorrectValue() throws Exception
-   {
-      Tuple tuple = TupleFactory.getInstance().newTuple();
-      tuple.append(20100203);
-      tuple.append(20100204);
-      tuple.append(1);
-
-      FileObject fileObject = ScriptType.ACTIVE_PROJECTS.createFileObject(BASE_DIR, tuple);
-
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.TO_DATE));
-
-      Iterator<String> iter = fileObject.getKeys().keySet().iterator();
-      Assert.assertEquals(iter.next(), Constants.DATE);
-      Assert.assertEquals(iter.next(), Constants.TO_DATE);
-
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_FOR_LONG);
-      Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20100203");
-      Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20100204");
-      Assert.assertEquals(fileObject.getValue(), 1L);
-
-      File file =
-         new File(BASE_DIR + "/" + ScriptType.ACTIVE_PROJECTS.toString().toLowerCase() + "/2010/02/03/20100204/value");
-      file.delete();
-
-      Assert.assertFalse(file.exists());
-
-      fileObject.store();
-
-      Assert.assertTrue(file.exists());
+      Assert.assertEquals(fileObject.getValue(), 2L);
    }
 }

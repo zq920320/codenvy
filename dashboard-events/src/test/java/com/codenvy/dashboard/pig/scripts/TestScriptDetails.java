@@ -48,9 +48,10 @@ public class TestScriptDetails extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.DETAILS_USER_ADDED_TO_WS, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.DETAILS_USER_ADDED_TO_WS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.DETAILS_USER_ADDED_TO_WS.createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.DETAILS_USER_ADDED_TO_WS.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("website"), "2");
@@ -68,7 +69,7 @@ public class TestScriptDetails extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, new String[][]{{Constants.DATE, "20101001"},
+      executePigScript(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, new String[][]{{Constants.FROM_DATE, "20101001"},
          {Constants.TO_DATE, "20101001"}});
 
       FileObject fileObject = ScriptType.DETAILS_USER_SSO_LOGGED_IN.createFileObject(BASE_DIR, 20101001, 20101001);
@@ -94,13 +95,41 @@ public class TestScriptDetails extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.DETAILS_PROJECT_CREATED_TYPES, log, new String[][]{{Constants.DATE, "20101001"}});
+      executePigScript(ScriptType.DETAILS_PROJECT_CREATED_TYPES, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.DETAILS_PROJECT_CREATED_TYPES.createFileObject(BASE_DIR, 20101001);
+      FileObject fileObject = ScriptType.DETAILS_PROJECT_CREATED_TYPES.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("type1"), "2");
       Assert.assertEquals(props.getProperty("type2"), "1");
       Assert.assertEquals(props.getProperty("type3"), "1");
+   }
+
+   @Test
+   public void testScriptDetailsApplicationCreatedPaas() throws Exception
+   {
+      List<Event> events = new ArrayList<Event>();
+      events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project1", "type", "paas1")
+         .withDate("2010-10-01").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project2", "type", "paas3")
+         .withDate("2010-10-01").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project3", "type", "paas3")
+         .withDate("2010-10-01").build());
+      events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project4", "type", "paas3")
+         .withDate("2010-10-01").build());
+
+
+      File log = LogGenerator.generateLog(events);
+
+      executePigScript(ScriptType.DETAILS_APPLICATION_CREATED_PAAS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
+
+      FileObject fileObject =
+         ScriptType.DETAILS_APPLICATION_CREATED_PAAS.createFileObject(BASE_DIR, 20101001, 20101001);
+
+      Properties props = (Properties)fileObject.getValue();
+      Assert.assertEquals(props.getProperty("paas1"), "1");
+      Assert.assertEquals(props.getProperty("paas3"), "3");
    }
 }

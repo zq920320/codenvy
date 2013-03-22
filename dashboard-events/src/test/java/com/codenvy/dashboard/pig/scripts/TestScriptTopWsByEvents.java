@@ -57,15 +57,15 @@ public class TestScriptTopWsByEvents extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.TOP_WS_BY_USERS, log, new String[][]{{Constants.DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "1"}});
+      executePigScript(ScriptType.TOP_WS_BY_USERS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_USERS.createFileObject(BASE_DIR, 20101001, 20101001, 1);
+      FileObject fileObject = ScriptType.TOP_WS_BY_USERS.createFileObject(BASE_DIR, 20101001, 20101001);
 
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("ws1"), "3");
-      Assert.assertEquals(props.size(), 1);
+      Assert.assertEquals(props.getProperty("ws2"), "2");
    }
 
    @Test
@@ -80,15 +80,15 @@ public class TestScriptTopWsByEvents extends BasePigTest
       events.add(Event.Builder.createUserInviteEvent("user1", "ws3", "ses", "email1").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.TOP_WS_BY_INVITATIONS, log, new String[][]{{Constants.DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "2"}});
+      executePigScript(ScriptType.TOP_WS_BY_INVITATIONS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_INVITATIONS.createFileObject(BASE_DIR, 20101001, 20101001, 2);
+      FileObject fileObject = ScriptType.TOP_WS_BY_INVITATIONS.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("ws1"), "3");
       Assert.assertEquals(props.getProperty("ws2"), "2");
-      Assert.assertEquals(props.size(), 2);
+      Assert.assertEquals(props.getProperty("ws3"), "1");
    }
 
    @Test
@@ -115,15 +115,15 @@ public class TestScriptTopWsByEvents extends BasePigTest
          .withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.TOP_WS_BY_BUILDS, log, new String[][]{{Constants.DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "2"}});
+      executePigScript(ScriptType.TOP_WS_BY_BUILDS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_BUILDS.createFileObject(BASE_DIR, 20101001, 20101001, 2);
+      FileObject fileObject = ScriptType.TOP_WS_BY_BUILDS.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("ws1"), "3");
       Assert.assertEquals(props.getProperty("ws2"), "2");
-      Assert.assertEquals(props.size(), 2);
+      Assert.assertEquals(props.getProperty("ws3"), "1");
    }
 
    @Test
@@ -153,14 +153,14 @@ public class TestScriptTopWsByEvents extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.TOP_WS_BY_PROJECTS, log, new String[][]{{Constants.DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "2"}});
+      executePigScript(ScriptType.TOP_WS_BY_PROJECTS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_PROJECTS.createFileObject(BASE_DIR, 20101001, 20101001, 2);
+      FileObject fileObject = ScriptType.TOP_WS_BY_PROJECTS.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("ws1"), "2");
       Assert.assertEquals(props.getProperty("ws2"), "2");
-      Assert.assertEquals(props.size(), 2);
+      Assert.assertEquals(props.getProperty("ws3"), "1");
    }
 }

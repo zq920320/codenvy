@@ -1,198 +1,255 @@
---
--- Macros common file.
---
-
---
--- Loads resources and returns returns in format: {ip : bytearray, date : int, time : int, message : chararray} 
+---------------------------------------------------------------------------
+-- Loads resources.
+-- @return {ip : bytearray, date : int, time : int, event : bytearray, message : chararray} 
 -- In details:
 --   field 'date' contains date in format 'YYYYMMDD'
 --   field 'time' contains seconds from midnight
---
+---------------------------------------------------------------------------
 DEFINE loadResources(resourceParam) RETURNS Y {
   l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
   l2 = DISTINCT l1;
-  l3 = FOREACH l2 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}).*') 
+  l3 = FOREACH l2 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}).*EVENT\\#([^\\#]*)\\#..*') 
                           AS pattern, message;
 
   $Y = FOREACH l3 GENERATE pattern.$0 AS ip, 
                           (int)pattern.$1 * 10000 + (int)pattern.$2 * 100 + (int)pattern.$3 AS date, 
                           (int)pattern.$4 * 3600 + (int)pattern.$5 * 60 + (int)pattern.$6 AS time, 
-                          message;
+                          pattern.$8 AS event, message;
 };
 
 
+---------------------------------------------------------------------------
+-- Filters events by date of occurrence.
+-- @param fromDateParam - date in format 'YYYYMMDD'
+-- @param toDateParam  - date in format 'YYYYMMDD'
+---------------------------------------------------------------------------
 DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
   $Y = FILTER $X BY (int) $fromDateParam <= date AND date <= (int) $toDateParam;
 };
 
-DEFINE filterByEvent(X, eventNameParam) RETURNS Y {
-  $Y = FILTER $X BY INDEXOF(message, 'EVENT#$eventNameParam#', 0) >= 0;
+---------------------------------------------------------------------------
+-- Filters events by names. Keeps only events from passed list.
+-- @param eventNamesParam - comma separated list of event names
+---------------------------------------------------------------------------
+DEFINE filterByEvent(X, eventNamesParam) RETURNS Y {
+  $Y = FILTER $X BY INDEXOF('$eventNamesParam', event, 0) >= 0;
 };
 
-DEFINE skipEvent(X, eventNameParam) RETURNS Y {
-  $Y = FILTER $X BY INDEXOF(message, 'EVENT#$eventNameParam#', 0) < 0;
+---------------------------------------------------------------------------
+-- Filters events by names. Keeps only events out of passed list.
+-- @param eventsNameParam - comma separated list of event names
+---------------------------------------------------------------------------
+DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
+  $Y = FILTER $X BY INDEXOF('$eventNamesParam', event, 0) < 0;
 };
 
+---------------------------------------------------------------------------
+-- Extract workspace name out of message and adds as field to tuple.
+-- @return  {..., ws : bytearray}
+---------------------------------------------------------------------------
 DEFINE extractWs(X) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws;
+  x1 = extractParam($X, 'WS', 'ws');
   x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws;
   x3 = UNION x1, x2;
   x4 = DISTINCT x3;
   $Y = FILTER x4 BY ws != '' AND ws != 'default';
 };
 
+---------------------------------------------------------------------------
+-- Extract user name out of message and adds as field to tuple.
+-- @return  {..., user : bytearray}
+---------------------------------------------------------------------------
 DEFINE extractUser(X) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user;
+  x1 = extractParam($X, 'USER', 'user');
   x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user;
   x3 = UNION x1, x2;
   x4 = DISTINCT x3;
   $Y = FILTER x4 BY user != '';
 };
 
-DEFINE extractParam(X, paramNameParam, paramValueParam) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramValueParam;
-  $Y = FILTER x1 BY $paramValueParam != '';
+---------------------------------------------------------------------------
+-- Extract parameter value out of message and adds as field to tuple.
+-- @param paramNameParam - the parameter name
+-- @param paramFieldNameParam - the name of filed in the tuple
+-- @return  {..., $paramFieldNameParam : bytearray}
+---------------------------------------------------------------------------
+DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramFieldNameParam;
+  $Y = FILTER x1 BY $paramFieldNameParam != '';
 };
 
---
--- $Y: {countByField::group: bytearray,countByField::count: long}
---
-DEFINE countByField(X, fieldParam) RETURNS Y {
-  x1 = GROUP $X BY $fieldParam;
-  x2 = FOREACH x1 GENERATE FLATTEN(group), COUNT($X) AS count;
+---------------------------------------------------------------------------
+-- Counts how many times every distinct value of given field have met.
+-- @param fieldNameParam - the field name
+-- @return {countByField : {(field : bytearray, count : long)}}
+---------------------------------------------------------------------------
+DEFINE countByField(X, fieldNameParam) RETURNS Y {
+  x1 = GROUP $X BY $fieldNameParam;
+  x2 = FOREACH x1 GENERATE FLATTEN(group) AS field, COUNT($X) AS count;
   x3 = GROUP x2 ALL;
   $Y = FOREACH x3 GENERATE x2 AS countByField;
 };
 
+---------------------------------------------------------------------------
+-- Counts the number of tuples.
+-- @return {count : long}
+---------------------------------------------------------------------------
 DEFINE countAll(X) RETURNS Y {
   x1 = GROUP $X ALL;
   $Y = FOREACH x1 GENERATE COUNT($X) AS count;
 };
 
-
--- comma sep
+---------------------------------------------------------------------------
+-- Counts the number of given events in every workspace separatly.
+-- @param eventsParam - comma separated list of events
+-- @return {countByField : {(field : bytearray, count : long)}}
+---------------------------------------------------------------------------
 DEFINE countEventsInWs(X, eventsParam) RETURNS Y {
-  z1 = extractParam($X, 'EVENT', 'event');
-  z2 = FILTER z1 BY INDEXOF('$eventsParam', event, 0) >= 0;
-  z3 = extractWs(z2);
-  $Y = countByField(z3, 'ws');
+  z1 = filterByEvent($X, '$eventsParam');
+  z2 = extractWs(z1);
+  $Y = countByField(z2, 'ws');
 };
 
-
--- comma sep
+---------------------------------------------------------------------------
+-- Counts the number of given events in every workspace separatly.
+-- @param eventsParam - comma separated list of events
+-- @return {ws : bytearray, count : long}
+---------------------------------------------------------------------------
 DEFINE countEventsInWsFlatten(X, eventsParam) RETURNS Y {
   w1 = countEventsInWs($X, '$eventsParam');
   w2 = FOREACH w1 GENERATE FLATTEN(countByField);
-  $Y = FOREACH w2 GENERATE countByField::group AS ws, countByField::count AS count;
+  $Y = FOREACH w2 GENERATE countByField::field AS ws, countByField::count AS count;
 };
-
 
 -----------------------------------------------------------------------------
 -- Finds top workspaces in which events had place.
---
--- Incoming parameters:
--- logParam        - the list of resources to load
--- dateParam       - beginning of the time frame
--- toDateParam     - ending of the time frame
--- topParam        - how many workspaces should be left in result
--- eventsParam     - which events should be taken in account
+-- @param logParam - the list of resources to load
+-- @param fromDateParam - beginning of the time frame
+-- @param toDateParam - ending of the time frame
+-- @param topParam - how many workspaces should be in result
+-- @param eventsParam - comma separated list of events
+-- @return {(field : bytearray, count : long)}
 ---------------------------------------------------------------------------
-DEFINE topWsByEvents(logParam, dateParam, toDateParam, topParam, eventsParam) RETURNS Y {
+DEFINE topWsByEvents(logParam, fromDateParam, toDateParam, topParam, eventsParam) RETURNS Y {
   w1 = loadResources('$logParam');
-  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
-  wR = countEventsInWs(w2, '$eventsParam');
+  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+  w3 = countEventsInWs(w2, '$eventsParam');
 
-  $Y = FOREACH wR {
-    GENERATE '$dateParam', '$toDateParam', '$topParam', TOP($topParam, 1, countByField);
+  $Y = FOREACH w3 {
+    GENERATE TOP($topParam, 1, countByField);
   }
 };
 
 -----------------------------------------------------------------------------
--- Finds the amount of occurred events in all workspaces.
---
--- Incoming parameters:
--- logParam        - the list of resources to load
--- dateParam       - beginning of the time frame
--- toDateParam     - ending of the time frame
--- eventsParam     - which events should be taken in account
+-- Counts the number of given events.
+-- @param logParam - the list of resources to load
+-- @param fromDateParam - beginning of the time frame
+-- @param toDateParam - ending of the time frame
+-- @param eventsParam - comma separated list of events
+-- @return {count : long}
 ---------------------------------------------------------------------------
-DEFINE countEvents(logParam, dateParam, toDateParam, eventsParam) RETURNS Y {
+DEFINE countEvents(logParam, fromDateParam, toDateParam, eventsParam) RETURNS Y {
   w1 = loadResources('$logParam');
-  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
-  w3 = extractParam(w2, 'EVENT', 'event');
-  w4 = FILTER w3 BY INDEXOF('$eventsParam', event, 0) >= 0;
-  w5 = countAll(w4);
+  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+  w3 = filterByEvent(w2,'$eventsParam');
+  $Y = countAll(w3);
+};
 
-  $Y = FOREACH w5 GENERATE '$dateParam', count;
+--- only once field
+DEFINE differSets(A, B) RETURNS Y {
+  w1 = JOIN $A BY $0 LEFT, $B BY $0;
+  w2 = FILTER w1 BY $1 IS NULL;
+  w3 = FOREACH w2 GENERATE $0;
+  $Y = GROUP w3 ALL;
 };
 
 ---------------------------------------------------------------------------
 -- Finds amount of occurence of every parameter's value in
 -- unique sequences consisting of fixed event, workspace and two parameter's value.
---
--- Incoming parameters:
--- logParam        - the list of resources to load
--- dateParam       - beginning of the time frame
--- toDateParam     - ending of the time frame
--- eventParam      - which event should be taken in account
--- paramNameParam  - the first parameter name
--- secondParamNameParam - the second parameter name
+-- @param logParam - the list of resources to load
+-- @param fromDateParam - beginning of the time frame
+-- @param toDateParam - ending of the time frame
+-- @param eventParam - which event should be taken in account
+-- @param paramNameParam - the first parameter name
+-- @param secondParamNameParam - the second parameter name
+-- @return {countByField : {(field : bytearray, count : long)}}
 ---------------------------------------------------------------------------
-DEFINE countSecondParamInDist2ParamsEventWs(logParam, dateParam, toDateParam, eventParam, paramNameParam, secondParamNameParam) RETURNS Y {
+DEFINE countSecondParamInDist2ParamsEventWs(logParam, fromDateParam, toDateParam, eventParam, paramNameParam, secondParamNameParam) RETURNS Y {
   w1 = loadResources('$logParam');
-  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
+  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
   w3 = filterByEvent(w2, '$eventParam');
 
   w4 = extractWs(w3);
-  w5 = extractParam(w4, '$paramNameParam', 'paramValue');
-  w6 = extractParam(w5, '$secondParamNameParam', 'secondParamValue');
-  w7 = FOREACH w6 GENERATE ws, paramValue, secondParamValue;
+  w5 = extractParam(w4, '$paramNameParam', 'paramFieldName');
+  w6 = extractParam(w5, '$secondParamNameParam', 'secondParamFieldName');
+  w7 = FOREACH w6 GENERATE ws, paramFieldName, secondParamFieldName;
   w8 = DISTINCT w7;
 
-  $Y = countByField(w8, 'secondParamValue');
+  $Y = countByField(w8, 'secondParamFieldName');
 };
 
 ---------------------------------------------------------------------------
 -- Finds amount of occurence of every parameter's value in
 -- unique sequences consisting of fixed event and two parameter's value.
---
--- Incoming parameters:
--- logParam        - the list of resources to load
--- dateParam       - beginning of the time frame
--- toDateParam     - ending of the time frame
--- eventParam      - which event should be taken in account
--- paramNameParam  - the first parameter name
--- secondParamNameParam - the second parameter name
+-- @param logParam - the list of resources to load
+-- @param fromDateParam - beginning of the time frame
+-- @param toDateParam - ending of the time frame
+-- @param eventParam - which event should be taken in account
+-- @param paramNameParam - the first parameter name
+-- @param secondParamNameParam - the second parameter name
+-- @return {countByField : {(field : bytearray, count : long)}}
 ---------------------------------------------------------------------------
-DEFINE countSecondParamInDist2ParamsEvent(logParam, dateParam, toDateParam, eventParam, paramNameParam, secondParamNameParam) RETURNS Y {
+DEFINE countSecondParamInDist2ParamsEvent(logParam, fromDateParam, toDateParam, eventParam, paramNameParam, secondParamNameParam) RETURNS Y {
   w1 = loadResources('$logParam');
-  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
+  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
   w3 = filterByEvent(w2, '$eventParam');
 
-  w5 = extractParam(w3, '$paramNameParam', 'paramValue');
-  w6 = extractParam(w5, '$secondParamNameParam', 'secondParamValue');
-  w7 = FOREACH w6 GENERATE paramValue, secondParamValue;
+  w5 = extractParam(w3, '$paramNameParam', 'paramFieldName');
+  w6 = extractParam(w5, '$secondParamNameParam', 'secondParamFieldName');
+  w7 = FOREACH w6 GENERATE paramFieldName, secondParamFieldName;
   w8 = DISTINCT w7;
 
-  $Y = countByField(w8, 'secondParamValue');
+  $Y = countByField(w8, 'secondParamFieldName');
 };
-
 
 ---------------------------------------------------------------------------
 -- Finds amount of occurence of every parameter's value in
 -- sequences consisting of fixed event and parameter's value.
---
--- Incoming parameters:
--- logParam        - the list of resources to load
--- dateParam       - beginning of the time frame
--- toDateParam     - ending of the time frame
--- eventParam      - which event should be taken in account
--- paramNameParam  - the parameter name
+-- @param logParam - the list of resources to load
+-- @param fromDateParam - beginning of the time frame
+-- @param toDateParam - ending of the time frame
+-- @param eventParam - comma separated list of events
+-- @param paramNameParam - the first parameter name
+-- @return {countByField : {(field : bytearray, count : long)}}
 ---------------------------------------------------------------------------
-DEFINE countParamInParamEvent(logParam, dateParam, toDateParam, eventParam, paramNameParam) RETURNS Y {
+DEFINE countParamInParamEvent(logParam, fromDateParam, toDateParam, eventParam, paramNameParam) RETURNS Y {
   w1 = loadResources('$logParam');
-  w2 = filterByDate(w1, '$dateParam', '$toDateParam');
+  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
   w3 = filterByEvent(w2, '$eventParam');
-  w4 = extractParam(w3, '$paramNameParam', 'paramValue');
-  $Y = countByField(w4, 'paramValue');
+  w4 = extractParam(w3, '$paramNameParam', 'paramFieldName');
+  $Y = countByField(w4, 'paramFieldName');
+};
+
+---------------------------------------------------------------------------
+-- Finds amount of occurence of every parameter's value in
+-- sequences consisting of fixed event and parameter's value.
+-- @param logParam - the list of resources to load
+-- @param fromDateParam - beginning of the time frame
+-- @param toDateParam - ending of the time frame
+-- @param eventParam - comma separated list of events
+-- @param paramNameParam - the first parameter name
+-- @return {count : long}
+---------------------------------------------------------------------------
+DEFINE countAllInDistParamEventWs(logParam, fromDateParam, toDateParam, eventParam, paramNameParam) RETURNS Y {
+  w1 = loadResources('$logParam');
+  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+  w3 = filterByEvent(w2, '$eventParam');
+
+  w5 = extractWs(w3);
+  w6 = extractParam(w5, '$paramNameParam', 'paramValue');
+
+  w7 = FOREACH w6 GENERATE ws, paramValue;
+  w8 = DISTINCT w7;
+
+  $Y = countAll(w8);
 };

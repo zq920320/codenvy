@@ -21,16 +21,11 @@ package com.codenvy.dashboard.pig.scripts;
 import com.codenvy.dashboard.pig.scripts.util.Event;
 import com.codenvy.dashboard.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.DataBag;
-import org.apache.pig.data.DefaultDataBag;
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -57,51 +52,13 @@ public class TestScriptUsersWithoutProjects extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_PROJECTS, log, new String[][]{{Constants.DATE, "20101001"},
+      executePigScript(ScriptType.USERS_WITHOUT_PROJECTS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
          {Constants.TO_DATE, "20101002"}});
 
       FileObject fileObject = ScriptType.USERS_WITHOUT_PROJECTS.createFileObject(BASE_DIR, 20101001, 20101002);
 
-      List<String> list = (List)fileObject.getValue();
+      List<String> list = (List<String>)fileObject.getValue();
       Assert.assertEquals(list.size(), 1);
       Assert.assertEquals(list.get(0), "user2");
-   }
-
-   @Test
-   public void fileObjectShouldReturnCorrectProperties() throws Exception
-   {
-      Tuple tuple = TupleFactory.getInstance().newTuple();
-      tuple.append(20101001);
-      tuple.append(20101003);
-
-      Tuple innerTuple = TupleFactory.getInstance().newTuple();
-      innerTuple.append("user1");
-      DataBag bag = new DefaultDataBag();
-      bag.add(innerTuple);
-
-      tuple.append(bag);
-
-      FileObject fileObject = ScriptType.USERS_WITHOUT_PROJECTS.createFileObject(BASE_DIR, tuple);
-
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.DATE));
-      Assert.assertNotNull(fileObject.getKeys().get(Constants.TO_DATE));
-
-      Iterator<String> iter = fileObject.getKeys().keySet().iterator();
-      Assert.assertEquals(iter.next(), Constants.DATE);
-      Assert.assertEquals(iter.next(), Constants.TO_DATE);
-
-      Assert.assertEquals(fileObject.getTypeResult(), ScriptTypeResult.TIMEFRAME_FOR_LIST);
-      Assert.assertEquals(fileObject.getKeys().get(Constants.DATE), "20101001");
-      Assert.assertEquals(fileObject.getKeys().get(Constants.TO_DATE), "20101003");
-      Assert.assertEquals(((List)fileObject.getValue()).get(0), "user1");
-
-      File file = new File(BASE_DIR + "/users_without_projects/2010/10/01/20101003/value");
-      file.delete();
-
-      Assert.assertFalse(file.exists());
-
-      fileObject.store();
-
-      Assert.assertTrue(file.exists());
    }
 }
