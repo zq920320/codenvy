@@ -35,12 +35,13 @@
 
     <properties>
         <!-- Apache Pig dependencies -->
-        <pig.version>0.10.1</pig.version>
+        <pig.version>0.11.0</pig.version>
         <hadoop.version>0.20.2</hadoop.version>
         <jline.version>0.9.94</jline.version>
         <antlr.version>3.4</antlr.version>
         <jackson.version>1.7.4</jackson.version>
         <guava.version>11.0</guava.version>
+        <joda-time.version>2.2</joda-time.version>
 
         <!-- Third parties -->
         <testng.version>6.3.1</testng.version>
@@ -60,6 +61,11 @@
                 <groupId>org.apache.pig</groupId>
                 <artifactId>pig</artifactId>
                 <version>${pig.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
