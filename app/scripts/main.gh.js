@@ -1,9 +1,9 @@
 /*
-    Require setup + entry point for the application
+    This is a copy of main.js with baseUrl adjusted for github
 */
 
 require.config({
-    baseUrl : "/scripts/",
+    baseUrl : "http://codenvy.github.com/odyssey/scripts/",
     shim: {
         'underscore' : {exports: '_' },
         'backbone' : {exports: 'Backbone', deps: ['underscore']},
@@ -24,7 +24,7 @@ require.config({
         text : 'vendor/text',
         json : 'vendor/json2',
         handlebars : 'vendor/handlebars',
-        templates: '../templates'
+        templates: 'http://codenvy.github.com/odyssey/templates'
     }
 
 });
