@@ -149,6 +149,30 @@ public enum ScriptType {
       }
    },
 
+   USERS_WITHOUT_BUILDS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.NO_KEY_FIELDS_LIST;
+      }
+   },
+
+   USERS_WITHOUT_DEPLOYS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.NO_KEY_FIELDS_LIST;
+      }
+   },
+
+   USERS_WITHOUT_INVITES {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.NO_KEY_FIELDS_LIST;
+      }
+   },
+
    PRODUCT_USAGE_TIME {
       @Override
       public ScriptTypeResult getResultType()
