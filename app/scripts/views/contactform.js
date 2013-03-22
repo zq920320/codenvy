@@ -54,8 +54,8 @@ return {
         },
 
         __showErrors : function(errorMap){
-this.$(".success-message").addClass("hidden");
-this.$("label:contains('Your email address:')").addClass("hidden");
+			this.$(".success-message").addClass("hidden");
+			this.$("label:contains('Your email address:')").addClass("hidden");
             if(typeof errorMap.email !== 'undefined'){
                 this.trigger("invalid","email",errorMap.email);
                 return;
