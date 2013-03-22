@@ -21,7 +21,7 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
         },
 
         __validationMessages : function(){
-            return {
+        	return {
                 email : {
                     required : this.settings.invalidEmailErrorMessage,
                     email : this.settings.invalidEmailErrorMessage
@@ -43,9 +43,8 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
                 this.$("textarea[name='message']").val(),
                 _.bind(function(){
                     this.$(".success-message").removeClass("hidden");
+                    this.$("label:contains('Your email address:')").removeClass("hidden");
                     this.__restoreForm();
-                    this.$("input[name='email']").val("");
-                    this.$("textarea[name='message']").val("");
                 },this),
                 _.bind(function(){
                     this.trigger("invalid",null,this.settings.failedToSendErrorMessage);
@@ -55,6 +54,8 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
         },
 
         __showErrors : function(errorMap){
+        	$(".success-message").addClass("hidden");
+        	this.$("label:contains('Your email address:')").addClass("hidden");
             if(typeof errorMap.email !== 'undefined'){
                 this.trigger("invalid","email",errorMap.email);
                 return;
@@ -68,10 +69,13 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
 
         __restoreForm : function(){
             this.$("input[type='submit']").removeAttr("disabled");
+            this.$("input[name='email']").val("");
+            this.$("textarea[name='message']").val("");
         },
 
         __showProgress : function(){
             this.$("input[type='submit']").attr("disabled","disabled");
+ 
         }
     });
 
