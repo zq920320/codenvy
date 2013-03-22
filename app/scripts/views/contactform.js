@@ -21,7 +21,7 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
         },
 
         __validationMessages : function(){
-        	return {
+return {
                 email : {
                     required : this.settings.invalidEmailErrorMessage,
                     email : this.settings.invalidEmailErrorMessage
@@ -54,8 +54,8 @@ define(["underscore","views/form","models/contact"],function(_,Form,Contact){
         },
 
         __showErrors : function(errorMap){
-        	$(".success-message").addClass("hidden");
-        	this.$("label:contains('Your email address:')").addClass("hidden");
+this.$(".success-message").addClass("hidden");
+this.$("label:contains('Your email address:')").addClass("hidden");
             if(typeof errorMap.email !== 'undefined'){
                 this.trigger("invalid","email",errorMap.email);
                 return;
