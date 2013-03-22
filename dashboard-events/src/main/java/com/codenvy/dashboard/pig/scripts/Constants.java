@@ -46,15 +46,19 @@ public class Constants
    public static final String LOG = "log";
 
    /**
-    * Not mandatory parameter for {@link ScriptType#PRODUCT_USAGE_TIME}.
+    * Not a mandatory parameter for {@link ScriptType#PRODUCT_USAGE_TIME}.
     */
    protected static final String INACTIVE_INTERVAL = "inactiveInterval";
 
    /**
-    * Not mandatory parameter for 'top workspaces by event' scripts.
+    * Not a mandatory parameter for 'top workspaces by event' scripts.
     */
    protected static final String TOP = "top";
 
+   /**
+    * Not a mandatory parameter when script supports storing result.
+    */
+   protected static final String STORE_LOCATION = "storeLocation";
 
    /**
     * Private constructor.

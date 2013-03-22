@@ -59,7 +59,7 @@ public enum ScriptTypeResult {
       }
    },
 
-   LIST {
+   NO_KEY_FIELDS_LIST {
       @Override
       public ValueTranslator getValueTranslator()
       {
@@ -70,6 +70,21 @@ public enum ScriptTypeResult {
       public Object getEmptyObject()
       {
          return new DefaultDataBag();
+      }
+
+      @Override
+      public String[] getKeyFields()
+      {
+         return new String[]{};
+      }
+
+      @Override
+      public Tuple getEmptyResult(Map<String, String> executionContext) throws ExecException
+      {
+         Tuple tuple = TupleFactory.getInstance().newTuple(1);
+         tuple.set(1, getEmptyObject());
+
+         return tuple;
       }
    };
    

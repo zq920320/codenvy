@@ -52,10 +52,10 @@ public class TestScriptUsersWithoutProjects extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_PROJECTS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101002"}});
+      executePigScript(ScriptType.USERS_WITHOUT_PROJECTS, log, new String[][]{{Constants.STORE_LOCATION,
+         BASE_DIR + "/users-without-projects"}});
 
-      FileObject fileObject = ScriptType.USERS_WITHOUT_PROJECTS.createFileObject(BASE_DIR, 20101001, 20101002);
+      FileObject fileObject = ScriptType.USERS_WITHOUT_PROJECTS.createFileObject(BASE_DIR);
 
       List<String> list = (List<String>)fileObject.getValue();
       Assert.assertEquals(list.size(), 1);

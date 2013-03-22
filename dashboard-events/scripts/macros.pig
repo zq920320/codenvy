@@ -155,12 +155,27 @@ DEFINE countEvents(logParam, fromDateParam, toDateParam, eventsParam) RETURNS Y 
   $Y = countAll(w3);
 };
 
---- only once field
+---------------------------------------------------------------------------
+-- Calculates the difference between two relation.
+-- The relations should be preprocessed using 'prepareSet'.
+-- @return {{(bytearray)}}
+---------------------------------------------------------------------------
 DEFINE differSets(A, B) RETURNS Y {
   w1 = JOIN $A BY $0 LEFT, $B BY $0;
   w2 = FILTER w1 BY $1 IS NULL;
   w3 = FOREACH w2 GENERATE $0;
-  $Y = GROUP w3 ALL;
+  w4 = GROUP w3 ALL;
+  $Y = FOREACH w4 GENERATE $1;
+};
+
+---------------------------------------------------------------------------
+-- Generates a relation with a single field whose values are unique.
+-- @param fieldNameParam - the field name to process
+-- @return {$fieldNameParam : chararray}
+---------------------------------------------------------------------------
+DEFINE prepareSet(X, fieldNameParam) RETURNS Y {
+  w1 = FOREACH $X GENERATE $fieldNameParam;
+  $Y = DISTINCT w1;
 };
 
 ---------------------------------------------------------------------------

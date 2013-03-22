@@ -3,31 +3,30 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-log = loadResources('$log');
+%DEFAULT fromDate '00000000';
+%DEFAULT toDate   '99999999';
+%DEFAULT storeLocation 'users-without-projects';
+
+f1 = loadResources('$log');
+fR = filterByDate(f1, '$fromDate', '$toDate');
 
 --
--- prepare list of created users in given day
+-- prepare list of created users
+-- extract user emails from ALIASES#...# or ALIASES#[...]#
 --
-a1 = filterByDate(log, $fromDate, $fromDate);
-a2 = filterByEvent(a1, 'user-created');
-a3 = FOREACH a2 GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#\\[([^\\#]*)\\]\\#.*')) AS user;
-aR = DISTINCT a3;
+a1 = filterByEvent(fR, 'user-created');
+a2 = FOREACH a1 GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user;
+a3 = FOREACH a2 GENERATE FLATTEN(TOKENIZE(user, ',')) AS user;
+aR = prepareSet(a3, 'user');
 
 --
 -- prepare list of users who created projects in time frame
 --
-b1 = filterByDate(log, $fromDate, $toDate);
-b2 = filterByEvent(b1, 'project-created');
-b3 = FOREACH b2 GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user;
-bR = DISTINCT b3;
+b1 = filterByEvent(fR, 'project-created');
+b2 = extractUser(b1);
+bR = prepareSet(b2, 'user');
 
---
--- find tuples where user-created record exists and project-created record does not
---
-g1 = JOIN aR BY user LEFT, bR BY user;
-g2 = FILTER g1 BY bR::user IS NULL;
-g3 = FOREACH g2 GENERATE aR::user;
-g4 = GROUP g3 ALL;
+result = differSets(aR, bR);
 
-result = FOREACH g4 GENERATE '$fromDate', '$toDate', g3;
-DUMP result;
+sR = FOREACH result GENERATE FLATTEN($0);
+STORE sR INTO '$storeLocation' USING PigStorage(',');

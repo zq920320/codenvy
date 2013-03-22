@@ -145,7 +145,7 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.LIST;
+         return ScriptTypeResult.NO_KEY_FIELDS_LIST;
       }
    },
 
