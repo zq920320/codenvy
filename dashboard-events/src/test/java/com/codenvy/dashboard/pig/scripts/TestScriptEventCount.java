@@ -42,11 +42,11 @@ public class TestScriptEventCount extends BasePigTest
       events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-02").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_COUNT_TENANT_CREATED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+      executePigScript(ScriptType.EVENT_COUNT_WORKSPACE_CREATED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
          {Constants.TO_DATE, "20101001"}});
 
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_TENANT_CREATED.createFileObject(BASE_DIR, 20101001, 20101001);
+      FileObject fileObject = ScriptType.EVENT_COUNT_WORKSPACE_CREATED.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 2L);
    }
@@ -59,10 +59,10 @@ public class TestScriptEventCount extends BasePigTest
       events.add(Event.Builder.createTenantDestroyedEvent("ws2").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.EVENT_COUNT_TENANT_DESTROYED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+      executePigScript(ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED, log, new String[][]{{Constants.FROM_DATE, "20101001"},
          {Constants.TO_DATE, "20101001"}});
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_TENANT_DESTROYED.createFileObject(BASE_DIR, 20101001, 20101001);
+      FileObject fileObject = ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 2L);
    }
@@ -149,5 +149,20 @@ public class TestScriptEventCount extends BasePigTest
       FileObject fileObject = ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD.createFileObject(BASE_DIR, 20101001, 20101001);
 
       Assert.assertEquals(fileObject.getValue(), 3L);
+   }
+
+   @Test
+   public void testEventCountUserInvite() throws Exception
+   {
+      List<Event> events = new ArrayList<Event>();
+      events.add(Event.Builder.createUserInviteEvent("user", "ws", "session", "email").withDate("2010-10-01").build());
+      File log = LogGenerator.generateLog(events);
+
+      executePigScript(ScriptType.EVENT_COUNT_USER_INVITE, log, new String[][]{{Constants.FROM_DATE, "20101001"},
+         {Constants.TO_DATE, "20101001"}});
+
+      FileObject fileObject = ScriptType.EVENT_COUNT_USER_INVITE.createFileObject(BASE_DIR, 20101001, 20101001);
+
+      Assert.assertEquals(fileObject.getValue(), 1L);
    }
 }

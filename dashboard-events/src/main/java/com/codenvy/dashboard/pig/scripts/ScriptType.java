@@ -29,7 +29,7 @@ import java.io.IOException;
  */
 public enum ScriptType {
 
-   EVENT_COUNT_TENANT_CREATED {
+   EVENT_COUNT_WORKSPACE_CREATED {
       @Override
       public ScriptTypeResult getResultType()
       {
@@ -69,7 +69,7 @@ public enum ScriptType {
       }
    },
 
-   EVENT_COUNT_TENANT_DESTROYED {
+   EVENT_COUNT_WORKSPACE_DESTROYED {
       @Override
       public ScriptTypeResult getResultType()
       {
@@ -78,6 +78,14 @@ public enum ScriptType {
    },
 
    EVENT_COUNT_PROJECT_DESTROYED {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.LONG;
+      }
+   },
+
+   EVENT_COUNT_USER_INVITE {
       @Override
       public ScriptTypeResult getResultType()
       {

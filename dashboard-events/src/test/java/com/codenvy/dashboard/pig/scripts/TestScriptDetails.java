@@ -118,6 +118,8 @@ public class TestScriptDetails extends BasePigTest
          .withDate("2010-10-01").build());
       events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project4", "type", "paas3")
          .withDate("2010-10-01").build());
+      events.add(Event.Builder.createProjectDeployedEvent("user", "ws", "session", "project4", "type", "local")
+         .withDate("2010-10-01").build());
 
 
       File log = LogGenerator.generateLog(events);
@@ -131,5 +133,6 @@ public class TestScriptDetails extends BasePigTest
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("paas1"), "1");
       Assert.assertEquals(props.getProperty("paas3"), "3");
+      Assert.assertEquals(props.getProperty("local"), "1");
    }
 }

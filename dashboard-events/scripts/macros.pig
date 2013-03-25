@@ -7,14 +7,14 @@
 ---------------------------------------------------------------------------
 DEFINE loadResources(resourceParam) RETURNS Y {
   l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
-  l2 = DISTINCT l1;
-  l3 = FOREACH l2 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}).*EVENT\\#([^\\#]*)\\#..*') 
+  l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}).*EVENT\\#([^\\#]*)\\#..*') 
                           AS pattern, message;
-
-  $Y = FOREACH l3 GENERATE pattern.$0 AS ip, 
+  l3 = FILTER l2 BY pattern.$8 != '';
+  l4 = FOREACH l3 GENERATE pattern.$0 AS ip, 
                           (int)pattern.$1 * 10000 + (int)pattern.$2 * 100 + (int)pattern.$3 AS date, 
                           (int)pattern.$4 * 3600 + (int)pattern.$5 * 60 + (int)pattern.$6 AS time, 
                           pattern.$8 AS event, message;
+  $Y = DISTINCT l4;
 };
 
 
