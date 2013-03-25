@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------
--- Finds total number of 'project-created' events.
+-- Finds total number of unique projects built.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 

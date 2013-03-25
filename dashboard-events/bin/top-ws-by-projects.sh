@@ -1,2 +1,2 @@
 source commons.sh
-$pigDir/pig $runMode -param log=$log -param fromDate=$fromDate -param toDate=$toDate $scriptDir/top-ws-by-projects.pig
+$pigDir/pig $runMode -param log=$log -param top=$top -param fromDate=$fromDate -param toDate=$toDate $scriptDir/top-ws-by-projects.pig

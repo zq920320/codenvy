@@ -7,7 +7,7 @@
 ---------------------------------------------------------------------------
 DEFINE loadResources(resourceParam) RETURNS Y {
   l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
-  l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}).*EVENT\\#([^\\#]*)\\#..*') 
+  l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}).*EVENT\\#([^\\#]*)\\#.*') 
                           AS pattern, message;
   l3 = FILTER l2 BY pattern.$8 != '';
   l4 = FOREACH l3 GENERATE pattern.$0 AS ip, 

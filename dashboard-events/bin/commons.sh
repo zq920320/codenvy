@@ -1,8 +1,13 @@
+runMode="-x local"
+
 baseDir=~/analytics
 pigDir=$baseDir/pig/bin
-runMode="-x local"
+scriptDir=$baseDir/scripts
+
 log=$baseDir/logs
 fromDate=YYYYMMDD
 toDate=YYYYMMDD
-scriptDir=$baseDir/scripts
+top=10
+inactiveInterval=600
+
 
