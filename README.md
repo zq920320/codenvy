@@ -13,13 +13,13 @@ Installing order:
 
 - Perl digest and ruby gems
 
-Fedora:
+  Fedora:
 
 ```
 sudo yum install -y  perl-Digest-SHA ruby-devel-1.9.3.392
 ```
 
-Ubuntu
+  Ubuntu:
 
 ```
 sudo apt-get -y install libdigest-sha-perl  rubygems
