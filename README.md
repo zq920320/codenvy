@@ -15,15 +15,15 @@ Installing order:
 
   Fedora:
 
-  ```
-  sudo yum install -y  perl-Digest-SHA ruby-devel-1.9.3.392
-  ```
+```
+sudo yum install -y  perl-Digest-SHA ruby-devel-1.9.3.392
+```
 
   Ubuntu
 
-  ```
-  sudo apt-get -y install libdigest-sha-perl  rubygems
-  ```
+```
+sudo apt-get -y install libdigest-sha-perl  rubygems
+```
 
 - NodeJS
 
