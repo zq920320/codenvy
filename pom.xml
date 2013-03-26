@@ -44,6 +44,10 @@
         <joda-time.version>2.2</joda-time.version>
 
         <!-- Third parties -->
+        <everrest.version>1.0.11-SNAPSHOT</everrest.version>
+        <javax.ws.rs.version>1.0</javax.ws.rs.version>
+
+        <!-- Third parties -->
         <testng.version>6.3.1</testng.version>
 
         <!-- Loggers -->
@@ -90,6 +94,24 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+            <!-- REST -->
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>jsr311-api</artifactId>
+                <version>${javax.ws.rs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.everrest</groupId>
+                <artifactId>everrest-core</artifactId>
+                <version>${everrest.version}</version>
+            </dependency>
+
 
             <!-- Third parties -->
             <dependency>
@@ -114,17 +136,12 @@
                 <artifactId>logback-core</artifactId>
                 <version>${ch.qos.logback.version}</version>
             </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>dashboard-events</module>
-        <module>dashboard-client</module>
-        <module>dashboard-tomcat</module>
+        <module>dashboard-web-client</module>
+        <module>dashboard-tomcat-pkg</module>
     </modules>
 </project>

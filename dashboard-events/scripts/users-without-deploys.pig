@@ -5,7 +5,6 @@ IMPORT 'macros.pig';
 
 %DEFAULT fromDate '00000000';
 %DEFAULT toDate   '99999999';
-%DEFAULT storeLocation '$resultDir/users-without-deploys';
 
 f1 = loadResources('$log');
 fR = filterByDate(f1, '$fromDate', '$toDate');
@@ -25,6 +24,4 @@ b2 = extractUser(b1);
 bR = prepareSet(b2, 'user');
 
 result = differSets(aR, bR);
-
-sR = FOREACH result GENERATE FLATTEN($0);
-STORE sR INTO '$storeLocation' USING PigStorage(',');
+DUMP result;

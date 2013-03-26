@@ -27,6 +27,4 @@ b2 = extractUser(b1);
 bR = prepareSet(b2, 'user');
 
 result = differSets(aR, bR);
-
-sR = FOREACH result GENERATE FLATTEN($0);
-STORE sR INTO '$storeLocation' USING PigStorage(',');
+DUMP result;
