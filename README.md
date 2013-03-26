@@ -41,6 +41,7 @@ npm install -g phantomjs
 npm install -g yeoman@0.9.6
 ```
 - Grunt-cli (0.1.6)
+
 ```
 npm install -g grunt-cli@0.1.6
 ```
