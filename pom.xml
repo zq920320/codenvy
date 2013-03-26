@@ -45,8 +45,6 @@
 
         <!-- Third parties -->
         <testng.version>6.3.1</testng.version>
-        <mongo.driver.version>2.10.1</mongo.driver.version>
-        <embedded.mongo.version>1.28</embedded.mongo.version>
 
         <!-- Loggers -->
         <org.slf4j.version>1.6.1</org.slf4j.version>
@@ -99,16 +97,6 @@
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
             </dependency>
-            <dependency>
-                <groupId>de.flapdoodle.embed</groupId>
-                <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                <version>${embedded.mongo.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongo-java-driver</artifactId>
-                <version>${mongo.driver.version}</version>
-            </dependency>
 
             <!-- Loggers -->
            <dependency>
@@ -136,5 +124,7 @@
 
     <modules>
         <module>dashboard-events</module>
+        <module>dashboard-client</module>
+        <module>dashboard-tomcat</module>
     </modules>
 </project>
