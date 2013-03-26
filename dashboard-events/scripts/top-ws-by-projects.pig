@@ -3,7 +3,6 @@
 -- If project was removed, then it will not be calculated.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
-%DEFAULT top '10';
 
 f1 = loadResources('$log');
 fR = filterByDate(f1, '$fromDate', '$toDate');

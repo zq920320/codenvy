@@ -56,6 +56,15 @@ DEFINE extractWs(X) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Extract sessin id out of message and adds as field to tuple.
+-- @return  {..., session : bytearray}
+---------------------------------------------------------------------------
+DEFINE extractSession(X) RETURNS Y {
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[.*\\]\\[(.*)\\] - .*')) AS session;
+  $Y = FILTER x1 BY session != '';
+};
+
+---------------------------------------------------------------------------
 -- Extract user name out of message and adds as field to tuple.
 -- @return  {..., user : bytearray}
 ---------------------------------------------------------------------------

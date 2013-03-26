@@ -1,2 +1,2 @@
-source commons.sh
-$pigDir/pig $runMode -param log=$log $scriptDir/users-without-projects.pig
+source defaults.sh
+$pigDir/pig $runMode -param log=$log -param resultDir=$resultDir $scriptDir/users-without-projects.pig

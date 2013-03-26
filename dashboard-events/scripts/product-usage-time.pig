@@ -5,7 +5,6 @@
 -- is started at the next interaction.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
-%DEFAULT inactiveInterval '600';
 
 -------------------------------------------------------
 -- Let's keep only needed events in given time frame
