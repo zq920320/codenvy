@@ -58,7 +58,7 @@ public class TestScriptTopWsByEvents extends BasePigTest
       File log = LogGenerator.generateLog(events);
 
       executePigScript(ScriptType.TOP_WS_BY_USERS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "10"}});
 
       FileObject fileObject = ScriptType.TOP_WS_BY_USERS.createFileObject(BASE_DIR, 20101001, 20101001);
 
@@ -81,7 +81,7 @@ public class TestScriptTopWsByEvents extends BasePigTest
       File log = LogGenerator.generateLog(events);
 
       executePigScript(ScriptType.TOP_WS_BY_INVITATIONS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "10"}});
 
       FileObject fileObject = ScriptType.TOP_WS_BY_INVITATIONS.createFileObject(BASE_DIR, 20101001, 20101001);
 
@@ -116,7 +116,7 @@ public class TestScriptTopWsByEvents extends BasePigTest
       File log = LogGenerator.generateLog(events);
 
       executePigScript(ScriptType.TOP_WS_BY_BUILDS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "10"}});
 
       FileObject fileObject = ScriptType.TOP_WS_BY_BUILDS.createFileObject(BASE_DIR, 20101001, 20101001);
 
@@ -154,7 +154,7 @@ public class TestScriptTopWsByEvents extends BasePigTest
       File log = LogGenerator.generateLog(events);
 
       executePigScript(ScriptType.TOP_WS_BY_PROJECTS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "10"}});
 
       FileObject fileObject = ScriptType.TOP_WS_BY_PROJECTS.createFileObject(BASE_DIR, 20101001, 20101001);
 

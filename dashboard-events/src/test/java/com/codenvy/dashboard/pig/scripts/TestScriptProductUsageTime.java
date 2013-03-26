@@ -56,7 +56,7 @@ public class TestScriptProductUsageTime extends BasePigTest
       File log = LogGenerator.generateLog(events);
 
       executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101003"}});
+         {Constants.TO_DATE, "20101003"}, {Constants.INACTIVE_INTERVAL, "600"}});
 
       FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, 20101001, 20101003);
       Assert.assertEquals(fileObject.getValue(), 11L);
