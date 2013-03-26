@@ -9,6 +9,43 @@ To run odyssey locally and to be able to build project for deployment you will n
 - [Grunt 0.4+](http://gruntjs.com/getting-started)
 - [Jekyll](http://jekyllrb.com/)
 
+Installing order:
+
+- NodeJS
+
+```
+git clone git://github.com/creationix/nvm.git ~/nvm
+echo "source ~/nvm/nvm.sh" >> ~/.bashrc
+source ~/.bashrc
+nvm install 0.9.5
+nvm alias default 0.9.5
+```
+- Jekyll (0.12.1)
+
+```
+ sudo gem install jekyll -v 0.12.1
+```
+- Compass (0.12.2)
+
+```
+ sudo gem install compass -v 0.12.2
+```
+- Phantomjs (latest)
+
+```
+npm install -g phantomjs
+```
+- Yeoman      (0.9.6)
+
+```
+npm install -g yeoman@0.9.6
+```
+- Grunt-cli (0.1.6)
+```
+npm install -g grunt-cli@0.1.6
+```
+
+
 
 Running locally
 =======
