@@ -11,6 +11,19 @@ To run odyssey locally and to be able to build project for deployment you will n
 
 Installing order:
 
+- Perl digest and ruby gems
+  Fedora:
+  
+  ```
+  sudo yum install -y  perl-Digest-SHA ruby-devel-1.9.3.392
+  ```
+  
+  Ubuntu
+  
+  ```
+  sudo apt-get -y install libdigest-sha-perl  rubygems
+  ```
+
 - NodeJS
 
 ```
