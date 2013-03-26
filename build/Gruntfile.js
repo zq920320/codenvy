@@ -107,7 +107,11 @@ module.exports = function( grunt ) {
 
                 // templates
 
-                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/gh/templates/'}
+                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/gh/templates/'},
+                
+                // robots.txt
+
+                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: 'dist/gh/'}
             ]
         },
 
@@ -135,7 +139,11 @@ module.exports = function( grunt ) {
 
                 // templates
 
-                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/stage/templates/'}
+                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/stage/templates/'},
+                
+                // robots.txt
+
+                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: 'dist/stage/'}
             ]
         },
 
@@ -184,7 +192,11 @@ module.exports = function( grunt ) {
                     cwd: '../dist/_site/',
                     src: ['*.html','**/*.html'],
                     dest: 'dist/prod/'
-                }
+                },
+                
+                // robots.txt
+
+                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: 'dist/prod/'}
             ]
         }
     },
