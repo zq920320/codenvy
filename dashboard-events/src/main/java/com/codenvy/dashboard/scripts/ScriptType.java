@@ -226,7 +226,7 @@ public enum ScriptType {
     */
    public String getScriptFileName()
    {
-      return toString().toLowerCase().replace('_', '-') + ".pig";
+      return toString().toLowerCase() + ".pig";
    }
 
    /**
