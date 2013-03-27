@@ -39,10 +39,8 @@
     <plugins>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.7</version>
         <executions>
           <execution>
-            <id>compile</id>
             <phase>compile</phase>
             <goals>
               <goal>run</goal>
@@ -55,24 +53,48 @@
               </target>
             </configuration>
           </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
           <execution>
-            <id>package</id>
+            <id>gh</id>
             <phase>package</phase>
             <goals>
-              <goal>run</goal>
+              <goal>single</goal>
             </goals>
             <configuration>
-              <target>
-                <zip destfile="${project.build.directory}/odyssey-gh.zip">
-                  <fileset dir="${basedir}/build/dist/gh"/>
-                </zip>
-                <zip destfile="${project.build.directory}/odyssey-stage.zip">
-                  <fileset dir="${basedir}/build/dist/stage"/>
-                </zip>
-                <zip destfile="${project.build.directory}/odyssey-prod.zip">
-                  <fileset dir="${basedir}/build/dist/prod"/>
-                </zip>
-              </target>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <descriptors>
+                <descriptor>${basedir}/assembly/assembly-gh.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stage</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.artifactId}-${project.version}</finalName> 
+              <descriptors>
+                <descriptor>${basedir}/assembly/assembly-stage.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>prod</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <descriptors>
+                <descriptor>${basedir}/assembly/assembly-prod.xml</descriptor>
+              </descriptors>
             </configuration>
           </execution>
         </executions>
