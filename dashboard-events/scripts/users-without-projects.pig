@@ -5,7 +5,6 @@ IMPORT 'macros.pig';
 
 %DEFAULT fromDate '00000000';
 %DEFAULT toDate   '99999999';
-%DEFAULT storeLocation '$resultDir/users-without-projects';
 
 f1 = loadResources('$log');
 fR = filterByDate(f1, '$fromDate', '$toDate');

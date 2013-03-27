@@ -71,9 +71,9 @@ public class ScriptService
       executor.setParams(context.getParams());
       executor.setParam(Constants.LOG, LOGS_DIRECTORY);
 
-      context.setResult(doExecuteScript(scriptType, executor));
+      Object result = doExecuteScript(scriptType, executor);
 
-      return Response.status(Response.Status.OK).entity(context).build();
+      return Response.status(Response.Status.OK).entity(result).build();
    }
 
    private Object doExecuteScript(ScriptType scriptType, ScriptExecutor executor) throws IOException
