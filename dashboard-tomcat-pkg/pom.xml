@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>dashboard-tomcat-pkg</artifactId>
-    <name>Codenvy :: Dashboard :: Assemblies Tomcat assembly</name>
+    <name>Codenvy :: Dashboard :: Analytics Tomcat assembly</name>
     <packaging>pom</packaging>
 
     <dependencies>
@@ -104,6 +104,10 @@
 
                                 <copy file="${project.build.directory}/packager-conf/war/dashboard-web-client.war" tofile="${project.build.directory}/tomcat-analytics/webapps/analytics.war" />
                                 <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x" />
+
+                                <copy todir="${project.build.directory}/tomcat-analytics/scripts" overwrite="true">
+                                   <fileset dir="${basedir}/../dashboard-events/scripts/" />
+                                </copy>
                              </tasks>
                           </configuration>
                           <goals>

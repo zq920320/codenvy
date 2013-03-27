@@ -125,7 +125,7 @@
               <configuration>
                  <systemProperties>
                     <property>
-                       <name>dashboard.script.directory</name>
+                       <name>dashboard.scripts.directory</name>
                        <value>scripts</value>
                     </property>
                     <property>

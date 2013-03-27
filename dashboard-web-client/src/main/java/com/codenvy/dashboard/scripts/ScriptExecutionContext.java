@@ -41,7 +41,7 @@ public class ScriptExecutionContext
    /**
     * {@link ScriptType}.
     */
-   private ScriptType scriptType;
+   private String scriptType;
 
    /**
     * Getter for {@link #result}. 
@@ -62,7 +62,7 @@ public class ScriptExecutionContext
    /**
     * Getter for {@link #scriptType}. 
     */
-   public ScriptType getScriptType()
+   public String getScriptType()
    {
       return scriptType;
    }
@@ -70,7 +70,7 @@ public class ScriptExecutionContext
    /**
     * Setter for {@link #scriptType}. 
     */
-   public void setScriptType(ScriptType type)
+   public void setScriptType(String type)
    {
       this.scriptType = type;
    }

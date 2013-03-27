@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -35,6 +36,7 @@ import javax.ws.rs.core.Response;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 @Path("script-service")
+@RolesAllowed("admins")
 public class ScriptService
 {
    /**
@@ -61,21 +63,23 @@ public class ScriptService
    @Path("execute")
    public Response execute(ScriptExecutionContext context) throws IOException
    {
-      LOG.info("Execution " + context.getScriptType().getScriptFileName() + " is started");
+      ScriptType scriptType = ScriptType.valueOf(context.getScriptType().toUpperCase());
+
+      LOG.info("Execution " + scriptType.getScriptFileName() + " is started");
       
-      ScriptExecutor executor = new ScriptExecutor(context.getScriptType());
+      ScriptExecutor executor = new ScriptExecutor(scriptType);
       executor.setParams(context.getParams());
       executor.setParam(Constants.LOG, LOGS_DIRECTORY);
 
-      context.setResult(doExecuteScript(context, executor));
+      context.setResult(doExecuteScript(scriptType, executor));
 
       return Response.status(Response.Status.OK).entity(context).build();
    }
 
-   private Object doExecuteScript(ScriptExecutionContext context, ScriptExecutor executor) throws IOException
+   private Object doExecuteScript(ScriptType scriptType, ScriptExecutor executor) throws IOException
    {
       Tuple tuple = executor.executeAndReturnResult();
-      FileObject fileObject = context.getScriptType().createFileObject(".", tuple);
+      FileObject fileObject = scriptType.createFileObject(".", tuple);
 
       return fileObject.getValue();
    }

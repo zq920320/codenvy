@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2010 eXo Platform SAS.
+    Copyright (C) 2013 eXo Platform SAS.
 
     This is free software; you can redistribute it and/or modify it
     under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,34 @@
 
    <servlet-mapping>
       <servlet-name>EverrestServlet</servlet-name>
-      <url-pattern>/*</url-pattern>
+      <url-pattern>/rest/*</url-pattern>
    </servlet-mapping>
+
+   <security-constraint>
+      <web-resource-collection>
+         <web-resource-name>Analytics-application</web-resource-name>
+         <url-pattern>/*</url-pattern>
+         <http-method>POST</http-method>
+         <http-method>GET</http-method>
+      </web-resource-collection>
+      <auth-constraint>
+         <role-name>admins</role-name>
+      </auth-constraint>
+      <user-data-constraint>
+         <transport-guarantee>NONE</transport-guarantee>
+      </user-data-constraint>
+   </security-constraint>
+
+
+   <!-- Define the Login Configuration for this Application -->
+   <login-config>
+      <auth-method>BASIC</auth-method>
+      <realm-name>Analytics application</realm-name>
+   </login-config>
+
+   <!-- Security roles referenced by this web application -->
+   <security-role>
+      <role-name>admins</role-name>
+   </security-role>
 </web-app>
 
