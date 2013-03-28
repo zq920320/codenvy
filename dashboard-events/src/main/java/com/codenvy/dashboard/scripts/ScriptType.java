@@ -151,6 +151,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.LONG;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    ACTIVE_WORKSPACES {
@@ -256,6 +262,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
             return ScriptTypeResult.PROPERTIES;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
