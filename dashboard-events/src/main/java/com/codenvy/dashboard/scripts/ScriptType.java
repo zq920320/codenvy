@@ -24,7 +24,7 @@ import java.io.IOException;
 
 /**
  * Enumeration of all available Pig-latin scripts.
- * 
+ *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum ScriptType {
@@ -93,6 +93,14 @@ public enum ScriptType {
       }
    },
 
+   EVENT_COUNT_JREBEL_USAGE {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.LONG;
+      }
+   },
+
    ACTIVE_WORKSPACES {
       @Override
       public ScriptTypeResult getResultType()
@@ -116,7 +124,7 @@ public enum ScriptType {
          return ScriptTypeResult.LONG;
       }
    },
-   
+
    DETAILS_USER_ADDED_TO_WS {
       @Override
       public ScriptTypeResult getResultType()
@@ -146,6 +154,14 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.PROPERTIES;
+      }
+   },
+
+   DETAILS_JREBEL_USAGE {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+            return ScriptTypeResult.PROPERTIES;
       }
    },
 
@@ -222,7 +238,7 @@ public enum ScriptType {
    };
 
    /**
-    * @return the script file name 
+    * @return the script file name
     */
    public String getScriptFileName()
    {
@@ -231,7 +247,7 @@ public enum ScriptType {
 
    /**
     * Every Pig-latin script return result of specific type. The type define the data format to be stored.
-    * 
+    *
     * @return corresponding {@link ScriptTypeResult}.
     */
    public abstract ScriptTypeResult getResultType();

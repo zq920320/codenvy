@@ -250,6 +250,12 @@ public class Event
          return new Builder().withContext(user, ws, session).withParam("EVENT", "user-invite")
             .withParam("EMAIL", email);
       }
+
+      public static Builder createJRebelUsageEvent(String user, String ws, String session, String project, String type, boolean jrebel)
+      {
+         return new Builder().withContext(user, ws, session).withParam("EVENT", "jrebel-usage")
+            .withParam("PROJECT", project ).withParam("TYPE", type).withParam("JREBEL", String.valueOf(jrebel));
+      }
    }
 
    /**
