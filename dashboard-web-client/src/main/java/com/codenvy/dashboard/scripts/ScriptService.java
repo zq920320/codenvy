@@ -77,8 +77,16 @@ public class ScriptService
       @QueryParam("toDate") String toDate) throws IOException
    {
       Map<String, String> params = new HashMap<String, String>();
-      params.put(Constants.FROM_DATE, fromDate);
-      params.put(Constants.TO_DATE, toDate);
+
+      if (fromDate != null)
+      {
+         params.put(Constants.FROM_DATE, fromDate);
+      }
+
+      if (toDate != null)
+      {
+         params.put(Constants.TO_DATE, toDate);
+      }
 
       return doExecute(script, params);
    }
