@@ -18,6 +18,8 @@
  */
 package com.codenvy.dashboard.scripts;
 
+import com.codenvy.dashboard.scripts.ScriptType.ScriptTypeResult;
+
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 
@@ -85,7 +87,7 @@ public class FileObject
    {
       this.scriptType = scriptType;
       this.scriptResultType = scriptType.getResultType();
-      this.keys = makeKeys(scriptResultType.getKeyFields(), keysValues);
+      this.keys = makeKeys(scriptType.getKeyFields(), keysValues);
       this.baseDir = baseDir;
       this.translator = scriptResultType.getValueTranslator();
       this.value = load();
@@ -98,7 +100,7 @@ public class FileObject
    FileObject(String baseDir, ScriptType scriptType, Tuple tuple) throws IOException
    {
       this.scriptResultType = scriptType.getResultType();
-      final String[] keyFields = scriptResultType.getKeyFields();
+      final String[] keyFields = scriptType.getKeyFields();
 
       if (tuple.size() != keyFields.length + 1)
       {
@@ -116,6 +118,19 @@ public class FileObject
 
       this.translator = scriptResultType.getValueTranslator();
       this.value = translator.translate(tuple.get(keyFields.length));
+   }
+
+   /**
+    * {@link FileObject} constructor. Loads value from the file.
+    */
+   FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams) throws IOException
+   {
+      this.scriptType = scriptType;
+      this.scriptResultType = scriptType.getResultType();
+      this.keys = makeKeys(scriptType.getKeyFields(), executionParams);
+      this.baseDir = baseDir;
+      this.translator = scriptResultType.getValueTranslator();
+      this.value = load();
    }
 
    /**
@@ -288,9 +303,25 @@ public class FileObject
    {
       LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 
-      for (int i = 0; i < keyValues.length; i++)
+      for (int i = 0; i < keyFields.length; i++)
       {
          keys.put(keyFields[i], keyValues[i].toString());
+      }
+
+      return keys;
+   }
+
+   /**
+    * Prepare keys for {@link FileObject#keys}.
+    */
+   private LinkedHashMap<String, String> makeKeys(String[] keyFields, Map<String, String> executionParams)
+      throws ExecException
+   {
+      LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+
+      for (int i = 0; i < keyFields.length; i++)
+      {
+         keys.put(keyFields[i], executionParams.get(keyFields[i]));
       }
 
       return keys;

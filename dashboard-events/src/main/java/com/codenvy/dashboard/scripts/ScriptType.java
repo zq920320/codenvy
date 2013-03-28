@@ -18,9 +18,13 @@
  */
 package com.codenvy.dashboard.scripts;
 
+import org.apache.pig.backend.executionengine.ExecException;
+import org.apache.pig.data.DefaultDataBag;
 import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Enumeration of all available Pig-latin scripts.
@@ -35,6 +39,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.LONG;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    EVENT_COUNT_USER_CREATED {
@@ -42,6 +52,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.LONG;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
@@ -51,6 +67,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.LONG;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    EVENT_COUNT_PROJECT_CREATED {
@@ -58,6 +80,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.LONG;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
@@ -67,6 +95,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.LONG;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    EVENT_COUNT_WORKSPACE_DESTROYED {
@@ -74,6 +108,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.LONG;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
@@ -83,6 +123,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.LONG;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    EVENT_COUNT_USER_INVITE {
@@ -90,6 +136,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.LONG;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
@@ -107,6 +159,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.LONG;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    ACTIVE_PROJECTS {
@@ -114,6 +172,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.LONG;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
@@ -123,6 +187,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.LONG;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    DETAILS_USER_ADDED_TO_WS {
@@ -130,6 +200,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.PROPERTIES;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
@@ -139,6 +215,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.PROPERTIES;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    DETAILS_APPLICATION_CREATED_PAAS {
@@ -147,6 +229,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.PROPERTIES;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    DETAILS_USER_SSO_LOGGED_IN {
@@ -154,6 +242,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.PROPERTIES;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
@@ -169,7 +263,13 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.NO_KEY_FIELDS_LIST;
+         return ScriptTypeResult.LIST;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.EMPTY;
       }
    },
 
@@ -177,7 +277,13 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.NO_KEY_FIELDS_LIST;
+         return ScriptTypeResult.LIST;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.EMPTY;
       }
    },
 
@@ -185,7 +291,13 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.NO_KEY_FIELDS_LIST;
+         return ScriptTypeResult.LIST;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.EMPTY;
       }
    },
 
@@ -193,7 +305,13 @@ public enum ScriptType {
       @Override
       public ScriptTypeResult getResultType()
       {
-         return ScriptTypeResult.NO_KEY_FIELDS_LIST;
+         return ScriptTypeResult.LIST;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.EMPTY;
       }
    },
 
@@ -203,6 +321,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.LONG;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    TOP_WS_BY_USERS {
@@ -210,6 +334,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.PROPERTIES;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    },
 
@@ -219,6 +349,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.PROPERTIES;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    TOP_WS_BY_PROJECTS {
@@ -227,6 +363,12 @@ public enum ScriptType {
       {
          return ScriptTypeResult.PROPERTIES;
       }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
+      }
    },
 
    TOP_WS_BY_BUILDS {
@@ -234,6 +376,12 @@ public enum ScriptType {
       public ScriptTypeResult getResultType()
       {
          return ScriptTypeResult.PROPERTIES;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.TIMEFRAME;
       }
    };
 
@@ -253,6 +401,22 @@ public enum ScriptType {
    public abstract ScriptTypeResult getResultType();
 
    /**
+    * Every Pig-latin script results contains sequence of keys which uses in creation of unique identifier
+    * of result. 
+    * 
+    * @return corresponding {@link ScriptKeyFieldsType}.
+    */
+   public abstract ScriptKeyFieldsType getKeyFieldsType();
+
+   /**
+    * @return {@link ScriptKeyFieldsType#getKeyFields()}.
+    */
+   public String[] getKeyFields()
+   {
+      return getKeyFieldsType().getKeyFields();
+   }
+
+   /**
     * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptTypeResult}.
     * The value will be obtained from {@link Tuple}.
     */
@@ -268,5 +432,114 @@ public enum ScriptType {
    public FileObject createFileObject(String baseDir, Object... keysValues) throws IOException
    {
       return new FileObject(baseDir, this, keysValues);
+   }
+   
+   /**
+    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptTypeResult}.
+    * The value will be loaded from the file.
+    */
+   public FileObject createFileObject(String baseDir, Map<String, String> executionParams) throws IOException
+   {
+      return new FileObject(baseDir, this, executionParams);
+   }
+
+   public Tuple getEmptyResult(Map<String, String> executionParams) throws ExecException
+   {
+      String[] keyFields = getKeyFields();
+      
+      Tuple tuple = TupleFactory.getInstance().newTuple(keyFields.length+1);
+      for (int i = 0; i < keyFields.length; i++)
+      {
+         tuple.set(0, executionParams.get(keyFields[i]));
+      }
+      tuple.set(keyFields.length, getResultType().getEmptyResult());
+
+      return tuple;
+   }
+   
+   /**
+    * Enumeration of all Pig-latin script's results. 
+    */
+   public enum ScriptTypeResult {
+
+      PROPERTIES {
+         @Override
+         public ValueTranslator getValueTranslator()
+         {
+            return new Bag2PropertiesTranslator();
+         }
+
+         @Override
+         public Object getEmptyResult()
+         {
+            return new DefaultDataBag();
+         }
+      },
+
+      LONG {
+         @Override
+         public ValueTranslator getValueTranslator()
+         {
+            return new Object2LongTranslator();
+         }
+
+         @Override
+         public Object getEmptyResult()
+         {
+            return Long.valueOf(0);
+         }
+      },
+
+      LIST {
+         @Override
+         public ValueTranslator getValueTranslator()
+         {
+            return new Bag2ListTranslator();
+         }
+
+         @Override
+         public Object getEmptyResult()
+         {
+            return new DefaultDataBag();
+         }
+      };
+      
+      /**
+       * @return corresponding {@link ValueTranslator} instance
+       */
+      public abstract ValueTranslator getValueTranslator();
+
+      /**
+       * @return particular object for default value
+       */
+      public abstract Object getEmptyResult();
+
+   }
+
+   /**
+    * Enumeration of all key fields types. 
+    */
+   public enum ScriptKeyFieldsType {
+
+      TIMEFRAME {
+         @Override
+         public String[] getKeyFields()
+         {
+            return new String[]{Constants.FROM_DATE, Constants.TO_DATE};
+         }
+      },
+      
+      EMPTY {
+         @Override
+         public String[] getKeyFields()
+         {
+            return new String[]{};
+         }
+      };
+
+      /**
+       * @return the list of actual key field names.
+       */
+      public abstract String[] getKeyFields();
    }
 }

@@ -146,7 +146,7 @@ public class ScriptExecutor
          Tuple result = doExecute(scriptContent);
          if (result == null)
          {
-            return scriptType.getResultType().getEmptyResult(context);
+            return scriptType.getEmptyResult(context);
          }
 
          return result;
@@ -188,7 +188,7 @@ public class ScriptExecutor
     */
    private void validateContext() throws IOException
    {
-      for (String keyField : scriptType.getResultType().getKeyFields())
+      for (String keyField : scriptType.getKeyFields())
       {
          if (!context.containsKey(keyField))
          {

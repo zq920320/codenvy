@@ -29,51 +29,9 @@ import java.util.Map;
 public class ScriptExecutionContext
 {
    /**
-    * Script execution result. 
-    */
-   private Object result;
-
-   /**
     * Runtime script parameters.
     */
    private Map<String, String> params;
-
-   /**
-    * {@link ScriptType}.
-    */
-   private String scriptType;
-
-   /**
-    * Getter for {@link #result}. 
-    */
-   public Object getResult()
-   {
-      return result;
-   }
-
-   /**
-    * Setter for {@link #result}. 
-    */
-   public void setResult(Object result)
-   {
-      this.result = result;
-   }
-
-   /**
-    * Getter for {@link #scriptType}. 
-    */
-   public String getScriptType()
-   {
-      return scriptType;
-   }
-
-   /**
-    * Setter for {@link #scriptType}. 
-    */
-   public void setScriptType(String type)
-   {
-      this.scriptType = type;
-   }
 
    /**
     * Getter for {@link #params}. 

@@ -42,15 +42,17 @@ public class Object2LongTranslator implements ValueTranslator {
 	 * {@inheritedDoc}
 	 */
 	@Override
-	public Long doRead(BufferedReader reader) throws IOException {
-		return Long.valueOf(reader.readLine());
+   public Long doRead(BufferedReader reader) throws IOException
+   {
+      return Long.valueOf(reader.readLine());
 	}
 
 	/**
 	 * {@inheritedDoc}
 	 */
 	@Override
-	public Long translate(Object value) throws IOException {
-		return Long.valueOf(value.toString());
+   public Long translate(Object value) throws IOException
+   {
+      return Long.valueOf(value.toString());
 	}
 }
