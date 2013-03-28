@@ -7,16 +7,12 @@
 ---------------------------------------------------------------------------
 DEFINE loadResources(resourceParam) RETURNS Y {
   l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
-  l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}).*EVENT\\#([^\\#]*)\\#.*') 
+  l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*EVENT\\#([^\\#]*)\\#.*') 
                           AS pattern, message;
-  l3 = FILTER l2 BY pattern.$8 != '';
-  l4 = FOREACH l3 GENERATE pattern.$0 AS ip, 
-                          (int)pattern.$1 * 10000 + (int)pattern.$2 * 100 + (int)pattern.$3 AS date, 
-                          (int)pattern.$4 * 3600 + (int)pattern.$5 * 60 + (int)pattern.$6 AS time, 
-                          pattern.$8 AS event, message;
+  l3 = FILTER l2 BY pattern.$2 != '';
+  l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$2 AS event, message;
   $Y = DISTINCT l4;
 };
-
 
 ---------------------------------------------------------------------------
 -- Filters events by date of occurrence.
@@ -24,7 +20,8 @@ DEFINE loadResources(resourceParam) RETURNS Y {
 -- @param toDateParam  - date in format 'YYYYMMDD'
 ---------------------------------------------------------------------------
 DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
-  $Y = FILTER $X BY (int) $fromDateParam <= date AND date <= (int) $toDateParam;
+  $Y = FILTER $X BY MilliSecondsBetween(ToDate('$fromDateParam', 'yyyyMMdd'), dt) <= 0 AND
+                    MilliSecondsBetween(AddDuration(ToDate('$toDateParam', 'yyyyMMdd'), 'P1D'), dt) > 0;
 };
 
 ---------------------------------------------------------------------------

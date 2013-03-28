@@ -15,21 +15,19 @@ f2 = filterByDate(f1, '$fromDate', '$toDate');
 fR = removeEvent(f2, 'user-added-to-ws,user-created,user-removed');
 
 a1 = extractUser(fR);
-aR = FOREACH a1 GENERATE date, user, time, event;
-bR = FOREACH a1 GENERATE date, user, time, event;
+aR = FOREACH a1 GENERATE user, dt;
+bR = FOREACH a1 GENERATE user, dt;
 
 -------------------------------------------------------
 -- Finds for every event the closest next one 
 -- as long as interval between two events less 
 -- than 'inactiveInterval'
---
--- DESCRIBE j1: {aR::date: int,aR::user: bytearray,aR::time: int,aR::event: bytearray,bR::date: int,bR::user: bytearray,bR::time: int,bR::event: bytearray}
 -------------------------------------------------------
-j1 = JOIN aR BY (date, user), bR BY (date, user);
-j2 = FILTER j1 BY (int) $inactiveInterval > bR::time - aR::time AND bR::time - aR::time > 0;
-jR = FOREACH j2 GENERATE aR::date AS date, aR::user AS user, aR::time AS time, bR::time - aR::time AS interval;
+j1 = JOIN aR BY (user), bR BY (user);
+j2 = FOREACH j1 GENERATE aR::user AS user, aR::dt AS dt, SecondsBetween(bR::dt, aR::dt) AS interval;
+jR = FILTER j2 BY 0 < interval AND interval <= (int) $inactiveInterval;
 
-g1 = GROUP jR BY (date, user, time);
+g1 = GROUP jR BY (user, dt);
 gR = FOREACH g1 GENERATE MIN(jR.interval) AS interval;
 
 -------------------------------------------------------

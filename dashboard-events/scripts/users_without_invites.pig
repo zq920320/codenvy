@@ -3,8 +3,8 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-%DEFAULT fromDate '00000000';
-%DEFAULT toDate   '99999999';
+%DEFAULT fromDate '00010101';
+%DEFAULT toDate   '55551231';
 
 f1 = loadResources('$log');
 fR = filterByDate(f1, '$fromDate', '$toDate');
