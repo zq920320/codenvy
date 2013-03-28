@@ -238,8 +238,9 @@
                         success({ email : xhr.responseText });
                     },
                     error : function(xhr /*,status , err*/){
+                        setTimeout(function(){window.location = "/recover-password";}, 10000);
                         error([
-                            new AccountError(null,xhr.responseText)
+                            new AccountError(null,xhr.responseText + ".<br>You will be redirected in 10 sec")
                         ]);
                     }
                 });
