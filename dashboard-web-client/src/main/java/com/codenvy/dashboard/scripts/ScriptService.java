@@ -18,7 +18,6 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,12 +126,10 @@ public class ScriptService
 
       LOG.info("Execution " + scriptType.getScriptFileName() + " is started");
 
-      Tuple tuple = executor.executeAndReturnResult();
+      FileObject fileObject = executor.executeAndReturnResult(RESULT_DIRECTORY);
+      fileObject.store();
 
       LOG.info("Execution " + scriptType.getScriptFileName() + " is finished");
-
-      FileObject fileObject = scriptType.createFileObject(RESULT_DIRECTORY, tuple);
-      fileObject.store();
 
       return fileObject.getValue();
    }

@@ -3,7 +3,5 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-r1 = countAllInDistParamEventWs('$log', '$fromDate', '$toDate', 'project-built,application-created,project-deployed', 'PROJECT');
-result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
-
+result = countAllInDistParamEventWs('$log', '$fromDate', '$toDate', 'project-built,application-created,project-deployed', 'PROJECT');
 DUMP result;

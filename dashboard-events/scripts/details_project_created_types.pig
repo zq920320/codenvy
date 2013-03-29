@@ -3,7 +3,5 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-r1 = countParamInParamEvent('$log', '$fromDate', '$toDate', 'project-created', 'TYPE');
-result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
-
+result = countParamInParamEvent('$log', '$fromDate', '$toDate', 'project-created', 'TYPE');
 DUMP result;

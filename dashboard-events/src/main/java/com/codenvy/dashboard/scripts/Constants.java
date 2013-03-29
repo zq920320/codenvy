@@ -24,36 +24,16 @@ package com.codenvy.dashboard.scripts;
 public class Constants
 {
    /**
-    * The relation name in the Pig script, contains the execution result.
-    */
-   public static final String FINAL_RELATION = "result";
-   
-   /**
-    * Beginning of the time frame. Has format YYYYMMDD.
-    */
-   public static final String FROM_DATE = "fromDate";
-
-   /**
-    * Ending of the time frame. Has format YYYYMMDD.
-    */
-   public static final String TO_DATE = "toDate";
-
-   /**
     * Parameter name in Pig script contains the resources are needed to be loaded.
     * Can be either the name of single resource (file or directory) or the list of 
     * comma separated resources. Wildcard characters are supported.
     */
    public static final String LOG = "log";
 
-   // The list not mandatory parameters. 
-
-   protected static final String INACTIVE_INTERVAL = "inactiveInterval";
-
-   protected static final String TOP = "top";
-
-   protected static final String LAST_MINUTES = "lastMinutes";
-
-   protected static final String SESSIONS_COUNT = "sessionsCount";
+   /**
+    * Pig relation containing execution result. 
+    */
+   public static final String FINAL_RELATION = "result";
 
    /**
     * Private constructor.

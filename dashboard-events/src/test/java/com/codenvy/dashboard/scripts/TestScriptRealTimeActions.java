@@ -21,7 +21,6 @@ package com.codenvy.dashboard.scripts;
 import com.codenvy.dashboard.scripts.util.Event;
 import com.codenvy.dashboard.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,7 +28,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -69,10 +70,10 @@ public class TestScriptRealTimeActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      Tuple tuple =
-         executeAndReturnResult(ScriptType.REALTIME_USER_SSO_LOGGED_IN, log, new String[][]{{Constants.LAST_MINUTES,
-            "6"}});
-      FileObject fileObject = ScriptType.REALTIME_USER_SSO_LOGGED_IN.createFileObject(BASE_DIR, tuple);
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.LAST_MINUTES.getName(), "6");
+
+      FileObject fileObject = executeAndReturnResult(ScriptType.REALTIME_USER_SSO_LOGGED_IN, log, params);
 
       List<String> list = (List<String>)fileObject.getValue();
       Assert.assertEquals(list.size(), 3);
@@ -109,10 +110,10 @@ public class TestScriptRealTimeActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      Tuple tuple =
-         executeAndReturnResult(ScriptType.REALTIME_WS_WITH_SEVERAL_USERS, log, new String[][]{{Constants.LAST_MINUTES,
-            "6"}});
-      FileObject fileObject = ScriptType.REALTIME_WS_WITH_SEVERAL_USERS.createFileObject(BASE_DIR, tuple);
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.LAST_MINUTES.getName(), "6");
+
+      FileObject fileObject = executeAndReturnResult(ScriptType.REALTIME_WS_WITH_SEVERAL_USERS, log, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.size(), 1);

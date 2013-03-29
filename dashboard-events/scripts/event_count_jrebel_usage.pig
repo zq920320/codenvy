@@ -3,8 +3,5 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-w = countAllInDistParamEventWs('$log', '$fromDate', '$toDate', 'jrebel-usage', 'PROJECT');
-
-result = FOREACH w GENERATE '$fromDate', '$toDate', *;
-
+result = countAllInDistParamEventWs('$log', '$fromDate', '$toDate', 'jrebel-usage', 'PROJECT');
 DUMP result;

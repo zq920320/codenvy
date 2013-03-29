@@ -4,9 +4,6 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-%DEFAULT lastMinutes   '60';
-%DEFAULT sessionsCount '2';
-
 f1 = loadResources('$log');
 fR = filterByLastMinutes(f1, '$lastMinutes');
 
@@ -24,5 +21,4 @@ bR = FOREACH b2 GENERATE group, COUNT(aR);
 
 r1 = GROUP bR ALL;
 result = FOREACH r1 GENERATE bR;
-
 DUMP result;

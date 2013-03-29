@@ -5,7 +5,6 @@
 -- is started at the next interaction.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
-%DEFAULT inactivityInterval '10';
 
 -------------------------------------------------------
 -- Let's keep only needed events in given time frame
@@ -34,7 +33,6 @@ gR = FOREACH g1 GENERATE MIN(jR.interval) AS interval;
 -- Calculates to total time in minutes
 -------------------------------------------------------
 r1 = GROUP gR ALL;
-result = FOREACH r1 GENERATE '$fromDate', '$toDate', SUM(gR.interval) / 60;
-
+result = FOREACH r1 GENERATE SUM(gR.interval) / 60;
 DUMP result;
 

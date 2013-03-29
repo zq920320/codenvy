@@ -3,8 +3,5 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-w = countSecondParamInDist2ParamsEventWs('$log', '$fromDate', '$toDate', 'jrebel-usage', 'PROJECT', 'JREBEL');
-
-result = FOREACH w GENERATE '$fromDate', '$toDate', *;
-
+result = countSecondParamInDist2ParamsEventWs('$log', '$fromDate', '$toDate', 'jrebel-usage', 'PROJECT', 'JREBEL');
 DUMP result;

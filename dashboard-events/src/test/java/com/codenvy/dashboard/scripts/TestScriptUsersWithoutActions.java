@@ -26,7 +26,9 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -52,9 +54,9 @@ public class TestScriptUsersWithoutActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_PROJECTS, log, new String[][]{});
+      Map<String, String> params = new HashMap<String, String>();
 
-      FileObject fileObject = ScriptType.USERS_WITHOUT_PROJECTS.createFileObject(BASE_DIR);
+      FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_PROJECTS, log, params);
 
       List<String> list = (List<String>)fileObject.getValue();
       Assert.assertEquals(list.size(), 1);
@@ -78,9 +80,9 @@ public class TestScriptUsersWithoutActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_INVITES, log, new String[][]{});
+      Map<String, String> params = new HashMap<String, String>();
 
-      FileObject fileObject = ScriptType.USERS_WITHOUT_INVITES.createFileObject(BASE_DIR);
+      FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_INVITES, log, params);
 
       List<String> list = (List<String>)fileObject.getValue();
       Assert.assertEquals(list.size(), 1);
@@ -112,9 +114,9 @@ public class TestScriptUsersWithoutActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_BUILDS, log, new String[][]{});
+      Map<String, String> params = new HashMap<String, String>();
 
-      FileObject fileObject = ScriptType.USERS_WITHOUT_BUILDS.createFileObject(BASE_DIR);
+      FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_BUILDS, log, params);
 
       List<String> list = (List<String>)fileObject.getValue();
       Assert.assertEquals(list.size(), 1);
@@ -142,9 +144,9 @@ public class TestScriptUsersWithoutActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_DEPLOYS, log, new String[][]{});
+      Map<String, String> params = new HashMap<String, String>();
 
-      FileObject fileObject = ScriptType.USERS_WITHOUT_DEPLOYS.createFileObject(BASE_DIR);
+      FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_DEPLOYS, log, params);
 
       List<String> list = (List<String>)fileObject.getValue();
       Assert.assertEquals(list.size(), 1);

@@ -3,7 +3,5 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-r1 = countSecondParamInDist2ParamsEvent('$log', '$fromDate', '$toDate', 'user-sso-logged-in', 'USER', 'USING');
-result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
-
+result = countSecondParamInDist2ParamsEvent('$log', '$fromDate', '$toDate', 'user-sso-logged-in', 'USER', 'USING');
 DUMP result;

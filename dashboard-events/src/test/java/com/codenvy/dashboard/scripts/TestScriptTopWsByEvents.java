@@ -18,21 +18,17 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import com.codenvy.dashboard.scripts.Constants;
-import com.codenvy.dashboard.scripts.FileObject;
-import com.codenvy.dashboard.scripts.ScriptType;
-
 import com.codenvy.dashboard.scripts.util.Event;
 import com.codenvy.dashboard.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -63,11 +59,13 @@ public class TestScriptTopWsByEvents extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.TOP_WS_BY_USERS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "10"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_USERS.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.TOP_WS_BY_USERS, log, params);
 
+      FileObject fileObject = ScriptType.TOP_WS_BY_USERS.createFileObject(BASE_DIR, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("ws1"), "3");
@@ -86,10 +84,13 @@ public class TestScriptTopWsByEvents extends BasePigTest
       events.add(Event.Builder.createUserInviteEvent("user1", "ws3", "ses", "email1").withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.TOP_WS_BY_INVITATIONS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "10"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_INVITATIONS.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.TOP_WS_BY_INVITATIONS, log, params);
+
+      FileObject fileObject = ScriptType.TOP_WS_BY_INVITATIONS.createFileObject(BASE_DIR, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("ws1"), "3");
@@ -121,10 +122,13 @@ public class TestScriptTopWsByEvents extends BasePigTest
          .withDate("2010-10-01").build());
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.TOP_WS_BY_BUILDS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "10"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_BUILDS.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.TOP_WS_BY_BUILDS, log, params);
+
+      FileObject fileObject = ScriptType.TOP_WS_BY_BUILDS.createFileObject(BASE_DIR, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("ws1"), "3");
@@ -159,10 +163,13 @@ public class TestScriptTopWsByEvents extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.TOP_WS_BY_PROJECTS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}, {Constants.TOP, "10"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_PROJECTS.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.TOP_WS_BY_PROJECTS, log, params);
+
+      FileObject fileObject = ScriptType.TOP_WS_BY_PROJECTS.createFileObject(BASE_DIR, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("ws1"), "2");

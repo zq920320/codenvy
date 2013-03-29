@@ -18,21 +18,17 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import com.codenvy.dashboard.scripts.Constants;
-import com.codenvy.dashboard.scripts.FileObject;
-import com.codenvy.dashboard.scripts.ScriptType;
-
 import com.codenvy.dashboard.scripts.util.Event;
 import com.codenvy.dashboard.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -52,10 +48,13 @@ public class TestScriptActiveUsers extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.ACTIVE_USERS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject = ScriptType.ACTIVE_USERS.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.ACTIVE_USERS, log, params);
+
+      FileObject fileObject = ScriptType.ACTIVE_USERS.createFileObject(BASE_DIR, params);
 
       Assert.assertEquals(fileObject.getValue(), Long.valueOf(2));
    }

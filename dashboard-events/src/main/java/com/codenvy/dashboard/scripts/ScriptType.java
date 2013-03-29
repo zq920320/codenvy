@@ -18,10 +18,7 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DefaultDataBag;
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -32,7 +29,7 @@ import java.util.Map;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum ScriptType {
-
+   
    EVENT_COUNT_WORKSPACE_CREATED {
       @Override
       public ScriptTypeResult getResultType()
@@ -41,9 +38,15 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
       }
    },
 
@@ -55,10 +58,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    EVENT_COUNT_USER_REMOVED {
@@ -69,10 +79,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    EVENT_COUNT_PROJECT_CREATED {
@@ -83,10 +100,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    EVENT_COUNT_DIST_PROJECT_BUILD {
@@ -97,10 +121,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    EVENT_COUNT_WORKSPACE_DESTROYED {
@@ -111,10 +142,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    EVENT_COUNT_PROJECT_DESTROYED {
@@ -125,10 +163,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    EVENT_COUNT_USER_INVITE {
@@ -139,10 +184,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    EVENT_COUNT_JREBEL_USAGE {
@@ -153,10 +205,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    ACTIVE_WORKSPACES {
@@ -167,10 +226,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    ACTIVE_PROJECTS {
@@ -181,10 +247,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    ACTIVE_USERS {
@@ -195,10 +268,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    DETAILS_USER_ADDED_TO_WS {
@@ -209,10 +289,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    DETAILS_PROJECT_CREATED_TYPES {
@@ -223,10 +310,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    DETAILS_APPLICATION_CREATED_PAAS {
@@ -237,10 +331,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    DETAILS_USER_SSO_LOGGED_IN {
@@ -251,10 +352,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    DETAILS_JREBEL_USAGE {
@@ -265,10 +373,17 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{};
+      }
+
    },
 
    USERS_WITHOUT_PROJECTS {
@@ -279,9 +394,21 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.EMPTY;
+         return new ScriptParameters[]{};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public boolean isStoreSupport()
+      {
+         return false;
       }
    },
 
@@ -293,9 +420,21 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.EMPTY;
+         return new ScriptParameters[]{};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public boolean isStoreSupport()
+      {
+         return false;
       }
    },
 
@@ -307,9 +446,21 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.EMPTY;
+         return new ScriptParameters[]{};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public boolean isStoreSupport()
+      {
+         return false;
       }
    },
 
@@ -321,9 +472,21 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.EMPTY;
+         return new ScriptParameters[]{};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public boolean isStoreSupport()
+      {
+         return false;
       }
    },
 
@@ -335,9 +498,15 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.INACTIVE_INTERVAL};
       }
    },
 
@@ -349,9 +518,15 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.TOP};
       }
    },
 
@@ -363,9 +538,15 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getAdditionalParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.TOP};
+      }
+
+      @Override
+      public ScriptParameters[] getMandatoryParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
       }
    },
 
@@ -377,9 +558,15 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.TOP};
       }
    },
 
@@ -391,9 +578,15 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.TIMEFRAME;
+         return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.TOP};
       }
    },
 
@@ -405,15 +598,21 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.EMPTY;
+         return new ScriptParameters[]{};
       }
 
       @Override
       public boolean isStoreSupport()
       {
          return false;
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.LAST_MINUTES, ScriptParameters.SESSIONS_COUNT};
       }
    },
 
@@ -425,15 +624,21 @@ public enum ScriptType {
       }
 
       @Override
-      public ScriptKeyFieldsType getKeyFieldsType()
+      public ScriptParameters[] getMandatoryParams()
       {
-         return ScriptKeyFieldsType.EMPTY;
+         return new ScriptParameters[]{};
       }
 
       @Override
       public boolean isStoreSupport()
       {
          return false;
+      }
+
+      @Override
+      public ScriptParameters[] getAdditionalParams()
+      {
+         return new ScriptParameters[]{ScriptParameters.LAST_MINUTES};
       }
    };
 
@@ -453,47 +658,14 @@ public enum ScriptType {
    public abstract ScriptTypeResult getResultType();
 
    /**
-    * Every Pig-latin script results contains sequence of keys which uses in creation of unique identifier
-    * of result. 
-    * 
-    * @return corresponding {@link ScriptKeyFieldsType}.
+    * @return list of mandatory parameters that have to be passed to the script
     */
-   public abstract ScriptKeyFieldsType getKeyFieldsType();
+   public abstract ScriptParameters[] getMandatoryParams();
 
    /**
-    * @return {@link ScriptKeyFieldsType#getKeyFields()}.
+    * @return list of additional parameters (not mandatory) that might be passed to the script
     */
-   public String[] getKeyFields()
-   {
-      return getKeyFieldsType().getKeyFields();
-   }
-
-   /**
-    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptTypeResult}.
-    * The value will be obtained from {@link Tuple}.
-    */
-   public FileObject createFileObject(String baseDir, Tuple tuple) throws IOException
-   {
-      return new FileObject(baseDir, this, tuple);
-   }
-
-   /**
-    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptTypeResult}.
-    * The value will be loaded from the file.
-    */
-   public FileObject createFileObject(String baseDir, Object... keysValues) throws IOException
-   {
-      return new FileObject(baseDir, this, keysValues);
-   }
-   
-   /**
-    * Factory class. Creates specific {@link FileObject} with given corresponding {@link ScriptTypeResult}.
-    * The value will be loaded from the file.
-    */
-   public FileObject createFileObject(String baseDir, Map<String, String> executionParams) throws IOException
-   {
-      return new FileObject(baseDir, this, executionParams);
-   }
+   public abstract ScriptParameters[] getAdditionalParams();
 
    /**
     * @return true if script result might be stored and false otherwise  
@@ -504,22 +676,22 @@ public enum ScriptType {
    }
 
    /**
-    * Returns tuple with no results. 
+    * Factory class.
     */
-   public Tuple getEmptyResult(Map<String, String> executionParams) throws ExecException
+   public FileObject createFileObject(String baseDir, Map<String, String> executionParams, Object value)
+      throws IOException
    {
-      String[] keyFields = getKeyFields();
-      
-      Tuple tuple = TupleFactory.getInstance().newTuple(keyFields.length+1);
-      for (int i = 0; i < keyFields.length; i++)
-      {
-         tuple.set(0, executionParams.get(keyFields[i]));
-      }
-      tuple.set(keyFields.length, getResultType().getEmptyResult());
-
-      return tuple;
+      return new FileObject(baseDir, this, executionParams, value);
    }
-   
+
+   /**
+    * Factory class. The value will be loaded from the file.
+    */
+   public FileObject createFileObject(String baseDir, Map<String, String> executionParams) throws IOException
+   {
+      return new FileObject(baseDir, this, executionParams);
+   }
+
    /**
     * Enumeration of all Pig-latin script's results. 
     */
@@ -577,32 +749,5 @@ public enum ScriptType {
        */
       public abstract Object getEmptyResult();
 
-   }
-
-   /**
-    * Enumeration of all key fields types. 
-    */
-   public enum ScriptKeyFieldsType {
-
-      TIMEFRAME {
-         @Override
-         public String[] getKeyFields()
-         {
-            return new String[]{Constants.FROM_DATE, Constants.TO_DATE};
-         }
-      },
-      
-      EMPTY {
-         @Override
-         public String[] getKeyFields()
-         {
-            return new String[]{};
-         }
-      };
-
-      /**
-       * @return the list of actual key field names.
-       */
-      public abstract String[] getKeyFields();
    }
 }

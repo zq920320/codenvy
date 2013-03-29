@@ -11,7 +11,5 @@ a1 = extractUser(fR);
 a2 = FOREACH a1 GENERATE user;
 aR = DISTINCT a2;
 
-r1 = countAll(aR);
-result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
-
+result = countAll(aR);
 DUMP result;

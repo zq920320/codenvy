@@ -3,8 +3,6 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-%DEFAULT lastMinutes  '60';
-
 f1 = loadResources('$log');
 f2 = filterByLastMinutes(f1, '$lastMinutes');
 fR = filterByEvent(f2, 'user-sso-logged-in');
@@ -15,5 +13,4 @@ aR = DISTINCT a2;
 
 r1 = GROUP aR ALL;
 result = FOREACH r1 GENERATE aR;
-
 DUMP result;

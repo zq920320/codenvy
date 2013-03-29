@@ -4,7 +4,5 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-r1 = countSecondParamInDist2ParamsEventWs('$log', '$fromDate', '$toDate', 'user-added-to-ws', 'USER', 'FROM');
-result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
-
+result = countSecondParamInDist2ParamsEventWs('$log', '$fromDate', '$toDate', 'user-added-to-ws', 'USER', 'FROM');
 DUMP result;

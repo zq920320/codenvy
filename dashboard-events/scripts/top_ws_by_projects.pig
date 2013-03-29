@@ -3,7 +3,6 @@
 -- If project was removed, then it will not be calculated.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
-%DEFAULT top '10';
 
 f1 = loadResources('$log');
 fR = filterByDate(f1, '$fromDate', '$toDate');
@@ -22,7 +21,7 @@ jR = FOREACH j1 GENERATE aR::ws, (bR::count IS NULL ? aR::count : aR::count - bR
 -------------------------------------------------------
 r1 = GROUP jR ALL;
 result = FOREACH r1 {
-    GENERATE '$fromDate', '$toDate', TOP($top, 1, jR);
+    GENERATE TOP($top, 1, jR);
 }
 
 DUMP result;

@@ -26,7 +26,9 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -55,10 +57,14 @@ public class TestScriptProductUsageTime extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101003"}, {Constants.INACTIVE_INTERVAL, "10"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101003");
+      params.put(ScriptParameters.INACTIVE_INTERVAL.getName(), "10");
 
-      FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, 20101001, 20101003);
+      executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, params);
+
+      FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, params);
       Assert.assertEquals(fileObject.getValue(), 11L);
    }
 }

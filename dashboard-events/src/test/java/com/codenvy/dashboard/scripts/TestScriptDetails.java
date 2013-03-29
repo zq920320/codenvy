@@ -18,21 +18,17 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import com.codenvy.dashboard.scripts.Constants;
-import com.codenvy.dashboard.scripts.FileObject;
-import com.codenvy.dashboard.scripts.ScriptType;
-
 import com.codenvy.dashboard.scripts.util.Event;
 import com.codenvy.dashboard.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -54,10 +50,13 @@ public class TestScriptDetails extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.DETAILS_USER_ADDED_TO_WS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject = ScriptType.DETAILS_USER_ADDED_TO_WS.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.DETAILS_USER_ADDED_TO_WS, log, params);
+
+      FileObject fileObject = ScriptType.DETAILS_USER_ADDED_TO_WS.createFileObject(BASE_DIR, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("website"), "2");
@@ -75,10 +74,13 @@ public class TestScriptDetails extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject = ScriptType.DETAILS_USER_SSO_LOGGED_IN.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, params);
+
+      FileObject fileObject = ScriptType.DETAILS_USER_SSO_LOGGED_IN.createFileObject(BASE_DIR, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("google"), "2");
@@ -101,10 +103,13 @@ public class TestScriptDetails extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.DETAILS_PROJECT_CREATED_TYPES, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject = ScriptType.DETAILS_PROJECT_CREATED_TYPES.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.DETAILS_PROJECT_CREATED_TYPES, log, params);
+
+      FileObject fileObject = ScriptType.DETAILS_PROJECT_CREATED_TYPES.createFileObject(BASE_DIR, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("type1"), "2");
@@ -130,11 +135,13 @@ public class TestScriptDetails extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.DETAILS_APPLICATION_CREATED_PAAS, log, new String[][]{{Constants.FROM_DATE, "20101001"},
-         {Constants.TO_DATE, "20101001"}});
+      Map<String, String> params = new HashMap<String, String>();
+      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      FileObject fileObject =
-         ScriptType.DETAILS_APPLICATION_CREATED_PAAS.createFileObject(BASE_DIR, 20101001, 20101001);
+      executePigScript(ScriptType.DETAILS_APPLICATION_CREATED_PAAS, log, params);
+
+      FileObject fileObject = ScriptType.DETAILS_APPLICATION_CREATED_PAAS.createFileObject(BASE_DIR, params);
 
       Properties props = (Properties)fileObject.getValue();
       Assert.assertEquals(props.getProperty("paas1"), "1");

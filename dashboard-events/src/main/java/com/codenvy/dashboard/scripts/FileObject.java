@@ -18,11 +18,6 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import com.codenvy.dashboard.scripts.ScriptType.ScriptTypeResult;
-
-import org.apache.pig.backend.executionengine.ExecException;
-import org.apache.pig.data.Tuple;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -53,11 +48,6 @@ public class FileObject
    private final ScriptType scriptType;
 
    /**
-    * {@link ScriptTypeResult}.
-    */
-   private final ScriptTypeResult scriptResultType;
-
-   /**
     * The sequence of values are used as unique identifier of result
     * relatively to {@link #type}. They are used also as a part of 
     * path to destination {@link #FILE_NAME}. 
@@ -80,44 +70,16 @@ public class FileObject
    private final ValueTranslator translator;
 
    /**
-    * {@link FileObject} constructor. Loads value from the file.
+    * {@link FileObject} constructor.
     */
-   FileObject(String baseDir, ScriptType scriptType, Object... keysValues)
+   FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams, Object value)
       throws IOException
    {
       this.scriptType = scriptType;
-      this.scriptResultType = scriptType.getResultType();
-      this.keys = makeKeys(scriptType.getKeyFields(), keysValues);
       this.baseDir = baseDir;
-      this.translator = scriptResultType.getValueTranslator();
-      this.value = load();
-   }
-
-   /**
-    * {@link FileObject} constructor. Extract keys and value from the passed <code>tuple</code>.
-    * The last fields of the tuple is treated as value. 
-    */
-   FileObject(String baseDir, ScriptType scriptType, Tuple tuple) throws IOException
-   {
-      this.scriptResultType = scriptType.getResultType();
-      final String[] keyFields = scriptType.getKeyFields();
-
-      if (tuple.size() != keyFields.length + 1)
-      {
-         throw new IOException("The size of the tuple does not corresponds the number of key fields");
-      }
-
-      this.scriptType = scriptType;
-      this.baseDir = baseDir;
-      this.keys = new LinkedHashMap<String, String>(keyFields.length);
-
-      for (int i = 0; i < keyFields.length; i++)
-      {
-         keys.put(keyFields[i], tuple.get(i).toString());
-      }
-
-      this.translator = scriptResultType.getValueTranslator();
-      this.value = translator.translate(tuple.get(keyFields.length));
+      this.keys = makeKeys(executionParams);
+      this.translator = scriptType.getResultType().getValueTranslator();
+      this.value = translator.translate(value);
    }
 
    /**
@@ -126,10 +88,9 @@ public class FileObject
    FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams) throws IOException
    {
       this.scriptType = scriptType;
-      this.scriptResultType = scriptType.getResultType();
-      this.keys = makeKeys(scriptType.getKeyFields(), executionParams);
       this.baseDir = baseDir;
-      this.translator = scriptResultType.getValueTranslator();
+      this.keys = makeKeys(executionParams);
+      this.translator = scriptType.getResultType().getValueTranslator();
       this.value = load();
    }
 
@@ -232,7 +193,7 @@ public class FileObject
     */
    private String toRelativePath(Entry<String, String> entry)
    {
-      if (entry.getKey().equals(Constants.FROM_DATE))
+      if (entry.getKey().equals(ScriptParameters.FROM_DATE.getName()))
       {
          return translateDateToRelativePath(entry.getValue());
       }
@@ -302,39 +263,39 @@ public class FileObject
    /**
     * Prepare keys for {@link FileObject#keys}.
     */
-   private LinkedHashMap<String, String> makeKeys(String[] keyFields, Object... keyValues) throws ExecException
+   private LinkedHashMap<String, String> makeKeys(Map<String, String> executionParams) throws IOException
    {
       LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 
-      for (int i = 0; i < keyFields.length; i++)
+      ScriptParameters[] manParams = scriptType.getMandatoryParams();
+      ScriptParameters[] addParams = scriptType.getAdditionalParams();
+
+      for (int i = 0; i < manParams.length; i++)
       {
-         keys.put(keyFields[i], keyValues[i].toString());
+         String paramKey = manParams[i].getName();
+         String paramValue = executionParams.get(paramKey);
+         
+         if (paramValue == null)
+         {
+            throw new IOException("There is no mandatory parameter " + paramKey + " in execution context");
+         }
+
+         keys.put(paramKey, paramValue);
+      }
+
+      for (int i = 0; i < addParams.length; i++)
+      {
+         String paramKey = addParams[i].getName();
+         String paramValue = executionParams.get(paramKey);
+
+         if (paramValue == null)
+         {
+            paramValue = addParams[i].getDefaultValue();
+         }
+
+         keys.put(paramKey, paramValue);
       }
 
       return keys;
-   }
-
-   /**
-    * Prepare keys for {@link FileObject#keys}.
-    */
-   private LinkedHashMap<String, String> makeKeys(String[] keyFields, Map<String, String> executionParams)
-      throws ExecException
-   {
-      LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
-
-      for (int i = 0; i < keyFields.length; i++)
-      {
-         keys.put(keyFields[i], executionParams.get(keyFields[i]));
-      }
-
-      return keys;
-   }
-
-   /**
-    * Getter for {@link #type}.
-    */
-   public ScriptTypeResult getTypeResult()
-   {
-      return scriptResultType;
    }
 }

@@ -12,7 +12,5 @@ a2 = extractParam(a1, 'PROJECT', 'project');
 a3 = FOREACH a2 GENERATE ws, project;
 aR = DISTINCT a3;
 
-r1 = countAll(aR);
-result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
-
+result = countAll(aR);
 DUMP result;

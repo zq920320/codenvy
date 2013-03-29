@@ -18,10 +18,9 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import org.apache.pig.data.Tuple;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
@@ -33,27 +32,25 @@ public class BasePigTest
     */
    public static final String BASE_DIR = "target";
 
-   protected void executePigScript(ScriptType type, File log, String[][] params) throws IOException
+   protected void executePigScript(ScriptType type, File log, Map<String, String> executionParams) throws IOException
    {
-      ScriptExecutor scriptExecutor = new ScriptExecutor(type);
-      scriptExecutor.setParam(Constants.LOG, log.getAbsolutePath());
-      for (String[] param : params)
-      {
-         scriptExecutor.setParam(param[0], param[1]);
-      }
+      executionParams.put(Constants.LOG, log.getAbsolutePath());
 
-      scriptExecutor.executeAndStoreResult(BASE_DIR);
+      ScriptExecutor scriptExecutor = new ScriptExecutor(type);
+      scriptExecutor.setParams(executionParams);
+
+      FileObject fileObject = scriptExecutor.executeAndReturnResult(BASE_DIR);
+      fileObject.store();
    }
 
-   protected Tuple executeAndReturnResult(ScriptType type, File log, String[][] params) throws IOException
+   protected FileObject executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
+      throws IOException
    {
-      ScriptExecutor scriptExecutor = new ScriptExecutor(type);
-      scriptExecutor.setParam(Constants.LOG, log.getAbsolutePath());
-      for (String[] param : params)
-      {
-         scriptExecutor.setParam(param[0], param[1]);
-      }
+      executionParams.put(Constants.LOG, log.getAbsolutePath());
 
-      return scriptExecutor.executeAndReturnResult();
+      ScriptExecutor scriptExecutor = new ScriptExecutor(type);
+      scriptExecutor.setParams(executionParams);
+
+      return scriptExecutor.executeAndReturnResult(BASE_DIR);
    }
 }

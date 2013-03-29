@@ -113,26 +113,13 @@ public class ScriptExecutor
    }
 
    /**
-    * Executes script and store result into the given directory.
-    * 
+    * Run script and returns iterator by {@link Tuple} or null if script returned nothing.
     * @throws IOException if something gone wrong
     */
-   public void executeAndStoreResult(String storeLocation) throws IOException
+   public FileObject executeAndReturnResult(String storeLocation) throws IOException
    {
-      Tuple tuple = executeAndReturnResult();
-
-      FileObject fileObject = scriptType.createFileObject(storeLocation, tuple);
-      fileObject.store();
-   }
-
-   /**
-    * Run script and returns iterator by {@link Tuple}.
-    * 
-    * @throws IOException if something gone wrong
-    */
-   public Tuple executeAndReturnResult() throws IOException
-   {
-      validateContext();
+      validateMandatoryParameters();
+      addAdditionalParameters();
 
       File scriptFile = new File(SCRIPTS_DIRECTORY, scriptType.getScriptFileName());
       if (!scriptFile.exists())
@@ -143,13 +130,10 @@ public class ScriptExecutor
       InputStream scriptContent = readScriptContent(scriptFile);
       try
       {
-         Tuple result = doExecute(scriptContent);
-         if (result == null)
-         {
-            return scriptType.getEmptyResult(context);
-         }
+         Tuple tuple = doExecute(scriptContent);
 
-         return result;
+         Object value = tuple == null ? scriptType.getResultType().getEmptyResult() : tuple.get(0);
+         return scriptType.createFileObject(storeLocation, context, value);
       }
       finally
       {
@@ -186,13 +170,29 @@ public class ScriptExecutor
     * Checks if all parameters that are needed to script execution have been added
     * to context;
     */
-   private void validateContext() throws IOException
+   private void validateMandatoryParameters() throws IOException
    {
-      for (String keyField : scriptType.getKeyFields())
+      for (ScriptParameters param : scriptType.getMandatoryParams())
       {
-         if (!context.containsKey(keyField))
+         String paramName = param.getName();
+         if (!context.containsKey(paramName))
          {
-            throw new IOException("Key field " + keyField + " is absent in execution context");
+            throw new IOException("Key field " + paramName + " is absent in execution context");
+         }
+      }
+   }
+
+   /**
+    * Adds additional parameters into context if they are not there.
+    */
+   private void addAdditionalParameters() throws IOException
+   {
+      for (ScriptParameters param : scriptType.getAdditionalParams())
+      {
+         String paramName = param.getName();
+         if (!context.containsKey(paramName))
+         {
+            context.put(paramName, param.getDefaultValue());
          }
       }
    }

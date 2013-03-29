@@ -3,7 +3,5 @@
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
 
-r1 = countEvents('$log', '$fromDate', '$toDate', 'user-removed');
-result = FOREACH r1 GENERATE '$fromDate', '$toDate', *;
-
+result = countEvents('$log', '$fromDate', '$toDate', 'user-removed');
 DUMP result;
