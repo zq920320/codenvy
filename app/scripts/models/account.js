@@ -394,7 +394,7 @@
                
 
                 var MAX_WAIT_TIME_SECONDS = 120,
-                    PING_TIMEOUT_MILLISECONDS = 2000,
+                    PING_TIMEOUT_MILLISECONDS = 500,
                     endTime = new Date().getTime() + MAX_WAIT_TIME_SECONDS * 1000;
 
                 function buildRedirectUrl(){
