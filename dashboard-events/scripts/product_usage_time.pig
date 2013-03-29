@@ -5,7 +5,7 @@
 -- is started at the next interaction.
 ---------------------------------------------------------------------------
 IMPORT 'macros.pig';
-%DEFAULT inactivityInterval '600';
+%DEFAULT inactivityInterval '10';
 
 -------------------------------------------------------
 -- Let's keep only needed events in given time frame
@@ -25,7 +25,7 @@ bR = FOREACH a1 GENERATE user, dt;
 -------------------------------------------------------
 j1 = JOIN aR BY (user), bR BY (user);
 j2 = FOREACH j1 GENERATE aR::user AS user, aR::dt AS dt, SecondsBetween(bR::dt, aR::dt) AS interval;
-jR = FILTER j2 BY 0 < interval AND interval <= (int) $inactiveInterval;
+jR = FILTER j2 BY 0 < interval AND interval <= (long) $inactiveInterval * 60;
 
 g1 = GROUP jR BY (user, dt);
 gR = FOREACH g1 GENERATE MIN(jR.interval) AS interval;

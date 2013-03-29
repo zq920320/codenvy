@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------
 -- Loads resources.
--- @return {ip : bytearray, date : int, time : int, event : bytearray, message : chararray} 
+-- @return {ip : bytearray, dt : datetime,  event : bytearray, message : chararray} 
 -- In details:
 --   field 'date' contains date in format 'YYYYMMDD'
 --   field 'time' contains seconds from midnight
@@ -22,6 +22,16 @@ DEFINE loadResources(resourceParam) RETURNS Y {
 DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
   $Y = FILTER $X BY MilliSecondsBetween(ToDate('$fromDateParam', 'yyyyMMdd'), dt) <= 0 AND
                     MilliSecondsBetween(AddDuration(ToDate('$toDateParam', 'yyyyMMdd'), 'P1D'), dt) > 0;
+};
+
+---------------------------------------------------------------------------
+-- Filters events by date of occurrence. Keeps only in $lastMinutesParam.
+-- @param lastMinutesParam - time interval in minutes
+-- @return {..., curentDt : datetime}
+---------------------------------------------------------------------------
+DEFINE filterByLastMinutes(X, lastMinutesParam) RETURNS Y {
+  x1 = FOREACH $X GENERATE *, CurrentTime() AS currentDt;
+  $Y = FILTER x1 BY MinutesBetween(currentDt, dt) < (long) $lastMinutesParam;
 };
 
 ---------------------------------------------------------------------------
@@ -274,3 +284,4 @@ DEFINE countAllInDistParamEventWs(logParam, fromDateParam, toDateParam, eventPar
 
   $Y = countAll(w8);
 };
+

@@ -31,15 +31,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 @Path("script-service")
-@RolesAllowed("admins")
+@RolesAllowed({"admins", "cloud/admin", "cloud/manager"})
 public class ScriptService
 {
    /**
@@ -73,19 +75,14 @@ public class ScriptService
    @GET
    @Produces(MediaType.APPLICATION_JSON)
    @Path("{script}")
-   public Response execute(@PathParam("script") String script, @QueryParam("fromDate") String fromDate,
-      @QueryParam("toDate") String toDate) throws IOException
+   public Response execute(@PathParam("script") String script, @Context UriInfo info) throws IOException
    {
       Map<String, String> params = new HashMap<String, String>();
 
-      if (fromDate != null)
+      MultivaluedMap<String, String> queryParameters = info.getQueryParameters();
+      for (String key : queryParameters.keySet())
       {
-         params.put(Constants.FROM_DATE, fromDate);
-      }
-
-      if (toDate != null)
-      {
-         params.put(Constants.TO_DATE, toDate);
+         params.put(key, queryParameters.getFirst(key));
       }
 
       return doExecute(script, params);

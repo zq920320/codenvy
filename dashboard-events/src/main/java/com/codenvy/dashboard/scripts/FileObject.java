@@ -154,10 +154,13 @@ public class FileObject
     */
    public final synchronized void store() throws IOException
    {
-      File file = getFile();
+      if (scriptType.isStoreSupport())
+      {
+         File file = getFile();
 
-      validateDestination(file);
-      doStore(file);
+         validateDestination(file);
+         doStore(file);
+      }
    }
 
    /**

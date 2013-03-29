@@ -18,14 +18,8 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import com.codenvy.dashboard.scripts.Constants;
-import com.codenvy.dashboard.scripts.FileObject;
-import com.codenvy.dashboard.scripts.ScriptType;
-
 import com.codenvy.dashboard.scripts.util.Event;
 import com.codenvy.dashboard.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -58,8 +52,7 @@ public class TestScriptUsersWithoutActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_PROJECTS, log, new String[][]{{Constants.STORE_LOCATION,
-         BASE_DIR + "/users-without-projects"}});
+      executePigScript(ScriptType.USERS_WITHOUT_PROJECTS, log, new String[][]{});
 
       FileObject fileObject = ScriptType.USERS_WITHOUT_PROJECTS.createFileObject(BASE_DIR);
 
@@ -85,8 +78,7 @@ public class TestScriptUsersWithoutActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_INVITES, log, new String[][]{{Constants.STORE_LOCATION,
-         BASE_DIR + "/users-without-invites"}});
+      executePigScript(ScriptType.USERS_WITHOUT_INVITES, log, new String[][]{});
 
       FileObject fileObject = ScriptType.USERS_WITHOUT_INVITES.createFileObject(BASE_DIR);
 
@@ -120,8 +112,7 @@ public class TestScriptUsersWithoutActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_BUILDS, log, new String[][]{{Constants.STORE_LOCATION,
-         BASE_DIR + "/users-without-builds"}});
+      executePigScript(ScriptType.USERS_WITHOUT_BUILDS, log, new String[][]{});
 
       FileObject fileObject = ScriptType.USERS_WITHOUT_BUILDS.createFileObject(BASE_DIR);
 
@@ -151,8 +142,7 @@ public class TestScriptUsersWithoutActions extends BasePigTest
 
       File log = LogGenerator.generateLog(events);
 
-      executePigScript(ScriptType.USERS_WITHOUT_DEPLOYS, log, new String[][]{{Constants.STORE_LOCATION,
-         BASE_DIR + "/users-without-deployes"}});
+      executePigScript(ScriptType.USERS_WITHOUT_DEPLOYS, log, new String[][]{});
 
       FileObject fileObject = ScriptType.USERS_WITHOUT_DEPLOYS.createFileObject(BASE_DIR);
 

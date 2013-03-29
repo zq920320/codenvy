@@ -18,9 +18,7 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import com.codenvy.dashboard.scripts.Constants;
-import com.codenvy.dashboard.scripts.ScriptExecutor;
-import com.codenvy.dashboard.scripts.ScriptType;
+import org.apache.pig.data.Tuple;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,5 +43,17 @@ public class BasePigTest
       }
 
       scriptExecutor.executeAndStoreResult(BASE_DIR);
+   }
+
+   protected Tuple executeAndReturnResult(ScriptType type, File log, String[][] params) throws IOException
+   {
+      ScriptExecutor scriptExecutor = new ScriptExecutor(type);
+      scriptExecutor.setParam(Constants.LOG, log.getAbsolutePath());
+      for (String[] param : params)
+      {
+         scriptExecutor.setParam(param[0], param[1]);
+      }
+
+      return scriptExecutor.executeAndReturnResult();
    }
 }

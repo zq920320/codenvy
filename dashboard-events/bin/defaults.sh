@@ -8,6 +8,8 @@ log=$baseDir/logs
 fromDate=YYYYMMDD
 toDate=YYYYMMDD
 top=10
-inactiveInterval=600
+inactiveInterval=10
+lastMinutes=60
+minUsersCount=2
 
 

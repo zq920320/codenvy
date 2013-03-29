@@ -395,6 +395,46 @@ public enum ScriptType {
       {
          return ScriptKeyFieldsType.TIMEFRAME;
       }
+   },
+
+   REALTIME_WS_WITH_SEVERAL_USERS {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.PROPERTIES;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.EMPTY;
+      }
+
+      @Override
+      public boolean isStoreSupport()
+      {
+         return false;
+      }
+   },
+
+   REALTIME_USER_SSO_LOGGED_IN {
+      @Override
+      public ScriptTypeResult getResultType()
+      {
+         return ScriptTypeResult.LIST;
+      }
+
+      @Override
+      public ScriptKeyFieldsType getKeyFieldsType()
+      {
+         return ScriptKeyFieldsType.EMPTY;
+      }
+
+      @Override
+      public boolean isStoreSupport()
+      {
+         return false;
+      }
    };
 
    /**
@@ -455,6 +495,17 @@ public enum ScriptType {
       return new FileObject(baseDir, this, executionParams);
    }
 
+   /**
+    * @return true if script result might be stored and false otherwise  
+    */
+   public boolean isStoreSupport()
+   {
+      return true;
+   }
+
+   /**
+    * Returns tuple with no results. 
+    */
    public Tuple getEmptyResult(Map<String, String> executionParams) throws ExecException
    {
       String[] keyFields = getKeyFields();
