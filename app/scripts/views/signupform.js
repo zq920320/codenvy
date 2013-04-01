@@ -25,17 +25,17 @@ define(["jquery","underscore","models/account","views/accountformbase","validati
             adjustFormDisplay : function(){
 
                 //if all text fields are filled out, never collapse
-                var textBoxes = this.$(".field > input").toArray(), empty = false;
+                var textBoxes = this.$(".field > .required").toArray(), empty = true;
 
                 _.each(textBoxes,function(tb){
-                    if($(tb).val() === ''){
-                        empty = true;
+                    if($(tb).val() !== '' ){
+                        empty = false;
                     }
                 });
 
                 if(!empty){
-                    this.stopFromCollapsing();
-                }
+                   this.stopFromCollapsing();
+                }else{this.canCollapse = true;}
 
                 if(this.$(".field > input").toArray().indexOf(document.activeElement) !== -1){
                     this.$(".field > .signup-button").removeClass("hidden-button");

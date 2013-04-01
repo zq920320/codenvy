@@ -14,7 +14,7 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="{{'/styles/main.css' | resource}}">
         <link rel="shortcut icon" href="{{'/images/favicon.ico' | resource}}" />
         <script src="{{'/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
@@ -55,16 +55,16 @@
         <footer>
             <nav>
                 <ul>
-
                     <li><a class="footer-link" href="{{'features.html' | url}}">Features</a></li>
                     <li><a class="footer-link" href="{{'pricing.html' | url}}">Pricing</a></li>
                     <li><a class="footer-link" href="{{'enterprise.html' | url}}">Enterprise</a></li>
                     <li><a class="footer-link" href="{{'ISV.html' | url}}">ISV</a></li>
-                    <li><a class="footer-link" href="#">Documentation</a></li>
+                    <li><a class="footer-link" href="/docs">Documentation</a></li>
                     <li><a class="footer-link" href="{{'about.html' | url}}">About</a></li>
                     <li><a class="footer-link" href="{{'jobs.html' | url}}">Jobs</a></li>
                     <li><a class="footer-link" href="#" onclick="UserVoice.showPopupWidget();">Contact</a></li>
-                    <li><a class="footer-link" href="http://facebook.com/codenvy">Facebook</a></li>
+                    <li><a class="footer-link" href="http://codenvy.tumblr.com" target="_blank">Blog</a></li>
+                    <li><a class="footer-link" href="http://facebook.com/codenvy" target="_blank">Facebook</a></li>
                     <li><a class="footer-link" href="http://twitter.com/codenvyhq" target="_blank">Twitter</a></li>
                 </ul>
             </nav>
@@ -78,9 +78,6 @@
 
         {% include uservoice.html %}
         {% include google-analytics.html %}
-
-    <!-- build:js scripts/amd-app.js -->
-    <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
-    <!-- endbuild -->
+        {% include application-script.html %}
 </body>
 </html>

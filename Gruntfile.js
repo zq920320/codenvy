@@ -151,7 +151,7 @@ module.exports = function( grunt ) {
     // usemin handler should point to the file containing
     // the usemin blocks to be parsed
     'usemin-handler': {
-      html: '_layouts/base.html' //'index.html'
+      html: '_site/**/*.html' //'index.html'
     },
 
     // update references in HTML/CSS to revved files
@@ -183,7 +183,8 @@ module.exports = function( grunt ) {
       baseUrl: './scripts',
       wrap: true,
       name: 'main',
-      mainFile:'_layouts/base.html'
+      mainFile:'_site/index.html'
+      //mainConfigFile: 'scripts/main.js'
     },
 
     // While Yeoman handles concat/min when using

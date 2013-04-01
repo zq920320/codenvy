@@ -75,6 +75,10 @@ $scene-height:407px;
         @include icon_lighting();
     }
 
+    .lighting-enterprise{
+        @include icon_lighting_enterprise();
+    }
+
     .user{
         @include icon_user();
     }
@@ -311,14 +315,23 @@ h1.enterprise-header-text {
 
 .enterprise-features {
 
-    .icon-head p {
-        height: 150px;
+    .enterprise-icon {
+        
     }
 
-    .row:last-child .icon-head p{
-        background: none;
+    .enterprise-icon p {
         height: 130px;
     }
+
+    .row:last-child .enterprise-icon p{
+        background: none;
+    }
+
+    h4 {
+        margin-bottom: 80px;
+    }
+
+
 
 }
 
@@ -539,3 +552,16 @@ h1.enterprise-header-text {
         display: none !important;
     };
 }
+
+
+/*
+
+    Hot Pages
+
+*/
+
+.ht-index {
+    color: $light-background-color;
+    font-size: 4px;
+}
+

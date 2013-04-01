@@ -29,8 +29,8 @@ define(["underscore","views/accountformbase","models/account"],
             },
 
             __showResultMessage : function(){
-                this.$("fieldset.data").addClass("hidden");
-                this.$("fieldset.result-message").removeClass("hidden");
+				this.$("fieldset.data").attr("style","display:none");
+				this.$("fieldset.result-message").removeClass("hidden");
             }
         });
 

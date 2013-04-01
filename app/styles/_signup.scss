@@ -3,11 +3,18 @@
 @import "assets";
 @import "colors";
 
+
 .signup-form-wrapper {
     width: 335px;
     margin: 20px;
     padding-top: 11px;
 
+    -webkit-animation: fadeIn 0.8s;
+    -moz-animation: fadeIn 0.8s;
+    -ms-animation: fadeIn 0.8s;
+    -o-animation: fadeIn 0.8s;
+    animation: fadeIn 0.8s; 
+    
     h1 { padding-left: 16px; }
 }
 

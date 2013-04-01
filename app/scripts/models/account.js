@@ -145,7 +145,7 @@
                     type : "POST",
                     data: {'email':email,'password':password},
                     success : function(){
-                        success({url : "/pages/private/select-tenant?authType=jaas"});
+                        success({url : "/private/select-tenant?authType=jaas"});
                     },
                     error : function(xhr){
                         switch (xhr.status) {
@@ -183,7 +183,7 @@
                     type : "POST",
                     data: {},
                     success : function(){
-                        success({url: '/thank-you'});
+                        success({url: '../thank-you'});
                     },
                     error : function(xhr/*, status , err*/){
                         error([
@@ -238,8 +238,9 @@
                         success({ email : xhr.responseText });
                     },
                     error : function(xhr /*,status , err*/){
+                        setTimeout(function(){window.location = "/recover-password";}, 10000);
                         error([
-                            new AccountError(null,xhr.responseText)
+                            new AccountError(null,xhr.responseText + ".<br>You will be redirected in 10 sec")
                         ]);
                     }
                 });
@@ -379,19 +380,20 @@
                 });
             },
 
+
             waitForTenant : function(success, error){
-                var  errorType = Utils.getQueryParameterByName("errorType");//create OR start
+                //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
+                var errorType = Utils.getQueryParameterByName("errorType");//create OR start
                 var redirectUrl = Utils.getQueryParameterByName("redirect_url");
                 var tenantName = Utils.getQueryParameterByName("tenantName");
-
-                   if(typeof tenantName === 'undefined'){
-                       error([new AccountError(null,"This is not a valid url")]);
-                   }
-
-
+                if(typeof tenantName === 'undefined'){
+                    error([
+                        new AccountError(null,"This is not a valid url")
+                    ]);
+                }
 
                 var MAX_WAIT_TIME_SECONDS = 120,
-                    PING_TIMEOUT_MILLISECONDS = 2000,
+                    PING_TIMEOUT_MILLISECONDS = 500,
                     endTime = new Date().getTime() + MAX_WAIT_TIME_SECONDS * 1000;
 
                 function buildRedirectUrl(){ return redirectUrl; }
@@ -406,18 +408,16 @@
                                     null,
                                     "Tenant creation delayed, we will send credentials on your email when tenant started."
                                 )
-
                             ]);
                         }else{
                             error([
-                                    new AccountError(
-                                        null,
-                                        "The requested tenant <strong>'" + tenantName + "'</strong> is not available. Please, contact support."
-                                    )
+                                new AccountError(
+                                    null,
+                                    "The requested tenant <strong>'" + tenantName + "'</strong> is not available. Please, contact support."
+                                )
 
-                                ]);
+                            ]);
                         }
-
 
                         return;
                     }

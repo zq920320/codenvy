@@ -83,6 +83,44 @@ define(["jquery","models/account","views/form","validation"],
                     refocus(this.$("input[name='password1']"));
                     return;
                 }
+
+                if(typeof errorMap.change_password !== 'undefined'){
+                    this.trigger("invalid","change_password",errorMap.change_password);
+                    refocus(this.$("input[name='change_password']"));
+                    return;
+                }
+
+                if(typeof errorMap.confirm_password !== 'undefined'){
+                    this.trigger("invalid","confirm_password",errorMap.confirm_password);
+                    refocus(this.$("input[name='confirm_password']"));
+                    return;
+                }
+
+                if(typeof errorMap.first_name !== 'undefined'){
+                    this.trigger("invalid","first_name",errorMap.first_name);
+                    refocus(this.$("input[name='first_name']"));
+                    return;
+                }
+                if(typeof errorMap.last_name !== 'undefined'){
+                    this.trigger("invalid","last_name",errorMap.last_name);
+                    refocus(this.$("input[name='last_name']"));
+                    return;
+                }
+                if(typeof errorMap.phone_work !== 'undefined'){
+                    this.trigger("invalid","phone_work",errorMap.phone_work);
+                    refocus(this.$("input[name='phone_work']"));
+                    return;
+                }
+                if(typeof errorMap.company !== 'undefined'){
+                    this.trigger("invalid","company",errorMap.company);
+                    refocus(this.$("input[name='company']"));
+                    return;
+                }
+                if(typeof errorMap.title !== 'undefined'){
+                    this.trigger("invalid","title",errorMap.title);
+                    refocus(this.$("input[name='title']"));
+                    return;
+                }
             },
 
             __restoreForm : function(){
