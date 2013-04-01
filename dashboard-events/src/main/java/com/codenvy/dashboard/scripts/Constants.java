@@ -18,26 +18,18 @@
  */
 package com.codenvy.dashboard.scripts;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class Constants
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class Constants {
     /**
      * Parameter name in Pig script contains the resources are needed to be loaded. Can be either the name of single resource (file or
      * directory) or the list of comma separated resources. Wildcard characters are supported.
      */
-    public static final String LOG            = "log";
+    public static final String LOG = "log";
 
-    /**
-     * Pig relation containing execution result.
-     */
+    /** Pig relation containing execution result. */
     public static final String FINAL_RELATION = "result";
 
-    /**
-     * Private constructor.
-     */
-    private Constants()
-    {
+    /** Private constructor. */
+    private Constants() {
     }
 }

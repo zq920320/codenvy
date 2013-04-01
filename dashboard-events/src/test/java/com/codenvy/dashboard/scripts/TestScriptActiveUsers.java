@@ -30,14 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestScriptActiveUsers extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestScriptActiveUsers extends BasePigTest {
     @Test
-    public void testEventFound() throws Exception
-    {
+    public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());

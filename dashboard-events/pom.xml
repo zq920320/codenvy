@@ -19,8 +19,9 @@
     02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.codenvy.dashboard</groupId>
         <artifactId>dashboard-parent</artifactId>
@@ -82,7 +83,7 @@
         </dependency>
 
         <!-- Loggers -->
-       <dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${org.slf4j.version}</version>
@@ -99,43 +100,43 @@
         </dependency>
     </dependencies>
 
-   <build>
-      <resources>
-         <resource>
-            <directory>src/main/resources</directory>
-            <includes>
-               <include>**/*</include>
-            </includes>
-         </resource>
-      </resources>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
 
-      <testResources>
-         <testResource>
-            <directory>src/test/resources</directory>
-            <includes>
-               <include>**/*</include>
-            </includes>
-         </testResource>
-      </testResources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
 
-      <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration>
-                 <systemProperties>
-                    <property>
-                       <name>dashboard.scripts.directory</name>
-                       <value>scripts</value>
-                    </property>
-                 </systemProperties>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>dashboard.scripts.directory</name>
+                            <value>scripts</value>
+                        </property>
+                    </systemProperties>
 
-                 <excludes>
-                    <exclude>com/codenvy/dashboard/**/TestLogCollector.java</exclude>
-                 </excludes>
-              </configuration>
-          </plugin>
-      </plugins>
-   </build>
+                    <excludes>
+                        <exclude>com/codenvy/dashboard/**/TestLogCollector.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

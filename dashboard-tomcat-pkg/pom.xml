@@ -19,8 +19,9 @@
     02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.codenvy.dashboard</groupId>
         <artifactId>dashboard-parent</artifactId>
@@ -32,7 +33,7 @@
     <packaging>pom</packaging>
 
     <dependencies>
-       <dependency>
+        <dependency>
             <groupId>com.codenvy.dashboard</groupId>
             <artifactId>dashboard-web-client</artifactId>
             <version>${project.version}</version>
@@ -41,85 +42,86 @@
     </dependencies>
 
 
-   <profiles>
+    <profiles>
         <profile>
             <id>deploy</id>
             <activation>
-                <activeByDefault>false</activeByDefault> 
+                <activeByDefault>false</activeByDefault>
             </activation>
 
-             <build>
-              <plugins>
-                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <executions>
-                       <execution>
-                          <id>copy-dependencies-war</id>
-                          <phase>process-resources</phase>
-                          <goals>
-                             <goal>copy-dependencies</goal>
-                          </goals>
-                          <configuration>
-                             <includeTypes>war</includeTypes>
-                             <stripVersion>true</stripVersion>
-                             <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
-                          </configuration>
-                       </execution>
-                       <execution>
-                          <id>copy-dependencies-jar1</id>
-                          <phase>process-resources</phase>
-                          <goals>
-                             <goal>copy-dependencies</goal>
-                          </goals>
-                          <configuration>
-                             <includeTypes>jar</includeTypes>
-                             <stripVersion>false</stripVersion>
-                             <outputDirectory>${project.build.directory}/packager-conf/jar</outputDirectory>
-                          </configuration>
-                       </execution>
-                    </executions>
-                 </plugin>
-                 <plugin>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <executions>
-                       <execution>
-                          <id>copy-clear-tomcat</id>
-                          <phase>process-resources</phase>
-                          <configuration>
-                             <tasks>
-                                <copy todir="${project.build.directory}/tomcat-analytics">
-                                   <fileset dir="${exo.projects.directory.dependencies}/${tomcat.version}/">
-                                      <exclude name="**/ROOT/**" />
-                                      <exclude name="**/docs/**" />
-                                      <exclude name="**/examples/**" />
-                                      <exclude name="**/manager/**" />
-                                      <exclude name="**/host-manager/**" />
-                                   </fileset>
-                                </copy>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies-war</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeTypes>war</includeTypes>
+                                    <stripVersion>true</stripVersion>
+                                    <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-dependencies-jar1</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeTypes>jar</includeTypes>
+                                    <stripVersion>false</stripVersion>
+                                    <outputDirectory>${project.build.directory}/packager-conf/jar</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-clear-tomcat</id>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <copy todir="${project.build.directory}/tomcat-analytics">
+                                            <fileset dir="${exo.projects.directory.dependencies}/${tomcat.version}/">
+                                                <exclude name="**/ROOT/**"/>
+                                                <exclude name="**/docs/**"/>
+                                                <exclude name="**/examples/**"/>
+                                                <exclude name="**/manager/**"/>
+                                                <exclude name="**/host-manager/**"/>
+                                            </fileset>
+                                        </copy>
 
-                                <copy todir="${project.build.directory}/tomcat-analytics/" overwrite="true">
-                                   <fileset dir="${basedir}/src/main/resources/tomcat/" />
-                                </copy>
+                                        <copy todir="${project.build.directory}/tomcat-analytics/" overwrite="true">
+                                            <fileset dir="${basedir}/src/main/resources/tomcat/"/>
+                                        </copy>
 
-                                <copy file="${project.build.directory}/packager-conf/war/dashboard-web-client.war" tofile="${project.build.directory}/tomcat-analytics/webapps/analytics.war" />
-                                <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x" />
+                                        <copy file="${project.build.directory}/packager-conf/war/dashboard-web-client.war"
+                                              tofile="${project.build.directory}/tomcat-analytics/webapps/analytics.war"/>
+                                        <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x"/>
 
-                                <copy todir="${project.build.directory}/tomcat-analytics/scripts" overwrite="true">
-                                   <fileset dir="${basedir}/../dashboard-events/scripts/" />
-                                </copy>
-                             </tasks>
-                          </configuration>
-                          <goals>
-                             <goal>run</goal>
-                          </goals>
-                       </execution>
-                    </executions>
-                 </plugin>
-              </plugins>
-           </build>
+                                        <copy todir="${project.build.directory}/tomcat-analytics/scripts" overwrite="true">
+                                            <fileset dir="${basedir}/../dashboard-events/scripts/"/>
+                                        </copy>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
-   </profiles>
+    </profiles>
 
 
 </project>

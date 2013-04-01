@@ -31,38 +31,28 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
- */
-public class TestLogCollector
-{
+/** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
+public class TestLogCollector {
 
-    /**
-     * Logger.
-     */
-    protected static final Logger LOG                        = LoggerFactory.getLogger(TestLogCollector.class);
+    /** Logger. */
+    protected static final Logger LOG = LoggerFactory.getLogger(TestLogCollector.class);
 
-    /**
-     * The threads count to be launched.
-     */
-    private static final int      THREAD_COUNT               = 1000;
+    /** The threads count to be launched. */
+    private static final int THREAD_COUNT = 1000;
 
-    /**
-     * Time between events generation;
-     */
-    private static final int      EVENT_INTERVAL             = 50;                                             // 100 ms
+    /** Time between events generation; */
+    private static final int EVENT_INTERVAL = 50;                                             // 100 ms
 
-    private static final int      MAX_EVENT_COUNT_PER_THREAD = 5000;
+    private static final int MAX_EVENT_COUNT_PER_THREAD = 5000;
 
-    private CountDownLatch        latch                      = new CountDownLatch(1);
+    private CountDownLatch latch = new CountDownLatch(1);
 
-    private AtomicLong            count                      = new AtomicLong(0);
+    private AtomicLong count = new AtomicLong(0);
 
-    private Logger                log;
+    private Logger log;
 
     @BeforeTest
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         LoggerContext context = new LoggerContext();
         JoranConfigurator configurator = new JoranConfigurator();
         configurator.setContext(context);
@@ -72,24 +62,19 @@ public class TestLogCollector
         log = context.getLogger(TestLogCollector.class);
     }
 
-    /**
-     * Test throughput.
-     */
+    /** Test throughput. */
     @Test
-    public void testThroughput() throws Exception
-    {
+    public void testThroughput() throws Exception {
         ThreadGroup group = new ThreadGroup("Writers");
 
-        for (int i = 0; i < THREAD_COUNT; i++)
-        {
+        for (int i = 0; i < THREAD_COUNT; i++) {
             Thread thread = new Writer(group, "thread " + i);
             thread.start();
         }
 
         latch.countDown();
 
-        while (group.activeCount() != 0)
-        {
+        while (group.activeCount() != 0) {
             Thread.sleep(5000);
             LOG.info("Has been wrote " + count.get() + " from " + (MAX_EVENT_COUNT_PER_THREAD * THREAD_COUNT)
                      + " events");
@@ -99,49 +84,32 @@ public class TestLogCollector
                  + " events");
     }
 
-    /**
-     * Is responsible to writer messages to the syslog server.
-     */
-    private class Writer extends Thread
-    {
-        /**
-         * Writer constructor.
-         */
-        Writer(ThreadGroup group, String name)
-        {
+    /** Is responsible to writer messages to the syslog server. */
+    private class Writer extends Thread {
+        /** Writer constructor. */
+        Writer(ThreadGroup group, String name) {
             super(group, name);
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        public void run()
-        {
-            try
-            {
+        /** {@inheritDoc} */
+        public void run() {
+            try {
                 latch.await();
-            } catch (InterruptedException e1)
-            {
+            } catch (InterruptedException e1) {
                 return;
             }
 
-            for (int i = 0; i < MAX_EVENT_COUNT_PER_THREAD; i++)
-            {
-                try
-                {
+            for (int i = 0; i < MAX_EVENT_COUNT_PER_THREAD; i++) {
+                try {
                     doWrite();
-                } catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     break;
                 }
             }
         }
 
-        /**
-         * @throws InterruptedException
-         */
-        private void doWrite() throws InterruptedException
-        {
+        /** @throws InterruptedException */
+        private void doWrite() throws InterruptedException {
             log.info(UUID.randomUUID().toString());
             count.incrementAndGet();
 

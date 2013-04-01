@@ -22,18 +22,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
- */
-public class BasePigTest
-{
-    /**
-     * Relative path to temporary files.
-     */
+/** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
+public class BasePigTest {
+    /** Relative path to temporary files. */
     public static final String BASE_DIR = "target";
 
-    protected void executePigScript(ScriptType type, File log, Map<String, String> executionParams) throws IOException
-    {
+    protected void executePigScript(ScriptType type, File log, Map<String, String> executionParams) throws IOException {
         executionParams.put(Constants.LOG, log.getAbsolutePath());
 
         ScriptExecutor scriptExecutor = new ScriptExecutor(type);
@@ -44,8 +38,7 @@ public class BasePigTest
     }
 
     protected FileObject executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
-                                                                                                               throws IOException
-    {
+            throws IOException {
         executionParams.put(Constants.LOG, log.getAbsolutePath());
 
         ScriptExecutor scriptExecutor = new ScriptExecutor(type);

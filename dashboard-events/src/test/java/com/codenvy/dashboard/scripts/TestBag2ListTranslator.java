@@ -18,8 +18,6 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import com.codenvy.dashboard.scripts.Bag2ListTranslator;
-
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DefaultDataBag;
 import org.apache.pig.data.Tuple;
@@ -27,31 +25,22 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestBag2ListTranslator extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestBag2ListTranslator extends BasePigTest {
 
-    private final Bag2ListTranslator translator   = new Bag2ListTranslator();
+    private final Bag2ListTranslator translator = new Bag2ListTranslator();
 
-    private final File               file         = new File(BASE_DIR, UUID.randomUUID().toString());
+    private final File file = new File(BASE_DIR, UUID.randomUUID().toString());
 
-    private final TupleFactory       tupleFactory = TupleFactory.getInstance();
+    private final TupleFactory tupleFactory = TupleFactory.getInstance();
 
     @Test
-    public void testCorrectTranslation() throws Exception
-    {
+    public void testCorrectTranslation() throws Exception {
         DataBag bag = new DefaultDataBag();
         Tuple tuple = tupleFactory.newTuple();
         tuple.append("user1");
@@ -68,8 +57,7 @@ public class TestBag2ListTranslator extends BasePigTest
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)
-    public void testTryToModifyResult() throws Exception
-    {
+    public void testTryToModifyResult() throws Exception {
         DataBag bag = new DefaultDataBag();
         Tuple tuple = tupleFactory.newTuple();
         tuple.append("user1");
@@ -85,14 +73,12 @@ public class TestBag2ListTranslator extends BasePigTest
 
 
     @Test(expectedExceptions = IOException.class)
-    public void testIncorrectValueTranslation() throws Exception
-    {
+    public void testIncorrectValueTranslation() throws Exception {
         translator.translate("some value");
     }
 
     @Test(expectedExceptions = IOException.class)
-    public void testTranslationBagWith2Tuples() throws Exception
-    {
+    public void testTranslationBagWith2Tuples() throws Exception {
         DataBag bag = new DefaultDataBag();
         Tuple tuple = tupleFactory.newTuple();
         tuple.append("user1");
@@ -103,8 +89,7 @@ public class TestBag2ListTranslator extends BasePigTest
     }
 
     @Test
-    public void testTranslateReadWriter() throws Exception
-    {
+    public void testTranslateReadWriter() throws Exception {
         List<String> users = new ArrayList<String>(2);
         users.add("user1");
         users.add("user2");
@@ -128,15 +113,12 @@ public class TestBag2ListTranslator extends BasePigTest
     }
 
     @Test(expectedExceptions = IOException.class)
-    public void testTranslateReadWriterWrongObject() throws Exception
-    {
+    public void testTranslateReadWriterWrongObject() throws Exception {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
-        try
-        {
+        try {
             translator.doWrite(null, "value");
-        } finally
-        {
+        } finally {
             writer.close();
         }
     }

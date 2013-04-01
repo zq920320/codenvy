@@ -41,14 +41,14 @@ public class LogLocationOptimizer {
 
     public static String generatePathString(String baseDir, String fromDateString, String toDateString) {
 
-        List<String> paths = generatePathList( baseDir,  fromDateString,  toDateString);
+        List<String> paths = generatePathList(baseDir, fromDateString, toDateString);
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < paths.size(); i++) {
             sb.append(paths.get(i));
             sb.append(", ");
         }
-        sb.delete(sb.lastIndexOf(","), sb.lastIndexOf(",")+2);
+        sb.delete(sb.lastIndexOf(","), sb.lastIndexOf(",") + 2);
 
         return sb.toString();
     }

@@ -30,14 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestScriptEventCount extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestScriptEventCount extends BasePigTest {
     @Test
-    public void testEventCountTenantCreated() throws Exception
-    {
+    public void testEventCountTenantCreated() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
@@ -56,8 +52,7 @@ public class TestScriptEventCount extends BasePigTest
     }
 
     @Test
-    public void testEventCountTenantDestroyed() throws Exception
-    {
+    public void testEventCountTenantDestroyed() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createTenantDestroyedEvent("ws1").withDate("2010-10-01").build());
         events.add(Event.Builder.createTenantDestroyedEvent("ws2").withDate("2010-10-01").build());
@@ -75,8 +70,7 @@ public class TestScriptEventCount extends BasePigTest
     }
 
     @Test
-    public void testEventCountUserCreated() throws Exception
-    {
+    public void testEventCountUserCreated() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserCreatedEvent("user1", "user@user1").withDate("2010-10-01").build());
         events.add(Event.Builder.createUserCreatedEvent("user2", "user@user2").withDate("2010-10-01").build());
@@ -95,8 +89,7 @@ public class TestScriptEventCount extends BasePigTest
     }
 
     @Test
-    public void testEventCountUserRemoved() throws Exception
-    {
+    public void testEventCountUserRemoved() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserRemovedEvent("user1").withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);
@@ -113,11 +106,10 @@ public class TestScriptEventCount extends BasePigTest
     }
 
     @Test
-    public void testEventCountProjectCreated() throws Exception
-    {
+    public void testEventCountProjectCreated() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createProjectCreatedEvent("user", "ws", "session", "project").withDate("2010-10-01")
-                                .build());
+                        .build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
@@ -132,11 +124,10 @@ public class TestScriptEventCount extends BasePigTest
     }
 
     @Test
-    public void testEventCountProjectDestroyed() throws Exception
-    {
+    public void testEventCountProjectDestroyed() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project").withDate("2010-10-01")
-                                .build());
+                        .build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
@@ -151,15 +142,14 @@ public class TestScriptEventCount extends BasePigTest
     }
 
     @Test
-    public void testEventCountProjectBuild() throws Exception
-    {
+    public void testEventCountProjectBuild() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "ses", "project1", "type")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "ses", "project2", "type", "paas")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectDeployedEvent("user1", "ws1", "ses", "project3", "type", "paas")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
@@ -174,8 +164,7 @@ public class TestScriptEventCount extends BasePigTest
     }
 
     @Test
-    public void testEventCountUserInvite() throws Exception
-    {
+    public void testEventCountUserInvite() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserInviteEvent("user", "ws", "session", "email").withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);

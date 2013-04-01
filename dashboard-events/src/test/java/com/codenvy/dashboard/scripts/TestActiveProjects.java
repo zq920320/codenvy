@@ -30,29 +30,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestActiveProjects extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestActiveProjects extends BasePigTest {
     @Test
-    public void testEventFound() throws Exception
-    {
+    public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
 
         // 2 active projects
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
-                                .build());
+                        .build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project2").withDate("2010-10-02")
-                                .build());
+                        .build());
 
         // project already mentioned
         events.add(Event.Builder.createProjectCreatedEvent("user3", "ws2", "session", "project1").withDate("2010-10-02")
-                                .build());
+                        .build());
 
         // events should be ignored
         events.add(Event.Builder.createProjectDestroyedEvent("user2", "ws2", "session", "project3")
-                                .withDate("2010-10-02").build());
+                        .withDate("2010-10-02").build());
 
         File log = LogGenerator.generateLog(events);
 

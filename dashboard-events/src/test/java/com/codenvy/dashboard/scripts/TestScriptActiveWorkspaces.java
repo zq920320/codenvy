@@ -30,14 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestScriptActiveWorkspaces extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestScriptActiveWorkspaces extends BasePigTest {
     @Test
-    public void testEventFound1UseCase() throws Exception
-    {
+    public void testEventFound1UseCase() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-02").build());
@@ -63,17 +59,16 @@ public class TestScriptActiveWorkspaces extends BasePigTest
     }
 
     @Test
-    public void testEventFound2UseCase() throws Exception
-    {
+    public void testEventFound2UseCase() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project").withDate("2010-10-02")
-                                .build());
+                        .build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session", "project").withDate("2010-10-02")
-                                .build());
+                        .build());
         events.add(Event.Builder.createUserCreatedEvent("userId", "hello@gmail").withDate("2010-10-03").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws5", "session", "project").withDate("2010-10-11")
-                                .build());
+                        .build());
 
         File log = LogGenerator.generateLog(events);
 

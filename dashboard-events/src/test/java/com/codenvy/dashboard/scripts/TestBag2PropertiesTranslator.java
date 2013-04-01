@@ -18,8 +18,6 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import com.codenvy.dashboard.scripts.Bag2PropertiesTranslator;
-
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DefaultDataBag;
 import org.apache.pig.data.Tuple;
@@ -27,30 +25,21 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 import java.util.UUID;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestBag2PropertiesTranslator extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestBag2PropertiesTranslator extends BasePigTest {
 
-    private final Bag2PropertiesTranslator translator   = new Bag2PropertiesTranslator();
+    private final Bag2PropertiesTranslator translator = new Bag2PropertiesTranslator();
 
-    private final File                     file         = new File(BASE_DIR, UUID.randomUUID().toString());
+    private final File file = new File(BASE_DIR, UUID.randomUUID().toString());
 
-    private final TupleFactory             tupleFactory = TupleFactory.getInstance();
+    private final TupleFactory tupleFactory = TupleFactory.getInstance();
 
     @Test
-    public void testTranslateCorrectBagTuple2Field() throws Exception
-    {
+    public void testTranslateCorrectBagTuple2Field() throws Exception {
         DataBag bag = new DefaultDataBag();
         Tuple tuple = tupleFactory.newTuple();
         tuple.append("prop1");
@@ -68,8 +57,7 @@ public class TestBag2PropertiesTranslator extends BasePigTest
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)
-    public void testTranslateCorrectBagTuple2FieldTryModifyResult() throws Exception
-    {
+    public void testTranslateCorrectBagTuple2FieldTryModifyResult() throws Exception {
         DataBag bag = new DefaultDataBag();
         Tuple tuple = tupleFactory.newTuple();
         tuple.append("prop1");
@@ -86,14 +74,12 @@ public class TestBag2PropertiesTranslator extends BasePigTest
 
 
     @Test(expectedExceptions = IOException.class)
-    public void testTranslateWrongObject() throws Exception
-    {
+    public void testTranslateWrongObject() throws Exception {
         translator.translate("some value");
     }
 
     @Test(expectedExceptions = IOException.class)
-    public void testTranslateBagTuple1Field() throws Exception
-    {
+    public void testTranslateBagTuple1Field() throws Exception {
         DataBag bag = new DefaultDataBag();
         Tuple tuple = tupleFactory.newTuple();
         tuple.append("prop1");
@@ -103,8 +89,7 @@ public class TestBag2PropertiesTranslator extends BasePigTest
     }
 
     @Test(expectedExceptions = IOException.class)
-    public void testTranslateBagTuple3Field() throws Exception
-    {
+    public void testTranslateBagTuple3Field() throws Exception {
         DataBag bag = new DefaultDataBag();
         Tuple tuple = tupleFactory.newTuple();
         tuple.append("prop1");
@@ -116,8 +101,7 @@ public class TestBag2PropertiesTranslator extends BasePigTest
     }
 
     @Test
-    public void testTranslateReadWriter() throws Exception
-    {
+    public void testTranslateReadWriter() throws Exception {
         Properties props = new Properties();
         props.put("prop1", "1");
 
@@ -138,15 +122,12 @@ public class TestBag2PropertiesTranslator extends BasePigTest
     }
 
     @Test(expectedExceptions = IOException.class)
-    public void testTranslateReadWriterWrongObject() throws Exception
-    {
+    public void testTranslateReadWriterWrongObject() throws Exception {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
-        try
-        {
+        try {
             translator.doWrite(null, "value");
-        } finally
-        {
+        } finally {
             writer.close();
         }
     }

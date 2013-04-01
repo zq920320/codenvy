@@ -30,30 +30,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestScriptProductUsageTime extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestScriptProductUsageTime extends BasePigTest {
 
     @Test
-    public void testEventFound() throws Exception
-    {
+    public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
 
         // 7 min
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-                                .withTime("20:00:00").build());
+                        .withTime("20:00:00").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-                                .withTime("20:05:00").build());
+                        .withTime("20:05:00").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-                                .withTime("20:07:00").build());
+                        .withTime("20:07:00").build());
 
         // 4 min
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-                                .withTime("20:29:00").build());
+                        .withTime("20:29:00").build());
 
         File log = LogGenerator.generateLog(events);
 

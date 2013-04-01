@@ -24,35 +24,27 @@ import java.io.IOException;
 
 /**
  * Translate any {@link Object} into the {@link Long}.
- * 
+ *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class Object2LongTranslator implements ValueTranslator {
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void doWrite(BufferedWriter writer, Object value) throws IOException {
         writer.write(value.toString());
         writer.flush();
     }
 
-    /**
-     * {@inheritedDoc}
-     */
+    /** {@inheritedDoc} */
     @Override
-    public Long doRead(BufferedReader reader) throws IOException
-    {
+    public Long doRead(BufferedReader reader) throws IOException {
         return Long.valueOf(reader.readLine());
     }
 
-    /**
-     * {@inheritedDoc}
-     */
+    /** {@inheritedDoc} */
     @Override
-    public Long translate(Object value) throws IOException
-    {
+    public Long translate(Object value) throws IOException {
         return Long.valueOf(value.toString());
     }
 }

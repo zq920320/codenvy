@@ -25,37 +25,29 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestScriptTopWsByEvents extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestScriptTopWsByEvents extends BasePigTest {
 
     @Test
-    public void testTopWsByUsers() throws Exception
-    {
+    public void testTopWsByUsers() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws1", "ses", "ws1", "user1", "website")
-                                .withDate("2010-10-01")
-                                .build());
+                        .withDate("2010-10-01")
+                        .build());
         events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws1", "ses", "ws1", "user2", "website")
-                                .withDate("2010-10-01")
-                                .build());
+                        .withDate("2010-10-01")
+                        .build());
         events.add(Event.Builder.createUserAddedToWsEvent("user3", "ws1", "ses", "ws1", "user3", "website")
-                                .withDate("2010-10-01")
-                                .build());
+                        .withDate("2010-10-01")
+                        .build());
         events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws2", "ses", "ws2", "user1", "website")
-                                .withDate("2010-10-01")
-                                .build());
+                        .withDate("2010-10-01")
+                        .build());
         events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws2", "ses", "ws2", "user2", "website")
-                                .withDate("2010-10-01")
-                                .build());
+                        .withDate("2010-10-01")
+                        .build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -73,8 +65,7 @@ public class TestScriptTopWsByEvents extends BasePigTest
     }
 
     @Test
-    public void testTopWsByInvitations() throws Exception
-    {
+    public void testTopWsByInvitations() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "ses", "email1").withDate("2010-10-01").build());
         events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "ses", "email2").withDate("2010-10-01").build());
@@ -99,27 +90,26 @@ public class TestScriptTopWsByEvents extends BasePigTest
     }
 
     @Test
-    public void testTopWsByBuilds() throws Exception
-    {
+    public void testTopWsByBuilds() throws Exception {
         List<Event> events = new ArrayList<Event>();
 
         // ws1 - 2
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "ses", "project1", "type")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "ses", "project2", "type", "paas")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectDeployedEvent("user1", "ws1", "ses", "project3", "type", "paas")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
 
         // ws2 - 2
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws2", "ses", "project1", "type")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws2", "ses", "project2", "type", "paas")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
 
         // ws3 - 1
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws3", "ses", "project1", "type")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
@@ -137,29 +127,28 @@ public class TestScriptTopWsByEvents extends BasePigTest
     }
 
     @Test
-    public void testTopWsByProjects() throws Exception
-    {
+    public void testTopWsByProjects() throws Exception {
         List<Event> events = new ArrayList<Event>();
 
         // ws1 - 2
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project1").withDate("2010-10-01")
-                                .build());
+                        .build());
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project2").withDate("2010-10-01")
-                                .build());
+                        .build());
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project3").withDate("2010-10-01")
-                                .build());
+                        .build());
         events.add(Event.Builder.createProjectDestroyedEvent("user1", "ws1", "ses", "project2").withDate("2010-10-01")
-                                .build());
+                        .build());
 
         // ws2 - 2
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "ses", "project1").withDate("2010-10-01")
-                                .build());
+                        .build());
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "ses", "project2").withDate("2010-10-01")
-                                .build());
+                        .build());
 
         // ws3 - 1
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws3", "ses", "project1").withDate("2010-10-01")
-                                .build());
+                        .build());
 
         File log = LogGenerator.generateLog(events);
 

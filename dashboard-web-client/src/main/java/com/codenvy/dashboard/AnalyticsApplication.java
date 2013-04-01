@@ -20,48 +20,35 @@ package com.codenvy.dashboard;
 
 import com.codenvy.dashboard.scripts.ScriptService;
 
+import javax.ws.rs.core.Application;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.core.Application;
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class AnalyticsApplication extends Application {
+    private final Set<Object> singletons;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class AnalyticsApplication extends Application
-{
-    private final Set<Object>     singletons;
+    private final Set<Class<?>> classes;
 
-    private final Set<Class< ? >> classes;
-
-    /**
-     * {@link AnalyticsApplication} constructor.
-     */
-    public AnalyticsApplication()
-    {
+    /** {@link AnalyticsApplication} constructor. */
+    public AnalyticsApplication() {
         singletons = new HashSet<Object>();
         singletons.add(ScriptService.class);
 
-        classes = new HashSet<Class< ? >>();
+        classes = new HashSet<Class<?>>();
         classes.add(ScriptService.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public Set<Class< ? >> getClasses()
-    {
+    public Set<Class<?>> getClasses() {
         return classes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public Set<Object> getSingletons()
-    {
+    public Set<Object> getSingletons() {
         return Collections.emptySet();
     }
 }

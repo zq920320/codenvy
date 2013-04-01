@@ -26,22 +26,13 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestScriptRealTimeActions extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestScriptRealTimeActions extends BasePigTest {
 
     @Test
-    public void testRealtimeUsersWhoLoggedInInLastMinutes() throws Exception
-    {
+    public void testRealtimeUsersWhoLoggedInInLastMinutes() throws Exception {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss,SSS");
 
@@ -51,22 +42,22 @@ public class TestScriptRealTimeActions extends BasePigTest
 
         // current time
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate(dateFormat.format(cal.getTime()))
-                                .withTime(timeFormat.format(cal.getTime())).build());
+                        .withTime(timeFormat.format(cal.getTime())).build());
 
         // in 1 minutes
         cal.add(Calendar.MINUTE, -1);
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google").withDate(dateFormat.format(cal.getTime()))
-                                .withTime(timeFormat.format(cal.getTime())).build());
+                        .withTime(timeFormat.format(cal.getTime())).build());
 
         // in 5 minutes
         cal.add(Calendar.MINUTE, -4);
         events.add(Event.Builder.createUserSSOLoggedInEvent("user3", "google").withDate(dateFormat.format(cal.getTime()))
-                                .withTime(timeFormat.format(cal.getTime())).build());
+                        .withTime(timeFormat.format(cal.getTime())).build());
 
         // in 10 minutes
         cal.add(Calendar.MINUTE, -5);
         events.add(Event.Builder.createUserSSOLoggedInEvent("user4", "google").withDate(dateFormat.format(cal.getTime()))
-                                .withTime(timeFormat.format(cal.getTime())).build());
+                        .withTime(timeFormat.format(cal.getTime())).build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -80,8 +71,7 @@ public class TestScriptRealTimeActions extends BasePigTest
     }
 
     @Test
-    public void testRealtimeWorkspacesWithSeveralUsers() throws Exception
-    {
+    public void testRealtimeWorkspacesWithSeveralUsers() throws Exception {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss,SSS");
 
@@ -91,22 +81,22 @@ public class TestScriptRealTimeActions extends BasePigTest
 
         // current time
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "session", "project")
-                                .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
+                        .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws1", "session", "project")
-                                .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
+                        .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
 
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "session", "project")
-                                .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
+                        .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
 
         // in 10 minutes
         cal.add(Calendar.MINUTE, -10);
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "session", "project")
-                                .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
+                        .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
 
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws3", "session", "project")
-                                .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
+                        .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session", "project")
-                                .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
+                        .withDate(dateFormat.format(cal.getTime())).withTime(timeFormat.format(cal.getTime())).build());
 
         File log = LogGenerator.generateLog(events);
 

@@ -25,25 +25,21 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestScriptJrebelUsage extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestScriptJrebelUsage extends BasePigTest {
     @Test
-    public void testJRebelEligible() throws Exception
-    {
+    public void testJRebelEligible() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project2", "type", false).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project2", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", false).withDate("2010-10-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -60,14 +56,16 @@ public class TestScriptJrebelUsage extends BasePigTest
     }
 
     @Test
-    public void testJRebelEligibleDistinction() throws Exception
-    {
+    public void testJRebelEligibleDistinction() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
         events.add(Event.Builder.createJRebelUsageEvent("user2", "ws1", "session", "project1", "type", false).withDate("2010-10-01")
-                                .build());
+                        .build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -84,10 +82,10 @@ public class TestScriptJrebelUsage extends BasePigTest
     }
 
     @Test
-    public void testDetailedJRebelUsageDistinction() throws Exception
-    {
+    public void testDetailedJRebelUsageDistinction() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
         events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", true).withDate("2010-10-01").build());
         events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project1", "type", true).withDate("2010-10-01").build());
         events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", true).withDate("2010-10-01").build());
@@ -108,10 +106,10 @@ public class TestScriptJrebelUsage extends BasePigTest
     }
 
     @Test
-    public void testDetailedJRebelUsage() throws Exception
-    {
+    public void testDetailedJRebelUsage() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(
+                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
         events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project2", "type", true).withDate("2010-10-01").build());
         events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", true).withDate("2010-10-01").build());
         events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", true).withDate("2010-10-01").build());

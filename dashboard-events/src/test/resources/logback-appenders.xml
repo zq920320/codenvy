@@ -21,30 +21,32 @@
 -->
 
 <configuration>
-  <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
-    <syslogHost>localhost</syslogHost>
-    <port>5140</port>
-    <facility>user</facility>
-    <suffixPattern>%-41(%date[%.15thread]) %-45([%-5level] [%.30logger{30} %L]) [%X{user}][%X{currentTenant}][%X{sessionId}] - %msg%n</suffixPattern>
-  </appender>
+    <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>localhost</syslogHost>
+        <port>5140</port>
+        <facility>user</facility>
+        <suffixPattern>%-41(%date[%.15thread]) %-45([%-5level] [%.30logger{30} %L]) [%X{user}][%X{currentTenant}][%X{sessionId}] - %msg%n
+        </suffixPattern>
+    </appender>
 
-  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>target/testFile.log</file>
-    <append>true</append>
-    <encoder>
-      <pattern>%-41(%date[%.15thread]) %-45([%-5level] [%.30logger{30} %L]) [%X{user}][%X{currentTenant}][%X{sessionId}] - %msg%n</pattern>
-    </encoder>
-  </appender>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>target/testFile.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%-41(%date[%.15thread]) %-45([%-5level] [%.30logger{30} %L]) [%X{user}][%X{currentTenant}][%X{sessionId}] - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
 
-  <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-    <appender-ref ref="SYSLOG" />
-    <queueSize>100000</queueSize>
-    <discardingThreshold>0</discardingThreshold>
-    <includeCallerData>false</includeCallerData>
-  </appender>
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="SYSLOG"/>
+        <queueSize>100000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+    </appender>
 
 
-  <root level="INFO">
-    <appender-ref ref="ASYNC" />
-  </root>
+    <root level="INFO">
+        <appender-ref ref="ASYNC"/>
+    </root>
 </configuration>

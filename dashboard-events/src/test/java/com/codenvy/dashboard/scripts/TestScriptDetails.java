@@ -25,28 +25,20 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class TestScriptDetails extends BasePigTest
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestScriptDetails extends BasePigTest {
 
     @Test
-    public void testScriptDetailsUserAddedToWs() throws Exception
-    {
+    public void testScriptDetailsUserAddedToWs() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws1", "session", "ws1", "user1", "website")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws1", "session", "ws1", "user2", "website")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user3", "ws1", "session", "ws1", "user3", "invite")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -64,8 +56,7 @@ public class TestScriptDetails extends BasePigTest
     }
 
     @Test
-    public void testScriptDetailsUserSsoLoggedIn() throws Exception
-    {
+    public void testScriptDetailsUserSsoLoggedIn() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "github").withDate("2010-10-01").build());
@@ -89,17 +80,16 @@ public class TestScriptDetails extends BasePigTest
     }
 
     @Test
-    public void testScriptDetailsProjectCreatedTypes() throws Exception
-    {
+    public void testScriptDetailsProjectCreatedTypes() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createProjectCreatedEvent("user", "ws", "session", "project1")
-                                .withParam("TYPE", "type1").withDate("2010-10-01").build());
+                        .withParam("TYPE", "type1").withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user", "ws", "session", "project2")
-                                .withParam("TYPE", "type1").withDate("2010-10-01").build());
+                        .withParam("TYPE", "type1").withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user", "ws", "session", "project").withParam("TYPE", "type2")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user", "ws", "session", "project").withParam("TYPE", "type3")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -118,19 +108,18 @@ public class TestScriptDetails extends BasePigTest
     }
 
     @Test
-    public void testScriptDetailsApplicationCreatedPaas() throws Exception
-    {
+    public void testScriptDetailsApplicationCreatedPaas() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project1", "type", "paas1")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project2", "type", "paas3")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project3", "type", "paas3")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project4", "type", "paas3")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectDeployedEvent("user", "ws", "session", "project4", "type", "local")
-                                .withDate("2010-10-01").build());
+                        .withDate("2010-10-01").build());
 
 
         File log = LogGenerator.generateLog(events);

@@ -18,37 +18,24 @@
  */
 package com.codenvy.dashboard.scripts.util;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.List;
 
-/**
- * @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a>
- */
-public class LogGenerator
-{
+/** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
+public class LogGenerator {
 
-    /**
-     * Generates log file with given events.
-     */
-    public static File generateLog(List<Event> events) throws IOException
-    {
+    /** Generates log file with given events. */
+    public static File generateLog(List<Event> events) throws IOException {
         File log = File.createTempFile("log", "tmp");
         log.deleteOnExit();
 
         Writer out = new BufferedWriter(new FileWriter(log));
 
-        try
-        {
-            for (Event event : events)
-            {
+        try {
+            for (Event event : events) {
                 out.write(event.toString() + "\n");
             }
-        } finally
-        {
+        } finally {
             out.close();
         }
 

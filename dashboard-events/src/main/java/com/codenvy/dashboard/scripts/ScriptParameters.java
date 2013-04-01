@@ -19,91 +19,76 @@
 package com.codenvy.dashboard.scripts;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public enum ScriptParameters
-{
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public enum ScriptParameters {
     FROM_DATE {
         @Override
-        public String getDefaultValue()
-        {
+        public String getDefaultValue() {
             return "20000101";
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "fromDate";
         }
     },
 
     TO_DATE {
         @Override
-        public String getDefaultValue()
-        {
+        public String getDefaultValue() {
             return "21001231";
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "toDate";
         }
     },
 
     LAST_MINUTES {
         @Override
-        public String getDefaultValue()
-        {
+        public String getDefaultValue() {
             return "60";
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "lastMinutes";
         }
     },
 
     SESSIONS_COUNT {
         @Override
-        public String getDefaultValue()
-        {
+        public String getDefaultValue() {
             return "2";
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "sessionsCount";
         }
     },
 
     TOP {
         @Override
-        public String getDefaultValue()
-        {
+        public String getDefaultValue() {
             return "10";
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "top";
         }
     },
 
     INACTIVE_INTERVAL {
         @Override
-        public String getDefaultValue()
-        {
+        public String getDefaultValue() {
             return "10";
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "inactiveInterval";
         }
     };

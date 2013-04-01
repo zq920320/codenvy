@@ -22,29 +22,20 @@ import java.util.Map;
 
 /**
  * Simple POJO object containing all necessary data for execution particular script.
- * 
+ *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ScriptExecutionContext
-{
-    /**
-     * Runtime script parameters.
-     */
+public class ScriptExecutionContext {
+    /** Runtime script parameters. */
     private Map<String, String> params;
 
-    /**
-     * Getter for {@link #params}.
-     */
-    public Map<String, String> getParams()
-    {
+    /** Getter for {@link #params}. */
+    public Map<String, String> getParams() {
         return params;
     }
 
-    /**
-     * Setter for {@link #params}.
-     */
-    public void setParams(Map<String, String> params)
-    {
+    /** Setter for {@link #params}. */
+    public void setParams(Map<String, String> params) {
         this.params = params;
     }
 }
