@@ -35,35 +35,35 @@ import java.util.Map;
  */
 public class TestActiveProjects extends BasePigTest
 {
-   @Test
-   public void testEventFound() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
+    @Test
+    public void testEventFound() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
 
-      // 2 active projects
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project2").withDate("2010-10-02")
-         .build());
+        // 2 active projects
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project2").withDate("2010-10-02")
+                                .build());
 
-      // project already mentioned
-      events.add(Event.Builder.createProjectCreatedEvent("user3", "ws2", "session", "project1").withDate("2010-10-02")
-         .build());
+        // project already mentioned
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws2", "session", "project1").withDate("2010-10-02")
+                                .build());
 
-      // events should be ignored
-      events.add(Event.Builder.createProjectDestroyedEvent("user2", "ws2", "session", "project3")
-         .withDate("2010-10-02").build());
+        // events should be ignored
+        events.add(Event.Builder.createProjectDestroyedEvent("user2", "ws2", "session", "project3")
+                                .withDate("2010-10-02").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101002");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101002");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101002");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101002");
 
-      executePigScript(ScriptType.ACTIVE_PROJECTS, log, params);
+        executePigScript(ScriptType.ACTIVE_PROJECTS, log, params);
 
-      FileObject fileObject = ScriptType.ACTIVE_PROJECTS.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.ACTIVE_PROJECTS.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 2L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 2L);
+    }
 }

@@ -43,121 +43,120 @@ import javax.ws.rs.core.UriInfo;
 @RolesAllowed({"admins", "cloud/admin", "cloud/manager"})
 public class ScriptService
 {
-   /**
-    * Logger.
-    */
-   private static final Logger LOG = LoggerFactory.getLogger(ScriptService.class);
+    /**
+     * Logger.
+     */
+    private static final Logger LOG                                 = LoggerFactory.getLogger(ScriptService.class);
 
-   /**
-    * Runtime parameter name. Contains the directory where logs are located.
-    */
-   public static final String DASHBOARD_LOGS_DIRECTORY_PROPERTY = "dashboard.logs.directory";
+    /**
+     * Runtime parameter name. Contains the directory where logs are located.
+     */
+    public static final String  DASHBOARD_LOGS_DIRECTORY_PROPERTY   = "dashboard.logs.directory";
 
-   /**
-    * Runtime parameter name. Contains the directory where results are stored.
-    */
-   public static final String DASHBOARD_RESULT_DIRECTORY_PROPERTY = "dashboard.result.directory";
+    /**
+     * Runtime parameter name. Contains the directory where results are stored.
+     */
+    public static final String  DASHBOARD_RESULT_DIRECTORY_PROPERTY = "dashboard.result.directory";
 
-   /**
-    * The value of {@value #DASHBOARD_LOGS_DIRECTORY_PROPERTY} runtime parameter.
-    */
-   public static final String LOGS_DIRECTORY = System.getProperty(DASHBOARD_LOGS_DIRECTORY_PROPERTY);
+    /**
+     * The value of {@value #DASHBOARD_LOGS_DIRECTORY_PROPERTY} runtime parameter.
+     */
+    public static final String  LOGS_DIRECTORY                      = System.getProperty(DASHBOARD_LOGS_DIRECTORY_PROPERTY);
 
-   /**
-    * The value of {@value #DASHBOARD_RESULT_DIRECTORY_PROPERTY} runtime parameter.
-    */
-   public static final String RESULT_DIRECTORY = System.getProperty(DASHBOARD_RESULT_DIRECTORY_PROPERTY);
+    /**
+     * The value of {@value #DASHBOARD_RESULT_DIRECTORY_PROPERTY} runtime parameter.
+     */
+    public static final String  RESULT_DIRECTORY                    = System.getProperty(DASHBOARD_RESULT_DIRECTORY_PROPERTY);
 
-   /**
-    * Executes script and returns result in JSON.
-    */
-   @GET
-   @Produces(MediaType.APPLICATION_JSON)
-   @Path("{script}")
-   public Response execute(@PathParam("script") String script, @Context UriInfo info) throws IOException
-   {
-      Map<String, String> params = new HashMap<String, String>();
+    /**
+     * Executes script and returns result in JSON.
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{script}")
+    public Response execute(@PathParam("script") String script, @Context UriInfo info) throws IOException
+    {
+        Map<String, String> params = new HashMap<String, String>();
 
-      MultivaluedMap<String, String> queryParameters = info.getQueryParameters();
-      for (String key : queryParameters.keySet())
-      {
-         params.put(key, queryParameters.getFirst(key));
-      }
+        MultivaluedMap<String, String> queryParameters = info.getQueryParameters();
+        for (String key : queryParameters.keySet())
+        {
+            params.put(key, queryParameters.getFirst(key));
+        }
 
-      return doExecute(script, params);
-   }
+        return doExecute(script, params);
+    }
 
-   private Response doExecute(String script, Map<String, String> params) throws IOException
-   {
-      params.put(Constants.LOG, LOGS_DIRECTORY);
+    private Response doExecute(String script, Map<String, String> params) throws IOException
+    {
+        params.put(Constants.LOG, LOGS_DIRECTORY);
 
-      ScriptExecutionResult executionResult = new ScriptExecutionResult();
-      executionResult.setResult(getResult(script, params));
+        ScriptExecutionResult executionResult = new ScriptExecutionResult();
+        executionResult.setResult(getResult(script, params));
 
-      return Response.status(Response.Status.OK).entity(executionResult).build();
-   }
+        return Response.status(Response.Status.OK).entity(executionResult).build();
+    }
 
-   private Object getResult(String script, Map<String, String> params) throws IOException
-   {
-      ScriptType scriptType = ScriptType.valueOf(script.toUpperCase());
+    private Object getResult(String script, Map<String, String> params) throws IOException
+    {
+        ScriptType scriptType = ScriptType.valueOf(script.toUpperCase());
 
-      try
-      {
-         return getExistedResult(scriptType, params);
-      }
-      catch (IOException e)
-      {
-         return getResultFromQuery(scriptType, params);
-      }
-   }
+        try
+        {
+            return getExistedResult(scriptType, params);
+        } catch (IOException e)
+        {
+            return getResultFromQuery(scriptType, params);
+        }
+    }
 
-   private Object getExistedResult(ScriptType scriptType, Map<String, String> params) throws IOException
-   {
-      FileObject fileObject = scriptType.createFileObject(RESULT_DIRECTORY, params);
+    private Object getExistedResult(ScriptType scriptType, Map<String, String> params) throws IOException
+    {
+        FileObject fileObject = scriptType.createFileObject(RESULT_DIRECTORY, params);
 
-      LOG.info("Result for " + scriptType.getScriptFileName() + " is returned from storage");
-      return fileObject.getValue();
-   }
+        LOG.info("Result for " + scriptType.getScriptFileName() + " is returned from storage");
+        return fileObject.getValue();
+    }
 
-   private Object getResultFromQuery(ScriptType scriptType, Map<String, String> params) throws IOException
-   {
-      ScriptExecutor executor = new ScriptExecutor(scriptType);
-      executor.setParams(params);
+    private Object getResultFromQuery(ScriptType scriptType, Map<String, String> params) throws IOException
+    {
+        ScriptExecutor executor = new ScriptExecutor(scriptType);
+        executor.setParams(params);
 
-      LOG.info("Execution " + scriptType.getScriptFileName() + " is started");
+        LOG.info("Execution " + scriptType.getScriptFileName() + " is started");
 
-      FileObject fileObject = executor.executeAndReturnResult(RESULT_DIRECTORY);
-      fileObject.store();
+        FileObject fileObject = executor.executeAndReturnResult(RESULT_DIRECTORY);
+        fileObject.store();
 
-      LOG.info("Execution " + scriptType.getScriptFileName() + " is finished");
+        LOG.info("Execution " + scriptType.getScriptFileName() + " is finished");
 
-      return fileObject.getValue();
-   }
+        return fileObject.getValue();
+    }
 
-   /**
-    * Wraps result in POJO.
-    */
-   public class ScriptExecutionResult
-   {
-      /**
-       * Script execution result. 
-       */
-      private Object result;
+    /**
+     * Wraps result in POJO.
+     */
+    public class ScriptExecutionResult
+    {
+        /**
+         * Script execution result.
+         */
+        private Object result;
 
-      /**
-       * Getter for {@link #result}. 
-       */
-      public Object getResult()
-      {
-         return result;
-      }
+        /**
+         * Getter for {@link #result}.
+         */
+        public Object getResult()
+        {
+            return result;
+        }
 
-      /**
-       * Setter for {@link #result}. 
-       */
-      public void setResult(Object result)
-      {
-         this.result = result;
-      }
-   }
+        /**
+         * Setter for {@link #result}.
+         */
+        public void setResult(Object result)
+        {
+            this.result = result;
+        }
+    }
 }

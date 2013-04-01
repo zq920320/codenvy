@@ -21,31 +21,30 @@ package com.codenvy.dashboard.scripts;
 import java.util.Map;
 
 /**
- * Simple POJO object containing all necessary data for execution
- * particular script.
+ * Simple POJO object containing all necessary data for execution particular script.
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class ScriptExecutionContext
 {
-   /**
-    * Runtime script parameters.
-    */
-   private Map<String, String> params;
+    /**
+     * Runtime script parameters.
+     */
+    private Map<String, String> params;
 
-   /**
-    * Getter for {@link #params}. 
-    */
-   public Map<String, String> getParams()
-   {
-      return params;
-   }
+    /**
+     * Getter for {@link #params}.
+     */
+    public Map<String, String> getParams()
+    {
+        return params;
+    }
 
-   /**
-    * Setter for {@link #params}. 
-    */
-   public void setParams(Map<String, String> params)
-   {
-      this.params = params;
-   }
+    /**
+     * Setter for {@link #params}.
+     */
+    public void setParams(Map<String, String> params)
+    {
+        this.params = params;
+    }
 }

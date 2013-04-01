@@ -43,102 +43,101 @@ import java.util.UUID;
 public class TestBag2ListTranslator extends BasePigTest
 {
 
-   private final Bag2ListTranslator translator = new Bag2ListTranslator();
-   
-   private final File file = new File(BASE_DIR, UUID.randomUUID().toString());
+    private final Bag2ListTranslator translator   = new Bag2ListTranslator();
 
-   private final TupleFactory tupleFactory = TupleFactory.getInstance();
+    private final File               file         = new File(BASE_DIR, UUID.randomUUID().toString());
 
-   @Test
-   public void testCorrectTranslation() throws Exception
-   {
-      DataBag bag = new DefaultDataBag();
-      Tuple tuple = tupleFactory.newTuple();
-      tuple.append("user1");
-      bag.add(tuple);
+    private final TupleFactory       tupleFactory = TupleFactory.getInstance();
 
-      Object value = translator.translate(bag);
-      
-      Assert.assertTrue(value instanceof List);
+    @Test
+    public void testCorrectTranslation() throws Exception
+    {
+        DataBag bag = new DefaultDataBag();
+        Tuple tuple = tupleFactory.newTuple();
+        tuple.append("user1");
+        bag.add(tuple);
 
-      List<String> list = (List<String>)value;
+        Object value = translator.translate(bag);
 
-      Assert.assertNotNull(list.get(0));
-      Assert.assertEquals(list.get(0), "user1");
-   }
+        Assert.assertTrue(value instanceof List);
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
-   public void testTryToModifyResult() throws Exception
-   {
-      DataBag bag = new DefaultDataBag();
-      Tuple tuple = tupleFactory.newTuple();
-      tuple.append("user1");
-      bag.add(tuple);
+        List<String> list = (List<String>)value;
 
-      Object value = translator.translate(bag);
+        Assert.assertNotNull(list.get(0));
+        Assert.assertEquals(list.get(0), "user1");
+    }
 
-      Assert.assertTrue(value instanceof List);
-      List<String> list = (List<String>)value;
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testTryToModifyResult() throws Exception
+    {
+        DataBag bag = new DefaultDataBag();
+        Tuple tuple = tupleFactory.newTuple();
+        tuple.append("user1");
+        bag.add(tuple);
 
-      list.add("some value");
-   }
+        Object value = translator.translate(bag);
 
-   
-   @Test(expectedExceptions = IOException.class)
-   public void testIncorrectValueTranslation() throws Exception
-   {
-      translator.translate("some value");
-   }
+        Assert.assertTrue(value instanceof List);
+        List<String> list = (List<String>)value;
 
-   @Test(expectedExceptions = IOException.class)
-   public void testTranslationBagWith2Tuples() throws Exception
-   {
-      DataBag bag = new DefaultDataBag();
-      Tuple tuple = tupleFactory.newTuple();
-      tuple.append("user1");
-      tuple.append("user2");
-      bag.add(tuple);
+        list.add("some value");
+    }
 
-      translator.translate(bag);
-   }
 
-   @Test
-   public void testTranslateReadWriter() throws Exception
-   {
-      List<String> users = new ArrayList<String>(2);
-      users.add("user1");
-      users.add("user2");
+    @Test(expectedExceptions = IOException.class)
+    public void testIncorrectValueTranslation() throws Exception
+    {
+        translator.translate("some value");
+    }
 
-      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-      translator.doWrite(writer, users);
-      writer.close();
+    @Test(expectedExceptions = IOException.class)
+    public void testTranslationBagWith2Tuples() throws Exception
+    {
+        DataBag bag = new DefaultDataBag();
+        Tuple tuple = tupleFactory.newTuple();
+        tuple.append("user1");
+        tuple.append("user2");
+        bag.add(tuple);
 
-      BufferedReader reader = new BufferedReader(new FileReader(file));
-      Object value = translator.doRead(reader);
-      reader.close();
+        translator.translate(bag);
+    }
 
-      Assert.assertTrue(value instanceof List);
+    @Test
+    public void testTranslateReadWriter() throws Exception
+    {
+        List<String> users = new ArrayList<String>(2);
+        users.add("user1");
+        users.add("user2");
 
-      users = (List<String>)value;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        translator.doWrite(writer, users);
+        writer.close();
 
-      Assert.assertNotNull(users.get(0));
-      Assert.assertNotNull(users.get(1));
-      Assert.assertEquals(users.get(0), "user1");
-      Assert.assertEquals(users.get(1), "user2");
-   }
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        Object value = translator.doRead(reader);
+        reader.close();
 
-   @Test(expectedExceptions = IOException.class)
-   public void testTranslateReadWriterWrongObject() throws Exception
-   {
-      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        Assert.assertTrue(value instanceof List);
 
-      try
-      {
-         translator.doWrite(null, "value");
-      }
-      finally
-      {
-         writer.close();
-      }
-   }
+        users = (List<String>)value;
+
+        Assert.assertNotNull(users.get(0));
+        Assert.assertNotNull(users.get(1));
+        Assert.assertEquals(users.get(0), "user1");
+        Assert.assertEquals(users.get(1), "user2");
+    }
+
+    @Test(expectedExceptions = IOException.class)
+    public void testTranslateReadWriterWrongObject() throws Exception
+    {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+
+        try
+        {
+            translator.doWrite(null, "value");
+        } finally
+        {
+            writer.close();
+        }
+    }
 }

@@ -24,91 +24,91 @@ package com.codenvy.dashboard.scripts;
  */
 public enum ScriptParameters
 {
-   FROM_DATE {
-      @Override
-      public String getDefaultValue()
-      {
-         return "20000101";
-      }
+    FROM_DATE {
+        @Override
+        public String getDefaultValue()
+        {
+            return "20000101";
+        }
 
-      @Override
-      public String getName()
-      {
-         return "fromDate";
-      }
-   },
+        @Override
+        public String getName()
+        {
+            return "fromDate";
+        }
+    },
 
-   TO_DATE {
-      @Override
-      public String getDefaultValue()
-      {
-         return "21001231";
-      }
+    TO_DATE {
+        @Override
+        public String getDefaultValue()
+        {
+            return "21001231";
+        }
 
-      @Override
-      public String getName()
-      {
-         return "toDate";
-      }
-   },
+        @Override
+        public String getName()
+        {
+            return "toDate";
+        }
+    },
 
-   LAST_MINUTES {
-      @Override
-      public String getDefaultValue()
-      {
-         return "60";
-      }
+    LAST_MINUTES {
+        @Override
+        public String getDefaultValue()
+        {
+            return "60";
+        }
 
-      @Override
-      public String getName()
-      {
-         return "lastMinutes";
-      }
-   },
+        @Override
+        public String getName()
+        {
+            return "lastMinutes";
+        }
+    },
 
-   SESSIONS_COUNT {
-      @Override
-      public String getDefaultValue()
-      {
-         return "2";
-      }
+    SESSIONS_COUNT {
+        @Override
+        public String getDefaultValue()
+        {
+            return "2";
+        }
 
-      @Override
-      public String getName()
-      {
-         return "sessionsCount";
-      }
-   },
+        @Override
+        public String getName()
+        {
+            return "sessionsCount";
+        }
+    },
 
-   TOP {
-      @Override
-      public String getDefaultValue()
-      {
-         return "10";
-      }
+    TOP {
+        @Override
+        public String getDefaultValue()
+        {
+            return "10";
+        }
 
-      @Override
-      public String getName()
-      {
-         return "top";
-      }
-   },
+        @Override
+        public String getName()
+        {
+            return "top";
+        }
+    },
 
-   INACTIVE_INTERVAL {
-      @Override
-      public String getDefaultValue()
-      {
-         return "10";
-      }
+    INACTIVE_INTERVAL {
+        @Override
+        public String getDefaultValue()
+        {
+            return "10";
+        }
 
-      @Override
-      public String getName()
-      {
-         return "inactiveInterval";
-      }
-   };
+        @Override
+        public String getName()
+        {
+            return "inactiveInterval";
+        }
+    };
 
-   public abstract String getDefaultValue();
+    public abstract String getDefaultValue();
 
-   public abstract String getName();
+    public abstract String getName();
 }

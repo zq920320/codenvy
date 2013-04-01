@@ -37,73 +37,73 @@ import java.util.List;
 public class Bag2ListTranslator implements ValueTranslator
 {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void doWrite(BufferedWriter writer, Object value) throws IOException
-   {
-      if (value instanceof List)
-      {
-         List<String> list = (List<String>)value;
-         for (String str : list)
-         {
-            writer.write(str);
-            writer.newLine();
-         }
-
-         writer.flush();
-      }
-      else
-      {
-         throw new IOException("Unknown class " + value.getClass().getName() + " for storing");
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public List<String> doRead(BufferedReader reader) throws IOException
-   {
-      List<String> result = new ArrayList<String>();
-
-      String line;
-      while ((line = reader.readLine()) != null)
-      {
-         result.add(line);
-      }
-
-      return Collections.unmodifiableList(result);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public List<String> translate(Object value) throws IOException
-   {
-      if (value instanceof DataBag)
-      {
-         DataBag bag = (DataBag)value;
-         
-         List<String> result = new ArrayList<String>((int)bag.size());
-         
-         Iterator<Tuple> iter = bag.iterator();
-         while (iter.hasNext())
-         {
-            Tuple tuple = iter.next();
-            if (tuple.size() != 1)
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doWrite(BufferedWriter writer, Object value) throws IOException
+    {
+        if (value instanceof List)
+        {
+            List<String> list = (List<String>)value;
+            for (String str : list)
             {
-               throw new IOException("Tuple size should be 1");
+                writer.write(str);
+                writer.newLine();
             }
 
-            result.add(tuple.get(0).toString());
-         }
+            writer.flush();
+        }
+        else
+        {
+            throw new IOException("Unknown class " + value.getClass().getName() + " for storing");
+        }
+    }
 
-         return Collections.unmodifiableList(result);
-      }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> doRead(BufferedReader reader) throws IOException
+    {
+        List<String> result = new ArrayList<String>();
 
-      throw new IOException("Unknown class " + value.getClass().getName() + " for translation");
-   }
+        String line;
+        while ((line = reader.readLine()) != null)
+        {
+            result.add(line);
+        }
+
+        return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> translate(Object value) throws IOException
+    {
+        if (value instanceof DataBag)
+        {
+            DataBag bag = (DataBag)value;
+
+            List<String> result = new ArrayList<String>((int)bag.size());
+
+            Iterator<Tuple> iter = bag.iterator();
+            while (iter.hasNext())
+            {
+                Tuple tuple = iter.next();
+                if (tuple.size() != 1)
+                {
+                    throw new IOException("Tuple size should be 1");
+                }
+
+                result.add(tuple.get(0).toString());
+            }
+
+            return Collections.unmodifiableList(result);
+        }
+
+        throw new IOException("Unknown class " + value.getClass().getName() + " for translation");
+    }
 }

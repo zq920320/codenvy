@@ -36,35 +36,35 @@ import java.util.Map;
 public class TestScriptProductUsageTime extends BasePigTest
 {
 
-   @Test
-   public void testEventFound() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
+    @Test
+    public void testEventFound() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
 
-      // 7 min
-      events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-         .withTime("20:00:00").build());
-      events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-         .withTime("20:05:00").build());
-      events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-         .withTime("20:07:00").build());
+        // 7 min
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+                                .withTime("20:00:00").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+                                .withTime("20:05:00").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+                                .withTime("20:07:00").build());
 
-      // 4 min
-      events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-         .withTime("20:25:00").build());
-      events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
-         .withTime("20:29:00").build());
+        // 4 min
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+                                .withTime("20:25:00").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+                                .withTime("20:29:00").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101003");
-      params.put(ScriptParameters.INACTIVE_INTERVAL.getName(), "10");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101003");
+        params.put(ScriptParameters.INACTIVE_INTERVAL.getName(), "10");
 
-      executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, params);
+        executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, params);
 
-      FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, params);
-      Assert.assertEquals(fileObject.getValue(), 11L);
-   }
+        FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, params);
+        Assert.assertEquals(fileObject.getValue(), 11L);
+    }
 }

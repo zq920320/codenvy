@@ -35,27 +35,27 @@ import java.util.Map;
  */
 public class TestScriptActiveUsers extends BasePigTest
 {
-   @Test
-   public void testEventFound() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-01").build());
+    @Test
+    public void testEventFound() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-01").build());
 
-      // events should not be taken in account
-      events.add(Event.Builder.createUserSSOLoggedOutEvent("user3").withDate("2010-10-01").build());
+        // events should not be taken in account
+        events.add(Event.Builder.createUserSSOLoggedOutEvent("user3").withDate("2010-10-01").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.ACTIVE_USERS, log, params);
+        executePigScript(ScriptType.ACTIVE_USERS, log, params);
 
-      FileObject fileObject = ScriptType.ACTIVE_USERS.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.ACTIVE_USERS.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), Long.valueOf(2));
-   }
+        Assert.assertEquals(fileObject.getValue(), Long.valueOf(2));
+    }
 }

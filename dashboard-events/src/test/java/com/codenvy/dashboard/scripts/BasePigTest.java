@@ -27,30 +27,30 @@ import java.util.Map;
  */
 public class BasePigTest
 {
-   /**
-    * Relative path to temporary files.
-    */
-   public static final String BASE_DIR = "target";
+    /**
+     * Relative path to temporary files.
+     */
+    public static final String BASE_DIR = "target";
 
-   protected void executePigScript(ScriptType type, File log, Map<String, String> executionParams) throws IOException
-   {
-      executionParams.put(Constants.LOG, log.getAbsolutePath());
+    protected void executePigScript(ScriptType type, File log, Map<String, String> executionParams) throws IOException
+    {
+        executionParams.put(Constants.LOG, log.getAbsolutePath());
 
-      ScriptExecutor scriptExecutor = new ScriptExecutor(type);
-      scriptExecutor.setParams(executionParams);
+        ScriptExecutor scriptExecutor = new ScriptExecutor(type);
+        scriptExecutor.setParams(executionParams);
 
-      FileObject fileObject = scriptExecutor.executeAndReturnResult(BASE_DIR);
-      fileObject.store();
-   }
+        FileObject fileObject = scriptExecutor.executeAndReturnResult(BASE_DIR);
+        fileObject.store();
+    }
 
-   protected FileObject executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
-      throws IOException
-   {
-      executionParams.put(Constants.LOG, log.getAbsolutePath());
+    protected FileObject executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
+                                                                                                               throws IOException
+    {
+        executionParams.put(Constants.LOG, log.getAbsolutePath());
 
-      ScriptExecutor scriptExecutor = new ScriptExecutor(type);
-      scriptExecutor.setParams(executionParams);
+        ScriptExecutor scriptExecutor = new ScriptExecutor(type);
+        scriptExecutor.setParams(executionParams);
 
-      return scriptExecutor.executeAndReturnResult(BASE_DIR);
-   }
+        return scriptExecutor.executeAndReturnResult(BASE_DIR);
+    }
 }

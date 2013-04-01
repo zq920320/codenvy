@@ -35,159 +35,159 @@ import java.util.Map;
  */
 public class TestScriptEventCount extends BasePigTest
 {
-   @Test
-   public void testEventCountTenantCreated() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-02").build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testEventCountTenantCreated() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-02").build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_WORKSPACE_CREATED, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_WORKSPACE_CREATED, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_WORKSPACE_CREATED.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_WORKSPACE_CREATED.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 2L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 2L);
+    }
 
-   @Test
-   public void testEventCountTenantDestroyed() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createTenantDestroyedEvent("ws1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createTenantDestroyedEvent("ws2").withDate("2010-10-01").build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testEventCountTenantDestroyed() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createTenantDestroyedEvent("ws1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createTenantDestroyedEvent("ws2").withDate("2010-10-01").build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 2L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 2L);
+    }
 
-   @Test
-   public void testEventCountUserCreated() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserCreatedEvent("user1", "user@user1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserCreatedEvent("user2", "user@user2").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserCreatedEvent("user3", "user@user3").withDate("2010-10-01").build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testEventCountUserCreated() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserCreatedEvent("user1", "user@user1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user2", "user@user2").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user3", "user@user3").withDate("2010-10-01").build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_USER_CREATED, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_USER_CREATED, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_USER_CREATED.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_USER_CREATED.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 3L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 3L);
+    }
 
-   @Test
-   public void testEventCountUserRemoved() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserRemovedEvent("user1").withDate("2010-10-01").build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testEventCountUserRemoved() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserRemovedEvent("user1").withDate("2010-10-01").build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_USER_REMOVED, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_USER_REMOVED, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_USER_REMOVED.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_USER_REMOVED.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 1L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 1L);
+    }
 
-   @Test
-   public void testEventCountProjectCreated() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createProjectCreatedEvent("user", "ws", "session", "project").withDate("2010-10-01")
-         .build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testEventCountProjectCreated() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createProjectCreatedEvent("user", "ws", "session", "project").withDate("2010-10-01")
+                                .build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_PROJECT_CREATED, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_PROJECT_CREATED, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_CREATED.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_CREATED.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 1L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 1L);
+    }
 
-   @Test
-   public void testEventCountProjectDestroyed() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project").withDate("2010-10-01")
-         .build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testEventCountProjectDestroyed() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project").withDate("2010-10-01")
+                                .build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_DESTROYED.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_DESTROYED.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 1L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 1L);
+    }
 
-   @Test
-   public void testEventCountProjectBuild() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "ses", "project1", "type")
-         .withDate("2010-10-01").build());
-      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "ses", "project2", "type", "paas")
-         .withDate("2010-10-01").build());
-      events.add(Event.Builder.createProjectDeployedEvent("user1", "ws1", "ses", "project3", "type", "paas")
-         .withDate("2010-10-01").build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testEventCountProjectBuild() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "ses", "project1", "type")
+                                .withDate("2010-10-01").build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "ses", "project2", "type", "paas")
+                                .withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectDeployedEvent("user1", "ws1", "ses", "project3", "type", "paas")
+                                .withDate("2010-10-01").build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 3L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 3L);
+    }
 
-   @Test
-   public void testEventCountUserInvite() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserInviteEvent("user", "ws", "session", "email").withDate("2010-10-01").build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testEventCountUserInvite() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserInviteEvent("user", "ws", "session", "email").withDate("2010-10-01").build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_USER_INVITE, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_USER_INVITE, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_USER_INVITE.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_USER_INVITE.createFileObject(BASE_DIR, params);
 
-      Assert.assertEquals(fileObject.getValue(), 1L);
-   }
+        Assert.assertEquals(fileObject.getValue(), 1L);
+    }
 }

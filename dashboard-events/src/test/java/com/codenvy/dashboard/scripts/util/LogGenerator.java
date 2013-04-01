@@ -31,28 +31,27 @@ import java.util.List;
 public class LogGenerator
 {
 
-   /**
-    * Generates log file with given events.
-    */
-   public static File generateLog(List<Event> events) throws IOException
-   {
-      File log = File.createTempFile("log", "tmp");
-      log.deleteOnExit();
+    /**
+     * Generates log file with given events.
+     */
+    public static File generateLog(List<Event> events) throws IOException
+    {
+        File log = File.createTempFile("log", "tmp");
+        log.deleteOnExit();
 
-      Writer out = new BufferedWriter(new FileWriter(log));
+        Writer out = new BufferedWriter(new FileWriter(log));
 
-      try
-      {
-         for (Event event : events)
-         {
-            out.write(event.toString() + "\n");
-         }
-      }
-      finally
-      {
-         out.close();
-      }
+        try
+        {
+            for (Event event : events)
+            {
+                out.write(event.toString() + "\n");
+            }
+        } finally
+        {
+            out.close();
+        }
 
-      return log;
-   }
+        return log;
+    }
 }

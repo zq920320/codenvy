@@ -37,143 +37,143 @@ import java.util.Properties;
 public class TestScriptTopWsByEvents extends BasePigTest
 {
 
-   @Test
-   public void testTopWsByUsers() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws1", "ses", "ws1", "user1", "website")
-         .withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws1", "ses", "ws1", "user2", "website")
-         .withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createUserAddedToWsEvent("user3", "ws1", "ses", "ws1", "user3", "website")
-         .withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws2", "ses", "ws2", "user1", "website")
-         .withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws2", "ses", "ws2", "user2", "website")
-         .withDate("2010-10-01")
-         .build());
+    @Test
+    public void testTopWsByUsers() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws1", "ses", "ws1", "user1", "website")
+                                .withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws1", "ses", "ws1", "user2", "website")
+                                .withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user3", "ws1", "ses", "ws1", "user3", "website")
+                                .withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws2", "ses", "ws2", "user1", "website")
+                                .withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws2", "ses", "ws2", "user2", "website")
+                                .withDate("2010-10-01")
+                                .build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.TOP_WS_BY_USERS, log, params);
+        executePigScript(ScriptType.TOP_WS_BY_USERS, log, params);
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_USERS.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.TOP_WS_BY_USERS.createFileObject(BASE_DIR, params);
 
-      Properties props = (Properties)fileObject.getValue();
-      Assert.assertEquals(props.getProperty("ws1"), "3");
-      Assert.assertEquals(props.getProperty("ws2"), "2");
-   }
+        Properties props = (Properties)fileObject.getValue();
+        Assert.assertEquals(props.getProperty("ws1"), "3");
+        Assert.assertEquals(props.getProperty("ws2"), "2");
+    }
 
-   @Test
-   public void testTopWsByInvitations() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "ses", "email1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "ses", "email2").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "ses", "email3").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "ses", "email1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "ses", "email2").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserInviteEvent("user1", "ws3", "ses", "email1").withDate("2010-10-01").build());
-      File log = LogGenerator.generateLog(events);
+    @Test
+    public void testTopWsByInvitations() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "ses", "email1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "ses", "email2").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "ses", "email3").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "ses", "email1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "ses", "email2").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws3", "ses", "email1").withDate("2010-10-01").build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.TOP_WS_BY_INVITATIONS, log, params);
+        executePigScript(ScriptType.TOP_WS_BY_INVITATIONS, log, params);
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_INVITATIONS.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.TOP_WS_BY_INVITATIONS.createFileObject(BASE_DIR, params);
 
-      Properties props = (Properties)fileObject.getValue();
-      Assert.assertEquals(props.getProperty("ws1"), "3");
-      Assert.assertEquals(props.getProperty("ws2"), "2");
-      Assert.assertEquals(props.getProperty("ws3"), "1");
-   }
+        Properties props = (Properties)fileObject.getValue();
+        Assert.assertEquals(props.getProperty("ws1"), "3");
+        Assert.assertEquals(props.getProperty("ws2"), "2");
+        Assert.assertEquals(props.getProperty("ws3"), "1");
+    }
 
-   @Test
-   public void testTopWsByBuilds() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
+    @Test
+    public void testTopWsByBuilds() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
 
-      // ws1 - 2
-      events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "ses", "project1", "type")
-         .withDate("2010-10-01").build());
-      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "ses", "project2", "type", "paas")
-         .withDate("2010-10-01").build());
-      events.add(Event.Builder.createProjectDeployedEvent("user1", "ws1", "ses", "project3", "type", "paas")
-         .withDate("2010-10-01").build());
+        // ws1 - 2
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "ses", "project1", "type")
+                                .withDate("2010-10-01").build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "ses", "project2", "type", "paas")
+                                .withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectDeployedEvent("user1", "ws1", "ses", "project3", "type", "paas")
+                                .withDate("2010-10-01").build());
 
-      // ws2 - 2
-      events.add(Event.Builder.createProjectBuiltEvent("user1", "ws2", "ses", "project1", "type")
-         .withDate("2010-10-01").build());
-      events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws2", "ses", "project2", "type", "paas")
-         .withDate("2010-10-01").build());
+        // ws2 - 2
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws2", "ses", "project1", "type")
+                                .withDate("2010-10-01").build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws2", "ses", "project2", "type", "paas")
+                                .withDate("2010-10-01").build());
 
-      // ws3 - 1
-      events.add(Event.Builder.createProjectBuiltEvent("user1", "ws3", "ses", "project1", "type")
-         .withDate("2010-10-01").build());
-      File log = LogGenerator.generateLog(events);
+        // ws3 - 1
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws3", "ses", "project1", "type")
+                                .withDate("2010-10-01").build());
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.TOP_WS_BY_BUILDS, log, params);
+        executePigScript(ScriptType.TOP_WS_BY_BUILDS, log, params);
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_BUILDS.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.TOP_WS_BY_BUILDS.createFileObject(BASE_DIR, params);
 
-      Properties props = (Properties)fileObject.getValue();
-      Assert.assertEquals(props.getProperty("ws1"), "3");
-      Assert.assertEquals(props.getProperty("ws2"), "2");
-      Assert.assertEquals(props.getProperty("ws3"), "1");
-   }
+        Properties props = (Properties)fileObject.getValue();
+        Assert.assertEquals(props.getProperty("ws1"), "3");
+        Assert.assertEquals(props.getProperty("ws2"), "2");
+        Assert.assertEquals(props.getProperty("ws3"), "1");
+    }
 
-   @Test
-   public void testTopWsByProjects() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
+    @Test
+    public void testTopWsByProjects() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
 
-      // ws1 - 2
-      events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project1").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project2").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project3").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createProjectDestroyedEvent("user1", "ws1", "ses", "project2").withDate("2010-10-01")
-         .build());
+        // ws1 - 2
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project1").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project2").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses", "project3").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectDestroyedEvent("user1", "ws1", "ses", "project2").withDate("2010-10-01")
+                                .build());
 
-      // ws2 - 2
-      events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "ses", "project1").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "ses", "project2").withDate("2010-10-01")
-         .build());
+        // ws2 - 2
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "ses", "project1").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "ses", "project2").withDate("2010-10-01")
+                                .build());
 
-      // ws3 - 1
-      events.add(Event.Builder.createProjectCreatedEvent("user1", "ws3", "ses", "project1").withDate("2010-10-01")
-         .build());
+        // ws3 - 1
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws3", "ses", "project1").withDate("2010-10-01")
+                                .build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.TOP_WS_BY_PROJECTS, log, params);
+        executePigScript(ScriptType.TOP_WS_BY_PROJECTS, log, params);
 
-      FileObject fileObject = ScriptType.TOP_WS_BY_PROJECTS.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.TOP_WS_BY_PROJECTS.createFileObject(BASE_DIR, params);
 
-      Properties props = (Properties)fileObject.getValue();
-      Assert.assertEquals(props.getProperty("ws1"), "2");
-      Assert.assertEquals(props.getProperty("ws2"), "2");
-      Assert.assertEquals(props.getProperty("ws3"), "1");
-   }
+        Properties props = (Properties)fileObject.getValue();
+        Assert.assertEquals(props.getProperty("ws1"), "2");
+        Assert.assertEquals(props.getProperty("ws2"), "2");
+        Assert.assertEquals(props.getProperty("ws3"), "1");
+    }
 }

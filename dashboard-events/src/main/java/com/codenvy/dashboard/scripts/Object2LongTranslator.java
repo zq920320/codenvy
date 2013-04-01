@@ -29,30 +29,30 @@ import java.io.IOException;
  */
 public class Object2LongTranslator implements ValueTranslator {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doWrite(BufferedWriter writer, Object value) throws IOException {
-		writer.write(value.toString());
-		writer.flush();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doWrite(BufferedWriter writer, Object value) throws IOException {
+        writer.write(value.toString());
+        writer.flush();
+    }
 
-	/**
-	 * {@inheritedDoc}
-	 */
-	@Override
-   public Long doRead(BufferedReader reader) throws IOException
-   {
-      return Long.valueOf(reader.readLine());
-	}
+    /**
+     * {@inheritedDoc}
+     */
+    @Override
+    public Long doRead(BufferedReader reader) throws IOException
+    {
+        return Long.valueOf(reader.readLine());
+    }
 
-	/**
-	 * {@inheritedDoc}
-	 */
-	@Override
-   public Long translate(Object value) throws IOException
-   {
-      return Long.valueOf(value.toString());
-	}
+    /**
+     * {@inheritedDoc}
+     */
+    @Override
+    public Long translate(Object value) throws IOException
+    {
+        return Long.valueOf(value.toString());
+    }
 }

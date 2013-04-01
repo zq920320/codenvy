@@ -42,113 +42,112 @@ import java.util.UUID;
 public class TestBag2PropertiesTranslator extends BasePigTest
 {
 
-   private final Bag2PropertiesTranslator translator = new Bag2PropertiesTranslator();
-   
-   private final File file = new File(BASE_DIR, UUID.randomUUID().toString());
+    private final Bag2PropertiesTranslator translator   = new Bag2PropertiesTranslator();
 
-   private final TupleFactory tupleFactory = TupleFactory.getInstance();
+    private final File                     file         = new File(BASE_DIR, UUID.randomUUID().toString());
 
-   @Test
-   public void testTranslateCorrectBagTuple2Field() throws Exception
-   {
-      DataBag bag = new DefaultDataBag();
-      Tuple tuple = tupleFactory.newTuple();
-      tuple.append("prop1");
-      tuple.append(1L);
-      bag.add(tuple);
+    private final TupleFactory             tupleFactory = TupleFactory.getInstance();
 
-      Object value = translator.translate(bag);
-      
-      Assert.assertTrue(value instanceof Properties);
+    @Test
+    public void testTranslateCorrectBagTuple2Field() throws Exception
+    {
+        DataBag bag = new DefaultDataBag();
+        Tuple tuple = tupleFactory.newTuple();
+        tuple.append("prop1");
+        tuple.append(1L);
+        bag.add(tuple);
 
-      Properties props = (Properties)value;
+        Object value = translator.translate(bag);
 
-      Assert.assertNotNull(props.getProperty("prop1"));
-      Assert.assertEquals(props.getProperty("prop1"), "1");
-   }
+        Assert.assertTrue(value instanceof Properties);
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
-   public void testTranslateCorrectBagTuple2FieldTryModifyResult() throws Exception
-   {
-      DataBag bag = new DefaultDataBag();
-      Tuple tuple = tupleFactory.newTuple();
-      tuple.append("prop1");
-      tuple.append(1L);
-      bag.add(tuple);
+        Properties props = (Properties)value;
 
-      Object value = translator.translate(bag);
+        Assert.assertNotNull(props.getProperty("prop1"));
+        Assert.assertEquals(props.getProperty("prop1"), "1");
+    }
 
-      Assert.assertTrue(value instanceof Properties);
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testTranslateCorrectBagTuple2FieldTryModifyResult() throws Exception
+    {
+        DataBag bag = new DefaultDataBag();
+        Tuple tuple = tupleFactory.newTuple();
+        tuple.append("prop1");
+        tuple.append(1L);
+        bag.add(tuple);
 
-      Properties props = (Properties)value;
-      props.put("prop1", "2");
-   }
+        Object value = translator.translate(bag);
 
-   
-   @Test(expectedExceptions = IOException.class)
-   public void testTranslateWrongObject() throws Exception
-   {
-      translator.translate("some value");
-   }
+        Assert.assertTrue(value instanceof Properties);
 
-   @Test(expectedExceptions = IOException.class)
-   public void testTranslateBagTuple1Field() throws Exception
-   {
-      DataBag bag = new DefaultDataBag();
-      Tuple tuple = tupleFactory.newTuple();
-      tuple.append("prop1");
-      bag.add(tuple);
+        Properties props = (Properties)value;
+        props.put("prop1", "2");
+    }
 
-      translator.translate(bag);
-   }
 
-   @Test(expectedExceptions = IOException.class)
-   public void testTranslateBagTuple3Field() throws Exception
-   {
-      DataBag bag = new DefaultDataBag();
-      Tuple tuple = tupleFactory.newTuple();
-      tuple.append("prop1");
-      tuple.append(1L);
-      tuple.append("prop2");
-      bag.add(tuple);
+    @Test(expectedExceptions = IOException.class)
+    public void testTranslateWrongObject() throws Exception
+    {
+        translator.translate("some value");
+    }
 
-      translator.translate(bag);
-   }
+    @Test(expectedExceptions = IOException.class)
+    public void testTranslateBagTuple1Field() throws Exception
+    {
+        DataBag bag = new DefaultDataBag();
+        Tuple tuple = tupleFactory.newTuple();
+        tuple.append("prop1");
+        bag.add(tuple);
 
-   @Test
-   public void testTranslateReadWriter() throws Exception
-   {
-      Properties props = new Properties();
-      props.put("prop1", "1");
+        translator.translate(bag);
+    }
 
-      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-      translator.doWrite(writer, props);
-      writer.close();
+    @Test(expectedExceptions = IOException.class)
+    public void testTranslateBagTuple3Field() throws Exception
+    {
+        DataBag bag = new DefaultDataBag();
+        Tuple tuple = tupleFactory.newTuple();
+        tuple.append("prop1");
+        tuple.append(1L);
+        tuple.append("prop2");
+        bag.add(tuple);
 
-      BufferedReader reader = new BufferedReader(new FileReader(file));
-      Object value = translator.doRead(reader);
-      reader.close();
+        translator.translate(bag);
+    }
 
-      Assert.assertTrue(value instanceof Properties);
+    @Test
+    public void testTranslateReadWriter() throws Exception
+    {
+        Properties props = new Properties();
+        props.put("prop1", "1");
 
-      props = (Properties)value;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        translator.doWrite(writer, props);
+        writer.close();
 
-      Assert.assertNotNull(props.getProperty("prop1"));
-      Assert.assertEquals(props.getProperty("prop1"), "1");
-   }
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        Object value = translator.doRead(reader);
+        reader.close();
 
-   @Test(expectedExceptions = IOException.class)
-   public void testTranslateReadWriterWrongObject() throws Exception
-   {
-      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        Assert.assertTrue(value instanceof Properties);
 
-      try
-      {
-         translator.doWrite(null, "value");
-      }
-      finally
-      {
-         writer.close();
-      }
-   }
+        props = (Properties)value;
+
+        Assert.assertNotNull(props.getProperty("prop1"));
+        Assert.assertEquals(props.getProperty("prop1"), "1");
+    }
+
+    @Test(expectedExceptions = IOException.class)
+    public void testTranslateReadWriterWrongObject() throws Exception
+    {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+
+        try
+        {
+            translator.doWrite(null, "value");
+        } finally
+        {
+            writer.close();
+        }
+    }
 }

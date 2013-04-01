@@ -32,163 +32,173 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Translate any {@link DataBag} into the {@link Properties}.
- * The key is instance of {@link String}, and the value is
- * instance of {@link String}.
+ * Translate any {@link DataBag} into the {@link Properties}. The key is instance of {@link String}, and the value is instance of
+ * {@link String}.
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class Bag2PropertiesTranslator implements ValueTranslator
 {
 
-   /**
-    * {@inheritedDoc)
-    */
-   @Override
-   public void doWrite(BufferedWriter writer, Object value) throws IOException
-   {
-      if (value instanceof Properties)
-      {
-         Properties props = (Properties)value;
-         props.store(writer, null);
-      }
-      else
-      {
-         throw new IOException("Unknown class " + value.getClass().getName() + " for storing");
-      }
-   }
+    /**
+     * {@inheritedDoc)
 
-   /**
-    * {@inheritedDoc)
-    */
-   @Override
-   public Properties doRead(BufferedReader reader) throws IOException
-   {
-      Properties props = new Properties();
-      props.load(reader);
+     */
+    @Override
+    public void doWrite(BufferedWriter writer, Object value) throws IOException
+    {
+        if (value instanceof Properties)
+        {
+            Properties props = (Properties)value;
+            props.store(writer, null);
+        }
+        else
+        {
+            throw new IOException("Unknown class " + value.getClass().getName() + " for storing");
+        }
+    }
 
-      return new ImmutableProperties(props);
-   }
+    /**
+     * {@inheritedDoc)
 
-   /**
-    * {@inheritedDoc)
-    */
-   @Override
-   public Properties translate(Object value) throws IOException
-   {
-      if (value instanceof DataBag)
-      {
-         Properties props = new Properties();
+     */
+    @Override
+    public Properties doRead(BufferedReader reader) throws IOException
+    {
+        Properties props = new Properties();
+        props.load(reader);
 
-         Iterator<Tuple> iter = ((DataBag)value).iterator();
-         while (iter.hasNext())
-         {
-            Tuple tuple = iter.next();
+        return new ImmutableProperties(props);
+    }
 
-            if (tuple.size() != 2)
+    /**
+     * {@inheritedDoc)
+
+     */
+    @Override
+    public Properties translate(Object value) throws IOException
+    {
+        if (value instanceof DataBag)
+        {
+            Properties props = new Properties();
+
+            Iterator<Tuple> iter = ((DataBag)value).iterator();
+            while (iter.hasNext())
             {
-               throw new IOException("Tuple size should be 2");
+                Tuple tuple = iter.next();
+
+                if (tuple.size() != 2)
+                {
+                    throw new IOException("Tuple size should be 2");
+                }
+
+                props.put(tuple.get(0).toString(), tuple.get(1).toString());
             }
 
-            props.put(tuple.get(0).toString(), tuple.get(1).toString());
-         }
+            return new ImmutableProperties(props);
+        }
 
-         return new ImmutableProperties(props);
-      }
+        throw new IOException("Unknown class " + value.getClass().getName() + " for translation");
+    }
 
-      throw new IOException("Unknown class " + value.getClass().getName() + " for translation");
-   }
+    /**
+     * Immutable wrapper for {@link Properties}.
+     */
+    @SuppressWarnings("serial")
+    private class ImmutableProperties extends Properties
+    {
 
-   /**
-    * Immutable wrapper for {@link Properties}.
-    */
-   @SuppressWarnings("serial")
-   private class ImmutableProperties extends Properties
-   {
+        /**
+         * {@link ImmutableProperties} constructor.
+         */
+        public ImmutableProperties(Properties original)
+        {
+            super();
 
-      /**
-       * {@link ImmutableProperties} constructor.
-       */
-      public ImmutableProperties(Properties original)
-      {
-         super();
+            for (java.util.Map.Entry<Object, Object> entry : original.entrySet())
+            {
+                super.put(entry.getKey(), entry.getValue());
+            }
+        }
 
-         for (java.util.Map.Entry<Object, Object> entry : original.entrySet())
-         {
-            super.put(entry.getKey(), entry.getValue());
-         }
-      }
+        /**
+         * {@inheritedDoc)
 
-      /**
-       * {@inheritedDoc)
-       */
-      @Override
-      public Object setProperty(String key, String val)
-      {
-         throw new UnsupportedOperationException("Method is not supported");
-      }
+         */
+        @Override
+        public Object setProperty(String key, String val)
+        {
+            throw new UnsupportedOperationException("Method is not supported");
+        }
 
-      /**
-       * {@inheritedDoc)
-       */
-      @Override
-      public synchronized void load(Reader arg0) throws IOException
-      {
-         throw new UnsupportedOperationException("Method is not supported");
-      }
+        /**
+         * {@inheritedDoc)
 
-      /**
-       * {@inheritedDoc)
-       */
-      @Override
-      public synchronized void load(InputStream arg0) throws IOException
-      {
-         throw new UnsupportedOperationException("Method is not supported");
-      }
+         */
+        @Override
+        public synchronized void load(Reader arg0) throws IOException
+        {
+            throw new UnsupportedOperationException("Method is not supported");
+        }
 
-      /**
-       * {@inheritedDoc)
-       */
-      @Override
-      public synchronized void loadFromXML(InputStream arg0) throws IOException, InvalidPropertiesFormatException
-      {
-         throw new UnsupportedOperationException("Method is not supported");
-      }
+        /**
+         * {@inheritedDoc)
 
-      /**
-       * {@inheritedDoc)
-       */
-      @Override
-      public synchronized void clear()
-      {
-         throw new UnsupportedOperationException("Method is not supported");
-      }
+         */
+        @Override
+        public synchronized void load(InputStream arg0) throws IOException
+        {
+            throw new UnsupportedOperationException("Method is not supported");
+        }
 
-      /**
-       * {@inheritedDoc)
-       */
-      @Override
-      public synchronized Object put(Object arg0, Object arg1)
-      {
-         throw new UnsupportedOperationException("Method is not supported");
-      }
+        /**
+         * {@inheritedDoc)
 
-      /**
-       * {@inheritedDoc)
-       */
-      @Override
-      public synchronized void putAll(Map<? extends Object, ? extends Object> arg0)
-      {
-         throw new UnsupportedOperationException("Method is not supported");
-      }
+         */
+        @Override
+        public synchronized void loadFromXML(InputStream arg0) throws IOException, InvalidPropertiesFormatException
+        {
+            throw new UnsupportedOperationException("Method is not supported");
+        }
 
-      /**
-       * {@inheritedDoc)
-       */
-      @Override
-      public synchronized Object remove(Object arg0)
-      {
-         throw new UnsupportedOperationException("Method is not supported");
-      }
-   }
+        /**
+         * {@inheritedDoc)
+
+         */
+        @Override
+        public synchronized void clear()
+        {
+            throw new UnsupportedOperationException("Method is not supported");
+        }
+
+        /**
+         * {@inheritedDoc)
+
+         */
+        @Override
+        public synchronized Object put(Object arg0, Object arg1)
+        {
+            throw new UnsupportedOperationException("Method is not supported");
+        }
+
+        /**
+         * {@inheritedDoc)
+
+         */
+        @Override
+        public synchronized void putAll(Map< ? extends Object, ? extends Object> arg0)
+        {
+            throw new UnsupportedOperationException("Method is not supported");
+        }
+
+        /**
+         * {@inheritedDoc)
+
+         */
+        @Override
+        public synchronized Object remove(Object arg0)
+        {
+            throw new UnsupportedOperationException("Method is not supported");
+        }
+    }
 }

@@ -36,97 +36,98 @@ import java.util.Properties;
  */
 public class TestScriptJrebelUsage extends BasePigTest
 {
-   @Test
-   public void testJRebelEligible() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project2", "type", false).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", false).withDate("2010-10-01").build());
+    @Test
+    public void testJRebelEligible() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project2", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", false).withDate("2010-10-01").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_JREBEL_USAGE.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_JREBEL_USAGE.createFileObject(BASE_DIR, params);
 
-      Long value = (Long)fileObject.getValue();
-      Assert.assertEquals(value, Long.valueOf(4));
-   }
+        Long value = (Long)fileObject.getValue();
+        Assert.assertEquals(value, Long.valueOf(4));
+    }
 
-   @Test
-   public void testJRebelEligibleDistinction() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user2", "ws1", "session", "project1", "type", false).withDate("2010-10-01").build());
+    @Test
+    public void testJRebelEligibleDistinction() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws1", "session", "project1", "type", false).withDate("2010-10-01")
+                                .build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
+        executePigScript(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
 
-      FileObject fileObject = ScriptType.EVENT_COUNT_JREBEL_USAGE.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.EVENT_COUNT_JREBEL_USAGE.createFileObject(BASE_DIR, params);
 
-      Long value = (Long)fileObject.getValue();
-      Assert.assertEquals(value, Long.valueOf(3));
-   }
+        Long value = (Long)fileObject.getValue();
+        Assert.assertEquals(value, Long.valueOf(3));
+    }
 
-   @Test
-   public void testDetailedJRebelUsageDistinction() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", true).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project1", "type", true).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", true).withDate("2010-10-01").build());
+    @Test
+    public void testDetailedJRebelUsageDistinction() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", true).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project1", "type", true).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", true).withDate("2010-10-01").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.DETAILS_JREBEL_USAGE, log, params);
+        executePigScript(ScriptType.DETAILS_JREBEL_USAGE, log, params);
 
-      FileObject fileObject = ScriptType.DETAILS_JREBEL_USAGE.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.DETAILS_JREBEL_USAGE.createFileObject(BASE_DIR, params);
 
-      Properties props = (Properties)fileObject.getValue();
-      Assert.assertEquals(props.getProperty("true"), "2");
-      Assert.assertEquals(props.getProperty("false"), "1");
-   }
+        Properties props = (Properties)fileObject.getValue();
+        Assert.assertEquals(props.getProperty("true"), "2");
+        Assert.assertEquals(props.getProperty("false"), "1");
+    }
 
-   @Test
-   public void testDetailedJRebelUsage() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project2", "type", true).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", true).withDate("2010-10-01").build());
-      events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", true).withDate("2010-10-01").build());
+    @Test
+    public void testDetailedJRebelUsage() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project2", "type", true).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", true).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", true).withDate("2010-10-01").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
-      params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
-      params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-      executePigScript(ScriptType.DETAILS_JREBEL_USAGE, log, params);
+        executePigScript(ScriptType.DETAILS_JREBEL_USAGE, log, params);
 
-      FileObject fileObject = ScriptType.DETAILS_JREBEL_USAGE.createFileObject(BASE_DIR, params);
+        FileObject fileObject = ScriptType.DETAILS_JREBEL_USAGE.createFileObject(BASE_DIR, params);
 
-      Properties props = (Properties)fileObject.getValue();
-      Assert.assertEquals(props.getProperty("true"), "3");
-      Assert.assertEquals(props.getProperty("false"), "1");
-   }
+        Properties props = (Properties)fileObject.getValue();
+        Assert.assertEquals(props.getProperty("true"), "3");
+        Assert.assertEquals(props.getProperty("false"), "1");
+    }
 }

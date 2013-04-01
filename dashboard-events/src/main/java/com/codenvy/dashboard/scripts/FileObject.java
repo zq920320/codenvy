@@ -37,265 +37,259 @@ import java.util.Map.Entry;
 public class FileObject
 {
 
-   /**
-    * The file name where {@link #value} is stored.
-    */
-   public static final String FILE_NAME = "value";
-   
-   /**
-    * {@link ScriptType}. It is used also as a part of path to destination {@link #FILE_NAME}.
-    */
-   private final ScriptType scriptType;
+    /**
+     * The file name where {@link #value} is stored.
+     */
+    public static final String                  FILE_NAME = "value";
 
-   /**
-    * The sequence of values are used as unique identifier of result
-    * relatively to {@link #type}. They are used also as a part of 
-    * path to destination {@link #FILE_NAME}. 
-    */
-   private final LinkedHashMap<String, String> keys;
+    /**
+     * {@link ScriptType}. It is used also as a part of path to destination {@link #FILE_NAME}.
+     */
+    private final ScriptType                    scriptType;
 
-   /**
-    * The parent directory of the storage. 
-    */
-   private final String baseDir;
+    /**
+     * The sequence of values are used as unique identifier of result relatively to {@link #type}. They are used also as a part of path to
+     * destination {@link #FILE_NAME}.
+     */
+    private final LinkedHashMap<String, String> keys;
 
-   /**
-    * Contains the actual value. 
-    */
-   private final Object value;
+    /**
+     * The parent directory of the storage.
+     */
+    private final String                        baseDir;
 
-   /**
-    * {@link ValueTranslator} instance.
-    */
-   private final ValueTranslator translator;
+    /**
+     * Contains the actual value.
+     */
+    private final Object                        value;
 
-   /**
-    * {@link FileObject} constructor.
-    */
-   FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams, Object value)
-      throws IOException
-   {
-      this.scriptType = scriptType;
-      this.baseDir = baseDir;
-      this.keys = makeKeys(executionParams);
-      this.translator = scriptType.getResultType().getValueTranslator();
-      this.value = translator.translate(value);
-   }
+    /**
+     * {@link ValueTranslator} instance.
+     */
+    private final ValueTranslator               translator;
 
-   /**
-    * {@link FileObject} constructor. Loads value from the file.
-    */
-   FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams) throws IOException
-   {
-      this.scriptType = scriptType;
-      this.baseDir = baseDir;
-      this.keys = makeKeys(executionParams);
-      this.translator = scriptType.getResultType().getValueTranslator();
-      this.value = load();
-   }
+    /**
+     * {@link FileObject} constructor.
+     */
+    FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams, Object value)
+                                                                                                        throws IOException
+    {
+        this.scriptType = scriptType;
+        this.baseDir = baseDir;
+        this.keys = makeKeys(executionParams);
+        this.translator = scriptType.getResultType().getValueTranslator();
+        this.value = translator.translate(value);
+    }
 
-   /**
-    * @return {@link #keys}.
-    */
-   public final Map<String, String> getKeys()
-   {
-      return keys;
-   }
+    /**
+     * {@link FileObject} constructor. Loads value from the file.
+     */
+    FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams) throws IOException
+    {
+        this.scriptType = scriptType;
+        this.baseDir = baseDir;
+        this.keys = makeKeys(executionParams);
+        this.translator = scriptType.getResultType().getValueTranslator();
+        this.value = load();
+    }
 
-   /**
-    * @return {@link #value}.
-    */
-   public final Object getValue() throws IOException
-   {
-      return value;
-   }
-   
-   /**
-    * Stores value into the file.
-    */
-   public final synchronized void store() throws IOException
-   {
-      if (scriptType.isStoreSupport())
-      {
-         File file = getFile();
+    /**
+     * @return {@link #keys}.
+     */
+    public final Map<String, String> getKeys()
+    {
+        return keys;
+    }
 
-         validateDestination(file);
-         doStore(file);
-      }
-   }
+    /**
+     * @return {@link #value}.
+     */
+    public final Object getValue() throws IOException
+    {
+        return value;
+    }
 
-   /**
-    * Checks if it is possible to write to destination file.
-    * The directory should exist and the file does not.
-    */
-   private void validateDestination(File file) throws IOException
-   {
-      File dir = file.getParentFile();
-      if (!dir.exists())
-      {
-         if (!dir.mkdirs())
-         {
-            throw new IOException("Can not create directory tree " + dir.getAbsolutePath());
-         }
-      }
+    /**
+     * Stores value into the file.
+     */
+    public final synchronized void store() throws IOException
+    {
+        if (scriptType.isStoreSupport())
+        {
+            File file = getFile();
 
-      if (file.exists())
-      {
-         if (!file.delete())
-         {
-            throw new IOException("File " + file.getAbsolutePath() + " already exists and can not be removed");
-         }
-      }
-   }
+            validateDestination(file);
+            doStore(file);
+        }
+    }
 
-   /**
-    * Returns the file to store in or load value from.
-    */
-   private File getFile() throws IOException
-   {
-      File dir;
+    /**
+     * Checks if it is possible to write to destination file. The directory should exist and the file does not.
+     */
+    private void validateDestination(File file) throws IOException
+    {
+        File dir = file.getParentFile();
+        if (!dir.exists())
+        {
+            if (!dir.mkdirs())
+            {
+                throw new IOException("Can not create directory tree " + dir.getAbsolutePath());
+            }
+        }
 
-      if (baseDir.startsWith("file://"))
-      {
-         URI uri;
-         try
-         {
-            uri = new URI(baseDir);
-         }
-         catch (URISyntaxException e)
-         {
-            throw new IOException(e);
-         }
+        if (file.exists())
+        {
+            if (!file.delete())
+            {
+                throw new IOException("File " + file.getAbsolutePath() + " already exists and can not be removed");
+            }
+        }
+    }
 
-         dir = new File(uri);
-      }
-      else
-      {
-         dir = new File(baseDir);
-      }
-      
-      StringBuilder builder = new StringBuilder();
-      builder.append(scriptType.toString().toLowerCase());
-      builder.append(File.separatorChar);
-      
-      for (Entry<String, String> entry : keys.entrySet())
-      {
-         builder.append(toRelativePath(entry));
-         builder.append(File.separatorChar);
-      }
-      builder.append(FILE_NAME);
+    /**
+     * Returns the file to store in or load value from.
+     */
+    private File getFile() throws IOException
+    {
+        File dir;
 
-      return new File(dir, builder.toString());
-   }
+        if (baseDir.startsWith("file://"))
+        {
+            URI uri;
+            try
+            {
+                uri = new URI(baseDir);
+            } catch (URISyntaxException e)
+            {
+                throw new IOException(e);
+            }
 
-   /**
-    * Translates key into relative path of the destination file.
-    */
-   private String toRelativePath(Entry<String, String> entry)
-   {
-      if (entry.getKey().equals(ScriptParameters.FROM_DATE.getName()))
-      {
-         return translateDateToRelativePath(entry.getValue());
-      }
+            dir = new File(uri);
+        }
+        else
+        {
+            dir = new File(baseDir);
+        }
 
-      return entry.getValue().toLowerCase().replace('-', File.separatorChar);
-   }
+        StringBuilder builder = new StringBuilder();
+        builder.append(scriptType.toString().toLowerCase());
+        builder.append(File.separatorChar);
 
-   /**
-    * Translate date from format YYYYMMDD into format like YYYY/MM/DD 
-    * and {@link File#separatorChar} is used as delimiter.
-    */
-   private String translateDateToRelativePath(String date)
-   {
-      StringBuilder builder = new StringBuilder();
+        for (Entry<String, String> entry : keys.entrySet())
+        {
+            builder.append(toRelativePath(entry));
+            builder.append(File.separatorChar);
+        }
+        builder.append(FILE_NAME);
 
-      builder.append(date.substring(0, 4));
-      builder.append(File.separatorChar);
+        return new File(dir, builder.toString());
+    }
 
-      builder.append(date.substring(4, 6));
-      builder.append(File.separatorChar);
+    /**
+     * Translates key into relative path of the destination file.
+     */
+    private String toRelativePath(Entry<String, String> entry)
+    {
+        if (entry.getKey().equals(ScriptParameters.FROM_DATE.getName()))
+        {
+            return translateDateToRelativePath(entry.getValue());
+        }
 
-      builder.append(date.substring(6, 8));
+        return entry.getValue().toLowerCase().replace('-', File.separatorChar);
+    }
 
-      return builder.toString();
-   }
+    /**
+     * Translate date from format YYYYMMDD into format like YYYY/MM/DD and {@link File#separatorChar} is used as delimiter.
+     */
+    private String translateDateToRelativePath(String date)
+    {
+        StringBuilder builder = new StringBuilder();
 
-   private void doStore(File file) throws IOException
-   {
-      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-      try
-      {
-         translator.doWrite(writer, value);
-      }
-      finally
-      {
-         writer.close();
-      }
-   }
+        builder.append(date.substring(0, 4));
+        builder.append(File.separatorChar);
 
-   /**
-    * Loads value from the file.
-    */
-   private Object load() throws IOException
-   {
-      File file = getFile();
-      if (!file.exists())
-      {
-         throw new FileNotFoundException("File does not exist " + file.getAbsolutePath());
-      }
+        builder.append(date.substring(4, 6));
+        builder.append(File.separatorChar);
 
-      return doLoad(file);
-   }
+        builder.append(date.substring(6, 8));
 
-   private Object doLoad(File file) throws IOException
-   {
-      BufferedReader reader = new BufferedReader(new FileReader(file));
-      try
-      {
-         return translator.doRead(reader);
-      }
-      finally
-      {
-         reader.close();
-      }
-   }
+        return builder.toString();
+    }
 
-   /**
-    * Prepare keys for {@link FileObject#keys}.
-    */
-   private LinkedHashMap<String, String> makeKeys(Map<String, String> executionParams) throws IOException
-   {
-      LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+    private void doStore(File file) throws IOException
+    {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        try
+        {
+            translator.doWrite(writer, value);
+        } finally
+        {
+            writer.close();
+        }
+    }
 
-      ScriptParameters[] manParams = scriptType.getMandatoryParams();
-      ScriptParameters[] addParams = scriptType.getAdditionalParams();
+    /**
+     * Loads value from the file.
+     */
+    private Object load() throws IOException
+    {
+        File file = getFile();
+        if (!file.exists())
+        {
+            throw new FileNotFoundException("File does not exist " + file.getAbsolutePath());
+        }
 
-      for (int i = 0; i < manParams.length; i++)
-      {
-         String paramKey = manParams[i].getName();
-         String paramValue = executionParams.get(paramKey);
-         
-         if (paramValue == null)
-         {
-            throw new IOException("There is no mandatory parameter " + paramKey + " in execution context");
-         }
+        return doLoad(file);
+    }
 
-         keys.put(paramKey, paramValue);
-      }
+    private Object doLoad(File file) throws IOException
+    {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        try
+        {
+            return translator.doRead(reader);
+        } finally
+        {
+            reader.close();
+        }
+    }
 
-      for (int i = 0; i < addParams.length; i++)
-      {
-         String paramKey = addParams[i].getName();
-         String paramValue = executionParams.get(paramKey);
+    /**
+     * Prepare keys for {@link FileObject#keys}.
+     */
+    private LinkedHashMap<String, String> makeKeys(Map<String, String> executionParams) throws IOException
+    {
+        LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 
-         if (paramValue == null)
-         {
-            paramValue = addParams[i].getDefaultValue();
-         }
+        ScriptParameters[] manParams = scriptType.getMandatoryParams();
+        ScriptParameters[] addParams = scriptType.getAdditionalParams();
 
-         keys.put(paramKey, paramValue);
-      }
+        for (int i = 0; i < manParams.length; i++)
+        {
+            String paramKey = manParams[i].getName();
+            String paramValue = executionParams.get(paramKey);
 
-      return keys;
-   }
+            if (paramValue == null)
+            {
+                throw new IOException("There is no mandatory parameter " + paramKey + " in execution context");
+            }
+
+            keys.put(paramKey, paramValue);
+        }
+
+        for (int i = 0; i < addParams.length; i++)
+        {
+            String paramKey = addParams[i].getName();
+            String paramValue = executionParams.get(paramKey);
+
+            if (paramValue == null)
+            {
+                paramValue = addParams[i].getDefaultValue();
+            }
+
+            keys.put(paramKey, paramValue);
+        }
+
+        return keys;
+    }
 }

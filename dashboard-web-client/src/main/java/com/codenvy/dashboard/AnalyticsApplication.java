@@ -31,37 +31,37 @@ import javax.ws.rs.core.Application;
  */
 public class AnalyticsApplication extends Application
 {
-   private final Set<Object> singletons;
+    private final Set<Object>     singletons;
 
-   private final Set<Class<?>> classes;
+    private final Set<Class< ? >> classes;
 
-   /**
-    * {@link AnalyticsApplication} constructor.
-    */
-   public AnalyticsApplication()
-   {
-      singletons = new HashSet<Object>();
-      singletons.add(ScriptService.class);
+    /**
+     * {@link AnalyticsApplication} constructor.
+     */
+    public AnalyticsApplication()
+    {
+        singletons = new HashSet<Object>();
+        singletons.add(ScriptService.class);
 
-      classes = new HashSet<Class<?>>();
-      classes.add(ScriptService.class);
-   }
+        classes = new HashSet<Class< ? >>();
+        classes.add(ScriptService.class);
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<Class<?>> getClasses()
-   {
-      return classes;
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Class< ? >> getClasses()
+    {
+        return classes;
+    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<Object> getSingletons()
-   {
-      return Collections.emptySet();
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Object> getSingletons()
+    {
+        return Collections.emptySet();
+    }
 }

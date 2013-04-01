@@ -36,120 +36,120 @@ import java.util.Map;
 public class TestScriptUsersWithoutActions extends BasePigTest
 {
 
-   /**
-    * Run script which find all events.  
-    */
-   @Test
-   public void testUsersWithoutProjects() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2010-10-02").build());
+    /**
+     * Run script which find all events.
+     */
+    @Test
+    public void testUsersWithoutProjects() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2010-10-02").build());
 
-      events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-03")
-         .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-03")
+                                .build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
 
-      FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_PROJECTS, log, params);
+        FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_PROJECTS, log, params);
 
-      List<String> list = (List<String>)fileObject.getValue();
-      Assert.assertEquals(list.size(), 1);
-      Assert.assertEquals(list.get(0), "user2");
-   }
+        List<String> list = (List<String>)fileObject.getValue();
+        Assert.assertEquals(list.size(), 1);
+        Assert.assertEquals(list.get(0), "user2");
+    }
 
-   /**
-    * Run script which find all events.  
-    */
-   @Test
-   public void testUsersWithoutInvites() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2010-10-01").build());
-      events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2010-10-02").build());
+    /**
+     * Run script which find all events.
+     */
+    @Test
+    public void testUsersWithoutInvites() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2010-10-02").build());
 
-      events.add(Event.Builder.createUserInviteEvent("user1", "ws", "session", "user4").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createUserInviteEvent("user2", "ws", "session", "user4").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws", "session", "user4").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createUserInviteEvent("user2", "ws", "session", "user4").withDate("2010-10-01").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
 
-      FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_INVITES, log, params);
+        FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_INVITES, log, params);
 
-      List<String> list = (List<String>)fileObject.getValue();
-      Assert.assertEquals(list.size(), 1);
-      Assert.assertEquals(list.get(0), "user3");
-   }
+        List<String> list = (List<String>)fileObject.getValue();
+        Assert.assertEquals(list.size(), 1);
+        Assert.assertEquals(list.get(0), "user3");
+    }
 
-   /**
-    * Run script which find all events.  
-    */
-   @Test
-   public void testUsersWithoutBuilds() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2010-10-03")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2010-10-03")
-         .build());
+    /**
+     * Run script which find all events.
+     */
+    @Test
+    public void testUsersWithoutBuilds() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2010-10-03")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2010-10-03")
+                                .build());
 
-      events.add(Event.Builder.createProjectBuiltEvent("user1", "ws", "session", "project", "type")
-         .withDate("2010-10-01").build());
-      events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas")
-         .withDate("2010-10-03").build());
-      events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws", "session", "project", "type", "paas")
-         .withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws", "session", "project", "type")
+                                .withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas")
+                                .withDate("2010-10-03").build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws", "session", "project", "type", "paas")
+                                .withDate("2010-10-01").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
 
-      FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_BUILDS, log, params);
+        FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_BUILDS, log, params);
 
-      List<String> list = (List<String>)fileObject.getValue();
-      Assert.assertEquals(list.size(), 1);
-      Assert.assertEquals(list.get(0), "user4");
-   }
+        List<String> list = (List<String>)fileObject.getValue();
+        Assert.assertEquals(list.size(), 1);
+        Assert.assertEquals(list.get(0), "user4");
+    }
 
-   /**
-    * Run script which find all events.  
-    */
-   //   @Test
-   public void testUsersWithoutDeployes() throws Exception
-   {
-      List<Event> events = new ArrayList<Event>();
-      events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2010-10-03")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-01")
-         .build());
-      events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2010-10-03")
-         .build());
+    /**
+     * Run script which find all events.
+     */
+    // @Test
+    public void testUsersWithoutDeployes() throws Exception
+    {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2010-10-03")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2010-10-03")
+                                .build());
 
-      events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas")
-         .withDate("2010-10-03").build());
-      events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws", "session", "project", "type", "paas")
-         .withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas")
+                                .withDate("2010-10-03").build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws", "session", "project", "type", "paas")
+                                .withDate("2010-10-01").build());
 
-      File log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
-      Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
 
-      FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_DEPLOYS, log, params);
+        FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_DEPLOYS, log, params);
 
-      List<String> list = (List<String>)fileObject.getValue();
-      Assert.assertEquals(list.size(), 1);
-      Assert.assertEquals(list.get(0), "user4");
-   }
+        List<String> list = (List<String>)fileObject.getValue();
+        Assert.assertEquals(list.size(), 1);
+        Assert.assertEquals(list.get(0), "user4");
+    }
 }
