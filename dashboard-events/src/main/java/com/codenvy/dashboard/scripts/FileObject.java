@@ -18,10 +18,17 @@
  */
 package com.codenvy.dashboard.scripts;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -190,11 +197,11 @@ public class FileObject {
     private LinkedHashMap<String, String> makeKeys(Map<String, String> executionParams) throws IOException {
         LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 
-        ScriptParameters[] manParams = scriptType.getMandatoryParams();
-        ScriptParameters[] addParams = scriptType.getAdditionalParams();
+        List<ScriptParameters> manParams = scriptType.getMandatoryParams();
+        List<ScriptParameters> addParams = scriptType.getAdditionalParams();
 
-        for (int i = 0; i < manParams.length; i++) {
-            String paramKey = manParams[i].getName();
+        for (int i = 0; i < manParams.size(); i++) {
+            String paramKey = manParams.get(i).getName();
             String paramValue = executionParams.get(paramKey);
 
             if (paramValue == null) {
@@ -204,12 +211,12 @@ public class FileObject {
             keys.put(paramKey, paramValue);
         }
 
-        for (int i = 0; i < addParams.length; i++) {
-            String paramKey = addParams[i].getName();
+        for (int i = 0; i < addParams.size(); i++) {
+            String paramKey = addParams.get(i).getName();
             String paramValue = executionParams.get(paramKey);
 
             if (paramValue == null) {
-                paramValue = addParams[i].getDefaultValue();
+                paramValue = addParams.get(i).getDefaultValue();
             }
 
             keys.put(paramKey, paramValue);

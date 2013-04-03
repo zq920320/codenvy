@@ -20,129 +20,65 @@
 package com.codenvy.dashboard.scripts;
 
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /** Log path optimization utility provides means to parse paths where logs are stored */
 public class LogLocationOptimizer {
-    public static List<String> generatePathList(String baseDir, String fromDateString, String toDateString) {
-        LoggingDate fromDate = new LoggingDate(fromDateString);
-        LoggingDate toDate = new LoggingDate(toDateString);
 
-        List<String> paths = new LinkedList<String>();
+    public static String generatePathString(String baseDir, String fromDateString, String toDateString) throws ParseException,
+                                                                                                       IllegalStateException {
+        DateFormat df = new SimpleDateFormat("yyyyMMdd");
 
-        while (fromDate.equalOrLess(toDate)) {
-            paths.add(baseDir + File.separator + fromDate.toString());
-            fromDate.increment();
+        Calendar fromDate = Calendar.getInstance();
+        Calendar toDate = Calendar.getInstance();
+
+        fromDate.setTime(df.parse(fromDateString));
+        toDate.setTime(df.parse(toDateString));
+
+        return doGeneratePath(baseDir, fromDate, toDate);
+    }
+
+    public static String generatePathString(String baseDir, String lastMinutes) throws ParseException, IllegalStateException {
+        Calendar fromDate = Calendar.getInstance();
+        Calendar toDate = Calendar.getInstance();
+
+        fromDate.add(Calendar.MINUTE, -Integer.valueOf(lastMinutes));
+
+        return doGeneratePath(baseDir, fromDate, toDate);
+    }
+
+    /**
+     * If particular path is absent it will not be included in resulted set. Since Pig framework throw an exception when path does not
+     * exist.
+     */
+    private static String doGeneratePath(String baseDir, Calendar fromDate, Calendar toDate)
+    {
+        final DateFormat df = new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
+
+        if (fromDate.after(toDate))
+        {
+            throw new IllegalStateException(fromDate.toString() + " is after " + toDate.toString());
         }
 
-        return paths;
-    }
-
-    public static String generatePathString(String baseDir, String fromDateString, String toDateString) {
-
-        List<String> paths = generatePathList(baseDir, fromDateString, toDateString);
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < paths.size(); i++) {
-            sb.append(paths.get(i));
-            sb.append(", ");
-        }
-        sb.delete(sb.lastIndexOf(","), sb.lastIndexOf(",") + 2);
-
-        return sb.toString();
-    }
-}
-
-class LoggingDate {
-    int year;
-
-    int month;
-
-    int day;
-
-    LoggingDate(String date) {
-        this.year = Integer.parseInt(date.substring(0, 4));
-        this.month = Integer.parseInt(date.substring(4, 6));
-        this.day = Integer.parseInt(date.substring(6, 8));
-    }
-
-    public boolean equalOrLess(String cmpDateString) {
-        return equalOrLess(new LoggingDate(cmpDateString));
-    }
-
-    public boolean equalOrLess(LoggingDate cmpDate) {
-        if (year < cmpDate.getYear()) {
-            return true;
-        } else if (year == cmpDate.getYear()) {
-            if (month < cmpDate.getMonth()) {
-                return true;
-            } else if (month == cmpDate.getMonth()) {
-                return day <= cmpDate.getDay();
+        StringBuilder builder = new StringBuilder();
+        do {
+            File file = new File(baseDir, df.format(fromDate.getTime()));
+            if (file.exists())
+            {
+                builder.append(file.getPath());
+                builder.append(',');
             }
+
+            fromDate.add(Calendar.DAY_OF_MONTH, 1);
+        } while (!fromDate.after(toDate));
+
+        if (builder.length() != 0) {
+            builder.deleteCharAt(builder.length() - 1);
         }
 
-        return false;
-    }
-
-    public void increment() {
-        if ((month == 1 && day == 31) ||
-            (month == 2 && day == 28) ||
-            (month == 3 && day == 31) ||
-            (month == 4 && day == 30) ||
-            (month == 5 && day == 31) ||
-            (month == 6 && day == 30) ||
-            (month == 7 && day == 31) ||
-            (month == 8 && day == 31) ||
-            (month == 9 && day == 30) ||
-            (month == 10 && day == 31) ||
-            (month == 11 && day == 30) ||
-            (month == 12 && day == 31)) {
-            day = 1;
-            if (month == 12) {
-                month = 1;
-                year++;
-            } else {
-                month++;
-            }
-        } else {
-            day++;
-        }
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
-    public void setMonth(int month) {
-        this.month = month;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public void setDay(int day) {
-        this.day = day;
-    }
-
-    public String toString() {
-        return String.valueOf(year) + File.separator + addZeroIfNeeded(month) + File.separator + addZeroIfNeeded(day);
-    }
-
-    private String addZeroIfNeeded(int number) {
-        if (number < 10) {
-            return 0 + String.valueOf(number);
-        }
-
-        return String.valueOf(number);
+        return builder.toString();
     }
 }

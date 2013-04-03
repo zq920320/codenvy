@@ -21,6 +21,8 @@ package com.codenvy.dashboard.scripts;
 import org.apache.pig.data.DefaultDataBag;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,13 +39,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
     },
 
@@ -54,13 +56,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -72,13 +74,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -90,13 +92,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -108,13 +110,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -126,13 +128,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -144,13 +146,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -162,13 +164,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -180,13 +182,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -198,13 +200,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -216,13 +218,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -234,13 +236,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -252,13 +254,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -270,13 +272,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -288,13 +290,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -306,13 +308,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -324,13 +326,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
     },
@@ -342,13 +344,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
@@ -364,13 +366,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
@@ -386,13 +388,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
@@ -408,13 +410,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
@@ -430,13 +432,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.INACTIVE_INTERVAL};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.INACTIVE_INTERVAL});
         }
     },
 
@@ -447,13 +449,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.TOP};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.TOP});
         }
     },
 
@@ -464,13 +466,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.TOP};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.TOP});
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
     },
 
@@ -481,13 +483,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.TOP};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.TOP});
         }
     },
 
@@ -498,13 +500,13 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE, ScriptParameters.TO_DATE});
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.TOP};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.TOP});
         }
     },
 
@@ -515,8 +517,8 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
         @Override
@@ -525,8 +527,8 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.LAST_MINUTES, ScriptParameters.SESSIONS_COUNT};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.LAST_MINUTES, ScriptParameters.SESSIONS_COUNT});
         }
     },
 
@@ -537,8 +539,8 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getMandatoryParams() {
-            return new ScriptParameters[]{};
+        public List<ScriptParameters> getMandatoryParams() {
+            return Arrays.asList(new ScriptParameters[]{});
         }
 
         @Override
@@ -547,8 +549,8 @@ public enum ScriptType {
         }
 
         @Override
-        public ScriptParameters[] getAdditionalParams() {
-            return new ScriptParameters[]{ScriptParameters.LAST_MINUTES};
+        public List<ScriptParameters> getAdditionalParams() {
+            return Arrays.asList(new ScriptParameters[]{ScriptParameters.LAST_MINUTES});
         }
     };
 
@@ -565,10 +567,10 @@ public enum ScriptType {
     public abstract ScriptTypeResult getResultType();
 
     /** @return list of mandatory parameters that have to be passed to the script */
-    public abstract ScriptParameters[] getMandatoryParams();
+    public abstract List<ScriptParameters> getMandatoryParams();
 
     /** @return list of additional parameters (not mandatory) that might be passed to the script */
-    public abstract ScriptParameters[] getAdditionalParams();
+    public abstract List<ScriptParameters> getAdditionalParams();
 
     /** @return true if script result might be stored and false otherwise */
     public boolean isStoreSupport() {

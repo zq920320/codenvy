@@ -25,7 +25,14 @@ import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,28 +41,34 @@ import java.util.regex.Pattern;
 
 /**
  * The Pig-latin script executor.
- *
+ * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class ScriptExecutor {
     /** Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(ScriptExecutor.class);
+    private static final Logger       LOG                                  = LoggerFactory.getLogger(ScriptExecutor.class);
 
     /** Runtime parameter name. Contains the directory where script are located. */
-    public static final String DASHBOARD_SCRIPTS_DIRECTORY_PROPERTY = "dashboard.scripts.directory";
+    public static final String        DASHBOARD_SCRIPTS_DIRECTORY_PROPERTY = "dashboard.scripts.directory";
 
 
     /** The value of {@value #DASHBOARD_SCRIPTS_DIRECTORY_PROPERTY} runtime parameter. */
-    public static final String SCRIPTS_DIRECTORY = System.getProperty(DASHBOARD_SCRIPTS_DIRECTORY_PROPERTY);
+    public static final String        SCRIPTS_DIRECTORY                    = System.getProperty(DASHBOARD_SCRIPTS_DIRECTORY_PROPERTY);
+
+    /** Runtime parameter name. Contains the directory where logs are located. */
+    public static final String        DASHBOARD_LOGS_DIRECTORY_PROPERTY    = "dashboard.logs.directory";
+
+    /** The value of {@value #DASHBOARD_LOGS_DIRECTORY_PROPERTY} runtime parameter. */
+    public static final String        LOGS_DIRECTORY                       = System.getProperty(DASHBOARD_LOGS_DIRECTORY_PROPERTY);
 
     /** {@link ScriptType} to execute. */
-    private final ScriptType scriptType;
+    private final ScriptType          scriptType;
 
     /** Script execution mode. */
-    private ExecType execType;
+    private ExecType                  execType;
 
     /** Execution parameters context. */
-    private final Map<String, String> context = new HashMap<String, String>();
+    private final Map<String, String> context                              = new HashMap<String, String>();
 
     /** {@link ScriptExecutor} constructor. */
     public ScriptExecutor(ScriptType scriptType) throws ExecException {
@@ -83,14 +96,10 @@ public class ScriptExecutor {
 
     /**
      * Run script and returns iterator by {@link Tuple} or null if script returned nothing.
-     *
-     * @throws IOException
-     *         if something gone wrong
+     * 
+     * @throws IOException if something gone wrong
      */
     public FileObject executeAndReturnResult(String storeLocation) throws IOException {
-        validateMandatoryParameters();
-        addAdditionalParameters();
-
         File scriptFile = new File(SCRIPTS_DIRECTORY, scriptType.getScriptFileName());
         if (!scriptFile.exists()) {
             throw new IOException("Resource " + scriptFile.getAbsolutePath() + " not found");
@@ -109,6 +118,15 @@ public class ScriptExecutor {
 
     /** Executes script and ensures result contains only one tuple. */
     private Tuple doExecute(InputStream scriptContent) throws IOException {
+        validateMandatoryParameters();
+        addAdditionalParameters();
+
+        if (!context.containsKey(Constants.LOG)) {
+            setLogParameter();
+        }
+
+        LOG.info("Execution " + scriptType.getScriptFileName() + " is started with data located: " + context.get(Constants.LOG));
+
         PigServer server = new PigServer(execType);
         try {
             server.registerScript(scriptContent, context);
@@ -122,7 +140,43 @@ public class ScriptExecutor {
             return result;
         } finally {
             server.shutdown();
+            LOG.info("Execution " + scriptType.getScriptFileName() + " is finished");
         }
+    }
+
+    /** Add {@link Constants#LOG} parameter into the context with trying optimize inspected data. */
+    private void setLogParameter() throws IOException {
+        try {
+            String path = LOGS_DIRECTORY;
+
+            if (containsParam(ScriptParameters.LAST_MINUTES) && !containsParam(ScriptParameters.FROM_DATE)
+                && !containsParam(ScriptParameters.TO_DATE)) {
+                path = LogLocationOptimizer.generatePathString(LOGS_DIRECTORY, getValue(ScriptParameters.LAST_MINUTES));
+            } else if (containsParam(ScriptParameters.FROM_DATE) && containsParam(ScriptParameters.TO_DATE)
+                       && !containsDefaultValue(ScriptParameters.FROM_DATE) && !containsDefaultValue(ScriptParameters.TO_DATE)) {
+                path =
+                       LogLocationOptimizer.generatePathString(LOGS_DIRECTORY, getValue(ScriptParameters.FROM_DATE),
+                                                               getValue(ScriptParameters.TO_DATE));
+            }
+
+            context.put(Constants.LOG, path);
+        } catch (IllegalStateException e) {
+            throw new IOException(e);
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
+    }
+
+    private boolean containsParam(ScriptParameters param) {
+        return context.containsKey(param.getName());
+    }
+
+    private boolean containsDefaultValue(ScriptParameters param) {
+        return getValue(param).equals(param.getDefaultValue());
+    }
+
+    private String getValue(ScriptParameters param) {
+        return context.get(param.getName());
     }
 
     /** Checks if all parameters that are needed to script execution have been added to context; */
@@ -182,7 +236,7 @@ public class ScriptExecutor {
 
     /**
      * Extracts relative path to pig script out of IMPORT command.
-     *
+     * 
      * @return absolute path to script located in {@value #SCRIPTS_DIRECTORY}.
      */
     private File extractRelativePath(final String regex, String scriptContnent, Matcher matcher) throws IOException {
