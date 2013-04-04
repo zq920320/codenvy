@@ -8,17 +8,17 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.codenvy.server.GreetingServiceImpl</servlet-class>
+    <servlet-class>com.codenvy.analytics.server.GreetingServiceImpl</servlet-class>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/client/greet</url-pattern>
+    <url-pattern>/AnalyticsApplication/greet</url-pattern>
   </servlet-mapping>
 
   <!-- Default page to serve -->
   <welcome-file-list>
-    <welcome-file>client.html</welcome-file>
+    <welcome-file>AnalyticsApplication.html</welcome-file>
   </welcome-file-list>
 
 </web-app>
