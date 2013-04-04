@@ -106,6 +106,8 @@
 
 
         return {
+            
+            Utils : Utils,
 
             AccountError : AccountError,
 

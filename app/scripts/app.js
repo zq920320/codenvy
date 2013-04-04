@@ -11,7 +11,8 @@ define(["jquery","config","marketo",
         "views/setprofilepasswordform",
         "views/setprofileuserform",
         "views/inviteorganization",
-        "views/errorresponse"
+        "views/errorresponse",
+        "views/maintenancepage"
         ],
 
     function($,Config,Munchkin,
@@ -27,7 +28,8 @@ define(["jquery","config","marketo",
         SetProfilePassword,
         SetProfileUser,
         InviteOrganization,
-        ErrorResponse){
+        ErrorResponse,
+        MaintenancePage){
 
         function modernize(){
             Modernizr.load({
@@ -61,7 +63,8 @@ define(["jquery","config","marketo",
                         setProfilePassword = $(".change-password-form"),
                         setProfileUserForm = $(".cloud-ide-profile"),
                         inviteOrganization = $(".organization"),
-                        errorResponse = $(".ErrorIcon");
+                        errorResponse = $(".ErrorIcon"),
+                        maintenancePage = $(".maintenance");
 
                     if(signupForm.length !== 0){
                         (function(){
@@ -236,6 +239,15 @@ define(["jquery","config","marketo",
                         (function(){
                             var element = ErrorResponse.get(errorResponse);
                             element.setError();
+                        }());
+                    }
+                    
+                    // maintenance page. queue number
+                    if(maintenancePage.length !== 0){
+                        (function(){
+                            MaintenancePage.get(maintenancePage);
+                            
+                            
                         }());
                     }
 
