@@ -23,19 +23,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.codenvy.dashboard</groupId>
-        <artifactId>dashboard-parent</artifactId>
+        <groupId>com.codenvy.analytics</groupId>
+        <artifactId>analytics-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dashboard-tomcat-pkg</artifactId>
-    <name>Codenvy :: Dashboard :: Analytics Tomcat assembly</name>
+    <artifactId>analytics-tomcat-pkg</artifactId>
+    <name>Codenvy :: Analytics :: Analytics Tomcat assembly</name>
     <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.dashboard</groupId>
-            <artifactId>dashboard-web-client</artifactId>
+            <groupId>com.codenvy.analytics</groupId>
+            <artifactId>analytics-web-client</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -103,12 +103,12 @@
                                             <fileset dir="${basedir}/src/main/resources/tomcat/"/>
                                         </copy>
 
-                                        <copy file="${project.build.directory}/packager-conf/war/dashboard-web-client.war"
+                                        <copy file="${project.build.directory}/packager-conf/war/analytics-web-client.war"
                                               tofile="${project.build.directory}/tomcat-analytics/webapps/analytics.war"/>
                                         <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x"/>
 
                                         <copy todir="${project.build.directory}/tomcat-analytics/scripts" overwrite="true">
-                                            <fileset dir="${basedir}/../dashboard-events/scripts/"/>
+                                            <fileset dir="${basedir}/../analytics-events/scripts/"/>
                                         </copy>
                                     </tasks>
                                 </configuration>

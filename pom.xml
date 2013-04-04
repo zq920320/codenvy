@@ -28,9 +28,9 @@
         <version>1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.codenvy.dashboard</groupId>
-    <artifactId>dashboard-parent</artifactId>
-    <name>Codenvy :: Dashboard :: Parent</name>
+    <groupId>com.codenvy.analytics</groupId>
+    <artifactId>analytics-parent</artifactId>
+    <name>Codenvy :: Analytics :: Parent</name>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -141,8 +141,8 @@
     </dependencyManagement>
 
     <modules>
-        <module>dashboard-events</module>
-        <module>dashboard-web-client</module>
-        <module>dashboard-tomcat-pkg</module>
+        <module>analytics-events</module>
+        <module>analytics-web-client</module>
+        <module>analytics-tomcat-pkg</module>
     </modules>
 </project>
