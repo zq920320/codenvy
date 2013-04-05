@@ -6,9 +6,9 @@
 # Sets some variables
 SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf"
 
-ANALYTICS_OPTS="-Ddashboard.logs.directory=${CATALINA_HOME}/../logs-production \
-                -Ddashboard.scripts.directory=${CATALINA_HOME}/scripts \
-                -Ddashboard.result.directory=${CATALINA_HOME}/data/results "
+ANALYTICS_OPTS="-Danalytics.logs.directory=${CATALINA_HOME}/../logs-production \
+                -Danalytics.scripts.directory=${CATALINA_HOME}/scripts \
+                -Danalytics.result.directory=${CATALINA_HOME}/data/results "
 
 JMX_OPTS="-Dcom.sun.management.jmxremote.authenticate=true \
           -Dcom.sun.management.jmxremote.password.file=${CATALINA_HOME}/conf/jmxremote.password \

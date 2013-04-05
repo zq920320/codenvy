@@ -18,24 +18,35 @@
  */
 package com.codenvy.analytics.scripts;
 
-import java.util.Map;
+import org.apache.pig.data.Tuple;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 
 /**
- * Simple POJO object containing all necessary data for execution particular script.
+ * It is used to translate result received from script execution into the object more useful to operate with. Also it has responsibilities
+ * to perform read and write in the way more suitable for given object.
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ScriptExecutionContext {
-    /** Runtime script parameters. */
-    private Map<String, String> params;
+public interface ValueTranslator {
+    /** Performs write operation. It is supposed the value already translated. */
+    void doWrite(BufferedWriter writer, Object value) throws IOException;
 
-    /** Getter for {@link #params}. */
-    public Map<String, String> getParams() {
-        return params;
-    }
+    /**
+     * Performs read operation.
+     *
+     * @return the translated object.
+     */
+    Object doRead(BufferedReader reader) throws IOException;
 
-    /** Setter for {@link #params}. */
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
+    /**
+     * Object translation.
+     *
+     * @param value
+     *         some object from resulted {@link Tuple}
+     * @return translated object
+     */
+    Object translate(Object value) throws IOException;
 }

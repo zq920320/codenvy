@@ -18,24 +18,18 @@
  */
 package com.codenvy.analytics.scripts;
 
-import java.util.Map;
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class Constants {
+    /**
+     * Parameter name in Pig script contains the resources are needed to be loaded. Can be either the name of single resource (file or
+     * directory) or the list of comma separated resources. Wildcard characters are supported.
+     */
+    public static final String LOG = "log";
 
-/**
- * Simple POJO object containing all necessary data for execution particular script.
- *
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ScriptExecutionContext {
-    /** Runtime script parameters. */
-    private Map<String, String> params;
+    /** Pig relation containing execution result. */
+    public static final String FINAL_RELATION = "result";
 
-    /** Getter for {@link #params}. */
-    public Map<String, String> getParams() {
-        return params;
-    }
-
-    /** Setter for {@link #params}. */
-    public void setParams(Map<String, String> params) {
-        this.params = params;
+    /** Private constructor. */
+    private Constants() {
     }
 }

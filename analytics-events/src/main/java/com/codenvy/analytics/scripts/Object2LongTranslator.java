@@ -18,24 +18,33 @@
  */
 package com.codenvy.analytics.scripts;
 
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 
 /**
- * Simple POJO object containing all necessary data for execution particular script.
+ * Translate any {@link Object} into the {@link Long}.
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ScriptExecutionContext {
-    /** Runtime script parameters. */
-    private Map<String, String> params;
+public class Object2LongTranslator implements ValueTranslator {
 
-    /** Getter for {@link #params}. */
-    public Map<String, String> getParams() {
-        return params;
+    /** {@inheritDoc} */
+    @Override
+    public void doWrite(BufferedWriter writer, Object value) throws IOException {
+        writer.write(value.toString());
+        writer.flush();
     }
 
-    /** Setter for {@link #params}. */
-    public void setParams(Map<String, String> params) {
-        this.params = params;
+    /** {@inheritedDoc} */
+    @Override
+    public Long doRead(BufferedReader reader) throws IOException {
+        return Long.valueOf(reader.readLine());
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public Long translate(Object value) throws IOException {
+        return Long.valueOf(value.toString());
     }
 }

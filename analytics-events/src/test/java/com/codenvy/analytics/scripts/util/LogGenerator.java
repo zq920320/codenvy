@@ -16,26 +16,29 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.analytics.scripts;
+package com.codenvy.analytics.scripts.util;
 
-import java.util.Map;
+import java.io.*;
+import java.util.List;
 
-/**
- * Simple POJO object containing all necessary data for execution particular script.
- *
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ScriptExecutionContext {
-    /** Runtime script parameters. */
-    private Map<String, String> params;
+/** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
+public class LogGenerator {
 
-    /** Getter for {@link #params}. */
-    public Map<String, String> getParams() {
-        return params;
-    }
+    /** Generates log file with given events. */
+    public static File generateLog(List<Event> events) throws IOException {
+        File log = File.createTempFile("log", "tmp");
+        log.deleteOnExit();
 
-    /** Setter for {@link #params}. */
-    public void setParams(Map<String, String> params) {
-        this.params = params;
+        Writer out = new BufferedWriter(new FileWriter(log));
+
+        try {
+            for (Event event : events) {
+                out.write(event.toString() + "\n");
+            }
+        } finally {
+            out.close();
+        }
+
+        return log;
     }
 }

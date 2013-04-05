@@ -16,7 +16,7 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.dashboard.scripts;
+package com.codenvy.analytics.scripts;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +44,10 @@ public class ScriptService {
     private static final Logger LOG = LoggerFactory.getLogger(ScriptService.class);
 
     /** Runtime parameter name. Contains the directory where results are stored. */
-    public static final String DASHBOARD_RESULT_DIRECTORY_PROPERTY = "dashboard.result.directory";
+    public static final String  ANALYTICS_RESULT_DIRECTORY_PROPERTY = "analytics.result.directory";
 
-    /** The value of {@value #DASHBOARD_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
-    public static final String RESULT_DIRECTORY = System.getProperty(DASHBOARD_RESULT_DIRECTORY_PROPERTY);
+    /** The value of {@value #ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
+    public static final String RESULT_DIRECTORY = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
 
     /** Executes script and returns result in JSON. */
     @GET

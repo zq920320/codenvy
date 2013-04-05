@@ -8,7 +8,7 @@
 
     <context-param>
         <param-name>javax.ws.rs.Application</param-name>
-        <param-value>com.codenvy.dashboard.AnalyticsApplication</param-value>
+        <param-value>com.codenvy.analytics.AnalyticsRestApplication</param-value>
     </context-param>
 
     <listener>
