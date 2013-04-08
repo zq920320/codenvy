@@ -18,6 +18,7 @@
  */
 package com.codenvy.analytics.scripts;
 
+
 import com.codenvy.analytics.scripts.Bag2ListTranslator;
 
 import org.apache.pig.data.DataBag;

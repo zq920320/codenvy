@@ -18,7 +18,6 @@
  */
 package com.codenvy.analytics.scripts;
 
-import com.codenvy.analytics.scripts.Constants;
 import com.codenvy.analytics.scripts.FileObject;
 import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptType;
@@ -33,22 +32,22 @@ public class BasePigTest {
     public static final String BASE_DIR = "target";
 
     protected void executePigScript(ScriptType type, File log, Map<String, String> executionParams) throws IOException {
-        executionParams.put(Constants.LOG, log.getAbsolutePath());
+        executionParams.put(ScriptExecutor.LOG, log.getAbsolutePath());
 
         ScriptExecutor scriptExecutor = new ScriptExecutor(type);
         scriptExecutor.setParams(executionParams);
 
-        FileObject fileObject = scriptExecutor.executeAndReturnResult(BASE_DIR);
+        FileObject fileObject = scriptExecutor.executeAndReturnResult();
         fileObject.store();
     }
 
     protected FileObject executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
             throws IOException {
-        executionParams.put(Constants.LOG, log.getAbsolutePath());
+        executionParams.put(ScriptExecutor.LOG, log.getAbsolutePath());
 
         ScriptExecutor scriptExecutor = new ScriptExecutor(type);
         scriptExecutor.setParams(executionParams);
 
-        return scriptExecutor.executeAndReturnResult(BASE_DIR);
+        return scriptExecutor.executeAndReturnResult();
     }
 }

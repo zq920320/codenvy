@@ -32,7 +32,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,20 +48,36 @@ import java.util.regex.Pattern;
  */
 public class ScriptExecutor {
     /** Logger. */
-    private static final Logger       LOG                                  = LoggerFactory.getLogger(ScriptExecutor.class);
+    private static final Logger       LOGGER                               = LoggerFactory.getLogger(ScriptExecutor.class);
 
     /** Runtime parameter name. Contains the directory where script are located. */
-    public static final String        ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY = "analytics.scripts.directory";
+    private static final String       ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY = "analytics.scripts.directory";
 
 
     /** The value of {@value #ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY} runtime parameter. */
     public static final String        SCRIPTS_DIRECTORY                    = System.getProperty(ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY);
 
     /** Runtime parameter name. Contains the directory where logs are located. */
-    public static final String        ANALYTICS_LOGS_DIRECTORY_PROPERTY    = "analytics.logs.directory";
+    private static final String       ANALYTICS_LOGS_DIRECTORY_PROPERTY    = "analytics.logs.directory";
 
     /** The value of {@value #ANALYTICS_LOGS_DIRECTORY_PROPERTY} runtime parameter. */
     public static final String        LOGS_DIRECTORY                       = System.getProperty(ANALYTICS_LOGS_DIRECTORY_PROPERTY);
+
+
+    /** Runtime parameter name. Contains the directory where results are stored. */
+    private static final String       ANALYTICS_RESULT_DIRECTORY_PROPERTY  = "analytics.result.directory";
+
+    /** The value of {@value ScriptService#ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
+    public static final String        RESULT_DIRECTORY                     = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
+
+    /**
+     * Parameter name in Pig script contains the resources are needed to be loaded. Can be either the name of single resource (file or
+     * directory) or the list of comma separated resources. Wildcard characters are supported.
+     */
+    public static final String        LOG                                  = "log";
+
+    /** Pig relation containing execution result. */
+    public static final String        FINAL_RELATION                       = "result";
 
     /** {@link ScriptType} to execute. */
     private final ScriptType          scriptType;
@@ -69,6 +87,12 @@ public class ScriptExecutor {
 
     /** Execution parameters context. */
     private final Map<String, String> context                              = new HashMap<String, String>();
+
+
+    /**
+     * The given date format is used in script execution.
+     */
+    public static final DateFormat    paramDateFormat                      = new SimpleDateFormat("yyyyMMdd");
 
     /** {@link ScriptExecutor} constructor. */
     public ScriptExecutor(ScriptType scriptType) throws ExecException {
@@ -99,7 +123,7 @@ public class ScriptExecutor {
      * 
      * @throws IOException if something gone wrong
      */
-    public FileObject executeAndReturnResult(String storeLocation) throws IOException {
+    public FileObject executeAndReturnResult() throws IOException {
         File scriptFile = new File(SCRIPTS_DIRECTORY, scriptType.getScriptFileName());
         if (!scriptFile.exists()) {
             throw new IOException("Resource " + scriptFile.getAbsolutePath() + " not found");
@@ -110,7 +134,7 @@ public class ScriptExecutor {
             Tuple tuple = doExecute(scriptContent);
 
             Object value = tuple == null ? scriptType.getResultType().getEmptyResult() : tuple.get(0);
-            return scriptType.createFileObject(storeLocation, context, value);
+            return scriptType.createFileObject(RESULT_DIRECTORY, context, value);
         } finally {
             scriptContent.close();
         }
@@ -121,16 +145,16 @@ public class ScriptExecutor {
         validateMandatoryParameters();
         addAdditionalParameters();
 
-        if (!context.containsKey(Constants.LOG)) {
+        if (!context.containsKey(LOG)) {
             setLogParameter();
         }
 
-        LOG.info("Execution " + scriptType.getScriptFileName() + " is started with data located: " + context.get(Constants.LOG));
+        LOGGER.info("Execution " + scriptType.getScriptFileName() + " is started with data located: " + context.get(LOG));
 
         PigServer server = new PigServer(execType);
         try {
             server.registerScript(scriptContent, context);
-            Iterator<Tuple> iter = server.openIterator(Constants.FINAL_RELATION);
+            Iterator<Tuple> iter = server.openIterator(ScriptExecutor.FINAL_RELATION);
 
             Tuple result = iter.next();
             if (iter.hasNext()) {
@@ -140,11 +164,11 @@ public class ScriptExecutor {
             return result;
         } finally {
             server.shutdown();
-            LOG.info("Execution " + scriptType.getScriptFileName() + " is finished");
+            LOGGER.info("Execution " + scriptType.getScriptFileName() + " is finished");
         }
     }
 
-    /** Add {@link Constants#LOG} parameter into the context with trying optimize inspected data. */
+    /** Add {@link #LOG} parameter into the context with trying optimize inspected data. */
     private void setLogParameter() throws IOException {
         try {
             String path = LOGS_DIRECTORY;
@@ -159,7 +183,7 @@ public class ScriptExecutor {
                                                                getValue(ScriptParameters.TO_DATE));
             }
 
-            context.put(Constants.LOG, path);
+            context.put(LOG, path);
         } catch (IllegalStateException e) {
             throw new IOException(e);
         } catch (ParseException e) {
@@ -266,12 +290,12 @@ public class ScriptExecutor {
                 try {
                     is.close();
                 } catch (IOException ignore) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("An exception occurred: " + ignore.getMessage());
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("An exception occurred: " + ignore.getMessage());
                     }
                 } catch (RuntimeException ignore) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("An exception occurred: " + ignore.getMessage());
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("An exception occurred: " + ignore.getMessage());
                     }
                 }
             }

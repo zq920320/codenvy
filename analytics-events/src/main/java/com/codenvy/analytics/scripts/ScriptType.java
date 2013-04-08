@@ -31,7 +31,7 @@ import java.util.Map;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum ScriptType {
-
+    
     EVENT_COUNT_WORKSPACE_CREATED {
         @Override
         public ScriptTypeResult getResultType() {
@@ -583,7 +583,11 @@ public enum ScriptType {
         return new FileObject(baseDir, this, executionParams, value);
     }
 
-    /** Factory class. The value will be loaded from the file. */
+    /**
+     * Factory class. The value will be loaded from the file.
+     * 
+     * @throws IOException when file with value does not exist
+     */
     public FileObject createFileObject(String baseDir, Map<String, String> executionParams) throws IOException {
         return new FileObject(baseDir, this, executionParams);
     }

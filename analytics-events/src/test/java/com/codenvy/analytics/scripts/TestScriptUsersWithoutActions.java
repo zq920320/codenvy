@@ -18,6 +18,7 @@
  */
 package com.codenvy.analytics.scripts;
 
+
 import com.codenvy.analytics.scripts.FileObject;
 import com.codenvy.analytics.scripts.ScriptType;
 

@@ -20,6 +20,7 @@ package com.codenvy.analytics.scripts;
 
 import static org.junit.Assert.assertEquals;
 
+
 import com.codenvy.analytics.scripts.LogLocationOptimizer;
 
 

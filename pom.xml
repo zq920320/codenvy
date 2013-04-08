@@ -55,6 +55,7 @@
         <!-- Third parties -->
         <testng.version>6.3.1</testng.version>
         <junit.version>4.10</junit.version>
+        <mockito.version>1.9.0</mockito.version>
 
         <!-- Loggers -->
         <org.slf4j.version>1.6.1</org.slf4j.version>
@@ -147,11 +148,19 @@
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Loggers -->

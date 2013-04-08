@@ -58,7 +58,7 @@ public class FileObject {
 
     /** {@link FileObject} constructor. */
     FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams, Object value)
-            throws IOException {
+                                                                                                        throws IOException {
         this.scriptType = scriptType;
         this.baseDir = baseDir;
         this.keys = makeKeys(executionParams);
@@ -66,7 +66,11 @@ public class FileObject {
         this.value = translator.translate(value);
     }
 
-    /** {@link FileObject} constructor. Loads value from the file. */
+    /**
+     * {@link FileObject} constructor. Loads value from the file.
+     * 
+     * @throws IOException when file with value does not exist
+     */
     FileObject(String baseDir, ScriptType scriptType, Map<String, String> executionParams) throws IOException {
         this.scriptType = scriptType;
         this.baseDir = baseDir;
@@ -75,24 +79,17 @@ public class FileObject {
         this.value = load();
     }
 
-    /** @return {@link #keys}. */
-    public final Map<String, String> getKeys() {
-        return keys;
-    }
-
     /** @return {@link #value}. */
-    public final Object getValue() throws IOException {
+    public Object getValue() throws IOException {
         return value;
     }
 
     /** Stores value into the file. */
     public final synchronized void store() throws IOException {
-        if (scriptType.isStoreSupport()) {
-            File file = getFile();
+        File file = getFile();
 
-            validateDestination(file);
-            doStore(file);
-        }
+        validateDestination(file);
+        doStore(file);
     }
 
     /** Checks if it is possible to write to destination file. The directory should exist and the file does not. */
