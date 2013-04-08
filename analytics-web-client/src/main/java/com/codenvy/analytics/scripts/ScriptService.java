@@ -43,12 +43,6 @@ public class ScriptService {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ScriptService.class);
 
-    /** Runtime parameter name. Contains the directory where results are stored. */
-    public static final String  ANALYTICS_RESULT_DIRECTORY_PROPERTY = "analytics.result.directory";
-
-    /** The value of {@value #ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
-    public static final String RESULT_DIRECTORY = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
-
     /** Executes script and returns result in JSON. */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -87,10 +81,7 @@ public class ScriptService {
         ScriptExecutor executor = new ScriptExecutor(scriptType);
         executor.setParams(params);
 
-        FileObject fileObject = executor.executeAndReturnResult(RESULT_DIRECTORY);
-        fileObject.store();
-
-        return fileObject.getValue();
+        return executor.executeAndReturnResult().getValue();
     }
 
     /** Wraps result in POJO. */

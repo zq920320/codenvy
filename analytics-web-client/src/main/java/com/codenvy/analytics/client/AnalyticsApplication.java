@@ -1,6 +1,6 @@
 package com.codenvy.analytics.client;
 
-import com.codenvy.analytics.client.view.TimeLine;
+import com.codenvy.analytics.client.view.TimeLineWidget;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -12,6 +12,6 @@ public class AnalyticsApplication implements EntryPoint {
 
     /** This is the entry point method. */
     public void onModuleLoad() {
-        RootPanel.get("timeLineContainer").add(TimeLine.createWidget());
+        RootPanel.get("timeLineContainer").add(TimeLineWidget.createWidget());
     }
 }

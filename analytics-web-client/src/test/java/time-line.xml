@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     Copyright (C) 2013 Codenvy.
+ 
+ -->
+<view>
+	<metrics>
+		<metric>workspaces_created</metric>
+		<metric>workspaces_destroyed</metric>
+		<metric>total_workspaces</metric>
+	</metrics>
+</view>
