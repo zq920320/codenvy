@@ -2,7 +2,7 @@ define(["models/account","backbone"], function(Account,Backbone){
 
     var ErrorResponse = Backbone.View.extend({
         setError : function(){
-            this.el.innerHTML = decodeURIComponent(Account.getParam("message"));
+            this.el.innerHTML = decodeURIComponent(Account.getQueryParameterByName("message"));
         }
     });
 

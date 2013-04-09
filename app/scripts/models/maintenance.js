@@ -8,7 +8,7 @@ define(["jquery","models/account"],function($,Account){
             tenantName = Account.Utils.getQueryParameterByName("tenant");
             $.ajax({
                 url : "/cloud-admin/rest/cloud-admin/update/state?tenant=" + tenantName,
-                method : "GET",
+                type : "GET",
                 success : function(output/*,status, xhr*/){
                         if (output.queuePosition === "-1") {window.location = window.location.protocol + "//" + tenantName + "." + window.location.host;}
                         else{
@@ -26,7 +26,6 @@ define(["jquery","models/account"],function($,Account){
         speedUp : function(success,error){
             $.ajax({
                 url : "/cloud-admin/rest/cloud-admin/update/promote?tenant=" + tenantName,
-                method : "POST",
                 type : "POST",
                 success : function(output/*,status, xhr*/){
                         success({

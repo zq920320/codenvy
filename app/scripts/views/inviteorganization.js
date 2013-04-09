@@ -4,7 +4,7 @@ define(["models/account","backbone"], function(Account,Backbone){
     
     var InviteOrganization = Backbone.View.extend({
         setOrganization : function(){
-            this.el.innerHTML=("<b>" + Account.getParam("organization") + "</b>");
+            this.el.innerHTML=("<b>" + Account.getQueryParameterByName("organization") + "</b>");
         }
     });
 

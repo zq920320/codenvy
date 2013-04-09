@@ -39,7 +39,15 @@
             }
 
         };
-
+        // getQueryParameterByName replaces Utils.getQueryParameterByName
+        var getQueryParameterByName = function(name){
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+                var results = regex.exec(window.location.search);
+                if(results){
+                    return decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+        };
 
         /*
 
@@ -48,12 +56,7 @@
 
         */
 
-        var PasswordSetupIdProvider = {
-            getId : function(){
-                //get query string parameter by name
-                return Utils.getQueryParameterByName("id");
-            }
-        };
+
         function onReceiveUserProfileInfo(request)
         {
                 var user = JSON.parse(request.responseText);
@@ -106,8 +109,10 @@
 
 
         return {
-            
+            //FIXIT remove Utils.getQueryParameterByName
             Utils : Utils,
+
+            getQueryParameterByName : getQueryParameterByName,
 
             AccountError : AccountError,
 
@@ -223,7 +228,7 @@
                 // https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
                 var confirmSetupPasswordUrl = "/rest/password/verify",
-                    id = PasswordSetupIdProvider.getId();
+                    id = getQueryParameterByName("id");
 
                 if(typeof id === 'undefined'){
                     error([
@@ -256,7 +261,7 @@
                 //  https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
                 var setupPasswordUrl = "/rest/password/setup",
-                    id = PasswordSetupIdProvider.getId();
+                    id = getQueryParameterByName("id");
 
 
                 $.ajax({
@@ -277,7 +282,7 @@
             changePassword : function(password,success,error){
 
                 var changePasswordUrl = "/rest/private/password/change",
-                    id = PasswordSetupIdProvider.getId();
+                    id = getQueryParameterByName("id");
 
                 $.ajax({
                     url : changePasswordUrl,
@@ -385,9 +390,9 @@
 
             waitForTenant : function(success, error){
                 //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
-                var errorType = Utils.getQueryParameterByName("errorType");//create OR start
-                var redirectUrl = Utils.getQueryParameterByName("redirect_url");
-                var tenantName = Utils.getQueryParameterByName("tenantName");
+                var errorType = getQueryParameterByName("errorType");//create OR start
+                var redirectUrl = getQueryParameterByName("redirect_url");
+                var tenantName = getQueryParameterByName("tenantName");
                 if(typeof tenantName === 'undefined'){
                     error([
                         new AccountError(null,"This is not a valid url")
@@ -426,9 +431,10 @@
 
                     $.ajax({
                         url : "/cloud-admin/rest/cloud-admin/tenant-service/tenant-state/" + tenantName,
-                        method : "GET",
+                        type : "GET",
                         success : function(output,status, xhr){
                             if(xhr.responseText === "ONLINE"){
+                                //mktoMunchkinFunction("LeadSource", form_data, hash.key);//Web - Cloud IDE
                                 success({
                                     url : buildRedirectUrl()
                                 });
