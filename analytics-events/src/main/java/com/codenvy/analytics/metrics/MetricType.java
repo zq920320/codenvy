@@ -4,9 +4,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
@@ -14,17 +11,24 @@ public enum MetricType {
 
     WORKSPACE_CREATED {
         @Override
-        public Metric getInstance() throws IOException {
+        public Metric getInstance() {
             return new WorkspacesCreatedMetric();
         }
     },
-    
+
     WORKSPACE_DESTROYED {
         @Override
-        public Metric getInstance() throws IOException {
-            return new WorkspacesDestroyedMetric();
+        public Metric getInstance() {
+            return new WorkspacesDestoryedMetric();
+        }
+    },
+
+    TOTAL_WORKSPACES {
+        @Override
+        public Metric getInstance() {
+            return new TotalWorkspacesMetric();
         }
     };
 
-    public abstract Metric getInstance() throws IOException;
+    public abstract Metric getInstance();
 }

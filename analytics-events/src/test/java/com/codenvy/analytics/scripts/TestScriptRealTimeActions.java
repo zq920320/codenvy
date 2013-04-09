@@ -18,22 +18,19 @@
  */
 package com.codenvy.analytics.scripts;
 
-
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptRealTimeActions extends BasePigTest {
@@ -71,10 +68,8 @@ public class TestScriptRealTimeActions extends BasePigTest {
         Map<String, String> params = new HashMap<String, String>();
         params.put(ScriptParameters.LAST_MINUTES.getName(), "6");
 
-        FileObject fileObject = executeAndReturnResult(ScriptType.REALTIME_USER_SSO_LOGGED_IN, log, params);
-
-        List<String> list = (List<String>)fileObject.getValue();
-        Assert.assertEquals(list.size(), 3);
+        List<String> value = (List<String>)executeAndReturnResult(ScriptType.REALTIME_USER_SSO_LOGGED_IN, log, params);
+        Assert.assertEquals(value.size(), 3);
     }
 
     @Test
@@ -110,10 +105,8 @@ public class TestScriptRealTimeActions extends BasePigTest {
         Map<String, String> params = new HashMap<String, String>();
         params.put(ScriptParameters.LAST_MINUTES.getName(), "6");
 
-        FileObject fileObject = executeAndReturnResult(ScriptType.REALTIME_WS_WITH_SEVERAL_USERS, log, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.size(), 1);
-        Assert.assertEquals(props.getProperty("ws1"), "2");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.REALTIME_WS_WITH_SEVERAL_USERS, log, params);
+        Assert.assertEquals(value.size(), 1);
+        Assert.assertEquals(value.get("ws1"), Long.valueOf(2));
     }
 }

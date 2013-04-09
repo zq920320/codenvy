@@ -16,24 +16,20 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.analytics.scripts;
+package com.codenvy.analytics.metrics;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Map;
 
-/** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
-public class BasePigTest {
-    /** Relative path to temporary files. */
-    public static final String BASE_DIR = "target";
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
+public interface ValueManager {
 
-    protected Object executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
-                                                                                                           throws IOException {
-        executionParams.put(ScriptExecutor.LOG, log.getAbsolutePath());
+    /** Performs read operation. */
+    Object load(BufferedReader reader) throws IOException;
 
-        ScriptExecutor scriptExecutor = new ScriptExecutor(type);
-        scriptExecutor.setParams(executionParams);
-
-        return scriptExecutor.executeAndReturnResult();
-    }
+    /** Performs write operation. It is supposed the value already translated. */
+    void store(BufferedWriter writer, Object value) throws IOException;
 }

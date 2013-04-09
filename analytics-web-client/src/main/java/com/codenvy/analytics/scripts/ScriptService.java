@@ -81,7 +81,7 @@ public class ScriptService {
         ScriptExecutor executor = new ScriptExecutor(scriptType);
         executor.setParams(params);
 
-        return executor.executeAndReturnResult().getValue();
+        return executor.executeAndReturnResult();
     }
 
     /** Wraps result in POJO. */

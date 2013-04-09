@@ -20,33 +20,22 @@ package com.codenvy.analytics.scripts;
 
 import org.apache.pig.data.Tuple;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 
 /**
- * It is used to translate result received from script execution into the object more useful to operate with. Also it has responsibilities
- * to perform read and write in the way more suitable for given object.
- *
+ * It is used to transform tuple received from script execution into the object more useful to operate with.
+ * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface ValueTranslator {
-    /** Performs write operation. It is supposed the value already translated. */
-    void doWrite(BufferedWriter writer, Object value) throws IOException;
+public interface TupleTransformer {
 
     /**
-     * Performs read operation.
-     *
-     * @return the translated object.
+     * Object transformation. Any Pig-script returns {@link Tuple} as result. This method transforms tuple into another more suitable
+     * object.
+     * 
+     * @param tuple the result returned by Pig-script
+     * @return transformed object
+     * @throws IOException if any exception is occurred
      */
-    Object doRead(BufferedReader reader) throws IOException;
-
-    /**
-     * Object translation.
-     *
-     * @param value
-     *         some object from resulted {@link Tuple}
-     * @return translated object
-     */
-    Object translate(Object value) throws IOException;
+    Object transform(Tuple tuple) throws IOException;
 }

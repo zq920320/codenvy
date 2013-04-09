@@ -20,10 +20,6 @@ package com.codenvy.analytics.scripts;
 
 import static org.junit.Assert.assertEquals;
 
-
-import com.codenvy.analytics.scripts.LogLocationOptimizer;
-
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -41,7 +37,6 @@ public class TestLogLocationOptimizer extends BasePigTest {
     {
         baseDir = BASE_DIR + File.separator + UUID.randomUUID();
     }
-
 
     @Test
     public void testPathsStringGenerationByDate() throws Exception {

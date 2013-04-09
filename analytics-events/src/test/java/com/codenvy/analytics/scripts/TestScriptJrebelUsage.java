@@ -18,21 +18,17 @@
  */
 package com.codenvy.analytics.scripts;
 
-
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptJrebelUsage extends BasePigTest {
@@ -54,11 +50,7 @@ public class TestScriptJrebelUsage extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_JREBEL_USAGE.createFileObject(BASE_DIR, params);
-
-        Long value = (Long)fileObject.getValue();
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
         Assert.assertEquals(value, Long.valueOf(4));
     }
 
@@ -80,11 +72,7 @@ public class TestScriptJrebelUsage extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_JREBEL_USAGE.createFileObject(BASE_DIR, params);
-
-        Long value = (Long)fileObject.getValue();
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
         Assert.assertEquals(value, Long.valueOf(3));
     }
 
@@ -103,13 +91,9 @@ public class TestScriptJrebelUsage extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.DETAILS_JREBEL_USAGE, log, params);
-
-        FileObject fileObject = ScriptType.DETAILS_JREBEL_USAGE.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("true"), "2");
-        Assert.assertEquals(props.getProperty("false"), "1");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.DETAILS_JREBEL_USAGE, log, params);
+        Assert.assertEquals(value.get("true"), Long.valueOf(2));
+        Assert.assertEquals(value.get("false"), Long.valueOf(1));
     }
 
     @Test
@@ -127,12 +111,8 @@ public class TestScriptJrebelUsage extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.DETAILS_JREBEL_USAGE, log, params);
-
-        FileObject fileObject = ScriptType.DETAILS_JREBEL_USAGE.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("true"), "3");
-        Assert.assertEquals(props.getProperty("false"), "1");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.DETAILS_JREBEL_USAGE, log, params);
+        Assert.assertEquals(value.get("true"), Long.valueOf(3));
+        Assert.assertEquals(value.get("false"), Long.valueOf(1));
     }
 }

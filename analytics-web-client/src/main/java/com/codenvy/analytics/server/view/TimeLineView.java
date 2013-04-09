@@ -6,6 +6,9 @@ package com.codenvy.analytics.server.view;
 
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.scripts.ScriptExecutor;
+import com.codenvy.analytics.scripts.ScriptParameters;
 
 import org.xml.sax.SAXException;
 
@@ -17,8 +20,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -30,7 +35,7 @@ public class TimeLineView {
     private static final int         HISTORY_LENGTH = 20;
 
     private static final String      RESOURCE_PATH  = "metrics/time-line.xml";
-    
+
     private final List<Metric>       metrics;
 
     private final List<List<String>> rows;
@@ -51,15 +56,22 @@ public class TimeLineView {
     }
 
     private void fillMetricRow(Metric metric, Calendar date, TimeUnit timeUnit) throws IOException {
-        DateFormat df = new SimpleDateFormat("yyyyMMdd");
+        Map<String, String> context = new HashMap<String, String>(2);
+
+        // TODO from the end ?
+
         for (int i = 0; i < HISTORY_LENGTH; i++) {
             List<String> row = new ArrayList<String>(HISTORY_LENGTH + 1);
             row.add(metric.getTitle());
 
-            String fromDate = df.format(date.getTime());
+            String fromDate = ScriptExecutor.PARAM_DATE_FORMAT.format(date.getTime());
             String toDate = fromDate;
+            
+            context.put(ScriptParameters.FROM_DATE.getName(), fromDate);
+            context.put(ScriptParameters.TO_DATE.getName(), toDate);
+            // context.put(key, value); TODO TimeUnit
 
-            row.add(metric.getValue(null));
+            row.add(metric.getValue(context).toString());
 
             date.add(Calendar.DAY_OF_MONTH, 1);
             rows.add(row);
@@ -81,7 +93,7 @@ public class TimeLineView {
     }
 
     public Iterator<List<String>> getRows() {
-        return null;
+        return rows.iterator();
     }
 
     private List<Metric> readMetricsList() throws ParserConfigurationException, SAXException, IOException {

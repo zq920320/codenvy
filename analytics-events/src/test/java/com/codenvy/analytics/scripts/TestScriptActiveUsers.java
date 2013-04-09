@@ -18,15 +18,8 @@
  */
 package com.codenvy.analytics.scripts;
 
-
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -55,10 +48,7 @@ public class TestScriptActiveUsers extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.ACTIVE_USERS, log, params);
-
-        FileObject fileObject = ScriptType.ACTIVE_USERS.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), Long.valueOf(2));
+        Long value = (Long)executeAndReturnResult(ScriptType.ACTIVE_USERS, log, params);
+        Assert.assertEquals(value, Long.valueOf(2));
     }
 }

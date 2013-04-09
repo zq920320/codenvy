@@ -18,21 +18,17 @@
  */
 package com.codenvy.analytics.scripts;
 
-
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptTopWsByEvents extends BasePigTest {
@@ -62,13 +58,9 @@ public class TestScriptTopWsByEvents extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.TOP_WS_BY_USERS, log, params);
-
-        FileObject fileObject = ScriptType.TOP_WS_BY_USERS.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("ws1"), "3");
-        Assert.assertEquals(props.getProperty("ws2"), "2");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.TOP_WS_BY_USERS, log, params);
+        Assert.assertEquals(value.get("ws1"), Long.valueOf(3));
+        Assert.assertEquals(value.get("ws2"), Long.valueOf(2));
     }
 
     @Test
@@ -86,14 +78,10 @@ public class TestScriptTopWsByEvents extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.TOP_WS_BY_INVITATIONS, log, params);
-
-        FileObject fileObject = ScriptType.TOP_WS_BY_INVITATIONS.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("ws1"), "3");
-        Assert.assertEquals(props.getProperty("ws2"), "2");
-        Assert.assertEquals(props.getProperty("ws3"), "1");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.TOP_WS_BY_INVITATIONS, log, params);
+        Assert.assertEquals(value.get("ws1"), Long.valueOf(3));
+        Assert.assertEquals(value.get("ws2"), Long.valueOf(2));
+        Assert.assertEquals(value.get("ws3"), Long.valueOf(1));
     }
 
     @Test
@@ -123,14 +111,10 @@ public class TestScriptTopWsByEvents extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.TOP_WS_BY_BUILDS, log, params);
-
-        FileObject fileObject = ScriptType.TOP_WS_BY_BUILDS.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("ws1"), "3");
-        Assert.assertEquals(props.getProperty("ws2"), "2");
-        Assert.assertEquals(props.getProperty("ws3"), "1");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.TOP_WS_BY_BUILDS, log, params);
+        Assert.assertEquals(value.get("ws1"), Long.valueOf(3));
+        Assert.assertEquals(value.get("ws2"), Long.valueOf(2));
+        Assert.assertEquals(value.get("ws3"), Long.valueOf(1));
     }
 
     @Test
@@ -163,13 +147,9 @@ public class TestScriptTopWsByEvents extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.TOP_WS_BY_PROJECTS, log, params);
-
-        FileObject fileObject = ScriptType.TOP_WS_BY_PROJECTS.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("ws1"), "2");
-        Assert.assertEquals(props.getProperty("ws2"), "2");
-        Assert.assertEquals(props.getProperty("ws3"), "1");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.TOP_WS_BY_PROJECTS, log, params);
+        Assert.assertEquals(value.get("ws1"), Long.valueOf(2));
+        Assert.assertEquals(value.get("ws2"), Long.valueOf(2));
+        Assert.assertEquals(value.get("ws3"), Long.valueOf(1));
     }
 }

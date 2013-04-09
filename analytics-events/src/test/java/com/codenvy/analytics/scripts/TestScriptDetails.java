@@ -19,20 +19,17 @@
 package com.codenvy.analytics.scripts;
 
 
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptDetails extends BasePigTest {
@@ -53,13 +50,10 @@ public class TestScriptDetails extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.DETAILS_USER_ADDED_TO_WS, log, params);
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.DETAILS_USER_ADDED_TO_WS, log, params);
 
-        FileObject fileObject = ScriptType.DETAILS_USER_ADDED_TO_WS.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("website"), "2");
-        Assert.assertEquals(props.getProperty("invite"), "1");
+        Assert.assertEquals(value.get("website"), Long.valueOf(2));
+        Assert.assertEquals(value.get("invite"), Long.valueOf(1));
     }
 
     @Test
@@ -76,14 +70,10 @@ public class TestScriptDetails extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, params);
-
-        FileObject fileObject = ScriptType.DETAILS_USER_SSO_LOGGED_IN.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("google"), "2");
-        Assert.assertEquals(props.getProperty("github"), "1");
-        Assert.assertEquals(props.getProperty("jaas"), "1");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, params);
+        Assert.assertEquals(value.get("google"), Long.valueOf(2));
+        Assert.assertEquals(value.get("github"), Long.valueOf(1));
+        Assert.assertEquals(value.get("jaas"), Long.valueOf(1));
     }
 
     @Test
@@ -104,14 +94,10 @@ public class TestScriptDetails extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.DETAILS_PROJECT_CREATED_TYPES, log, params);
-
-        FileObject fileObject = ScriptType.DETAILS_PROJECT_CREATED_TYPES.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("type1"), "2");
-        Assert.assertEquals(props.getProperty("type2"), "1");
-        Assert.assertEquals(props.getProperty("type3"), "1");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.DETAILS_PROJECT_CREATED_TYPES, log, params);
+        Assert.assertEquals(value.get("type1"), Long.valueOf(2));
+        Assert.assertEquals(value.get("type2"), Long.valueOf(1));
+        Assert.assertEquals(value.get("type3"), Long.valueOf(1));
     }
 
     @Test
@@ -135,13 +121,9 @@ public class TestScriptDetails extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.DETAILS_APPLICATION_CREATED_PAAS, log, params);
-
-        FileObject fileObject = ScriptType.DETAILS_APPLICATION_CREATED_PAAS.createFileObject(BASE_DIR, params);
-
-        Properties props = (Properties)fileObject.getValue();
-        Assert.assertEquals(props.getProperty("paas1"), "1");
-        Assert.assertEquals(props.getProperty("paas3"), "3");
-        Assert.assertEquals(props.getProperty("local"), "1");
+        Map<String, Long> value = (Map<String, Long>)executeAndReturnResult(ScriptType.DETAILS_APPLICATION_CREATED_PAAS, log, params);
+        Assert.assertEquals(value.get("paas1"), Long.valueOf(1));
+        Assert.assertEquals(value.get("paas3"), Long.valueOf(3));
+        Assert.assertEquals(value.get("local"), Long.valueOf(1));
     }
 }

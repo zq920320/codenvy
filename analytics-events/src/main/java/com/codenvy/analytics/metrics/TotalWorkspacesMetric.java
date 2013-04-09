@@ -4,15 +4,13 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.scripts.ScriptType;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class WorkspacesCreatedMetric extends ScriptCalculatedMetric {
+public class TotalWorkspacesMetric extends CumulativeCalculatedMetric {
 
-    public WorkspacesCreatedMetric() {
-        super(MetricType.WORKSPACE_CREATED);
+    TotalWorkspacesMetric() {
+        super(MetricType.TOTAL_WORKSPACES, MetricType.WORKSPACE_CREATED, MetricType.WORKSPACE_DESTROYED);
     }
 
     /**
@@ -20,13 +18,7 @@ public class WorkspacesCreatedMetric extends ScriptCalculatedMetric {
      */
     @Override
     public String getTitle() {
-        return "Workspaces Created";
-    }
-
-
-    @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.EVENT_COUNT_WORKSPACE_CREATED;
+        return "Cumulative Total Workspaces";
     }
 
     /**
@@ -36,4 +28,5 @@ public class WorkspacesCreatedMetric extends ScriptCalculatedMetric {
     protected ValueManager getValueManager() {
         return new LongValueManager();
     }
+
 }

@@ -18,17 +18,10 @@
  */
 package com.codenvy.analytics.scripts;
 
-
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
-
-
-import org.testng.Assert;
+import org.junit.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -39,6 +32,7 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestActiveProjects extends BasePigTest {
+
     @Test
     public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
@@ -63,10 +57,7 @@ public class TestActiveProjects extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101002");
         params.put(ScriptParameters.TO_DATE.getName(), "20101002");
 
-        executePigScript(ScriptType.ACTIVE_PROJECTS, log, params);
-
-        FileObject fileObject = ScriptType.ACTIVE_PROJECTS.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 2L);
+        Long value = (Long)executeAndReturnResult(ScriptType.ACTIVE_PROJECTS, log, params);
+        Assert.assertEquals(value, Long.valueOf(2));
     }
 }

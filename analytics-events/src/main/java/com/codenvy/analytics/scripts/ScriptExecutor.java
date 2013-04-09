@@ -88,11 +88,10 @@ public class ScriptExecutor {
     /** Execution parameters context. */
     private final Map<String, String> context                              = new HashMap<String, String>();
 
-
     /**
      * The given date format is used in script execution.
      */
-    public static final DateFormat    paramDateFormat                      = new SimpleDateFormat("yyyyMMdd");
+    public static final DateFormat    PARAM_DATE_FORMAT                    = new SimpleDateFormat("yyyyMMdd");
 
     /** {@link ScriptExecutor} constructor. */
     public ScriptExecutor(ScriptType scriptType) throws ExecException {
@@ -119,11 +118,11 @@ public class ScriptExecutor {
     }
 
     /**
-     * Run script and returns iterator by {@link Tuple} or null if script returned nothing.
+     * Run script and returns transformed result.
      * 
      * @throws IOException if something gone wrong
      */
-    public FileObject executeAndReturnResult() throws IOException {
+    public Object executeAndReturnResult() throws IOException {
         File scriptFile = new File(SCRIPTS_DIRECTORY, scriptType.getScriptFileName());
         if (!scriptFile.exists()) {
             throw new IOException("Resource " + scriptFile.getAbsolutePath() + " not found");
@@ -132,9 +131,7 @@ public class ScriptExecutor {
         InputStream scriptContent = readScriptContent(scriptFile);
         try {
             Tuple tuple = doExecute(scriptContent);
-
-            Object value = tuple == null ? scriptType.getResultType().getEmptyResult() : tuple.get(0);
-            return scriptType.createFileObject(RESULT_DIRECTORY, context, value);
+            return scriptType.getTupleTransformer().transform(tuple);
         } finally {
             scriptContent.close();
         }

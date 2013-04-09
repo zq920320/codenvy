@@ -30,13 +30,11 @@ public class LogLocationOptimizer {
 
     public static String generatePathString(String baseDir, String fromDateString, String toDateString) throws ParseException,
                                                                                                        IllegalStateException {
-        DateFormat df = new SimpleDateFormat("yyyyMMdd");
-
         Calendar fromDate = Calendar.getInstance();
         Calendar toDate = Calendar.getInstance();
 
-        fromDate.setTime(df.parse(fromDateString));
-        toDate.setTime(df.parse(toDateString));
+        fromDate.setTime(ScriptExecutor.PARAM_DATE_FORMAT.parse(fromDateString));
+        toDate.setTime(ScriptExecutor.PARAM_DATE_FORMAT.parse(toDateString));
 
         return doGeneratePath(baseDir, fromDate, toDate);
     }

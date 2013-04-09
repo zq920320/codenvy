@@ -18,14 +18,8 @@
  */
 package com.codenvy.analytics.scripts;
 
-
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -56,11 +50,9 @@ public class TestScriptUsersWithoutActions extends BasePigTest {
 
         Map<String, String> params = new HashMap<String, String>();
 
-        FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_PROJECTS, log, params);
-
-        List<String> list = (List<String>)fileObject.getValue();
-        Assert.assertEquals(list.size(), 1);
-        Assert.assertEquals(list.get(0), "user2");
+        List<String> value = (List<String>)executeAndReturnResult(ScriptType.USERS_WITHOUT_PROJECTS, log, params);
+        Assert.assertEquals(value.size(), 1);
+        Assert.assertEquals(value.get(0), "user2");
     }
 
     /** Run script which find all events. */
@@ -79,11 +71,9 @@ public class TestScriptUsersWithoutActions extends BasePigTest {
 
         Map<String, String> params = new HashMap<String, String>();
 
-        FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_INVITES, log, params);
-
-        List<String> list = (List<String>)fileObject.getValue();
-        Assert.assertEquals(list.size(), 1);
-        Assert.assertEquals(list.get(0), "user3");
+        List<String> value = (List<String>)executeAndReturnResult(ScriptType.USERS_WITHOUT_INVITES, log, params);
+        Assert.assertEquals(value.size(), 1);
+        Assert.assertEquals(value.get(0), "user3");
     }
 
     /** Run script which find all events. */
@@ -110,11 +100,9 @@ public class TestScriptUsersWithoutActions extends BasePigTest {
 
         Map<String, String> params = new HashMap<String, String>();
 
-        FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_BUILDS, log, params);
-
-        List<String> list = (List<String>)fileObject.getValue();
-        Assert.assertEquals(list.size(), 1);
-        Assert.assertEquals(list.get(0), "user4");
+        List<String> value = (List<String>)executeAndReturnResult(ScriptType.USERS_WITHOUT_BUILDS, log, params);
+        Assert.assertEquals(value.size(), 1);
+        Assert.assertEquals(value.get(0), "user4");
     }
 
     /** Run script which find all events. */
@@ -137,10 +125,8 @@ public class TestScriptUsersWithoutActions extends BasePigTest {
 
         Map<String, String> params = new HashMap<String, String>();
 
-        FileObject fileObject = executeAndReturnResult(ScriptType.USERS_WITHOUT_DEPLOYS, log, params);
-
-        List<String> list = (List<String>)fileObject.getValue();
-        Assert.assertEquals(list.size(), 1);
-        Assert.assertEquals(list.get(0), "user4");
+        List<String> value = (List<String>)executeAndReturnResult(ScriptType.USERS_WITHOUT_DEPLOYS, log, params);
+        Assert.assertEquals(value.size(), 1);
+        Assert.assertEquals(value.get(0), "user4");
     }
 }

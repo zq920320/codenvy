@@ -9,7 +9,11 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class WorkspacesDestroyedMetric extends AbstractMetric {
+public class WorkspacesDestoryedMetric extends ScriptCalculatedMetric implements Metric {
+
+    WorkspacesDestoryedMetric() {
+        super(MetricType.WORKSPACE_DESTROYED);
+    }
 
     /**
      * {@inheritDoc}
@@ -25,5 +29,14 @@ public class WorkspacesDestroyedMetric extends AbstractMetric {
     @Override
     protected ScriptType getScriptType() {
         return ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ValueManager getValueManager() {
+        return new LongValueManager();
     }
 }

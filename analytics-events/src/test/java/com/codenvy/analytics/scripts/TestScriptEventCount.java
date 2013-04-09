@@ -19,14 +19,8 @@
 package com.codenvy.analytics.scripts;
 
 
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -51,11 +45,8 @@ public class TestScriptEventCount extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_WORKSPACE_CREATED, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_WORKSPACE_CREATED.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 2L);
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_WORKSPACE_CREATED, log, params);
+        Assert.assertEquals(value, Long.valueOf(2));
     }
 
     @Test
@@ -69,11 +60,8 @@ public class TestScriptEventCount extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 2L);
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED, log, params);
+        Assert.assertEquals(value, Long.valueOf(2));
     }
 
     @Test
@@ -88,11 +76,8 @@ public class TestScriptEventCount extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_USER_CREATED, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_USER_CREATED.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 3L);
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_CREATED, log, params);
+        Assert.assertEquals(value, Long.valueOf(3));
     }
 
     @Test
@@ -105,11 +90,8 @@ public class TestScriptEventCount extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_USER_REMOVED, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_USER_REMOVED.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 1L);
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_REMOVED, log, params);
+        Assert.assertEquals(value, Long.valueOf(1));
     }
 
     @Test
@@ -123,11 +105,8 @@ public class TestScriptEventCount extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_PROJECT_CREATED, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_CREATED.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 1L);
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_PROJECT_CREATED, log, params);
+        Assert.assertEquals(value, Long.valueOf(1));
     }
 
     @Test
@@ -141,11 +120,8 @@ public class TestScriptEventCount extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_PROJECT_DESTROYED.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 1L);
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, params);
+        Assert.assertEquals(value, Long.valueOf(1));
     }
 
     @Test
@@ -163,11 +139,8 @@ public class TestScriptEventCount extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 3L);
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD, log, params);
+        Assert.assertEquals(value, Long.valueOf(3));
     }
 
     @Test
@@ -180,10 +153,7 @@ public class TestScriptEventCount extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101001");
 
-        executePigScript(ScriptType.EVENT_COUNT_USER_INVITE, log, params);
-
-        FileObject fileObject = ScriptType.EVENT_COUNT_USER_INVITE.createFileObject(BASE_DIR, params);
-
-        Assert.assertEquals(fileObject.getValue(), 1L);
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_INVITE, log, params);
+        Assert.assertEquals(value, Long.valueOf(1));
     }
 }

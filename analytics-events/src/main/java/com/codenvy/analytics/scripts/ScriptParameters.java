@@ -18,9 +18,23 @@
  */
 package com.codenvy.analytics.scripts;
 
+import com.codenvy.analytics.metrics.TimeUnit;
+
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum ScriptParameters {
+    TIME_UNIT {
+        @Override
+        public String getDefaultValue() {
+            return TimeUnit.DAY.toString();
+        }
+
+        @Override
+        public String getName() {
+            return "timeUnit";
+        }
+    },
+
     FROM_DATE {
         @Override
         public String getDefaultValue() {

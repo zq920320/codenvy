@@ -18,15 +18,8 @@
  */
 package com.codenvy.analytics.scripts;
 
-
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -57,11 +50,7 @@ public class TestScriptActiveWorkspaces extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101005");
 
-        executePigScript(ScriptType.ACTIVE_WORKSPACES, log, params);
-
-        FileObject fileObject = ScriptType.ACTIVE_WORKSPACES.createFileObject(BASE_DIR, params);
-
-        Long value = (Long)fileObject.getValue();
+        Long value = (Long)executeAndReturnResult(ScriptType.ACTIVE_WORKSPACES, log, params);
         Assert.assertEquals(value, Long.valueOf(3));
     }
 
@@ -70,12 +59,12 @@ public class TestScriptActiveWorkspaces extends BasePigTest {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project").withDate("2010-10-02")
-                        .build());
+                                .build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session", "project").withDate("2010-10-02")
-                        .build());
+                                .build());
         events.add(Event.Builder.createUserCreatedEvent("userId", "hello@gmail").withDate("2010-10-03").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws5", "session", "project").withDate("2010-10-11")
-                        .build());
+                                .build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -83,11 +72,7 @@ public class TestScriptActiveWorkspaces extends BasePigTest {
         params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
         params.put(ScriptParameters.TO_DATE.getName(), "20101005");
 
-        executePigScript(ScriptType.ACTIVE_WORKSPACES, log, params);
-
-        FileObject fileObject = ScriptType.ACTIVE_WORKSPACES.createFileObject(BASE_DIR, params);
-
-        Long value = (Long)fileObject.getValue();
+        Long value = (Long)executeAndReturnResult(ScriptType.ACTIVE_WORKSPACES, log, params);
         Assert.assertEquals(value, Long.valueOf(3));
     }
 }

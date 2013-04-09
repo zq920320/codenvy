@@ -2,7 +2,7 @@
  *    Copyright (C) 2013 Codenvy.
  *
  */
-package com.codenvy.analytics.server.view;
+package com.codenvy.analytics.metrics;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>

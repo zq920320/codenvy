@@ -4,11 +4,14 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.scripts.FileObject;
 import com.codenvy.analytics.scripts.ScriptExecutor;
+import com.codenvy.analytics.scripts.ScriptParameters;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
+
+import javax.tools.FileObject;
 
 
 /**
@@ -23,7 +26,13 @@ public interface Metric {
      *            object instantiation
      * @throws IOException if any errors are occurred
      */
-    public String getValue(Map<String, String> context) throws IOException;
+    public Object getValue(Map<String, String> context) throws IOException;
+
+    /** @return list of mandatory parameters that have to be passed to the script */
+    public abstract Set<ScriptParameters> getMandatoryParams();
+
+    /** @return list of additional parameters (not mandatory) that might be passed to the script */
+    public abstract Set<ScriptParameters> getAdditionalParams();
 
     /**
      * @return the metric title, it is used

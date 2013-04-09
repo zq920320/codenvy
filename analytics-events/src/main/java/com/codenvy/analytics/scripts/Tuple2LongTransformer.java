@@ -18,33 +18,22 @@
  */
 package com.codenvy.analytics.scripts;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import org.apache.pig.data.Tuple;
+
 import java.io.IOException;
 
 /**
- * Translate any {@link Object} into the {@link Long}.
- *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class Object2LongTranslator implements ValueTranslator {
-
-    /** {@inheritDoc} */
-    @Override
-    public void doWrite(BufferedWriter writer, Object value) throws IOException {
-        writer.write(value.toString());
-        writer.flush();
-    }
+public class Tuple2LongTransformer implements TupleTransformer {
 
     /** {@inheritedDoc} */
     @Override
-    public Long doRead(BufferedReader reader) throws IOException {
-        return Long.valueOf(reader.readLine());
-    }
+    public Long transform(Tuple tuple) throws IOException {
+        if (tuple == null) {
+            return Long.valueOf(0);
+        }
 
-    /** {@inheritedDoc} */
-    @Override
-    public Long translate(Object value) throws IOException {
-        return Long.valueOf(value.toString());
+        return (Long)tuple.get(0);
     }
 }

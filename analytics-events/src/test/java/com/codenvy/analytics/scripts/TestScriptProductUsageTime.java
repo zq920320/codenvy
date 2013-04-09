@@ -18,15 +18,8 @@
  */
 package com.codenvy.analytics.scripts;
 
-
-import com.codenvy.analytics.scripts.FileObject;
-import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.scripts.ScriptType;
-
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-
-
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -65,9 +58,7 @@ public class TestScriptProductUsageTime extends BasePigTest {
         params.put(ScriptParameters.TO_DATE.getName(), "20101003");
         params.put(ScriptParameters.INACTIVE_INTERVAL.getName(), "10");
 
-        executePigScript(ScriptType.PRODUCT_USAGE_TIME, log, params);
-
-        FileObject fileObject = ScriptType.PRODUCT_USAGE_TIME.createFileObject(BASE_DIR, params);
-        Assert.assertEquals(fileObject.getValue(), 11L);
+        Long value = (Long)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME, log, params);
+        Assert.assertEquals(value, Long.valueOf(11));
     }
 }
