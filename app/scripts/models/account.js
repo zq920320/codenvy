@@ -72,7 +72,7 @@
            _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
             var url = "/rest/ide/oauth/authenticate?oauth_provider=google&mode=federated_login" +
                "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" +
-               "&scope=https://www.googleapis.com/auth/appengine.admin" +
+               "&scope=https://www.googleapis.com/auth/appengine.admin&scope=https://www.google.com/m8/feeds" +
                "&redirect_after_login=/oauth/" + new Date().getTime();
             //window.location = url;
             if(typeof callback !== 'undefined'){
