@@ -13,7 +13,7 @@ define(["jquery","models/account"],function($,Account){
                         if (output.queuePosition === "-1") {window.location = window.location.protocol + "//" + tenantName + "." + window.location.host;}
                         else{
                             success({
-                                queue : output.queuePosition,
+                                queue : parseFloat(output.queuePosition) + 1,
                                 readyTime : new Date(parseFloat(output.queuePosition,10)*parseFloat(output.timeTenantUpdate,10) + new Date().getTime()).toLocaleString()
                             });
                         }
