@@ -12,7 +12,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 public class WorkspacesCreatedMetric extends ScriptCalculatedMetric {
 
     public WorkspacesCreatedMetric() {
-        super(MetricType.WORKSPACE_CREATED);
+        super(MetricType.WORKSPACES_CREATED);
     }
 
     /**

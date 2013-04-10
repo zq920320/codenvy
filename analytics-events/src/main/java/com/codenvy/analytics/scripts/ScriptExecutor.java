@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -143,7 +144,11 @@ public class ScriptExecutor {
         addAdditionalParameters();
 
         if (!context.containsKey(LOG)) {
-            setLogParameter();
+            try {
+                setLogParameter();
+            } catch (FileNotFoundException e) {
+                return null;
+            }
         }
 
         LOGGER.info("Execution " + scriptType.getScriptFileName() + " is started with data located: " + context.get(LOG));
@@ -165,7 +170,12 @@ public class ScriptExecutor {
         }
     }
 
-    /** Add {@link #LOG} parameter into the context with trying optimize inspected data. */
+    /**
+     * Add {@link #LOG} parameter into the context with trying optimize inspected data.
+     * 
+     * @throws FileNotFoundException have not find logs to inpect
+     * @throws IOException if another exception is occurred
+     */
     private void setLogParameter() throws IOException {
         try {
             String path = LOGS_DIRECTORY;
@@ -178,6 +188,10 @@ public class ScriptExecutor {
                 path =
                        LogLocationOptimizer.generatePathString(LOGS_DIRECTORY, getValue(ScriptParameters.FROM_DATE),
                                                                getValue(ScriptParameters.TO_DATE));
+            }
+
+            if (path.isEmpty()) {
+                throw new FileNotFoundException("There are not logs to inspect");
             }
 
             context.put(LOG, path);

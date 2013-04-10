@@ -49,46 +49,6 @@ public class TestCumulativeMetric {
         Assert.assertEquals(metric.queryValue(contextCurrentDate), Long.valueOf(105));
     }
 
-
-    @Test
-    public void testShiftMetricByDay() throws Exception {
-        Map<String, String> context = new HashMap<String, String>();
-        context.put(ScriptParameters.FROM_DATE.getName(), "20130331");
-        context.put(ScriptParameters.TO_DATE.getName(), "20130331");
-        context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
-
-        new TestedMetric().shiftDateInterval(context);
-
-        Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130401");
-        Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130401");
-    }
-
-    @Test
-    public void testShiftMetricByWeek() throws Exception {
-        Map<String, String> context = new HashMap<String, String>();
-        context.put(ScriptParameters.FROM_DATE.getName(), "20130429");
-        context.put(ScriptParameters.TO_DATE.getName(), "20130505");
-        context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.WEEK.toString());
-
-        new TestedMetric().shiftDateInterval(context);
-
-        Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130506");
-        Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130512");
-    }
-
-    @Test
-    public void testShiftMetricByMonth() throws Exception {
-        Map<String, String> context = new HashMap<String, String>();
-        context.put(ScriptParameters.FROM_DATE.getName(), "20130301");
-        context.put(ScriptParameters.TO_DATE.getName(), "20130331");
-        context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.MONTH.toString());
-
-        new TestedMetric().shiftDateInterval(context);
-
-        Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130401");
-        Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130430");
-    }
-
     class TestedMetric extends CumulativeCalculatedMetric {
 
         TestedMetric(MetricType metricType, MetricType addedType, MetricType removedType) {

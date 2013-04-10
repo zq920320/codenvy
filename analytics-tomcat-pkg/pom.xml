@@ -35,7 +35,13 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.analytics</groupId>
-            <artifactId>analytics-web-client</artifactId>
+            <artifactId>analytics-rest-service</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.analytics</groupId>
+            <artifactId>analytics-web-portal</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -103,7 +109,9 @@
                                             <fileset dir="${basedir}/src/main/resources/tomcat/"/>
                                         </copy>
 
-                                        <copy file="${project.build.directory}/packager-conf/war/analytics-web-client.war"
+                                        <copy file="${project.build.directory}/packager-conf/war/analytics-rest-service.war"
+                                              tofile="${project.build.directory}/tomcat-analytics/webapps/rest-service.war"/>
+                                        <copy file="${project.build.directory}/packager-conf/war/analytics-web-portal.war"
                                               tofile="${project.build.directory}/tomcat-analytics/webapps/analytics.war"/>
                                         <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x"/>
 

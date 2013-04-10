@@ -12,7 +12,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 public class WorkspacesDestoryedMetric extends ScriptCalculatedMetric implements Metric {
 
     WorkspacesDestoryedMetric() {
-        super(MetricType.WORKSPACE_DESTROYED);
+        super(MetricType.WORKSPACES_DESTROYED);
     }
 
     /**

@@ -35,7 +35,7 @@ public class TestAbstractMetrics {
     @BeforeMethod
     public void setUp() throws Exception {
         mockedScriptExecutor = mock(ScriptExecutor.class);
-        metric = new TestedWorkspaceCreatedMetric(mockedScriptExecutor, MetricType.WORKSPACE_CREATED);
+        metric = new TestedMetric(mockedScriptExecutor, MetricType.WORKSPACES_CREATED);
         context = new HashMap<String, String>();
     }
 
@@ -81,11 +81,11 @@ public class TestAbstractMetrics {
     /**
      * For testing purpose only.
      */
-    class TestedWorkspaceCreatedMetric extends ScriptCalculatedMetric {
+    class TestedMetric extends ScriptCalculatedMetric {
 
         private final ScriptExecutor scriptExecutor;
 
-        public TestedWorkspaceCreatedMetric(ScriptExecutor scriptExecutor, MetricType metricType) {
+        public TestedMetric(ScriptExecutor scriptExecutor, MetricType metricType) {
             super(metricType);
             this.scriptExecutor = scriptExecutor;
         }

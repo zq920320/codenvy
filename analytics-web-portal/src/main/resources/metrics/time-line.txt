@@ -1,0 +1,3 @@
+# the list of metrics to be displayed at time-line view
+workspaces_created
+workspaces_destroyed

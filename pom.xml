@@ -184,7 +184,8 @@
 
     <modules>
         <module>analytics-events</module>
-        <module>analytics-web-client</module>
+        <module>analytics-web-portal</module>
+        <module>analytics-rest-service</module>
         <module>analytics-tomcat-pkg</module>
     </modules>
 </project>

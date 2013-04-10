@@ -9,14 +9,14 @@ package com.codenvy.analytics.metrics;
  */
 public enum MetricType {
 
-    WORKSPACE_CREATED {
+    WORKSPACES_CREATED {
         @Override
         public Metric getInstance() {
             return new WorkspacesCreatedMetric();
         }
     },
 
-    WORKSPACE_DESTROYED {
+    WORKSPACES_DESTROYED {
         @Override
         public Metric getInstance() {
             return new WorkspacesDestoryedMetric();
