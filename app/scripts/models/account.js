@@ -269,7 +269,7 @@
                     type : "POST",
                     data : { uuid : id, password : password },
                     success : function(){
-                        success({url: "/"});
+                        success({url: "/login"});
                     },
                     error : function(xhr){
                         error([
