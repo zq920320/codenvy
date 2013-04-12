@@ -152,13 +152,13 @@
                     type : "POST",
                     data: {'email':email,'password':password},
                     success : function(){
-                        success({url : "/private/select-tenant"});
+                        //success({url : "/private/select-tenant"});
                     },
                     error : function(xhr){
                         switch (xhr.status) {
                             case 0:
                                 // we assume this is the case of successful authentication
-                                success({ url : "/sso/server/grant" });
+                                success({ url : "/sso/server/grant?authType=jaas" });
                                 break;
                             case 400:
                                 error([new AccountError(null,"This kind of authentication is not supported.")]);
