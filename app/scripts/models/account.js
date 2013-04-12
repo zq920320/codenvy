@@ -152,7 +152,7 @@
                     type : "POST",
                     data: {'email':email,'password':password},
                     success : function(){
-                        //success({url : "/private/select-tenant"});
+                        success({url : "/private/select-tenant?authType=jaas"});
                     },
                     error : function(xhr){
                         switch (xhr.status) {
