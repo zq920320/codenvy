@@ -5,14 +5,17 @@
 package com.codenvy.analytics.metrics;
 
 import static org.mockito.Matchers.anyMap;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.testng.Assert.assertEquals;
 
 import com.codenvy.analytics.scripts.ScriptParameters;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,34 +32,24 @@ public class TestCumulativeMetric {
         contextCurrentDate.put(ScriptParameters.TO_DATE.getName(), "20130331");
         contextCurrentDate.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
         
-        MetricType addedTypeMocked = mock(MetricType.class);
-        MetricType removedTypeMocked = mock(MetricType.class);
-        Metric addedMetricMocked = mock(Metric.class);
-        Metric removedMetricMocked = mock(Metric.class);
-        
-        when(addedTypeMocked.getInstance()).thenReturn(addedMetricMocked);
-        when(removedTypeMocked.getInstance()).thenReturn(removedMetricMocked);
-        when(addedMetricMocked.getValue(contextCurrentDate)).thenReturn(10L);
-        when(removedMetricMocked.getValue(contextCurrentDate)).thenReturn(5L);
-        
-        MetricType prevTypeMocked = mock(MetricType.class);
-        CumulativeCalculatedMetric prevMetricMocked = mock(CumulativeCalculatedMetric.class);
+        Metric addedMetric = spy(MetricFactory.createMetric(MetricType.WORKSPACES_CREATED));
+        Metric removedMetric = spy(MetricFactory.createMetric(MetricType.WORKSPACES_DESTROYED));
 
-        when(prevTypeMocked.getInstance()).thenReturn(prevMetricMocked);
-        when(prevMetricMocked.getValue(anyMap())).thenReturn(100L);
+        doReturn(10L).when(addedMetric).getValue(anyMap());
+        doReturn(5L).when(removedMetric).getValue(anyMap());
 
-        TestedMetric metric = new TestedMetric(prevTypeMocked, addedTypeMocked, removedTypeMocked);
-        Assert.assertEquals(metric.queryValue(contextCurrentDate), Long.valueOf(105));
+        TestedMetric testedMetric =
+                                    spy(new TestedMetric(MetricType.TOTAL_WORKSPACES, addedMetric,
+                                                         removedMetric));
+        doReturn(100L).when(testedMetric).getValue(anyMap());
+
+        assertEquals(testedMetric.evaluateValue(contextCurrentDate), Long.valueOf(105));
     }
 
-    class TestedMetric extends CumulativeCalculatedMetric {
+    class TestedMetric extends CumulativeMetric {
 
-        TestedMetric(MetricType metricType, MetricType addedType, MetricType removedType) {
-            super(metricType, addedType, removedType);
-        }
-
-        public TestedMetric() {
-            super(null, null, null);
+        TestedMetric(MetricType metricType, Metric addedMetric, Metric removedMetric) throws IOException {
+            super(metricType, addedMetric, removedMetric);
         }
 
         @Override
@@ -65,8 +58,8 @@ public class TestCumulativeMetric {
         }
 
         @Override
-        protected ValueManager getValueManager() {
-            return new LongValueManager();
+        protected InputStream readResource() {
+            return new ByteArrayInputStream("<metrics></metrics>".getBytes());
         }
     }
 }

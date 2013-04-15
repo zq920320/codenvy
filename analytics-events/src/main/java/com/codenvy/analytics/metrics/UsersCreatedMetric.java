@@ -9,10 +9,10 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class WorkspacesCreatedMetric extends ScriptBasedMetric {
+public class UsersCreatedMetric extends ScriptBasedMetric {
 
-    WorkspacesCreatedMetric() {
-        super(MetricType.WORKSPACES_CREATED);
+    UsersCreatedMetric() {
+        super(MetricType.USERS_CREATED);
     }
 
     /**
@@ -20,12 +20,15 @@ public class WorkspacesCreatedMetric extends ScriptBasedMetric {
      */
     @Override
     public String getTitle() {
-        return "Workspaces Created";
+        return "Users Created";
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.EVENT_COUNT_WORKSPACE_CREATED;
+        return ScriptType.EVENT_COUNT_USER_CREATED;
     }
+
 }

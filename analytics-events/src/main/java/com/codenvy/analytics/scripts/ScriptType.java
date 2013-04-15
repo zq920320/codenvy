@@ -31,8 +31,8 @@ public enum ScriptType {
 
     EVENT_COUNT_WORKSPACE_CREATED {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -50,8 +50,8 @@ public enum ScriptType {
 
     EVENT_COUNT_USER_CREATED {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -70,8 +70,8 @@ public enum ScriptType {
 
     EVENT_COUNT_USER_REMOVED {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -90,8 +90,8 @@ public enum ScriptType {
 
     EVENT_COUNT_PROJECT_CREATED {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -110,8 +110,8 @@ public enum ScriptType {
 
     EVENT_COUNT_DIST_PROJECT_BUILD {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -130,8 +130,8 @@ public enum ScriptType {
 
     EVENT_COUNT_WORKSPACE_DESTROYED {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -150,8 +150,8 @@ public enum ScriptType {
 
     EVENT_COUNT_PROJECT_DESTROYED {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -170,8 +170,8 @@ public enum ScriptType {
 
     EVENT_COUNT_USER_INVITE {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -190,8 +190,8 @@ public enum ScriptType {
 
     EVENT_COUNT_JREBEL_USAGE {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -210,8 +210,8 @@ public enum ScriptType {
 
     ACTIVE_WORKSPACES {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -230,8 +230,8 @@ public enum ScriptType {
 
     ACTIVE_PROJECTS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -250,8 +250,8 @@ public enum ScriptType {
 
     ACTIVE_USERS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -270,8 +270,8 @@ public enum ScriptType {
 
     DETAILS_USER_ADDED_TO_WS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -290,8 +290,8 @@ public enum ScriptType {
 
     DETAILS_PROJECT_CREATED_TYPES {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -310,8 +310,8 @@ public enum ScriptType {
 
     DETAILS_APPLICATION_CREATED_PAAS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -330,8 +330,8 @@ public enum ScriptType {
 
     DETAILS_USER_SSO_LOGGED_IN {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -350,8 +350,8 @@ public enum ScriptType {
 
     DETAILS_JREBEL_USAGE {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -370,8 +370,8 @@ public enum ScriptType {
 
     USERS_WITHOUT_PROJECTS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2ListTransformer();
+        public ValueManager getValueManager() {
+            return new ListValueManager();
         }
 
         @Override
@@ -389,8 +389,8 @@ public enum ScriptType {
 
     USERS_WITHOUT_BUILDS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2ListTransformer();
+        public ValueManager getValueManager() {
+            return new ListValueManager();
         }
 
         @Override
@@ -408,8 +408,8 @@ public enum ScriptType {
 
     USERS_WITHOUT_DEPLOYS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2ListTransformer();
+        public ValueManager getValueManager() {
+            return new ListValueManager();
         }
 
         @Override
@@ -427,8 +427,8 @@ public enum ScriptType {
 
     USERS_WITHOUT_INVITES {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2ListTransformer();
+        public ValueManager getValueManager() {
+            return new ListValueManager();
         }
 
         @Override
@@ -446,8 +446,8 @@ public enum ScriptType {
 
     PRODUCT_USAGE_TIME {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2LongTransformer();
+        public ValueManager getValueManager() {
+            return new LongValueManager();
         }
 
         @Override
@@ -465,8 +465,8 @@ public enum ScriptType {
 
     TOP_WS_BY_USERS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -484,8 +484,8 @@ public enum ScriptType {
 
     TOP_WS_BY_INVITATIONS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -503,8 +503,8 @@ public enum ScriptType {
 
     TOP_WS_BY_PROJECTS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -522,8 +522,8 @@ public enum ScriptType {
 
     TOP_WS_BY_BUILDS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -541,8 +541,8 @@ public enum ScriptType {
 
     REALTIME_WS_WITH_SEVERAL_USERS {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2MapTransformer();
+        public ValueManager getValueManager() {
+            return new MapValueManager();
         }
 
         @Override
@@ -560,8 +560,8 @@ public enum ScriptType {
 
     REALTIME_USER_SSO_LOGGED_IN {
         @Override
-        public TupleTransformer getTupleTransformer() {
-            return new Tuple2ListTransformer();
+        public ValueManager getValueManager() {
+            return new ListValueManager();
         }
 
         @Override
@@ -580,8 +580,8 @@ public enum ScriptType {
         return toString().toLowerCase() + ".pig";
     }
 
-    /** @return corresponding {@link TupleTransformer} instance. */
-    public abstract TupleTransformer getTupleTransformer();
+    /** @return corresponding {@link ValueManager} instance. */
+    public abstract ValueManager getValueManager();
 
     /** @return list of mandatory parameters that have to be passed to the script */
     public abstract Set<ScriptParameters> getMandatoryParams();

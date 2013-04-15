@@ -21,6 +21,8 @@ package com.codenvy.analytics.scripts;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,11 +32,11 @@ import java.util.List;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class Tuple2ListTransformer implements TupleTransformer {
+public class ListValueManager implements ValueManager {
 
     /** {@inheritDoc} */
     @Override
-    public List<String> transform(Tuple tuple) throws IOException {
+    public List<String> valueOf(Tuple tuple) throws IOException {
         if (tuple == null) {
             return Collections.emptyList();
         }
@@ -58,5 +60,55 @@ public class Tuple2ListTransformer implements TupleTransformer {
         }
 
         throw new IOException("Unknown class " + tuple.getClass().getName() + " for transformation");
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> load(BufferedReader reader) throws IOException {
+        List<String> result = new ArrayList<String>();
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+            result.add(line);
+        }
+
+        return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void store(BufferedWriter writer, Object value) throws IOException {
+        if (value instanceof List) {
+            List<String> props = (List<String>)value;
+
+            for (String line : props) {
+                writer.write(line);
+                writer.newLine();
+            }
+
+            writer.flush();
+        } else {
+            throw new IOException("Unknown class " + value.getClass().getName() + " for storing");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> valueOf(String value) throws IOException {
+        String[] splittedLine = value.split(",");
+
+        List<String> result = new ArrayList<String>(splittedLine.length);
+        for (String str : splittedLine) {
+            result.add(str.trim());
+        }
+
+        return Collections.unmodifiableList(result);
     }
 }

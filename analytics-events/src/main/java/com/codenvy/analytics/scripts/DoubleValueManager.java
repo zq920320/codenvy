@@ -16,7 +16,9 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.analytics.metrics;
+package com.codenvy.analytics.scripts;
+
+import org.apache.pig.data.Tuple;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,11 +27,37 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface ValueManager {
+public class DoubleValueManager implements ValueManager {
 
-    /** Performs read operation. */
-    Object load(BufferedReader reader) throws IOException;
+    /** {@inheritedDoc} */
+    @Override
+    public Double valueOf(Tuple tuple) throws IOException {
+        if (tuple == null) {
+            return Double.valueOf(0.0D);
+        }
 
-    /** Performs write operation. It is supposed the value already translated. */
-    void store(BufferedWriter writer, Object value) throws IOException;
+        return (Double)tuple.get(0);
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public Double load(BufferedReader reader) throws IOException {
+        return valueOf(reader.readLine());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void store(BufferedWriter writer, Object value) throws IOException {
+        writer.write(value.toString());
+        writer.flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Double valueOf(String value) throws IOException {
+        return Double.valueOf(value);
+    }
 }

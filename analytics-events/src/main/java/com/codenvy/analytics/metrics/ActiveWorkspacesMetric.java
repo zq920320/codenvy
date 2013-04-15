@@ -6,13 +6,14 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.scripts.ScriptType;
 
+
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class WorkspacesCreatedMetric extends ScriptBasedMetric {
+public class ActiveWorkspacesMetric extends ScriptBasedMetric {
 
-    WorkspacesCreatedMetric() {
-        super(MetricType.WORKSPACES_CREATED);
+    ActiveWorkspacesMetric() {
+        super(MetricType.ACTIVE_WORKSPACES);
     }
 
     /**
@@ -20,12 +21,14 @@ public class WorkspacesCreatedMetric extends ScriptBasedMetric {
      */
     @Override
     public String getTitle() {
-        return "Workspaces Created";
+        return "# Active Workspaces";
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.EVENT_COUNT_WORKSPACE_CREATED;
+        return ScriptType.ACTIVE_WORKSPACES;
     }
 }

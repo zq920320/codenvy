@@ -7,6 +7,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptParameters;
 import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.ValueManager;
 
 import org.apache.pig.backend.executionengine.ExecException;
 
@@ -31,12 +32,14 @@ public abstract class AbstractMetric implements Metric {
     /** The file name where calculated metric is stored. */
     public static final String FILE_NAME = "value";
 
+    /**
+     * Metric type associated with.
+     */
     protected final MetricType metricType;
 
     AbstractMetric(MetricType metricType) {
         this.metricType = metricType;
     }
-
 
     /**
      * {@inheritDoc}
@@ -46,7 +49,7 @@ public abstract class AbstractMetric implements Metric {
         try {
             return loadValue(context);
         } catch (FileNotFoundException e) {
-            Object value = queryValue(context);
+            Object value = evaluateValue(context);
 
             if (isStoreAllowed(context)) {
                 storeValue(value, context);
@@ -56,10 +59,13 @@ public abstract class AbstractMetric implements Metric {
         }
     }
 
+    /**
+     * Stores value into the file.
+     */
     protected synchronized void storeValue(Object value, Map<String, String> context) throws IOException {
         File file = getFile(context);
 
-        validateDestination(file);
+        ensureDestination(file);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         try {
@@ -107,8 +113,14 @@ public abstract class AbstractMetric implements Metric {
         return currentDate.after(toDate);
     }
 
-    abstract protected Object queryValue(Map<String, String> context) throws IOException;
+    /**
+     * Evaluates metric value.
+     */
+    abstract protected Object evaluateValue(Map<String, String> context) throws IOException;
 
+    /**
+     * To be able to store and load specific value it is need to have dedicated {@link ValueManager} to operate with them.
+     */
     abstract protected ValueManager getValueManager();
 
     /**
@@ -118,7 +130,6 @@ public abstract class AbstractMetric implements Metric {
     {
         return new ScriptExecutor(scriptType);
     }
-
 
     /**
      * Returns the file to store in or load value from.
@@ -163,8 +174,10 @@ public abstract class AbstractMetric implements Metric {
         return builder.toString();
     }
 
-    /** Checks if it is possible to write to destination file. The directory should exist and the file does not. */
-    private void validateDestination(File file) throws IOException {
+    /**
+     * Creates all needed sub tree and removes target file if exists.
+     */
+    private void ensureDestination(File file) throws IOException {
         File dir = file.getParentFile();
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
@@ -180,7 +193,7 @@ public abstract class AbstractMetric implements Metric {
     }
 
     /** Preparation unique sequences to identify stored value. */
-    private LinkedHashMap<String, String> makeKeys(Map<String, String> executionParams) throws IOException {
+    protected LinkedHashMap<String, String> makeKeys(Map<String, String> executionParams) throws IOException {
         LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 
         for (ScriptParameters param : getMandatoryParams()) {

@@ -18,7 +18,7 @@ import java.util.Map;
 public class TimeIntervalUtil {
 
     /**
-     * 
+     * Initialize date interval.
      */
     public static void initDateInterval(Calendar date, Map<String, String> context) throws IOException,
                                                                                        ParseException,

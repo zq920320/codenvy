@@ -5,7 +5,7 @@
 package com.codenvy.analytics.server.view;
 
 import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.TimeIntervalUtil;
 import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptParameters;
@@ -13,6 +13,8 @@ import com.codenvy.analytics.scripts.ScriptParameters;
 import org.xml.sax.SAXException;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,13 @@ public class TimeLineView {
 
     public static final int           HISTORY_LENGTH = 20;
 
-    private static final String       RESOURCE_PATH  = "metrics/time-line.xml";
+    /** Runtime parameter name. Contains the path to time-line view configuration. */
+    private static final String       ANALYTICS_TIME_LINE_VIEW_PROPERTY = "analytics.view.time-line";
+
+
+    /** The value of {@value #ANALYTICS_TIME_LINE_VIEW_PROPERTY} runtime parameter. */
+    public static final String        ANALYTICS_TIME_LIVE_VIEW          =
+                                                                          System.getProperty(ANALYTICS_TIME_LINE_VIEW_PROPERTY);
 
     private List<List<String>>        rows;
 
@@ -56,7 +63,7 @@ public class TimeLineView {
                                                       IllegalArgumentException,
                                                       ParseException {
         fillDateRow(initContext);
-        //
+
         for (Metric metric : metrics) {
             fillMetricRow(metric, initContext);
         }
@@ -66,20 +73,15 @@ public class TimeLineView {
         Map<String, String> currentContext = new HashMap<String, String>(initContext);
 
         // rolling back to the last time interval
+        List<String> row = new ArrayList<String>(HISTORY_LENGTH + 1);
+
+        row.add(metric.getTitle());
         for (int i = 0; i < HISTORY_LENGTH; i++) {
+            row.add(metric.getValue(new HashMap<String, String>(currentContext)).toString());
             TimeIntervalUtil.prevDateInterval(currentContext);
         }
 
-        List<String> row = new ArrayList<String>(HISTORY_LENGTH + 1);
-        row.add(metric.getTitle());
-
-        for (int i = 0; i < HISTORY_LENGTH; i++) {
-            row.add(metric.getValue(currentContext).toString());
-
-            rows.add(row);
-
-            TimeIntervalUtil.nextDateInterval(currentContext);
-        }
+        rows.add(row);
     }
 
     private void fillDateRow(Map<String, String> initContext) throws IllegalArgumentException, IOException, ParseException {
@@ -100,26 +102,23 @@ public class TimeLineView {
         rows.add(row);
     }
 
-    public Iterator<List<String>> getRows() throws ParserConfigurationException,
+    public List<List<String>> getRows() throws ParserConfigurationException,
                                            SAXException,
                                            IOException,
                                            IllegalArgumentException,
                                            ParseException {
-        if (rows == null) {
-            this.rows = new ArrayList<List<String>>();
-            this.metrics = readMetricsList();
+        this.rows = new ArrayList<List<String>>();
+        this.metrics = readMetricsList();
 
-            fillRows(initContext);
-        }
+        fillRows(initContext);
 
-
-        return rows.iterator();
+        return rows;
     }
 
     protected List<Metric> readMetricsList() throws ParserConfigurationException, SAXException, IOException {
         List<Metric> metrics = new ArrayList<Metric>();
 
-        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(RESOURCE_PATH);
+        InputStream in = new FileInputStream(new File(ANALYTICS_TIME_LIVE_VIEW));
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         try {
@@ -130,8 +129,7 @@ public class TimeLineView {
                 }
 
                 try {
-                    MetricType metricType = MetricType.valueOf(name.toUpperCase());
-                    metrics.add(metricType.getInstance());
+                    metrics.add(MetricFactory.createMetric(name));
                 } catch (IllegalArgumentException e) {
                     throw new IOException("Metric " + name + " not found");
                 }

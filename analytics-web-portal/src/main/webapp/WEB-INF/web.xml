@@ -6,6 +6,17 @@
 <web-app>
     <display-name>Analytics Service</display-name>
 
+    <!-- Servlets -->
+    <servlet>
+      <servlet-name>viewServlet</servlet-name>
+      <servlet-class>com.codenvy.analytics.server.ViewServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+      <servlet-name>viewServlet</servlet-name>
+      <url-pattern>/AnalyticsApplication/view</url-pattern>
+    </servlet-mapping>
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Analytics-Web-Portal</web-resource-name>

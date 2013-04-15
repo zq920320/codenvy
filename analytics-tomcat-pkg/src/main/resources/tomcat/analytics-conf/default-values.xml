@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2013 Codenvy.
+
+-->
+<metrics>
+    <!--metric type="metric_name">
+        <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
+        <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
+    </metric-->
+</metrics>
+ 

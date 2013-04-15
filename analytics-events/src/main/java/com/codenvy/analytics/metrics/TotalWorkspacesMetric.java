@@ -4,13 +4,16 @@
  */
 package com.codenvy.analytics.metrics;
 
+import java.io.IOException;
+
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TotalWorkspacesMetric extends CumulativeCalculatedMetric {
+public class TotalWorkspacesMetric extends CumulativeMetric {
 
-    TotalWorkspacesMetric() {
-        super(MetricType.TOTAL_WORKSPACES, MetricType.WORKSPACES_CREATED, MetricType.WORKSPACES_DESTROYED);
+    TotalWorkspacesMetric() throws IOException {
+        super(MetricType.TOTAL_WORKSPACES, MetricFactory.createMetric(MetricType.WORKSPACES_CREATED),
+              MetricFactory.createMetric(MetricType.WORKSPACES_DESTROYED));
     }
 
     /**
@@ -19,14 +22,6 @@ public class TotalWorkspacesMetric extends CumulativeCalculatedMetric {
     @Override
     public String getTitle() {
         return "Cumulative Total Workspaces";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ValueManager getValueManager() {
-        return new LongValueManager();
     }
 
 }

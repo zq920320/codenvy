@@ -81,7 +81,7 @@ public class TestAbstractMetrics {
     /**
      * For testing purpose only.
      */
-    class TestedMetric extends ScriptCalculatedMetric {
+    class TestedMetric extends ScriptBasedMetric {
 
         private final ScriptExecutor scriptExecutor;
 
@@ -103,11 +103,6 @@ public class TestAbstractMetrics {
         @Override
         protected ScriptExecutor getScriptExecutor(ScriptType scriptType) {
             return scriptExecutor;
-        }
-
-        @Override
-        protected ValueManager getValueManager() {
-            return new LongValueManager();
         }
     }
 }

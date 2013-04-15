@@ -14,7 +14,6 @@ import static org.testng.Assert.assertEquals;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.TimeIntervalUtil;
 import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.WorkspacesCreatedMetric;
 import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptParameters;
 
@@ -41,16 +40,16 @@ public class TestTimeLineView {
         context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
         TimeIntervalUtil.initDateInterval(cal, context);
         
-        Metric mockedMetric = mock(WorkspacesCreatedMetric.class);
-        when(mockedMetric.getValue(anyMap())).thenReturn(1L);
+        Metric mockedMetric = mock(Metric.class);
+
+        when(mockedMetric.getValue(anyMap())).thenReturn(2L).thenReturn(1L);
         when(mockedMetric.getTitle()).thenReturn("title");
 
         List<Metric> metrics = Arrays.asList(new Metric[]{mockedMetric});
         
         TimeLineView tView = spy(new TimeLineView(context));
         doReturn(metrics).when(tView).readMetricsList();
-
-        Iterator<List<String>> rows = tView.getRows();
+        Iterator<List<String>> rows = tView.getRows().iterator();
         List<String> row = rows.next();
 
         assertEquals(row.get(0), "");
@@ -59,7 +58,7 @@ public class TestTimeLineView {
 
         row = rows.next();
         assertEquals(row.get(0), "title");
-        assertEquals(row.get(1), "1");
+        assertEquals(row.get(1), "2");
         assertEquals(row.get(2), "1");
     }
 }

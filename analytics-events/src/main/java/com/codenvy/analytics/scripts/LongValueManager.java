@@ -20,22 +20,44 @@ package com.codenvy.analytics.scripts;
 
 import org.apache.pig.data.Tuple;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 
 /**
- * It is used to transform tuple received from script execution into the object more useful to operate with.
- * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface TupleTransformer {
+public class LongValueManager implements ValueManager {
+
+    /** {@inheritedDoc} */
+    @Override
+    public Long valueOf(Tuple tuple) throws IOException {
+        if (tuple == null) {
+            return Long.valueOf(0);
+        }
+
+        return (Long)tuple.get(0);
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public Long load(BufferedReader reader) throws IOException {
+        return valueOf(reader.readLine());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void store(BufferedWriter writer, Object value) throws IOException {
+        writer.write(value.toString());
+        writer.flush();
+    }
 
     /**
-     * Object transformation. Any Pig-script returns {@link Tuple} as result. This method transforms tuple into another more suitable
-     * object.
-     * 
-     * @param tuple the result returned by Pig-script
-     * @return transformed object
-     * @throws IOException if any exception is occurred
+     * {@inheritDoc}
      */
-    Object transform(Tuple tuple) throws IOException;
+    @Override
+    public Long valueOf(String value) throws IOException {
+        return Long.valueOf(value);
+    }
 }

@@ -1,32 +1,31 @@
 package com.codenvy.analytics.client;
 
+import com.codenvy.analytics.client.view.TimeLineWidget;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.RootPanel;
+
+import java.util.Date;
+import java.util.List;
 
 /** Entry point classes define <code>onModuleLoad()</code>. */
 public class AnalyticsApplication implements EntryPoint {
 
-    /** Create a remote service proxy to talk to the server-side Greeting service. */
-//    private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
+    /** Create a remote service proxy. */
+    private final ViewServiceAsync viewService = GWT.create(ViewService.class);
 
     /** This is the entry point method. */
     public void onModuleLoad() {
-        // try {
-        // RootPanel.get("timeLineContainer").add(TimeLineWidget.createWidget());
-        // } catch (IllegalArgumentException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // } catch (IOException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // } catch (ParseException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // } catch (ParserConfigurationException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // } catch (SAXException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
+        viewService.getTimeLineView(new Date(), new AsyncCallback<List<List<String>>>() {
+            public void onFailure(Throwable caught) {
+                Window.alert("Something gone wrong. See server logs for details");
+            }
+
+            public void onSuccess(List<List<String>> result) {
+                RootPanel.get("timeLineContainer").add(TimeLineWidget.createWidget(result.iterator()));
+            }
+        });
     }
 }

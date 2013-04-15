@@ -20,20 +20,31 @@ package com.codenvy.analytics.scripts;
 
 import org.apache.pig.data.Tuple;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class Tuple2LongTransformer implements TupleTransformer {
+public interface ValueManager {
 
-    /** {@inheritedDoc} */
-    @Override
-    public Long transform(Tuple tuple) throws IOException {
-        if (tuple == null) {
-            return Long.valueOf(0);
-        }
+    /**
+     * Object transformation. Any Pig-script returns {@link Tuple} as result. This method transforms tuple into another more suitable
+     * object.
+     * 
+     * @param tuple the result returned by Pig-script
+     * @return transformed object
+     * @throws IOException if any exception is occurred
+     */
+    Object valueOf(Tuple tuple) throws IOException;
 
-        return (Long)tuple.get(0);
-    }
+    /** Performs read operation. */
+    Object load(BufferedReader reader) throws IOException;
+
+    /** Performs write operation. It is supposed the value already translated. */
+    void store(BufferedWriter writer, Object value) throws IOException;
+
+    /** Returns object based on string representation. */
+    Object valueOf(String value) throws IOException;
 }

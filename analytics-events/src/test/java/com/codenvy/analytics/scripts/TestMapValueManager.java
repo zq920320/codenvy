@@ -24,25 +24,69 @@ import org.apache.pig.data.DefaultDataBag;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestTuple2MapTransformer extends BasePigTest {
+public class TestMapValueManager extends BasePigTest {
 
-    private final Tuple2MapTransformer translator = new Tuple2MapTransformer();
-    private final TupleFactory tupleFactory = TupleFactory.getInstance();
+    private MapValueManager valueManager;
+    private TupleFactory    tupleFactory;
+    private BufferedReader  reader;
+    private BufferedWriter  writer;
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        File file = new File(ScriptExecutor.RESULT_DIRECTORY, UUID.randomUUID().toString());
+        file.createNewFile();
+
+        reader = new BufferedReader(new FileReader(file));
+        writer = new BufferedWriter(new FileWriter(file));
+        valueManager = new MapValueManager();
+        tupleFactory = TupleFactory.getInstance();
+    }
 
     @Test
-    public void testTranslateCorrectBagTuple2Field() throws Exception {
+    public void testValueOfTuple() throws Exception {
         Tuple tuple = createTuple();
 
-        Map<String, Long> value = translator.transform(tuple);
+        Map<String, Long> value = valueManager.valueOf(tuple);
 
         Assert.assertTrue(value.containsKey("prop1"));
         Assert.assertEquals(value.get("prop1"), Long.valueOf(1));
+    }
+    
+    @Test
+    public void testValueOfString() throws Exception {
+        Map<String, Long> value = valueManager.valueOf("prop1=1,prop2=2");
+
+        Assert.assertEquals(value.get("prop1"), Long.valueOf(1));
+        Assert.assertEquals(value.get("prop2"), Long.valueOf(2));
+    }
+
+    @Test
+    public void testStoreLoad() throws Exception {
+        Map<String, Long> value = new HashMap<String, Long>();
+        value.put("1", 2L);
+        value.put("3", 4L);
+
+        ValueManager manager = new MapValueManager();
+        manager.store(writer, value);
+
+        Map<String, Long> newValue = (Map<String, Long>)manager.load(reader);
+
+        Assert.assertEquals(newValue.get("1"), Long.valueOf(2));
+        Assert.assertEquals(newValue.get("3"), Long.valueOf(4));
     }
 
     private Tuple createTuple() throws IOException {

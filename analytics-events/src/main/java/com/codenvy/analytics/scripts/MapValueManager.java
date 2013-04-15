@@ -16,13 +16,19 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.analytics.metrics;
+package com.codenvy.analytics.scripts;
+
+import org.apache.pig.data.DataBag;
+import org.apache.pig.data.Tuple;
+import org.apache.pig.impl.util.TupleFormat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -30,6 +36,36 @@ import java.util.Map.Entry;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class MapValueManager implements ValueManager {
+
+    /** {@inheritedDoc) */
+    @Override
+    public Map<String, Long> valueOf(Tuple tuple) throws IOException {
+        TupleFormat.format(tuple);
+        
+        if (tuple == null) {
+            return Collections.emptyMap();
+        }
+
+        if (tuple.get(0) instanceof DataBag) {
+            Map<String, Long> result = new HashMap<String, Long>();
+
+            Iterator<Tuple> iter = ((DataBag)tuple.get(0)).iterator();
+            while (iter.hasNext()) {
+                Tuple innterTuple = iter.next();
+
+                if (innterTuple.size() != 2) {
+                    throw new IOException("Tuple size should be 2");
+                }
+
+                result.put(innterTuple.get(0).toString(), (Long)innterTuple.get(1));
+            }
+
+            return Collections.unmodifiableMap(result);
+        }
+
+        throw new IOException("Unknown class " + tuple.getClass().getName() + " for transformation");
+    }
+
 
     /**
      * {@inheritDoc}
@@ -59,7 +95,22 @@ public class MapValueManager implements ValueManager {
         String line;
         while ((line = reader.readLine()) != null) {
             String[] entry = line.split("=");
+            result.put(entry[0], Long.valueOf(entry[1]));
+        }
 
+        return Collections.unmodifiableMap(result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Long> valueOf(String value) throws IOException {
+        String[] splittedLine = value.split(",");
+
+        Map<String, Long> result = new LinkedHashMap<String, Long>(splittedLine.length);
+        for (String str : splittedLine) {
+            String[] entry = str.split("=");
             result.put(entry[0], Long.valueOf(entry[1]));
         }
 

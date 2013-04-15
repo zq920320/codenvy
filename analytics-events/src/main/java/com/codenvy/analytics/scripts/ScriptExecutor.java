@@ -132,7 +132,7 @@ public class ScriptExecutor {
         InputStream scriptContent = readScriptContent(scriptFile);
         try {
             Tuple tuple = doExecute(scriptContent);
-            return scriptType.getTupleTransformer().transform(tuple);
+            return scriptType.getValueManager().valueOf(tuple);
         } finally {
             scriptContent.close();
         }

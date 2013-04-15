@@ -8,27 +8,16 @@ package com.codenvy.analytics.metrics;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum MetricType {
-
-    WORKSPACES_CREATED {
-        @Override
-        public Metric getInstance() {
-            return new WorkspacesCreatedMetric();
-        }
-    },
-
-    WORKSPACES_DESTROYED {
-        @Override
-        public Metric getInstance() {
-            return new WorkspacesDestoryedMetric();
-        }
-    },
-
-    TOTAL_WORKSPACES {
-        @Override
-        public Metric getInstance() {
-            return new TotalWorkspacesMetric();
-        }
-    };
-
-    public abstract Metric getInstance();
+    WORKSPACES_CREATED,
+    WORKSPACES_DESTROYED,
+    TOTAL_WORKSPACES,
+    ACTIVE_WORKSPACES,
+    PERCENT_ACTIVE_WORKSPACES,
+    PERCENT_INACTIVE_WORKSPACES,
+    USERS_CREATED,
+    USERS_DESTROYED,
+    TOTAL_USERS,
+    ACTIVE_USERS,
+    PERCENT_ACTIVE_USERS,
+    PERCENT_INACTIVE_USERS;
 }

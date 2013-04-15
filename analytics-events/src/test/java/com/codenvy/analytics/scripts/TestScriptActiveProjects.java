@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestActiveProjects extends BasePigTest {
+public class TestScriptActiveProjects extends BasePigTest {
 
     @Test
     public void testEventFound() throws Exception {

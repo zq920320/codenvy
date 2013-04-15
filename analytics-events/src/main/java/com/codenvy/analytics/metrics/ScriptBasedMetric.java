@@ -7,18 +7,18 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptParameters;
 import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.ValueManager;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class ScriptCalculatedMetric extends AbstractMetric {
+public abstract class ScriptBasedMetric extends AbstractMetric {
 
-    ScriptCalculatedMetric(MetricType metricType) {
+    ScriptBasedMetric(MetricType metricType) {
         super(metricType);
     }
 
@@ -42,11 +42,19 @@ public abstract class ScriptCalculatedMetric extends AbstractMetric {
      * {@inheritDoc}
      */
     @Override
-    protected Object queryValue(Map<String, String> context) throws IOException {
+    protected Object evaluateValue(Map<String, String> context) throws IOException {
         ScriptExecutor executor = getScriptExecutor(getScriptType());
         executor.setParams(context);
 
         return executor.executeAndReturnResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ValueManager getValueManager() {
+        return getScriptType().getValueManager();
     }
 
     /**

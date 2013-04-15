@@ -22,48 +22,29 @@ import com.codenvy.analytics.server.view.TimeLineView;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.text.ParseException;
+import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * @author <a href="abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class TimeLineWidget {
-    public static Widget createWidget() throws IllegalArgumentException,
-                                       IOException,
-                                       ParseException,
-                                       ParserConfigurationException,
-                                       SAXException {
-        // CellTable<List<String>> timeline = new CellTable<List<String>>();
-        //
-        // createsColumns(timeline);
-        //
-        // ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
-        // dataProvider.addDataDisplay(timeline);
-        //
-        //
-        // Map<String, String> context = new HashMap<String, String>();
-        // context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
-        //
-        // TimeIntervalUtil.initDateInterval(Calendar.getInstance(), context);
-        // TimeIntervalUtil.prevDateInterval(context);
-        //
-        // TimeLineView view = new TimeLineView(context);
-        // Iterator<List<String>> iter = view.getRows();
-        //
-        // List<List<String>> list = dataProvider.getList();
-        // while (iter.hasNext()) {
-        // list.add(iter.next());
-        // }
-        //
-        // return timeline;
-        return null;
+    public static Widget createWidget(Iterator<List<String>> iter) {
+        CellTable<List<String>> timeline = new CellTable<List<String>>();
+
+        createsColumns(timeline);
+
+        ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
+        dataProvider.addDataDisplay(timeline);
+
+        List<List<String>> list = dataProvider.getList();
+        while (iter.hasNext()) {
+            list.add(iter.next());
+        }
+
+        return timeline;
     }
 
     private static void createsColumns(CellTable<List<String>> timeline) {
