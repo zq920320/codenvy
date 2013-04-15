@@ -84,6 +84,15 @@ DEFINE extractUser(X) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Extract user name out of message and adds as field to tuple.
+-- @return  {..., user : bytearray}
+---------------------------------------------------------------------------
+DEFINE extractUserFromAliases(X) RETURNS Y {
+  x1 = FOREACH $X GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user;
+  $Y = FOREACH x1 GENERATE FLATTEN(TOKENIZE(user, ',')) AS user;
+};
+
+---------------------------------------------------------------------------
 -- Extract parameter value out of message and adds as field to tuple.
 -- @param paramNameParam - the parameter name
 -- @param paramFieldNameParam - the name of filed in the tuple
@@ -181,7 +190,19 @@ DEFINE differSets(A, B) RETURNS Y {
   w2 = FILTER w1 BY $1 IS NULL;
   w3 = FOREACH w2 GENERATE $0;
   w4 = GROUP w3 ALL;
-  $Y = FOREACH w4 GENERATE $1;
+  $Y = FOREACH w4 GENERATE $1 AS list;
+};
+
+---------------------------------------------------------------------------
+-- Calculates the intersection between two relation.
+-- The relations should be preprocessed using 'prepareSet'.
+-- @return {{(bytearray)}}
+---------------------------------------------------------------------------
+DEFINE intersectSets(A, B) RETURNS Y {
+  w1 = JOIN $A BY $0, $B BY $0;
+  w2 = FOREACH w1 GENERATE $0;
+  w3 = GROUP w2 ALL;
+  $Y = FOREACH w3 GENERATE $1 AS list;
 };
 
 ---------------------------------------------------------------------------

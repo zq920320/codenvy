@@ -29,6 +29,25 @@ import java.util.Set;
  */
 public enum ScriptType {
 
+    EVENT_COUNT_USERS_CREATED_PROJECTS {
+        @Override
+        public ValueManager getValueManager() {
+            return new LongValueManager();
+        }
+
+        @Override
+        public Set<ScriptParameters> getMandatoryParams() {
+            return new LinkedHashSet<ScriptParameters>(
+                                                       Arrays.asList(new ScriptParameters[]{ScriptParameters.FROM_DATE,
+                                                               ScriptParameters.TO_DATE}));
+        }
+
+        @Override
+        public Set<ScriptParameters> getAdditionalParams() {
+            return new LinkedHashSet<ScriptParameters>(Arrays.asList(new ScriptParameters[]{}));
+        }
+    },
+
     EVENT_COUNT_WORKSPACE_CREATED {
         @Override
         public ValueManager getValueManager() {

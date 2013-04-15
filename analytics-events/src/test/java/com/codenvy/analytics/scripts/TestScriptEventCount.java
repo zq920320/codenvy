@@ -156,4 +156,30 @@ public class TestScriptEventCount extends BasePigTest {
         Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_INVITE, log, params);
         Assert.assertEquals(value, Long.valueOf(1));
     }
+
+    @Test
+    public void testEventCountUsersCreatedProject() throws Exception {
+        List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserCreatedEvent("userid1", "user1").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createUserCreatedEvent("userid2", "user2").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project1").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project2").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project3").withDate("2010-10-01")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project4").withDate("2010-10-01")
+                                .build());
+
+        File log = LogGenerator.generateLog(events);
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(ScriptParameters.FROM_DATE.getName(), "20101001");
+        params.put(ScriptParameters.TO_DATE.getName(), "20101001");
+
+        Long value = (Long)executeAndReturnResult(ScriptType.EVENT_COUNT_USERS_CREATED_PROJECTS, log, params);
+        Assert.assertEquals(value, Long.valueOf(2));
+    }
 }

@@ -21,5 +21,7 @@ b1 = filterByEvent(fR, 'project-created');
 b2 = extractUser(b1);
 bR = prepareSet(b2, 'user');
 
-result = differSets(aR, bR);
+r1 = intersectSets(aR, bR);
+result = FOREACH r1 GENERATE COUNT(list);
+
 DUMP result;

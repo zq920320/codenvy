@@ -57,9 +57,9 @@ abstract class PercentMetric extends AbstractMetric {
     @Override
     protected Double evaluateValue(Map<String, String> context) throws IOException {
         if (!residual) {
-            return new Double(100 * (Long)relativeMetric.getValue(context) / (Long)baseMetric.getValue(context));
+            return new Double(100D * (Long)relativeMetric.getValue(context) / (Long)baseMetric.getValue(context));
         } else {
-            return new Double(100 - 100 * (Long)relativeMetric.getValue(context) / (Long)baseMetric.getValue(context));
+            return new Double(100 - 100D * (Long)relativeMetric.getValue(context) / (Long)baseMetric.getValue(context));
         }
     }
 
