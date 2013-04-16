@@ -4,6 +4,7 @@
  */
 package com.codenvy.analytics.server.view;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -18,8 +19,9 @@ import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptParameters;
 
 import org.testng.annotations.Test;
+import org.w3c.dom.Element;
 
-import java.util.Arrays;
+import java.io.ByteArrayInputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,26 +35,31 @@ public class TestTimeLineView {
 
     @Test
     public void testTimeView() throws Exception {
+        String resouce = "<view>" +
+                         "<date section=\"WORKSPACES\" format=\"dd/MM\"/>" +
+                         "<metric type=\"workspaces_created\"/>" +
+                         "<empty />" +
+                         "</view>";
+        
         Calendar cal = Calendar.getInstance();
         cal.setTime(ScriptExecutor.PARAM_DATE_FORMAT.parse("20130310"));
 
         Map<String, String> context = new HashMap<String, String>();
         context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
         TimeIntervalUtil.initDateInterval(cal, context);
-        
-        Metric mockedMetric = mock(Metric.class);
 
-        when(mockedMetric.getValue(anyMap())).thenReturn(2L).thenReturn(1L);
-        when(mockedMetric.getTitle()).thenReturn("title");
+        Metric mockedMetrick = mock(Metric.class);
+        when(mockedMetrick.getValue(anyMap())).thenReturn(2L).thenReturn(1L);
+        when(mockedMetrick.getTitle()).thenReturn("title");
 
-        List<Metric> metrics = Arrays.asList(new Metric[]{mockedMetric});
-        
         TimeLineView tView = spy(new TimeLineView(context));
-        doReturn(metrics).when(tView).readMetricsList();
+        doReturn(new ByteArrayInputStream(resouce.getBytes())).when(tView).readResource();
+        doReturn(new TimeLineView.MetricRow(mockedMetrick, "%d")).when(tView).createMetricRow(any(Element.class));
+
         Iterator<List<String>> rows = tView.getRows().iterator();
         List<String> row = rows.next();
 
-        assertEquals(row.get(0), "");
+        assertEquals(row.get(0), "WORKSPACES");
         assertEquals(row.get(1), "10/03");
         assertEquals(row.get(2), "09/03");
 
@@ -60,5 +67,10 @@ public class TestTimeLineView {
         assertEquals(row.get(0), "title");
         assertEquals(row.get(1), "2");
         assertEquals(row.get(2), "1");
+
+        row = rows.next();
+        assertEquals(row.get(0), "");
+        assertEquals(row.get(1), "");
+        assertEquals(row.get(2), "");
     }
 }

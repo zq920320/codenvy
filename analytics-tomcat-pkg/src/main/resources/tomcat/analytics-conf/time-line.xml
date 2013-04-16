@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (C) 2013 Codenvy.
+-->
+<view>
+    <date section="WORKSPACES" format="dd/MM" />
+    <metric type="workspaces_created"/>
+    <metric type="workspaces_destroyed"/>
+    <metric type="total_workspaces"/>
+    <metric type="active_workspaces"/>
+    <metric type="percent_active_workspaces" format="%.2f%%"/>
+    <metric type="percent_inactive_workspaces" format="%.2f%%"/>
+    <empty />
+    <empty />
+    <empty />
+    <date section="DEVELOPERS" format="dd/MM"/>
+    <metric type="users_created"/>
+    <metric type="percent_users_created_projects" format="%.2f%%"/>
+    <metric type="users_destroyed"/>
+    <metric type="total_users"/>
+    <metric type="active_users"/>
+    <metric type="percent_active_users" format="%.2f%%"/>
+    <metric type="percent_inactive_users" format="%.2f%%"/>
+    <section name="Users Added To Workspaces"/>
+    <metric type="users_added_to_workspace_from_website" format="%.2f%%"/>
+    <metric type="users_added_to_workspace_from_invite" format="%.2f%%"/>
+</view>
+

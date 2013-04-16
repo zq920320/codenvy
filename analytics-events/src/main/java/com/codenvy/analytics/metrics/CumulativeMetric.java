@@ -117,15 +117,16 @@ public abstract class CumulativeMetric extends AbstractMetric {
         long addedEntities = (Long)addedMetric.getValue(context);
         long removedEntities = (Long)removedMetric.getValue(context);
 
+        Map<String, String> prevContext;
         try {
-            TimeIntervalUtil.prevDateInterval(context);
+            prevContext = TimeIntervalUtil.prevDateInterval(context);
         } catch (ParseException e) {
             throw new IOException(e);
         } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
 
-        long previousEntities = (Long)getValue(context);
+        long previousEntities = (Long)getValue(prevContext);
 
         return new Long(previousEntities + addedEntities - removedEntities);
     }

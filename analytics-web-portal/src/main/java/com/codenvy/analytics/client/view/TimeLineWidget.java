@@ -35,6 +35,9 @@ public class TimeLineWidget {
         CellTable<List<String>> timeline = new CellTable<List<String>>();
 
         createsColumns(timeline);
+        timeline.setColumnWidth(0, "200pt");
+        // timeline.setRowCount(100);
+        timeline.setPageSize(Integer.MAX_VALUE);
 
         ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
         dataProvider.addDataDisplay(timeline);

@@ -61,6 +61,21 @@ public class MetricFactory {
             case PERCENT_INACTIVE_USERS:
                 metric = new PercentInactiveUsersMetric();
                 break;
+            case USERS_CREATED_PROJECTS:
+                metric = new UsersCreatedProjectsMetric();
+                break;
+            case PERCENT_USERS_CREATED_PROJECTS:
+                metric = new PercentUsersCreatedProjectsMetric();
+                break;
+            case USERS_ADDED_TO_WORKSPACE:
+                metric = new UsersAddedToWorkspaceMetric();
+                break;
+            case USERS_ADDED_TO_WORKSPACE_FROM_WEBSITE:
+                metric = new UsersAddedToWsFromWebsiteMetric();
+                break;
+            case USERS_ADDED_TO_WORKSPACE_FROM_INVITE:
+                metric = new UsersAddedToWsFromInviteMetric();
+                break;
 
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);

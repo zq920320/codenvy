@@ -10,6 +10,7 @@ import com.codenvy.analytics.scripts.ScriptParameters;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -68,9 +69,13 @@ public class TimeIntervalUtil {
     /**
      * Shift date interval forward depending on {@link TimeUnit}. Should also be placed in context.
      */
-    public static void nextDateInterval(Map<String, String> context) throws IOException, ParseException, IllegalArgumentException {
-        String fromDateParam = context.get(ScriptParameters.FROM_DATE.getName());
-        String toDateParam = context.get(ScriptParameters.TO_DATE.getName());
+    public static Map<String, String> nextDateInterval(Map<String, String> context) throws IOException,
+                                                                                   ParseException,
+                                                                                   IllegalArgumentException {
+        Map<String, String> resultContext = new HashMap<String, String>(context);
+
+        String fromDateParam = resultContext.get(ScriptParameters.FROM_DATE.getName());
+        String toDateParam = resultContext.get(ScriptParameters.TO_DATE.getName());
 
         if (fromDateParam == null || toDateParam == null) {
             throw new IOException("Parameters " + ScriptParameters.FROM_DATE + " or " + ScriptParameters.TO_DATE
@@ -83,29 +88,35 @@ public class TimeIntervalUtil {
         toDate.setTime(ScriptExecutor.PARAM_DATE_FORMAT.parse(toDateParam));
         fromDate.setTime(ScriptExecutor.PARAM_DATE_FORMAT.parse(fromDateParam));
 
-        TimeUnit timeUnit = TimeUnit.valueOf(context.get(ScriptParameters.TIME_UNIT.getName()));
+        TimeUnit timeUnit = TimeUnit.valueOf(resultContext.get(ScriptParameters.TIME_UNIT.getName()));
 
         switch (timeUnit) {
             case DAY:
-                nextDay(fromDate, toDate, context);
+                nextDay(fromDate, toDate, resultContext);
                 break;
             case WEEK:
-                nextWeek(fromDate, toDate, context);
+                nextWeek(fromDate, toDate, resultContext);
                 break;
             case MONTH:
-                nextMonth(fromDate, toDate, context);
+                nextMonth(fromDate, toDate, resultContext);
                 break;
             default:
                 throw new IllegalArgumentException("Illegal time unit " + timeUnit);
         }
+
+        return resultContext;
     }
 
     /**
      * Shift date interval backward depending on {@link TimeUnit}. Should also be placed in context.
      */
-    public static void prevDateInterval(Map<String, String> context) throws IOException, ParseException, IllegalArgumentException {
-        String fromDateParam = context.get(ScriptParameters.FROM_DATE.getName());
-        String toDateParam = context.get(ScriptParameters.TO_DATE.getName());
+    public static Map<String, String> prevDateInterval(Map<String, String> context) throws IOException,
+                                                                                   ParseException,
+                                                                                   IllegalArgumentException {
+        Map<String, String> resultContext = new HashMap<String, String>(context);
+
+        String fromDateParam = resultContext.get(ScriptParameters.FROM_DATE.getName());
+        String toDateParam = resultContext.get(ScriptParameters.TO_DATE.getName());
 
         if (fromDateParam == null || toDateParam == null) {
             throw new IOException("Parameters " + ScriptParameters.FROM_DATE + " or " + ScriptParameters.TO_DATE
@@ -118,21 +129,23 @@ public class TimeIntervalUtil {
         toDate.setTime(ScriptExecutor.PARAM_DATE_FORMAT.parse(toDateParam));
         fromDate.setTime(ScriptExecutor.PARAM_DATE_FORMAT.parse(fromDateParam));
 
-        TimeUnit timeUnit = TimeUnit.valueOf(context.get(ScriptParameters.TIME_UNIT.getName()));
+        TimeUnit timeUnit = TimeUnit.valueOf(resultContext.get(ScriptParameters.TIME_UNIT.getName()));
 
         switch (timeUnit) {
             case DAY:
-                prevDay(fromDate, toDate, context);
+                prevDay(fromDate, toDate, resultContext);
                 break;
             case WEEK:
-                prevWeek(fromDate, toDate, context);
+                prevWeek(fromDate, toDate, resultContext);
                 break;
             case MONTH:
-                prevMonth(fromDate, toDate, context);
+                prevMonth(fromDate, toDate, resultContext);
                 break;
             default:
                 throw new IllegalArgumentException("Illegal time unit " + timeUnit);
         }
+
+        return resultContext;
     }
 
     private static void prevWeek(Calendar fromDate, Calendar toDate, Map<String, String> context) {

@@ -20,7 +20,6 @@ package com.codenvy.analytics.scripts;
 
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
-import org.apache.pig.impl.util.TupleFormat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,8 +39,6 @@ public class MapValueManager implements ValueManager {
     /** {@inheritedDoc) */
     @Override
     public Map<String, Long> valueOf(Tuple tuple) throws IOException {
-        TupleFormat.format(tuple);
-        
         if (tuple == null) {
             return Collections.emptyMap();
         }

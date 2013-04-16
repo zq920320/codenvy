@@ -73,7 +73,7 @@ public class TestTimeIntrevalUtil {
         context.put(ScriptParameters.TO_DATE.getName(), "20130331");
         context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
 
-        TimeIntervalUtil.nextDateInterval(context);
+        context = TimeIntervalUtil.nextDateInterval(context);
 
         Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130401");
         Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130401");
@@ -86,7 +86,7 @@ public class TestTimeIntrevalUtil {
         context.put(ScriptParameters.TO_DATE.getName(), "20130505");
         context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.WEEK.toString());
 
-        TimeIntervalUtil.nextDateInterval(context);
+        context = TimeIntervalUtil.nextDateInterval(context);
 
         Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130506");
         Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130512");
@@ -99,7 +99,7 @@ public class TestTimeIntrevalUtil {
         context.put(ScriptParameters.TO_DATE.getName(), "20130331");
         context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.MONTH.toString());
 
-        TimeIntervalUtil.nextDateInterval(context);
+        context = TimeIntervalUtil.nextDateInterval(context);
 
         Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130401");
         Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130430");
@@ -112,7 +112,7 @@ public class TestTimeIntrevalUtil {
         context.put(ScriptParameters.TO_DATE.getName(), "20130331");
         context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
 
-        TimeIntervalUtil.prevDateInterval(context);
+        context = TimeIntervalUtil.prevDateInterval(context);
 
         Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130330");
         Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130330");
@@ -125,7 +125,7 @@ public class TestTimeIntrevalUtil {
         context.put(ScriptParameters.TO_DATE.getName(), "20130505");
         context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.WEEK.toString());
 
-        TimeIntervalUtil.prevDateInterval(context);
+        context = TimeIntervalUtil.prevDateInterval(context);
 
         Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130422");
         Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130428");
@@ -138,7 +138,7 @@ public class TestTimeIntrevalUtil {
         context.put(ScriptParameters.TO_DATE.getName(), "20130331");
         context.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.MONTH.toString());
 
-        TimeIntervalUtil.prevDateInterval(context);
+        context = TimeIntervalUtil.prevDateInterval(context);
 
         Assert.assertEquals(context.get(ScriptParameters.FROM_DATE.getName()), "20130201");
         Assert.assertEquals(context.get(ScriptParameters.TO_DATE.getName()), "20130228");
