@@ -17,9 +17,9 @@ import java.util.Set;
  */
 public abstract class ValueFromMapMetric extends AbstractMetric {
 
-    private final String keyName;
-    private final Metric metric;
-    private final boolean percent;
+    protected final String keyName;
+    private final Metric   metric;
+    private final boolean  percent;
 
     ValueFromMapMetric(MetricType metricType, Metric metric, String keyName, boolean percent) {
         super(metricType);
@@ -58,7 +58,7 @@ public abstract class ValueFromMapMetric extends AbstractMetric {
         }
     }
 
-    private Double calculatePercent(Map<String, Long> valueMetric) {
+    protected Double calculatePercent(Map<String, Long> valueMetric) {
         Long sum = 0L;
         for (Long value : valueMetric.values()) {
             sum += value;
@@ -67,7 +67,7 @@ public abstract class ValueFromMapMetric extends AbstractMetric {
         return Double.valueOf(100D * getParticalValue(valueMetric) / sum);
     }
 
-    private Long getParticalValue(Map<String, Long> valueMetric) {
+    protected Long getParticalValue(Map<String, Long> valueMetric) {
         return valueMetric.containsKey(keyName) ? valueMetric.get(keyName) : Long.valueOf(0);
     }
 

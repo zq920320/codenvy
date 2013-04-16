@@ -76,7 +76,66 @@ public class MetricFactory {
             case USERS_ADDED_TO_WORKSPACE_FROM_INVITE:
                 metric = new UsersAddedToWsFromInviteMetric();
                 break;
-
+            case USERS_SSO_LOGGED_IN:
+                metric = new UsersSsoLoggedInMetric();
+                break;
+            case USERS_SSO_LOGGED_IN_USING_GOOGLE:
+                metric = new UsersSsoLoggedInUsingGoogleMetric();
+                break;
+            case USERS_SSO_LOGGED_IN_USING_GITHUB:
+                metric = new UsersSsoLoggedInUsingGithubMetric();
+                break;
+            case USERS_SSO_LOGGED_IN_USING_FORM:
+                metric = new UsersSsoLoggedInUsingFormMetric();
+                break;
+            case PRODUCT_USAGE_TIME:
+                metric = new ProductUsageTimeMetric();
+                break;
+            case PROJECTS_CREATED:
+                metric = new ProjectsCreatedMetric();
+                break;
+            case PROJECTS_DESTROYED:
+                metric = new ProjectsDestroyedMetric();
+                break;
+            case TOTAL_RPOJECTS:
+                metric = new TotalProjectsMetric();
+                break;
+            case PROJECT_CREATED_TYPES:
+                metric = new ProjectCreatedTypesMetric();
+                break;
+            case PROJECT_TYPE_JAVA_JAR:
+                metric = new ProjectCreatedTypeJavaJarMetric();
+                break;
+            case PROJECT_TYPE_JAVA_WAR:
+                metric = new ProjectCreatedTypeJavaWarMetric();
+                break;
+            case PROJECT_TYPE_JAVA_JSP:
+                metric = new ProjectCreatedTypeJavaJspMetric();
+                break;
+            case PROJECT_TYPE_JAVA_SPRING:
+                metric = new ProjectCreatedTypeJavaSpring();
+                break;
+            case PROJECT_TYPE_PHP:
+                metric = new ProjectCreatedTypeJavaPhpMetric();
+                break;
+            case PROJECT_TYPE_PYTHON:
+                metric = new ProjectCreatedTypePythonMetric();
+                break;
+            case PROJECT_TYPE_JAVASCRIPT:
+                metric = new ProjectCreatedTypeJavaScriptMetric();
+                break;
+            case PROJECT_TYPE_RUBY:
+                metric = new ProjectCreatedTypeRubyMetric();
+                break;
+            case PROJECT_TYPE_MMP:
+                metric = new ProjectCreatedTypeMmpMetric();
+                break;
+            case PROJECT_TYPE_GROOVY:
+                metric = new ProjectCreatedTypeGroovyMetric();
+                break;
+            case PROJECT_TYPE_OTHERS:
+                metric = new ProjectCreatedTypeOthersMetric();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

@@ -2,7 +2,7 @@
 <!--
     Copyright (C) 2013 Codenvy.
 -->
-<view>
+<view history_length="20">
     <date section="WORKSPACES" format="dd/MM" />
     <metric type="workspaces_created"/>
     <metric type="workspaces_destroyed"/>
@@ -11,9 +11,7 @@
     <metric type="percent_active_workspaces" format="%.2f%%"/>
     <metric type="percent_inactive_workspaces" format="%.2f%%"/>
     <empty />
-    <empty />
-    <empty />
-    <date section="DEVELOPERS" format="dd/MM"/>
+    <date section="USERS" format="dd/MM"/>
     <metric type="users_created"/>
     <metric type="percent_users_created_projects" format="%.2f%%"/>
     <metric type="users_destroyed"/>
@@ -21,8 +19,35 @@
     <metric type="active_users"/>
     <metric type="percent_active_users" format="%.2f%%"/>
     <metric type="percent_inactive_users" format="%.2f%%"/>
+    <empty />
     <section name="Users Added To Workspaces"/>
     <metric type="users_added_to_workspace_from_website" format="%.2f%%"/>
     <metric type="users_added_to_workspace_from_invite" format="%.2f%%"/>
+    <empty />
+    <section name="Users Logged In Way"/>
+    <metric type="users_added_to_workspace_from_website" format="%.0f%%"/>
+    <metric type="users_added_to_workspace_from_invite" format="%.0f%%"/>
+    <metric type="users_added_to_workspace_from_invite" format="%.0f%%"/>
+    <empty />
+    <date section="SESSIONS" format="dd/MM"/>
+    <metric type="product_usage_time" format="%,d"/>
+    <empty />
+    <date section="PROJECTS" format="dd/MM"/>
+    <metric type="projects_created"/>
+    <metric type="projects_destroyed"/>
+    <metric type="total_projects"/>
+    <empty />
+    <section name="Projects Types"/>
+    <metric type="project_type_java_jar" format="%.0f%%"/>
+    <metric type="project_type_java_war" format="%.0f%%"/>
+    <metric type="project_type_java_jsp" format="%.0f%%"/>
+    <metric type="project_type_java_spring" format="%.0f%%"/>
+    <metric type="project_type_php" format="%.0f%%"/>
+    <metric type="project_type_python" format="%.0f%%"/>
+    <metric type="project_type_javascript" format="%.0f%%"/>
+    <metric type="project_type_ruby" format="%.0f%%"/>
+    <metric type="project_type_mmp" format="%.0f%%"/>
+    <metric type="project_type_groovy" format="%.0f%%"/>
+    <metric type="project_type_others" format="%.0f%%"/>
 </view>
 

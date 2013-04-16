@@ -5,9 +5,14 @@
 
 -->
 <metrics>
-    <!--metric type="metric_name">
+    <metric type="total_users">
         <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
+    </metric>
+    <metric type="total_workspaces">
         <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
-    </metric-->
+    </metric>
+    <metric type="total_projects">
+        <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
+    </metric>
 </metrics>
  
