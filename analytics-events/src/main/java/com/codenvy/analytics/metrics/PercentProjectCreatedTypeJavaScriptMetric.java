@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaScriptMetric extends ValueFromMapMetric {
+public class PercentProjectCreatedTypeJavaScriptMetric extends ValueFromMapMetric {
 
-    ProjectCreatedTypeJavaScriptMetric() throws IOException {
+    PercentProjectCreatedTypeJavaScriptMetric() throws IOException {
         super(MetricType.PERCENT_PROJECT_TYPE_JAVASCRIPT, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "JavaScript", true);
     }
 

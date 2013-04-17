@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaWarMetric extends ValueFromMapMetric {
+public class PercentProjectCreatedTypeJavaWarMetric extends ValueFromMapMetric {
 
-    ProjectCreatedTypeJavaWarMetric() throws IOException {
+    PercentProjectCreatedTypeJavaWarMetric() throws IOException {
         super(MetricType.PERCENT_PROJECT_TYPE_JAVA_WAR, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "War", true);
     }
 

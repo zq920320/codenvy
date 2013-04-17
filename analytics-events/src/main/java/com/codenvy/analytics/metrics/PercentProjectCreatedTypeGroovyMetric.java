@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeGroovyMetric extends ValueFromMapMetric {
+public class PercentProjectCreatedTypeGroovyMetric extends ValueFromMapMetric {
 
-    ProjectCreatedTypeGroovyMetric() throws IOException {
+    PercentProjectCreatedTypeGroovyMetric() throws IOException {
         super(MetricType.PERCENT_PROJECT_TYPE_GROOVY, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "eXo", true);
     }
 

@@ -10,6 +10,7 @@ import java.util.List;
 
 
 /** The client side stub for the RPC service. */
+
 @RemoteServiceRelativePath("timeLineView")
 public interface TimeLineViewService extends RemoteService {
 
@@ -17,4 +18,5 @@ public interface TimeLineViewService extends RemoteService {
      * Returns rows for timeline view.
      */
     List<DataView> getViews(Date date) throws IOException;
+
 }

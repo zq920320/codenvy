@@ -4,6 +4,12 @@
     <inherits name='com.codenvy.analytics.AnalyticsApplication'/>
 
     <!-- Specify the path to any remote services.                   -->
+<<<<<<< HEAD
     <servlet path="/AnalyticsApplication/timeLineView" class="com.codenvy.analytics.server.TimeLineViewServiceImpl"/>
 
+=======
+    <servlet path="/AnalyticsApplication/view" class="com.codenvy.analytics.server.ViewServiceImpl"/>
+    
+	<source path='shared'/>
+>>>>>>> af2d939d9723329cf3a23ad1d6d2f68284325efb
 </module>

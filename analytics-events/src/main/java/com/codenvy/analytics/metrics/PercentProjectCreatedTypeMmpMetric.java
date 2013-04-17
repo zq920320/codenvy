@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeMmpMetric extends ValueFromMapMetric {
+public class PercentProjectCreatedTypeMmpMetric extends ValueFromMapMetric {
 
-    ProjectCreatedTypeMmpMetric() throws IOException {
+    PercentProjectCreatedTypeMmpMetric() throws IOException {
         super(MetricType.PERCENT_PROJECT_TYPE_MMP, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Maven Multi-module", true);
     }
 

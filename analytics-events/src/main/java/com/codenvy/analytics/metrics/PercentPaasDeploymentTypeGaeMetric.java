@@ -9,10 +9,10 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PaasDeploymentTypeLocalMetric extends ValueFromMapMetric {
+public class PercentPaasDeploymentTypeGaeMetric extends ValueFromMapMetric {
 
-    PaasDeploymentTypeLocalMetric() throws IOException {
-        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_LOCAL, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "LOCAL",
+    PercentPaasDeploymentTypeGaeMetric() throws IOException {
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_GAE, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "GAE",
               true);
     }
 
@@ -21,6 +21,6 @@ public class PaasDeploymentTypeLocalMetric extends ValueFromMapMetric {
      */
     @Override
     public String getTitle() {
-        return "% Local";
+        return "% GAE";
     }
 }

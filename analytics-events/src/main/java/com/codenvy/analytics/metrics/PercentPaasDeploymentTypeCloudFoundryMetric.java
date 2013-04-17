@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PaasDeploymentTypeCloudFoundryMetric extends ValueFromMapMetric {
+public class PercentPaasDeploymentTypeCloudFoundryMetric extends ValueFromMapMetric {
 
-    PaasDeploymentTypeCloudFoundryMetric() throws IOException {
+    PercentPaasDeploymentTypeCloudFoundryMetric() throws IOException {
         super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_CLOUDFOUNDRY, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "CloudFoundry",
               true);
     }

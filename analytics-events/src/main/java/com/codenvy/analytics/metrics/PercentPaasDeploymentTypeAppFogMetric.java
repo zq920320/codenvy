@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PaasDeploymentTypeAppFogMetric extends ValueFromMapMetric {
+public class PercentPaasDeploymentTypeAppFogMetric extends ValueFromMapMetric {
 
-    PaasDeploymentTypeAppFogMetric() throws IOException {
+    PercentPaasDeploymentTypeAppFogMetric() throws IOException {
         super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_APPFOG, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "Appfog", true);
     }
 

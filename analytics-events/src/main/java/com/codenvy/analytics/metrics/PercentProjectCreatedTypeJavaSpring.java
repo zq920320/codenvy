@@ -9,10 +9,10 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaSpring extends ValueFromMapMetric {
+public class PercentProjectCreatedTypeJavaSpring extends ValueFromMapMetric {
 
 
-    ProjectCreatedTypeJavaSpring() throws IOException {
+    PercentProjectCreatedTypeJavaSpring() throws IOException {
         super(MetricType.PERCENT_PROJECT_TYPE_JAVA_SPRING, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Spring", true);
     }
 

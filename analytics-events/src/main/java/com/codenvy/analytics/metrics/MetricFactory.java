@@ -80,13 +80,13 @@ public class MetricFactory {
                 metric = new UsersSsoLoggedInMetric();
                 break;
             case PERCENT_USERS_SSO_LOGGED_IN_USING_GOOGLE:
-                metric = new UsersSsoLoggedInUsingGoogleMetric();
+                metric = new PercentUsersSsoLoggedInUsingGoogleMetric();
                 break;
             case PERCENT_USERS_SSO_LOGGED_IN_USING_GITHUB:
-                metric = new UsersSsoLoggedInUsingGithubMetric();
+                metric = new PercentUsersSsoLoggedInUsingGithubMetric();
                 break;
             case PERCENT_USERS_SSO_LOGGED_IN_USING_FORM:
-                metric = new UsersSsoLoggedInUsingFormMetric();
+                metric = new PercentUsersSsoLoggedInUsingFormMetric();
                 break;
             case PRODUCT_USAGE_TIME:
                 metric = new ProductUsageTimeMetric();
@@ -119,64 +119,64 @@ public class MetricFactory {
                 metric = new ProjectCreatedTypesMetric();
                 break;
             case PERCENT_PROJECT_TYPE_JAVA_JAR:
-                metric = new ProjectCreatedTypeJavaJarMetric();
+                metric = new PercentProjectCreatedTypeJavaJarMetric();
                 break;
             case PERCENT_PROJECT_TYPE_JAVA_WAR:
-                metric = new ProjectCreatedTypeJavaWarMetric();
+                metric = new PercentProjectCreatedTypeJavaWarMetric();
                 break;
             case PERCENT_PROJECT_TYPE_JAVA_JSP:
-                metric = new ProjectCreatedTypeJavaJspMetric();
+                metric = new PercentProjectCreatedTypeJavaJspMetric();
                 break;
             case PERCENT_PROJECT_TYPE_JAVA_SPRING:
-                metric = new ProjectCreatedTypeJavaSpring();
+                metric = new PercentProjectCreatedTypeJavaSpring();
                 break;
             case PERCENT_PROJECT_TYPE_PHP:
-                metric = new ProjectCreatedTypeJavaPhpMetric();
+                metric = new PercentProjectCreatedTypeJavaPhpMetric();
                 break;
             case PERCENT_PROJECT_TYPE_PYTHON:
-                metric = new ProjectCreatedTypePythonMetric();
+                metric = new PercentProjectCreatedTypePythonMetric();
                 break;
             case PERCENT_PROJECT_TYPE_JAVASCRIPT:
-                metric = new ProjectCreatedTypeJavaScriptMetric();
+                metric = new PercentProjectCreatedTypeJavaScriptMetric();
                 break;
             case PERCENT_PROJECT_TYPE_RUBY:
-                metric = new ProjectCreatedTypeRubyMetric();
+                metric = new PercentProjectCreatedTypeRubyMetric();
                 break;
             case PERCENT_PROJECT_TYPE_MMP:
-                metric = new ProjectCreatedTypeMmpMetric();
+                metric = new PercentProjectCreatedTypeMmpMetric();
                 break;
             case PERCENT_PROJECT_TYPE_GROOVY:
-                metric = new ProjectCreatedTypeGroovyMetric();
+                metric = new PercentProjectCreatedTypeGroovyMetric();
                 break;
             case PERCENT_PROJECT_TYPE_OTHERS:
-                metric = new ProjectCreatedTypeOthersMetric();
+                metric = new PercentProjectCreatedTypeOthersMetric();
                 break;
             case PAAS_DEPLOYEMNT_TYPES:
                 metric = new PaasDeploymentTypesMetric();
                 break;
             case PERCENT_PAAS_DEPLOYEMNT_TYPE_AWS:
-                metric = new PaasDeploymentTypeAwsMetric();
+                metric = new PercentPaasDeploymentTypeAwsMetric();
                 break;
             case PERCENT_PAAS_DEPLOYEMNT_TYPE_APPFOG:
-                metric = new PaasDeploymentTypeAppFogMetric();
+                metric = new PercentPaasDeploymentTypeAppFogMetric();
                 break;
             case PERCENT_PAAS_DEPLOYEMNT_TYPE_CLOUDFOUNDRY:
-                metric = new PaasDeploymentTypeCloudFoundryMetric();
+                metric = new PercentPaasDeploymentTypeCloudFoundryMetric();
                 break;
             case PERCENT_PAAS_DEPLOYEMNT_TYPE_CLOUDBESS:
-                metric = new PaasDeploymentTypeCloudBeesMetric();
+                metric = new PercentPaasDeploymentTypeCloudBeesMetric();
                 break;
             case PERCENT_PAAS_DEPLOYEMNT_TYPE_GAE:
-                metric = new PaasDeploymentTypeGaeMetric();
+                metric = new PercentPaasDeploymentTypeGaeMetric();
                 break;
             case PERCENT_PAAS_DEPLOYEMNT_TYPE_HEROKU:
-                metric = new PaasDeploymentTypeHerokuMetric();
+                metric = new PercentPaasDeploymentTypeHerokuMetric();
                 break;
             case PERCENT_PAAS_DEPLOYEMNT_TYPE_LOCAL:
-                metric = new PaasDeploymentTypeLocalMetric();
+                metric = new PercentPaasDeploymentTypeLocalMetric();
                 break;
             case PERCENT_PAAS_DEPLOYEMNT_TYPE_OPENSHIFT:
-                metric = new PaasDeploymentTypeOpenShiftMetric();
+                metric = new PercentPaasDeploymentTypeOpenShiftMetric();
                 break;
             case JREBEL_ELIGIBLE:
                 metric = new JrebelElibigleMetric();

@@ -9,8 +9,8 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersSsoLoggedInUsingGoogleMetric extends ValueFromMapMetric {
-    UsersSsoLoggedInUsingGoogleMetric() throws IOException {
+public class PercentUsersSsoLoggedInUsingGoogleMetric extends ValueFromMapMetric {
+    PercentUsersSsoLoggedInUsingGoogleMetric() throws IOException {
         super(MetricType.PERCENT_USERS_SSO_LOGGED_IN_USING_GOOGLE, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN), "google", true);
     }
 

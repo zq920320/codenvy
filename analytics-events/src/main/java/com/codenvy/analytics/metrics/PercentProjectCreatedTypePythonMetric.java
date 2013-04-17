@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypePythonMetric extends ValueFromMapMetric {
+public class PercentProjectCreatedTypePythonMetric extends ValueFromMapMetric {
 
-    ProjectCreatedTypePythonMetric() throws IOException {
+    PercentProjectCreatedTypePythonMetric() throws IOException {
         super(MetricType.PERCENT_PROJECT_TYPE_PYTHON, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Python", true);
     }
 

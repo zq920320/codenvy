@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaPhpMetric extends ValueFromMapMetric {
+public class PercentProjectCreatedTypeJavaPhpMetric extends ValueFromMapMetric {
 
-    ProjectCreatedTypeJavaPhpMetric() throws IOException {
+    PercentProjectCreatedTypeJavaPhpMetric() throws IOException {
         super(MetricType.PERCENT_PROJECT_TYPE_PHP, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "PHP", true);
     }
 

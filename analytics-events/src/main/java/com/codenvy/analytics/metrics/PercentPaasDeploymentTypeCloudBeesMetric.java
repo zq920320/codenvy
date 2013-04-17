@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PaasDeploymentTypeCloudBeesMetric extends ValueFromMapMetric {
+public class PercentPaasDeploymentTypeCloudBeesMetric extends ValueFromMapMetric {
 
-    PaasDeploymentTypeCloudBeesMetric() throws IOException {
+    PercentPaasDeploymentTypeCloudBeesMetric() throws IOException {
         super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_CLOUDBESS, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "CloudBees",
               true);
     }

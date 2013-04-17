@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeOthersMetric extends ValueFromMapMetric {
+public class PercentProjectCreatedTypeOthersMetric extends ValueFromMapMetric {
 
-    ProjectCreatedTypeOthersMetric() throws IOException {
+    PercentProjectCreatedTypeOthersMetric() throws IOException {
         super(MetricType.PERCENT_PROJECT_TYPE_OTHERS, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "default", true);
     }
 

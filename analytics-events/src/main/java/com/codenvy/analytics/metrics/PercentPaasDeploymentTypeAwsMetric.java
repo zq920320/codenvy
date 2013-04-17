@@ -9,9 +9,9 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PaasDeploymentTypeAwsMetric extends ValueFromMapMetric {
+public class PercentPaasDeploymentTypeAwsMetric extends ValueFromMapMetric {
 
-    PaasDeploymentTypeAwsMetric() throws IOException {
+    PercentPaasDeploymentTypeAwsMetric() throws IOException {
         super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_AWS, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "AWS:BeansTalk", true);
     }
 

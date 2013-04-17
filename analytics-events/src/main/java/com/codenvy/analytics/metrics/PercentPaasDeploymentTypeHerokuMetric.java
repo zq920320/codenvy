@@ -9,10 +9,10 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PaasDeploymentTypeGaeMetric extends ValueFromMapMetric {
+public class PercentPaasDeploymentTypeHerokuMetric extends ValueFromMapMetric {
 
-    PaasDeploymentTypeGaeMetric() throws IOException {
-        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_GAE, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "GAE",
+    PercentPaasDeploymentTypeHerokuMetric() throws IOException {
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_HEROKU, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "Heroku",
               true);
     }
 
@@ -21,6 +21,6 @@ public class PaasDeploymentTypeGaeMetric extends ValueFromMapMetric {
      */
     @Override
     public String getTitle() {
-        return "% GAE";
+        return "% Heroku";
     }
 }
