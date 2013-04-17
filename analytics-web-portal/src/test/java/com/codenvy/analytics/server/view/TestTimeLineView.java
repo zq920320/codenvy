@@ -35,7 +35,7 @@ public class TestTimeLineView {
 
     @Test
     public void testTimeView() throws Exception {
-        String resouce = "<view>" +
+        String resouce = "<view history_length=\"2\">" +
                          "<date section=\"WORKSPACES\" format=\"dd/MM\"/>" +
                          "<metric type=\"workspaces_created\"/>" +
                          "<empty />" +
@@ -54,7 +54,7 @@ public class TestTimeLineView {
 
         TimeLineView tView = spy(new TimeLineView(context));
         doReturn(new ByteArrayInputStream(resouce.getBytes())).when(tView).readResource();
-        doReturn(new TimeLineView.MetricRow(mockedMetrick, "%d")).when(tView).createMetricRow(any(Element.class));
+        doReturn(tView.new MetricRow(mockedMetrick, "%d")).when(tView).createMetricRow(any(Element.class));
 
         Iterator<List<String>> rows = tView.getRows().iterator();
         List<String> row = rows.next();
@@ -72,5 +72,7 @@ public class TestTimeLineView {
         assertEquals(row.get(0), "");
         assertEquals(row.get(1), "");
         assertEquals(row.get(2), "");
+        
+        assertEquals(tView.getHistoryLength(), 2);
     }
 }

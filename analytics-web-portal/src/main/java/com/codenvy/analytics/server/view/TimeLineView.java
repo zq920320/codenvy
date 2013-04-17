@@ -37,7 +37,9 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class TimeLineView {
 
-    public static final int           HISTORY_LENGTH = 20;
+    private static int                DEFAULT_HISTORY_LENGTH            = 20;
+
+    private int                       historyLength                     = DEFAULT_HISTORY_LENGTH;
 
     /** Runtime parameter name. Contains the path to time-line view configuration. */
     private static final String       ANALYTICS_TIME_LINE_VIEW_PROPERTY = "analytics.view.time-line";
@@ -60,6 +62,9 @@ public class TimeLineView {
         this.initContext = initContext;
     }
 
+    /**
+     * TOOD
+     */
     public List<List<String>> getRows() throws Exception {
         this.filledRows = new ArrayList<List<String>>();
         this.rowsLayout = readRowsLayout();
@@ -69,6 +74,13 @@ public class TimeLineView {
         }
 
         return filledRows;
+    }
+
+    /**
+     * TODO
+     */
+    public int getHistoryLength() {
+        return historyLength;
     }
 
     protected List<Row> readRowsLayout() throws ParserConfigurationException, SAXException, IOException {
@@ -125,7 +137,15 @@ public class TimeLineView {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         Document doc = dbFactory.newDocumentBuilder().parse(in);
 
-        return doc.getElementsByTagName("view").item(0).getChildNodes();
+        Node node = doc.getElementsByTagName("view").item(0);
+
+        try {
+            historyLength = Integer.valueOf(node.getAttributes().getNamedItem("history_length").getNodeValue());
+        } catch (NumberFormatException e) {
+            historyLength = DEFAULT_HISTORY_LENGTH;
+        }
+
+        return node.getChildNodes();
     }
 
     protected InputStream readResource() throws FileNotFoundException {
@@ -139,7 +159,7 @@ public class TimeLineView {
         List<String> fill(Map<String, String> context) throws Exception;
     }
 
-    protected static class DateRow implements Row {
+    protected class DateRow implements Row {
         private final String sectionName;
         private final String format;
 
@@ -149,12 +169,12 @@ public class TimeLineView {
         }
 
         public List<String> fill(Map<String, String> context) throws Exception {
-            List<String> row = new ArrayList<String>(HISTORY_LENGTH + 1);
+            List<String> row = new ArrayList<String>(getHistoryLength() + 1);
             row.add(sectionName);
 
             DateFormat df = new SimpleDateFormat(format);
 
-            for (int i = 0; i < HISTORY_LENGTH; i++) {
+            for (int i = 0; i < getHistoryLength(); i++) {
                 Date date = ScriptExecutor.PARAM_DATE_FORMAT.parse(context.get(ScriptParameters.TO_DATE.getName()));
                 row.add(df.format(date));
 
@@ -165,20 +185,20 @@ public class TimeLineView {
         }
     }
 
-    protected static class MetricRow implements Row {
+    protected class MetricRow implements Row {
         private final Metric metric;
         private final String format;
-        
+
         MetricRow(Metric metric, String format) {
             this.metric = metric;
             this.format = format == null || format.isEmpty() ? "%d" : format;
         }
 
         public List<String> fill(Map<String, String> context) throws Exception {
-            List<String> row = new ArrayList<String>(HISTORY_LENGTH + 1);
+            List<String> row = new ArrayList<String>(getHistoryLength() + 1);
             row.add(metric.getTitle());
 
-            for (int i = 0; i < HISTORY_LENGTH; i++) {
+            for (int i = 0; i < getHistoryLength(); i++) {
                 Object value = metric.getValue(new HashMap<String, String>(context));
 
                 row.add(String.format(format, value));
@@ -189,17 +209,17 @@ public class TimeLineView {
         }
     }
 
-    protected static class EmptyRow implements Row {
+    protected class EmptyRow implements Row {
         public List<String> fill(Map<String, String> context) {
-            List<String> row  = new ArrayList<String>(HISTORY_LENGTH + 1);
-            for (int i = 0; i < HISTORY_LENGTH + 1; i++) {
+            List<String> row = new ArrayList<String>(getHistoryLength() + 1);
+            for (int i = 0; i < getHistoryLength() + 1; i++) {
                 row.add("");
             }
             return row;
         }
     }
 
-    protected static class SectionRow implements Row {
+    protected class SectionRow implements Row {
         private final String name;
 
         protected SectionRow(String name) {
@@ -207,10 +227,10 @@ public class TimeLineView {
         }
 
         public List<String> fill(Map<String, String> context) {
-            List<String> row = new ArrayList<String>(HISTORY_LENGTH + 1);
+            List<String> row = new ArrayList<String>(getHistoryLength() + 1);
             row.add(name);
 
-            for (int i = 1; i < HISTORY_LENGTH + 1; i++) {
+            for (int i = 1; i < getHistoryLength() + 1; i++) {
                 row.add("");
             }
             return row;

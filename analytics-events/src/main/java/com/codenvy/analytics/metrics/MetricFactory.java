@@ -94,11 +94,26 @@ public class MetricFactory {
             case PROJECTS_CREATED:
                 metric = new ProjectsCreatedMetric();
                 break;
+            case BUILT_PROJECTS:
+                metric = new BuiltProjectsMetric();
+                break;
+            case PERCENT_BUILT_PROJECTS:
+                metric = new PercentBuiltProjectsMetric();
+                break;
             case PROJECTS_DESTROYED:
                 metric = new ProjectsDestroyedMetric();
                 break;
             case TOTAL_RPOJECTS:
                 metric = new TotalProjectsMetric();
+                break;
+            case ACTIVE_PROJECTS:
+                metric = new ActiveProjectsMetric();
+                break;
+            case PERCENT_ACTIVE_PROJECTS:
+                metric = new PercentActiveProjectsMetric();
+                break;
+            case PERCENT_INACTIVE_PROJECTS:
+                metric = new PercentInactiveProjectsMetric();
                 break;
             case PROJECT_CREATED_TYPES:
                 metric = new ProjectCreatedTypesMetric();
@@ -136,6 +151,49 @@ public class MetricFactory {
             case PROJECT_TYPE_OTHERS:
                 metric = new ProjectCreatedTypeOthersMetric();
                 break;
+            case PAAS_DEPLOYEMNT_TYPES:
+                metric = new PaasDeploymentTypesMetric();
+                break;
+            case PAAS_DEPLOYEMNT_TYPE_AWS:
+                metric = new PaasDeploymentTypeAwsMetric();
+                break;
+            case PAAS_DEPLOYEMNT_TYPE_APPFOG:
+                metric = new PaasDeploymentTypeAppFogMetric();
+                break;
+            case PAAS_DEPLOYEMNT_TYPE_CLOUDFOUNDRY:
+                metric = new PaasDeploymentTypeCloudFoundryMetric();
+                break;
+            case PAAS_DEPLOYEMNT_TYPE_CLOUDBESS:
+                metric = new PaasDeploymentTypeCloudBeesMetric();
+                break;
+            case PAAS_DEPLOYEMNT_TYPE_GAE:
+                metric = new PaasDeploymentTypeGaeMetric();
+                break;
+            case PAAS_DEPLOYEMNT_TYPE_HEROKU:
+                metric = new PaasDeploymentTypeHerokuMetric();
+                break;
+            case PAAS_DEPLOYEMNT_TYPE_LOCAL:
+                metric = new PaasDeploymentTypeLocalMetric();
+                break;
+            case PAAS_DEPLOYEMNT_TYPE_OPENSHIFT:
+                metric = new PaasDeploymentTypeOpenShiftMetric();
+                break;
+            case JREBEL_ELIGIBLE:
+                metric = new JrebelElibigleMetric();
+                break;
+            case JREBEL_USAGE:
+                metric = new JrebelUsageMetric();
+                break;
+            case PERCENT_JREBEL_USAGE:
+                metric = new PercentJrebelConvertMetric();
+                break;
+            case INVITATIONS_SENT:
+                metric = new InvitationsSentMetric();
+                break;
+            case PERCENT_INVITATIONS_ACTIVATED:
+                metric = new PercentInvitationsActivatedMetric();
+                break;
+
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

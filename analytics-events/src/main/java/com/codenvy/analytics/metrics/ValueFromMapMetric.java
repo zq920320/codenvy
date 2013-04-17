@@ -59,12 +59,16 @@ public abstract class ValueFromMapMetric extends AbstractMetric {
     }
 
     protected Double calculatePercent(Map<String, Long> valueMetric) {
+        Long sum = calculateSum(valueMetric);
+        return Double.valueOf(100D * getParticalValue(valueMetric) / sum);
+    }
+
+    protected Long calculateSum(Map<String, Long> valueMetric) {
         Long sum = 0L;
         for (Long value : valueMetric.values()) {
             sum += value;
         }
-        
-        return Double.valueOf(100D * getParticalValue(valueMetric) / sum);
+        return sum;
     }
 
     protected Long getParticalValue(Map<String, Long> valueMetric) {

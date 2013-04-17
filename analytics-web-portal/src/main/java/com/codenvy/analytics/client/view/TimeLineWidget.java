@@ -18,7 +18,6 @@
  */
 package com.codenvy.analytics.client.view;
 
-import com.codenvy.analytics.server.view.TimeLineView;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,15 +33,17 @@ public class TimeLineWidget {
     public static Widget createWidget(Iterator<List<String>> iter) {
         CellTable<List<String>> timeline = new CellTable<List<String>>();
 
-        createsColumns(timeline);
-        timeline.setColumnWidth(0, "200pt");
-        // timeline.setRowCount(100);
-        timeline.setPageSize(Integer.MAX_VALUE);
-
         ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
         dataProvider.addDataDisplay(timeline);
 
+        List<String> row = iter.next();
+        createsColumns(timeline, row.size());
+
+        timeline.setColumnWidth(0, "300pt");
+        timeline.setPageSize(Integer.MAX_VALUE);
+
         List<List<String>> list = dataProvider.getList();
+        list.add(row);
         while (iter.hasNext()) {
             list.add(iter.next());
         }
@@ -50,8 +51,8 @@ public class TimeLineWidget {
         return timeline;
     }
 
-    private static void createsColumns(CellTable<List<String>> timeline) {
-        for (int i = 0; i < TimeLineView.HISTORY_LENGTH; i++) {
+    private static void createsColumns(CellTable<List<String>> timeline, int columnCount) {
+        for (int i = 0; i < columnCount; i++) {
             CustomColumn column = new CustomColumn(i);
             timeline.addColumn(column);
         }
