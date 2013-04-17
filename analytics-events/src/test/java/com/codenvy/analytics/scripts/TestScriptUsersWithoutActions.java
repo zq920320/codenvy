@@ -37,13 +37,13 @@ public class TestScriptUsersWithoutActions extends BasePigTest {
     @Test
     public void testUsersWithoutProjects() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2012-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2012-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2012-10-02").build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2012-10-03")
                         .build());
 
         File log = LogGenerator.generateLog(events);
@@ -59,13 +59,13 @@ public class TestScriptUsersWithoutActions extends BasePigTest {
     @Test
     public void testUsersWithoutInvites() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user1").withDate("2012-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2012-10-01").build());
+        events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2012-10-02").build());
 
-        events.add(Event.Builder.createUserInviteEvent("user1", "ws", "session", "user4").withDate("2010-10-01")
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws", "session", "user4").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createUserInviteEvent("user2", "ws", "session", "user4").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserInviteEvent("user2", "ws", "session", "user4").withDate("2012-10-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -80,21 +80,21 @@ public class TestScriptUsersWithoutActions extends BasePigTest {
     @Test
     public void testUsersWithoutBuilds() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2010-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2012-10-03")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2010-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2012-10-03")
                         .build());
 
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws", "session", "project", "type")
-                        .withDate("2010-10-01").build());
+                        .withDate("2012-10-01").build());
         events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas")
-                        .withDate("2010-10-03").build());
+                        .withDate("2012-10-03").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws", "session", "project", "type", "paas")
-                        .withDate("2010-10-01").build());
+                        .withDate("2012-10-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -109,11 +109,11 @@ public class TestScriptUsersWithoutActions extends BasePigTest {
     // @Test
     public void testUsersWithoutDeployes() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2010-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2012-10-03")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2010-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2012-10-03")
                         .build());
 
         events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas")

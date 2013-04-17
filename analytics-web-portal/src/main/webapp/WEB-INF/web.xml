@@ -11,10 +11,20 @@
       <servlet-name>viewServlet</servlet-name>
       <servlet-class>com.codenvy.analytics.server.ViewServiceImpl</servlet-class>
     </servlet>
+    
+    <servlet>
+      <servlet-name>scriptServlet</servlet-name>
+      <servlet-class>com.codenvy.analytics.server.QueryServiceImpl</servlet-class>
+    </servlet>
 
     <servlet-mapping>
       <servlet-name>viewServlet</servlet-name>
       <url-pattern>/AnalyticsApplication/view</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+      <servlet-name>scriptServlet</servlet-name>
+      <url-pattern>/AnalyticsApplication/query</url-pattern>
     </servlet-mapping>
 
     <security-constraint>

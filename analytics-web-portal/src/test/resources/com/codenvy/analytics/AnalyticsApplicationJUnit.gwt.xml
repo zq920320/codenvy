@@ -5,5 +5,6 @@
 
     <!-- Specify the path to any remote services.                   -->
     <servlet path="/AnalyticsApplication/view" class="com.codenvy.analytics.server.ViewServiceImpl"/>
-
+    
+	<source path='shared'/>
 </module>
