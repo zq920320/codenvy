@@ -190,8 +190,8 @@ public class MetricFactory {
             case INVITATIONS_SENT:
                 metric = new InvitationsSentMetric();
                 break;
-            case PERCENT_INVITATIONS_ACTIVATED:
-                metric = new PercentInvitationsActivatedMetric();
+            case PERCENT_INVITATIONS_ACCEPTED:
+                metric = new PercentInvitationsAcceptedMetric();
                 break;
 
             default:

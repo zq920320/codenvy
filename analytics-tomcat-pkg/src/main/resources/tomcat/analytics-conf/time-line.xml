@@ -82,7 +82,7 @@
     <view>
         <date section="INVITATIONS" format="dd/MM" />
         <metric type="invitations_sent"/>
-        <metric type="percent_invitations_activated" format="%.0f%%"/>
+        <metric type="percent_invitations_accepted" format="%.0f%%"/>
         <empty />
     </view>
 </views>

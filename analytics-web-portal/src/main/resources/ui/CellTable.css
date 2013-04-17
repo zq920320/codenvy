@@ -2,7 +2,7 @@
 
 .cellTableWidget {
 	border: none;
-	width: auto;
+	width: 100%;
 }
 
 .cellTableLoading

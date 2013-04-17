@@ -15,13 +15,13 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PercentInvitationsActivatedMetric extends AbstractMetric {
+public class PercentInvitationsAcceptedMetric extends AbstractMetric {
 
     private final Metric totalMetric;
     private final Metric relativeMetric;
 
-    PercentInvitationsActivatedMetric() throws IOException {
-        super(MetricType.PERCENT_INVITATIONS_ACTIVATED);
+    PercentInvitationsAcceptedMetric() throws IOException {
+        super(MetricType.PERCENT_INVITATIONS_ACCEPTED);
 
         this.totalMetric = MetricFactory.createMetric(MetricType.INVITATIONS_SENT);
         this.relativeMetric = MetricFactory.createMetric(MetricType.USERS_ADDED_TO_WORKSPACE);
