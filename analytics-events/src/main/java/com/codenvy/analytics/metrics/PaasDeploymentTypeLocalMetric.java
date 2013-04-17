@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PaasDeploymentTypeLocalMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeLocalMetric() throws IOException {
-        super(MetricType.PAAS_DEPLOYEMNT_TYPE_LOCAL, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "LOCAL",
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_LOCAL, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "LOCAL",
               true);
     }
 

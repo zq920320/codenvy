@@ -13,7 +13,7 @@ public class ProjectCreatedTypeJavaJspMetric extends ValueFromMapMetric {
 
 
     ProjectCreatedTypeJavaJspMetric() throws IOException {
-        super(MetricType.PROJECT_TYPE_JAVA_JSP, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Servlet/JSP", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_JAVA_JSP, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Servlet/JSP", true);
     }
 
     /**

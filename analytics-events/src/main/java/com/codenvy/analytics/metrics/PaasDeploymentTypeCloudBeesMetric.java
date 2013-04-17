@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PaasDeploymentTypeCloudBeesMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeCloudBeesMetric() throws IOException {
-        super(MetricType.PAAS_DEPLOYEMNT_TYPE_CLOUDBESS, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "CloudBees",
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_CLOUDBESS, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "CloudBees",
               true);
     }
 

@@ -21,7 +21,7 @@ public class TotalWorkspacesMetric extends CumulativeMetric {
      */
     @Override
     public String getTitle() {
-        return "Cumulative Total Workspaces";
+        return "Total Workspaces";
     }
 
 }

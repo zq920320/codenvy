@@ -18,7 +18,7 @@
  */
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.scripts.ScriptService;
+import com.codenvy.analytics.scripts.MetricService;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,10 +35,10 @@ public class AnalyticsApplication extends Application {
     /** {@link AnalyticsApplication} constructor. */
     public AnalyticsApplication() {
         singletons = new HashSet<Object>();
-        singletons.add(ScriptService.class);
+        singletons.add(MetricService.class);
 
         classes = new HashSet<Class<?>>();
-        classes.add(ScriptService.class);
+        classes.add(MetricService.class);
     }
 
     /** {@inheritDoc} */

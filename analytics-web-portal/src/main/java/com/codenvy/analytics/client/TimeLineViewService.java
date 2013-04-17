@@ -1,5 +1,6 @@
 package com.codenvy.analytics.client;
 
+import com.codenvy.analytics.shared.DataView;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -9,11 +10,11 @@ import java.util.List;
 
 
 /** The client side stub for the RPC service. */
-@RemoteServiceRelativePath("view")
-public interface ViewService extends RemoteService {
+@RemoteServiceRelativePath("timeLineView")
+public interface TimeLineViewService extends RemoteService {
 
     /**
      * Returns rows for timeline view.
      */
-    List<List<String>> getTimeLineView(Date date) throws IOException;
+    List<DataView> getViews(Date date) throws IOException;
 }

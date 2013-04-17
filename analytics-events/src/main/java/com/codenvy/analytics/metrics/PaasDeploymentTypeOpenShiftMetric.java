@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PaasDeploymentTypeOpenShiftMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeOpenShiftMetric() throws IOException {
-        super(MetricType.PAAS_DEPLOYEMNT_TYPE_OPENSHIFT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "OpenShift",
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_OPENSHIFT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "OpenShift",
               true);
     }
 

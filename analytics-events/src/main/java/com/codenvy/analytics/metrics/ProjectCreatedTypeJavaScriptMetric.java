@@ -12,7 +12,7 @@ import java.io.IOException;
 public class ProjectCreatedTypeJavaScriptMetric extends ValueFromMapMetric {
 
     ProjectCreatedTypeJavaScriptMetric() throws IOException {
-        super(MetricType.PROJECT_TYPE_JAVASCRIPT, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "JavaScript", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_JAVASCRIPT, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "JavaScript", true);
     }
 
     /**

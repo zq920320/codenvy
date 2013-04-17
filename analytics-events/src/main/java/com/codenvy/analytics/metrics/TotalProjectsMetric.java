@@ -12,7 +12,7 @@ import java.io.IOException;
 public class TotalProjectsMetric extends CumulativeMetric {
 
     TotalProjectsMetric() throws IOException {
-        super(MetricType.TOTAL_RPOJECTS, MetricFactory.createMetric(MetricType.PROJECTS_CREATED),
+        super(MetricType.TOTAL_PROJECTS, MetricFactory.createMetric(MetricType.PROJECTS_CREATED),
               MetricFactory.createMetric(MetricType.PROJECTS_DESTROYED));
     }
 

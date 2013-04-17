@@ -2,75 +2,88 @@
 <!--
     Copyright (C) 2013 Codenvy.
 -->
-<view history_length="20">
-    <date format="dd/MM" />
-    <section name="Workspaces"/>
-    <metric type="workspaces_created"/>
-    <metric type="workspaces_destroyed"/>
-    <metric type="total_workspaces"/>
-    <metric type="active_workspaces"/>
-    <metric type="percent_active_workspaces" format="%.2f%%"/>
-    <metric type="percent_inactive_workspaces" format="%.2f%%"/>
-    <empty />
-    <section name="Users"/>
-    <metric type="users_created"/>
-    <metric type="percent_users_created_projects" format="%.0f%%"/>
-    <metric type="users_destroyed"/>
-    <metric type="total_users"/>
-    <metric type="active_users"/>
-    <metric type="percent_active_users" format="%.2f%%"/>
-    <metric type="percent_inactive_users" format="%.2f%%"/>
-    <empty />
-    <section name="Users Added To Workspaces"/>
-    <metric type="users_added_to_workspace_from_website" format="%.2f%%"/>
-    <metric type="users_added_to_workspace_from_invite" format="%.2f%%"/>
-    <empty />
-    <section name="Users Logged In Way"/>
-    <metric type="users_added_to_workspace_from_website" format="%.0f%%"/>
-    <metric type="users_added_to_workspace_from_invite" format="%.0f%%"/>
-    <metric type="users_added_to_workspace_from_invite" format="%.0f%%"/>
-    <empty />
-    <section name="Sessions"/>
-    <metric type="product_usage_time" format="%,d"/>
-    <empty />
-    <section name="Projects"/>
-    <metric type="projects_created"/>
-    <metric type="percent_built_projects" format="%.0f%%"/>
-    <metric type="projects_destroyed"/>
-    <metric type="total_projects"/>
-    <metric type="active_projects"/>
-    <metric type="percent_active_projects" format="%.2f%%"/>
-    <metric type="percent_inactive_projects" format="%.2f%%"/>
-    <empty />
-    <section name="Projects Types"/>
-    <metric type="project_type_java_jar" format="%.0f%%"/>
-    <metric type="project_type_java_war" format="%.0f%%"/>
-    <metric type="project_type_java_jsp" format="%.0f%%"/>
-    <metric type="project_type_java_spring" format="%.0f%%"/>
-    <metric type="project_type_php" format="%.0f%%"/>
-    <metric type="project_type_python" format="%.0f%%"/>
-    <metric type="project_type_javascript" format="%.0f%%"/>
-    <metric type="project_type_ruby" format="%.0f%%"/>
-    <metric type="project_type_mmp" format="%.0f%%"/>
-    <metric type="project_type_groovy" format="%.0f%%"/>
-    <metric type="project_type_others" format="%.0f%%"/>
-    <empty />
-    <section name="PAAS Deployment"/>
-    <metric type="paas_deployemnt_type_aws" format="%.0f%%"/>
-    <metric type="paas_deployemnt_type_appfog" format="%.0f%%"/>
-    <metric type="paas_deployemnt_type_cloudbess" format="%.0f%%"/>
-    <metric type="paas_deployemnt_type_cloudfoundry" format="%.0f%%"/>
-    <metric type="paas_deployemnt_type_gae" format="%.0f%%"/>
-    <metric type="paas_deployemnt_type_heroku" format="%.0f%%"/>
-    <metric type="paas_deployemnt_type_openshift" format="%.0f%%"/>
-    <metric type="paas_deployemnt_type_local" format="%.0f%%"/>
-    <empty />
-    <metric type="jrebel_eligible"/>
-    <metric type="percen_jrebel_usage" format="%.0f%%"/>
-    <empty />
-    <empty />
-    <section name="Invitations"/>
-    <metric type="invitations_sent"/>
-    <metric type="percent_invitations_activated" format="%.0f%%"/>
-</view>
+<views history-length="20">
+    <view>
+        <date section="WORKSPACES" format="dd/MM" />
+        <metric type="workspaces_created"/>
+        <metric type="workspaces_destroyed"/>
+        <metric type="total_workspaces"/>
+        <metric type="active_workspaces"/>
+        <metric type="percent_active_workspaces" format="%.1f%%"/>
+        <metric type="percent_inactive_workspaces" format="%.1f%%"/>
+        <empty />
+    </view>
+    <view>
+        <date section="USERS" format="dd/MM" />
+	<metric type="users_created"/>
+        <metric type="percent_users_created_projects" format="%.0f%%"/>
+	<metric type="users_destroyed"/>
+        <metric type="total_users"/>
+        <metric type="active_users"/>
+	<metric type="percent_active_users" format="%.1f%%"/>
+        <metric type="percent_inactive_users" format="%.1f%%"/>
+        <empty />
+        <section name="Users Added To Workspaces"/>
+        <metric type="percent_users_added_to_workspace_from_website" format="%.0f%%"/>
+        <metric type="percent_users_added_to_workspace_from_invite" format="%.0f%%"/>
+        <empty />
+        <section name="Users Logged In Way"/>
+        <metric type="percent_users_added_to_workspace_from_website" format="%.0f%%"/>
+        <metric type="percent_users_added_to_workspace_from_invite" format="%.0f%%"/>
+        <metric type="percent_users_added_to_workspace_from_invite" format="%.0f%%"/>
+        <empty />
+    </view>
+    <view>
+        <date section="SESSIONS" format="dd/MM" />
+        <metric type="product_usage_time" format="%,d"/>
+        <empty />
+    </view>
+    <view>
+        <date section="PROJECTS" format="dd/MM" />
+        <metric type="projects_created"/>
+        <metric type="percent_built_projects" format="%.0f%%"/>
+	<metric type="projects_destroyed"/>
+        <metric type="total_projects"/>
+        <metric type="active_projects"/>
+        <metric type="percent_active_projects" format="%.1f%%"/>
+        <metric type="percent_inactive_projects" format="%.1f%%"/>
+        <empty />
+    </view>
+    <view>
+        <date section="PROJECTS TYPES" format="dd/MM" />
+        <metric type="percent_project_type_java_jar" format="%.0f%%"/>
+        <metric type="percent_project_type_java_war" format="%.0f%%"/>
+        <metric type="percent_project_type_java_jsp" format="%.0f%%"/>
+        <metric type="percent_project_type_java_spring" format="%.0f%%"/>
+        <metric type="percent_project_type_php" format="%.0f%%"/>
+        <metric type="percent_project_type_python" format="%.0f%%"/>
+        <metric type="percent_project_type_javascript" format="%.0f%%"/>
+        <metric type="percent_project_type_ruby" format="%.0f%%"/>
+        <metric type="percent_project_type_mmp" format="%.0f%%"/>
+        <metric type="percent_project_type_groovy" format="%.0f%%"/>
+        <metric type="percent_project_type_others" format="%.0f%%"/>
+        <empty />
+        <metric type="jrebel_eligible"/>
+        <metric type="percent_jrebel_usage" format="%.0f%%"/>
+        <empty />
+    </view>
+    <view>
+        <date section="PAAS DEPLOYMENT" format="dd/MM" />
+        <metric type="percent_paas_deployemnt_type_aws" format="%.0f%%"/>
+        <metric type="percent_paas_deployemnt_type_appfog" format="%.0f%%"/>
+        <metric type="percent_paas_deployemnt_type_cloudbess" format="%.0f%%"/>
+        <metric type="percent_paas_deployemnt_type_cloudfoundry" format="%.0f%%"/>
+        <metric type="percent_paas_deployemnt_type_gae" format="%.0f%%"/>
+        <metric type="percent_paas_deployemnt_type_heroku" format="%.0f%%"/>
+        <metric type="percent_paas_deployemnt_type_openshift" format="%.0f%%"/>
+        <metric type="percent_paas_deployemnt_type_local" format="%.0f%%"/>
+        <empty />
+    </view>
+    <view>
+        <date section="INVITATIONS" format="dd/MM" />
+        <metric type="invitations_sent"/>
+        <metric type="percent_invitations_activated" format="%.0f%%"/>
+        <empty />
+    </view>
+</views>
 

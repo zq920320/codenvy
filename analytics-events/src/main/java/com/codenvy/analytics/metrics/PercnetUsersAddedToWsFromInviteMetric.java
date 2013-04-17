@@ -9,10 +9,10 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersAddedToWsFromInviteMetric extends ValueFromMapMetric {
+public class PercnetUsersAddedToWsFromInviteMetric extends ValueFromMapMetric {
 
-    UsersAddedToWsFromInviteMetric() throws IOException {
-        super(MetricType.USERS_ADDED_TO_WORKSPACE_FROM_INVITE, MetricFactory.createMetric(MetricType.USERS_ADDED_TO_WORKSPACE), "invite",
+    PercnetUsersAddedToWsFromInviteMetric() throws IOException {
+        super(MetricType.PERCENT_USERS_ADDED_TO_WORKSPACE_FROM_INVITE, MetricFactory.createMetric(MetricType.USERS_ADDED_TO_WORKSPACE), "invite",
               true);
     }
 

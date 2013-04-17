@@ -12,7 +12,7 @@ import java.io.IOException;
 public class ProjectCreatedTypeJavaPhpMetric extends ValueFromMapMetric {
 
     ProjectCreatedTypeJavaPhpMetric() throws IOException {
-        super(MetricType.PROJECT_TYPE_PHP, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "PHP", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_PHP, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "PHP", true);
     }
 
     /**

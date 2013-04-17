@@ -18,11 +18,12 @@
  */
 package com.codenvy.analytics.scripts;
 
-import java.io.IOException;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -34,15 +35,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@Path("script")
-@RolesAllowed({"admins", "cloud/admin", "cloud/manager"})
-public class ScriptService {
+@Path("metric")
+public class MetricService {
 
     /** Executes script and returns result in JSON. */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{script}")
-    public Response execute(@PathParam("script") String script, @Context UriInfo info) {
+    @Path("{metric}")
+    public Response execute(@PathParam("metric") String metricName, @Context UriInfo info) {
         Map<String, String> params = new HashMap<String, String>();
 
         MultivaluedMap<String, String> queryParameters = info.getQueryParameters();
@@ -50,33 +50,20 @@ public class ScriptService {
             params.put(key, queryParameters.getFirst(key));
         }
 
-        return doExecute(script, params);
+        return getValue(metricName, params);
     }
 
-    private Response doExecute(String script, Map<String, String> params) {
+    private Response getValue(String metricName, Map<String, String> params) {
         ScriptExecutionResult executionResult = new ScriptExecutionResult();
 
         try {
-            executionResult.setResult(getResult(script, params));
+            Metric metric = MetricFactory.createMetric(metricName);
+
+            executionResult.setResult(metric.getValue(params));
             return Response.status(Response.Status.OK).entity(executionResult).build();
-        } catch (IOException e) {
-            executionResult.setResult(e);
+        } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-    }
-
-    private Object getResult(String script, Map<String, String> params) throws IOException {
-        ScriptType scriptType;
-        try {
-            scriptType = ScriptType.valueOf(script.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IOException("Unknown script name " + script);
-        }
-
-        ScriptExecutor executor = new ScriptExecutor(scriptType);
-        executor.setParams(params);
-
-        return executor.executeAndReturnResult();
     }
 
     /** Wraps result in POJO. */

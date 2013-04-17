@@ -32,10 +32,11 @@ public class PercentInvitationsActivatedMetric extends AbstractMetric {
      */
     @Override
     protected Object evaluateValue(Map<String, String> context) throws IOException {
-        Long total = (Long)totalMetric.getValue(context);
-        Map<String, Long> relative = (Map<String, Long>)relativeMetric.getValue(context);
+        Map<String, Long> values = (Map<String, Long>)relativeMetric.getValue(context);
+        Long value = values.containsKey("invite") ? values.get("invite") : Long.valueOf(0);
 
-        return Double.valueOf(100D * relative.get("invite") / total);
+        Long total = (Long)totalMetric.getValue(context);
+        return Double.valueOf(100D * value / total);
     }
 
     /**

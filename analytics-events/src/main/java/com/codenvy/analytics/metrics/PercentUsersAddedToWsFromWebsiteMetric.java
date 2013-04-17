@@ -9,10 +9,10 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersAddedToWsFromWebsiteMetric extends ValueFromMapMetric {
+public class PercentUsersAddedToWsFromWebsiteMetric extends ValueFromMapMetric {
 
-    UsersAddedToWsFromWebsiteMetric() throws IOException {
-        super(MetricType.USERS_ADDED_TO_WORKSPACE_FROM_WEBSITE, MetricFactory.createMetric(MetricType.USERS_ADDED_TO_WORKSPACE), "website",
+    PercentUsersAddedToWsFromWebsiteMetric() throws IOException {
+        super(MetricType.PERCENT_USERS_ADDED_TO_WORKSPACE_FROM_WEBSITE, MetricFactory.createMetric(MetricType.USERS_ADDED_TO_WORKSPACE), "website",
               true);
     }
 

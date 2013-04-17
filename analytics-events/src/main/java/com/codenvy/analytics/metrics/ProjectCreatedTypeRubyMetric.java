@@ -12,7 +12,7 @@ import java.io.IOException;
 public class ProjectCreatedTypeRubyMetric extends ValueFromMapMetric {
 
     ProjectCreatedTypeRubyMetric() throws IOException {
-        super(MetricType.PROJECT_TYPE_RUBY, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Rails", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_RUBY, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Rails", true);
     }
 
     /**

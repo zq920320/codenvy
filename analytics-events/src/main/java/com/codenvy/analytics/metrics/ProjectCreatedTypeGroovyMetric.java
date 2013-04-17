@@ -12,7 +12,7 @@ import java.io.IOException;
 public class ProjectCreatedTypeGroovyMetric extends ValueFromMapMetric {
 
     ProjectCreatedTypeGroovyMetric() throws IOException {
-        super(MetricType.PROJECT_TYPE_GROOVY, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "eXo", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_GROOVY, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "eXo", true);
     }
 
     /**

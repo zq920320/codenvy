@@ -18,6 +18,8 @@
  */
 package com.codenvy.analytics.client.view;
 
+import com.codenvy.analytics.client.CellTableResource;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,19 +33,16 @@ import java.util.List;
  */
 public class TimeLineWidget {
     public static Widget createWidget(Iterator<List<String>> iter) {
-        CellTable<List<String>> timeline = new CellTable<List<String>>();
+        CellTableResource resources = GWT.create(CellTableResource.class);
 
+        CellTable<List<String>> timeline = new CellTable<List<String>>(Integer.MAX_VALUE, resources);
         ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
         dataProvider.addDataDisplay(timeline);
 
         List<String> row = iter.next();
-        createsColumns(timeline, row.size());
-
-        timeline.setColumnWidth(0, "300pt");
-        timeline.setPageSize(Integer.MAX_VALUE);
+        createsColumns(timeline, row);
 
         List<List<String>> list = dataProvider.getList();
-        list.add(row);
         while (iter.hasNext()) {
             list.add(iter.next());
         }
@@ -51,10 +50,11 @@ public class TimeLineWidget {
         return timeline;
     }
 
-    private static void createsColumns(CellTable<List<String>> timeline, int columnCount) {
-        for (int i = 0; i < columnCount; i++) {
+
+    private static void createsColumns(CellTable<List<String>> timeline, List<String> headers) {
+        for (int i = 0; i < headers.size(); i++) {
             CustomColumn column = new CustomColumn(i);
-            timeline.addColumn(column);
+            timeline.addColumn(column, headers.get(i));
         }
     }
 

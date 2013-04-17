@@ -13,7 +13,7 @@ public class PercentInactiveProjectsMetric extends PercentMetric {
 
 
     PercentInactiveProjectsMetric() throws IOException {
-        super(MetricType.PERCENT_INACTIVE_PROJECTS, MetricFactory.createMetric(MetricType.TOTAL_RPOJECTS),
+        super(MetricType.PERCENT_INACTIVE_PROJECTS, MetricFactory.createMetric(MetricType.TOTAL_PROJECTS),
               MetricFactory.createMetric(MetricType.ACTIVE_PROJECTS), true);
     }
 

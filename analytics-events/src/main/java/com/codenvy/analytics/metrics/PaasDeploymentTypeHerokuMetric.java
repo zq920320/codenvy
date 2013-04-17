@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PaasDeploymentTypeHerokuMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeHerokuMetric() throws IOException {
-        super(MetricType.PAAS_DEPLOYEMNT_TYPE_HEROKU, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "Heroku",
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_HEROKU, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "Heroku",
               true);
     }
 

@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PaasDeploymentTypeAwsMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeAwsMetric() throws IOException {
-        super(MetricType.PAAS_DEPLOYEMNT_TYPE_AWS, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "AWS:BeansTalk", true);
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_AWS, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "AWS:BeansTalk", true);
     }
 
     /**

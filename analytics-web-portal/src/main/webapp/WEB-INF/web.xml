@@ -9,12 +9,12 @@
     <!-- Servlets -->
     <servlet>
       <servlet-name>viewServlet</servlet-name>
-      <servlet-class>com.codenvy.analytics.server.ViewServiceImpl</servlet-class>
+      <servlet-class>com.codenvy.analytics.server.TimeLineViewServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
       <servlet-name>viewServlet</servlet-name>
-      <url-pattern>/AnalyticsApplication/view</url-pattern>
+      <url-pattern>/AnalyticsApplication/timeLineView</url-pattern>
     </servlet-mapping>
 
     <security-constraint>

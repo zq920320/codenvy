@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PaasDeploymentTypeCloudFoundryMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeCloudFoundryMetric() throws IOException {
-        super(MetricType.PAAS_DEPLOYEMNT_TYPE_CLOUDFOUNDRY, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "CloudFoundry",
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_CLOUDFOUNDRY, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "CloudFoundry",
               true);
     }
 

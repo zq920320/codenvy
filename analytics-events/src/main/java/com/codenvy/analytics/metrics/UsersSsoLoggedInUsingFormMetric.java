@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class UsersSsoLoggedInUsingFormMetric extends ValueFromMapMetric {
     UsersSsoLoggedInUsingFormMetric() throws IOException {
-        super(MetricType.USERS_SSO_LOGGED_IN_USING_FORM, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN), "jaas", true);
+        super(MetricType.PERCENT_USERS_SSO_LOGGED_IN_USING_FORM, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN), "jaas", true);
     }
 
     /**

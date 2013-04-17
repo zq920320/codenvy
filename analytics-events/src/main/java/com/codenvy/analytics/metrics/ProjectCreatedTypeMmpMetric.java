@@ -12,7 +12,7 @@ import java.io.IOException;
 public class ProjectCreatedTypeMmpMetric extends ValueFromMapMetric {
 
     ProjectCreatedTypeMmpMetric() throws IOException {
-        super(MetricType.PROJECT_TYPE_MMP, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Maven Multi-module", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_MMP, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Maven Multi-module", true);
     }
 
     /**

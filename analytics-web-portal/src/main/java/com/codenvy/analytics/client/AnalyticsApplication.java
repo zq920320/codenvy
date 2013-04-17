@@ -1,6 +1,8 @@
 package com.codenvy.analytics.client;
 
+
 import com.codenvy.analytics.client.view.TimeLineWidget;
+import com.codenvy.analytics.shared.DataView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -14,17 +16,19 @@ import java.util.List;
 public class AnalyticsApplication implements EntryPoint {
 
     /** Create a remote service proxy. */
-    private final ViewServiceAsync viewService = GWT.create(ViewService.class);
+    private final TimeLineViewServiceAsync viewService = GWT.create(TimeLineViewService.class);
 
     /** This is the entry point method. */
     public void onModuleLoad() {
-        viewService.getTimeLineView(new Date(), new AsyncCallback<List<List<String>>>() {
+        viewService.getViews(new Date(), new AsyncCallback<List<DataView>>() {
             public void onFailure(Throwable caught) {
-                Window.alert("Something gone wrong. See server logs for details");
+                Window.alert("Something gone wrong. See server logs for details " + caught.getMessage());
             }
 
-            public void onSuccess(List<List<String>> result) {
-                RootPanel.get("timeLineContainer").add(TimeLineWidget.createWidget(result.iterator()));
+            public void onSuccess(List<DataView> result) {
+                for (DataView data : result) {
+                    RootPanel.get("timeLineContainer").add(TimeLineWidget.createWidget(data.iterator()));
+                }
             }
         });
     }

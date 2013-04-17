@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PaasDeploymentTypeGaeMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeGaeMetric() throws IOException {
-        super(MetricType.PAAS_DEPLOYEMNT_TYPE_GAE, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "GAE",
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_GAE, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "GAE",
               true);
     }
 
