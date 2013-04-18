@@ -1,6 +1,7 @@
 package com.codenvy.analytics.client.view;
 
 import com.codenvy.analytics.client.AnalyticsApplication;
+import com.codenvy.analytics.client.GWTLoader;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,16 +23,12 @@ import java.util.Map;
 public class QueryView extends Composite
 {
     private final AnalyticsApplication portal;
-
     private final Map<String, String>  parameters          = new HashMap<String, String>();
-
     private Map<String, String>        metrics;
-
     private String                     metricTitle;
-
     private final FlexTable            flexTableMain       = new FlexTable();
-
     private final FlexTable            flexTableParameters = new FlexTable();
+    private final GWTLoader            gwtLoader           = new GWTLoader();
 
     public QueryView(final AnalyticsApplication portal) {
         this.portal = portal;
@@ -61,16 +58,18 @@ public class QueryView extends Composite
             setStyleName("mainmenu");
             this.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
+                    gwtLoader.show();
                     portal.getQueryService().calculateMetric(metrics.get(metricTitle), parameters, new AsyncCallback<String>() {
                         public void onSuccess(String result) {
+                            gwtLoader.hide();
                             flexTableMain.setText(3, 0, result);
                         }
 
                         public void onFailure(Throwable caught) {
+                            gwtLoader.hide();
                             flexTableMain.setText(3, 0, caught.getMessage());
                         }
                     });
-
                 }
             });
         }

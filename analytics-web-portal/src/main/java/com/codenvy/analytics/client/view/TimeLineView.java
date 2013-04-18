@@ -6,6 +6,7 @@ package com.codenvy.analytics.client.view;
 
 import com.codenvy.analytics.client.AnalyticsApplication;
 import com.codenvy.analytics.client.CellTableResource;
+import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.TimeLineViewServiceAsync;
 import com.codenvy.analytics.shared.DataView;
 import com.google.gwt.core.client.GWT;
@@ -32,13 +33,18 @@ public class TimeLineView extends Composite
     public TimeLineView(final AnalyticsApplication portal) {
         flexTableMain.setStyleName("flexTableMain");
 
+        final GWTLoader gwtLoader = new GWTLoader();
+        gwtLoader.show();
+
         TimeLineViewServiceAsync viewService = portal.getViewService();
         viewService.getViews(new Date(), new AsyncCallback<List<DataView>>() {
             public void onFailure(Throwable caught) {
+                gwtLoader.hide();
                 flexTableMain.setText(0, 0, caught.getMessage());
             }
 
             public void onSuccess(List<DataView> result) {
+                gwtLoader.hide();
                 for (int i = 0; i < result.size(); i++) {
                     flexTableMain.setWidget(i, 0, createWidget(result.get(i).iterator()));
                 }

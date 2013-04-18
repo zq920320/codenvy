@@ -226,6 +226,10 @@ public class TimeLineViewManager {
 
                 if (value instanceof Double && ((Double)value).isNaN()) {
                     row.add("");
+                } else if (value instanceof Double && ((Double)value) == 0) {
+                    row.add("");
+                } else if (value instanceof Long && ((Long)value) == 0) {
+                    row.add("");
                 } else {
                     row.add(String.format(format, value));
                 }

@@ -58,7 +58,8 @@ public class LogLocationOptimizer {
 
         if (fromDate.after(toDate))
         {
-            throw new IllegalStateException(fromDate.toString() + " is after " + toDate.toString());
+            throw new IllegalStateException(ScriptExecutor.PARAM_DATE_FORMAT.format(fromDate.getTime()) + " is after "
+                                            + ScriptExecutor.PARAM_DATE_FORMAT.format(toDate.getTime()));
         }
 
         StringBuilder builder = new StringBuilder();

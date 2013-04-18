@@ -28,9 +28,9 @@
         <metric type="percent_users_added_to_workspace_from_invite" format="%.0f%%"/>
         <empty />
         <section name="Users Logged In Way"/>
-        <metric type="percent_users_added_to_workspace_from_website" format="%.0f%%"/>
-        <metric type="percent_users_added_to_workspace_from_invite" format="%.0f%%"/>
-        <metric type="percent_users_added_to_workspace_from_invite" format="%.0f%%"/>
+        <metric type="percent_users_sso_logged_in_using_google" format="%.0f%%"/>
+        <metric type="percent_users_sso_logged_in_using_github" format="%.0f%%"/>
+        <metric type="percent_users_sso_logged_in_using_form" format="%.0f%%"/>
         <empty />
     </view>
     <view>
