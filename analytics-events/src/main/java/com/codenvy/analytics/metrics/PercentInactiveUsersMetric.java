@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PercentInactiveUsersMetric extends PercentMetric {
 
     PercentInactiveUsersMetric() throws IOException {
-        super(MetricType.PERCENT_ACTIVE_USERS, MetricFactory.createMetric(MetricType.TOTAL_USERS),
+        super(MetricType.PERCENT_INACTIVE_USERS, MetricFactory.createMetric(MetricType.TOTAL_USERS),
               MetricFactory.createMetric(MetricType.ACTIVE_USERS), true);
     }
 

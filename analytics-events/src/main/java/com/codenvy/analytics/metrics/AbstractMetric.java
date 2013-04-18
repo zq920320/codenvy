@@ -90,6 +90,9 @@ public abstract class AbstractMetric implements Metric {
         }
     }
 
+    /**
+     * TODO
+     */
     protected boolean isStoreAllowed(Map<String, String> context) throws IOException {
         String toDateParam = context.get(ScriptParameters.TO_DATE.getName());
 

@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PercentUsersSsoLoggedInUsingGithubMetric extends ValueFromMapMetric {
+public class PercentUsersSsoLoggedInUsingGithubMetric extends PercentUserSsoLoggedInMetric {
 
     PercentUsersSsoLoggedInUsingGithubMetric() throws IOException {
         super(MetricType.PERCENT_USERS_SSO_LOGGED_IN_USING_GITHUB, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN), "github", true);
