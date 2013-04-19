@@ -1,12 +1,11 @@
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.shared.DataView;
-
 import com.codenvy.analytics.client.TimeLineViewService;
 import com.codenvy.analytics.metrics.TimeIntervalUtil;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.scripts.ScriptParameters;
 import com.codenvy.analytics.server.view.TimeLineViewManager;
+import com.codenvy.analytics.shared.DataView;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import org.slf4j.Logger;

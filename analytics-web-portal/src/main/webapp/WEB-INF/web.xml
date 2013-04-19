@@ -6,24 +6,28 @@
 <web-app>
     <display-name>Analytics Service</display-name>
 
+    <listener>
+      <listener-class>com.codenvy.analytics.server.PreprocessingServiceImpl</listener-class>
+    </listener>
     <!-- Servlets -->
-    <servlet>
-      <servlet-name>viewServlet</servlet-name>
-      <servlet-class>com.codenvy.analytics.server.TimeLineViewServiceImpl</servlet-class>
-    </servlet>
     
     <servlet>
-      <servlet-name>scriptServlet</servlet-name>
+      <servlet-name>queryServlet</servlet-name>
       <servlet-class>com.codenvy.analytics.server.QueryServiceImpl</servlet-class>
     </servlet>
 
+    <servlet>
+      <servlet-name>timeLineViewServlet</servlet-name>
+      <servlet-class>com.codenvy.analytics.server.TimeLineViewServiceImpl</servlet-class>
+    </servlet>
+
     <servlet-mapping>
-      <servlet-name>viewServlet</servlet-name>
+      <servlet-name>timeLineViewServlet</servlet-name>
       <url-pattern>/AnalyticsApplication/timeLineView</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>
-      <servlet-name>scriptServlet</servlet-name>
+      <servlet-name>queryServlet</servlet-name>
       <url-pattern>/AnalyticsApplication/query</url-pattern>
     </servlet-mapping>
 

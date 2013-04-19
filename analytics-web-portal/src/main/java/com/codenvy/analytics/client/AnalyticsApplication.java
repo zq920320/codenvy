@@ -19,13 +19,13 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 /** Entry point classes define <code>onModuleLoad()</code>. */
 public class AnalyticsApplication implements EntryPoint {
-    private final QueryServiceAsync        queryService  = GWT.create(QueryService.class);
-    private final TimeLineViewServiceAsync viewService   = GWT.create(TimeLineViewService.class);
-    private final QueryView                queryView     = new QueryView(this);
-    private final TimeLineView             timelineView  = new TimeLineView(this);
-    private final UserView                 userView      = new UserView();
-    private final WorkspaceView            workspaceView = new WorkspaceView();
-    private final ProjectView              projectView   = new ProjectView();
+    private final QueryServiceAsync         queryService         = GWT.create(QueryService.class);
+    private final TimeLineViewServiceAsync  viewService          = GWT.create(TimeLineViewService.class);
+    private final QueryView                 queryView            = new QueryView(this);
+    private final TimeLineView              timelineView         = new TimeLineView(this);
+    private final UserView                  userView             = new UserView();
+    private final WorkspaceView             workspaceView        = new WorkspaceView();
+    private final ProjectView               projectView          = new ProjectView();
 
     /**
      * This is the entry point method.

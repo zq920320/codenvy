@@ -63,6 +63,7 @@
                             <addClasspath>false</addClasspath>
                         </manifest>
                     </archive>
+                  	<packagingExcludes>**/lib/servlet-api*,**/lib/jsp*</packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>
