@@ -32,18 +32,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestMapValueManager extends BasePigTest {
+public class TestArrayDoubleValueManager extends BasePigTest {
 
-    private MapValueManager valueManager;
-    private TupleFactory    tupleFactory;
-    private BufferedReader  reader;
-    private BufferedWriter  writer;
+    private ArrayDoubleValueManager valueManager;
+    private TupleFactory     tupleFactory;
+    private BufferedReader   reader;
+    private BufferedWriter   writer;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -52,60 +49,47 @@ public class TestMapValueManager extends BasePigTest {
 
         reader = new BufferedReader(new FileReader(file));
         writer = new BufferedWriter(new FileWriter(file));
-        valueManager = new MapValueManager();
+        valueManager = new ArrayDoubleValueManager();
         tupleFactory = TupleFactory.getInstance();
     }
 
     @Test
-    public void testValueOfTuple() throws Exception {
-        Tuple tuple = createTuple();
-
-        Map<String, Long> value = valueManager.valueOf(tuple);
-
-        Assert.assertTrue(value.containsKey("prop1"));
-        Assert.assertEquals(value.get("prop1"), Long.valueOf(1));
-    }
-    
-    @Test
     public void testValueOfString() throws Exception {
-        Map<String, Long> value = valueManager.valueOf("prop1=1, prop2=2");
+        Double[] value = valueManager.valueOf("1,2,3");
 
-        Assert.assertEquals(value.get("prop1"), Long.valueOf(1));
-        Assert.assertEquals(value.get("prop2"), Long.valueOf(2));
+        Assert.assertEquals(value[0], 1D);
+        Assert.assertEquals(value[1], 2D);
+        Assert.assertEquals(value[2], 3D);
     }
 
     @Test
     public void testValueOfStringWithBrackets() throws Exception {
-        Map<String, Long> value = valueManager.valueOf("[prop1=1, prop2=2]");
+        Double[] value = valueManager.valueOf("[1,2,3]");
 
-        Assert.assertEquals(value.get("prop1"), Long.valueOf(1));
-        Assert.assertEquals(value.get("prop2"), Long.valueOf(2));
+        Assert.assertEquals(value[0], 1D);
+        Assert.assertEquals(value[1], 2D);
+        Assert.assertEquals(value[2], 3D);
     }
 
     @Test
     public void testStoreLoad() throws Exception {
-        Map<String, Long> value = new HashMap<String, Long>();
-        value.put("1", 2L);
-        value.put("3", 4L);
+        Double[] value = {10D, 11.0D};
 
-        ValueManager manager = new MapValueManager();
-        manager.store(writer, value);
+        valueManager.store(writer, value);
+        Double[] newValue = valueManager.load(reader);
 
-        Map<String, Long> newValue = (Map<String, Long>)manager.load(reader);
-
-        Assert.assertEquals(newValue.get("1"), Long.valueOf(2));
-        Assert.assertEquals(newValue.get("3"), Long.valueOf(4));
+        Assert.assertEquals(value[0], 10D);
+        Assert.assertEquals(value[1], 11.0D);
     }
 
-    private Tuple createTuple() throws IOException {
+    private Tuple createTuple() {
         Tuple tuple = tupleFactory.newTuple();
 
+        Tuple innterTuple = tupleFactory.newTuple();
+        innterTuple.append(10D);
+        innterTuple.append(11.1D);
         DataBag bag = new DefaultDataBag();
-        Tuple innerTuple = tupleFactory.newTuple();
-        innerTuple.append("prop1");
-        innerTuple.append(1L);
-        bag.add(innerTuple);
-
+        bag.add(innterTuple);
         tuple.append(bag);
 
         return tuple;

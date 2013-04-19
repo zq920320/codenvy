@@ -102,6 +102,10 @@ public class ListValueManager implements ValueManager {
      */
     @Override
     public List<String> valueOf(String value) throws IOException {
+        int beginIndex = value.startsWith("[") ? 1 : 0;
+        int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
+        value = value.substring(beginIndex, endIndex);
+
         String[] splittedLine = value.split(",");
 
         List<String> result = new ArrayList<String>(splittedLine.length);

@@ -75,6 +75,15 @@ public class TestListValueManager extends BasePigTest {
     }
 
     @Test
+    public void testValueOfStringWithBrackets() throws Exception {
+        List<String> value = valueManager.valueOf("[1,2,3]");
+
+        Assert.assertEquals(value.get(0), "1");
+        Assert.assertEquals(value.get(1), "2");
+        Assert.assertEquals(value.get(2), "3");
+    }
+
+    @Test
     public void testStoreLoad() throws Exception {
         List<String> value = new ArrayList<String>();
         value.add("1");
