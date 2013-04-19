@@ -12,8 +12,8 @@ import java.util.Map.Entry;
  */
 public abstract class PercentUserSsoLoggedInMetric extends ValueFromMapMetric {
 
-    PercentUserSsoLoggedInMetric(MetricType metricType, Metric metric, String keyName, boolean percent) {
-        super(metricType, metric, keyName, percent);
+    PercentUserSsoLoggedInMetric(MetricType metricType, Metric metric, String keyName) {
+        super(metricType, metric, keyName, ValueType.PERCENT);
     }
 
     /**

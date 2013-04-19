@@ -12,7 +12,8 @@ import java.io.IOException;
 public class PercentPaasDeploymentTypeAppFogMetric extends ValueFromMapMetric {
 
     PercentPaasDeploymentTypeAppFogMetric() throws IOException {
-        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_APPFOG, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "Appfog", true);
+        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_APPFOG, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "Appfog",
+              ValueType.PERCENT);
     }
 
     /**

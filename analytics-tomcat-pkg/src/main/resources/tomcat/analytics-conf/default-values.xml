@@ -5,13 +5,7 @@
 
 -->
 <metrics>
-    <metric type="total_users">
-        <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
-    </metric>
-    <metric type="total_workspaces">
-        <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
-    </metric>
-    <metric type="total_projects">
+    <metric type="metric_name">
         <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
     </metric>
 </metrics>

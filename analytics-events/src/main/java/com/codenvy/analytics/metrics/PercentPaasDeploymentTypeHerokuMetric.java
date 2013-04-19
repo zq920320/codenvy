@@ -13,7 +13,7 @@ public class PercentPaasDeploymentTypeHerokuMetric extends ValueFromMapMetric {
 
     PercentPaasDeploymentTypeHerokuMetric() throws IOException {
         super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_HEROKU, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "Heroku",
-              true);
+              ValueType.PERCENT);
     }
 
     /**

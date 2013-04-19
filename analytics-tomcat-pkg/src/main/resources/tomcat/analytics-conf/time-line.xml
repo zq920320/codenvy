@@ -51,17 +51,17 @@
     </view>
     <view>
         <date section="PROJECTS TYPES" format="dd/MM" />
-        <metric type="percent_project_type_java_jar" format="%.0f%%"/>
-        <metric type="percent_project_type_java_war" format="%.0f%%"/>
-        <metric type="percent_project_type_java_jsp" format="%.0f%%"/>
-        <metric type="percent_project_type_java_spring" format="%.0f%%"/>
-        <metric type="percent_project_type_php" format="%.0f%%"/>
-        <metric type="percent_project_type_python" format="%.0f%%"/>
-        <metric type="percent_project_type_javascript" format="%.0f%%"/>
-        <metric type="percent_project_type_ruby" format="%.0f%%"/>
-        <metric type="percent_project_type_mmp" format="%.0f%%"/>
-        <metric type="percent_project_type_groovy" format="%.0f%%"/>
-        <metric type="percent_project_type_others" format="%.0f%%"/>
+        <metric type="percent_project_type_java_jar" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_java_war" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_java_jsp" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_java_spring" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_php" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_python" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_javascript" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_ruby" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_mmp" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_groovy" format="%.0f (%.1f%%)"/>
+        <metric type="percent_project_type_others" format="%.0f (%.1f%%)"/>
         <empty />
         <metric type="jrebel_eligible"/>
         <metric type="percent_jrebel_usage" format="%.0f%%"/>

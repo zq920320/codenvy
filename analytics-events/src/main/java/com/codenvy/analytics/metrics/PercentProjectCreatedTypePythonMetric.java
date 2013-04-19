@@ -12,7 +12,8 @@ import java.io.IOException;
 public class PercentProjectCreatedTypePythonMetric extends ValueFromMapMetric {
 
     PercentProjectCreatedTypePythonMetric() throws IOException {
-        super(MetricType.PERCENT_PROJECT_TYPE_PYTHON, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Python", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_PYTHON, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Python",
+              ValueType.BOTH);
     }
 
     /**

@@ -12,7 +12,8 @@ import java.io.IOException;
 public class PercentProjectCreatedTypeOthersMetric extends ValueFromMapMetric {
 
     PercentProjectCreatedTypeOthersMetric() throws IOException {
-        super(MetricType.PERCENT_PROJECT_TYPE_OTHERS, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "default", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_OTHERS, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "default",
+              ValueType.BOTH);
     }
 
     /**

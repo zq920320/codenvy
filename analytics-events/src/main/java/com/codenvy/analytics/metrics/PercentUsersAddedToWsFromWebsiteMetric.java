@@ -13,7 +13,7 @@ public class PercentUsersAddedToWsFromWebsiteMetric extends ValueFromMapMetric {
 
     PercentUsersAddedToWsFromWebsiteMetric() throws IOException {
         super(MetricType.PERCENT_USERS_ADDED_TO_WORKSPACE_FROM_WEBSITE, MetricFactory.createMetric(MetricType.USERS_ADDED_TO_WORKSPACE), "website",
-              true);
+              ValueType.PERCENT);
     }
 
     /**

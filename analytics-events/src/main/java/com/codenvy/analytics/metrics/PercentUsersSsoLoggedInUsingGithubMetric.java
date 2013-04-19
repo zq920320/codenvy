@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PercentUsersSsoLoggedInUsingGithubMetric extends PercentUserSsoLoggedInMetric {
 
     PercentUsersSsoLoggedInUsingGithubMetric() throws IOException {
-        super(MetricType.PERCENT_USERS_SSO_LOGGED_IN_USING_GITHUB, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN), "github", true);
+        super(MetricType.PERCENT_USERS_SSO_LOGGED_IN_USING_GITHUB, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN), "github");
     }
 
     /**

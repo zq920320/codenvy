@@ -4,7 +4,9 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.scripts.ArrayDoubleValueManager;
 import com.codenvy.analytics.scripts.DoubleValueManager;
+import com.codenvy.analytics.scripts.LongValueManager;
 import com.codenvy.analytics.scripts.ScriptParameters;
 import com.codenvy.analytics.scripts.ValueManager;
 
@@ -19,13 +21,13 @@ public abstract class ValueFromMapMetric extends AbstractMetric {
 
     protected final String keyName;
     private final Metric   metric;
-    private final boolean  percent;
+    private final ValueType valueType;
 
-    ValueFromMapMetric(MetricType metricType, Metric metric, String keyName, boolean percent) {
+    ValueFromMapMetric(MetricType metricType, Metric metric, String keyName, ValueType valueType) {
         super(metricType);
         this.metric = metric;
         this.keyName = keyName;
-        this.percent = percent;
+        this.valueType = valueType;
     }
 
     /**
@@ -51,11 +53,16 @@ public abstract class ValueFromMapMetric extends AbstractMetric {
     protected Object evaluateValue(Map<String, String> context) throws IOException {
         Map<String, Long> valueMetric = (Map<String, Long>)metric.getValue(context);
 
-        if (percent) {
-            return calculatePercent(valueMetric);
-        } else {
-            return getParticalValue(valueMetric);
+        switch (valueType) {
+            case NUMBER:
+                return getParticalValue(valueMetric);
+            case PERCENT:
+                return calculatePercent(valueMetric);
+            case BOTH:
+                return new Double[]{getParticalValue(valueMetric).doubleValue(), calculatePercent(valueMetric)};
         }
+
+        throw new IllegalArgumentException("Unkonw type " + valueType);
     }
 
     protected Double calculatePercent(Map<String, Long> valueMetric) {
@@ -80,6 +87,21 @@ public abstract class ValueFromMapMetric extends AbstractMetric {
      */
     @Override
     protected ValueManager getValueManager() {
-        return new DoubleValueManager();
+        switch (valueType) {
+            case NUMBER:
+                return new LongValueManager();
+            case PERCENT:
+                return new DoubleValueManager();
+            case BOTH:
+                return new ArrayDoubleValueManager();
+        }
+
+        throw new IllegalArgumentException("Unkonw type " + valueType);
+    }
+
+    public static enum ValueType {
+        NUMBER,
+        PERCENT,
+        BOTH
     }
 }

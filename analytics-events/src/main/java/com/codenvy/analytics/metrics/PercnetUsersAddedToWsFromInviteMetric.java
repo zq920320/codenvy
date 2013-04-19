@@ -13,7 +13,7 @@ public class PercnetUsersAddedToWsFromInviteMetric extends ValueFromMapMetric {
 
     PercnetUsersAddedToWsFromInviteMetric() throws IOException {
         super(MetricType.PERCENT_USERS_ADDED_TO_WORKSPACE_FROM_INVITE, MetricFactory.createMetric(MetricType.USERS_ADDED_TO_WORKSPACE), "invite",
-              true);
+              ValueType.PERCENT);
     }
 
     /**

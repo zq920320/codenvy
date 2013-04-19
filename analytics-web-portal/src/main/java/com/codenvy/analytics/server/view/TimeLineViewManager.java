@@ -224,12 +224,12 @@ public class TimeLineViewManager {
             for (int i = 0; i < getHistoryLength(); i++) {
                 Object value = metric.getValue(new HashMap<String, String>(context));
 
-                if (value instanceof Double && ((Double)value).isNaN()) {
-                    row.add("");
-                } else if (value instanceof Double && ((Double)value) == 0) {
+                if (value instanceof Double && (((Double)value).isNaN() || ((Double)value) == 0)) {
                     row.add("");
                 } else if (value instanceof Long && ((Long)value) == 0) {
                     row.add("");
+                } else if (value instanceof Double[]) {
+                    row.add(String.format(format, (Double[])value));
                 } else {
                     row.add(String.format(format, value));
                 }

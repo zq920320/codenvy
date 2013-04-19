@@ -13,7 +13,7 @@ import java.util.Map;
 public class PercentProjectCreatedTypeJavaWarMetric extends ValueFromMapMetric {
 
     PercentProjectCreatedTypeJavaWarMetric() throws IOException {
-        super(MetricType.PERCENT_PROJECT_TYPE_JAVA_WAR, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "War", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_JAVA_WAR, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "War", ValueType.BOTH);
     }
 
     /**

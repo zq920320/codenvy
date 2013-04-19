@@ -112,7 +112,7 @@ public class MapValueManager implements ValueManager {
         Map<String, Long> result = new LinkedHashMap<String, Long>(splittedLine.length);
         for (String str : splittedLine) {
             String[] entry = str.split("=");
-            result.put(entry[0], Long.valueOf(entry[1]));
+            result.put(entry[0].trim(), Long.valueOf(entry[1].trim()));
         }
 
         return Collections.unmodifiableMap(result);

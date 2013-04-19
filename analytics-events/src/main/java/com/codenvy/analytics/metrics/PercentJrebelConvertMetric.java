@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PercentJrebelConvertMetric extends ValueFromMapMetric {
 
     PercentJrebelConvertMetric() throws IOException {
-        super(MetricType.PERCENT_JREBEL_USAGE, MetricFactory.createMetric(MetricType.JREBEL_USAGE), "true", true);
+        super(MetricType.PERCENT_JREBEL_USAGE, MetricFactory.createMetric(MetricType.JREBEL_USAGE), "true", ValueType.PERCENT);
     }
 
     /**

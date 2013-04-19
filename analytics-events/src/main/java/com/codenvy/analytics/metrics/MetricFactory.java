@@ -121,9 +121,6 @@ public class MetricFactory {
             case PERCENT_PROJECT_TYPE_JAVA_JAR:
                 metric = new PercentProjectCreatedTypeJavaJarMetric();
                 break;
-            case PROJECT_TYPE_JAVA_JAR:
-                metric = new ProjectCreatedTypeJavaJarMetric();
-                break;
             case PERCENT_PROJECT_TYPE_JAVA_WAR:
                 metric = new PercentProjectCreatedTypeJavaWarMetric();
                 break;

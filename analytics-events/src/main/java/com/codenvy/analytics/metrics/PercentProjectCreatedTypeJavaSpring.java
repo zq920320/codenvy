@@ -13,7 +13,8 @@ public class PercentProjectCreatedTypeJavaSpring extends ValueFromMapMetric {
 
 
     PercentProjectCreatedTypeJavaSpring() throws IOException {
-        super(MetricType.PERCENT_PROJECT_TYPE_JAVA_SPRING, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Spring", true);
+        super(MetricType.PERCENT_PROJECT_TYPE_JAVA_SPRING, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "Spring",
+              ValueType.BOTH);
     }
 
     /**
