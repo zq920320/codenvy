@@ -9,7 +9,7 @@ SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf
 ANALYTICS_OPTS="-Danalytics.logs.directory=${CATALINA_HOME}/../logs-production \
                 -Danalytics.scripts.directory=${CATALINA_HOME}/scripts \
                 -Danalytics.result.directory=${CATALINA_HOME}/data/results \
-                -Danalytics.metrics.default.values=${CATALINA_HOME}/analytics-conf/default-values.xml \
+                -Danalytics.metrics.default.values=${CATALINA_HOME}/analytics-conf/initial-values.xml \
                 -Danalytics.view.time-line=${CATALINA_HOME}/analytics-conf/time-line.xml"
 
 JMX_OPTS="-Dcom.sun.management.jmxremote.authenticate=true \

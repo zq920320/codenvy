@@ -103,11 +103,7 @@ public class MapValueManager implements ValueManager {
      */
     @Override
     public Map<String, Long> valueOf(String value) throws IOException {
-        int beginIndex = value.startsWith("[") ? 1 : 0;
-        int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
-        value = value.substring(beginIndex, endIndex);
-
-        String[] splittedLine = value.split(",");
+        String[] splittedLine = value.replace("[", "").replace("]", "").replace("{", "").replace("}", "").split(",");
 
         Map<String, Long> result = new LinkedHashMap<String, Long>(splittedLine.length);
         for (String str : splittedLine) {

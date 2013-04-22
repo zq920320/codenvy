@@ -6,7 +6,7 @@
 -->
 <metrics>
     <metric type="metric_name">
-        <default-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</default-value>
+        <initial-value fromDate="yyyyMMdd" toDate="yyyyMMdd">0</initial-value>
     </metric>
 </metrics>
  
