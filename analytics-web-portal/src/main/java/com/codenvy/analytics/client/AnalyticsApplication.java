@@ -4,8 +4,6 @@
  */
 package com.codenvy.analytics.client;
 
-import com.codenvy.analytics.client.service.QueryService;
-import com.codenvy.analytics.client.service.TimeLineViewService;
 
 import com.codenvy.analytics.client.view.ProjectViewImpl;
 import com.codenvy.analytics.client.view.QueryViewImpl;

@@ -1,6 +1,6 @@
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.client.service.TimeLineViewService;
+import com.codenvy.analytics.client.TimeLineViewService;
 
 import com.codenvy.analytics.metrics.TimeIntervalUtil;
 import com.codenvy.analytics.metrics.TimeUnit;

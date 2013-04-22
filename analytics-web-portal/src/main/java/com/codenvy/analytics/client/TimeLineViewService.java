@@ -2,7 +2,7 @@
  *    Copyright (C) 2013 Codenvy.
  *
  */
-package com.codenvy.analytics.client.service;
+package com.codenvy.analytics.client;
 
 import com.codenvy.analytics.shared.DataView;
 import com.google.gwt.user.client.rpc.RemoteService;
