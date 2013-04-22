@@ -1,6 +1,7 @@
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.client.QueryService;
+import com.codenvy.analytics.client.service.QueryService;
+
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;

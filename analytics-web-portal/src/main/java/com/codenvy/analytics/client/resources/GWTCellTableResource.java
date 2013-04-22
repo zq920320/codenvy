@@ -2,7 +2,7 @@
  *    Copyright (C) 2013 Codenvy.
  *
  */
-package com.codenvy.analytics.client;
+package com.codenvy.analytics.client.resources;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ImageResource.ImageOptions;
@@ -12,8 +12,8 @@ import com.google.gwt.user.cellview.client.CellTable;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface CellTableResource extends CellTable.Resources
-{
+public interface GWTCellTableResource extends CellTable.Resources {
+
     @Source({CellTable.Style.DEFAULT_CSS, "com/codenvy/analytics/client/ui/CellTable.css"})
     TableStyle cellTableStyle();
 
@@ -21,11 +21,8 @@ public interface CellTableResource extends CellTable.Resources
     @ImageOptions(repeatStyle = RepeatStyle.Horizontal)
     ImageResource header();
 
-    interface TableStyle extends CellTable.Style
-    {
+    interface TableStyle extends CellTable.Style {
         String cellTableBox();
-
         String scrollTable();
     }
-
 }

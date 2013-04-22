@@ -5,10 +5,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
-public class ProjectView extends Composite {
-    public ProjectView() {
+public class UserViewImpl extends Composite implements View {
+    public UserViewImpl() {
         VerticalPanel vPanel = new VerticalPanel();
-        Label label = new Label("Project Test label");
+        Label label = new Label("User Test label");
         vPanel.add(label);
         initWidget(vPanel);
     }

@@ -4,8 +4,9 @@
  */
 package com.codenvy.analytics.client.view;
 
+import com.codenvy.analytics.client.resources.GWTCellTableResource;
+
 import com.codenvy.analytics.client.AnalyticsApplication;
-import com.codenvy.analytics.client.CellTableResource;
 import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.TimeLineViewServiceAsync;
 import com.codenvy.analytics.shared.DataView;
@@ -26,11 +27,10 @@ import java.util.List;
 /**
  * @author <a href="abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TimeLineView extends Composite
-{
+public class TimeLineViewImpl extends Composite implements View {
     private final FlexTable            flexTableMain = new FlexTable();
 
-    public TimeLineView(final AnalyticsApplication portal) {
+    public TimeLineViewImpl(final AnalyticsApplication portal) {
         flexTableMain.setStyleName("flexTableMain");
 
         final GWTLoader gwtLoader = new GWTLoader();
@@ -55,7 +55,7 @@ public class TimeLineView extends Composite
     }
     
     private Widget createWidget(Iterator<List<String>> iter) {
-        CellTableResource resources = GWT.create(CellTableResource.class);
+        GWTCellTableResource resources = GWT.create(GWTCellTableResource.class);
 
         CellTable<List<String>> timeline = new CellTable<List<String>>(Integer.MAX_VALUE, resources);
         ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();

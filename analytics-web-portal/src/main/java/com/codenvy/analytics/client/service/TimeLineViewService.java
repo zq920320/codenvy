@@ -1,4 +1,8 @@
-package com.codenvy.analytics.client;
+/*
+ *    Copyright (C) 2013 Codenvy.
+ *
+ */
+package com.codenvy.analytics.client.service;
 
 import com.codenvy.analytics.shared.DataView;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -18,5 +22,4 @@ public interface TimeLineViewService extends RemoteService {
      * Returns rows for timeline view.
      */
     List<DataView> getViews(Date date) throws IOException;
-
 }

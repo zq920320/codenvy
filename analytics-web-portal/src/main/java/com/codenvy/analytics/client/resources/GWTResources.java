@@ -2,7 +2,7 @@
  *    Copyright (C) 2013 Codenvy.
  *
  */
-package com.codenvy.analytics.client;
+package com.codenvy.analytics.client.resources;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
@@ -72,7 +72,6 @@ public interface GWTResources extends ClientBundle {
 
         String loaderImage();
     }
-
 
     @Source("com/codenvy/analytics/client/ui/images/component/loader/ajax-loader.gif")
     ImageResource getLoaderImage();

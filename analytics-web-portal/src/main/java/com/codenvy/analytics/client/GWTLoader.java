@@ -4,6 +4,8 @@
  */
 package com.codenvy.analytics.client;
 
+import com.codenvy.analytics.client.resources.GWTResources;
+
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -15,12 +17,9 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * 
  * @author <a href="mailto:gavrikvetal@gmail.com">Vitaliy Gulyy</a>
  */
-public class GWTLoader
-{
+public class GWTLoader {
     private static final String LOADING_DATA_MESSAGE = "Loading data ...";
-
     private static final String LOADER_ID            = "GWTLoaderId";
-
     private PopupPanel          loader;
 
     public GWTLoader() {

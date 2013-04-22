@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QueryView extends Composite
-{
+public class QueryViewImpl extends Composite implements View {
     private final AnalyticsApplication portal;
     private final Map<String, String>  parameters          = new HashMap<String, String>();
     private Map<String, String>        metrics;
@@ -30,7 +29,7 @@ public class QueryView extends Composite
     private final FlexTable            flexTableParameters = new FlexTable();
     private final GWTLoader            gwtLoader           = new GWTLoader();
 
-    public QueryView(final AnalyticsApplication portal) {
+    public QueryViewImpl(final AnalyticsApplication portal) {
         this.portal = portal;
 
         flexTableMain.setStyleName("flexTableMain");
