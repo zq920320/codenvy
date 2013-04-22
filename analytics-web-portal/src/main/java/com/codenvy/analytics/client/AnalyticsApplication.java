@@ -11,11 +11,15 @@ import com.codenvy.analytics.client.view.TimeLineViewImpl;
 import com.codenvy.analytics.client.view.UserViewImpl;
 import com.codenvy.analytics.client.view.View;
 import com.codenvy.analytics.client.view.WorkspaceViewImpl;
+import com.codenvy.analytics.shared.TimeUnit;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /** Entry point classes define <code>onModuleLoad()</code>. */
@@ -23,11 +27,11 @@ public class AnalyticsApplication implements EntryPoint {
     private final QueryServiceAsync        queryService  = GWT.create(QueryService.class);
     private final TimeLineViewServiceAsync viewService   = GWT.create(TimeLineViewService.class);
 
-    private final QueryViewImpl                queryView     = new QueryViewImpl(this);
-    private final TimeLineViewImpl             timelineView  = new TimeLineViewImpl(this);
-    private final UserViewImpl                 userView      = new UserViewImpl();
-    private final WorkspaceViewImpl            workspaceView = new WorkspaceViewImpl();
-    private final ProjectViewImpl              projectView   = new ProjectViewImpl();
+    private final QueryViewImpl            queryView     = new QueryViewImpl(this);
+    private final TimeLineViewImpl         timelineView  = new TimeLineViewImpl(this);
+    private final UserViewImpl             userView      = new UserViewImpl();
+    private final WorkspaceViewImpl        workspaceView = new WorkspaceViewImpl();
+    private final ProjectViewImpl          projectView   = new ProjectViewImpl();
 
     private View                           currentView;
 
@@ -55,16 +59,34 @@ public class AnalyticsApplication implements EntryPoint {
         queryButton.setStyleName("mainmenu");
         queryButton.addClickHandler(new QueryClickHandler());
 
+        final ListBox timeUnitBox = new ListBox();
+        initTimeUnitBox(timeUnitBox);
+
         RootPanel.get("mainMenuContainer").add(timelineButton);
         RootPanel.get("mainMenuContainer").add(userButton);
         RootPanel.get("mainMenuContainer").add(workspaceButton);
         RootPanel.get("mainMenuContainer").add(projectButton);
         RootPanel.get("mainMenuContainer").add(queryButton);
+        RootPanel.get("timeUnitContainer").add(timeUnitBox);
 
         // by default opening timeline view
         RootPanel.get("mainWindowContainer").add(timelineView);
 
         currentView = timelineView;
+    }
+
+    private void initTimeUnitBox(final ListBox timeUnitBox) {
+        for (TimeUnit timeUnit : TimeUnit.values()) {
+            timeUnitBox.addItem(timeUnit.toString().toLowerCase());
+        }
+
+        timeUnitBox.setVisibleItemCount(1);
+        timeUnitBox.addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+                timeUnitBox.getSelectedIndex();
+                // currentView
+            }
+        });
     }
 
     public QueryServiceAsync getQueryService() {

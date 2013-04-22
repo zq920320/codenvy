@@ -4,12 +4,12 @@
  */
 package com.codenvy.analytics.client.view;
 
-import com.codenvy.analytics.client.resources.GWTCellTableResource;
-
 import com.codenvy.analytics.client.AnalyticsApplication;
 import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.TimeLineViewServiceAsync;
+import com.codenvy.analytics.client.resources.GWTCellTableResource;
 import com.codenvy.analytics.shared.DataView;
+import com.codenvy.analytics.shared.TimeUnit;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -94,5 +94,10 @@ public class TimeLineViewImpl extends Composite implements View {
         public String getValue(List<String> object) {
             return object.get(number);
         }
+    }
+
+    public void update(TimeUnit timeUnit) {
+        // TODO Auto-generated method stub
+
     }
 }

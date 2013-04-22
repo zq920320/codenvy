@@ -1,5 +1,6 @@
 package com.codenvy.analytics.client.view;
 
+import com.codenvy.analytics.shared.TimeUnit;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -11,5 +12,10 @@ public class ProjectViewImpl extends Composite implements View {
         Label label = new Label("Project Test label");
         vPanel.add(label);
         initWidget(vPanel);
+    }
+
+    public void update(TimeUnit timeUnit) {
+        // TODO Auto-generated method stub
+
     }
 }
