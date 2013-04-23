@@ -35,6 +35,15 @@
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+
+    <scm>
+        <connection>scm:git:git@github.com:codenvy/odyssey.git</connection>
+        <url>https://fisheye.exoplatform.org/browse/odyssey</url>
+        <developerConnection>scm:git:git@github.com:codenvy/odyssey.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
+
   <build>
     <plugins>
       <plugin>
