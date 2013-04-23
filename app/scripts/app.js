@@ -49,7 +49,13 @@ define(["jquery","config","marketo",
                 $(document).ready(function(){
 
                     modernize();
-
+                    var USER_AGENT = navigator.userAgent.toLowerCase();
+                    var IS_WS_SUPPORTED = ("WebSocket" in window);
+                    if (!IS_WS_SUPPORTED || (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1)) {
+                        if (window.location.hash !== "#show") {
+                            window.location = "/error/browser-not-supported#show";
+                        }
+                    } else {
                     Munchkin.init('577-PCT-880');
 
                     var signupForm = $(".signup-form"),
@@ -250,6 +256,7 @@ define(["jquery","config","marketo",
                             
                         }());
                     }
+                } // if websocket else
 
                 });
             }
