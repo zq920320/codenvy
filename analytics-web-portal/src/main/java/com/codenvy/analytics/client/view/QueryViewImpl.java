@@ -2,7 +2,7 @@ package com.codenvy.analytics.client.view;
 
 import com.codenvy.analytics.client.AnalyticsApplication;
 import com.codenvy.analytics.client.GWTLoader;
-import com.codenvy.analytics.shared.TimeUnit;
+import com.codenvy.analytics.metrics.TimeUnit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -53,9 +53,11 @@ public class QueryViewImpl extends Composite implements View {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     public void update(TimeUnit timeUnit) {
-        // TODO Auto-generated method stub
-
+        // do nothing
     }
 
     private class QueryButton extends Button {

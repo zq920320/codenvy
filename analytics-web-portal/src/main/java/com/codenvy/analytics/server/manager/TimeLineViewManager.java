@@ -2,14 +2,14 @@
  *    Copyright (C) 2013 Codenvy.
  *
  */
-package com.codenvy.analytics.server.view;
+package com.codenvy.analytics.server.manager;
 
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.TimeIntervalUtil;
 import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.shared.DataView;
+import com.codenvy.analytics.shared.TimeLineViewData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -57,7 +57,7 @@ public class TimeLineViewManager {
     /**
      * Actually contains data to display.
      */
-    private List<DataView>            dataViews;
+    private List<TimeLineViewData>            dataViews;
 
     /**
      * Context.
@@ -74,19 +74,19 @@ public class TimeLineViewManager {
     /**
      * Return {@link #dataViews}.
      */
-    public List<DataView> getDataView() throws Exception {
-        this.dataViews = new ArrayList<DataView>();
+    public List<TimeLineViewData> getTimeLineViewData() throws Exception {
+        this.dataViews = new ArrayList<TimeLineViewData>();
 
         List<List<RowLayout>> rowsLayout = readRowsLayout();
         for (int i = 0; i < rowsLayout.size(); i++) {
-            dataViews.add(prepareDataView(rowsLayout.get(i)));
+            dataViews.add(prepareData(rowsLayout.get(i)));
         }
 
         return dataViews;
     }
 
-    private DataView prepareDataView(List<RowLayout> list) throws Exception {
-        DataView dataView = new DataView();
+    private TimeLineViewData prepareData(List<RowLayout> list) throws Exception {
+        TimeLineViewData dataView = new TimeLineViewData();
 
         for (RowLayout row : list) {
             dataView.add(row.fill(new HashMap<String, String>(initContext)));
@@ -178,6 +178,27 @@ public class TimeLineViewManager {
         return new FileInputStream(new File(ANALYTICS_TIME_LIVE_VIEW));
     }
 
+    /**
+     * Checks if received value might be displayed in view.
+     */
+    private boolean isPrintable(Object value) {
+        if (value instanceof Long && (Long)value == 0) {
+            return false;
+        } else if (value instanceof Double && ((Double)value == 0 || ((Double)value).isNaN())) {
+            return false;
+        } else if (value instanceof Double[]) {
+            Double[] dblValue = (Double[])value;
+
+            for (Double dbl : dblValue) {
+                if (dbl == 0 || dbl.isNaN()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     protected interface RowLayout {
         List<String> fill(Map<String, String> context) throws Exception;
     }
@@ -224,19 +245,14 @@ public class TimeLineViewManager {
             for (int i = 0; i < getHistoryLength(); i++) {
                 Object value = metric.getValue(new HashMap<String, String>(context));
 
-                if (value instanceof Double && (((Double)value).isNaN() || ((Double)value) == 0)) {
-                    row.add("");
-                } else if (value instanceof Long && ((Long)value) == 0) {
-                    row.add("");
-                } else if (value instanceof Double[]) {
-                    row.add(String.format(format, (Double[])value));
-                } else {
+                if (isPrintable(value)) {
                     row.add(String.format(format, value));
+                } else {
+                    row.add("");
                 }
 
                 context = TimeIntervalUtil.prevDateInterval(context);
             }
-
             return row;
         }
     }

@@ -4,14 +4,13 @@
  */
 package com.codenvy.analytics.client;
 
-
 import com.codenvy.analytics.client.view.ProjectViewImpl;
 import com.codenvy.analytics.client.view.QueryViewImpl;
 import com.codenvy.analytics.client.view.TimeLineViewImpl;
 import com.codenvy.analytics.client.view.UserViewImpl;
 import com.codenvy.analytics.client.view.View;
 import com.codenvy.analytics.client.view.WorkspaceViewImpl;
-import com.codenvy.analytics.shared.TimeUnit;
+import com.codenvy.analytics.metrics.TimeUnit;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -21,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /** Entry point classes define <code>onModuleLoad()</code>. */
 public class AnalyticsApplication implements EntryPoint {
@@ -33,7 +33,9 @@ public class AnalyticsApplication implements EntryPoint {
     private final WorkspaceViewImpl        workspaceView = new WorkspaceViewImpl();
     private final ProjectViewImpl          projectView   = new ProjectViewImpl();
 
-    private View                           currentView;
+    // values by default
+    private View                           currentView     = timelineView;
+    private TimeUnit                       currentTimeUnit = TimeUnit.DAY;
 
     /**
      * This is the entry point method.
@@ -70,9 +72,7 @@ public class AnalyticsApplication implements EntryPoint {
         RootPanel.get("timeUnitContainer").add(timeUnitBox);
 
         // by default opening timeline view
-        RootPanel.get("mainWindowContainer").add(timelineView);
-
-        currentView = timelineView;
+        RootPanel.get("mainWindowContainer").add((Widget)currentView);
     }
 
     private void initTimeUnitBox(final ListBox timeUnitBox) {
@@ -83,8 +83,8 @@ public class AnalyticsApplication implements EntryPoint {
         timeUnitBox.setVisibleItemCount(1);
         timeUnitBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                timeUnitBox.getSelectedIndex();
-                // currentView
+                currentTimeUnit = TimeUnit.values()[timeUnitBox.getSelectedIndex() - 1];
+                currentView.update(currentTimeUnit);
             }
         });
     }
@@ -95,6 +95,13 @@ public class AnalyticsApplication implements EntryPoint {
 
     public TimeLineViewServiceAsync getViewService() {
         return viewService;
+    }
+
+    /**
+     * @return {@link #currentTimeUnit}
+     */
+    public TimeUnit getCurrentTimeUnit() {
+        return currentTimeUnit;
     }
 
     private class QueryClickHandler implements ClickHandler {

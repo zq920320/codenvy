@@ -1,7 +1,10 @@
+/*
+ *    Copyright (C) 2013 Codenvy.
+ *
+ */
 package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.client.QueryService;
-
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;

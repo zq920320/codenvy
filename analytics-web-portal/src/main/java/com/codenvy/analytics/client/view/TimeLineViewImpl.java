@@ -8,8 +8,8 @@ import com.codenvy.analytics.client.AnalyticsApplication;
 import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.TimeLineViewServiceAsync;
 import com.codenvy.analytics.client.resources.GWTCellTableResource;
-import com.codenvy.analytics.shared.DataView;
-import com.codenvy.analytics.shared.TimeUnit;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.shared.TimeLineViewData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -28,45 +28,56 @@ import java.util.List;
  * @author <a href="abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class TimeLineViewImpl extends Composite implements View {
-    private final FlexTable            flexTableMain = new FlexTable();
+    private final FlexTable                table = new FlexTable();
+    private final GWTLoader                gwtLoader = new GWTLoader();
+    private final TimeLineViewServiceAsync viewService;
 
+    /**
+     * {@link TimeLineViewImpl} constructor.
+     */
     public TimeLineViewImpl(final AnalyticsApplication portal) {
-        flexTableMain.setStyleName("flexTableMain");
+        this.viewService = portal.getViewService();
+        update(portal.getCurrentTimeUnit());
+    }
 
-        final GWTLoader gwtLoader = new GWTLoader();
+    /**
+     * {@inheritDoc}
+     */
+    public void update(TimeUnit timeUnit) {
+        table.clear();
         gwtLoader.show();
 
-        TimeLineViewServiceAsync viewService = portal.getViewService();
-        viewService.getViews(new Date(), new AsyncCallback<List<DataView>>() {
+        viewService.getViews(new Date(), timeUnit, new AsyncCallback<List<TimeLineViewData>>() {
             public void onFailure(Throwable caught) {
                 gwtLoader.hide();
-                flexTableMain.setText(0, 0, caught.getMessage());
+                table.setText(0, 0, caught.getMessage());
             }
 
-            public void onSuccess(List<DataView> result) {
+            public void onSuccess(List<TimeLineViewData> result) {
                 gwtLoader.hide();
                 for (int i = 0; i < result.size(); i++) {
-                    flexTableMain.setWidget(i, 0, createWidget(result.get(i).iterator()));
+                    Iterator<List<String>> rowIterator = result.get(i).iterator();
+                    table.setWidget(i, 0, createCellTableWidget(rowIterator));
                 }
             }
         });
 
-        initWidget(flexTableMain);
+        initWidget(table);
     }
-    
-    private Widget createWidget(Iterator<List<String>> iter) {
+
+    private Widget createCellTableWidget(Iterator<List<String>> rowIterator) {
         GWTCellTableResource resources = GWT.create(GWTCellTableResource.class);
 
         CellTable<List<String>> timeline = new CellTable<List<String>>(Integer.MAX_VALUE, resources);
         ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
         dataProvider.addDataDisplay(timeline);
 
-        List<String> row = iter.next();
-        createsColumns(timeline, row);
+        List<String> headers = rowIterator.next();
+        createsColumns(timeline, headers);
 
         List<List<String>> list = dataProvider.getList();
-        while (iter.hasNext()) {
-            list.add(iter.next());
+        while (rowIterator.hasNext()) {
+            list.add(rowIterator.next());
         }
 
         return timeline;
@@ -80,7 +91,7 @@ public class TimeLineViewImpl extends Composite implements View {
         }
     }
 
-    class CustomColumn extends TextColumn<List<String>> {
+    private class CustomColumn extends TextColumn<List<String>> {
         private final int number;
 
         public CustomColumn(int number) {
@@ -94,10 +105,5 @@ public class TimeLineViewImpl extends Composite implements View {
         public String getValue(List<String> object) {
             return object.get(number);
         }
-    }
-
-    public void update(TimeUnit timeUnit) {
-        // TODO Auto-generated method stub
-
     }
 }

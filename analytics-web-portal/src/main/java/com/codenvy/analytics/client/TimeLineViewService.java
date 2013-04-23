@@ -4,7 +4,8 @@
  */
 package com.codenvy.analytics.client;
 
-import com.codenvy.analytics.shared.DataView;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.shared.TimeLineViewData;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -20,6 +21,7 @@ public interface TimeLineViewService extends RemoteService {
 
     /**
      * Returns rows for timeline view.
+     * @param timeUnit TODO
      */
-    List<DataView> getViews(Date date) throws IOException;
+    List<TimeLineViewData> getViews(Date date, TimeUnit timeUnit) throws IOException;
 }

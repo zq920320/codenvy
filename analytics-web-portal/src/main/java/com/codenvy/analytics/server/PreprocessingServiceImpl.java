@@ -4,6 +4,8 @@
  */
 package com.codenvy.analytics.server;
 
+import com.codenvy.analytics.metrics.TimeUnit;
+
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -86,10 +88,13 @@ public class PreprocessingServiceImpl implements ServletContextListener {
         public void execute(JobExecutionContext context) throws JobExecutionException {
             try {
                 LOGGER.info("Preprocessing data is started");
+                long start = System.currentTimeMillis();
 
-                new TimeLineViewServiceImpl().getViews(new Date());
+                new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.DAY);
+                new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.WEEK);
+                new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.MONTH);
 
-                LOGGER.info("Preprocessing data is finished");
+                LOGGER.info("Preprocessing data is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
             } catch (IOException e) {
                 throw new JobExecutionException(e);
             }

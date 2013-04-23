@@ -12,12 +12,14 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
+import com.codenvy.analytics.server.manager.TimeLineViewManager;
+
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.TimeIntervalUtil;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptParameters;
-import com.codenvy.analytics.shared.DataView;
+import com.codenvy.analytics.shared.TimeLineViewData;
 
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
@@ -67,7 +69,7 @@ public class TestTimeLineView {
         doReturn(new ByteArrayInputStream(resouce.getBytes())).when(tView).readResource();
         doReturn(tView.new MetricRowLayout(mockedMetrick, "%d")).when(tView).createMetricRow(any(Element.class));
 
-        List<DataView> views = tView.getDataView();
+        List<TimeLineViewData> views = tView.getTimeLineViewData();
         assertEquals(tView.getHistoryLength(), 2);
         assertEquals(views.size(), 2);
 
@@ -140,7 +142,7 @@ public class TestTimeLineView {
         doReturn(new ByteArrayInputStream(resouce.getBytes())).when(tView).readResource();
         doReturn(tView.new MetricRowLayout(mockedMetrick, "%d")).when(tView).createMetricRow(any(Element.class));
 
-        List<DataView> views = tView.getDataView();
+        List<TimeLineViewData> views = tView.getTimeLineViewData();
         assertEquals(tView.getHistoryLength(), 2);
         assertEquals(views.size(), 2);
 
