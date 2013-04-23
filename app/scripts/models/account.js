@@ -186,7 +186,7 @@
                 var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm/";
 
                 $.ajax({
-                    url : tenantServiceUrl + encodeURIComponent(domain.toLowerCase()) + "/" + email,
+                    url : tenantServiceUrl + encodeURIComponent(domain.toLowerCase()) + "/" + encodeURIComponent(email),
                     type : "POST",
                     data: {},
                     success : function(){
