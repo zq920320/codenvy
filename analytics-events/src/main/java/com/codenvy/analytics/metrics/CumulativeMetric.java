@@ -5,6 +5,7 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.scripts.LongValueManager;
+import com.codenvy.analytics.scripts.MapValueManager;
 import com.codenvy.analytics.scripts.ScriptParameters;
 import com.codenvy.analytics.scripts.ValueManager;
 
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +48,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
 
     private final Metric              addedMetric;
     private final Metric              removedMetric;
-    private final Map<String, Object> defaults                                  = new ConcurrentHashMap<String, Object>();
+    private final Map<String, Object> initialValues                             = new ConcurrentHashMap<String, Object>();
 
     CumulativeMetric(MetricType metricType, Metric addedMetric, Metric removedMetric) throws IOException {
         super(metricType);
@@ -55,7 +57,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
         this.removedMetric = removedMetric;
 
         try {
-            readDefaultsValues();
+            readInitialValues();
         } catch (ParserConfigurationException e) {
             throw new IOException(e);
         } catch (SAXException e) {
@@ -70,6 +72,8 @@ public abstract class CumulativeMetric extends AbstractMetric {
     public Set<ScriptParameters> getMandatoryParams() {
         Set<ScriptParameters> params = addedMetric.getMandatoryParams();
         params.addAll(removedMetric.getMandatoryParams());
+
+        params.remove(ScriptParameters.FROM_DATE);
 
         return params;
     }
@@ -93,7 +97,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
     protected synchronized Object loadValue(Map<String, String> context) throws IOException {
         String key = makeKeys(context).toString();
 
-        Object value = defaults.get(key);
+        Object value = initialValues.get(key);
         if (value != null) {
             return value;
         }
@@ -114,12 +118,17 @@ public abstract class CumulativeMetric extends AbstractMetric {
      */
     @Override
     protected Long evaluateValue(Map<String, String> context) throws IOException {
-        long addedEntities = (Long)addedMetric.getValue(context);
-        long removedEntities = (Long)removedMetric.getValue(context);
+        Map<String, String> prevContext = new LinkedHashMap<String, String>(context);
+        prevContext.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
+        prevContext.put(ScriptParameters.FROM_DATE.getName(), context.get(ScriptParameters.TO_DATE.getName()));
 
-        Map<String, String> prevContext;
+        validateDatePeriod(prevContext);
+
+        long addedEntities = (Long)addedMetric.getValue(prevContext);
+        long removedEntities = (Long)removedMetric.getValue(prevContext);
+        
         try {
-            prevContext = TimeIntervalUtil.prevDateInterval(context);
+            prevContext = TimeIntervalUtil.prevDateInterval(prevContext);
         } catch (ParseException e) {
             throw new IOException(e);
         } catch (IllegalArgumentException e) {
@@ -131,7 +140,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
         return new Long(previousEntities + addedEntities - removedEntities);
     }
 
-    protected void readDefaultsValues() throws ParserConfigurationException, SAXException, IOException {
+    protected void readInitialValues() throws ParserConfigurationException, SAXException, IOException {
         InputStream in = readResource();
         try {
             NodeList nodes = parseDocument(in);
@@ -143,9 +152,14 @@ public abstract class CumulativeMetric extends AbstractMetric {
                     Element element = (Element)node;
 
                     if (metricType.toString().equalsIgnoreCase(element.getAttribute("type"))) {
-                        extractDefaultValues(element.getElementsByTagName("default-value"));
+                        extractInitialValues(element.getElementsByTagName("initial-value"));
+
                     }
                 }
+            }
+
+            if (initialValues.size() != 1) {
+                throw new IOException("Wrong cumulative metric configuration");
             }
         } finally {
             in.close();
@@ -163,7 +177,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
         return new FileInputStream(new File(METRICS_DEFAULT_VALUES));
     }
 
-    private void extractDefaultValues(NodeList nodes) throws IOException {
+    private void extractInitialValues(NodeList nodes) throws IOException {
         for (int j = 0; j < nodes.getLength(); j++) {
             Node node = nodes.item(j);
 
@@ -182,7 +196,21 @@ public abstract class CumulativeMetric extends AbstractMetric {
                 String key = makeKeys(context).toString();
                 Object value = getValueManager().valueOf(element.getTextContent());
 
-                defaults.put(key, value);
+                initialValues.put(key, value);
+            }
+        }
+    }
+
+    private void validateDatePeriod(Map<String, String> context) throws IOException
+    {
+        long fromDate = (long)Long.valueOf(context.get(ScriptParameters.FROM_DATE.getName()));
+        for (String key : initialValues.keySet())
+        {
+            long initialFromDate = (long)new MapValueManager().valueOf(key).get(ScriptParameters.TO_DATE.getName());
+
+            if (initialFromDate > fromDate)
+            {
+                throw new IOException("Wrong cumulative metric configuration");
             }
         }
     }

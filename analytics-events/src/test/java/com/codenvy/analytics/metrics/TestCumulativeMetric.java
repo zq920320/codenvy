@@ -59,7 +59,10 @@ public class TestCumulativeMetric {
 
         @Override
         protected InputStream readResource() {
-            return new ByteArrayInputStream("<metrics></metrics>".getBytes());
+            return new ByteArrayInputStream(
+                                            ("<metrics><metric type=\""
+                                                + MetricType.TOTAL_WORKSPACES.toString().toLowerCase()
+                                             + "\"><initial-value fromDate=\"20130223\" toDate=\"20130223\">43736</initial-value></metric></metrics>").getBytes());
         }
     }
 }
