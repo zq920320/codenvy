@@ -155,7 +155,7 @@ public abstract class AbstractMetric implements Metric {
 
     /** Translates key into relative path of the destination file. */
     private String toRelativePath(Entry<String, String> entry) {
-        if (entry.getKey().equals(ScriptParameters.FROM_DATE.getName())) {
+        if (entry.getKey().equals(ScriptParameters.FROM_DATE.getName()) || entry.getKey().equals(ScriptParameters.TO_DATE.getName())) {
             return translateDateToRelativePath(entry.getValue());
         }
 

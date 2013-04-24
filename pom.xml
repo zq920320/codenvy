@@ -185,6 +185,16 @@
                 <artifactId>logback-core</artifactId>
                 <version>${ch.qos.logback.version}</version>
             </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-security</artifactId>
+                <version>${ch.qos.logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>${org.slf4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

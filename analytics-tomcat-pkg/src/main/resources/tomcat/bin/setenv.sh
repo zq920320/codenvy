@@ -9,8 +9,11 @@ SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf
 ANALYTICS_OPTS="-Danalytics.logs.directory=${CATALINA_HOME}/../logs-production \
                 -Danalytics.scripts.directory=${CATALINA_HOME}/scripts \
                 -Danalytics.result.directory=${CATALINA_HOME}/data/results \
-                -Danalytics.metrics.default.values=${CATALINA_HOME}/analytics-conf/initial-values.xml \
-                -Danalytics.view.time-line=${CATALINA_HOME}/analytics-conf/time-line.xml"
+                -Danalytics.metrics.initial.values=${CATALINA_HOME}/analytics-conf/initial-values.xml \
+                -Danalytics.view.time-line=${CATALINA_HOME}/analytics-conf/time-line.xml \
+                -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
+
+QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
 
 JMX_OPTS="-Dcom.sun.management.jmxremote.authenticate=true \
           -Dcom.sun.management.jmxremote.password.file=${CATALINA_HOME}/conf/jmxremote.password \
@@ -21,7 +24,9 @@ JMX_OPTS="-Dcom.sun.management.jmxremote.authenticate=true \
 #REMOTE_DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y"
 REMOTE_DEBUG=""
 
-export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $REMOTE_DEBUG"
+export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $REMOTE_DEBUG $QUARTZ_OPTS"
+export CLASSPATH="${CATALINA_HOME}/conf/:${CATALINA_HOME}/lib/jul-to-slf4j.jar:\
+${CATALINA_HOME}/lib/slf4j-api.jar:${CATALINA_HOME}/lib/logback-classic.jar:${CATALINA_HOME}/lib/logback-core.jar"
 
 echo "======="
 echo $JAVA_OPTS

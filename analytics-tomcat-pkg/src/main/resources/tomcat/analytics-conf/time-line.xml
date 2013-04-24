@@ -4,7 +4,7 @@
 -->
 <views history-length="20">
     <view>
-        <date section="WORKSPACES" format="dd/MM" />
+        <date section="WORKSPACES" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="workspaces_created"/>
         <metric type="workspaces_destroyed"/>
         <metric type="total_workspaces"/>
@@ -14,7 +14,7 @@
         <empty />
     </view>
     <view>
-        <date section="USERS" format="dd/MM" />
+        <date section="USERS" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
 	<metric type="users_created"/>
         <metric type="percent_users_created_projects" format="%.0f%%"/>
 	<metric type="users_destroyed"/>
@@ -34,12 +34,12 @@
         <empty />
     </view>
     <view>
-        <date section="SESSIONS" format="dd/MM" />
+        <date section="SESSIONS" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="product_usage_time" format="%,d"/>
         <empty />
     </view>
     <view>
-        <date section="PROJECTS" format="dd/MM" />
+        <date section="PROJECTS" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="projects_created"/>
         <metric type="percent_built_projects" format="%.0f%%"/>
 	<metric type="projects_destroyed"/>
@@ -50,7 +50,7 @@
         <empty />
     </view>
     <view>
-        <date section="PROJECTS TYPES" format="dd/MM" />
+        <date section="PROJECTS TYPES" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="percent_project_type_java_jar" format="%.0f (%.0f%%)"/>
         <metric type="percent_project_type_java_war" format="%.0f (%.0f%%)"/>
         <metric type="percent_project_type_java_jsp" format="%.0f (%.0f%%)"/>
@@ -61,6 +61,7 @@
         <metric type="percent_project_type_ruby" format="%.0f (%.0f%%)"/>
         <metric type="percent_project_type_mmp" format="%.0f (%.0f%%)"/>
         <metric type="percent_project_type_groovy" format="%.0f (%.0f%%)"/>
+        <metric type="percent_project_type_nodejs" format="%.0f (%.0f%%)"/>
         <metric type="percent_project_type_others" format="%.0f (%.0f%%)"/>
         <empty />
         <metric type="jrebel_eligible"/>
@@ -68,19 +69,19 @@
         <empty />
     </view>
     <view>
-        <date section="PAAS DEPLOYMENT" format="dd/MM" />
-        <metric type="percent_paas_deployemnt_type_aws" format="%.0f%%"/>
-        <metric type="percent_paas_deployemnt_type_appfog" format="%.0f%%"/>
-        <metric type="percent_paas_deployemnt_type_cloudbess" format="%.0f%%"/>
-        <metric type="percent_paas_deployemnt_type_cloudfoundry" format="%.0f%%"/>
-        <metric type="percent_paas_deployemnt_type_gae" format="%.0f%%"/>
-        <metric type="percent_paas_deployemnt_type_heroku" format="%.0f%%"/>
-        <metric type="percent_paas_deployemnt_type_openshift" format="%.0f%%"/>
-        <metric type="percent_paas_deployemnt_type_local" format="%.0f%%"/>
+        <date section="PAAS DEPLOYMENT" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <metric type="percent_paas_deployemnt_type_aws" format="%.0f (%.0f%%)"/>
+        <metric type="percent_paas_deployemnt_type_appfog" format="%.0f (%.0f%%)"/>
+        <metric type="percent_paas_deployemnt_type_cloudbess" format="%.0f (%.0f%%)"/>
+        <metric type="percent_paas_deployemnt_type_cloudfoundry" format="%.0f (%.0f%%)"/>
+        <metric type="percent_paas_deployemnt_type_gae" format="%.0f (%.0f%%)"/>
+        <metric type="percent_paas_deployemnt_type_heroku" format="%.0f (%.0f%%)"/>
+        <metric type="percent_paas_deployemnt_type_openshift" format="%.0f (%.0f%%)"/>
+        <metric type="percent_paas_deployemnt_type_local" format="%.0f (%.0f%%)"/>
         <empty />
     </view>
     <view>
-        <date section="INVITATIONS" format="dd/MM" />
+        <date section="INVITATIONS" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="invitations_sent"/>
         <metric type="percent_invitations_accepted" format="%.0f%%"/>
         <empty />

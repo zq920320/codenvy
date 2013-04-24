@@ -45,6 +45,26 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
 
@@ -108,6 +128,15 @@
                                         <copy todir="${project.build.directory}/tomcat-analytics/" overwrite="true">
                                             <fileset dir="${basedir}/src/main/resources/tomcat/"/>
                                         </copy>
+
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-classic-${ch.qos.logback.version}.jar"
+                                              tofile="${project.build.directory}/tomcat-analytics/lib/logback-classic.jar"/>
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-core-${ch.qos.logback.version}.jar"
+                                              tofile="${project.build.directory}/tomcat-analytics/lib/logback-core.jar"/>
+                                        <copy file="${project.build.directory}/packager-conf/jar/slf4j-api-${org.slf4j.version}.jar"
+                                              tofile="${project.build.directory}/tomcat-analytics/lib/slf4j-api.jar"/>
+                                        <copy file="${project.build.directory}/packager-conf/jar/jul-to-slf4j-${org.slf4j.version}.jar"
+                                              tofile="${project.build.directory}/tomcat-analytics/lib/jul-to-slf4j.jar"/>
 
                                         <copy file="${project.build.directory}/packager-conf/war/analytics-rest-service.war"
                                               tofile="${project.build.directory}/tomcat-analytics/webapps/rest-service.war"/>

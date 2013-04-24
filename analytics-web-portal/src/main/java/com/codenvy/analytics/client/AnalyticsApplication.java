@@ -24,6 +24,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 /** Entry point classes define <code>onModuleLoad()</code>. */
 public class AnalyticsApplication implements EntryPoint {
+
+    private TimeUnit                       currentTimeUnit = TimeUnit.DAY;
+
     private final QueryServiceAsync        queryService  = GWT.create(QueryService.class);
     private final TimeLineViewServiceAsync viewService   = GWT.create(TimeLineViewService.class);
 
@@ -33,9 +36,7 @@ public class AnalyticsApplication implements EntryPoint {
     private final WorkspaceViewImpl        workspaceView = new WorkspaceViewImpl();
     private final ProjectViewImpl          projectView   = new ProjectViewImpl();
 
-    // values by default
     private View                           currentView     = timelineView;
-    private TimeUnit                       currentTimeUnit = TimeUnit.DAY;
 
     /**
      * This is the entry point method.
@@ -83,8 +84,11 @@ public class AnalyticsApplication implements EntryPoint {
         timeUnitBox.setVisibleItemCount(1);
         timeUnitBox.addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                currentTimeUnit = TimeUnit.values()[timeUnitBox.getSelectedIndex() - 1];
-                currentView.update(currentTimeUnit);
+                TimeUnit newCurrentTimeUnit = TimeUnit.values()[timeUnitBox.getSelectedIndex()];
+                if (newCurrentTimeUnit != currentTimeUnit) {
+                    currentTimeUnit = newCurrentTimeUnit;
+                    currentView.update(currentTimeUnit);
+                }
             }
         });
     }

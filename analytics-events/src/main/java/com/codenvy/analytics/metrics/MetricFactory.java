@@ -148,6 +148,9 @@ public class MetricFactory {
             case PERCENT_PROJECT_TYPE_GROOVY:
                 metric = new PercentProjectCreatedTypeGroovyMetric();
                 break;
+            case PERCENT_PROJECT_TYPE_NODEJS:
+                metric = new PercentProjectCreatedTypeNodejsMetric();
+                break;
             case PERCENT_PROJECT_TYPE_OTHERS:
                 metric = new PercentProjectCreatedTypeOthersMetric();
                 break;

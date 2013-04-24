@@ -9,10 +9,10 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class PercentPaasDeploymentTypeAwsMetric extends ValueFromMapMetric {
+public class PercentProjectCreatedTypeNodejsMetric extends ValueFromMapMetric {
 
-    PercentPaasDeploymentTypeAwsMetric() throws IOException {
-        super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_AWS, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "AWS:BeansTalk",
+    PercentProjectCreatedTypeNodejsMetric() throws IOException {
+        super(MetricType.PERCENT_PROJECT_TYPE_NODEJS, MetricFactory.createMetric(MetricType.PROJECT_CREATED_TYPES), "nodejs",
               ValueType.BOTH);
     }
 
@@ -21,6 +21,6 @@ public class PercentPaasDeploymentTypeAwsMetric extends ValueFromMapMetric {
      */
     @Override
     public String getTitle() {
-        return "% AWS";
+        return "% Node.js";
     }
 }

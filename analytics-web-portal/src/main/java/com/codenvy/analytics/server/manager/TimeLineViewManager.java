@@ -4,9 +4,11 @@
  */
 package com.codenvy.analytics.server.manager;
 
+import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.TimeIntervalUtil;
+import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.scripts.ScriptExecutor;
 import com.codenvy.analytics.scripts.ScriptParameters;
 import com.codenvy.analytics.shared.TimeLineViewData;
@@ -144,8 +146,10 @@ public class TimeLineViewManager {
 
     protected RowLayout createDateRow(Element element) {
         String section = element.getAttribute("section");
-        String format = element.getAttribute("format");
-        return new DateRowLayout(section, format);
+        String formatDay = element.getAttribute("formatDay");
+        String formatWeek = element.getAttribute("formatWeek");
+        String formatMonth = element.getAttribute("formatMonth");
+        return new DateRowLayout(section, formatDay, formatWeek, formatMonth);
     }
 
     protected RowLayout createSectionRow(Element element) {
@@ -184,13 +188,13 @@ public class TimeLineViewManager {
     private boolean isPrintable(Object value) {
         if (value instanceof Long && (Long)value == 0) {
             return false;
-        } else if (value instanceof Double && ((Double)value == 0 || ((Double)value).isNaN())) {
+        } else if (value instanceof Double && ((Double)value == 0D || ((Double)value).isNaN())) {
             return false;
         } else if (value instanceof Double[]) {
             Double[] dblValue = (Double[])value;
 
             for (Double dbl : dblValue) {
-                if (dbl == 0 || dbl.isNaN()) {
+                if (dbl == 0D || dbl.isNaN()) {
                     return false;
                 }
             }
@@ -205,18 +209,22 @@ public class TimeLineViewManager {
 
     protected class DateRowLayout implements RowLayout {
         private final String sectionName;
-        private final String format;
+        private final Map<TimeUnit, String> format;
 
-        DateRowLayout(String sectionName, String format) {
+        DateRowLayout(String sectionName, String formatDay, String formatWeek, String formatMonth) {
             this.sectionName = sectionName;
-            this.format = format;
+            this.format = new HashMap<TimeUnit, String>();
+            this.format.put(TimeUnit.DAY, formatDay);
+            this.format.put(TimeUnit.WEEK, formatWeek);
+            this.format.put(TimeUnit.MONTH, formatMonth);
         }
 
         public List<String> fill(Map<String, String> context) throws Exception {
+            TimeUnit timeUnit = TimeUnit.valueOf(context.get(ScriptParameters.TIME_UNIT.getName()).toUpperCase());
+            DateFormat df = new SimpleDateFormat(format.get(timeUnit));
+
             List<String> row = new ArrayList<String>(getHistoryLength() + 1);
             row.add(sectionName);
-
-            DateFormat df = new SimpleDateFormat(format);
 
             for (int i = 0; i < getHistoryLength(); i++) {
                 Date date = ScriptExecutor.PARAM_DATE_FORMAT.parse(context.get(ScriptParameters.TO_DATE.getName()));
@@ -243,11 +251,19 @@ public class TimeLineViewManager {
             row.add(metric.getTitle());
 
             for (int i = 0; i < getHistoryLength(); i++) {
-                Object value = metric.getValue(new HashMap<String, String>(context));
+                try {
+                    Object value = metric.getValue(new HashMap<String, String>(context));
 
-                if (isPrintable(value)) {
-                    row.add(String.format(format, value));
-                } else {
+                    if (isPrintable(value)) {
+                        if (value instanceof Double[]) {
+                            row.add(String.format(format, (Double[])value));
+                        } else {
+                            row.add(String.format(format, value));
+                        }
+                    } else {
+                        row.add("");
+                    }
+                } catch (InitialValueNotFoundException e)                 {
                     row.add("");
                 }
 

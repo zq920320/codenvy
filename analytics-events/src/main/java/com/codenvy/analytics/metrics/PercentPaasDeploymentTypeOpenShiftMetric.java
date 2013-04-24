@@ -13,7 +13,7 @@ public class PercentPaasDeploymentTypeOpenShiftMetric extends ValueFromMapMetric
 
     PercentPaasDeploymentTypeOpenShiftMetric() throws IOException {
         super(MetricType.PERCENT_PAAS_DEPLOYEMNT_TYPE_OPENSHIFT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYEMNT_TYPES), "OpenShift",
-              ValueType.PERCENT);
+              ValueType.BOTH);
     }
 
     /**

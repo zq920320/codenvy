@@ -39,12 +39,12 @@ import javax.xml.parsers.ParserConfigurationException;
 public abstract class CumulativeMetric extends AbstractMetric {
 
     /** Runtime parameter name. Contains the directory where script are located. */
-    private static final String       ANALYTICS_METRICS_DEFAULT_VALUES_PROPERTY = "analytics.metrics.default.values";
+    private static final String       ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY = "analytics.metrics.initial.values";
 
 
-    /** The value of {@value #ANALYTICS_METRICS_DEFAULT_VALUES_PROPERTY} runtime parameter. */
-    public static final String        METRICS_DEFAULT_VALUES                    =
-                                                                                  System.getProperty(ANALYTICS_METRICS_DEFAULT_VALUES_PROPERTY);
+    /** The value of {@value #ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY} runtime parameter. */
+    public static final String        METRICS_INITIAL_VALUES                    =
+                                                                                  System.getProperty(ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY);
 
     private final Metric              addedMetric;
     private final Metric              removedMetric;
@@ -117,7 +117,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
      * {@inheritDoc}
      */
     @Override
-    protected Long evaluateValue(Map<String, String> context) throws IOException {
+    protected Long evaluateValue(Map<String, String> context) throws InitialValueNotFoundException, IOException {
         Map<String, String> prevContext = new LinkedHashMap<String, String>(context);
         prevContext.put(ScriptParameters.TIME_UNIT.getName(), TimeUnit.DAY.toString());
         prevContext.put(ScriptParameters.FROM_DATE.getName(), context.get(ScriptParameters.TO_DATE.getName()));
@@ -153,13 +153,8 @@ public abstract class CumulativeMetric extends AbstractMetric {
 
                     if (metricType.toString().equalsIgnoreCase(element.getAttribute("type"))) {
                         extractInitialValues(element.getElementsByTagName("initial-value"));
-
                     }
                 }
-            }
-
-            if (initialValues.size() != 1) {
-                throw new IOException("Wrong cumulative metric configuration");
             }
         } finally {
             in.close();
@@ -174,7 +169,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
     }
 
     protected InputStream readResource() throws FileNotFoundException {
-        return new FileInputStream(new File(METRICS_DEFAULT_VALUES));
+        return new FileInputStream(new File(METRICS_INITIAL_VALUES));
     }
 
     private void extractInitialValues(NodeList nodes) throws IOException {
@@ -196,21 +191,22 @@ public abstract class CumulativeMetric extends AbstractMetric {
                 String key = makeKeys(context).toString();
                 Object value = getValueManager().valueOf(element.getTextContent());
 
+                if (initialValues.containsKey(key)) {
+                    throw new IOException("Wrong cumulative metric configuration");
+                }
+
                 initialValues.put(key, value);
             }
         }
     }
 
-    private void validateDatePeriod(Map<String, String> context) throws IOException
-    {
-        long fromDate = (long)Long.valueOf(context.get(ScriptParameters.FROM_DATE.getName()));
-        for (String key : initialValues.keySet())
-        {
-            long initialFromDate = (long)new MapValueManager().valueOf(key).get(ScriptParameters.TO_DATE.getName());
+    private void validateDatePeriod(Map<String, String> context) throws IOException {
+        long toDate = Long.valueOf(context.get(ScriptParameters.TO_DATE.getName()));
+        for (String key : initialValues.keySet()) {
+            long initialToDate = new MapValueManager().valueOf(key).get(ScriptParameters.TO_DATE.getName());
 
-            if (initialFromDate > fromDate)
-            {
-                throw new IOException("Wrong cumulative metric configuration");
+            if (initialToDate > toDate) {
+                throw new InitialValueNotFoundException("Wrong cumulative metric configuration");
             }
         }
     }
