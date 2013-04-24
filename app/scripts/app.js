@@ -49,6 +49,13 @@ define(["jquery","config",
                 $(document).ready(function(){
 
                     modernize();
+                    var USER_AGENT = navigator.userAgent.toLowerCase();
+                    var IS_WS_SUPPORTED = ("WebSocket" in window);
+                    if (!IS_WS_SUPPORTED || (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1)) {
+                        if (window.location.hash !== "#show") {
+                            window.location = "/error/browser-not-supported#show";
+                        }
+                    } else {
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
                         forgotPasswordForm = $(".forgotpassword-form"),
@@ -247,6 +254,7 @@ define(["jquery","config",
                             
                         }());
                     }
+                } // if websocket else
 
                 });
             }
