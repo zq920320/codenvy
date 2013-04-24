@@ -4,8 +4,9 @@
  */
 package com.codenvy.analytics.client;
 
+import com.codenvy.analytics.client.view.query.QueryViewImpl;
+
 import com.codenvy.analytics.client.view.ProjectViewImpl;
-import com.codenvy.analytics.client.view.QueryViewImpl;
 import com.codenvy.analytics.client.view.TimeLineViewImpl;
 import com.codenvy.analytics.client.view.UserViewImpl;
 import com.codenvy.analytics.client.view.View;
@@ -24,14 +25,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 /** Entry point classes define <code>onModuleLoad()</code>. */
 public class AnalyticsApplication implements EntryPoint {
-    private final QueryServiceAsync        queryService  = GWT.create(QueryService.class);
-    private final TimeLineViewServiceAsync viewService   = GWT.create(TimeLineViewService.class);
+    private final QueryServiceAsync        queryService    = GWT.create(QueryService.class);
+    private final TimeLineViewServiceAsync viewService     = GWT.create(TimeLineViewService.class);
 
-    private final QueryViewImpl            queryView     = new QueryViewImpl(this);
-    private final TimeLineViewImpl         timelineView  = new TimeLineViewImpl(this);
-    private final UserViewImpl             userView      = new UserViewImpl();
-    private final WorkspaceViewImpl        workspaceView = new WorkspaceViewImpl();
-    private final ProjectViewImpl          projectView   = new ProjectViewImpl();
+    private final QueryViewImpl            queryView       = new QueryViewImpl(this);
+    private final TimeLineViewImpl         timelineView    = new TimeLineViewImpl(this);
+    private final UserViewImpl             userView        = new UserViewImpl();
+    private final WorkspaceViewImpl        workspaceView   = new WorkspaceViewImpl();
+    private final ProjectViewImpl          projectView     = new ProjectViewImpl();
 
     // values by default
     private View                           currentView     = timelineView;
