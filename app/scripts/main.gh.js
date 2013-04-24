@@ -10,12 +10,10 @@ require.config({
         'skrollr' : {exports: 'skrollr' },
         'validation' : {deps:["jquery"]},
         'json' : {exports: 'JSON'},
-        'handlebars' :  {exports: 'Handlebars'},
-        'marketo': {exports: 'Munchkin', deps:['jquery']}
+        'handlebars' :  {exports: 'Handlebars'}
     },
 
     paths: {
-        marketo: '//munchkin.marketo.net/munchkin',
         jquery: 'vendor/jquery.min',
         validation: 'vendor/jquery.validate',
         underscore: 'vendor/underscore',

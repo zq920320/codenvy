@@ -434,7 +434,6 @@
                         type : "GET",
                         success : function(output,status, xhr){
                             if(xhr.responseText === "ONLINE"){
-                                //mktoMunchkinFunction("LeadSource", form_data, hash.key);//Web - Cloud IDE
                                 success({
                                     url : buildRedirectUrl()
                                 });
