@@ -5,11 +5,11 @@
 package com.codenvy.analytics.client;
 
 import com.codenvy.analytics.client.view.ProjectViewImpl;
-import com.codenvy.analytics.client.view.QueryViewImpl;
 import com.codenvy.analytics.client.view.TimeLineViewImpl;
 import com.codenvy.analytics.client.view.UserViewImpl;
 import com.codenvy.analytics.client.view.View;
 import com.codenvy.analytics.client.view.WorkspaceViewImpl;
+import com.codenvy.analytics.client.view.query.QueryViewImpl;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;

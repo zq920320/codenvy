@@ -2,7 +2,7 @@
  *    Copyright (C) 2013 Codenvy.
  *
  */
-package com.codenvy.analytics.server.manager;
+package com.codenvy.analytics.server.view;
 
 import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;

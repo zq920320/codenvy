@@ -2,4 +2,5 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
   <source path="metrics"></source>
+  <source path="scripts"></source>
 </module> 
