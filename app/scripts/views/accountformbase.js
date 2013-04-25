@@ -20,8 +20,8 @@ define(["jquery","models/account","views/form","validation"],
                 noEmailErrorMessage : "Please provide an email address.",
                 noPasswordErrorMessage : "Please provide your account password.",
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match.",
-                invalidEmailErrorMessage : "Please, provide a valid email address which should contain only letters (a-z), numbers (0-9), dashes, underscores and periods",
-                invalidDomainNameErrorMessage : "Your domain name should not start with a digit and must only contain Latin letters, digits or a dash in the middle of a domain name."
+                invalidEmailErrorMessage : "Please, provide a valid email address which should contain Latin letters, digits, dashes, underscores and periods",
+                invalidDomainNameErrorMessage : "Your domain name should start with Latin letters and must only contain Latin letters, digits or a dash in the middle of a domain name."
             },
 
             __validationRules : function(){
