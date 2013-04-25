@@ -13,6 +13,7 @@ ANALYTICS_OPTS="-Danalytics.logs.directory=${CATALINA_HOME}/../logs-production \
                 -Danalytics.view.time-line=${CATALINA_HOME}/analytics-conf/time-line.xml \
                 -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
 
+
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
 
 JMX_OPTS="-Dcom.sun.management.jmxremote.authenticate=true \
@@ -26,7 +27,8 @@ REMOTE_DEBUG=""
 
 export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $REMOTE_DEBUG $QUARTZ_OPTS"
 export CLASSPATH="${CATALINA_HOME}/conf/:${CATALINA_HOME}/lib/jul-to-slf4j.jar:\
-${CATALINA_HOME}/lib/slf4j-api.jar:${CATALINA_HOME}/lib/logback-classic.jar:${CATALINA_HOME}/lib/logback-core.jar"
+${CATALINA_HOME}/lib/slf4j-api.jar:${CATALINA_HOME}/lib/logback-classic.jar:${CATALINA_HOME}/lib/logback-core.jar:\
+${CATALINA_HOME}/lib/mail.jar"
 
 echo "======="
 echo $JAVA_OPTS

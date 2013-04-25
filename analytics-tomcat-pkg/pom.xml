@@ -65,6 +65,11 @@
             <artifactId>jul-to-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
     </dependencies>
 
 
@@ -137,6 +142,8 @@
                                               tofile="${project.build.directory}/tomcat-analytics/lib/slf4j-api.jar"/>
                                         <copy file="${project.build.directory}/packager-conf/jar/jul-to-slf4j-${org.slf4j.version}.jar"
                                               tofile="${project.build.directory}/tomcat-analytics/lib/jul-to-slf4j.jar"/>
+                                        <copy file="${project.build.directory}/packager-conf/jar/mail-${javax.mail.version}.jar"
+                                              tofile="${project.build.directory}/tomcat-analytics/lib/mail.jar"/>
 
                                         <copy file="${project.build.directory}/packager-conf/war/analytics-rest-service.war"
                                               tofile="${project.build.directory}/tomcat-analytics/webapps/rest-service.war"/>
