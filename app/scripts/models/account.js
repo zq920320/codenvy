@@ -136,7 +136,7 @@
             },
 
             isValidEmail : function(email){
-                return (/^[a-zA-Z0-9@_\.-]+$/).test(email);
+                return (/^[A-Za-z]{1}[a-zA-Z0-9@_\.-]+$/).test(email);
             },
 
             login : function(email,password,success,error){
