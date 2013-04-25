@@ -33,7 +33,8 @@
             <http-method>GET</http-method>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>admins</role-name>
+            <role-name>cloud/admin</role-name>
+            <role-name>cloud/manager</role-name>
         </auth-constraint>
         <user-data-constraint>
             <transport-guarantee>NONE</transport-guarantee>
@@ -48,6 +49,7 @@
 
     <!-- Security roles referenced by this web application -->
     <security-role>
-        <role-name>admins</role-name>
+        <role-name>cloud/admin</role-name>
+        <role-name>cloud/manager</role-name>
     </security-role>
 </web-app>

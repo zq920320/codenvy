@@ -27,6 +27,7 @@
       <!.. ..> that surrounds them.
     -->
 
-    <role rolename="admins"/>
-    <user username="admin" password="admin" roles="admins"/>
+    <role rolename="cloud/admin"/>
+    <role rolename="cloud/manager"/>
+    <user username="admin" password="admin" roles="cloud/admin"/>
 </tomcat-users>
