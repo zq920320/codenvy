@@ -80,16 +80,21 @@
             }
         };
 
+        var loginWithGithub = function(){
+                var registrationGitHubunavailable = "Sorry, registration with GitHub is temporary unavailable. Sorry for the inconvenience.";
+                $(".error-container").html(registrationGitHubunavailable).removeClass("ok-message").addClass("expanded");
+                    
+        };
+/*
         var loginWithGithub = function(page,callback){
             _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
             var url = "/rest/ide/oauth/authenticate?oauth_provider=github&mode=federated_login&" +
             "scope=user&scope=repo&redirect_after_login=/oauth/" + new Date().getTime();
-            //window.location = url;
             if(typeof callback !== 'undefined'){
                 callback(url);
             }
         };
-
+*/
         /*
             Every method accepts 0 or more data values and two callbacks (success and error)
 

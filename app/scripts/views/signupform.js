@@ -70,10 +70,15 @@ define(["jquery","underscore","models/account","views/accountformbase","validati
                 });
 
                 $(".oauth-button.github").click(function(){
+                    Account.loginWithGithub(function(){
+                    });
+
+                });
+/*                $(".oauth-button.github").click(function(){
                     Account.loginWithGithub("Main page", function(url){
                         window.location = url;
                     });
-                });
+                });*/
             },
 
             __submit : function(form){
