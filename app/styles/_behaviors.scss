@@ -24,3 +24,41 @@
   0%   { opacity: 0; transform:translate3d(-20px,0,0);}
   100% { opacity: 1; }
 }
+
+/* animation for the logo section on the landing page */
+
+@-webkit-keyframes roll-and-fade {
+  16% { opacity: 0.6; -webkit-transform:translate3d(0px,-115px,0) scale(0.95,0.95); }
+  33%   { -webkit-transform: translate3d(0px,-115px,0) scale(1,1); opacity: 1;}
+  48%   {opacity: 0.6; -webkit-transform:translate3d(0px,-226px,0) scale(0.95,0.95);}
+  66%   { -webkit-transform:translate3d(0px,-226px,0) scale(1,1); opacity: 1;}
+  82%   {opacity: 0.6; -webkit-transform:translate3d(0px,-336px,0) scale(0.95,0.95);}
+  100%   { -webkit-transform:translate3d(0px,-336px,0) scale(1,1); opacity: 1;}
+}
+
+@-moz-keyframes roll-and-fade {
+  16% { opacity: 0.6; -moz-transform:translate3d(0px,-115px,0) scale(0.95,0.95); }
+  33%   { -moz-transform: translate3d(0px,-115px,0) scale(1,1); opacity: 1;}
+  48%   {opacity: 0.6; -moz-transform:translate3d(0px,-226px,0) scale(0.95,0.95);}
+  66%   { -moz-transform:translate3d(0px,-226px,0) scale(1,1); opacity: 1;}
+  82%   {opacity: 0.6; -moz-transform:translate3d(0px,-336px,0) scale(0.95,0.95);}
+  100%   { -moz-transform:translate3d(0px,-336px,0) scale(1,1); opacity: 1;}
+}
+
+@-o-keyframes roll-and-fade {
+  16% { opacity: 0.6; -o-transform:translate3d(0px,-115px,0) scale(0.95,0.95); }
+  33%   { -o-transform: translate3d(0px,-115px,0) scale(1,1); opacity: 1;}
+  48%   {opacity: 0.6; -o-transform:translate3d(0px,-226px,0) scale(0.95,0.95);}
+  66%   { -o-transform:translate3d(0px,-226px,0) scale(1,1); opacity: 1;}
+  82%   {opacity: 0.6; -o-transform:translate3d(0px,-336px,0) scale(0.95,0.95);}
+  100%   { -o-transform:translate3d(0px,-336px,0) scale(1,1); opacity: 1;}
+}
+
+@keyframes roll-and-fade {
+  16% { opacity: 0.6; transform:translate3d(0px,-115px,0) scale(0.95,0.95); }
+  33%   { transform: translate3d(0px,-115px,0) scale(1,1); opacity: 1;}
+  48%   {opacity: 0.6; transform:translate3d(0px,-226px,0) scale(0.95,0.95);}
+  66%   { transform:translate3d(0px,-226px,0) scale(1,1); opacity: 1;}
+  82%   {opacity: 0.6; transform:translate3d(0px,-336px,0) scale(0.95,0.95);}
+  100%   { transform:translate3d(0px,-336px,0) scale(1,1); opacity: 1;}
+}
