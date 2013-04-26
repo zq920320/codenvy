@@ -1,5 +1,5 @@
 (function(window){
-    define(["jquery", "underscore", "views/accountformbase", "models/account"],
+    define(["jquery", "underscore", "views/accountformbase", "models/account","validation"],
 
         function($,_,AccountFormBase,Account){
 
@@ -30,6 +30,7 @@
                         },
                         email: {
                             required: true,
+                            checkEmail : true,
                             email: true
                         }
                     };

@@ -135,6 +135,10 @@
                 ).exec(domain) !== null ;
             },
 
+            isValidEmail : function(email){
+                return (/^[A-Za-z]{1}[a-zA-Z0-9@_\.-]+$/).test(email);
+            },
+
             login : function(email,password,success,error){
                 var loginUrl = "/sso/server/gen?authType=jaas",
                     queryString = window.location.search,
@@ -186,7 +190,7 @@
                 var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm/";
 
                 $.ajax({
-                    url : tenantServiceUrl + encodeURIComponent(domain.toLowerCase()) + "/" + encodeURIComponent(email),
+                    url : tenantServiceUrl + encodeURIComponent(domain.toLowerCase()) + "/" + encodeURIComponent(email.toLowerCase()),
                     type : "POST",
                     data: {},
                     success : function(){

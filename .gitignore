@@ -7,3 +7,5 @@ _site
 test/scripts
 .bin
 app/**/*.css
+.project
+.settings/

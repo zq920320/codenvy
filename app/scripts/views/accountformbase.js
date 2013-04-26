@@ -9,7 +9,9 @@ define(["jquery","models/account","views/form","validation"],
         jQuery.validator.addMethod("validDomain", function(value) {
             return Account.isValidDomain(value+".codenvy.com");
         });
-
+        jQuery.validator.addMethod("checkEmail", function(value) {
+            return Account.isValidEmail(value);
+        });
 
         var AccountFormBase = Form.extend({
 
@@ -18,8 +20,8 @@ define(["jquery","models/account","views/form","validation"],
                 noEmailErrorMessage : "Please provide an email address.",
                 noPasswordErrorMessage : "Please provide your account password.",
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match.",
-                invalidEmailErrorMessage : "You must provide a valid email address.",
-                invalidDomainNameErrorMessage : "Your domain name cannot start with a number and must only contain digits and characters. "
+                invalidEmailErrorMessage : "Please, provide a valid email address which should contain Latin letters, digits, dashes, underscores and periods",
+                invalidDomainNameErrorMessage : "Your domain name should start with Latin letters and must only contain Latin letters, digits or a dash in the middle of a domain name."
             },
 
             __validationRules : function(){
@@ -29,8 +31,8 @@ define(["jquery","models/account","views/form","validation"],
                         validDomain : true
                     },
                     email: {
-                        required: true,
-                        email: true
+                        required : true,
+                        checkEmail : true
                     }
                 };
             },
@@ -42,8 +44,8 @@ define(["jquery","models/account","views/form","validation"],
                         validDomain : this.settings.invalidDomainNameErrorMessage
                     },
                     email: {
-                        required: this.settings.noEmailErrorMessage,
-                        email: this.settings.invalidEmailErrorMessage
+                        required : this.settings.noEmailErrorMessage,
+                        checkEmail : this.settings.invalidEmailErrorMessage
                     },
                     password: {
                         required: this.settings.noPasswordErrorMessage
