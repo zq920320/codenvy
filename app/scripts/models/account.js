@@ -81,7 +81,7 @@
         };
 
         var loginWithGithub = function(){
-                var registrationGitHubunavailable = "Sorry, registration with GitHub is temporary unavailable. Sorry for the inconvenience.";
+                var registrationGitHubunavailable = " Login with GitHub is temporary unavailable. Please, use your username and password to log in. In case you lost your password you may go through a password recovery procedure. Sorry for the inconvenience.";
                 $(".error-container").html(registrationGitHubunavailable).removeClass("ok-message").addClass("expanded");
                     
         };
