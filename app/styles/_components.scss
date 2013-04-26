@@ -105,6 +105,27 @@ $scene-height:407px;
 
 }
 
+ul.used-by-logos{
+
+    $logo-width:125px;
+    $logo-height:75px;
+
+    list-style-type: none;
+    text-align: center;
+
+    li {
+        width: $logo-width;
+        min-height: $logo-height;
+        display: -moz-inline-stack;
+        display: inline-block;
+        vertical-align: top;
+        margin: 5px;
+        zoom: 1;
+        *display: inline;
+        _height: $logo-height;
+        text-align: center;
+    }
+}
 
 /*
 
