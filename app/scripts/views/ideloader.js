@@ -5,18 +5,20 @@ define(["jquery","underscore","backbone","models/account"],
         var animationFrequency = 500;
 
         var IDELoader = function(){
-            this.direction = "next";
-            setInterval(_.bind(this.onFrameUpdate,this),animationFrequency);
-            Account.waitForTenant(
-                _.bind(this.onTenantReady,this),
-                _.bind(this.onTenantError,this)
-            );        
+            if (Account.isWebsocketEnabled()) {
+                this.direction = "next";
+                setInterval(_.bind(this.onFrameUpdate,this),animationFrequency);
+                Account.waitForTenant(
+                    _.bind(this.onTenantReady,this),
+                    _.bind(this.onTenantError,this)
+                );
+            }
         };
 
         _.extend(IDELoader.prototype, Backbone.Events, {
 
             onTenantReady : function(d){
-                this.trigger("ready",d);
+                    this.trigger("ready",d);
             },
 
             onTenantError : function(errors){

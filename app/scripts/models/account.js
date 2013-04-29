@@ -69,28 +69,34 @@
 
 
         var loginWithGoogle = function(page,callback){
-           _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-            var url = "/rest/ide/oauth/authenticate?oauth_provider=google&mode=federated_login" +
-               "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" +
-               "&redirect_after_login=/oauth/" + new Date().getTime();
-            //window.location = url;
-            if(typeof callback !== 'undefined'){
-                callback(url);
+            if (isWebsocketEnabled()) {
+               _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
+                var url = "/rest/ide/oauth/authenticate?oauth_provider=google&mode=federated_login" +
+                   "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" +
+                   "&redirect_after_login=/oauth/" + new Date().getTime();
+                //window.location = url;
+                if(typeof callback !== 'undefined'){
+                    callback(url);
+                }
             }
         };
 
         var loginWithGithub = function(){
+            if (isWebsocketEnabled()) {
                 var registrationGitHubunavailable = " Login with GitHub is temporary unavailable. Please, use your username and password to log in. In case you lost your password you may go through a password recovery procedure. Sorry for the inconvenience.";
                 $(".error-container").html(registrationGitHubunavailable).removeClass("ok-message").addClass("expanded");
+            }
                     
         };
 /*
         var loginWithGithub = function(page,callback){
-            _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-            var url = "/rest/ide/oauth/authenticate?oauth_provider=github&mode=federated_login&" +
-            "scope=user&scope=repo&redirect_after_login=/oauth/" + new Date().getTime();
-            if(typeof callback !== 'undefined'){
-                callback(url);
+            if (isWebsocketEnabled()) {
+                _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
+                var url = "/rest/ide/oauth/authenticate?oauth_provider=github&mode=federated_login&" +
+                "scope=user&scope=repo&redirect_after_login=/oauth/" + new Date().getTime();
+                if(typeof callback !== 'undefined'){
+                    callback(url);
+                }
             }
         };
 */
@@ -110,11 +116,21 @@
                 }
 
         */
-
+        var isWebsocketEnabled = function(){
+            var USER_AGENT = navigator.userAgent.toLowerCase();
+            var IS_WS_SUPPORTED = ("WebSocket" in window);
+            if (!IS_WS_SUPPORTED || (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1)) {
+                window.location = "/error/browser-not-supported#show";
+                return false;
+            } 
+            return true;
+        };
 
         return {
             //FIXIT remove Utils.getQueryParameterByName
             Utils : Utils,
+
+            isWebsocketEnabled :isWebsocketEnabled,
 
             getQueryParameterByName : getQueryParameterByName,
 
@@ -144,6 +160,7 @@
             },
 
             login : function(email,password,success,error){
+                isWebsocketEnabled();
                 var loginUrl = "/sso/server/gen?authType=jaas",
                     queryString = window.location.search,
                     jaasExists = queryString.match(/authType=jaas/);

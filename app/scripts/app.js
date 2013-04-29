@@ -49,13 +49,6 @@ define(["jquery","config",
                 $(document).ready(function(){
 
                     modernize();
-                    var USER_AGENT = navigator.userAgent.toLowerCase();
-                    var IS_WS_SUPPORTED = ("WebSocket" in window);
-                    if (!IS_WS_SUPPORTED || (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1)) {
-                        if (window.location.hash !== "#show") {
-                            window.location = "/error/browser-not-supported#show";
-                        }
-                    } else {
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
                         forgotPasswordForm = $(".forgotpassword-form"),
@@ -153,16 +146,18 @@ define(["jquery","config",
                     }
 
                     if(loader.length !== 0){
-                        var ideloader = new IDELoader.IDELoader(),
-                            errorReport = ErrorReport.get(errorContainer);
 
-                        ideloader.on("ready",function(d){
-                            window.location.href = d.url;
-                        });
+                            var ideloader = new IDELoader.IDELoader(),
+                                errorReport = ErrorReport.get(errorContainer);
 
-                        ideloader.on("error",function(message){
-                            errorReport.show(message);
-                        });
+                            ideloader.on("ready",function(d){
+                                window.location.href = d.url;
+                            });
+
+                            ideloader.on("error",function(message){
+                                errorReport.show(message);
+                            });
+                        
                     }
 
                     if(contactForm.length !== 0){
@@ -254,7 +249,6 @@ define(["jquery","config",
                             
                         }());
                     }
-                } // if websocket else
 
                 });
             }

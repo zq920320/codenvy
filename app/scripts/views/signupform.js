@@ -18,7 +18,7 @@ define(["jquery","underscore","models/account","views/accountformbase","validati
                 },this));
 
                 this.$("input[type='submit']").click(_.bind(function(){
-                    this.stopFromCollapsing();
+                        this.stopFromCollapsing();
                 },this));
             },
 
@@ -77,6 +77,7 @@ define(["jquery","underscore","models/account","views/accountformbase","validati
             },
 
             __submit : function(form){
+                if (Account.isWebsocketEnabled()) {
                 this.__showProgress();
 
                 this.stopFromCollapsing();
@@ -102,7 +103,7 @@ define(["jquery","underscore","models/account","views/accountformbase","validati
                         }
                     },this)
                 );
-
+                }
                 return false;
             }
         });
