@@ -81,14 +81,6 @@
             }
         };
 
-        var loginWithGithub = function(){
-            if (isWebsocketEnabled()) {
-                var registrationGitHubunavailable = " Login with GitHub is temporary unavailable. Please, use your username and password to log in. In case you lost your password you may go through a password recovery procedure. Sorry for the inconvenience.";
-                $(".error-container").html(registrationGitHubunavailable).removeClass("ok-message").addClass("expanded");
-            }
-                    
-        };
-/*
         var loginWithGithub = function(page,callback){
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
@@ -99,7 +91,7 @@
                 }
             }
         };
-*/
+
         /*
             Every method accepts 0 or more data values and two callbacks (success and error)
 
