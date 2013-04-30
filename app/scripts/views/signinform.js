@@ -37,13 +37,16 @@
                 },
 
                 __submit : function(){
-                    Account.login(
-                        this.$("input[name='email']").val(),
-                        this.$("input[name='password']").val(),
-                        _.bind(function(data){
-                            //$(this.el).attr('action',data.loginUrl);
-                            //form.submit();
-                            window.location = data.url;
+                    var loginUrl = "/sso/server/gen?authType=jaas";
+                    $(this.el).attr("action", loginUrl);
+                    $(this.el).submit();
+/*                    Account.login(
+                        $(this.el), // validation form fields
+                        _.bind(function(){
+                            //$(this.el).attr('action',data.url);
+                            //$(this.el).submit();
+                            //window.location = data.url;
+                            return true;
                         },this),
                         _.bind(function(errors){
 
@@ -59,7 +62,7 @@
                         },this)
                     );
 
-                    return false;
+                    return false;*/
                 }
 
             });
