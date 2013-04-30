@@ -321,14 +321,6 @@
     }
 }
 
-@mixin image_choose_paas {
-    background: {
-        image:url('../images/features/img_choosepaas.png');
-        repeat:no-repeat;
-        position: 50% 100%;
-    }
-}
-
 @mixin image_screenshot_pair {
     background: {
         image:url('../images/features/img_prntscr_pair.png');

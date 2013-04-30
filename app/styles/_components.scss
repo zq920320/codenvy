@@ -316,7 +316,7 @@ h1.enterprise-header-text {
 .enterprise-features {
 
     .enterprise-icon {
-        
+
     }
 
     .enterprise-icon p {
@@ -496,11 +496,28 @@ h1.enterprise-header-text {
 .screenshot.language { @include image_screenshot_picklanguage(); }
 
 .choose-paas{
-    @include respond-to(tablet-desktop){
-        @include image_choose_paas(); padding-bottom: 170px;
+
+    $paas-tile-width:100px;
+    $paas-tile-height:100px;
+
+    ul{
+        list-style-type: none;
+        text-align: center;
+        margin:0; padding:0;
+
+        li{
+            width: $paas-tile-width;
+            min-height: $paas-tile-height;
+            display: -moz-inline-stack;
+            display: inline-block;
+            vertical-align: top;
+            margin: 5px;
+            zoom: 1;
+            *display: inline;
+            _height: $paas-tile-height;
+        }
     }
 }
-
 
 .screenshot.build-cycle{ @include image_screenshot_build_cycle(); }
 .screenshot.pair-programming{ @include image_screenshot_pair(); }
