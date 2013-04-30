@@ -139,12 +139,12 @@ $used-by-logos : "../images/landing/logos/amazon.png"
     $logo-width:125px;
     $logo-height:75px;
 
-    height: 107px;
+    height: 428px;
     margin-top: 15px;
 
     ul{
 
-        @include animation-roll-and-fade();
+        //@include animation-roll-and-fade();
 
         list-style-type: none;
         text-align: center;
