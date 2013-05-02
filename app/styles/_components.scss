@@ -497,24 +497,23 @@ h1.enterprise-header-text {
 
 .choose-paas{
 
-    $paas-tile-width:100px;
-    $paas-tile-height:100px;
+    $tile-width:80px;
+    $tile-height:80px;
 
     ul{
         list-style-type: none;
-        text-align: center;
         margin:0; padding:0;
 
         li{
-            width: $paas-tile-width;
-            min-height: $paas-tile-height;
+            width: $tile-width;
+            min-height: $tile-height;
             display: -moz-inline-stack;
             display: inline-block;
             vertical-align: top;
             margin: 5px;
             zoom: 1;
             *display: inline;
-            _height: $paas-tile-height;
+            _height: $tile-height;
         }
     }
 }
@@ -537,6 +536,11 @@ h1.enterprise-header-text {
 .feature-right {
   text-align: left;
   padding-left: 20px;
+}
+
+.table-row-tile {
+    margin-top: 40px;
+    margin-left: 30px;
 }
 
 
