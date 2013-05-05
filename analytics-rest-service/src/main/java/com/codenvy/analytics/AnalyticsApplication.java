@@ -18,9 +18,8 @@
  */
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.scripts.MetricService;
+import com.codenvy.analytics.services.MetricService;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,15 +27,10 @@ import javax.ws.rs.core.Application;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class AnalyticsApplication extends Application {
-    private final Set<Object> singletons;
-
     private final Set<Class<?>> classes;
 
     /** {@link AnalyticsApplication} constructor. */
     public AnalyticsApplication() {
-        singletons = new HashSet<Object>();
-        singletons.add(MetricService.class);
-
         classes = new HashSet<Class<?>>();
         classes.add(MetricService.class);
     }
@@ -45,11 +39,5 @@ public class AnalyticsApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         return classes;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<Object> getSingletons() {
-        return Collections.emptySet();
     }
 }

@@ -57,6 +57,7 @@
         <junit.version>4.10</junit.version>
         <mockito.version>1.9.0</mockito.version>
         <quartz.version>2.1.7</quartz.version>
+        <commons.lang.version>2.6</commons.lang.version>
 
         <!-- Loggers -->
         <org.slf4j.version>1.6.1</org.slf4j.version>
@@ -206,11 +207,16 @@
                 <version>${javax.mail.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons.lang.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
-        <module>analytics-events</module>
+        <module>analytics-core</module>
         <module>analytics-web-portal</module>
         <module>analytics-rest-service</module>
         <module>analytics-tomcat-pkg</module>

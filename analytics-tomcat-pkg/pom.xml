@@ -152,7 +152,7 @@
                                         <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x"/>
 
                                         <copy todir="${project.build.directory}/tomcat-analytics/scripts" overwrite="true">
-                                            <fileset dir="${basedir}/../analytics-events/scripts/"/>
+                                            <fileset dir="${basedir}/../analytics-core/scripts/"/>
                                         </copy>
                                     </tasks>
                                 </configuration>

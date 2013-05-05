@@ -83,7 +83,7 @@
 
         <dependency>
             <groupId>com.codenvy.analytics</groupId>
-            <artifactId>analytics-events</artifactId>
+            <artifactId>analytics-core</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>

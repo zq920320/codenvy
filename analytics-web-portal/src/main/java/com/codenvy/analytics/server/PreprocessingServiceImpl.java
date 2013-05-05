@@ -4,7 +4,10 @@
  */
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.metrics.TimeUnit;
+import java.util.Date;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
@@ -20,16 +23,11 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.Date;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import com.codenvy.analytics.metrics.TimeUnit;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-@SuppressWarnings("serial")
 public class PreprocessingServiceImpl implements ServletContextListener {
 
     /** Logger. */
@@ -86,18 +84,14 @@ public class PreprocessingServiceImpl implements ServletContextListener {
 
     public static class PreprocessJob implements Job {
         public void execute(JobExecutionContext context) throws JobExecutionException {
-            try {
-                LOGGER.info("Preprocessing data is started");
-                long start = System.currentTimeMillis();
+            LOGGER.info("Preprocessing data is started");
+            long start = System.currentTimeMillis();
 
-                new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.DAY);
-                new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.WEEK);
-                new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.MONTH);
+            new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.DAY);
+            new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.WEEK);
+            new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.MONTH);
 
-                LOGGER.info("Preprocessing data is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
-            } catch (IOException e) {
-                throw new JobExecutionException(e);
-            }
+            LOGGER.info("Preprocessing data is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 }
