@@ -105,6 +105,80 @@ $scene-height:407px;
 
 }
 
+$used-by-logos : "../images/landing/logos/amazon.png"
+"../images/landing/logos/amex.png"
+"../images/landing/logos/berkeley.png"
+"../images/landing/logos/bmw.png"
+"../images/landing/logos/boeing.png"
+"../images/landing/logos/cisco.png"
+"../images/landing/logos/disney.png"
+"../images/landing/logos/ebay.png"
+"../images/landing/logos/ericsson.png"
+"../images/landing/logos/ge.png"
+"../images/landing/logos/google.png"
+"../images/landing/logos/hsbc.png"
+"../images/landing/logos/intel.png"
+"../images/landing/logos/mckinsey.png"
+"../images/landing/logos/nasa.png"
+"../images/landing/logos/nbc.png"
+"../images/landing/logos/novartis.png"
+"../images/landing/logos/oracle.png"
+"../images/landing/logos/samsung.png"
+"../images/landing/logos/stanford.png"
+"../images/landing/logos/vmware.png";
+
+
+.used-by-label {
+    color:#8e979d;
+    font-size:0.9em;
+    padding: 1em;
+}
+
+.used-by-logos {
+
+    $logo-width:80px;
+    $logo-height:40px;
+
+    margin-top: 15px;
+
+    ul{
+        opacity: 0.6;
+
+        &:hover{
+            opacity: 1.0;
+        };
+
+        @include transition(0.2s,ease-in,opacity);
+
+        list-style-type: none;
+        text-align: center;
+        padding: 0; margin: 0;
+
+        @mixin logo-li {
+            width: $logo-width;
+            min-height: $logo-height;
+            display: -moz-inline-stack;
+            display: inline-block;
+            vertical-align: top;
+            margin: 18px 5px 18px 5px;
+            zoom: 1;
+            *display: inline;
+            _height: $logo-height;
+            text-align: center;
+            background: {
+                repeat:no-repeat;
+                position: 50% 50%;
+            }
+        }
+
+        @for $i from 1 through length($used-by-logos) {
+            li:nth-child(#{$i}){
+                @include logo-li();
+                background-image: url(nth($used-by-logos, $i));
+            }
+        }
+    }
+}
 
 /*
 
