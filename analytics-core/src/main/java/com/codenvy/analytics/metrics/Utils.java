@@ -324,6 +324,10 @@ public class Utils {
         return timeUnit == TimeUnit.DAY ? context = Utils.prevDateInterval(context) : context;
     }
 
+    public static Map<String, String> newContext(Map<String, String> context) {
+        return new HashMap<String, String>(context);
+    }
+
     /**
      * Validates context. Throws {@link IllegalArgumentException} if something wrong.
      */

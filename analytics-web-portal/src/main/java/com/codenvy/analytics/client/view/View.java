@@ -13,7 +13,6 @@ public interface View {
 
     /**
      * Updates view accordingly to new {@link TimeUnit} parameter.
-     * @param timeUnit TODO
      */
     public void update(TimeUnit timeUnit);
 }

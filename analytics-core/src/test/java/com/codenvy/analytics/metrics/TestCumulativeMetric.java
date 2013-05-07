@@ -10,11 +10,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
 
+import com.codenvy.analytics.BaseTest;
+
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.value.LongValueData;
 
 

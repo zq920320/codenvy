@@ -247,6 +247,12 @@ public class MetricFactory {
             case PAAS_DEPLOYMENT_TYPE_OPENSHIFT_PERCENT:
                 metric = new PaasDeploymentTypeOpenShiftPercentMetric();
                 break;
+            case PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER:
+                metric = new PaasDeploymentTypeTier3NumberMetric();
+                break;
+            case PAAS_DEPLOYMENT_TYPE_TIER3_PERCENT:
+                metric = new PaasDeploymentTypeTier3PercentMetric();
+                break;
             case JREBEL_ELIGIBLE:
                 metric = new JrebelElibigleMetric();
                 break;

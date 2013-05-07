@@ -11,6 +11,7 @@ SET ANALYTICS_OPTS=-Danalytics.logs.directory=C:/cygwin/home/tolusha/pig/logs/lo
 SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.scripts.directory=%CATALINA_HOME%/scripts
 SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.result.directory=%CATALINA_HOME%/data/results
 SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.metrics.initial.values=%CATALINA_HOME%/analytics-conf/initial-values.xml
+SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.acton.ftp.properties=%CATALINA_HOME%/analytics-conf/acton-ftp.properties
 SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Dcom.codenvy.analytics.logpath=%CATALINA_HOME%/logs
 
 SET QUARTZ_OPTS=-Dorg.terracotta.quartz.skipUpdateCheck=true

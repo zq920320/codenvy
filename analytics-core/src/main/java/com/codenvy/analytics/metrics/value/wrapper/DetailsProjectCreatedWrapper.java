@@ -4,13 +4,6 @@
  */
 package com.codenvy.analytics.metrics.value.wrapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
@@ -18,6 +11,13 @@ import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.StringValueData;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Items in the list meet the requirements: <br>
@@ -71,17 +71,29 @@ public class DetailsProjectCreatedWrapper implements ValueDataWrapper {
      * @return distribution number of the projects by type
      */
     public MapStringLongValueData getProjectsNumberByTypes() {
+        return getProjectsNumber(TYPE);
+    }
+
+    /**
+     * @return distribution number of the projects by user
+     */
+    public MapStringLongValueData getProjectsNumberByUsers() {
+        return getProjectsNumber(USER);
+    }
+
+    private MapStringLongValueData getProjectsNumber(int index) {
         Map<StringValueData, LongValueData> result = new HashMap<StringValueData, LongValueData>();
 
         for (ListStringValueData listVD : valueData.getAll()) {
-            StringValueData type = listVD.getAll().get(TYPE);
+            StringValueData key = listVD.getAll().get(index);
 
-            long prevValue = result.containsKey(type) ? result.get(type).getAsLong() : 0;
-            result.put(type, new LongValueData(prevValue + 1));
+            long prevValue = result.containsKey(key) ? result.get(key).getAsLong() : 0;
+            result.put(key, new LongValueData(prevValue + 1));
         }
 
         return new MapStringLongValueData(result);
     }
+
 
     private ListListStringValueData doFilter(String item, int index) {
         List<ListStringValueData> result = new ArrayList<ListStringValueData>();

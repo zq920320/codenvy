@@ -7,7 +7,7 @@
     <display-name>Analytics Service</display-name>
 
     <listener>
-      <listener-class>com.codenvy.analytics.server.PreprocessingServiceImpl</listener-class>
+      <listener-class>com.codenvy.analytics.server.DailyJobsRunner</listener-class>
     </listener>
     <!-- Servlets -->
     

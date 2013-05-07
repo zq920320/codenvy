@@ -20,6 +20,9 @@ package com.codenvy.analytics.scripts;
 
 import static org.testng.Assert.assertEquals;
 
+import com.codenvy.analytics.BaseTest;
+
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +31,6 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;

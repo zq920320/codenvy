@@ -98,21 +98,6 @@ public class TestScriptEventCount extends BaseTest {
     }
 
     @Test
-    public void testEventCountProjectCreated() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectCreatedEvent("user", "ws", "session", "project").withDate("2010-10-01")
-                        .build());
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_PROJECT_CREATED, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(1));
-    }
-
-    @Test
     public void testEventCountProjectDestroyed() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project").withDate("2010-10-01")

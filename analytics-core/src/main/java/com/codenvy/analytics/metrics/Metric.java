@@ -4,20 +4,23 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
 import javax.tools.FileObject;
 
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
-
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public interface Metric {
+
+    public static final String FILTER_PARAM_PREFIX = "filter/";
+    public static final String USER_FILTER_PARAM   = FILTER_PARAM_PREFIX + "user";
 
     /**
      * Returns value metric for given context.
@@ -27,7 +30,7 @@ public interface Metric {
      * @throws IOException if any errors are occurred
      */
     public ValueData getValue(Map<String, String> context) throws IOException;
-    
+
     /**
      * @return the {@link MetricType} associated with
      */

@@ -22,6 +22,8 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
+
+
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.SetListStringValueData;

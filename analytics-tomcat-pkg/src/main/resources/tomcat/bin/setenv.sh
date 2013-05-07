@@ -10,6 +10,7 @@ ANALYTICS_OPTS="-Danalytics.logs.directory=${CATALINA_HOME}/../logs-production \
                 -Danalytics.scripts.directory=${CATALINA_HOME}/scripts \
                 -Danalytics.result.directory=${CATALINA_HOME}/data/results \
                 -Danalytics.metrics.initial.values=${CATALINA_HOME}/analytics-conf/initial-values.xml \
+                -Danalytics.acton.ftp.properties=${CATALINA_HOME}/analytics-conf/acton-ftp.properties \
                 -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
 
 

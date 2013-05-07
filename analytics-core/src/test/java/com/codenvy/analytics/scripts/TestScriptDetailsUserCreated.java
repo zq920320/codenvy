@@ -21,6 +21,9 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.codenvy.analytics.BaseTest;
+
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +33,6 @@ import java.util.Set;
 
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.StringValueData;

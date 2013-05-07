@@ -7,13 +7,15 @@ package com.codenvy.analytics.metrics.value;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
+import com.codenvy.analytics.BaseTest;
+
+
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>

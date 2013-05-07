@@ -21,7 +21,6 @@ public interface TimeLineViewService extends RemoteService {
 
     /**
      * Returns rows for timeline view.
-     * @param timeUnit TODO
      */
     List<TimeLineViewData> getViews(Date date, TimeUnit timeUnit) throws IOException;
 }

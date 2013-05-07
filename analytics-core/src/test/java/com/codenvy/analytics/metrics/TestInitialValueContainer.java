@@ -11,6 +11,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
 
+import com.codenvy.analytics.BaseTest;
+
+
 import java.io.ByteArrayInputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,7 +21,6 @@ import java.util.Map;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 

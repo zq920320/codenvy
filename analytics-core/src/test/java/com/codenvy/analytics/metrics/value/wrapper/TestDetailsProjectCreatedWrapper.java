@@ -21,19 +21,19 @@ package com.codenvy.analytics.metrics.value.wrapper;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.StringValueData;
+
+import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestDetailsProjectCreatedWrapper extends BaseTest {
@@ -68,9 +68,9 @@ public class TestDetailsProjectCreatedWrapper extends BaseTest {
         assertTrue(all.contains(item3));
         assertTrue(all.contains(item4));
 
-        Map<StringValueData, LongValueData> projectsNumberByTypes = wrapper.getProjectsNumberByTypes().getAll();
-        assertEquals(projectsNumberByTypes.get(new StringValueData("type1")), new LongValueData(2L));
-        assertEquals(projectsNumberByTypes.get(new StringValueData("type2")), new LongValueData(2L));
+        Map<StringValueData, LongValueData> projectsNumber = wrapper.getProjectsNumberByTypes().getAll();
+        assertEquals(projectsNumber.get(new StringValueData("type1")), new LongValueData(2L));
+        assertEquals(projectsNumber.get(new StringValueData("type2")), new LongValueData(2L));
 
         assertEquals(wrapper.getProjectsNumberByType("type1"), new DoubleValueData(2));
         assertEquals(wrapper.getProjectsPercentByType("type2"), new DoubleValueData(50));
@@ -80,5 +80,10 @@ public class TestDetailsProjectCreatedWrapper extends BaseTest {
         assertTrue(users.contains(new StringValueData("user1")));
         assertTrue(users.contains(new StringValueData("user2")));
         assertTrue(users.contains(new StringValueData("user3")));
+
+        projectsNumber = wrapper.getProjectsNumberByUsers().getAll();
+        assertEquals(projectsNumber.get(new StringValueData("user1")), new LongValueData(2L));
+        assertEquals(projectsNumber.get(new StringValueData("user2")), new LongValueData(1L));
+        assertEquals(projectsNumber.get(new StringValueData("user3")), new LongValueData(1L));
     }
 }

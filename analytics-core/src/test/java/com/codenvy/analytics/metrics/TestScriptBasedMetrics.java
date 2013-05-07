@@ -7,17 +7,17 @@ package com.codenvy.analytics.metrics;
 import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.scripts.ScriptType;
+
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -36,7 +36,7 @@ public class TestScriptBasedMetrics extends BaseTest {
         Utils.putFromDate(context, fromDate);
         Utils.putTimeUnit(context, TimeUnit.WEEK);
 
-        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.PROJECTS_CREATED_LIST));
+        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.USERS_CREATED_NUMBER));
 
         assertEquals(mockedMetric.getValue(context), new LongValueData(70L));
     }
@@ -52,7 +52,7 @@ public class TestScriptBasedMetrics extends BaseTest {
 
         @Override
         protected ScriptType getScriptType() {
-            return ScriptType.EVENT_COUNT_PROJECT_CREATED;
+            return ScriptType.EVENT_COUNT_USER_CREATED;
         }
 
         @Override

@@ -5,10 +5,6 @@
 package com.codenvy.analytics.scripts;
 
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
@@ -16,6 +12,10 @@ import com.codenvy.analytics.metrics.value.MapStringLongValueData;
 import com.codenvy.analytics.metrics.value.SetListStringValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -44,13 +44,6 @@ public enum ScriptType {
     },
 
     EVENT_COUNT_USER_REMOVED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
-        }
-    },
-
-    EVENT_COUNT_PROJECT_CREATED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return LongValueData.class;

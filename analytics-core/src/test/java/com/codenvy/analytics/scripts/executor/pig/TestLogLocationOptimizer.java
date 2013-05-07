@@ -20,6 +20,9 @@ package com.codenvy.analytics.scripts.executor.pig;
 
 import static org.junit.Assert.assertEquals;
 
+import com.codenvy.analytics.BaseTest;
+
+
 import java.io.File;
 import java.util.Calendar;
 import java.util.UUID;
@@ -27,7 +30,6 @@ import java.util.UUID;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestLogLocationOptimizer extends BaseTest {

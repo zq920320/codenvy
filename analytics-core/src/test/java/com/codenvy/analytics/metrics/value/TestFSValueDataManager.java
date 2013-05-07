@@ -8,13 +8,15 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertFalse;
 
+import com.codenvy.analytics.BaseTest;
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.UUID;
 
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricType;
 
 /**

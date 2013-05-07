@@ -7,21 +7,19 @@ package com.codenvy.analytics.metrics;
 import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.scripts.ScriptType;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -71,7 +69,7 @@ public class TestAbstractMetrics extends BaseTest {
         Utils.putFromDate(context, calendar);
         Utils.putTimeUnit(context, TimeUnit.DAY);
 
-        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.PROJECTS_CREATED_LIST));
+        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT));
 
         assertEquals(mockedMetric.getValue(context), new LongValueData(10L));
         assertEquals(mockedMetric.load(context), new LongValueData(10L));
@@ -80,27 +78,20 @@ public class TestAbstractMetrics extends BaseTest {
     /**
      * For testing purpose only.
      */
-    class TestedMetric extends AbstractMetric {
+    class TestedMetric extends ScriptBasedMetric {
 
         TestedMetric(MetricType metricType) {
             super(metricType);
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<MetricParameter>(
-                                                      Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                              MetricParameter.TO_DATE}));
+        protected ScriptType getScriptType() {
+            return ScriptType.EVENT_COUNT_USER_INVITE;
         }
 
         @Override
-        protected Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
-        }
-
-        @Override
-        protected ValueData evaluate(Map<String, String> context) throws IOException {
-            return new LongValueData(10L);
+        protected ValueData executeScript(Map<String, String> context) throws IOException {
+            return new LongValueData(10);
         }
     }
 }
