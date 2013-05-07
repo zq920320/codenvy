@@ -4,6 +4,8 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
+
 import com.codenvy.analytics.metrics.value.CacheableValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataManager;
@@ -47,7 +49,30 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
      * Filtering data result depending on execution context.
      */
     protected ValueData doFilter(ValueData valueData, Map<String, String> context) {
+        if (isFilterSupported()) {
+            for (String param : FILTERS_PARAM) {
+                if (context.containsKey(param)) {
+                    ValueDataFilter filter = createFilter(valueData);
+                    valueData = filter.doFilter(param, context.get(param));
+                }
+            }
+        }
+
         return valueData;
+    }
+
+    /**
+     * @return {@link ValueDataFilter} over {@link ValueData}
+     */
+    protected ValueDataFilter createFilter(ValueData valueData) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @return true if metric supports filtering otherwise return false
+     */
+    protected boolean isFilterSupported() {
+        return false;
     }
 
     /** Stores value into the file. */

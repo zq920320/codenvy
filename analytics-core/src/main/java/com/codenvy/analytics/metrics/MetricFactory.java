@@ -196,6 +196,12 @@ public class MetricFactory {
             case PROJECT_TYPE_OTHERS_PERCENT:
                 metric = new ProjectCreatedTypeOthersPercentMetric();
                 break;
+            case APP_DEPLOYED_LIST:
+                metric = new AppDeployedListMetric();
+                break;
+            case APP_DEPLOYED_NUMBER:
+                metric = new AppDeployedNumberMetric();
+                break;
             case PAAS_DEPLOYMENT_TYPES:
                 metric = new PaasDeploymentTypesMetric();
                 break;

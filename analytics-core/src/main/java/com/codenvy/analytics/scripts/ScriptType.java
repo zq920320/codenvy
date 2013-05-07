@@ -120,6 +120,13 @@ public enum ScriptType {
         }
     },
 
+    APP_DEPLOYED_LIST {
+        @Override
+        public Class< ? extends ValueData> getValueDataClass() {
+            return ListListStringValueData.class;
+        }
+    },
+
     DETAILS_USER_CREATED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {

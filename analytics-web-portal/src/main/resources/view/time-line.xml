@@ -97,6 +97,7 @@
         <metric type="paas_deployment_type_gae_number" format="%.0f" title="GAE"/>
         <metric type="paas_deployment_type_heroku_number" format="%.0f" title="Heroku"/>
         <metric type="paas_deployment_type_openshift_number" format="%.0f" title="OpenShift"/>
+        <metric type="paas_deployment_type_tier3_number" format="%.0f" title="Tier3"/>
         <metric type="paas_deployment_type_local_number" format="%.0f" title="Local"/>
         <empty />
     </view>
@@ -109,6 +110,7 @@
         <metric type="paas_deployment_type_gae_percent" format="%.1f%%" title="GAE"/>
         <metric type="paas_deployment_type_heroku_percent" format="%.1f%%" title="Heroku"/>
         <metric type="paas_deployment_type_openshift_percent" format="%.1f%%" title="OpenShift"/>
+        <metric type="paas_deployment_type_tier3_percent" format="%.1f%%" title="Tier3"/>
         <metric type="paas_deployment_type_local_percent" format="%.1f%%" title="Local"/>
         <empty />
     </view>

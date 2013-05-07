@@ -4,12 +4,13 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+
 import java.io.IOException;
 import java.util.Map;
 
 import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.wrapper.DetailsProjectCreatedWrapper;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -24,7 +25,7 @@ public class ProjectCreatedTypeJavaWarPercentMetric extends ProjectsCreatedListM
     /** {@inheritedDoc} */
     @Override
     public ValueData evaluate(Map<String, String> context) throws IOException {
-        DetailsProjectCreatedWrapper wrapper = (DetailsProjectCreatedWrapper)getWrapper(basedMetric.getValue(context));
+        ProjectCreatedListFilter wrapper = (ProjectCreatedListFilter)getWrapper(basedMetric.getValue(context));
         return wrapper.getProjectsPercentByType(types[0]).union(wrapper.getProjectsPercentByType("Java"));
     }
 }

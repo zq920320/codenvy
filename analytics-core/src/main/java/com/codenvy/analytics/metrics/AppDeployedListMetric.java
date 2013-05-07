@@ -6,36 +6,34 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+import com.codenvy.analytics.metrics.value.filters.AppDeployedListFilter;
 import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
 import com.codenvy.analytics.scripts.ScriptType;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedListMetric extends ScriptBasedMetric {
+public class AppDeployedListMetric extends ScriptBasedMetric {
 
-    ProjectCreatedListMetric() {
-        super(MetricType.PROJECTS_CREATED_LIST);
+    AppDeployedListMetric() {
+        super(MetricType.APP_DEPLOYED_LIST);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.DETAILS_PROJECT_CREATED;
+        return ScriptType.APP_DEPLOYED_LIST;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected ValueDataFilter createFilter(ValueData valueData) {
+        return new AppDeployedListFilter((ListListStringValueData)valueData);
     }
 
     /** {@inheritDoc} */
     @Override
     protected boolean isFilterSupported() {
         return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected ValueDataFilter createFilter(ValueData valueData) {
-        return new ProjectCreatedListFilter((ListListStringValueData)valueData);
     }
 }

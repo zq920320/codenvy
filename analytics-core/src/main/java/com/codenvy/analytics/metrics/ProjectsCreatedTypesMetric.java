@@ -4,6 +4,8 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +13,6 @@ import java.util.Set;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.wrapper.DetailsProjectCreatedWrapper;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -40,7 +41,7 @@ public class ProjectsCreatedTypesMetric extends CalculateBasedMetric {
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
         ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        DetailsProjectCreatedWrapper wrapper = new DetailsProjectCreatedWrapper(valueData);
+        ProjectCreatedListFilter wrapper = new ProjectCreatedListFilter(valueData);
 
         return wrapper.getProjectsNumberByTypes();
     }

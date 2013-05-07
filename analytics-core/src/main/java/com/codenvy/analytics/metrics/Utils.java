@@ -328,6 +328,10 @@ public class Utils {
         return new HashMap<String, String>(context);
     }
 
+    public static Map<String, String> newContext() {
+        return new HashMap<String, String>();
+    }
+
     /**
      * Validates context. Throws {@link IllegalArgumentException} if something wrong.
      */

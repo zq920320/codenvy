@@ -4,6 +4,9 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -12,8 +15,6 @@ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.wrapper.DetailsProjectCreatedWrapper;
-import com.codenvy.analytics.metrics.value.wrapper.ValueDataWrapper;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -49,7 +50,7 @@ public abstract class ProjectsCreatedListMetric extends CalculateBasedMetric {
     /** {@inheritedDoc} */
     @Override
     public ValueData evaluate(Map<String, String> context) throws IOException {
-        DetailsProjectCreatedWrapper wrapper = (DetailsProjectCreatedWrapper)getWrapper(basedMetric.getValue(context));
+        ProjectCreatedListFilter wrapper = (ProjectCreatedListFilter)getWrapper(basedMetric.getValue(context));
 
         ValueData total = null;
         for (String type : types) {
@@ -68,8 +69,8 @@ public abstract class ProjectsCreatedListMetric extends CalculateBasedMetric {
         return total;
     }
 
-    protected ValueDataWrapper getWrapper(ValueData valueData) {
-        return new DetailsProjectCreatedWrapper(
+    protected ValueDataFilter getWrapper(ValueData valueData) {
+        return new ProjectCreatedListFilter(
                                                 (ListListStringValueData)valueData);
     }
 

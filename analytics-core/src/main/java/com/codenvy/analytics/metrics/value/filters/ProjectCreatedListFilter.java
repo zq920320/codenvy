@@ -2,8 +2,9 @@
  *    Copyright (C) 2013 Codenvy.
  *
  */
-package com.codenvy.analytics.metrics.value.wrapper;
+package com.codenvy.analytics.metrics.value.filters;
 
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
@@ -25,16 +26,17 @@ import java.util.Set;
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class DetailsProjectCreatedWrapper implements ValueDataWrapper {
+public class ProjectCreatedListFilter implements ValueDataFilter {
 
-    private final int                    WORKSPACE = 0;
-    private final int                    USER      = 1;
-    private final int                    PROJECT   = 2;
-    private final int                    TYPE      = 3;
+    private final int                     WORKSPACE = 0;
+    private final int                     USER      = 1;
+    private final int                     PROJECT   = 2;
+    private final int                     TYPE      = 3;
 
     private final ListListStringValueData valueData;
 
-    public DetailsProjectCreatedWrapper(ListListStringValueData valueData) {
+    public ProjectCreatedListFilter(ListListStringValueData valueData) {
+
         this.valueData = valueData;
     }
 
@@ -47,16 +49,8 @@ public class DetailsProjectCreatedWrapper implements ValueDataWrapper {
         return new SetStringValueData(result);
     }
 
-    public ListListStringValueData getProjectsByUser(String user) {
-        return doFilter(user, USER);
-    }
-
-    public ListListStringValueData getProjectsByType(String type) {
-        return doFilter(type, TYPE);
-    }
-
     public DoubleValueData getProjectsNumberByType(String type) {
-        List<ListStringValueData> all = getProjectsByType(type).getAll();
+        List<ListStringValueData> all = doFilter(Metric.TYPE_FILTER_PARAM, type).getAll();
         return new DoubleValueData(all.size());
     }
 
@@ -95,7 +89,7 @@ public class DetailsProjectCreatedWrapper implements ValueDataWrapper {
     }
 
 
-    private ListListStringValueData doFilter(String item, int index) {
+    private ListListStringValueData doFilter(int index, String item) {
         List<ListStringValueData> result = new ArrayList<ListStringValueData>();
 
         StringValueData itemVD = new StringValueData(item);
@@ -107,5 +101,21 @@ public class DetailsProjectCreatedWrapper implements ValueDataWrapper {
         }
 
         return new ListListStringValueData(result);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ListListStringValueData doFilter(String key, String value) {
+        if (key.equals(Metric.USER_FILTER_PARAM)) {
+            return doFilter(USER, value);
+        } else if (key.equals(Metric.WS_FILTER_PARAM)) {
+            return doFilter(WORKSPACE, value);
+        } else if (key.equals(Metric.PROJECT_FILTER_PARAM)) {
+            return doFilter(PROJECT, value);
+        } else if (key.equals(Metric.TYPE_FILTER_PARAM)) {
+            return doFilter(TYPE, value);
+        }
+
+        return valueData;
     }
 }

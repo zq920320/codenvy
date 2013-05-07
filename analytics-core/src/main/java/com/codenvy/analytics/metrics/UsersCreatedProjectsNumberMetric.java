@@ -4,6 +4,8 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +15,6 @@ import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.wrapper.DetailsProjectCreatedWrapper;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -48,7 +49,7 @@ public class UsersCreatedProjectsNumberMetric extends CalculateBasedMetric {
         int count = 0;
 
         ListListStringValueData createdProjectsValue = (ListListStringValueData)createdProjectsMetric.getValue(context);
-        DetailsProjectCreatedWrapper wrapper = new DetailsProjectCreatedWrapper(createdProjectsValue);
+        ProjectCreatedListFilter wrapper = new ProjectCreatedListFilter(createdProjectsValue);
         Set<StringValueData> allUsersHaveCreatedProjects = wrapper.getAllUsers().getAll();
 
         SetStringValueData createdUsersValue = (SetStringValueData)createdUsersMetric.getValue(context);

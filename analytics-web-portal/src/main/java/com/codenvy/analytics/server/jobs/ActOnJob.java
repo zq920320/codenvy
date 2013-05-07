@@ -130,7 +130,7 @@ public class ActOnJob implements Job {
         return ftpProps;
     }
 
-    private File prepareFile() throws IOException {
+    protected File prepareFile() throws IOException {
         Map<String, String> context = Utils.initilizeContext(TimeUnit.DAY, new Date());
 
         Set<StringValueData> activeUsers = getActiveUsers(context);
@@ -202,7 +202,7 @@ public class ActOnJob implements Job {
         }
     }
 
-    private Set<StringValueData> getActiveUsers(Map<String, String> context) throws IOException {
+    protected Set<StringValueData> getActiveUsers(Map<String, String> context) throws IOException {
         Metric activeUsersSetMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
         SetStringValueData valueData = (SetStringValueData)activeUsersSetMetric.getValue(context);
 

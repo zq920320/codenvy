@@ -16,12 +16,15 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.analytics.metrics.value.wrapper;
+package com.codenvy.analytics.metrics.value.filter;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
@@ -36,10 +39,10 @@ import java.util.Map;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestDetailsProjectCreatedWrapper extends BaseTest {
+public class TestProjectCreatedListFilter extends BaseTest {
 
     @Test
-    public void testScriptDetailsProjectCreatedTypes() throws Exception {
+    public void testDoFilter() throws Exception {
 
         ListStringValueData item1 =
                                     new ListStringValueData(Arrays.asList(new StringValueData("ws1"), new StringValueData("user1"),
@@ -56,15 +59,31 @@ public class TestDetailsProjectCreatedWrapper extends BaseTest {
 
         ListListStringValueData value = new ListListStringValueData(Arrays.asList(new ListStringValueData[]{item1, item2, item3, item4}));
 
-        DetailsProjectCreatedWrapper wrapper = new DetailsProjectCreatedWrapper(value);
-        List<ListStringValueData> all = wrapper.getProjectsByUser("user1").getAll();
+        ProjectCreatedListFilter wrapper = new ProjectCreatedListFilter(value);
+        List<ListStringValueData> all = wrapper.doFilter(Metric.USER_FILTER_PARAM, "user1").getAll();
 
         assertEquals(all.size(), 2);
         assertTrue(all.contains(item1));
         assertTrue(all.contains(item2));
 
-        all = wrapper.getProjectsByType("type2").getAll();
+        all = wrapper.doFilter(Metric.TYPE_FILTER_PARAM, "type2").getAll();
         assertEquals(all.size(), 2);
+        assertTrue(all.contains(item3));
+        assertTrue(all.contains(item4));
+
+        all = wrapper.doFilter(Metric.WS_FILTER_PARAM, "ws1").getAll();
+        assertEquals(all.size(), 2);
+        assertTrue(all.contains(item1));
+        assertTrue(all.contains(item3));
+
+        all = wrapper.doFilter(Metric.USER_FILTER_PARAM, "user2").getAll();
+        assertEquals(all.size(), 1);
+        assertTrue(all.contains(item3));
+
+        all = wrapper.doFilter(Metric.PROJECT_FILTER_PARAM, "project1").getAll();
+        assertEquals(all.size(), 4);
+        assertTrue(all.contains(item1));
+        assertTrue(all.contains(item2));
         assertTrue(all.contains(item3));
         assertTrue(all.contains(item4));
 
