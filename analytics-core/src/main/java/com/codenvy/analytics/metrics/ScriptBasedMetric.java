@@ -4,11 +4,10 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
-
 import com.codenvy.analytics.metrics.value.CacheableValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataManager;
+import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
@@ -35,14 +34,24 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
 
     /** {@inheritedDoc} */
     public synchronized ValueData getValue(Map<String, String> context) throws IOException {
-        ValueData valueData;
-        try {
-            valueData = load(context);
-        } catch (FileNotFoundException e) {
-            valueData = evaluate(context);
+        Calendar fromDate = Utils.getFromDate(context);
+        Calendar toDate = Utils.getToDate(context);
+
+        ValueData total = null;
+
+        Map<String, String> dayContext = Utils.newContext(context);
+        while (!fromDate.after(toDate)) {
+            Utils.putFromDate(dayContext, fromDate);
+            Utils.putToDate(dayContext, fromDate);
+            Utils.putTimeUnit(dayContext, TimeUnit.DAY);
+
+            ValueData dayValue = evaluate(dayContext);
+            total = total == null ? dayValue : total.union(dayValue);
+
+            fromDate.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        return doFilter(valueData, context);
+        return doFilter(total, context);
     }
 
     /**
@@ -76,10 +85,8 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     }
 
     /** Stores value into the file. */
-    protected void storeIfAllowed(ValueData value, Map<String, String> context) throws IOException {
-        if (isStoreAllowed(context)) {
-            valueDataManager.store(value, makeUUID(context));
-        }
+    protected void store(ValueData value, Map<String, String> context) throws IOException {
+        valueDataManager.store(value, makeUUID(context));
     }
 
     /** Loads value from the file. */
@@ -87,12 +94,8 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
         return valueDataManager.load(makeUUID(context));
     }
 
-    /** @return if it is allowed to preserve evaluated result. */
+    /** @return if it is allowed to preserve calculated data. */
     protected boolean isStoreAllowed(Map<String, String> context) throws IOException {
-        if (Utils.getToDateParam(context) == null) {
-            return false;
-        }
-
         Calendar toDate = Utils.getToDate(context);
         Calendar currentDate = DateUtils.truncate(Calendar.getInstance(), Calendar.DAY_OF_MONTH);
 
@@ -100,33 +103,21 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     }
 
     /** {@inheritedDoc} */
+    @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        if (Utils.isTimeUnitDay(context)) {
-            ValueData valueData = executeScript(context);
-            storeIfAllowed(valueData, context);
+        ValueData valueData;
 
-            return valueData;
+        try {
+            valueData = load(context);
+        } catch (FileNotFoundException e) {
+            valueData = executeScript(context);
+
+            if (isStoreAllowed(context)) {
+                store(valueData, context);
+            }
         }
 
-        Calendar fromDate = Utils.getFromDate(context);
-        Calendar toDate = Utils.getToDate(context);
-
-        ValueData total = null;
-
-        Map<String, String> dayContext = Utils.newContext(context);
-        while (!fromDate.after(toDate)) {
-            Utils.putFromDate(dayContext, fromDate);
-            Utils.putToDate(dayContext, fromDate);
-            Utils.putTimeUnit(dayContext, TimeUnit.DAY);
-
-            ValueData dayValue = getValue(dayContext);
-
-            total = total == null ? dayValue : total.union(dayValue);
-
-            fromDate.add(Calendar.DAY_OF_MONTH, 1);
-        }
-
-        return total;
+        return valueData;
     }
 
     /** {@inheritedDoc} */

@@ -25,7 +25,7 @@ public class DailyJobsRunner implements ServletContextListener {
 
     private static final Logger LOGGER          = LoggerFactory.getLogger(DailyJobsRunner.class);
     private static final String CRON_EXPRESSION = "0 0 1 ? * *";
-    // private static final String CRON_EXPRESSION = "0 0/1 * * * ?"; // "0 0 1 ? * *";
+    // private static final String CRON_EXPRESSION = "0 0/1 * * * ?";
     public static Scheduler     scheduler;
 
 

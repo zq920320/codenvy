@@ -12,6 +12,7 @@ import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.StringValueData;
 
+import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -89,21 +91,45 @@ public class ActOnJob implements Job {
     private void send(File file) throws SocketException, IOException {
         Properties ftpProps = readFTPProperties();
 
-        FTPSClient ftp = new FTPSClient(false);
+        final int timeout = Integer.valueOf(ftpProps.getProperty("timeout"));
+        final String auth = ftpProps.getProperty("auth");
+        final String server = ftpProps.getProperty("server");
+        final int port = Integer.valueOf(ftpProps.getProperty("port"));
 
-        ftp.connect(ftpProps.getProperty("server"), Integer.valueOf(ftpProps.getProperty("port")));
-        try {
-            ftp.login(ftpProps.getProperty("login"), ftpProps.getProperty("password"));
+        for (;;) {
+            FTPSClient ftp = new FTPSClient(auth, false);
+            try {
+                ftp.setDataTimeout(timeout);
+                ftp.setDefaultTimeout(timeout);
+                ftp.connect(server, port);
 
-            ftp.execPBSZ(0);
-            ftp.execPROT("P");
-            ftp.enterLocalPassiveMode();
+                if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                    throw new IOException("FTP connection failed");
+                }
 
-            transferFile(file, ftp);
+                if (!ftp.login(ftpProps.getProperty("login"), ftpProps.getProperty("password"))) {
+                    ftp.logout();
+                    throw new IOException("FTP login failed");
+                }
 
-            ftp.logout();
-        } finally {
-            ftp.disconnect();
+                ftp.enterLocalPassiveMode();
+                ftp.execPBSZ(0);
+                ftp.execPROT("P");
+                ftp.setFileType(FTPSClient.ASCII_FILE_TYPE);
+
+                transferFile(file, ftp);
+
+                ftp.logout();
+                ftp.disconnect();
+
+                break; // file transfered successfully
+            } catch (SocketTimeoutException e) {
+                LOGGER.error(e.getMessage());
+            } catch (IOException e) {
+                if (ftp.isConnected()) {
+                    ftp.disconnect();
+                }
+            }
         }
     }
 
