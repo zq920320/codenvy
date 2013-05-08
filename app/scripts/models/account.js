@@ -2,7 +2,7 @@
 
     var _gaq = _gaq || [];
 
-    define(["jquery","json", "models/tenant"],function($,JSON,Tenant){
+    define(["jquery","json", "models/tenant","cookies"],function($,JSON,Tenant){
 
         /*
             AccountError is used to report errors through error callback function
@@ -118,9 +118,17 @@
             return true;
         };
 
+        var removeCookie = function(cookie){
+            if ($.cookie(cookie)){
+                $.cookie(cookie, null);
+            }
+        };
+
         return {
             //FIXIT remove Utils.getQueryParameterByName
             Utils : Utils,
+
+            removeCookie : removeCookie,
 
             isWebsocketEnabled :isWebsocketEnabled,
 
@@ -426,6 +434,8 @@
                 function hitServer(){
 
                     if(new Date().getTime() >= endTime){
+                    // removing autologin cookie if exist
+                    removeCookie("autologin");
                         if (errorType === "create"){
                             error([
                                 new AccountError(

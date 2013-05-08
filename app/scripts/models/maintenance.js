@@ -19,7 +19,8 @@ define(["jquery","models/account"],function($,Account){
                         }
                 },
                 error : function(){
-                        error();
+                    Account.removeCookie("autologin");
+                    error();
                 }
             });
         },
