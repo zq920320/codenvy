@@ -4,16 +4,6 @@
  */
 package com.codenvy.analytics.server;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.codenvy.analytics.client.QueryService;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
@@ -24,6 +14,16 @@ import com.codenvy.analytics.server.vew.layout.MetricRowLayoutImpl;
 import com.codenvy.analytics.server.vew.layout.RowLayout;
 import com.codenvy.analytics.server.vew.layout.ViewLayout;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The server side implementation of the RPC service.
@@ -77,19 +77,6 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
         return parameters;
     }
 
-    /**
-     * Escape an html string. Escaping data received from the client helps to prevent cross-site script vulnerabilities.
-     * 
-     * @param html the html string to escape
-     * @return the escaped string
-     */
-    private String escapeHtml(String html) {
-        if (html == null) {
-            return null;
-        }
-        return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-    }
-
     /** {@inheritedDoc} */
     public String calculateMetric(String metricTitle, Map<String, String> context) {
         Metric metric;
@@ -137,7 +124,6 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
             ArrayList<String> metricParameter = new ArrayList<String>();
             metricParameter.add(sp.getName());
             metricParameter.add(sp.getDefaultValue());
-            metricParameter.add("");
             metricParameter.add(prepareParamName(sp));
             parameters.add(metricParameter);
         }
