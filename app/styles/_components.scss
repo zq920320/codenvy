@@ -415,141 +415,156 @@ h1.enterprise-header-text {
 
 */
 
-.pricing-feature-list {
-    padding: 0; margin: 2em 0;
-    list-style-type: none;
-    line-height: 2em;
-
-    li {
-        padding: 0 0 1em 0; margin: 1em 0;
-        @include sep_line_small();
-
-        a {
-            @include icon_info();
-            color: $text-on-dark-color;
-            padding-right: 30px;
-        }
-
-        &.highlight {
-            @include image_highlight();
-        }
-    }
-
-}
-
-.pricing-poetry {
-    font-size:1em;
-    color:#8e979d;
-    font-weight:300;
-    padding:0.5em;
-    margin-top: 36px;
-}
-
-.pricing-poetry.opensource {
-    margin-bottom: 14px;
-}
-
-.signup-opensource-button{
-    margin-top: 14px;
-}
-
-.pricing-feature {
-    padding: 15px;
-    p { margin-top: 5px; }
-    @include respond-to(mobile){
-        padding-bottom: 0;
-    }
-}
-
-.pricing-feature:nth-child(2){
-    @include respond-to(mobile){
-        padding-top: 0;
-    }
-};
-
-.pricing-plans {
-    margin-top: 1em;
-}
-
-.container.open-source {
-    background-color:#2b3748;
-    border: solid 1px #313d4d;
-    padding: 0.8em;
-}
-
-.container.open-source-desc {
-    padding-top: 7px;
-}
-
-.pricing-box-open-source {
-    @include image_pricing_box_open_source();
-    height:128px;
-}
-
-.paid-plan {
-    background-color:#2b3748;
-    border: solid 1px #313d4d;
-    padding: 0.8em;
-}
-
-.pricing-box-business {
-    @include image_pricing_box_business();
-    height: 213px;
-}
-
-.pricing-box-premium {
-    @include image_pricing_box_premium();
-    height: 213px;
-}
-
-.pricing-box-secure {
-    @include image_pricing_box_secure();
-    height: 213px;
-}
-
-.pricing-enterprise-header {
-
-}
-
-.container.enterprise-teaser {
-    background-color: #42617B;
-    color:$text-on-dark-color;
+.pricing-section {
+    border: solid 1px;
+    margin-bottom: 1.5em;
     padding: 1.5em;
-    a { color: $link-color-on-dark; }
-
-    h3 {
-        margin: 0 0 5px 0;
-        @include shiny-text-gradient();
-    }
 }
 
-.welcome-pack {
-    @include respond-to(tablet-desktop){
-        @include image_welcome_pack();
-        height: 212px;
+.shopping {
+    background:{
+        image:url('../images/pricing/shopping.png');
+        repeat: no-repeat;
+        position: 50% 50%;
     }
+    min-height: 114px;
 }
 
-.container.pricing-dedicated {
-    @include respond-to(tablet-desktop){
-        padding-right: 10px;
-        padding-left: 50px;
-    }
-}
+// .pricing-feature-list {
+//     padding: 0; margin: 2em 0;
+//     list-style-type: none;
+//     line-height: 2em;
 
-.cloud-up {
-    @include respond-to(tablet-desktop){
-        @include image_cloud_up();
-        min-height: 232px;
-    }
-}
+//     li {
+//         padding: 0 0 1em 0; margin: 1em 0;
+//         @include sep_line_small();
 
-.key-box {
-    @include respond-to(tablet-desktop){
-        @include image_key_box();
-        height: 250px;
-    }
-}
+//         a {
+//             @include icon_info();
+//             color: $text-on-dark-color;
+//             padding-right: 30px;
+//         }
+
+//         &.highlight {
+//             @include image_highlight();
+//         }
+//     }
+
+// }
+
+// .pricing-poetry {
+//     font-size:1em;
+//     color:#8e979d;
+//     font-weight:300;
+//     padding:0.5em;
+//     margin-top: 36px;
+// }
+
+// .pricing-poetry.opensource {
+//     margin-bottom: 14px;
+// }
+
+// .signup-opensource-button{
+//     margin-top: 14px;
+// }
+
+// .pricing-feature {
+//     padding: 15px;
+//     p { margin-top: 5px; }
+//     @include respond-to(mobile){
+//         padding-bottom: 0;
+//     }
+// }
+
+// .pricing-feature:nth-child(2){
+//     @include respond-to(mobile){
+//         padding-top: 0;
+//     }
+// };
+
+// .pricing-plans {
+//     margin-top: 1em;
+// }
+
+// .container.open-source {
+//     background-color:#2b3748;
+//     border: solid 1px #313d4d;
+//     padding: 0.8em;
+// }
+
+// .container.open-source-desc {
+//     padding-top: 7px;
+// }
+
+// .pricing-box-open-source {
+//     @include image_pricing_box_open_source();
+//     height:128px;
+// }
+
+// .paid-plan {
+//     background-color:#2b3748;
+//     border: solid 1px #313d4d;
+//     padding: 0.8em;
+// }
+
+// .pricing-box-business {
+//     @include image_pricing_box_business();
+//     height: 213px;
+// }
+
+// .pricing-box-premium {
+//     @include image_pricing_box_premium();
+//     height: 213px;
+// }
+
+// .pricing-box-secure {
+//     @include image_pricing_box_secure();
+//     height: 213px;
+// }
+
+// .pricing-enterprise-header {
+
+// }
+
+// .container.enterprise-teaser {
+//     background-color: #42617B;
+//     color:$text-on-dark-color;
+//     padding: 1.5em;
+//     a { color: $link-color-on-dark; }
+
+//     h3 {
+//         margin: 0 0 5px 0;
+//         @include shiny-text-gradient();
+//     }
+// }
+
+// .welcome-pack {
+//     @include respond-to(tablet-desktop){
+//         @include image_welcome_pack();
+//         height: 212px;
+//     }
+// }
+
+// .container.pricing-dedicated {
+//     @include respond-to(tablet-desktop){
+//         padding-right: 10px;
+//         padding-left: 50px;
+//     }
+// }
+
+// .cloud-up {
+//     @include respond-to(tablet-desktop){
+//         @include image_cloud_up();
+//         min-height: 232px;
+//     }
+// }
+
+// .key-box {
+//     @include respond-to(tablet-desktop){
+//         @include image_key_box();
+//         height: 250px;
+//     }
+// }
 
 /*
 
