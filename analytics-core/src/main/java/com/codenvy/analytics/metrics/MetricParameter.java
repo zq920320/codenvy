@@ -54,7 +54,8 @@ public enum MetricParameter {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_MONTH, -1);
 
-            return PARAM_DATE_FORMAT.format(calendar.getTime());
+            DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+            return df.format(calendar.getTime());
         }
 
         @Override
@@ -66,7 +67,7 @@ public enum MetricParameter {
     /**
      * The date format is used in scripts.
      */
-    public static final DateFormat PARAM_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+    public static final String PARAM_DATE_FORMAT = "yyyyMMdd";
 
     /**
      * @return the default value for given parameter.

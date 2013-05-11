@@ -4,24 +4,27 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class DoubleValueData extends AbstractValueData {
 
-    private final Double value;
+    private double value;
 
-    public DoubleValueData(String value) {
-        this.value = Double.valueOf(value);
+    public DoubleValueData() {
     }
 
-    public DoubleValueData(Double value) {
+    public DoubleValueData(double value) {
         this.value = value;
     }
 
-    public DoubleValueData(int value) {
-        this.value = Double.valueOf(value);
+    public DoubleValueData(long value) {
+        this.value = value;
     }
 
     /**
@@ -29,7 +32,7 @@ public class DoubleValueData extends AbstractValueData {
      */
     @Override
     public String getAsString() {
-        return value.toString();
+        return Double.toString(value);
     }
 
     /**
@@ -44,7 +47,7 @@ public class DoubleValueData extends AbstractValueData {
      * {@inheritDoc}
      */
     @Override
-    public Double getAsDouble() {
+    public double getAsDouble() {
         return value;
     }
 
@@ -53,7 +56,7 @@ public class DoubleValueData extends AbstractValueData {
      */
     @Override
     protected boolean doEquals(Object object) {
-        return value.equals(((DoubleValueData)object).value);
+        return value == ((DoubleValueData)object).value;
     }
 
     /**
@@ -61,6 +64,18 @@ public class DoubleValueData extends AbstractValueData {
      */
     @Override
     public int doHashCode() {
-        return value.intValue();
+        return (int)value;
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeDouble(value);
+
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        value = in.readDouble();
     }
 }

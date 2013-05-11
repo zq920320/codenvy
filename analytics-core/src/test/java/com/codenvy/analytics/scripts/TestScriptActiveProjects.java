@@ -21,19 +21,6 @@ package com.codenvy.analytics.scripts;
 
 import static org.testng.Assert.assertTrue;
 
-import com.codenvy.analytics.BaseTest;
-
-
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.SetListStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
-import com.codenvy.analytics.scripts.util.Event;
-import com.codenvy.analytics.scripts.util.LogGenerator;
-
-import org.junit.Assert;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +28,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.junit.Assert;
+import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.SetListStringValueData;
+import com.codenvy.analytics.scripts.util.Event;
+import com.codenvy.analytics.scripts.util.LogGenerator;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptActiveProjects extends BaseTest {
@@ -76,19 +73,13 @@ public class TestScriptActiveProjects extends BaseTest {
 
         Assert.assertEquals(all.size(), 3);
 
-        ListStringValueData value =
-                                    new ListStringValueData(Arrays.asList(new StringValueData[]{new StringValueData("ws2"),
-                                            new StringValueData("project1")}));
+        ListStringValueData value = new ListStringValueData(Arrays.asList(new String[]{"ws2", "project1"}));
         assertTrue(all.contains(value));
 
-        value =
-                new ListStringValueData(Arrays.asList(new StringValueData[]{new StringValueData("ws2"),
-                        new StringValueData("project2")}));
+        value = new ListStringValueData(Arrays.asList(new String[]{"ws2", "project2"}));
         assertTrue(all.contains(value));
 
-        value =
-                new ListStringValueData(Arrays.asList(new StringValueData[]{new StringValueData("ws3"),
-                        new StringValueData("project2")}));
+        value = new ListStringValueData(Arrays.asList(new String[]{"ws3", "project2"}));
         assertTrue(all.contains(value));
     }
 }

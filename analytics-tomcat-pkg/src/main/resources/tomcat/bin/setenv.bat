@@ -2,7 +2,7 @@
 REM Environment Variable Prerequisites
 
 REM Global JAVA options
-SET JAVA_OPTS=-Xms256m -Xmx512m -XX:MaxPermSize=256m
+SET JAVA_OPTS=-Xms256m -Xmx2048m -XX:MaxPermSize=256m
 
 REM Sets some variables
 SET SECURITY_OPTS=-Djava.security.auth.login.config=%CATALINA_HOME%/conf/jaas.conf

@@ -20,9 +20,6 @@ package com.codenvy.analytics.scripts;
 
 import static org.testng.Assert.assertEquals;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,10 +28,9 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -58,11 +54,11 @@ public class TestScriptDetails extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_USER_ADDED_TO_WS, log, params);
-        Map<StringValueData, LongValueData> all = value.getAll();
+        Map<String, Long> all = value.getAll();
 
         assertEquals(all.size(), 2);
-        assertEquals(all.get(new StringValueData("website")), new LongValueData(2L));
-        assertEquals(all.get(new StringValueData("invite")), new LongValueData(1L));
+        assertEquals(all.get("website"), Long.valueOf(2));
+        assertEquals(all.get("invite"), Long.valueOf(1));
     }
 
     @Test
@@ -80,12 +76,12 @@ public class TestScriptDetails extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, params);
-        Map<StringValueData, LongValueData> all = value.getAll();
+        Map<String, Long> all = value.getAll();
 
         assertEquals(all.size(), 3);
-        assertEquals(all.get(new StringValueData("google")), new LongValueData(2L));
-        assertEquals(all.get(new StringValueData("github")), new LongValueData(1L));
-        assertEquals(all.get(new StringValueData("jaas")), new LongValueData(1L));
+        assertEquals(all.get("google"), Long.valueOf(2));
+        assertEquals(all.get("github"), Long.valueOf(1));
+        assertEquals(all.get("jaas"), Long.valueOf(1));
     }
 
     @Test
@@ -112,11 +108,11 @@ public class TestScriptDetails extends BaseTest {
         MapStringLongValueData value =
                                        (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_APPLICATION_CREATED_PAAS, log,
                                                                                       params);
-        Map<StringValueData, LongValueData> all = value.getAll();
+        Map<String, Long> all = value.getAll();
 
         assertEquals(all.size(), 3);
-        assertEquals(all.get(new StringValueData("paas1")), new LongValueData(1L));
-        assertEquals(all.get(new StringValueData("paas3")), new LongValueData(3L));
-        assertEquals(all.get(new StringValueData("local")), new LongValueData(1L));
+        assertEquals(all.get("paas1"), Long.valueOf(1));
+        assertEquals(all.get("paas3"), Long.valueOf(3));
+        assertEquals(all.get("local"), Long.valueOf(1));
     }
 }

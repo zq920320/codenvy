@@ -4,21 +4,19 @@
  */
 package com.codenvy.analytics.metrics.value.filters;
 
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.value.DoubleValueData;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.value.DoubleValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 
 /**
  * Items in the list meet the requirements: <br>
@@ -41,7 +39,7 @@ public class ProjectCreatedListFilter implements ValueDataFilter {
     }
 
     public SetStringValueData getAllUsers() {
-        Set<StringValueData> result = new HashSet<StringValueData>();
+        Set<String> result = new HashSet<String>();
         for (ListStringValueData value : valueData.getAll()) {
             result.add(value.getAll().get(USER));
         }
@@ -76,13 +74,13 @@ public class ProjectCreatedListFilter implements ValueDataFilter {
     }
 
     private MapStringLongValueData getProjectsNumber(int index) {
-        Map<StringValueData, LongValueData> result = new HashMap<StringValueData, LongValueData>();
+        Map<String, Long> result = new HashMap<String, Long>();
 
         for (ListStringValueData listVD : valueData.getAll()) {
-            StringValueData key = listVD.getAll().get(index);
+            String key = listVD.getAll().get(index);
 
-            long prevValue = result.containsKey(key) ? result.get(key).getAsLong() : 0;
-            result.put(key, new LongValueData(prevValue + 1));
+            long prevValue = result.containsKey(key) ? result.get(key) : 0;
+            result.put(key, prevValue + 1);
         }
 
         return new MapStringLongValueData(result);
@@ -92,10 +90,8 @@ public class ProjectCreatedListFilter implements ValueDataFilter {
     private ListListStringValueData doFilter(int index, String item) {
         List<ListStringValueData> result = new ArrayList<ListStringValueData>();
 
-        StringValueData itemVD = new StringValueData(item);
-
         for (ListStringValueData listVD : valueData.getAll()) {
-            if (listVD.getAll().get(index).equals(itemVD)) {
+            if (listVD.getAll().get(index).equals(item)) {
                 result.add(listVD);
             }
         }

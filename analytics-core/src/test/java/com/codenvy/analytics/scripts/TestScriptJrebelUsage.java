@@ -19,23 +19,21 @@
 package com.codenvy.analytics.scripts;
 
 
-import com.codenvy.analytics.BaseTest;
-
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
-import com.codenvy.analytics.scripts.util.Event;
-import com.codenvy.analytics.scripts.util.LogGenerator;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.scripts.util.Event;
+import com.codenvy.analytics.scripts.util.LogGenerator;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptJrebelUsage extends BaseTest {
@@ -58,7 +56,7 @@ public class TestScriptJrebelUsage extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(4));
+        Assert.assertEquals(value.getAsLong(), 4L);
     }
 
     @Test
@@ -80,7 +78,7 @@ public class TestScriptJrebelUsage extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(3));
+        Assert.assertEquals(value.getAsLong(), 3L);
     }
 
     @Test
@@ -99,10 +97,10 @@ public class TestScriptJrebelUsage extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_JREBEL_USAGE, log, params);
-        Map<StringValueData, LongValueData> all = value.getAll();
+        Map<String, Long> all = value.getAll();
 
-        Assert.assertEquals(all.get(new StringValueData("true")), new LongValueData(2L));
-        Assert.assertEquals(all.get(new StringValueData("false")), new LongValueData(1L));
+        Assert.assertEquals(all.get("true"), Long.valueOf(2));
+        Assert.assertEquals(all.get("false"), Long.valueOf(1));
     }
 
     @Test
@@ -121,9 +119,10 @@ public class TestScriptJrebelUsage extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_JREBEL_USAGE, log, params);
-        Map<StringValueData, LongValueData> all = value.getAll();
 
-        Assert.assertEquals(all.get(new StringValueData("true")), new LongValueData(3L));
-        Assert.assertEquals(all.get(new StringValueData("false")), new LongValueData(1L));
+        Map<String, Long> all = value.getAll();
+
+        Assert.assertEquals(all.get("true"), Long.valueOf(3));
+        Assert.assertEquals(all.get("false"), Long.valueOf(1));
     }
 }

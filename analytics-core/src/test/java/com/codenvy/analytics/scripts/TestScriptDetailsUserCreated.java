@@ -21,9 +21,6 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,9 +30,9 @@ import java.util.Set;
 
 import org.testng.annotations.Test;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -59,11 +56,11 @@ public class TestScriptDetailsUserCreated extends BaseTest {
         SetStringValueData value =
                                    (SetStringValueData)executeAndReturnResult(ScriptType.DETAILS_USER_CREATED, log, params);
 
-        Set<StringValueData> all = value.getAll();
+        Set<String> all = value.getAll();
 
         assertEquals(all.size(), 3);
-        assertTrue(all.contains(new StringValueData("user1")));
-        assertTrue(all.contains(new StringValueData("user2")));
-        assertTrue(all.contains(new StringValueData("user3")));
+        assertTrue(all.contains("user1"));
+        assertTrue(all.contains("user2"));
+        assertTrue(all.contains("user3"));
     }
 }

@@ -27,7 +27,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 @SuppressWarnings("serial")
 public class TimeLineViewServiceImpl extends RemoteServiceServlet implements TimeLineViewService {
 
-    private static final Logger     LOGGER                   = LoggerFactory.getLogger(QueryServiceImpl.class);
+    private static final Logger     LOGGER                   = LoggerFactory.getLogger(TimeLineViewServiceImpl.class);
     private static final String     VIEW_TIME_LINE           = "view/time-line.xml";
     private static final String     HISTORY_LENGTH_ATTRIBUTE = "history-length";
 

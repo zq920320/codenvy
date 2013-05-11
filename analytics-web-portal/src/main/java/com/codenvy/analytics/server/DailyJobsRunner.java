@@ -4,8 +4,8 @@
  */
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.server.jobs.ActOnJob;
-import com.codenvy.analytics.server.jobs.TimeLineViewJob;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Scheduler;
@@ -15,8 +15,8 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import com.codenvy.analytics.server.jobs.ActOnJob;
+import com.codenvy.analytics.server.jobs.TimeLineViewJob;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>

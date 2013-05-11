@@ -7,14 +7,14 @@ package com.codenvy.analytics.metrics.value;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricType;
 
 
 /**
@@ -22,10 +22,7 @@ import org.testng.annotations.Test;
  */
 public class TestListDoubleValueData extends BaseTest {
 
-    private ValueData expectedValueData = new ListDoubleValueData(Arrays.asList(new DoubleValueData[]{
-                                              new DoubleValueData(1.0),
-                                              new DoubleValueData(2.0),
-                                              new DoubleValueData(3.0)}));
+    private ValueData expectedValueData = new ListDoubleValueData(Arrays.asList(new Double[]{1.0, 2.0, 3.0}));
 
     @Test
     public void testValueDataFromTuple() throws Exception {
@@ -49,59 +46,42 @@ public class TestListDoubleValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
-        ValueData expectedValueData = new ListDoubleValueData(Collections.<DoubleValueData> emptyList());
+        ValueData expectedValueData = new ListDoubleValueData(Collections.<Double> emptyList());
 
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
 
     @Test
     public void testEqualsSameOrder() throws Exception {
-        ValueData newValueData = new ListDoubleValueData(Arrays.asList(new DoubleValueData[]{
-                new DoubleValueData(1.0),
-                new DoubleValueData(2.0),
-                new DoubleValueData(3.0)}));
-
+        ValueData newValueData = new ListDoubleValueData(Arrays.asList(new Double[]{1.0, 2.0, 3.0}));
         assertEquals(newValueData, expectedValueData);
     }
 
     @Test
     public void testNotEqualsDifferentOrder() throws Exception {
-        ValueData newValueData = new ListDoubleValueData(Arrays.asList(new DoubleValueData[]{
-                new DoubleValueData(2.0),
-                new DoubleValueData(1.0),
-                new DoubleValueData(3.0)}));
+        ValueData newValueData = new ListDoubleValueData(Arrays.asList(new Double[]{2.0, 1.0, 3.0}));
 
         assertNotEquals(newValueData, expectedValueData);
     }
 
     @Test
     public void testNotEquals() throws Exception {
-        ValueData newValueData = new ListDoubleValueData(Arrays.asList(new DoubleValueData[]{
-                new DoubleValueData(2.0),
-                new DoubleValueData(3.0)}));
+        ValueData newValueData = new ListDoubleValueData(Arrays.asList(new Double[]{2.0, 3.0}));
 
         assertNotEquals(newValueData, expectedValueData);
     }
 
     @Test
     public void testAdd() throws Exception {
-
-        ValueData newValueData = new ListDoubleValueData(Arrays.asList(new DoubleValueData[]{
-                new DoubleValueData(1.0),
-                new DoubleValueData(2.0),
-                new DoubleValueData(3.0),
-                new DoubleValueData(1.0),
-                new DoubleValueData(2.0),
-                new DoubleValueData(3.0)}));
-
+        ValueData newValueData = new ListDoubleValueData(Arrays.asList(new Double[]{1.0, 2.0, 3.0, 1.0, 2.0, 3.0}));
         assertEquals(newValueData, expectedValueData.union(expectedValueData));
     }
 }

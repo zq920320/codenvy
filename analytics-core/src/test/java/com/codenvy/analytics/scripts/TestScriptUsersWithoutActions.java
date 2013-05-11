@@ -22,9 +22,6 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +31,8 @@ import java.util.Set;
 
 import org.testng.annotations.Test;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -62,10 +59,10 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         putToDate(params, "20121003");
 
         SetStringValueData value = (SetStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_PROJECTS, log, params);
-        Set<StringValueData> all = value.getAll();
+        Set<String> all = value.getAll();
 
         assertEquals(all.size(), 1);
-        assertTrue(all.contains(new StringValueData("user2")));
+        assertTrue(all.contains("user2"));
     }
 
     /** Run script which find all events. */
@@ -87,10 +84,10 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         putToDate(params, "20121003");
 
         SetStringValueData value = (SetStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_INVITES, log, params);
-        Set<StringValueData> all = value.getAll();
+        Set<String> all = value.getAll();
 
         assertEquals(all.size(), 1);
-        assertTrue(all.contains(new StringValueData("user3")));
+        assertTrue(all.contains("user3"));
     }
 
     /** Run script which find all events. */
@@ -120,10 +117,10 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         putToDate(params, "20121003");
 
         SetStringValueData value = (SetStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_BUILDS, log, params);
-        Set<StringValueData> all = value.getAll();
+        Set<String> all = value.getAll();
 
         assertEquals(all.size(), 1);
-        assertTrue(all.contains(new StringValueData("user4")));
+        assertTrue(all.contains("user4"));
     }
 
     /** Run script which find all events. */
@@ -149,9 +146,9 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         putToDate(params, "20121003");
 
         SetStringValueData value = (SetStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_DEPLOYS, log, params);
-        Set<StringValueData> all = value.getAll();
+        Set<String> all = value.getAll();
 
         assertEquals(all.size(), 1);
-        assertTrue(all.contains(new StringValueData("user4")));
+        assertTrue(all.contains("user4"));
     }
 }

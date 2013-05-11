@@ -5,12 +5,14 @@
 package com.codenvy.analytics.metrics;
 
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 
 /**
@@ -18,13 +20,15 @@ import java.util.Map;
  */
 public class TestTimeIntrevalUtil {
 
+    private final DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+
     @Test
     public void testInitDateIntervalByDay() throws Exception {
         Map<String, String> context = new HashMap<String, String>();
         context.put(MetricParameter.TIME_UNIT.getName(), TimeUnit.DAY.toString());
 
         Calendar date = Calendar.getInstance();
-        date.setTime(MetricParameter.PARAM_DATE_FORMAT.parse("20130410"));
+        date.setTime(df.parse("20130410"));
 
         Utils.initDateInterval(date, context);
 
@@ -39,7 +43,7 @@ public class TestTimeIntrevalUtil {
         context.put(MetricParameter.TIME_UNIT.getName(), TimeUnit.WEEK.toString());
 
         Calendar date = Calendar.getInstance();
-        date.setTime(MetricParameter.PARAM_DATE_FORMAT.parse("20130410"));
+        date.setTime(df.parse("20130410"));
 
         Utils.initDateInterval(date, context);
 
@@ -54,7 +58,7 @@ public class TestTimeIntrevalUtil {
         context.put(MetricParameter.TIME_UNIT.getName(), TimeUnit.MONTH.toString());
 
         Calendar date = Calendar.getInstance();
-        date.setTime(MetricParameter.PARAM_DATE_FORMAT.parse("20130410"));
+        date.setTime(df.parse("20130410"));
 
         Utils.initDateInterval(date, context);
 

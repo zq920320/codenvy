@@ -4,31 +4,39 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.List;
 
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ListDoubleValueData extends ListValueData<DoubleValueData> {
+public class ListDoubleValueData extends ListValueData<Double> {
 
-    public ListDoubleValueData(String value) {
-        super(value);
+    public ListDoubleValueData() {
     }
 
-    public ListDoubleValueData(List<DoubleValueData> value) {
+    public ListDoubleValueData(List<Double> value) {
         super(value);
     }
 
     /** {@inheritedDoc} */
     @Override
-    protected DoubleValueData createInnerValueData(String str) {
-        return new DoubleValueData(str);
-    }
-
-    /** {@inheritedDoc} */
-    @Override
-    protected ValueData createValueData(List<DoubleValueData> value) {
+    protected ValueData createInstance(List<Double> value) {
         return new ListDoubleValueData(value);
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    protected void writeItem(ObjectOutput out, Double item) throws IOException {
+        out.writeDouble(item);
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    protected Double readItem(ObjectInput in) throws IOException {
+        return in.readDouble();
     }
 }

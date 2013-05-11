@@ -18,20 +18,18 @@
  */
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
-
-import org.apache.pig.data.TupleFactory;
-import org.testng.annotations.BeforeClass;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.pig.data.TupleFactory;
+import org.testng.annotations.BeforeClass;
+
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
@@ -41,13 +39,11 @@ public class BaseTest {
     public static final String        BASE_DIR = "target";
 
     protected TupleFactory            tupleFactory;
-    protected FSValueDataManager      valueManager;
     protected HashMap<String, String> uuid;
 
     @BeforeClass
     public void setUp() throws Exception {
         tupleFactory = TupleFactory.getInstance();
-        valueManager = new FSValueDataManager(MetricType.BUILT_PROJECTS_NUMBER);
 
         uuid = new HashMap<String, String>();
         uuid.put(MetricParameter.FROM_DATE.getName(), "20130520");

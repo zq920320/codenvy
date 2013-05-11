@@ -21,9 +21,6 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,9 +30,9 @@ import java.util.Set;
 
 import org.testng.annotations.Test;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -62,12 +59,12 @@ public class TestScriptActiveWorkspaces extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101005");
 
         SetStringValueData valueData = (SetStringValueData)executeAndReturnResult(ScriptType.ACTIVE_WORKSPACES, log, params);
-        Set<StringValueData> value = valueData.getAll();
+        Set<String> value = valueData.getAll();
 
         assertEquals(value.size(), 3);
-        assertTrue(value.contains(new StringValueData("ws1")));
-        assertTrue(value.contains(new StringValueData("ws2")));
-        assertTrue(value.contains(new StringValueData("ws3")));
+        assertTrue(value.contains("ws1"));
+        assertTrue(value.contains("ws2"));
+        assertTrue(value.contains("ws3"));
     }
 
     @Test
@@ -89,11 +86,11 @@ public class TestScriptActiveWorkspaces extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101005");
 
         SetStringValueData valueData = (SetStringValueData)executeAndReturnResult(ScriptType.ACTIVE_WORKSPACES, log, params);
-        Set<StringValueData> value = valueData.getAll();
+        Set<String> value = valueData.getAll();
 
         assertEquals(value.size(), 3);
-        assertTrue(value.contains(new StringValueData("ws1")));
-        assertTrue(value.contains(new StringValueData("ws2")));
-        assertTrue(value.contains(new StringValueData("ws3")));
+        assertTrue(value.contains("ws1"));
+        assertTrue(value.contains("ws2"));
+        assertTrue(value.contains("ws3"));
     }
 }

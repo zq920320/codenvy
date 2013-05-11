@@ -7,14 +7,14 @@ package com.codenvy.analytics.metrics.value;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricType;
 
 
 /**
@@ -22,10 +22,7 @@ import org.testng.annotations.Test;
  */
 public class TestSetStringValueData extends BaseTest {
 
-    private ValueData expectedValueData = new SetStringValueData(Arrays.asList(new StringValueData[]{
-                                              new StringValueData("a"),
-                                              new StringValueData("b"),
-                                              new StringValueData("c")}));
+    private ValueData expectedValueData = new SetStringValueData(Arrays.asList(new String[]{"a", "b", "c"}));
 
     @Test
     public void testValueDataFromTuple() throws Exception {
@@ -49,61 +46,45 @@ public class TestSetStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyString() throws Exception {
-        ValueData expectedValueData = new SetStringValueData(Arrays.asList(new StringValueData[]{new StringValueData("")}));
+        ValueData expectedValueData = new SetStringValueData(Arrays.asList(new String[]{"a"}));
 
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
-        ValueData expectedValueData = new SetStringValueData(Collections.<StringValueData> emptySet());
+        ValueData expectedValueData = new SetStringValueData(Collections.<String> emptySet());
 
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
 
     @Test
     public void testEqualsSameOrder() throws Exception {
-        assertEquals(new SetStringValueData(Arrays.asList(new StringValueData[]{new StringValueData("a"),
-                new StringValueData("b"),
-                new StringValueData("c")})), expectedValueData);
+        assertEquals(new SetStringValueData(Arrays.asList(new String[]{"a", "b", "c"})), expectedValueData);
     }
 
     @Test
     public void testEqualsDifferentOrder() throws Exception {
-        assertEquals(new SetStringValueData(Arrays.asList(new StringValueData[]{new StringValueData("c"),
-                new StringValueData("b"),
-                new StringValueData("a")})), expectedValueData);
+        assertEquals(new SetStringValueData(Arrays.asList(new String[]{"a", "c", "b"})), expectedValueData);
     }
 
     @Test
     public void testNotEquals() throws Exception {
-        assertNotEquals(new SetStringValueData(Arrays.asList(new StringValueData[]{new StringValueData("c"),
-                new StringValueData("a")})), expectedValueData);
+        assertNotEquals(new SetStringValueData(Arrays.asList(new String[]{"a", "b"})), expectedValueData);
     }
 
     @Test
     public void testAdd() throws Exception {
-        ValueData newValueData = new SetStringValueData(Arrays.asList(new StringValueData[]{
-                new StringValueData("a"),
-                new StringValueData("d"),
-                new StringValueData("e")}));
-
-        ValueData resultValueData = new SetStringValueData(Arrays.asList(new StringValueData[]{
-                new StringValueData("a"),
-                new StringValueData("b"),
-                new StringValueData("c"),
-                new StringValueData("d"),
-                new StringValueData("e")}));
-
-        assertEquals(expectedValueData.union(newValueData), resultValueData);
+        ValueData resultValueData = new SetStringValueData(Arrays.asList(new String[]{"a", "b", "c", "a", "b", "c"}));
+        assertEquals(expectedValueData.union(expectedValueData), resultValueData);
     }
 }

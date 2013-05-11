@@ -31,8 +31,10 @@ public class Utils {
      */
     public static Calendar parseDate(String date) throws IOException {
         try {
+            DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(MetricParameter.PARAM_DATE_FORMAT.parse(date));
+            calendar.setTime(df.parse(date));
 
             return calendar;
         } catch (ParseException e) {
@@ -59,7 +61,8 @@ public class Utils {
      * Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}.
      */
     public static String formatDate(Date date) {
-        return MetricParameter.PARAM_DATE_FORMAT.format(date);
+        DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+        return df.format(date);
     }
 
     /**
@@ -325,7 +328,10 @@ public class Utils {
     }
 
     public static Map<String, String> newContext(Map<String, String> context) {
-        return new HashMap<String, String>(context);
+        Map<String, String> result = new HashMap<String, String>(context.size());
+        result.putAll(context);
+
+        return result;
     }
 
     public static Map<String, String> newContext() {

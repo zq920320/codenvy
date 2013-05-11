@@ -5,6 +5,7 @@
 package com.codenvy.analytics.metrics;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,9 +34,10 @@ abstract class PercentMetric extends CalculateBasedMetric {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Set<MetricParameter> getParams() {
-        Set<MetricParameter> params = totalMetric.getParams();
-        params.addAll(particalMetric.getParams());
+        Set<MetricParameter> params = (Set<MetricParameter>)((HashSet<MetricParameter>)particalMetric.getParams()).clone();
+        params.addAll(totalMetric.getParams());
 
         return params;
     }

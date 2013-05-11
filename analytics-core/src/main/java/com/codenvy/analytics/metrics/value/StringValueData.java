@@ -4,6 +4,9 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 
 /**
@@ -14,7 +17,10 @@ public class StringValueData extends AbstractValueData {
     /**
      * Internal value.
      */
-    private final String value;
+    private String value;
+
+    public StringValueData() {
+    }
 
     public StringValueData(String value) {
         this.value = value;
@@ -42,5 +48,17 @@ public class StringValueData extends AbstractValueData {
     @Override
     public int doHashCode() {
         return value.hashCode();
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeUTF(value);
+
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        value = in.readUTF();
     }
 }

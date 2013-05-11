@@ -19,8 +19,6 @@
 package com.codenvy.analytics.scripts;
 
 
-import com.codenvy.analytics.BaseTest;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +28,7 @@ import java.util.Map;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.scripts.util.Event;
@@ -63,6 +62,6 @@ public class TestScriptProductUsageTime extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101003");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(11));
+        Assert.assertEquals(value.getAsLong(), 11);
     }
 }

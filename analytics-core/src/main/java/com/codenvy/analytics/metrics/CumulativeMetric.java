@@ -5,7 +5,6 @@
 package com.codenvy.analytics.metrics;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,7 +48,7 @@ public abstract class CumulativeMetric extends CalculateBasedMetric {
      */
     @Override
     public ValueData evaluate(Map<String, String> context) throws InitialValueNotFoundException, IOException {
-        context = new HashMap<String, String>(context);
+        context = Utils.newContext(context);
         Utils.putFromDate(context, Utils.getToDate(context));
         Utils.putTimeUnit(context, TimeUnit.DAY);
 

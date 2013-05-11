@@ -21,22 +21,19 @@ package com.codenvy.analytics.metrics.value.filter;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.testng.annotations.Test;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
-
-import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProjectCreatedListFilter extends BaseTest {
@@ -44,19 +41,10 @@ public class TestProjectCreatedListFilter extends BaseTest {
     @Test
     public void testDoFilter() throws Exception {
 
-        ListStringValueData item1 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws1"), new StringValueData("user1"),
-                                                                          new StringValueData("project1"), new StringValueData("type1")));
-        ListStringValueData item2 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws2"), new StringValueData("user1"),
-                                                                          new StringValueData("project1"), new StringValueData("type1")));
-        ListStringValueData item3 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws1"), new StringValueData("user2"),
-                                                                          new StringValueData("project1"), new StringValueData("type2")));
-        ListStringValueData item4 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws3"), new StringValueData("user3"),
-                                                                          new StringValueData("project1"), new StringValueData("type2")));
-
+        ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1"));
+        ListStringValueData item2 = new ListStringValueData(Arrays.asList("ws2", "user1", "project1", "type1"));
+        ListStringValueData item3 = new ListStringValueData(Arrays.asList("ws1", "user2", "project1", "type2"));
+        ListStringValueData item4 = new ListStringValueData(Arrays.asList("ws3", "user3", "project1", "type2"));
         ListListStringValueData value = new ListListStringValueData(Arrays.asList(new ListStringValueData[]{item1, item2, item3, item4}));
 
         ProjectCreatedListFilter wrapper = new ProjectCreatedListFilter(value);
@@ -87,22 +75,22 @@ public class TestProjectCreatedListFilter extends BaseTest {
         assertTrue(all.contains(item3));
         assertTrue(all.contains(item4));
 
-        Map<StringValueData, LongValueData> projectsNumber = wrapper.getProjectsNumberByTypes().getAll();
-        assertEquals(projectsNumber.get(new StringValueData("type1")), new LongValueData(2L));
-        assertEquals(projectsNumber.get(new StringValueData("type2")), new LongValueData(2L));
+        Map<String, Long> projectsNumber = wrapper.getProjectsNumberByTypes().getAll();
+        assertEquals(projectsNumber.get("type1"), Long.valueOf(2));
+        assertEquals(projectsNumber.get("type2"), Long.valueOf(2));
 
         assertEquals(wrapper.getProjectsNumberByType("type1"), new DoubleValueData(2));
         assertEquals(wrapper.getProjectsPercentByType("type2"), new DoubleValueData(50));
 
-        Set<StringValueData> users = wrapper.getAllUsers().getAll();
+        Set<String> users = wrapper.getAllUsers().getAll();
         assertEquals(users.size(), 3);
-        assertTrue(users.contains(new StringValueData("user1")));
-        assertTrue(users.contains(new StringValueData("user2")));
-        assertTrue(users.contains(new StringValueData("user3")));
+        assertTrue(users.contains("user1"));
+        assertTrue(users.contains("user2"));
+        assertTrue(users.contains("user3"));
 
         projectsNumber = wrapper.getProjectsNumberByUsers().getAll();
-        assertEquals(projectsNumber.get(new StringValueData("user1")), new LongValueData(2L));
-        assertEquals(projectsNumber.get(new StringValueData("user2")), new LongValueData(1L));
-        assertEquals(projectsNumber.get(new StringValueData("user3")), new LongValueData(1L));
+        assertEquals(projectsNumber.get("user1"), Long.valueOf(2));
+        assertEquals(projectsNumber.get("user2"), Long.valueOf(1));
+        assertEquals(projectsNumber.get("user3"), Long.valueOf(1));
     }
 }

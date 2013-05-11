@@ -4,23 +4,26 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class LongValueData extends AbstractValueData {
 
-    private final Long value;
+    private long value;
+
+    public LongValueData() {
+    }
 
     public LongValueData(String value) {
         this.value = Long.valueOf(value);
     }
 
-    public LongValueData(Long value) {
+    public LongValueData(long value) {
         this.value = value;
-    }
-
-    public LongValueData(int value) {
-        this.value = Long.valueOf(value);
     }
 
     /**
@@ -28,7 +31,7 @@ public class LongValueData extends AbstractValueData {
      */
     @Override
     public String getAsString() {
-        return value.toString();
+        return Long.toString(value);
     }
 
     /**
@@ -43,7 +46,7 @@ public class LongValueData extends AbstractValueData {
      * {@inheritDoc}
      */
     @Override
-    public Long getAsLong() {
+    public long getAsLong() {
         return value;
     }
 
@@ -51,8 +54,8 @@ public class LongValueData extends AbstractValueData {
      * {@inheritDoc}
      */
     @Override
-    public Double getAsDouble() {
-        return Double.valueOf(value);
+    public double getAsDouble() {
+        return value;
     }
 
     /**
@@ -60,7 +63,7 @@ public class LongValueData extends AbstractValueData {
      */
     @Override
     protected boolean doEquals(Object object) {
-        return value.equals(((LongValueData)object).value);
+        return value == ((LongValueData)object).value;
     }
 
     /**
@@ -68,6 +71,19 @@ public class LongValueData extends AbstractValueData {
      */
     @Override
     public int doHashCode() {
-        return value.intValue();
+        return (int)value;
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeLong(value);
+
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        value = in.readLong();
     }
 }

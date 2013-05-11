@@ -21,23 +21,20 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import com.codenvy.analytics.BaseTest;
-
-
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
-import com.codenvy.analytics.scripts.util.Event;
-import com.codenvy.analytics.scripts.util.LogGenerator;
-
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.scripts.util.Event;
+import com.codenvy.analytics.scripts.util.LogGenerator;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptActiveUsers extends BaseTest {
@@ -59,10 +56,10 @@ public class TestScriptActiveUsers extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         SetStringValueData valueData = (SetStringValueData)executeAndReturnResult(ScriptType.ACTIVE_USERS, log, params);
-        Set<StringValueData> value = valueData.getAll();
+        Set<String> value = valueData.getAll();
 
         assertEquals(value.size(), 2);
-        assertTrue(value.contains(new StringValueData("user1")));
-        assertTrue(value.contains(new StringValueData("user2")));
+        assertTrue(value.contains("user1"));
+        assertTrue(value.contains("user2"));
     }
 }

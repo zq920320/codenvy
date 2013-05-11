@@ -9,15 +9,17 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 
-import com.codenvy.analytics.metrics.value.DoubleValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-
-import org.testng.annotations.Test;
-
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.testng.annotations.Test;
+
+import com.codenvy.analytics.metrics.value.DoubleValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
 
 
 /**
@@ -27,6 +29,8 @@ public class TestPercentMetric {
 
     @Test
     public void testGetValue() throws Exception {
+        DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+
         Metric baseMetric = mock(Metric.class);
         Metric relativeMetric = mock(Metric.class);
 
@@ -34,8 +38,8 @@ public class TestPercentMetric {
         doReturn(new LongValueData(5L)).when(relativeMetric).getValue(anyMap());
 
         Map<String, String> context = new HashMap<String, String>();
-        context.put(MetricParameter.FROM_DATE.getName(), MetricParameter.PARAM_DATE_FORMAT.format(new Date()));
-        context.put(MetricParameter.TO_DATE.getName(), MetricParameter.PARAM_DATE_FORMAT.format(new Date()));
+        context.put(MetricParameter.FROM_DATE.getName(), df.format(new Date()));
+        context.put(MetricParameter.TO_DATE.getName(), df.format(new Date()));
         context.put(MetricParameter.TIME_UNIT.getName(), TimeUnit.DAY.toString());
 
         TestedMetric testedMetric =

@@ -19,20 +19,20 @@
 package com.codenvy.analytics.scripts;
 
 
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.scripts.util.Event;
-import com.codenvy.analytics.scripts.util.LogGenerator;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.scripts.util.Event;
+import com.codenvy.analytics.scripts.util.LogGenerator;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptEventCount extends BaseTest {
@@ -49,7 +49,7 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_WORKSPACE_CREATED, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(2));
+        Assert.assertEquals(value.getAsLong(), 2L);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(2));
+        Assert.assertEquals(value.getAsLong(), 2L);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_CREATED, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(3));
+        Assert.assertEquals(value.getAsLong(), 3L);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_REMOVED, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(1));
+        Assert.assertEquals(value.getAsLong(), 1L);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(1));
+        Assert.assertEquals(value.getAsLong(), 1L);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_DIST_PROJECT_BUILD, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(3));
+        Assert.assertEquals(value.getAsLong(), 3L);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_INVITE, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(1));
+        Assert.assertEquals(value.getAsLong(), 1L);
     }
 
     @Test
@@ -168,6 +168,6 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_USERS_CREATED_PROJECTS, log, params);
-        Assert.assertEquals(value.getAsLong(), Long.valueOf(2));
+        Assert.assertEquals(value.getAsLong(), 2L);
     }
 }

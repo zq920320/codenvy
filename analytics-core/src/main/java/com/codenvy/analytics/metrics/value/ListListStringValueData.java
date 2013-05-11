@@ -4,6 +4,9 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.List;
 
 
@@ -12,23 +15,32 @@ import java.util.List;
  */
 public class ListListStringValueData extends ListValueData<ListStringValueData> {
 
-    public ListListStringValueData(String value) {
-        super(value);
+    public ListListStringValueData() {
+        super();
     }
 
     public ListListStringValueData(List<ListStringValueData> value) {
         super(value);
     }
 
-    /** {@inheritedDoc} */
     @Override
-    protected ListStringValueData createInnerValueData(String str) {
-        return new ListStringValueData(str);
+    protected ValueData createInstance(List<ListStringValueData> value) {
+        return new ListListStringValueData(value);
     }
 
     /** {@inheritedDoc} */
     @Override
-    protected ListListStringValueData createValueData(List<ListStringValueData> value) {
-        return new ListListStringValueData(value);
+    protected void writeItem(ObjectOutput out, ListStringValueData item) throws IOException {
+        out.writeObject(item);
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    protected ListStringValueData readItem(ObjectInput in) throws IOException {
+        try {
+            return (ListStringValueData)in.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IOException(e);
+        }
     }
 }

@@ -9,10 +9,6 @@ package com.codenvy.analytics.metrics.value;
  */
 public abstract class AbstractValueData implements ValueData {
 
-    protected static final String ITEM_DELIMITER      = ",";
-    protected static final String KEY_VALUE_DELIMITER = "=";
-    protected static final String EMPTY_VALUE         = "$EMPTY$";
-
     private Integer               hash;
 
     /**
@@ -26,6 +22,12 @@ public abstract class AbstractValueData implements ValueData {
         }
 
         return doUnion(valueData);
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public String toString() {
+        return getAsString();
     }
 
     /**
@@ -63,6 +65,7 @@ public abstract class AbstractValueData implements ValueData {
         return hash;
     }
     
+
     /**
      * @see #hashCode()
      */
@@ -73,7 +76,7 @@ public abstract class AbstractValueData implements ValueData {
      * {@inheritDoc}
      */
     @Override
-    public Long getAsLong() {
+    public long getAsLong() {
         throw new UnsupportedOperationException();
     }
 
@@ -81,7 +84,7 @@ public abstract class AbstractValueData implements ValueData {
      * {@inheritDoc}
      */
     @Override
-    public Double getAsDouble() {
+    public double getAsDouble() {
         throw new UnsupportedOperationException();
     }
 

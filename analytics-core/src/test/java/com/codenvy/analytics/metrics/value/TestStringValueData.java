@@ -7,13 +7,13 @@ package com.codenvy.analytics.metrics.value;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.util.Arrays;
 
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricType;
 
 
 /**
@@ -35,16 +35,16 @@ public class TestStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyString() throws Exception {
         ValueData expectedValueData = new StringValueData("");
 
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test

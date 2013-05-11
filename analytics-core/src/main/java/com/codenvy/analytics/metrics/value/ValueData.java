@@ -4,11 +4,13 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.Externalizable;
+
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface ValueData {
+public interface ValueData extends Externalizable {
 
     /**
      * Unions two {@link ValueData} into one single. The passed and current {@link ValueData} will not be modified.
@@ -23,10 +25,10 @@ public interface ValueData {
     /**
      * @return value as {@link Long}
      */
-    Long getAsLong();
+    long getAsLong();
 
     /**
      * @return value as {@link Double}
      */
-    Double getAsDouble();
+    double getAsDouble();
 }

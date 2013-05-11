@@ -7,9 +7,6 @@ package com.codenvy.analytics.metrics.value;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,6 +15,9 @@ import java.util.Map;
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricType;
 
 
 /**
@@ -29,10 +29,10 @@ public class TestMapStringLongValueData extends BaseTest {
 
     @BeforeMethod
     public void initValueData() {
-        Map<StringValueData, LongValueData> mapVD = new HashMap<StringValueData, LongValueData>();
-        mapVD.put(new StringValueData("a"), new LongValueData(1L));
-        mapVD.put(new StringValueData("b"), new LongValueData(2L));
-        mapVD.put(new StringValueData("c"), new LongValueData(3L));
+        Map<String, Long> mapVD = new HashMap<String, Long>();
+        mapVD.put("a", 1L);
+        mapVD.put("b", 2L);
+        mapVD.put("c", 3L);
 
         expectedValueData = new MapStringLongValueData(mapVD);
     }
@@ -41,15 +41,15 @@ public class TestMapStringLongValueData extends BaseTest {
     public void testValueDataFromTuple() throws Exception {
         Tuple tupleA = tupleFactory.newTuple();
         tupleA.append("a");
-        tupleA.append("1");
+        tupleA.append(1L);
 
         Tuple tupleB = tupleFactory.newTuple();
         tupleB.append("b");
-        tupleB.append("2");
+        tupleB.append(2L);
 
         Tuple tupleC = tupleFactory.newTuple();
         tupleC.append("c");
-        tupleC.append("3");
+        tupleC.append(3L);
 
         ValueData valueData =
                               ValueDataFactory.createValueData(MapStringLongValueData.class, Arrays.asList(new Tuple[]{tupleA,
@@ -62,35 +62,37 @@ public class TestMapStringLongValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
+
     }
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
-        ValueData expectedValueData = new MapStringLongValueData(Collections.<StringValueData, LongValueData> emptyMap());
+        ValueData expectedValueData = new MapStringLongValueData(Collections.<String, Long> emptyMap());
 
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
+
     }
 
     @Test
     public void testStoreLoadEmptyString() throws Exception {
-        Map<StringValueData, LongValueData> mapVD = new HashMap<StringValueData, LongValueData>();
-        mapVD.put(new StringValueData(""), new LongValueData(1L));
+        Map<String, Long> mapVD = new HashMap<String, Long>();
+        mapVD.put("", 1L);
 
         ValueData expectedValueData = new MapStringLongValueData(mapVD);
 
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
     public void testEqualsSameOrder() throws Exception {
-        Map<StringValueData, LongValueData> mapVD = new HashMap<StringValueData, LongValueData>();
-        mapVD.put(new StringValueData("a"), new LongValueData(1L));
-        mapVD.put(new StringValueData("b"), new LongValueData(2L));
-        mapVD.put(new StringValueData("c"), new LongValueData(3L));
+        Map<String, Long> mapVD = new HashMap<String, Long>();
+        mapVD.put("a", 1L);
+        mapVD.put("b", 2L);
+        mapVD.put("c", 3L);
 
         ValueData valueData = new MapStringLongValueData(mapVD);
 
@@ -99,10 +101,10 @@ public class TestMapStringLongValueData extends BaseTest {
 
     @Test
     public void testEqualsDifferentOrder() throws Exception {
-        Map<StringValueData, LongValueData> mapVD = new HashMap<StringValueData, LongValueData>();
-        mapVD.put(new StringValueData("c"), new LongValueData(3L));
-        mapVD.put(new StringValueData("a"), new LongValueData(1L));
-        mapVD.put(new StringValueData("b"), new LongValueData(2L));
+        Map<String, Long> mapVD = new HashMap<String, Long>();
+        mapVD.put("a", 1L);
+        mapVD.put("c", 3L);
+        mapVD.put("b", 2L);
 
         ValueData valueData = new MapStringLongValueData(mapVD);
 
@@ -111,9 +113,9 @@ public class TestMapStringLongValueData extends BaseTest {
 
     @Test
     public void testNotEquals() throws Exception {
-        Map<StringValueData, LongValueData> mapVD = new HashMap<StringValueData, LongValueData>();
-        mapVD.put(new StringValueData("a"), new LongValueData(1L));
-        mapVD.put(new StringValueData("b"), new LongValueData(2L));
+        Map<String, Long> mapVD = new HashMap<String, Long>();
+        mapVD.put("a", 1L);
+        mapVD.put("c", 3L);
 
         ValueData valueData = new MapStringLongValueData(mapVD);
 
@@ -123,20 +125,19 @@ public class TestMapStringLongValueData extends BaseTest {
 
     @Test
     public void testAdd() throws Exception {
-        Map<StringValueData, LongValueData> mapVD = new HashMap<StringValueData, LongValueData>();
-        mapVD.put(new StringValueData("a"), new LongValueData(1L));
-        mapVD.put(new StringValueData("d"), new LongValueData(4L));
+        Map<String, Long> mapVD = new HashMap<String, Long>();
+        mapVD.put("a", 1L);
+        mapVD.put("d", 4L);
 
         ValueData newValueData = new MapStringLongValueData(mapVD);
 
-        mapVD = new HashMap<StringValueData, LongValueData>();
-        mapVD.put(new StringValueData("a"), new LongValueData(2L));
-        mapVD.put(new StringValueData("b"), new LongValueData(2L));
-        mapVD.put(new StringValueData("c"), new LongValueData(3L));
-        mapVD.put(new StringValueData("d"), new LongValueData(4L));
+        mapVD = new HashMap<String, Long>();
+        mapVD.put("a", 2L);
+        mapVD.put("b", 2L);
+        mapVD.put("c", 3L);
+        mapVD.put("d", 4L);
 
         ValueData resultValueData = new MapStringLongValueData(mapVD);
-
         assertEquals(expectedValueData.union(newValueData), resultValueData);
     }
 }

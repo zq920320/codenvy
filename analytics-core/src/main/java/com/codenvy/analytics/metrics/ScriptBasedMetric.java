@@ -4,36 +4,43 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.CacheableValueDataManager;
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.ValueDataManager;
-import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.ScriptExecutor;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
-
-import org.apache.commons.lang.time.DateUtils;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
+import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 abstract public class ScriptBasedMetric extends AbstractMetric {
 
-    protected final ValueDataManager valueDataManager;
+    private static final Logger                                   LOGGER     = LoggerFactory.getLogger(ScriptBasedMetric.class);
+    private static final ConcurrentHashMap<String, AtomicBoolean> executions = new ConcurrentHashMap<String, AtomicBoolean>();
 
     ScriptBasedMetric(MetricType metricType) {
         super(metricType);
-        this.valueDataManager = new CacheableValueDataManager(metricType);
     }
 
     /** {@inheritedDoc} */
-    public synchronized ValueData getValue(Map<String, String> context) throws IOException {
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("Calculation " + getType() + " with context " + context.toString());
+        }
+
         Calendar fromDate = Utils.getFromDate(context);
         Calendar toDate = Utils.getToDate(context);
 
@@ -85,13 +92,13 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     }
 
     /** Stores value into the file. */
-    protected void store(ValueData value, Map<String, String> context) throws IOException {
-        valueDataManager.store(value, makeUUID(context));
+    protected void store(ValueData value, Map<String, String> uuid) throws IOException {
+        FSValueDataManager.store(value, metricType, uuid);
     }
 
     /** Loads value from the file. */
-    protected ValueData load(Map<String, String> context) throws IOException {
-        return valueDataManager.load(makeUUID(context));
+    protected ValueData load(Map<String, String> uuid) throws IOException {
+        return FSValueDataManager.load(metricType, uuid);
     }
 
     /** @return if it is allowed to preserve calculated data. */
@@ -105,19 +112,57 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     /** {@inheritedDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ValueData valueData;
+        Map<String, String> uuid = makeUUID(context);
 
+        acquire(uuid);
         try {
-            valueData = load(context);
-        } catch (FileNotFoundException e) {
-            valueData = executeScript(context);
+            ValueData valueData;
 
-            if (isStoreAllowed(context)) {
-                store(valueData, context);
+            try {
+                valueData = load(uuid);
+            } catch (FileNotFoundException e) {
+                valueData = executeScript(context);
+
+                if (isStoreAllowed(context)) {
+                    store(valueData, uuid);
+                }
+            }
+
+            return valueData;
+        } finally {
+            release(uuid);
+        }
+    }
+
+    protected void acquire(Map<String, String> uuid) {
+        String key = metricType.name() + uuid.toString();
+        AtomicBoolean monitor = new AtomicBoolean(true);
+
+        AtomicBoolean currentValue = executions.putIfAbsent(key, monitor);
+        if (currentValue != null) {
+            synchronized (currentValue) {
+                while (!currentValue.get()) {
+                    try {
+                        currentValue.wait();
+                    } catch (InterruptedException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                }
             }
         }
+    }
 
-        return valueData;
+    protected void release(Map<String, String> uuid) {
+        String key = metricType.name() + uuid.toString();
+
+        AtomicBoolean monitor = executions.remove(key);
+        if (monitor != null) {
+            monitor.set(false);
+
+            synchronized (monitor) {
+                monitor.notifyAll();
+            }
+        }
     }
 
     /** {@inheritedDoc} */
@@ -127,6 +172,8 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     }
 
     protected ValueData executeScript(Map<String, String> context) throws IOException {
+        LOGGER.info("Script execution " + getScriptType() + " with context " + context.toString());
+
         ScriptExecutor sExecutor = getScriptExecutor();
         return sExecutor.execute(getScriptType(), context);
     }

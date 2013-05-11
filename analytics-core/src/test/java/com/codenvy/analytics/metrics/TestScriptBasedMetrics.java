@@ -10,17 +10,6 @@ import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.scripts.ScriptType;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,6 +17,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.scripts.ScriptType;
 
 
 /**
@@ -101,18 +100,10 @@ public class TestScriptBasedMetrics extends BaseTest {
 
     @Test
     public void testFilter() throws Exception {
-        ListStringValueData item1 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws1"), new StringValueData("user1"),
-                                                                          new StringValueData("project1"), new StringValueData("type1")));
-        ListStringValueData item2 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws2"), new StringValueData("user1"),
-                                                                          new StringValueData("project1"), new StringValueData("type1")));
-        ListStringValueData item3 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws1"), new StringValueData("user2"),
-                                                                          new StringValueData("project1"), new StringValueData("type2")));
-        ListStringValueData item4 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws3"), new StringValueData("user3"),
-                                                                          new StringValueData("project1"), new StringValueData("type2")));
+        ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1"));
+        ListStringValueData item2 = new ListStringValueData(Arrays.asList("ws2", "user1", "project1", "type1"));
+        ListStringValueData item3 = new ListStringValueData(Arrays.asList("ws1", "user2", "project1", "type2"));
+        ListStringValueData item4 = new ListStringValueData(Arrays.asList("ws3", "user3", "project1", "type2"));
 
         ListListStringValueData value = new ListListStringValueData(Arrays.asList(new ListStringValueData[]{item1, item2, item3, item4}));
 

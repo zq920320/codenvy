@@ -4,25 +4,6 @@
  */
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
-
-import org.apache.commons.net.ftp.FTPReply;
-import org.apache.commons.net.ftp.FTPSClient;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.impl.JobDetailImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,6 +21,24 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
+import org.quartz.impl.JobDetailImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -159,19 +158,19 @@ public class ActOnJob implements Job {
     protected File prepareFile() throws IOException {
         Map<String, String> context = Utils.initilizeContext(TimeUnit.DAY, new Date());
 
-        Set<StringValueData> activeUsers = getActiveUsers(context);
+        Set<String> activeUsers = getActiveUsers(context);
         LinkedHashMap<String, String> metrics = readMetric();
         
         File file = new File(System.getProperty("java.io.tmpdir"), Utils.getToDateParam(context) + ".csv");
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
         try {
             writeTitle(out, metrics);
-            for (StringValueData userVD : activeUsers) {
-                writeEmail(out, userVD);
+            for (String user : activeUsers) {
+                writeEmail(out, user);
 
                 for (String metricName : metrics.values()) {
                     out.write(",");
-                    writeMetricValue(out, userVD, metricName, context);
+                    writeMetricValue(out, user, metricName, context);
                 }
 
                 out.newLine();
@@ -183,18 +182,18 @@ public class ActOnJob implements Job {
         return file;
     }
 
-    private void writeMetricValue(BufferedWriter out, StringValueData userVD, String metricName, Map<String, String> context) throws IOException {
+    private void writeMetricValue(BufferedWriter out, String user, String metricName, Map<String, String> context) throws IOException {
         Metric metric = MetricFactory.createMetric(metricName);
 
         context = Utils.newContext(context);
-        context.put(Metric.USER_FILTER_PARAM, userVD.getAsString());
+        context.put(Metric.USER_FILTER_PARAM, user);
 
         String value = metric.getValue(context).getAsString();
         out.write(value);
     }
 
-    private void writeEmail(BufferedWriter out, StringValueData userVD) throws IOException {
-        out.write(userVD.getAsString());
+    private void writeEmail(BufferedWriter out, String user) throws IOException {
+        out.write(user);
     }
 
     private void writeTitle(BufferedWriter out, LinkedHashMap<String, String> metrics) throws IOException {
@@ -228,7 +227,7 @@ public class ActOnJob implements Job {
         }
     }
 
-    protected Set<StringValueData> getActiveUsers(Map<String, String> context) throws IOException {
+    protected Set<String> getActiveUsers(Map<String, String> context) throws IOException {
         Metric activeUsersSetMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
         SetStringValueData valueData = (SetStringValueData)activeUsersSetMetric.getValue(context);
 

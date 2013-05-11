@@ -4,6 +4,9 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,12 +15,11 @@ import java.util.Map.Entry;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class MapValueData<K extends ValueData, V extends ValueData> extends AbstractValueData {
+public abstract class MapValueData<K, V> extends AbstractValueData {
 
-    protected final Map<K, V> value;
+    protected Map<K, V> value;
 
-    public MapValueData(String value) {
-        this.value = parse(value);
+    public MapValueData() {
     }
 
     public MapValueData(Map<K, V> value) {
@@ -41,77 +43,65 @@ public abstract class MapValueData<K extends ValueData, V extends ValueData> ext
 
         for (Entry<K, V> entry : value.entrySet()) {
             if (builder.length() != 0) {
-                builder.append(ITEM_DELIMITER);
+                builder.append(',');
             }
 
             builder.append(' ');
-            builder.append(entry.getKey().getAsString());
-            builder.append(KEY_VALUE_DELIMITER);
-            builder.append(entry.getValue().getAsString());
+            builder.append(entry.getKey().toString());
+            builder.append('=');
+            builder.append(entry.getValue().toString());
         }
 
         if (builder.length() != 0) {
             builder.setCharAt(0, '[');
             builder.append(']');
         } else {
-            builder.append('[');
-            builder.append(EMPTY_VALUE);
-            builder.append(']');
+            builder.append("[]");
         }
 
         return builder.toString();
     }
 
-    protected Map<K, V> parse(String line) {
-        line = line.substring(1, line.length() - 1); // removes '[' and ']'
+    /** {@inheritedDoc} */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected ValueData doUnion(ValueData valueData) {
+        MapValueData<K, V> addVD = (MapValueData<K, V>)valueData;
 
-        if (line.equals(EMPTY_VALUE)) {
-            return Collections.<K, V> emptyMap();
+        Map<K, V> result = new HashMap<K, V>(this.value);
+
+        for (Entry<K, V> entry : addVD.value.entrySet()) {
+            K key = entry.getKey();
+
+            if (result.containsKey(key)) {
+                result.put(key, unionValues(result.get(key), entry.getValue()));
+            } else {
+                result.put(key, entry.getValue());
+            }
         }
 
-        String[] splittedLine = line.split(ITEM_DELIMITER);
-
-        Map<K, V> result = new HashMap<K, V>(splittedLine.length);
-        for (String str : splittedLine) {
-            String[] entry = str.split(KEY_VALUE_DELIMITER);
-
-            K key = createInnerValueDataForKey(entry[0].trim());
-            V value = createInnerValueDataForValue(entry[1].trim());
-
-            result.put(key, value);
-        }
-
-        return result;
+        return createInstance(result);
     }
 
-    /** @return K instance */
-    abstract protected K createInnerValueDataForKey(String str);
-
-    /** @return V instance */
-    abstract protected V createInnerValueDataForValue(String str);
-
-
-    /**
-     * Return the union of two maps. If maps contain the same key the resulted value for this key will be union of those values.
-     */
-    @SuppressWarnings("unchecked")
-    protected Map<K, V> unionInternalValues(ValueData valueData) {
-        MapValueData<K, V> addValueData = (MapValueData<K, V>)valueData;
-
-        Map<K, V> newValue = new HashMap<K, V>(this.value);
-
-        for (Entry<K, V> entry : addValueData.value.entrySet()) {
-            V newMapValue = entry.getValue();
-
-            if (newValue.containsKey(entry.getKey())) {
-                newMapValue = (V)newMapValue.union(newValue.get(entry.getKey()));
-            }
-
-            newValue.put(entry.getKey(), newMapValue);
-
+    /** {@inheritedDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(value.size());
+        for (Entry<K, V> entry : value.entrySet()) {
+            writeKey(out, entry.getKey());
+            writeValue(out, entry.getValue());
         }
+    }
 
-        return newValue;
+    /** {@inheritedDoc} */
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int size = in.readInt();
+
+        value = new HashMap<K, V>(size);
+        for (int i = 0; i < size; i++) {
+            value.put(readKey(in), readValue(in));
+        }
     }
 
     /** {@inheritedDoc} */
@@ -146,4 +136,16 @@ public abstract class MapValueData<K extends ValueData, V extends ValueData> ext
 
         return hash;
     }
+
+    protected abstract V unionValues(V v1, V v2);
+
+    protected abstract ValueData createInstance(Map<K, V> value);
+
+    protected abstract void writeKey(ObjectOutput out, K key) throws IOException;
+
+    protected abstract void writeValue(ObjectOutput out, V value) throws IOException;
+
+    protected abstract K readKey(ObjectInput in) throws IOException;
+
+    protected abstract V readValue(ObjectInput in) throws IOException;
 }

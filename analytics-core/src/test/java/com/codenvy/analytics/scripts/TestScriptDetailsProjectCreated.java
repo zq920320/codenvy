@@ -21,9 +21,6 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,10 +30,10 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -65,18 +62,10 @@ public class TestScriptDetailsProjectCreated extends BaseTest {
                                         (ListListStringValueData)executeAndReturnResult(ScriptType.DETAILS_PROJECT_CREATED, log, params);
 
         List<ListStringValueData> all = value.getAll();
-        ListStringValueData item1 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws1"), new StringValueData("user1"),
-                                                                          new StringValueData("project1"), new StringValueData("type1")));
-        ListStringValueData item2 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws2"), new StringValueData("user1"),
-                                                                          new StringValueData("project1"), new StringValueData("type1")));
-        ListStringValueData item3 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws1"), new StringValueData("user2"),
-                                                                          new StringValueData("project1"), new StringValueData("type2")));
-        ListStringValueData item4 =
-                                    new ListStringValueData(Arrays.asList(new StringValueData("ws3"), new StringValueData("user3"),
-                                                                          new StringValueData("project1"), new StringValueData("type2")));
+        ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1"));
+        ListStringValueData item2 = new ListStringValueData(Arrays.asList("ws2", "user1", "project1", "type1"));
+        ListStringValueData item3 = new ListStringValueData(Arrays.asList("ws1", "user2", "project1", "type2"));
+        ListStringValueData item4 = new ListStringValueData(Arrays.asList("ws3", "user3", "project1", "type2"));
 
         assertEquals(all.size(), 4);
         assertTrue(all.contains(item1));

@@ -4,6 +4,9 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,12 +15,11 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class SetValueData<T extends ValueData> extends AbstractValueData {
+public abstract class SetValueData<T> extends AbstractValueData {
 
-    protected final Set<T> value;
+    protected Set<T> value;
 
-    public SetValueData(String value) {
-        this.value = parse(value);
+    public SetValueData() {
     }
 
     public SetValueData(Collection<T> value) {
@@ -41,88 +43,56 @@ public abstract class SetValueData<T extends ValueData> extends AbstractValueDat
 
         for (T valueData : value) {
             if (builder.length() != 0) {
-                builder.append(ITEM_DELIMITER);
+                builder.append(',');
             }
 
             builder.append(' ');
-            builder.append(valueData.getAsString());
+            builder.append(valueData.toString());
         }
         
         if (builder.length() != 0) {
             builder.setCharAt(0, '[');
             builder.append(']');
         } else {
-            builder.append('[');
-            builder.append(EMPTY_VALUE);
-            builder.append(']');
+            builder.append("[]");
         }
 
         return builder.toString();
     }
 
-    protected Set<T> parse(String line) {
-        line = line.substring(1, line.length() - 1); // removes '[' and ']'
-
-        if (line.equals(EMPTY_VALUE)) {
-            return Collections.<T> emptySet();
-        }
-
-        if (isComplexStructure(line)) {
-            return parseComplexStructure(line);
-        } else {
-            return parseSimpleStructure(line);
-        }
-    }
-
-    private Set<T> parseSimpleStructure(String line) {
-        String[] splittedLine = line.split(ITEM_DELIMITER);
-
-        Set<T> result = new HashSet<T>(splittedLine.length);
-        for (String str : splittedLine) {
-            result.add(createInnerValueData(str.trim()));
-        }
-
-        return result;
-    }
-
-    private Set<T> parseComplexStructure(String line) {
-        Set<T> result = new HashSet<T>();
-
-        int beginIndex;
-        while ((beginIndex = line.indexOf("[")) >= 0) {
-            int endIndex = line.indexOf("]");
-            
-            result.add(createInnerValueData(line.substring(beginIndex, endIndex + 1)));
-            line = line.substring(endIndex + 1);
-        }
-
-        return result;
-    }
-
-    private boolean isComplexStructure(String line) {
-        return line.contains("[");
-    }
-
-    /** @return T instance */
-    abstract protected T createInnerValueData(String str);
-
-    /**
-     * Return the union of two sets.
-     */
+    /** {@inheritedDoc} */
     @SuppressWarnings("unchecked")
-    protected Set<T> unionInternalValues(ValueData valueData) {
-        SetValueData<T> addValueData = (SetValueData<T>)valueData;
+    @Override
+    protected ValueData doUnion(ValueData valueData) {
+        SetValueData<T> addVD = (SetValueData<T>)valueData;
 
-        Set<T> newValue = new HashSet<T>(this.value.size() + addValueData.value.size());
-        newValue.addAll(this.value);
-        newValue.addAll(addValueData.value);
+        Set<T> result = new HashSet<T>(this.value);
+        result.addAll(addVD.value);
 
-        return newValue;
+        return createInstance(result);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritedDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(value.size());
+        for (T item : value) {
+            writeItem(out, item);
+        }
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int size = in.readInt();
+
+        value = new HashSet<T>(size);
+        for (int i = 0; i < size; i++) {
+            value.add(readItem(in));
+        }
+    }
+
+    /** {@inheritedDoc} */
     @Override
     protected boolean doEquals(Object object) {
         SetValueData< ? > valueData = (SetValueData< ? >)object;
@@ -142,4 +112,10 @@ public abstract class SetValueData<T extends ValueData> extends AbstractValueDat
 
         return hash;
     }
+
+    protected abstract void writeItem(ObjectOutput out, T item) throws IOException;
+
+    protected abstract T readItem(ObjectInput in) throws IOException;
+
+    protected abstract ValueData createInstance(Collection<T> value);
 }

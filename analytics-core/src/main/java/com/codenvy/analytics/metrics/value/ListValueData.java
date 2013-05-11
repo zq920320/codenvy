@@ -4,6 +4,9 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,12 +16,11 @@ import java.util.List;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public abstract class ListValueData<T extends ValueData> extends AbstractValueData {
+public abstract class ListValueData<T> extends AbstractValueData {
 
-    private final List<T> value;
+    private List<T> value;
 
-    public ListValueData(String value) {
-        this.value = parse(value);
+    public ListValueData() {
     }
 
     public ListValueData(Collection<T> value) {
@@ -41,83 +43,52 @@ public abstract class ListValueData<T extends ValueData> extends AbstractValueDa
         newValue.addAll(value1);
         newValue.addAll(value2);
 
-        return createValueData(newValue);
+        return createInstance(newValue);
     }
     
+    /** {@inheritedDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(value.size());
+        for (T item : value) {
+            writeItem(out, item);
+        }
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int size = in.readInt();
+
+        value = new ArrayList<T>(size);
+        for (int i = 0; i < size; i++) {
+            value.add(readItem(in));
+        }
+    }
+
     /** {@inheritedDoc} */
     @Override
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
 
-        for (ValueData valueData : value) {
+        for (T valueData : value) {
             if (builder.length() != 0) {
-                builder.append(ITEM_DELIMITER);
+                builder.append(',');
             }
 
             builder.append(' ');
-            builder.append(valueData.getAsString());
+            builder.append(valueData.toString());
         }
 
         if (builder.length() != 0) {
             builder.setCharAt(0, '[');
             builder.append(']');
         } else {
-            builder.append('[');
-            builder.append(EMPTY_VALUE);
-            builder.append(']');
+            builder.append("[]");
         }
 
         return builder.toString();
     }
-
-    protected List<T> parse(String line) {
-        line = line.substring(1, line.length() - 1); // removes '[' and ']'
-
-        if (line.equals(EMPTY_VALUE)) {
-            return Collections.<T> emptyList();
-        }
-
-        if (isComplexStructure(line)) {
-            return parseComplexStructure(line);
-        } else {
-            return parseSimpleStructure(line);
-        }
-    }
-
-    private List<T> parseSimpleStructure(String line) {
-        String[] splittedLine = line.split(ITEM_DELIMITER);
-
-        List<T> result = new ArrayList<T>(splittedLine.length);
-        for (String str : splittedLine) {
-            result.add(createInnerValueData(str.trim()));
-        }
-
-        return result;
-    }
-
-    private List<T> parseComplexStructure(String line) {
-        List<T> result = new ArrayList<T>();
-
-        int beginIndex;
-        while ((beginIndex = line.indexOf("[")) >= 0) {
-            int endIndex = line.indexOf("]");
-
-            result.add(createInnerValueData(line.substring(beginIndex, endIndex + 1)));
-            line = line.substring(endIndex + 1);
-        }
-
-        return result;
-    }
-
-    private boolean isComplexStructure(String line) {
-        return line.contains("[");
-    }
-
-    /** @return T instance */
-    abstract protected T createInnerValueData(String str);
-
-    /** Factory method */
-    abstract protected ValueData createValueData(List<T> value);
 
     /**
      * {@inheritDoc}
@@ -153,4 +124,10 @@ public abstract class ListValueData<T extends ValueData> extends AbstractValueDa
 
         return hash;
     }
+
+    abstract protected ValueData createInstance(List<T> value);
+
+    abstract protected void writeItem(ObjectOutput out, T item) throws IOException;
+
+    abstract protected T readItem(ObjectInput in) throws IOException;
 }

@@ -125,15 +125,15 @@ public class ValueDataFactory {
 
     private static ListDoubleValueData createListDoubleValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new ListDoubleValueData(Collections.<DoubleValueData> emptyList());
+            return new ListDoubleValueData(Collections.<Double> emptyList());
         }
 
-        List<DoubleValueData> result = new ArrayList<DoubleValueData>();
+        List<Double> result = new ArrayList<Double>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
             validateTupleSize(tuple, 1);
-            result.add(new DoubleValueData((Double)tuple.get(0)));
+            result.add((Double)tuple.get(0));
         }
 
         return new ListDoubleValueData(result);
@@ -141,15 +141,15 @@ public class ValueDataFactory {
 
     private static ListStringValueData createListStringValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new ListStringValueData(Collections.<StringValueData> emptyList());
+            return new ListStringValueData(Collections.<String> emptyList());
         }
 
-        List<StringValueData> result = new ArrayList<StringValueData>();
+        List<String> result = new ArrayList<String>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
             validateTupleSize(tuple, 1);
-            result.add(new StringValueData(tuple.get(0).toString()));
+            result.add(tuple.get(0).toString());
         }
 
         return new ListStringValueData(result);
@@ -157,17 +157,17 @@ public class ValueDataFactory {
 
     private static ValueData createMapStringLongValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new MapStringLongValueData(Collections.<StringValueData, LongValueData> emptyMap());
+            return new MapStringLongValueData(Collections.<String, Long> emptyMap());
         }
 
-        Map<StringValueData, LongValueData> result = new HashMap<StringValueData, LongValueData>();
+        Map<String, Long> result = new HashMap<String, Long>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
             validateTupleSize(tuple, 2);
 
-            StringValueData key = new StringValueData(tuple.get(0).toString());
-            LongValueData value = new LongValueData(Long.valueOf(tuple.get(1).toString()));
+            String key = tuple.get(0).toString();
+            Long value = (Long)tuple.get(1);
 
             result.put(key, value);
         }
@@ -177,15 +177,15 @@ public class ValueDataFactory {
 
     private static ValueData createSetStringValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new SetStringValueData(Collections.<StringValueData> emptySet());
+            return new SetStringValueData(Collections.<String> emptySet());
         }
 
-        Set<StringValueData> result = new HashSet<StringValueData>();
+        Set<String> result = new HashSet<String>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
             validateTupleSize(tuple, 1);
-            result.add(new StringValueData(tuple.get(0).toString()));
+            result.add(tuple.get(0).toString());
         }
 
         return new SetStringValueData(result);

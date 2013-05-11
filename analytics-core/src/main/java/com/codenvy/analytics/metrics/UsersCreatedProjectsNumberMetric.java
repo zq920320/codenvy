@@ -4,8 +4,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -13,8 +11,8 @@ import java.util.Set;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -50,11 +48,11 @@ public class UsersCreatedProjectsNumberMetric extends CalculateBasedMetric {
 
         ListListStringValueData createdProjectsValue = (ListListStringValueData)createdProjectsMetric.getValue(context);
         ProjectCreatedListFilter wrapper = new ProjectCreatedListFilter(createdProjectsValue);
-        Set<StringValueData> allUsersHaveCreatedProjects = wrapper.getAllUsers().getAll();
+        Set<String> allUsersHaveCreatedProjects = wrapper.getAllUsers().getAll();
 
         SetStringValueData createdUsersValue = (SetStringValueData)createdUsersMetric.getValue(context);
-        Set<StringValueData> usersCreated = createdUsersValue.getAll();
-        for (StringValueData user : usersCreated) {
+        Set<String> usersCreated = createdUsersValue.getAll();
+        for (String user : usersCreated) {
             if (allUsersHaveCreatedProjects.contains(user)) {
                 count++;
             }

@@ -14,9 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.codenvy.analytics.metrics.value.DoubleValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 /**
@@ -81,11 +79,11 @@ abstract public class ValueFromMapMetric extends CalculateBasedMetric {
 
     protected long calculateSum(MapStringLongValueData basedMetricValue) {
         long sum = 0L;
-        Map<StringValueData, LongValueData> all = basedMetricValue.getAll();
+        Map<String, Long> all = basedMetricValue.getAll();
 
-        for (Entry<StringValueData, LongValueData> entry : all.entrySet()) {
-            String key = entry.getKey().getAsString();
-            Long value = entry.getValue().getAsLong();
+        for (Entry<String, Long> entry : all.entrySet()) {
+            String key = entry.getKey();
+            Long value = entry.getValue();
 
             if (!ignoredKeys.contains(key)) {
                 sum += value;
@@ -97,13 +95,11 @@ abstract public class ValueFromMapMetric extends CalculateBasedMetric {
 
     protected double calculateParticalValue(MapStringLongValueData basedMetricValue) {
         long sum = 0;
-        Map<StringValueData, LongValueData> all = basedMetricValue.getAll();
+        Map<String, Long> all = basedMetricValue.getAll();
 
         for (String key : keys) {
-            StringValueData keyVD = new StringValueData(key);
-
-            if (all.containsKey(keyVD)) {
-                sum += all.get(keyVD).getAsLong();
+            if (all.containsKey(key)) {
+                sum += all.get(key);
             }
         }
 

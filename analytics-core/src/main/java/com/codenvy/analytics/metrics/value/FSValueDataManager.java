@@ -4,16 +4,20 @@
  */
 package com.codenvy.analytics.metrics.value;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
@@ -21,7 +25,10 @@ import com.codenvy.analytics.metrics.Utils;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class FSValueDataManager implements ValueDataManager {
+public class FSValueDataManager {
+
+    /** Logger. */
+    private static final Logger LOGGER                              = LoggerFactory.getLogger(FSValueDataManager.class);
 
     /** Runtime parameter name. Contains the directory where values are stored. */
     private static final String ANALYTICS_RESULT_DIRECTORY_PROPERTY = "analytics.result.directory";
@@ -30,45 +37,24 @@ public class FSValueDataManager implements ValueDataManager {
     public static final String  RESULT_DIRECTORY                    = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
 
     /** The file name where value is stored. */
-    private final String        FILE_NAME                           = "value";
-
-    /** The {@link MetricType} instance. */
-    private final MetricType    metricType;
-
-    public FSValueDataManager(MetricType metricType) {
-        this.metricType = metricType;
-    }
+    private static final String FILE_NAME                           = "value";
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public ValueData load(Map<String, String> uuid) throws IOException {
-        File file = getFile(uuid);
+    public static ValueData load(MetricType metricType, Map<String, String> uuid) throws IOException {
+        File file = getFile(metricType, uuid);
         validateExistance(file);
 
         return doLoad(file);
     }
 
-    private ValueData doLoad(File file) throws IOException {
-        BufferedReader in = new BufferedReader(new FileReader(file));
+    private static ValueData doLoad(File file) throws IOException {
+        ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 
         try {
-            Class< ? > clazz = Class.forName(in.readLine());
-            return ValueDataFactory.createValueData(clazz, in.readLine());
-        } catch (IllegalAccessException e) {
-            throw new IOException(e);
-        } catch (IllegalArgumentException e) {
-            throw new IOException(e);
-        } catch (InvocationTargetException e) {
-            throw new IOException(e);
-        } catch (NoSuchMethodException e) {
-            throw new IOException(e);
-        } catch (SecurityException e) {
-            throw new IOException(e);
+            return (ValueData)in.readObject();
         } catch (ClassNotFoundException e) {
-            throw new IOException(e);
-        } catch (InstantiationException e) {
             throw new IOException(e);
         } finally {
             in.close();
@@ -78,22 +64,19 @@ public class FSValueDataManager implements ValueDataManager {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void store(ValueData value, Map<String, String> uuid) throws IOException {
-        File file = getFile(uuid);
+    public static void store(ValueData value, MetricType metricType, Map<String, String> uuid) throws IOException {
+        File file = getFile(metricType, uuid);
         ensureDestination(file);
 
         doStore(value, file);
+        LOGGER.info("File " + file.getPath() + " is created");
     }
 
-    private void doStore(ValueData value, File file) throws IOException {
-        BufferedWriter out = new BufferedWriter(new FileWriter(file));
+    private static void doStore(ValueData value, File file) throws IOException {
+        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
 
         try {
-            out.write(value.getClass().getName());
-            out.newLine();
-            out.write(value.getAsString());
-            out.newLine();
+            out.writeObject(value);
         } finally {
             out.close();
         }
@@ -102,7 +85,7 @@ public class FSValueDataManager implements ValueDataManager {
     /**
      * Returns the file to store in or load value from.
      */
-    protected File getFile(Map<String, String> uuid) throws IOException {
+    protected static File getFile(MetricType metricType, Map<String, String> uuid) throws IOException {
         File dir = new File(RESULT_DIRECTORY);
 
         StringBuilder builder = new StringBuilder();
@@ -129,7 +112,7 @@ public class FSValueDataManager implements ValueDataManager {
     }
 
     /** Translate date from format yyyyMMdd into format like yyyy/MM/dd and {@link File#separatorChar} is used as delimiter. */
-    private String translateDateToRelativePath(String date) {
+    private static String translateDateToRelativePath(String date) {
         StringBuilder builder = new StringBuilder();
 
         builder.append(date.substring(0, 4));
@@ -146,7 +129,7 @@ public class FSValueDataManager implements ValueDataManager {
     /**
      * Creates all needed sub tree and removes target file if exists.
      */
-    private void ensureDestination(File file) throws IOException {
+    private static void ensureDestination(File file) throws IOException {
         File dir = file.getParentFile();
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
@@ -164,7 +147,7 @@ public class FSValueDataManager implements ValueDataManager {
     /**
      * Checks if file exists and throws an exception otherwise.
      */
-    private void validateExistance(File file) throws FileNotFoundException {
+    private static void validateExistance(File file) throws FileNotFoundException {
         if (!file.exists()) {
             throw new FileNotFoundException("File does not exist " + file.getAbsolutePath());
         }

@@ -5,7 +5,6 @@
 package com.codenvy.analytics.server.vew.layout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +42,7 @@ public class MetricRowLayoutImpl implements RowLayout {
 
         for (int i = 1; i < length; i++) {
             try {
-                ValueData valueData = metric.getValue(new HashMap<String, String>(context));
+                ValueData valueData = metric.getValue(context);
 
                 if (isPrintable(valueData)) {
                     row.add(print(format, valueData));
@@ -97,7 +96,7 @@ public class MetricRowLayoutImpl implements RowLayout {
 
     /** Checks if received value might be displayed in view. */
     private boolean isPrintable(ValueData value) {
-        if (value instanceof DoubleValueData && (value.getAsDouble().isNaN() || value.getAsDouble() == 0)) {
+        if (value instanceof DoubleValueData && (Double.valueOf(value.getAsDouble()).isNaN() || value.getAsDouble() == 0)) {
             return false;
         } else if (value instanceof LongValueData && value.getAsLong() == 0) {
             return false;

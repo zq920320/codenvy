@@ -4,11 +4,11 @@
  */
 package com.codenvy.analytics.metrics.value.filters;
 
+import java.util.ArrayList;
+
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-
-import java.util.ArrayList;
 
 /**
  * Items in the list meet the requirements: <br>
@@ -58,7 +58,7 @@ public class AppDeployedListFilter implements ValueDataFilter {
         ArrayList<ListStringValueData> result = new ArrayList<ListStringValueData>();
 
         for (ListStringValueData listVD : valueData.getAll()) {
-            if (listVD.getAll().get(index).getAsString().equals(value)) {
+            if (listVD.getAll().get(index).equals(value)) {
                 result.add(listVD);
             }
         }

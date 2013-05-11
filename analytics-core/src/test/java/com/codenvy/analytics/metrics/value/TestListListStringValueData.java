@@ -7,14 +7,14 @@ package com.codenvy.analytics.metrics.value;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 
-import com.codenvy.analytics.BaseTest;
-
-
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricType;
 
 
 /**
@@ -22,16 +22,10 @@ import org.testng.annotations.Test;
  */
 public class TestListListStringValueData extends BaseTest {
 
-    private ValueData expectedValueData =
-                                          new ListListStringValueData(
-                                                                      Arrays.asList(new ListStringValueData[]{
-            new ListStringValueData(
-                                    Arrays.asList(new StringValueData[]{new StringValueData("ws1"), new StringValueData("pr1")})),
-            new ListStringValueData(
-                                    Arrays.asList(new StringValueData[]{new StringValueData("ws1"), new StringValueData("pr2")})),
-            new ListStringValueData(
-                                    Arrays.asList(new StringValueData[]{new StringValueData("ws2"), new StringValueData("pr1")}))
-                                                                      }));
+    private ValueData expectedValueData = new ListListStringValueData(Arrays.asList(new ListStringValueData[]{
+                                        new ListStringValueData(Arrays.asList(new String[]{"ws1", "pr1"})),
+                                        new ListStringValueData(Arrays.asList(new String[]{"ws1", "pr2"})),
+                                        new ListStringValueData(Arrays.asList(new String[]{"ws2", "pr1"}))}));
 
     @Test
     public void testValueDataFromTuple() throws Exception {
@@ -62,16 +56,16 @@ public class TestListListStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
         ValueData expectedValueData = new ListListStringValueData(Collections.<ListStringValueData> emptyList());
 
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
@@ -80,85 +74,46 @@ public class TestListListStringValueData extends BaseTest {
                                       new ListListStringValueData(
                                                                   Arrays.asList(new ListStringValueData[]{}));
 
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyString() throws Exception {
         ValueData expectedValueData =
                                       new ListListStringValueData(
-                                                                  Arrays.asList(new ListStringValueData[]{
-                                                                          new ListStringValueData(
-                                                                                                  Arrays.asList(new StringValueData[]{
-                                                                                                          new StringValueData(
-                                                                                                                              "")})),
+                                                                  Arrays.asList(new ListStringValueData[]{new ListStringValueData(
+                                                                                                                                  Arrays.asList(new String[]{""})),}));
 
-                                                                  }));
-
-        valueManager.store(expectedValueData, uuid);
-        assertEquals(valueManager.load(uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
     }
 
     @Test
     public void testEqualsSameOrder() throws Exception {
-        ValueData newValueData =
-                                 new ListListStringValueData(
-                                                             Arrays.asList(new ListStringValueData[]{
-                                                                     new ListStringValueData(
-                                                                                             Arrays.asList(new StringValueData[]{
-                                                                                                     new StringValueData("ws1"),
-                                                                                                     new StringValueData("pr1")})),
-                                                                     new ListStringValueData(
-                                                                                             Arrays.asList(new StringValueData[]{
-                                                                                                     new StringValueData("ws1"),
-                                                                                                     new StringValueData("pr2")})),
-                                                                     new ListStringValueData(
-                                                                                             Arrays.asList(new StringValueData[]{
-                                                                                                     new StringValueData("ws2"),
-                                                                                                     new StringValueData("pr1")}))
-                                                             }));
+        ValueData newValueData = new ListListStringValueData(Arrays.asList(new ListStringValueData[]{
+                new ListStringValueData(Arrays.asList(new String[]{"ws1", "pr1"})),
+                new ListStringValueData(Arrays.asList(new String[]{"ws1", "pr2"})),
+                new ListStringValueData(Arrays.asList(new String[]{"ws2", "pr1"}))}));
 
         assertEquals(newValueData, expectedValueData);
     }
 
     @Test
     public void testNotEqualsDifferentOrder() throws Exception {
-        ValueData newValueData =
-                                 new ListListStringValueData(
-                                                             Arrays.asList(new ListStringValueData[]{
-                                                                     new ListStringValueData(
-                                                                                             Arrays.asList(new StringValueData[]{
-                                                                                                     new StringValueData("ws1"),
-                                                                                                     new StringValueData("pr2")})),
-                                                                     new ListStringValueData(
-                                                                                             Arrays.asList(new StringValueData[]{
-                                                                                                     new StringValueData("ws1"),
-                                                                                                     new StringValueData("pr1")})),
-
-                                                                     new ListStringValueData(
-                                                                                             Arrays.asList(new StringValueData[]{
-                                                                                                     new StringValueData("ws2"),
-                                                                                                     new StringValueData("pr1")}))
-                                                             }));
+        ValueData newValueData = new ListListStringValueData(Arrays.asList(new ListStringValueData[]{
+                new ListStringValueData(Arrays.asList(new String[]{"ws1", "pr1"})),
+                new ListStringValueData(Arrays.asList(new String[]{"ws2", "pr1"})),
+                new ListStringValueData(Arrays.asList(new String[]{"ws1", "pr2"}))}));
 
         assertNotEquals(newValueData, expectedValueData);
     }
 
     @Test
     public void testNotEquals() throws Exception {
-        ValueData newValueData =
-                                 new ListListStringValueData(
-                                                             Arrays.asList(new ListStringValueData[]{
-                                                                     new ListStringValueData(
-                                                                                             Arrays.asList(new StringValueData[]{
-                                                                                                     new StringValueData("ws1"),
-                                                                                                     new StringValueData("pr2")})),
-                                                                     new ListStringValueData(
-                                                                                             Arrays.asList(new StringValueData[]{
-                                                                                                     new StringValueData("ws2"),
-                                                                                                     new StringValueData("pr1")}))
-                                                             }));
+        ValueData newValueData = new ListListStringValueData(Arrays.asList(new ListStringValueData[]{
+                new ListStringValueData(Arrays.asList(new String[]{"ws1", "pr1"})),
+                new ListStringValueData(Arrays.asList(new String[]{"ws2", "pr1"}))}));
 
         assertNotEquals(newValueData, expectedValueData);
     }

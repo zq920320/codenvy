@@ -4,19 +4,15 @@
  */
 package com.codenvy.analytics.metrics.value;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertFalse;
-
-import com.codenvy.analytics.BaseTest;
-
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.UUID;
 
 import org.testng.annotations.Test;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricType;
 
 /**
@@ -26,28 +22,23 @@ public class TestFSValueDataManager extends BaseTest {
 
     @Test(expectedExceptions = FileNotFoundException.class)
     public void shouldThrowExceptionIfFileNotExist() throws Exception {
-        File file = new File(BASE_DIR, UUID.randomUUID().toString());
+        FSValueDataManager.store(new StringValueData("test"), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
 
-        FSValueDataManager valueManager = spy(new FSValueDataManager(MetricType.BUILT_PROJECTS_NUMBER));
-        doReturn(file).when(valueManager).getFile(uuid);
-
-        StringValueData valueData = new StringValueData("test");
-        valueManager.store(valueData, uuid);
-
+        File file = FSValueDataManager.getFile(MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
         file.delete();
+
         assertFalse(file.exists());
 
-        valueManager.load(uuid);
+        FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
     }
 
     @Test
     public void shouldStoreValueIfFileExist() throws Exception {
-        File file = new File(BASE_DIR, UUID.randomUUID().toString());
+        File file = FSValueDataManager.getFile(MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
         file.createNewFile();
 
-        FSValueDataManager valueManager = spy(new FSValueDataManager(MetricType.BUILT_PROJECTS_NUMBER));
-        doReturn(file).when(valueManager).getFile(uuid);
+        assertTrue(file.exists());
 
-        valueManager.store(new StringValueData("test"), uuid);
+        FSValueDataManager.store(new StringValueData("test"), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
     }
 }

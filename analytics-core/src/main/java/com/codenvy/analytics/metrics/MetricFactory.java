@@ -5,282 +5,187 @@
 package com.codenvy.analytics.metrics;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class MetricFactory {
 
-    private static ConcurrentHashMap<MetricType, Metric> metrics = new ConcurrentHashMap<MetricType, Metric>();
-
     /**
      * Creates new metric or returns existed one.
      */
     public static Metric createMetric(MetricType metricType) throws IOException {
-        Metric metric = metrics.get(metricType);
-
-        if (metric != null) {
-            return metric;
-        }
-
         switch (metricType) {
             case WORKSPACES_CREATED_NUMBER:
-                metric = new WorkspacesCreatedNumberMetric();
-                break;
+                return new WorkspacesCreatedNumberMetric();
             case WORKSPACES_DESTROYED_NUMBER:
-                metric = new WorkspacesDestoryedNumberMetric();
-                break;
+                return new WorkspacesDestoryedNumberMetric();
             case TOTAL_WORKSPACES_NUMBER:
-                metric = new TotalWorkspacesMetric();
-                break;
+                return new TotalWorkspacesMetric();
             case ACTIVE_WORKSPACES_NUMBER:
-                metric = new ActiveWorkspacesNumberMetric();
-                break;
+                return new ActiveWorkspacesNumberMetric();
             case ACTIVE_WORKSPACES_SET:
-                metric = new ActiveWorkspacesSetMetric();
-                break;
+                return new ActiveWorkspacesSetMetric();
             case ACTIVE_WORKSPACES_PERCENT:
-                metric = new ActiveWorkspacesPercentMetric();
-                break;
+                return new ActiveWorkspacesPercentMetric();
             case USERS_CREATED_SET:
-                metric = new UsersCreatedSetMetric();
-                break;
+                return new UsersCreatedSetMetric();
             case USERS_CREATED_NUMBER:
-                metric = new UsersCreatedNumberMetric();
-                break;
+                return new UsersCreatedNumberMetric();
             case USERS_DESTROYED_NUMBER:
-                metric = new UsersDestroyedNumberMetric();
-                break;
+                return new UsersDestroyedNumberMetric();
             case TOTAL_USERS_NUMBER:
-                metric = new TotalUsersMetric();
-                break;
+                return new TotalUsersMetric();
             case ACTIVE_USERS_NUMBER:
-                metric = new ActiveUsersNumberMetric();
-                break;
+                return new ActiveUsersNumberMetric();
             case ACTIVE_USERS_SET:
-                metric = new ActiveUsersSetMetric();
-                break;
+                return new ActiveUsersSetMetric();
             case ACTIVE_USERS_PERCENT:
-                metric = new ActiveUsersPercentMetric();
-                break;
+                return new ActiveUsersPercentMetric();
             case USERS_CREATED_PROJECTS_NUMBER:
-                metric = new UsersCreatedProjectsNumberMetric();
-                break;
+                return new UsersCreatedProjectsNumberMetric();
             case USERS_CREATED_PROJECTS_PERCENT:
-                metric = new UsersCreatedProjectsPercentMetric();
-                break;
+                return new UsersCreatedProjectsPercentMetric();
             case USERS_ADDED_TO_WORKSPACE:
-                metric = new UsersAddedToWorkspaceMetric();
-                break;
+                return new UsersAddedToWorkspaceMetric();
             case USERS_ADDED_TO_WORKSPACE_FROM_WEBSITE_PERCENT:
-                metric = new UsersAddedToWsFromWebsitePercentMetric();
-                break;
+                return new UsersAddedToWsFromWebsitePercentMetric();
             case USERS_ADDED_TO_WORKSPACE_FROM_INVITE_PERCENT:
-                metric = new UsersAddedToWsFromInvitePercentMetric();
-                break;
+                return new UsersAddedToWsFromInvitePercentMetric();
             case USERS_SSO_LOGGED_IN:
-                metric = new UsersSsoLoggedInMetric();
-                break;
+                return new UsersSsoLoggedInMetric();
             case USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT:
-                metric = new UsersSsoLoggedInUsingGooglePercentMetric();
-                break;
+                return new UsersSsoLoggedInUsingGooglePercentMetric();
             case USERS_SSO_LOGGED_IN_USING_GITHUB_PERCENT:
-                metric = new UsersSsoLoggedInUsingGithubPercentMetric();
-                break;
+                return new UsersSsoLoggedInUsingGithubPercentMetric();
             case USERS_SSO_LOGGED_IN_USING_FORM_PERCENT:
-                metric = new UsersSsoLoggedInUsingFormPercentMetric();
-                break;
+                return new UsersSsoLoggedInUsingFormPercentMetric();
             case PRODUCT_USAGE_TIME_TOTAL:
-                metric = new ProductUsageTimeTotalMetric();
-                break;
+                return new ProductUsageTimeTotalMetric();
             case PROJECTS_CREATED_NUMBER:
-                metric = new ProjectsCreatedNumberMetric();
-                break;
+                return new ProjectsCreatedNumberMetric();
             case BUILT_PROJECTS_NUMBER:
-                metric = new BuiltProjectsNumberMetric();
-                break;
+                return new BuiltProjectsNumberMetric();
             case BUILT_PROJECTS_PERCENT:
-                metric = new BuiltProjectsPercentMetric();
-                break;
+                return new BuiltProjectsPercentMetric();
             case PROJECTS_DESTROYED_NUMBER:
-                metric = new ProjectsDestroyedNumberMetric();
-                break;
+                return new ProjectsDestroyedNumberMetric();
             case TOTAL_PROJECTS_NUMBER:
-                metric = new TotalProjectsMetric();
-                break;
+                return new TotalProjectsMetric();
             case ACTIVE_PROJECTS_NUMBER:
-                metric = new ActiveProjectsNumberMetric();
-                break;
+                return new ActiveProjectsNumberMetric();
             case ACTIVE_PROJECTS_SET:
-                metric = new ActiveProjectsSetMetric();
-                break;
+                return new ActiveProjectsSetMetric();
             case ACTIVE_PROJECTS_PERCENT:
-                metric = new ActiveProjectsPercentMetric();
-                break;
+                return new ActiveProjectsPercentMetric();
             case PROJECTS_CREATED_LIST:
-                metric = new ProjectCreatedListMetric();
-                break;
+                return new ProjectCreatedListMetric();
             case PROJECTS_CREATED_TYPES:
-                metric = new ProjectsCreatedTypesMetric();
-                break;
+                return new ProjectsCreatedTypesMetric();
             case PROJECT_TYPE_JAVA_JAR_NUMBER:
-                metric = new ProjectCreatedTypeJavaJarNumberMetric();
-                break;
+                return new ProjectCreatedTypeJavaJarNumberMetric();
             case PROJECT_TYPE_JAVA_JAR_PERCENT:
-                metric = new ProjectCreatedTypeJavaJarPercentMetric();
-                break;
+                return new ProjectCreatedTypeJavaJarPercentMetric();
             case PROJECT_TYPE_JAVA_WAR_NUMBER:
-                metric = new ProjectCreatedTypeJavaWarNumberMetric();
-                break;
+                return new ProjectCreatedTypeJavaWarNumberMetric();
             case PROJECT_TYPE_JAVA_WAR_PERCENT:
-                metric = new ProjectCreatedTypeJavaWarPercentMetric();
-                break;
+                return new ProjectCreatedTypeJavaWarPercentMetric();
             case PROJECT_TYPE_JAVA_JSP_NUMBER:
-                metric = new ProjectCreatedTypeJavaJspNumberMetric();
-                break;
+                return new ProjectCreatedTypeJavaJspNumberMetric();
             case PROJECT_TYPE_JAVA_JSP_PERCENT:
-                metric = new ProjectCreatedTypeJavaJspPercentMetric();
-                break;
+                return new ProjectCreatedTypeJavaJspPercentMetric();
             case PROJECT_TYPE_JAVA_SPRING_NUMBER:
-                metric = new ProjectCreatedTypeJavaSpringNumberMetric();
-                break;
+                return new ProjectCreatedTypeJavaSpringNumberMetric();
             case PROJECT_TYPE_JAVA_SPRING_PERCENT:
-                metric = new ProjectCreatedTypeJavaSpringPercentMetric();
-                break;
+                return new ProjectCreatedTypeJavaSpringPercentMetric();
             case PROJECT_TYPE_PHP_NUMBER:
-                metric = new ProjectCreatedTypeJavaPhpNumberMetric();
-                break;
+                return new ProjectCreatedTypeJavaPhpNumberMetric();
             case PROJECT_TYPE_PHP_PERCENT:
-                metric = new ProjectCreatedTypeJavaPhpPercentMetric();
-                break;
+                return new ProjectCreatedTypeJavaPhpPercentMetric();
             case PROJECT_TYPE_PYTHON_NUMBER:
-                metric = new ProjectCreatedTypePythonNumberMetric();
-                break;
+                return new ProjectCreatedTypePythonNumberMetric();
             case PROJECT_TYPE_PYTHON_PERCENT:
-                metric = new ProjectCreatedTypePythonPercentMetric();
-                break;
+                return new ProjectCreatedTypePythonPercentMetric();
             case PROJECT_TYPE_JAVASCRIPT_NUMBER:
-                metric = new ProjectCreatedTypeJavaScriptNumberMetric();
-                break;
+                return new ProjectCreatedTypeJavaScriptNumberMetric();
             case PROJECT_TYPE_JAVASCRIPT_PERCENT:
-                metric = new ProjectCreatedTypeJavaScriptPercentMetric();
-                break;
+                return new ProjectCreatedTypeJavaScriptPercentMetric();
             case PROJECT_TYPE_RUBY_NUMBER:
-                metric = new ProjectCreatedTypeRubyNumberMetric();
-                break;
+                return new ProjectCreatedTypeRubyNumberMetric();
             case PROJECT_TYPE_RUBY_PERCENT:
-                metric = new ProjectCreatedTypeRubyPercentMetric();
-                break;
+                return new ProjectCreatedTypeRubyPercentMetric();
             case PROJECT_TYPE_MMP_NUMBER:
-                metric = new ProjectCreatedTypeMmpNumberMetric();
-                break;
+                return new ProjectCreatedTypeMmpNumberMetric();
             case PROJECT_TYPE_MMP_PERCENT:
-                metric = new ProjectCreatedTypeMmpPercentMetric();
-                break;
+                return new ProjectCreatedTypeMmpPercentMetric();
             case PROJECT_TYPE_GROOVY_NUMBER:
-                metric = new ProjectCreatedTypeGroovyNumberMetric();
-                break;
+                return new ProjectCreatedTypeGroovyNumberMetric();
             case PROJECT_TYPE_GROOVY_PERCENT:
-                metric = new ProjectCreatedTypeGroovyNumberMetric();
-                break;
+                return new ProjectCreatedTypeGroovyNumberMetric();
             case PROJECT_TYPE_NODEJS_NUMBER:
-                metric = new ProjectCreatedTypeNodejsNumberMetric();
-                break;
+                return new ProjectCreatedTypeNodejsNumberMetric();
             case PROJECT_TYPE_NODEJS_PERCENT:
-                metric = new ProjectCreatedTypeNodejsPercentMetric();
-                break;
+                return new ProjectCreatedTypeNodejsPercentMetric();
             case PROJECT_TYPE_OTHERS_NUMBER:
-                metric = new ProjectCreatedTypeOthersNumberMetric();
-                break;
+                return new ProjectCreatedTypeOthersNumberMetric();
             case PROJECT_TYPE_OTHERS_PERCENT:
-                metric = new ProjectCreatedTypeOthersPercentMetric();
-                break;
+                return new ProjectCreatedTypeOthersPercentMetric();
             case APP_DEPLOYED_LIST:
-                metric = new AppDeployedListMetric();
-                break;
+                return new AppDeployedListMetric();
             case APP_DEPLOYED_NUMBER:
-                metric = new AppDeployedNumberMetric();
-                break;
+                return new AppDeployedNumberMetric();
             case PAAS_DEPLOYMENT_TYPES:
-                metric = new PaasDeploymentTypesMetric();
-                break;
+                return new PaasDeploymentTypesMetric();
             case PAAS_DEPLOYMENT_TYPE_AWS_NUMBER:
-                metric = new PaasDeploymentTypeAwsNumberMetric();
-                break;
+                return new PaasDeploymentTypeAwsNumberMetric();
             case PAAS_DEPLOYMENT_TYPE_AWS_PERCENT:
-                metric = new PaasDeploymentTypeAwsPercentMetric();
-                break;
+                return new PaasDeploymentTypeAwsPercentMetric();
             case PAAS_DEPLOYMENT_TYPE_APPFOG_NUMBER:
-                metric = new PaasDeploymentTypeAppFogNumberMetric();
-                break;
+                return new PaasDeploymentTypeAppFogNumberMetric();
             case PAAS_DEPLOYMENT_TYPE_APPFOG_PERCENT:
-                metric = new PaasDeploymentTypeAppFogPercentMetric();
-                break;
+                return new PaasDeploymentTypeAppFogPercentMetric();
             case PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_NUMBER:
-                metric = new PaasDeploymentTypeCloudFoundryNumberMetric();
-                break;
+                return new PaasDeploymentTypeCloudFoundryNumberMetric();
             case PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_PERCENT:
-                metric = new PaasDeploymentTypeCloudFoundryPercentMetric();
-                break;
+                return new PaasDeploymentTypeCloudFoundryPercentMetric();
             case PAAS_DEPLOYMENT_TYPE_CLOUDBEES_NUMBER:
-                metric = new PaasDeploymentTypeCloudBeesNumberMetric();
-                break;
+                return new PaasDeploymentTypeCloudBeesNumberMetric();
             case PAAS_DEPLOYMENT_TYPE_CLOUDBEES_PERCENT:
-                metric = new PaasDeploymentTypeCloudBeesPercentMetric();
-                break;
+                return new PaasDeploymentTypeCloudBeesPercentMetric();
             case PAAS_DEPLOYMENT_TYPE_GAE_NUMBER:
-                metric = new PaasDeploymentTypeGaeNumberMetric();
-                break;
+                return new PaasDeploymentTypeGaeNumberMetric();
             case PAAS_DEPLOYMENT_TYPE_GAE_PERCENT:
-                metric = new PaasDeploymentTypeGaePercentMetric();
-                break;
+                return new PaasDeploymentTypeGaePercentMetric();
             case PAAS_DEPLOYMENT_TYPE_HEROKU_NUMBER:
-                metric = new PaasDeploymentTypeHerokuNumberMetric();
-                break;
+                return new PaasDeploymentTypeHerokuNumberMetric();
             case PAAS_DEPLOYMENT_TYPE_HEROKU_PERCENT:
-                metric = new PaasDeploymentTypeHerokuPercentMetric();
-                break;
+                return new PaasDeploymentTypeHerokuPercentMetric();
             case PAAS_DEPLOYMENT_TYPE_LOCAL_NUMBER:
-                metric = new PaasDeploymentTypeLocalNumberMetric();
-                break;
+                return new PaasDeploymentTypeLocalNumberMetric();
             case PAAS_DEPLOYMENT_TYPE_LOCAL_PERCENT:
-                metric = new PaasDeploymentTypeLocalPercentMetric();
-                break;
+                return new PaasDeploymentTypeLocalPercentMetric();
             case PAAS_DEPLOYMENT_TYPE_OPENSHIFT_NUMBER:
-                metric = new PaasDeploymentTypeOpenShiftNumberMetric();
-                break;
+                return new PaasDeploymentTypeOpenShiftNumberMetric();
             case PAAS_DEPLOYMENT_TYPE_OPENSHIFT_PERCENT:
-                metric = new PaasDeploymentTypeOpenShiftPercentMetric();
-                break;
+                return new PaasDeploymentTypeOpenShiftPercentMetric();
             case PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER:
-                metric = new PaasDeploymentTypeTier3NumberMetric();
-                break;
+                return new PaasDeploymentTypeTier3NumberMetric();
             case PAAS_DEPLOYMENT_TYPE_TIER3_PERCENT:
-                metric = new PaasDeploymentTypeTier3PercentMetric();
-                break;
+                return new PaasDeploymentTypeTier3PercentMetric();
             case JREBEL_ELIGIBLE:
-                metric = new JrebelElibigleMetric();
-                break;
+                return new JrebelElibigleMetric();
             case JREBEL_USAGE:
-                metric = new JrebelUsageMetric();
-                break;
+                return new JrebelUsageMetric();
             case JREBEL_USAGE_PERCENT:
-                metric = new JrebelUsagePercentMetric();
-                break;
+                return new JrebelUsagePercentMetric();
             case INVITATIONS_SENT:
-                metric = new InvitationsSentMetric();
-                break;
+                return new InvitationsSentMetric();
             case INVITATIONS_ACCEPTED_PERCENT:
-                metric = new InvitationsAcceptedPercentMetric();
-                break;
+                return new InvitationsAcceptedPercentMetric();
 
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }
-
-        metrics.putIfAbsent(metricType, metric);
-        return metric;
     }
 
     /**

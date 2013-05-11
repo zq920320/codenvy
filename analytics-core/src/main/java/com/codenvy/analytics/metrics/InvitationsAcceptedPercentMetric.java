@@ -9,9 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.codenvy.analytics.metrics.value.DoubleValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 /**
@@ -47,10 +45,9 @@ public class InvitationsAcceptedPercentMetric extends CalculateBasedMetric {
     public ValueData evaluate(Map<String, String> context) throws IOException {
         MapStringLongValueData values = (MapStringLongValueData)userAddedToWsMetric.getValue(context);
 
-        Map<StringValueData, LongValueData> all = values.getAll();
-        StringValueData key = new StringValueData("invite");
+        Map<String, Long> all = values.getAll();
         
-        Long value = all.containsKey(key) ? all.get(key).getAsLong() : 0L;
+        Long value = all.containsKey("invite") ? all.get("invite") : 0L;
         Long total = (Long)invitationSentMetric.getValue(context).getAsLong();
 
         return new DoubleValueData(100D * value / total);

@@ -4,20 +4,6 @@
  */
 package com.codenvy.analytics.scripts.executor.pig;
 
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.ValueDataFactory;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.ScriptExecutor;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.pig.ExecType;
-import org.apache.pig.PigServer;
-import org.apache.pig.data.Tuple;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +17,20 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.pig.ExecType;
+import org.apache.pig.PigServer;
+import org.apache.pig.data.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.ValueDataFactory;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
 /**
  * The Pig-latin script executor.
@@ -95,7 +95,7 @@ public class PigScriptExecutor implements ScriptExecutor {
 
         InputStream scriptContent = readScriptContent(scriptType);
         try {
-            LOGGER.info("Execution " + scriptType + " is started with data located: " + path);
+            LOGGER.info("Script execution " + scriptType + " is started with data located: " + path);
 
             PigServer server = new PigServer(execType);
             try {
