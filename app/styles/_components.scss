@@ -405,8 +405,6 @@ h1.enterprise-header-text {
         margin-bottom: 80px;
     }
 
-
-
 }
 
 /*
@@ -416,9 +414,81 @@ h1.enterprise-header-text {
 */
 
 .pricing-section {
-    border: solid 1px;
+    border: solid 1px #EFEFEF;
     margin-bottom: 1.5em;
     padding: 1.5em;
+    background-color: #FDFDFD;
+
+    font-size:$base-font-size*0.875;
+
+    h3 { margin-top: 0; margin-bottom:  0; }
+    p { margin-top:0; }
+
+    &.plain {
+        background-color: #FFF;
+        border: none;
+    }
+}
+
+.pricing-row {
+    position: relative;
+    border-top: solid 1px #EDEDED;
+    padding-top: 1em;
+}
+
+.pricing-row:nth-child(1) {
+    padding-top: 0;
+    border-top: none;
+}
+
+.price-span {
+    @include respond-to(tablet-desktop){
+        position: absolute;
+        top: 50%;
+        height: 40px;
+        margin-top: -20px;
+        right: 0%;
+        text-align: right;
+    }
+
+    text-align: center;
+}
+
+.price-label {
+    border: solid 1px #EDEDED;
+    background-color: #FFF;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 7px 7px 8px 7px;
+    width: 100px;
+    display: inline-block;
+    text-align: center;
+
+    &.extended{
+        width: 200px;
+    };
+}
+
+.explanation-section {
+    table {
+        width: 100%;
+    }
+
+    td {
+        padding:1em;
+        border-bottom: solid 1px #EDEDED;
+    }
+
+    td:nth-child(2){
+        text-align: right;
+    };
+}
+
+.explanation-section-header {
+    border-bottom: solid 1px #CCC;
+    font-weight: bold;
+    margin-bottom: 1em;
+    display: inline-block;
 }
 
 .shopping {
