@@ -39,6 +39,7 @@
 }
 
 .container.border-line { border-top: solid 4px #d6e3ed; }
+.container.thin-border-line { border-top: solid 2px #D3E3EE; }
 
 @mixin framing {
     border-left: solid 1px $container-border-color;
