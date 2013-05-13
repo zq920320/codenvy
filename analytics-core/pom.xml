@@ -65,6 +65,12 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
+        
+        <!-- LDAP -->
+        <dependency>
+            <groupId>com.codenvy.organization</groupId>
+            <artifactId>codenvy-organization-api-java-client</artifactId>
+        </dependency>
 
         <!-- Third parties -->
         <dependency>

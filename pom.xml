@@ -44,6 +44,9 @@
         <jackson.version>1.7.4</jackson.version>
         <guava.version>11.0</guava.version>
         <joda-time.version>2.2</joda-time.version>
+        
+        <!-- LDAP client-->
+        <ldap.client.version>0.3</ldap.client.version>
 
         <!-- Third parties -->
         <everrest.version>1.0.10</everrest.version>
@@ -122,6 +125,13 @@
                 <groupId>org.everrest</groupId>
                 <artifactId>everrest-core</artifactId>
                 <version>${everrest.version}</version>
+            </dependency>
+            
+            <!-- LDAP -->
+            <dependency>
+                <groupId>com.codenvy.organization</groupId>
+                <artifactId>codenvy-organization-api-java-client</artifactId>
+                <version>${ldap.client.version}</version>
             </dependency>
 
             <!-- GWT -->
