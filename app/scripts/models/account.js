@@ -159,16 +159,13 @@
                 return (/^[A-Za-z]{1}[a-zA-Z0-9@_\.-]+$/).test(email);
             },
 
-            login : function(form, success){
+            login : function(form){
 
-                isWebsocketEnabled();
-                // verify the form
-                
-                //var loginUrl = "/sso/server/gen?authType=jaas";
-                var loginUrl = "https://codenvy.com";
-                form.attr("action", loginUrl);
-                success();
-
+                if (isWebsocketEnabled()){
+                    var loginUrl = "/sso/server/gen?authType=jaas";
+                    form.attr("action", loginUrl);
+                    form.submit();
+                    }
                 },
 
             loginWithGoogle : loginWithGoogle,

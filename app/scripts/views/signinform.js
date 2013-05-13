@@ -37,32 +37,7 @@
                 },
 
                 __submit : function(){
-                    var loginUrl = "/sso/server/gen?authType=jaas";
-                    $(this.el).attr("action", loginUrl);
-                    $(this.el).submit();
-/*                    Account.login(
-                        $(this.el), // validation form fields
-                        _.bind(function(){
-                            //$(this.el).attr('action',data.url);
-                            //$(this.el).submit();
-                            //window.location = data.url;
-                            return true;
-                        },this),
-                        _.bind(function(errors){
-
-                            this.__restoreForm();
-
-                            if(errors.length !== 0){
-                                this.trigger(
-                                    "invalid",
-                                    errors[0].getFieldName(),
-                                    errors[0].getErrorDescription()
-                                );
-                            }
-                        },this)
-                    );
-
-                    return false;*/
+                    Account.login($(this.el));
                 }
 
             });
