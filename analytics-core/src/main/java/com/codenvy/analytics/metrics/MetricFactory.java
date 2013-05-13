@@ -118,10 +118,6 @@ public class MetricFactory {
                 return new ProjectCreatedTypeMmpNumberMetric();
             case PROJECT_TYPE_MMP_PERCENT:
                 return new ProjectCreatedTypeMmpPercentMetric();
-            case PROJECT_TYPE_GROOVY_NUMBER:
-                return new ProjectCreatedTypeGroovyNumberMetric();
-            case PROJECT_TYPE_GROOVY_PERCENT:
-                return new ProjectCreatedTypeGroovyNumberMetric();
             case PROJECT_TYPE_NODEJS_NUMBER:
                 return new ProjectCreatedTypeNodejsNumberMetric();
             case PROJECT_TYPE_NODEJS_PERCENT:
