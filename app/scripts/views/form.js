@@ -4,9 +4,9 @@ define(["jquery", "underscore", "backbone", "validation"],
 
         var Form = Backbone.View.extend({
             initialize : function(){
-                $(this.el).on('submit', function(e){
+/*                $(this.el).on('submit', function(e){
                     e.preventDefault();
-                });
+                });*/
 
                 this.validator = $(this.el).validate({
                     rules: this.__validationRules(),
