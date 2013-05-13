@@ -172,7 +172,9 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     }
 
     protected ValueData executeScript(Map<String, String> context) throws IOException {
-        LOGGER.info("Script execution " + getScriptType() + " with context " + context.toString());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Script execution " + getScriptType() + " with context " + context.toString());
+        }
 
         ScriptExecutor sExecutor = getScriptExecutor();
         return sExecutor.execute(getScriptType(), context);
