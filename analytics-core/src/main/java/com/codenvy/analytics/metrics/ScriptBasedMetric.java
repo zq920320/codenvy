@@ -114,7 +114,9 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     protected ValueData evaluate(Map<String, String> context) throws IOException {
         Map<String, String> uuid = makeUUID(context);
 
-        acquire(uuid);
+        String executionKey = metricType.name() + uuid.toString();
+
+        acquire(executionKey);
         try {
             ValueData valueData;
 
@@ -130,15 +132,14 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
 
             return valueData;
         } finally {
-            release(uuid);
+            release(executionKey);
         }
     }
 
-    protected void acquire(Map<String, String> uuid) {
-        String key = metricType.name() + uuid.toString();
+    protected void acquire(String executionKey) {
         AtomicBoolean monitor = new AtomicBoolean(true);
 
-        AtomicBoolean currentValue = executions.putIfAbsent(key, monitor);
+        AtomicBoolean currentValue = executions.putIfAbsent(executionKey, monitor);
         if (currentValue != null) {
             synchronized (currentValue) {
                 while (!currentValue.get()) {
@@ -152,10 +153,8 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
         }
     }
 
-    protected void release(Map<String, String> uuid) {
-        String key = metricType.name() + uuid.toString();
-
-        AtomicBoolean monitor = executions.remove(key);
+    protected void release(String executionKey) {
+        AtomicBoolean monitor = executions.remove(executionKey);
         if (monitor != null) {
             monitor.set(false);
 

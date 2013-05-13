@@ -10,6 +10,16 @@ import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.scripts.ScriptType;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,16 +27,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.scripts.ScriptType;
 
 
 /**
@@ -74,7 +74,6 @@ public class TestScriptBasedMetrics extends BaseTest {
 
         Utils.putToDate(context, calendar);
         Utils.putFromDate(context, calendar);
-        Utils.putTimeUnit(context, TimeUnit.DAY);
 
         TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT));
 
