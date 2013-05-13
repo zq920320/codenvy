@@ -9,18 +9,18 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 
+import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
+import com.codenvy.analytics.metrics.value.DoubleValueData;
+import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
+import org.testng.annotations.Test;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
-import com.codenvy.analytics.metrics.value.DoubleValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
 
 
 /**
@@ -46,12 +46,12 @@ public class TestValueFromMapMetric {
         context.put(MetricParameter.TO_DATE.getName(), df.format(new Date()));
         context.put(MetricParameter.TIME_UNIT.getName(), TimeUnit.DAY.toString());
 
-        TestedMetric testedMetric = new TestedMetric(MetricType.PROJECT_TYPE_GROOVY_NUMBER, mockedMetric, ValueType.NUMBER, "key1");
+        TestedMetric testedMetric = new TestedMetric(MetricType.PROJECT_TYPE_JAVA_JAR_NUMBER, mockedMetric, ValueType.NUMBER, "key1");
 
         DoubleValueData result = (DoubleValueData)testedMetric.getValue(context);
         assertEquals(result, new DoubleValueData(10));
 
-        testedMetric = new TestedMetric(MetricType.PROJECT_TYPE_GROOVY_NUMBER, mockedMetric, ValueType.PERCENT, "key1");
+        testedMetric = new TestedMetric(MetricType.PROJECT_TYPE_JAVA_JAR_NUMBER, mockedMetric, ValueType.PERCENT, "key1");
 
         result = (DoubleValueData)testedMetric.getValue(context);
         assertEquals(result, new DoubleValueData(20));

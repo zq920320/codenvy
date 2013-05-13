@@ -4,6 +4,17 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
+import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
+
+import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
@@ -11,17 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.ScriptExecutor;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -38,7 +38,7 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     /** {@inheritedDoc} */
     public ValueData getValue(Map<String, String> context) throws IOException {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.info("Calculation " + getType() + " with context " + context.toString());
+            LOGGER.debug("Calculation " + getType() + " with context " + context.toString());
         }
 
         Calendar fromDate = Utils.getFromDate(context);
