@@ -6,8 +6,8 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
-import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
+import com.codenvy.analytics.metrics.value.filters.Filter;
+import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
 import com.codenvy.analytics.scripts.ScriptType;
 
 /**
@@ -35,7 +35,7 @@ public class ProjectCreatedListMetric extends ScriptBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected ValueDataFilter createFilter(ValueData valueData) {
-        return new ProjectCreatedListFilter((ListListStringValueData)valueData);
+    protected Filter createFilter(ValueData valueData) {
+        return new ProjectsFilter((ListListStringValueData)valueData);
     }
 }

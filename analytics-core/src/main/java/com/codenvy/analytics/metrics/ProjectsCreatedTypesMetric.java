@@ -4,15 +4,14 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -41,8 +40,6 @@ public class ProjectsCreatedTypesMetric extends CalculateBasedMetric {
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
         ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        ProjectCreatedListFilter wrapper = new ProjectCreatedListFilter(valueData);
-
-        return wrapper.getProjectsNumberByTypes();
+        return new ProjectsFilter(valueData).sizeOfGroups(MetricFilter.FILTER_PROJECT_TYPE);
     }
 }

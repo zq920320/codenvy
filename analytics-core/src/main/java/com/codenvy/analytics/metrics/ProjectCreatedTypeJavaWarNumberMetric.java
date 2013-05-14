@@ -4,13 +4,13 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
+import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
+import com.codenvy.analytics.metrics.value.DoubleValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.Filter;
 
 import java.io.IOException;
 import java.util.Map;
-
-import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
-import com.codenvy.analytics.metrics.value.ValueData;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -25,7 +25,12 @@ public class ProjectCreatedTypeJavaWarNumberMetric extends ProjectsCreatedListMe
     /** {@inheritedDoc} */
     @Override
     public ValueData evaluate(Map<String, String> context) throws IOException {
-        ProjectCreatedListFilter wrapper = (ProjectCreatedListFilter)getWrapper(basedMetric.getValue(context));
-        return wrapper.getProjectsNumberByType(types[0]).union(wrapper.getProjectsNumberByType("Java"));
+        Filter filter = getFilter(basedMetric.getValue(context));
+
+        double v1 = filter.size(MetricFilter.FILTER_PROJECT_TYPE, types[0]);
+        double v2 = filter.size(MetricFilter.FILTER_PROJECT_TYPE, "Java");
+        double result = (v1 + v2);
+
+        return new DoubleValueData(result);
     }
 }

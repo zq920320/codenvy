@@ -6,7 +6,7 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
+import com.codenvy.analytics.metrics.value.filters.Filter;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
@@ -66,10 +66,12 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
      */
     protected ValueData doFilter(ValueData valueData, Map<String, String> context) {
         if (isFilterSupported()) {
-            for (String param : FILTERS_PARAM) {
-                if (context.containsKey(param)) {
-                    ValueDataFilter filter = createFilter(valueData);
-                    valueData = filter.doFilter(param, context.get(param));
+            for (MetricFilter filterKey : MetricFilter.values()) {
+                String filterValue = context.get(filterKey.name());
+
+                if (filterValue != null) {
+                    Filter filter = createFilter(valueData);
+                    valueData = filter.apply(filterKey, filterValue);
                 }
             }
         }
@@ -80,7 +82,7 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
     /**
      * @return {@link ValueDataFilter} over {@link ValueData}
      */
-    protected ValueDataFilter createFilter(ValueData valueData) {
+    protected Filter createFilter(ValueData valueData) {
         throw new UnsupportedOperationException();
     }
 

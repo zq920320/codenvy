@@ -145,6 +145,12 @@ public class Event {
             return new Builder().withParam("EVENT", "tenant-stopped").withParam("WS", ws);
         }
 
+        /** Create 'project-created' event. */
+        public static Builder createProjectCreatedEvent(String user, String ws, String session, String project) {
+            return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
+                                .withParam("PROJECT", project);
+        }
+
         /** Create 'project-destroyed' event. */
         public static Builder createProjectDestroyedEvent(String user, String ws, String session, String project) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "project-destroyed")
@@ -197,10 +203,8 @@ public class Event {
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("JREBEL", String.valueOf(jrebel));
         }
 
-        /** Create 'project-created' event. */
-        public static Builder createProjectCreatedEvent(String user, String ws, String session, String project) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
-                                .withParam("PROJECT", project);
+        public static Builder createProjectCreatedEvent(String user, String ws, String session, String project, String type) {
+            return createProjectCreatedEvent(user, ws, session, project).withParam("TYPE", type);
         }
     }
 

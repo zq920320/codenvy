@@ -157,6 +157,22 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>analytics.scripts.directory</name>
+                            <value>../analytics-core/scripts</value>
+                        </property>
+                        <property>
+                            <name>analytics.result.directory</name>
+                            <value>${project.build.directory}</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

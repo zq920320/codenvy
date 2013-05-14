@@ -4,17 +4,16 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.filters.ProjectCreatedListFilter;
-import com.codenvy.analytics.metrics.value.filters.ValueDataFilter;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
 import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.Filter;
+import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -50,28 +49,29 @@ public abstract class ProjectsCreatedListMetric extends CalculateBasedMetric {
     /** {@inheritedDoc} */
     @Override
     public ValueData evaluate(Map<String, String> context) throws IOException {
-        ProjectCreatedListFilter wrapper = (ProjectCreatedListFilter)getWrapper(basedMetric.getValue(context));
+        Filter filter = getFilter(basedMetric.getValue(context));
 
-        ValueData total = null;
+        double total = 0;
         for (String type : types) {
+            int size = filter.size(MetricFilter.FILTER_PROJECT_TYPE, type);
+
             switch (valueType) {
                 case NUMBER:
-                    total = total == null ? wrapper.getProjectsNumberByType(type) : total.union(wrapper.getProjectsNumberByType(type));
+                    total += size;
                     break;
                 case PERCENT:
-                    total = total == null ? wrapper.getProjectsPercentByType(type) : total.union(wrapper.getProjectsPercentByType(type));
+                    total += size * 100 / filter.size();
                     break;
                 default:
                     throw new IllegalStateException("Unknown " + valueType);
             }
         }
 
-        return total;
+        return new DoubleValueData(total);
     }
 
-    protected ValueDataFilter getWrapper(ValueData valueData) {
-        return new ProjectCreatedListFilter(
-                                                (ListListStringValueData)valueData);
+    protected Filter getFilter(ValueData valueData) {
+        return new ProjectsFilter((ListListStringValueData)valueData);
     }
 
     /** {@inheritedDoc} */

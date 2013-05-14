@@ -4,6 +4,25 @@
  */
 package com.codenvy.analytics.server.jobs;
 
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
+
+import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
+import org.quartz.impl.JobDetailImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,32 +41,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.net.ftp.FTPReply;
-import org.apache.commons.net.ftp.FTPSClient;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.impl.JobDetailImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class ActOnJob implements Job {
 
-    /** The value of {@value #ANALYTICS_ACTON_FTP_PROPERTIES_PARAM} runtime parameter. */
-    private static final String ACTON_FTP_PROPERTIES  =
-                                                        System.getProperty("analytics.acton.ftp.properties");
+    private static final String ACTON_FTP_PROPERTIES  = System.getProperty("analytics.acton.ftp.properties");
     private static final String ACTON_LAYOUT_RESOURCE = "acton-file-layout.properties";
     private static final Logger LOGGER                = LoggerFactory.getLogger(ActOnJob.class);
 
@@ -156,7 +155,7 @@ public class ActOnJob implements Job {
     }
 
     protected File prepareFile() throws IOException {
-        Map<String, String> context = Utils.initilizeContext(TimeUnit.DAY, new Date());
+        Map<String, String> context = prepareContext();
 
         Set<String> activeUsers = getActiveUsers(context);
         LinkedHashMap<String, String> metrics = readMetric();
@@ -182,11 +181,15 @@ public class ActOnJob implements Job {
         return file;
     }
 
+    protected Map<String, String> prepareContext() throws IOException {
+        return Utils.initilizeContext(TimeUnit.DAY, new Date());
+    }
+
     private void writeMetricValue(BufferedWriter out, String user, String metricName, Map<String, String> context) throws IOException {
         Metric metric = MetricFactory.createMetric(metricName);
 
         context = Utils.newContext(context);
-        context.put(Metric.USER_FILTER_PARAM, user);
+        context.put(MetricFilter.FILTER_USER.name(), user);
 
         String value = metric.getValue(context).getAsString();
         out.write(value);

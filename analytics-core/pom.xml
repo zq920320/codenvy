@@ -145,11 +145,6 @@
                             <name>analytics.result.directory</name>
                             <value>${project.build.directory}</value>
                         </property>
-                        <property>
-                            <name>pig.import.search.path</name>
-                            <value>scripts</value>
-                        </property>
-
                     </systemProperties>
                     <excludes>
                         <exclude>com/codenvy/analytics/**/TestLogCollector.java</exclude>
