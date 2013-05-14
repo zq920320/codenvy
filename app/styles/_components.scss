@@ -432,7 +432,7 @@ h1.enterprise-header-text {
 .pricing-row {
     position: relative;
     border-top: solid 1px #EDEDED;
-    padding: 0.4em 2em 0.4em 2em;
+    padding: 0.5em 2em 0.3em 2em;
 }
 
 .pricing-row:nth-child(1) {
@@ -582,16 +582,10 @@ ul.premium-features {
         text-align: center;
         display: inline-block; width: 100%;
         font-weight: 500;
+        margin-bottom: 5px;
     }
 }
 
-.truste {
-    background:{
-        image:url('../images/pricing/truste.png');
-        repeat: no-repeat;
-        position: 50% 50%;
-    }
-}
 
 .credit-cards {
     width: 320px;

@@ -35,6 +35,7 @@
     font-size: 1em;
     line-height: 1em;
     text-align: center;
+    vertical-align: top;
 }
 
 .button-100 { width: 100px; }
@@ -194,7 +195,7 @@
     };
 
     &:active{
-        @include background-image(linear-gradient(#51586b 50%, #3a4154 50%));
+        @include background-image(linear-gradient(#d8d8d8 50%, #bcbcbc 50%));
         @include box-shadow(0px 2px 5px 0px rgba(0, 0, 0, 1) inset);
     };
 
