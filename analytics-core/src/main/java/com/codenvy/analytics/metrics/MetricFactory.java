@@ -118,7 +118,7 @@ public class MetricFactory {
                 metric = new ActiveProjectsPercentMetric();
                 break;
             case PROJECTS_CREATED_LIST:
-                metric = new ProjectCreatedListMetric();
+                metric = new ProjectsCreatedListMetric();
                 break;
             case PROJECTS_BUILT_LIST:
                 metric = new ProjectsBuiltListMetric();
@@ -272,6 +272,7 @@ public class MetricFactory {
                 break;
             case INVITATIONS_ACCEPTED_PERCENT:
                 metric = new InvitationsAcceptedPercentMetric();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

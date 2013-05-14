@@ -11,7 +11,7 @@ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaPhpNumberMetric extends ProjectsCreatedListMetric {
+public class ProjectCreatedTypeJavaPhpNumberMetric extends AbstractProjectsCreatedMetric {
 
     ProjectCreatedTypeJavaPhpNumberMetric() throws IOException {
         super(MetricType.PROJECT_TYPE_PHP_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "PHP", ValueType.NUMBER);

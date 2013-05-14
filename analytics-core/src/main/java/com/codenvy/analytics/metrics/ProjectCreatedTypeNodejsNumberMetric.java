@@ -11,7 +11,7 @@ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeNodejsNumberMetric extends ProjectsCreatedListMetric {
+public class ProjectCreatedTypeNodejsNumberMetric extends AbstractProjectsCreatedMetric {
 
     ProjectCreatedTypeNodejsNumberMetric() throws IOException {
         super(MetricType.PROJECT_TYPE_NODEJS_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "nodejs",

@@ -110,7 +110,7 @@ public class TestScriptBasedMetrics extends BaseTest {
         Map<String, String> context = Utils.initilizeContext(TimeUnit.DAY, new Date());
         context.put(MetricFilter.FILTER_USER.name(), "user1");
 
-        ProjectCreatedListMetric metric = spy(new ProjectCreatedListMetric());
+        ProjectsCreatedListMetric metric = spy(new ProjectsCreatedListMetric());
         doReturn(value).when(metric).executeScript(anyMap());
 
         value = (ListListStringValueData)metric.getValue(context);

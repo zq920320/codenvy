@@ -4,8 +4,8 @@
  */
 package com.codenvy.analytics.server;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import com.codenvy.analytics.server.jobs.ActOnJob;
+import com.codenvy.analytics.server.jobs.TimeLineViewJob;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Scheduler;
@@ -15,8 +15,8 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codenvy.analytics.server.jobs.ActOnJob;
-import com.codenvy.analytics.server.jobs.TimeLineViewJob;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -50,20 +50,13 @@ public class DailyJobsRunner implements ServletContextListener {
             scheduler.start();
 
             scheduler.scheduleJob(TimeLineViewJob.createJob(), createTrigger());
-            scheduler.scheduleJob(ActOnJob.createJob(), createTrigger());
+            scheduler.scheduleJob(ActOnJob.createJob(), ActOnJob.createTrigger());
         } catch (Exception e) {
             LOGGER.error("Scheduler was not initialized", e);
         }
     }
 
-    /**
-     * Creates trigger. Will be run every day at 01:00.
-     */
     private Trigger createTrigger() {
-        return TriggerBuilder
-                             .newTrigger()
-                             .withSchedule(
-                                           CronScheduleBuilder.cronSchedule(CRON_EXPRESSION))
-                             .build();
+        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_EXPRESSION)).build();
     }
 }

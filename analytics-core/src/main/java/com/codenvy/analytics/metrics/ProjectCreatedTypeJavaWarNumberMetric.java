@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaWarNumberMetric extends ProjectsCreatedListMetric {
+public class ProjectCreatedTypeJavaWarNumberMetric extends AbstractProjectsCreatedMetric {
 
     ProjectCreatedTypeJavaWarNumberMetric() throws IOException {
         super(MetricType.PROJECT_TYPE_JAVA_WAR_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "War",

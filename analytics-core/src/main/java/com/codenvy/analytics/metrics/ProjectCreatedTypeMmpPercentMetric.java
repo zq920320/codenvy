@@ -11,7 +11,7 @@ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeMmpPercentMetric extends ProjectsCreatedListMetric {
+public class ProjectCreatedTypeMmpPercentMetric extends AbstractProjectsCreatedMetric {
 
     ProjectCreatedTypeMmpPercentMetric() throws IOException {
         super(MetricType.PROJECT_TYPE_MMP_PERCENT, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "Maven Multi-module",

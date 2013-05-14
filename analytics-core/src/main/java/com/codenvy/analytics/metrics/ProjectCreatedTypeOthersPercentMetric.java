@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeOthersPercentMetric extends ProjectsCreatedListMetric {
+public class ProjectCreatedTypeOthersPercentMetric extends AbstractProjectsCreatedMetric {
 
     ProjectCreatedTypeOthersPercentMetric() throws IOException {
         super(MetricType.PROJECT_TYPE_OTHERS_PERCENT, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), new String[]{"default",

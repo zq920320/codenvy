@@ -18,18 +18,18 @@ public class ReadOnlyUserProfile {
     }
 
     public String getFirstName() {
-        return firstName;
+        return firstName == null ? "" : firstName;
     }
 
     public String getLastName() {
-        return lastName;
+        return lastName == null ? "" : lastName;
     }
 
     public String getPhoneNumber() {
-        return phoneNumber;
+        return phoneNumber == null ? "" : phoneNumber;
     }
 
     public String getCompany() {
-        return company;
+        return company == null ? "" : company;
     }
 }

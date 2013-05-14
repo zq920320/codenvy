@@ -4,6 +4,8 @@
  */
 package com.codenvy.analytics.server.jobs;
 
+import com.codenvy.analytics.ldap.ReadOnlyUserManager;
+import com.codenvy.analytics.ldap.ReadOnlyUserProfile;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
@@ -11,14 +13,18 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.organization.exception.OrganizationServiceException;
 
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.JobDetailImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +52,28 @@ import java.util.Set;
  */
 public class ActOnJob implements Job {
 
-    private static final String ACTON_FTP_PROPERTIES  = System.getProperty("analytics.acton.ftp.properties");
-    private static final String ACTON_LAYOUT_RESOURCE = "acton-file-layout.properties";
-    private static final Logger LOGGER                = LoggerFactory.getLogger(ActOnJob.class);
+    private static final String       ACTON_FTP_PROPERTIES  = System.getProperty("analytics.acton.ftp.properties");
+    private static final String       ACTON_LAYOUT_RESOURCE = "acton-file-layout.properties";
+    private static final Logger       LOGGER                = LoggerFactory.getLogger(ActOnJob.class);
+
+    // every day at 10:00
+    private static final String       CRON_EXPRESSION       = "0 0 10 ? * *";
+    private final ReadOnlyUserManager userManager;
+
+    public ActOnJob() throws OrganizationServiceException {
+        this.userManager = new ReadOnlyUserManager();
+    }
+
+    /**
+     * For testing purpose.
+     */
+    public ActOnJob(ReadOnlyUserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    public static Trigger createTrigger() {
+        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_EXPRESSION)).build();
+    }
 
     /**
      * @return initialized job
@@ -166,6 +191,7 @@ public class ActOnJob implements Job {
             writeTitle(out, metrics);
             for (String user : activeUsers) {
                 writeEmail(out, user);
+                writeUserProfile(out, user);
 
                 for (String metricName : metrics.values()) {
                     out.write(",");
@@ -199,8 +225,26 @@ public class ActOnJob implements Job {
         out.write(user);
     }
 
+    private void writeUserProfile(BufferedWriter out, String user) throws IOException {
+        ReadOnlyUserProfile userProfile;
+        try {
+            userProfile = userManager.getUserProfile(user);
+        } catch (OrganizationServiceException e) {
+            throw new IOException(e);
+        }
+
+        out.write(",");
+        out.write(userProfile.getFirstName());
+        out.write(",");
+        out.write(userProfile.getLastName());
+        out.write(",");
+        out.write(userProfile.getPhoneNumber());
+        out.write(",");
+        out.write(userProfile.getCompany());
+    }
+
     private void writeTitle(BufferedWriter out, LinkedHashMap<String, String> metrics) throws IOException {
-        out.write("email");
+        out.write("email,firstName,lastName,phone,company");
         for (String key : metrics.keySet()) {
             out.write(",");
             out.write(key);

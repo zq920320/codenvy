@@ -11,7 +11,7 @@ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaJspNumberMetric extends ProjectsCreatedListMetric {
+public class ProjectCreatedTypeJavaJspNumberMetric extends AbstractProjectsCreatedMetric {
 
 
     ProjectCreatedTypeJavaJspNumberMetric() throws IOException {

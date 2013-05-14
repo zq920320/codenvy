@@ -10,11 +10,17 @@ import com.codenvy.organization.model.Profile;
  */
 public class ReadOnlyUserManager {
 
-    UserManager userManager;
+    private final UserManager userManager;
 
     public ReadOnlyUserManager() throws OrganizationServiceException {
-        super();
         this.userManager = new UserManager();
+    }
+
+    /**
+     * For testing purpose.
+     */
+    public ReadOnlyUserManager(UserManager userManager) throws OrganizationServiceException {
+        this.userManager = userManager;
     }
 
     public ReadOnlyUserProfile getUserProfile(String alias) throws OrganizationServiceException {
