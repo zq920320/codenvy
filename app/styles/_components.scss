@@ -571,8 +571,8 @@ h1.enterprise-header-text {
 
 .choose-paas{
 
-    $tile-width:80px;
-    $tile-height:80px;
+    $tile-width:60px;
+    $tile-height:60px;
 
     ul{
         list-style-type: none;
@@ -584,7 +584,7 @@ h1.enterprise-header-text {
             display: -moz-inline-stack;
             display: inline-block;
             vertical-align: top;
-            margin: 5px;
+            margin: 10px;
             zoom: 1;
             *display: inline;
             _height: $tile-height;
@@ -613,7 +613,7 @@ h1.enterprise-header-text {
 }
 
 .table-row-tile {
-    margin-top: 40px;
+    margin-top: 30px;
     margin-left: 30px;
 }
 
