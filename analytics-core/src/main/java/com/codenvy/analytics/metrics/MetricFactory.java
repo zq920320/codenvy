@@ -120,6 +120,12 @@ public class MetricFactory {
             case PROJECTS_CREATED_LIST:
                 metric = new ProjectCreatedListMetric();
                 break;
+            case PROJECTS_BUILT_LIST:
+                metric = new ProjectsBuiltListMetric();
+                break;
+            case PROJECTS_BUILT_NUMBER:
+                metric = new ProjectsBuiltNumberMetric();
+                break;
             case PROJECTS_CREATED_TYPES:
                 metric = new ProjectsCreatedTypesMetric();
                 break;

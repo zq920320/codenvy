@@ -54,7 +54,7 @@ public class TestScriptDetailsUserCreated extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         SetStringValueData value =
-                                   (SetStringValueData)executeAndReturnResult(ScriptType.DETAILS_USER_CREATED, log, params);
+                                   (SetStringValueData)executeAndReturnResult(ScriptType.DETAILED_USERS_CREATED, log, params);
 
         Set<String> all = value.getAll();
 

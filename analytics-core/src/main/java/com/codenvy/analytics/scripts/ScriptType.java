@@ -113,7 +113,7 @@ public enum ScriptType {
         }
     },
 
-    DETAILS_PROJECT_CREATED {
+    DETAILED_PROJECTS_CREATED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return ListListStringValueData.class;
@@ -127,10 +127,17 @@ public enum ScriptType {
         }
     },
 
-    DETAILS_USER_CREATED {
+    DETAILED_USERS_CREATED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return SetStringValueData.class;
+        }
+    },
+
+    DETAILED_PROJECTS_BUILT {
+        @Override
+        public Class< ? extends ValueData> getValueDataClass() {
+            return ListListStringValueData.class;
         }
     },
 

@@ -16,6 +16,6 @@ public class UsersCreatedSetMetric extends ScriptBasedMetric {
     /** {@inheritedDoc} */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.DETAILS_USER_CREATED;
+        return ScriptType.DETAILED_USERS_CREATED;
     }
 }

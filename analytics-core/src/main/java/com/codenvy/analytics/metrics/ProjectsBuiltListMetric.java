@@ -13,10 +13,10 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedListMetric extends ScriptBasedMetric {
+public class ProjectsBuiltListMetric extends ScriptBasedMetric {
 
-    ProjectCreatedListMetric() {
-        super(MetricType.PROJECTS_CREATED_LIST);
+    ProjectsBuiltListMetric() {
+        super(MetricType.PROJECTS_BUILT_LIST);
     }
 
     /**
@@ -24,7 +24,7 @@ public class ProjectCreatedListMetric extends ScriptBasedMetric {
      */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.DETAILED_PROJECTS_CREATED;
+        return ScriptType.DETAILED_PROJECTS_BUILT;
     }
 
     /** {@inheritDoc} */

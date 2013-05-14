@@ -53,10 +53,10 @@ public class TestActOnJob {
         Set<String> content = read(jobFile);
 
         assertEquals(content.size(), 4);
-        assertTrue(content.contains("email,projects,deployments"));
-        assertTrue(content.contains("user1,2,0"));
-        assertTrue(content.contains("user2,1,1"));
-        assertTrue(content.contains("user3,0,1"));
+        assertTrue(content.contains("email,projects,builts,deployments"));
+        assertTrue(content.contains("user1,2,0,0"));
+        assertTrue(content.contains("user2,1,2,1"));
+        assertTrue(content.contains("user3,0,1,1"));
     }
 
     private Set<String> read(File jobFile) throws IOException {
@@ -83,10 +83,14 @@ public class TestActOnJob {
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate(date).build());
         events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withDate(date).build());
 
+        // projects built
+        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withDate(date).build());
+
         // projects created
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate(date).build());
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate(date).build());
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate(date).build());
+
 
         // projects deployed
         events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1").withDate(date).build());
