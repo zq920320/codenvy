@@ -9,7 +9,7 @@
             <div class="span2"></div>
             <div class="span8">
                 <div class="container dark login rounded shadow">
-                    <div class="error-container"></div>
+                    <div class="error-container"><%= (request.getAttribute("errorMessage") == null) ? "" : request.getAttribute("errorMessage") %></div>
                     <h2 class="shiny center">Welcome back!</h2>
                     <hr class="short-line">
                     <form class="login-form" method="post">

@@ -86,7 +86,9 @@ define(["jquery","config",
                         (function(){
                             var form = SigninForm.get(signinForm),
                             errorReport = ErrorReport.get(errorContainer);
-
+                            if ($(".error-container").html()){
+                                $(".error-container").addClass("expanded");
+                            }
                             form.on("submitting", function(){
                                 errorReport.hide();
                             });

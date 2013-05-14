@@ -2,7 +2,7 @@
 
     var _gaq = _gaq || [];
 
-    define(["jquery","json", "models/tenant"],function($,JSON,Tenant){
+    define(["jquery","json", "models/tenant","cookies"],function($,JSON,Tenant){
 
         /*
             AccountError is used to report errors through error callback function
@@ -118,9 +118,17 @@
             return true;
         };
 
+        var removeCookie = function(cookie){
+            if ($.cookie(cookie)){
+                $.cookie(cookie, null);
+            }
+        };
+
         return {
             //FIXIT remove Utils.getQueryParameterByName
             Utils : Utils,
+
+            removeCookie : removeCookie,
 
             isWebsocketEnabled :isWebsocketEnabled,
 
@@ -151,49 +159,14 @@
                 return (/^[A-Za-z]{1}[a-zA-Z0-9@_\.-]+$/).test(email);
             },
 
-            login : function(email,password,success,error){
-                isWebsocketEnabled();
-                var loginUrl = "/sso/server/gen?authType=jaas",
-                    queryString = window.location.search,
-                    jaasExists = queryString.match(/authType=jaas/);
-                if (!jaasExists){
-                    if(queryString !== null && queryString.length > 4){ ///?key=value >4 symbols
-                        loginUrl += "&" + queryString.substring(1);
-                    }
-                }else {
-                    loginUrl = queryString;
-                }
+            login : function(form){
 
-                $.ajax({
-                    url : loginUrl,
-                    type : "POST",
-                    data: {'email':email,'password':password},
-                    success : function(){
-                        success({url : "/private/select-tenant?authType=jaas"});
-                    },
-                    error : function(xhr){
-                        switch (xhr.status) {
-                            case 0:
-                                // we assume this is the case of successful authentication
-                                success({ url : "/sso/server/grant?authType=jaas" });
-                                break;
-                            case 400:
-                                error([new AccountError(null,"This kind of authentication is not supported.")]);
-                                break;
-                            case 403:
-                                error([new AccountError(null,xhr.responseText)]);
-                                break;
-                            case 500:
-                                error([new AccountError(null,"Internal server error. Please contact support.")]);
-                                break;
-                            default :
-                                error([new AccountError(null,xhr.status + " Something went wrong. Please contact support.")]);
-                                break;
-                        }
+                if (isWebsocketEnabled()){
+                    var loginUrl = "/sso/server/gen?authType=jaas";
+                    form.attr("action", loginUrl);
+                    form.submit();
                     }
-                });
-
-            },
+                },
 
             loginWithGoogle : loginWithGoogle,
             loginWithGithub : loginWithGithub,
@@ -426,6 +399,8 @@
                 function hitServer(){
 
                     if(new Date().getTime() >= endTime){
+                    // removing autologin cookie if exist
+                    removeCookie("autologin");
                         if (errorType === "create"){
                             error([
                                 new AccountError(
