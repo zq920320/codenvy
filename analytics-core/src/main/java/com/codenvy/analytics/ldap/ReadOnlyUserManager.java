@@ -2,7 +2,13 @@ package com.codenvy.analytics.ldap;
 
 import com.codenvy.organization.client.UserManager;
 import com.codenvy.organization.exception.OrganizationServiceException;
-import com.codenvy.organization.model.Profile;
+import com.codenvy.organization.exception.UserExistenceException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Simple wrapper for {@link UserManager} to perform read-only operations. Application server hosting LDAP back-end URL should be defined in
@@ -10,23 +16,30 @@ import com.codenvy.organization.model.Profile;
  */
 public class ReadOnlyUserManager {
 
-    private final UserManager userManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReadOnlyUserManager.class);
+
+    private final UserManager   delegatedManager;
 
     public ReadOnlyUserManager() throws OrganizationServiceException {
-        this.userManager = new UserManager();
+        this.delegatedManager = new UserManager();
     }
 
     /**
      * For testing purpose.
      */
     public ReadOnlyUserManager(UserManager userManager) throws OrganizationServiceException {
-        this.userManager = userManager;
+        this.delegatedManager = userManager;
     }
 
-    public ReadOnlyUserProfile getUserProfile(String alias) throws OrganizationServiceException {
-        Profile ldapUserProfile = userManager.getUserProfile(alias);
-
-        return new ReadOnlyUserProfile(ldapUserProfile.getAttribute("firstName"), ldapUserProfile.getAttribute("lastName"),
-                                       ldapUserProfile.getAttribute("phone"), ldapUserProfile.getAttribute("employer"));
+    /**
+     * Returns user attributes by user alias. If user does not exist then empty map will be returned.
+     */
+    public Map<String, String> getUserAttributes(String alias) throws OrganizationServiceException {
+        try {
+            return delegatedManager.getUserProfile(alias).getAttributes();
+        } catch (UserExistenceException e) {
+            LOGGER.warn(e.getMessage() + " for " + alias);
+            return Collections.emptyMap();
+        }
     }
 }

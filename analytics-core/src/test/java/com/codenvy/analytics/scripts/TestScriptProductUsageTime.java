@@ -19,20 +19,20 @@
 package com.codenvy.analytics.scripts;
 
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptProductUsageTime extends BaseTest {
@@ -41,19 +41,27 @@ public class TestScriptProductUsageTime extends BaseTest {
     public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
 
-        // 7 min
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+        // 7 min, user1 session #1
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:05:00").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:07:00").build());
 
-        // 4 min
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+        // 4 min, user2 session #1
+        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:25:00").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:29:00").build());
+
+        // 7 min, user1 session #2
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+                                .withTime("21:00:00").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+                                .withTime("21:05:00").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+                                .withTime("21:07:00").build());
 
         File log = LogGenerator.generateLog(events);
 

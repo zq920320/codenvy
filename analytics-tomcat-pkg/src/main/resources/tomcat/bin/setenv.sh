@@ -13,6 +13,7 @@ ANALYTICS_OPTS="-Danalytics.logs.directory=${CATALINA_HOME}/../logs-production \
                 -Danalytics.acton.ftp.properties=${CATALINA_HOME}/analytics-conf/acton-ftp.properties \
                 -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs \
                 -Dorganization.application.server.url="
+#                -Danalytics.acton.cron.scheduling="0 0 1 ? * *" \
 
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
 

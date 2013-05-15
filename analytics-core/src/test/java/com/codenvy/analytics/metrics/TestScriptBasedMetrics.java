@@ -107,7 +107,7 @@ public class TestScriptBasedMetrics extends BaseTest {
         ListListStringValueData value = new ListListStringValueData(Arrays.asList(new ListStringValueData[]{item1, item2, item3, item4}));
 
 
-        Map<String, String> context = Utils.initilizeContext(TimeUnit.DAY, new Date());
+        Map<String, String> context = Utils.initializeContext(TimeUnit.DAY, new Date());
         context.put(MetricFilter.FILTER_USER.name(), "user1");
 
         ProjectsCreatedListMetric metric = spy(new ProjectsCreatedListMetric());

@@ -46,7 +46,7 @@ abstract public class ScriptBasedMetric extends AbstractMetric {
 
         ValueData total = null;
 
-        Map<String, String> dayContext = Utils.newContext(context);
+        Map<String, String> dayContext = Utils.clone(context);
         while (!fromDate.after(toDate)) {
             Utils.putFromDate(dayContext, fromDate);
             Utils.putToDate(dayContext, fromDate);

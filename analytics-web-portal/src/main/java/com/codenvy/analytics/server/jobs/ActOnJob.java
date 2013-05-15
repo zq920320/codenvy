@@ -5,7 +5,6 @@
 package com.codenvy.analytics.server.jobs;
 
 import com.codenvy.analytics.ldap.ReadOnlyUserManager;
-import com.codenvy.analytics.ldap.ReadOnlyUserProfile;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
@@ -30,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,47 +36,69 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.net.ssl.SSLException;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class ActOnJob implements Job {
 
-    private static final String       ACTON_FTP_PROPERTIES  = System.getProperty("analytics.acton.ftp.properties");
-    private static final String       ACTON_LAYOUT_RESOURCE = "acton-file-layout.properties";
-    private static final Logger       LOGGER                = LoggerFactory.getLogger(ActOnJob.class);
+    private static final String       EMAIL                   = "email";
 
-    // every day at 10:00
-    private static final String       CRON_EXPRESSION       = "0 0 10 ? * *";
+    // acton ftp parameters
+    private static final String       PASSWORD_PARAM          = "password";
+    private static final String       LOGIN_PARAM             = "login";
+    private static final String       SERVER_PARAM            = "server";
+    private static final String       PORT_PARAM              = "port";
+    private static final String       TIMEOUT_PARAM           = "timeout";
+    private static final String       MAX_EFFORTS_PARAM       = "maxEfforts";
+    private static final String       AUTH_PARAM              = "auth";
+
+    // acton file parameters
+    private static final String       USER_PROFILE_ATTRIBUTES = "user-profile-attributes";
+    private static final String       USER_PROFILE_HEADERS    = "user-profile-headers";
+    private static final String       METRIC_NAMES            = "metric-names";
+    private static final String       METRIC_HEADERS          = "metric-headers";
+
+    private static final Logger       LOGGER                  = LoggerFactory.getLogger(ActOnJob.class);
+    private static final String       ACTION_FTP_PROPERTIES   = System.getProperty("analytics.acton.ftp.properties");
+    private static final String       CRON_SCHEDULING         = System.getProperty("analytics.acton.cron.scheduling", "0 0 1 ? * *");
+    private static final String       ACTON_FILE_PROPERTIES   = "acton-file.properties";
+
     private final ReadOnlyUserManager userManager;
+    private final Properties          actonFileProperties;
+    private final Properties          actonFtpProperties;
 
-    public ActOnJob() throws OrganizationServiceException {
+    public ActOnJob() throws OrganizationServiceException, IOException {
         this.userManager = new ReadOnlyUserManager();
+        this.actonFtpProperties = readFTPProperties();
+        this.actonFileProperties = readActonProperties();
     }
 
     /**
      * For testing purpose.
      */
-    public ActOnJob(ReadOnlyUserManager userManager) {
+    public ActOnJob(ReadOnlyUserManager userManager, Properties actonFtpProperties) throws IOException {
         this.userManager = userManager;
+        this.actonFtpProperties = actonFtpProperties;
+        this.actonFileProperties = readActonProperties();
     }
 
-    public static Trigger createTrigger() {
-        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_EXPRESSION)).build();
+    public static Trigger makeTrigger() {
+        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_SCHEDULING.replace("\\", ""))).build();
     }
 
     /**
      * @return initialized job
      */
-    public static JobDetail createJob() {
+    public static JobDetail makeJob() {
         JobDetailImpl jobDetail = new JobDetailImpl();
         jobDetail.setKey(new JobKey(ActOnJob.class.getName()));
         jobDetail.setJobClass(ActOnJob.class);
@@ -86,17 +106,45 @@ public class ActOnJob implements Job {
         return jobDetail;
     }
 
+    private static Properties readActonProperties() throws IOException {
+        Properties properties = new Properties();
+
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ACTON_FILE_PROPERTIES);
+        try {
+            properties.load(in);
+        } finally {
+            in.close();
+        }
+
+        return properties;
+    }
+
+    /**
+     * Reads FTP connections properties.
+     */
+    private static Properties readFTPProperties() throws FileNotFoundException, IOException {
+        Properties ftpProps = new Properties();
+
+        InputStream in = new BufferedInputStream(new FileInputStream(ACTION_FTP_PROPERTIES));
+        try {
+            ftpProps.load(in);
+        } finally {
+            in.close();
+        }
+
+        return ftpProps;
+    }
+
     /**
      * {@inheritDoc}
      */
     public void execute(JobExecutionContext context) throws JobExecutionException {
         LOGGER.info("ActOnJob is started");
-
         long start = System.currentTimeMillis();
 
         try {
             File file = prepareFile();
-            send(file);
+            transfer(file);
 
             LOGGER.info("File " + file.getName() + " was transfered successfully");
 
@@ -111,52 +159,69 @@ public class ActOnJob implements Job {
         }
     }
 
-    private void send(File file) throws SocketException, IOException {
-        Properties ftpProps = readFTPProperties();
+    /**
+     * Sends file directly to FTP server.
+     */
+    private void transfer(File file) throws SocketException, IOException {
+        final String auth = actonFtpProperties.getProperty(AUTH_PARAM);
+        final int maxEfforts = Integer.valueOf(actonFtpProperties.getProperty(MAX_EFFORTS_PARAM));
 
-        final int timeout = Integer.valueOf(ftpProps.getProperty("timeout"));
-        final String auth = ftpProps.getProperty("auth");
-        final String server = ftpProps.getProperty("server");
-        final int port = Integer.valueOf(ftpProps.getProperty("port"));
-
-        for (;;) {
+        for (int i = 0; i < maxEfforts; i++) {
             FTPSClient ftp = new FTPSClient(auth, false);
+
             try {
-                ftp.setDataTimeout(timeout);
-                ftp.setDefaultTimeout(timeout);
-                ftp.connect(server, port);
-
-                if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
-                    throw new IOException("FTP connection failed");
-                }
-
-                if (!ftp.login(ftpProps.getProperty("login"), ftpProps.getProperty("password"))) {
-                    ftp.logout();
-                    throw new IOException("FTP login failed");
-                }
-
-                ftp.enterLocalPassiveMode();
-                ftp.execPBSZ(0);
-                ftp.execPROT("P");
-                ftp.setFileType(FTPSClient.ASCII_FILE_TYPE);
-
-                transferFile(file, ftp);
-
-                ftp.logout();
-                ftp.disconnect();
+                openConnection(ftp);
+                doTransfer(file, ftp);
+                closeConnection(ftp);
 
                 break; // file transfered successfully
+
             } catch (SocketTimeoutException e) {
                 LOGGER.error(e.getMessage());
+                continue;
+
             } catch (IOException e) {
                 if (ftp.isConnected()) {
                     ftp.disconnect();
                 }
+
+                throw e;
             }
         }
     }
 
-    private void transferFile(File file, FTPSClient ftp) throws FileNotFoundException, IOException {
+    private void closeConnection(FTPSClient ftp) throws IOException {
+        ftp.logout();
+        ftp.disconnect();
+    }
+
+    private void openConnection(FTPSClient ftp) throws SocketException, IOException, SSLException {
+        final int timeout = Integer.valueOf(actonFtpProperties.getProperty(TIMEOUT_PARAM));
+        final int port = Integer.valueOf(actonFtpProperties.getProperty(PORT_PARAM));
+        final String server = actonFtpProperties.getProperty(SERVER_PARAM);
+        final String username = actonFtpProperties.getProperty(LOGIN_PARAM);
+        final String password = actonFtpProperties.getProperty(PASSWORD_PARAM);
+
+        ftp.setDataTimeout(timeout);
+        ftp.setDefaultTimeout(timeout);
+        ftp.connect(server, port);
+
+        if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+            throw new IOException("FTP connection failed");
+        }
+
+        if (!ftp.login(username, password)) {
+            ftp.logout();
+            throw new IOException("FTP login failed");
+        }
+
+        ftp.enterLocalPassiveMode();
+        ftp.execPBSZ(0);
+        ftp.execPROT("P");
+        ftp.setFileType(FTPSClient.ASCII_FILE_TYPE);
+    }
+
+    private void doTransfer(File file, FTPSClient ftp) throws FileNotFoundException, IOException {
         InputStream in = new FileInputStream(file);
         try {
             if (!ftp.storeFile(file.getName(), in)) {
@@ -167,38 +232,19 @@ public class ActOnJob implements Job {
         }
     }
 
-    private Properties readFTPProperties() throws FileNotFoundException, IOException {
-        Properties ftpProps = new Properties();
-        InputStream in = new BufferedInputStream(new FileInputStream(ACTON_FTP_PROPERTIES));
-        try {
-            ftpProps.load(in);
-        } finally {
-            in.close();
-        }
-
-        return ftpProps;
-    }
-
     protected File prepareFile() throws IOException {
-        Map<String, String> context = prepareContext();
+        Map<String, String> context = initilalizeContext();
+        File file = createFile(context);
 
         Set<String> activeUsers = getActiveUsers(context);
-        LinkedHashMap<String, String> metrics = readMetric();
-        
-        File file = new File(System.getProperty("java.io.tmpdir"), Utils.getToDateParam(context) + ".csv");
+
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
         try {
-            writeTitle(out, metrics);
+            writeHeaders(out);
+
             for (String user : activeUsers) {
-                writeEmail(out, user);
-                writeUserProfile(out, user);
-
-                for (String metricName : metrics.values()) {
-                    out.write(",");
-                    writeMetricValue(out, user, metricName, context);
-                }
-
-                out.newLine();
+                writeUserProfileAttributes(out, user);
+                writeMetricsValues(context, out, user);
             }
         } finally {
             out.close();
@@ -207,76 +253,88 @@ public class ActOnJob implements Job {
         return file;
     }
 
-    protected Map<String, String> prepareContext() throws IOException {
-        return Utils.initilizeContext(TimeUnit.DAY, new Date());
+    private File createFile(Map<String, String> context) {
+        return new File(System.getProperty("java.io.tmpdir"), Utils.getToDateParam(context) + ".csv");
     }
 
-    private void writeMetricValue(BufferedWriter out, String user, String metricName, Map<String, String> context) throws IOException {
-        Metric metric = MetricFactory.createMetric(metricName);
+    private void writeMetricsValues(Map<String, String> context, BufferedWriter out, String user) throws IOException {
+        String[] metricNames = actonFileProperties.getProperty(METRIC_NAMES).split(",");
 
-        context = Utils.newContext(context);
-        context.put(MetricFilter.FILTER_USER.name(), user);
+        for (int i = 0; i < metricNames.length; i++) {
+            context = Utils.clone(context);
+            context.put(MetricFilter.FILTER_USER.name(), user);
+
+            writeMetricValue(out, metricNames[i], context);
+            if (i < metricNames.length - 1) {
+                out.write(",");
+            }
+        }
+
+        out.newLine();
+    }
+
+    /**
+     * Initializes context.<br>
+     * {@link Utils#initializeContext(TimeUnit, Date)}
+     */
+    protected Map<String, String> initilalizeContext() throws IOException {
+        return Utils.initializeContext(TimeUnit.DAY, new Date());
+    }
+
+    private void writeMetricValue(BufferedWriter out, String metricName, Map<String, String> context) throws IOException {
+        Metric metric = MetricFactory.createMetric(metricName);
 
         String value = metric.getValue(context).getAsString();
         out.write(value);
     }
 
-    private void writeEmail(BufferedWriter out, String user) throws IOException {
-        out.write(user);
-    }
+    private void writeUserProfileAttributes(BufferedWriter out, String user) throws IOException {
+        String[] attributesNames = actonFileProperties.getProperty(USER_PROFILE_ATTRIBUTES).split(",");
 
-    private void writeUserProfile(BufferedWriter out, String user) throws IOException {
-        ReadOnlyUserProfile userProfile;
+        Map<String, String> attributes;
         try {
-            userProfile = userManager.getUserProfile(user);
+            attributes = userManager.getUserAttributes(user);
         } catch (OrganizationServiceException e) {
             throw new IOException(e);
         }
 
-        out.write(",");
-        out.write(userProfile.getFirstName());
-        out.write(",");
-        out.write(userProfile.getLastName());
-        out.write(",");
-        out.write(userProfile.getPhoneNumber());
-        out.write(",");
-        out.write(userProfile.getCompany());
+        for (String name : attributesNames) {
+            if (name.equals(EMAIL)) {
+                writeString(out, user);
+            } else {
+                writeString(out, attributes.get(name));
+            }
+
+            out.write(",");
+        }
     }
 
-    private void writeTitle(BufferedWriter out, LinkedHashMap<String, String> metrics) throws IOException {
-        out.write("email,firstName,lastName,phone,company");
-        for (String key : metrics.keySet()) {
-            out.write(",");
-            out.write(key);
+    /**
+     * Write string value accordingly to CSV specification.
+     */
+    private void writeString(BufferedWriter out, String str) throws IOException {
+        if (str == null) {
+            out.write("");
+        } else {
+            out.write("\"");
+            out.write(str.replace("\"", "\"\"")); // quoting
+            out.write("\"");
         }
+    }
+
+    private void writeHeaders(BufferedWriter out) throws IOException {
+        out.write(actonFileProperties.getProperty(USER_PROFILE_HEADERS));
+        out.write(",");
+        out.write(actonFileProperties.getProperty(METRIC_HEADERS));
         out.newLine();
     }
 
-    private LinkedHashMap<String, String> readMetric() throws IOException {
-        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ACTON_LAYOUT_RESOURCE);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        try {
-            LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("#")) {
-                    continue;
-                }
-
-                String[] entry = line.split("=");
-                result.put(entry[0], entry[1]);
-            }
-
-            return result;
-        } finally {
-            in.close();
-        }
-    }
-
+    /**
+     * Extracts list of all active users.
+     */
     protected Set<String> getActiveUsers(Map<String, String> context) throws IOException {
-        Metric activeUsersSetMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
-        SetStringValueData valueData = (SetStringValueData)activeUsersSetMetric.getValue(context);
+        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
+        SetStringValueData valueData = (SetStringValueData)metric.getValue(context);
 
         return valueData.getAll();
     }

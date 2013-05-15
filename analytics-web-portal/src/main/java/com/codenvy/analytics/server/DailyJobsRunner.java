@@ -49,14 +49,14 @@ public class DailyJobsRunner implements ServletContextListener {
             scheduler = new StdSchedulerFactory().getScheduler();
             scheduler.start();
 
-            scheduler.scheduleJob(TimeLineViewJob.createJob(), createTrigger());
-            scheduler.scheduleJob(ActOnJob.createJob(), ActOnJob.createTrigger());
+            scheduler.scheduleJob(TimeLineViewJob.createJob(), makeTrigger());
+            scheduler.scheduleJob(ActOnJob.makeJob(), ActOnJob.makeTrigger());
         } catch (Exception e) {
             LOGGER.error("Scheduler was not initialized", e);
         }
     }
 
-    private Trigger createTrigger() {
+    private Trigger makeTrigger() {
         return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_EXPRESSION)).build();
     }
 }

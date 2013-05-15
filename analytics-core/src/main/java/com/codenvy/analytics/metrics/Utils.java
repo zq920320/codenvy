@@ -315,7 +315,7 @@ public class Utils {
         putToDate(context, toDate);
     }
 
-    public static Map<String, String> initilizeContext(TimeUnit timeUnit, Date date) throws IOException {
+    public static Map<String, String> initializeContext(TimeUnit timeUnit, Date date) throws IOException {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
@@ -327,7 +327,7 @@ public class Utils {
         return timeUnit == TimeUnit.DAY ? context = Utils.prevDateInterval(context) : context;
     }
 
-    public static Map<String, String> newContext(Map<String, String> context) {
+    public static Map<String, String> clone(Map<String, String> context) {
         Map<String, String> result = new HashMap<String, String>(context.size());
         result.putAll(context);
 

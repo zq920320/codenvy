@@ -51,7 +51,7 @@ public class TimeLineViewServiceImpl extends RemoteServiceServlet implements Tim
      */
     public List<TimeLineViewData> getViews(Date date, TimeUnit timeUnit) {
         try {
-            Map<String, String> context = Utils.initilizeContext(timeUnit, date);
+            Map<String, String> context = Utils.initializeContext(timeUnit, date);
 
             List<TimeLineViewData> result = new ArrayList<TimeLineViewData>();
             int length = Integer.valueOf(viewLayout.getAttributes().get(HISTORY_LENGTH_ATTRIBUTE)) + 1;

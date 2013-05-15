@@ -12,14 +12,15 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.ldap.ReadOnlyUserManager;
-import com.codenvy.analytics.ldap.ReadOnlyUserProfile;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 import com.codenvy.organization.client.UserManager;
+import com.codenvy.organization.exception.OrganizationServiceException;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.BufferedReader;
@@ -30,9 +31,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -40,40 +43,46 @@ import java.util.Set;
  */
 public class TestActOnJob {
 
-    @Test
-    public void testPrepareFile() throws Exception {
+    private ActOnJob job;
+
+    @BeforeMethod
+    private void setUp() throws IOException, OrganizationServiceException {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
         String date = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
         File file = prepareLog(date);
 
-        Map<String, String> context = Utils.initilizeContext(TimeUnit.DAY, new Date());
+        Map<String, String> context = Utils.initializeContext(TimeUnit.DAY, new Date());
         context.put(PigScriptExecutor.LOG, file.getAbsolutePath());
 
-        ReadOnlyUserProfile profile = mock(ReadOnlyUserProfile.class);
-        doReturn("firstName").when(profile).getFirstName();
-        doReturn("lastName").when(profile).getLastName();
-        doReturn("phone").when(profile).getPhoneNumber();
-        doReturn("company").when(profile).getCompany();
+        Map<String, String> attributes = new HashMap<String, String>();
+        attributes.put("firstName", "Chuck");
+        attributes.put("lastName", "Norris");
+        attributes.put("phone", "00000000");
+        attributes.put("employer", "Eath");
         
         UserManager userManager = mock(UserManager.class);
 
         ReadOnlyUserManager readOnlyUserManager = spy(new ReadOnlyUserManager(userManager));
-        doReturn(profile).when(readOnlyUserManager).getUserProfile(anyString());
+        doReturn(attributes).when(readOnlyUserManager).getUserAttributes(anyString());
 
-        ActOnJob job = spy(new ActOnJob(readOnlyUserManager));
-        doReturn(context).when(job).prepareContext();
+        job = spy(new ActOnJob(readOnlyUserManager, new Properties()));
+        doReturn(context).when(job).initilalizeContext();
+    }
 
+    @Test
+    public void testPrepareFile() throws Exception {
         File jobFile = job.prepareFile();
         Set<String> content = read(jobFile);
 
         assertEquals(content.size(), 4);
         assertTrue(content.contains("email,firstName,lastName,phone,company,projects,builts,deployments"));
-        assertTrue(content.contains("user1,firstName,lastName,phone,company,2,0,0"));
-        assertTrue(content.contains("user2,firstName,lastName,phone,company,1,2,1"));
-        assertTrue(content.contains("user3,firstName,lastName,phone,company,0,1,1"));
+        assertTrue(content.contains("\"user1\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",2,0,0"));
+        assertTrue(content.contains("\"user2\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",1,2,1"));
+        assertTrue(content.contains("\"user3\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",0,1,1"));
     }
+
 
     private Set<String> read(File jobFile) throws IOException {
         Set<String> result = new HashSet<String>();

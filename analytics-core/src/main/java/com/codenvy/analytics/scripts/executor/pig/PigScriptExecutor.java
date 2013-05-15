@@ -81,7 +81,7 @@ public class PigScriptExecutor implements ScriptExecutor {
      */
     @Override
     public ValueData execute(ScriptType scriptType, Map<String, String> context) throws IOException {
-        context = Utils.newContext(context);
+        context = Utils.clone(context);
         validateParameters(scriptType, context);
 
         if (!isExecutionAllowed(context)) {

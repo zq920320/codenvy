@@ -48,7 +48,7 @@ public abstract class CumulativeMetric extends CalculateBasedMetric {
      */
     @Override
     public ValueData evaluate(Map<String, String> context) throws InitialValueNotFoundException, IOException {
-        context = Utils.newContext(context);
+        context = Utils.clone(context);
         Utils.putFromDate(context, Utils.getToDate(context));
         Utils.putTimeUnit(context, TimeUnit.DAY);
 
