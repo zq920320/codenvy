@@ -24,22 +24,10 @@
             };
         };
 
-        var Utils = {
-            getQueryParameterByName : function(name){
-                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-                var results = regex.exec(window.location.search);
-                if(results){
-                    return decodeURIComponent(results[1].replace(/\+/g, " "));
-                }
-            },
-
-            isBadGateway : function(jqXHR){
+        var isBadGateway = function(jqXHR){
                 return jqXHR.status === 502;
-            }
-
         };
-        // getQueryParameterByName replaces Utils.getQueryParameterByName
+
         var getQueryParameterByName = function(name){
                 name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
                 var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
@@ -125,8 +113,6 @@
         };
 
         return {
-            //FIXIT remove Utils.getQueryParameterByName
-            Utils : Utils,
 
             removeCookie : removeCookie,
 
@@ -440,7 +426,7 @@
                             }
                         },
                         error : function(xhr){
-                            if(Utils.isBadGateway(xhr)){
+                            if(isBadGateway(xhr)){
                                 error([
                                     new AccountError(null,"The requested domain is not available. Please, contact support.")
                                 ]);
