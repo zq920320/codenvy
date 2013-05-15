@@ -71,9 +71,8 @@
         var loginWithGoogle = function(page,callback){
             if (isWebsocketEnabled()) {
                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/rest/ide/oauth/authenticate?oauth_provider=google&mode=federated_login" +
-                   "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" +
-                   "&redirect_after_login=/oauth/" + new Date().getTime();
+                var url = "/sso/server/gen?authType=oauth&oauth_provider=google" +
+                   "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email";
                 //window.location = url;
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -84,8 +83,7 @@
         var loginWithGithub = function(page,callback){
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/rest/ide/oauth/authenticate?oauth_provider=github&mode=federated_login&" +
-                "scope=user&scope=repo&redirect_after_login=/oauth/" + new Date().getTime();
+                var url = "/sso/server/gen?authType=oauth&oauth_provider=github&scope=user&scope=repo";
                 if(typeof callback !== 'undefined'){
                     callback(url);
                 }
