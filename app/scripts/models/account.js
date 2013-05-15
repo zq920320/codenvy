@@ -149,8 +149,8 @@
                     var loginUrl = "/sso/server/gen?authType=jaas";
                     if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url"))
                     {
-                        loginUrl+="&redirect_url="+getQueryParameterByName("redirect_url");
-                        loginUrl+="&client_url="   +getQueryParameterByName("client_url");
+                        loginUrl += "&redirect_url=" + getQueryParameterByName("redirect_url");
+                        loginUrl += "&client_url=" + getQueryParameterByName("client_url");
                     }
 
                     form.attr("action", loginUrl);
