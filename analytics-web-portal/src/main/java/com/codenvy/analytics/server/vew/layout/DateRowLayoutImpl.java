@@ -4,6 +4,9 @@
  */
 package com.codenvy.analytics.server.vew.layout;
 
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.Utils;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,9 +14,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 class DateRowLayoutImpl implements RowLayout {
@@ -33,7 +33,7 @@ class DateRowLayoutImpl implements RowLayout {
      * Fills row by the next rule:<br>
      * <li>First column is {@link #sectionName}</li><br>
      * <li>Others columns are filed by date represented in string by providing format depending on {@link TimeUnit}</li><br>
-     * {@inheritedDoc}
+     * {@inheritDoc}
      */
     public List<String> fill(Map<String, String> context, int length) throws Exception {
         TimeUnit timeUnit = Utils.getTimeUnit(context);

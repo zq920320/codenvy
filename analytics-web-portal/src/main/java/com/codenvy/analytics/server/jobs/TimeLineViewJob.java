@@ -44,9 +44,7 @@ public class TimeLineViewJob implements Job {
         long start = System.currentTimeMillis();
 
         try {
-            new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.DAY);
-            new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.WEEK);
-            new TimeLineViewServiceImpl().getViews(new Date(), TimeUnit.WEEK);
+            new TimeLineViewServiceImpl().updateTimelineView(new Date(), TimeUnit.DAY);
         } finally {
             LOGGER.info("TimeLineViewJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
