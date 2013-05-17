@@ -195,6 +195,12 @@ public class MetricFactory {
             case PROJECT_TYPE_NODEJS_PERCENT:
                 metric = new ProjectCreatedTypeNodejsPercentMetric();
                 break;
+            case PROJECT_TYPE_ANDROID_NUMBER:
+                metric = new ProjectCreatedTypeAndroidNumberMetric();
+                break;
+            case PROJECT_TYPE_ANDROID_PERCENT:
+                metric = new ProjectCreatedTypeAndroidPercentMetric();
+                break;
             case PROJECT_TYPE_OTHERS_NUMBER:
                 metric = new ProjectCreatedTypeOthersNumberMetric();
                 break;

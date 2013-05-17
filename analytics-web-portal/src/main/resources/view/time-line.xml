@@ -63,6 +63,7 @@
         <metric type="project_type_ruby_number" format="%.0f" title="Ruby"/>
         <metric type="project_type_mmp_number" format="%.0f" title="Maven Multi Project"/>
         <metric type="project_type_nodejs_number" format="%.0f" title="Node.js"/>
+        <metric type="project_type_android_number" format="%.0f" title="Android"/>
         <metric type="project_type_others_number" format="%.0f" title="Others"/>
         <empty />
     </view>
@@ -78,6 +79,7 @@
         <metric type="project_type_ruby_percent" format="%.1f%%" title="Ruby"/>
         <metric type="project_type_mmp_percent" format="%.1f%%" title="Maven Multi Project"/>
         <metric type="project_type_nodejs_percent" format="%.1f%%" title="Node.js"/>
+        <metric type="project_type_android_percent" format="%.1f%%" title="Android"/>
         <metric type="project_type_others_percent" format="%.1f%%" title="Others"/>
         <empty />
     </view>
