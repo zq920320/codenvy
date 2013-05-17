@@ -43,6 +43,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLException;
 
 /**
@@ -50,44 +57,55 @@ import javax.net.ssl.SSLException;
  */
 public class ActOnJob implements Job {
 
-    private static final String       EMAIL                   = "email";
+    private static final String       EMAIL                     = "email";
 
     // acton ftp parameters
-    private static final String       PASSWORD_PARAM          = "password";
-    private static final String       LOGIN_PARAM             = "login";
-    private static final String       SERVER_PARAM            = "server";
-    private static final String       PORT_PARAM              = "port";
-    private static final String       TIMEOUT_PARAM           = "timeout";
-    private static final String       MAX_EFFORTS_PARAM       = "maxEfforts";
-    private static final String       AUTH_PARAM              = "auth";
+    private static final String       FTP_PASSWORD_PARAM        = "ftp_password";
+    private static final String       FTP_LOGIN_PARAM           = "ftp_login";
+    private static final String       FTP_SERVER_PARAM          = "ftp_server";
+    private static final String       FTP_PORT_PARAM            = "ftp_port";
+    private static final String       FTP_TIMEOUT_PARAM         = "ftp_timeout";
+    private static final String       FTP_MAX_EFFORTS_PARAM     = "ftp_maxEfforts";
+    private static final String       FTP_AUTH_PARAM            = "ftp_auth";
+
+    // acton mail parameters
+    private static final String       MAIL_SMTP_AUTH            = "mail.smtp.auth";
+    private static final String       MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
+    private static final String       MAIL_SMTP_HOST            = "mail.smtp.host";
+    private static final String       MAIL_SMTP_PORT            = "mail.smtp.port";
+    private static final String       MAIL_USER                 = "mail.user";
+    private static final String       MAIL_PASSWORD             = "mail.password";
+    private static final String       MAIL_TO                   = "mail.to";
+    private static final String       MAIL_SUBJECT              = "mail.subject";
+    private static final String       MAIL_TEXT                 = "mail.text";
 
     // acton file parameters
-    private static final String       USER_PROFILE_ATTRIBUTES = "user-profile-attributes";
-    private static final String       USER_PROFILE_HEADERS    = "user-profile-headers";
-    private static final String       METRIC_NAMES            = "metric-names";
-    private static final String       METRIC_HEADERS          = "metric-headers";
+    private static final String       USER_PROFILE_ATTRIBUTES   = "user-profile-attributes";
+    private static final String       USER_PROFILE_HEADERS      = "user-profile-headers";
+    private static final String       METRIC_NAMES              = "metric-names";
+    private static final String       METRIC_HEADERS            = "metric-headers";
 
-    private static final Logger       LOGGER                  = LoggerFactory.getLogger(ActOnJob.class);
-    private static final String       ACTION_FTP_PROPERTIES   = System.getProperty("analytics.acton.ftp.properties");
-    private static final String       CRON_SCHEDULING         = System.getProperty("analytics.acton.cron.scheduling", "0 0 1 ? * *");
-    private static final String       ACTON_FILE_PROPERTIES   = "acton-file.properties";
+    private static final Logger       LOGGER                    = LoggerFactory.getLogger(ActOnJob.class);
+    private static final String       ACTION_FTP_PROPERTIES     = System.getProperty("analytics.acton.ftp.properties");
+    private static final String       CRON_SCHEDULING           = System.getProperty("analytics.acton.cron.scheduling", "0 0 1 ? * *");
+    private static final String       ACTON_FILE_PROPERTIES     = "acton-file.properties";
 
     private final ReadOnlyUserManager userManager;
     private final Properties          actonFileProperties;
-    private final Properties          actonFtpProperties;
+    private final Properties          actonProperties;
 
     public ActOnJob() throws OrganizationServiceException, IOException {
         this.userManager = new ReadOnlyUserManager();
-        this.actonFtpProperties = readFTPProperties();
+        this.actonProperties = readFTPProperties();
         this.actonFileProperties = readActonProperties();
     }
 
     /**
      * For testing purpose.
      */
-    public ActOnJob(ReadOnlyUserManager userManager, Properties actonFtpProperties) throws IOException {
+    public ActOnJob(ReadOnlyUserManager userManager, Properties actonProperties) throws IOException {
         this.userManager = userManager;
-        this.actonFtpProperties = actonFtpProperties;
+        this.actonProperties = actonProperties;
         this.actonFileProperties = readActonProperties();
     }
 
@@ -144,7 +162,9 @@ public class ActOnJob implements Job {
 
         try {
             File file = prepareFile();
+
             transfer(file);
+            sendMail(file.getName());
 
             LOGGER.info("File " + file.getName() + " was transfered successfully");
 
@@ -160,11 +180,44 @@ public class ActOnJob implements Job {
     }
 
     /**
+     * Sends notification about transfered file.
+     */
+    protected void sendMail(String fileName) throws IOException {
+        Properties props = new Properties();
+        props.put(MAIL_SMTP_AUTH, actonProperties.get(MAIL_SMTP_AUTH));
+        props.put(MAIL_SMTP_STARTTLS_ENABLE, actonProperties.get(MAIL_SMTP_STARTTLS_ENABLE));
+        props.put(MAIL_SMTP_HOST, actonProperties.get(MAIL_SMTP_HOST));
+        props.put(MAIL_SMTP_PORT, actonProperties.get(MAIL_SMTP_PORT));
+
+        Session session = Session.getInstance(props,
+                                              new javax.mail.Authenticator() {
+                                                  protected PasswordAuthentication getPasswordAuthentication() {
+                                                      return new PasswordAuthentication(actonProperties.getProperty(MAIL_USER),
+                                                                                        actonProperties.getProperty(MAIL_PASSWORD));
+                                                  }
+                                              });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(actonProperties.getProperty(MAIL_USER)));
+            message.setRecipients(Message.RecipientType.TO,
+                                  InternetAddress.parse(actonProperties.getProperty(MAIL_TO)));
+            message.setSubject(actonProperties.getProperty(MAIL_SUBJECT));
+            message.setText(actonProperties.getProperty(MAIL_TEXT).replace("${file_name}", fileName));
+
+            Transport.send(message);
+        } catch (MessagingException e) {
+            throw new IOException(e);
+        }
+    }
+
+
+    /**
      * Sends file directly to FTP server.
      */
     private void transfer(File file) throws SocketException, IOException {
-        final String auth = actonFtpProperties.getProperty(AUTH_PARAM);
-        final int maxEfforts = Integer.valueOf(actonFtpProperties.getProperty(MAX_EFFORTS_PARAM));
+        final String auth = actonProperties.getProperty(FTP_AUTH_PARAM);
+        final int maxEfforts = Integer.valueOf(actonProperties.getProperty(FTP_MAX_EFFORTS_PARAM));
 
         for (int i = 0; i < maxEfforts; i++) {
             FTPSClient ftp = new FTPSClient(auth, false);
@@ -196,11 +249,11 @@ public class ActOnJob implements Job {
     }
 
     private void openConnection(FTPSClient ftp) throws SocketException, IOException, SSLException {
-        final int timeout = Integer.valueOf(actonFtpProperties.getProperty(TIMEOUT_PARAM));
-        final int port = Integer.valueOf(actonFtpProperties.getProperty(PORT_PARAM));
-        final String server = actonFtpProperties.getProperty(SERVER_PARAM);
-        final String username = actonFtpProperties.getProperty(LOGIN_PARAM);
-        final String password = actonFtpProperties.getProperty(PASSWORD_PARAM);
+        final int timeout = Integer.valueOf(actonProperties.getProperty(FTP_TIMEOUT_PARAM));
+        final int port = Integer.valueOf(actonProperties.getProperty(FTP_PORT_PARAM));
+        final String server = actonProperties.getProperty(FTP_SERVER_PARAM);
+        final String username = actonProperties.getProperty(FTP_LOGIN_PARAM);
+        final String password = actonProperties.getProperty(FTP_PASSWORD_PARAM);
 
         ftp.setDataTimeout(timeout);
         ftp.setDefaultTimeout(timeout);
