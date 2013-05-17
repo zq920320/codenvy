@@ -16,7 +16,7 @@
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
 		<metric type="users_created_number" title="Created"/>
         <metric type="users_created_projects_percent" format="%.0f%%" title="% Have Created Projects"/>
-		<metric type="users_destroyed_number" title="Destroyed"/>
+		<metric type="users_destroyed_number" title="Purged"/>
         <metric type="total_users_number" title="Total"/>
         <metric type="active_users_number" title="# Active"/>
 		<metric type="active_users_percent" format="%.1f%%" title="% Active"/>
@@ -38,6 +38,7 @@
     <view>
         <date section="Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="product_usage_time_total" format="%,.0f" title="Product usage time (mins)"/>
+        <metric type="product_usage_user_sessions_number" format="%,.0f" title="# User Sessions"/>
         <empty />
     </view>
     <view>

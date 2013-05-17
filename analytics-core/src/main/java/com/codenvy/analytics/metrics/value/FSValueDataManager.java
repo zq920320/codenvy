@@ -4,6 +4,12 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Utils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -15,12 +21,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Utils;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -69,7 +69,10 @@ public class FSValueDataManager {
         ensureDestination(file);
 
         doStore(value, file);
-        LOGGER.info("File " + file.getPath() + " is created");
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("File " + file.getPath() + " is created");
+        }
     }
 
     private static void doStore(ValueData value, File file) throws IOException {

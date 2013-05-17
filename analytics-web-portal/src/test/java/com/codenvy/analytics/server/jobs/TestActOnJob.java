@@ -77,10 +77,10 @@ public class TestActOnJob {
         Set<String> content = read(jobFile);
 
         assertEquals(content.size(), 4);
-        assertTrue(content.contains("email,firstName,lastName,phone,company,projects,builts,deployments"));
-        assertTrue(content.contains("\"user1\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",2,0,0"));
-        assertTrue(content.contains("\"user2\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",1,2,1"));
-        assertTrue(content.contains("\"user3\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",0,1,1"));
+        assertTrue(content.contains("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime"));
+        assertTrue(content.contains("\"user1\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",2,0,0,5"));
+        assertTrue(content.contains("\"user2\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",1,2,1,10"));
+        assertTrue(content.contains("\"user3\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",0,1,1,0"));
     }
 
 
@@ -104,22 +104,28 @@ public class TestActOnJob {
         List<Event> events = new ArrayList<Event>();
 
         // active users [user1, user2, user3]
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate(date).build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate(date).build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withDate(date).build());
-
-        // projects built
-        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withDate(date).build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withTime("09:00:00").withDate(date).build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withTime("09:00:00").withDate(date).build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withTime("09:00:00").withDate(date).build());
 
         // projects created
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate(date).build());
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate(date).build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate(date).build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate(date).withTime("10:00:00")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate(date).withTime("10:05:00")
+                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate(date).withTime("10:00:00")
+                                .build());
+
+        // projects built
+        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withTime("10:06:00").withDate(date)
+                                .build());
 
 
         // projects deployed
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1").withDate(date).build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2").withDate(date).build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1").withTime("10:10:00")
+                                .withDate(date).build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2").withTime("10:00:00")
+                                .withDate(date).build());
 
         return LogGenerator.generateLog(events);
     }

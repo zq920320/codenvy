@@ -194,7 +194,7 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return ListListStringValueData.class;
         }
     };
 

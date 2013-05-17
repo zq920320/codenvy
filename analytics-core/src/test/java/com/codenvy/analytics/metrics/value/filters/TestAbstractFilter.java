@@ -24,9 +24,9 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestProjectFilter {
+public class TestAbstractFilter {
 
-    private ProjectsFilter      filter;
+    private AbstractFilter      filter;
     private ListStringValueData item1;
     private ListStringValueData item2;
     private ListStringValueData item3;
@@ -40,7 +40,7 @@ public class TestProjectFilter {
         item4 = new ListStringValueData(Arrays.asList("ws2", "user3", "project3", "type2", "paas4"));
 
         ListListStringValueData value = new ListListStringValueData(Arrays.asList(item1, item2, item3, item4));
-        filter = new ProjectsFilter(value);
+        filter = new TestedFilter(value);
     }
 
     @Test
@@ -93,4 +93,15 @@ public class TestProjectFilter {
         assertEquals(all.get("type3"), Long.valueOf(1));
     }
 
+    private class TestedFilter extends AbstractFilter {
+
+        public TestedFilter(ListListStringValueData valueData) {
+            super(valueData);
+        }
+
+        @Override
+        protected int getIndex(MetricFilter key) throws IllegalArgumentException {
+            return key.ordinal();
+        }
+    }
 }

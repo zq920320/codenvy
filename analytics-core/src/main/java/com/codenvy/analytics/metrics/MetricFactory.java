@@ -93,6 +93,12 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();
                 break;
+            case PRODUCT_USAGE_TIME_LIST:
+                metric = new ProductUsageTimeListlMetric();
+                break;
+            case PRODUCT_USAGE_USER_SESSIONS_NUMBER:
+                metric = new ProductUsageUserSessionsNumberMetric();
+                break;
             case PROJECTS_CREATED_NUMBER:
                 metric = new ProjectsCreatedNumberMetric();
                 break;
