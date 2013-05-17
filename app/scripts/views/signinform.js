@@ -37,29 +37,7 @@
                 },
 
                 __submit : function(){
-                    Account.login(
-                        this.$("input[name='email']").val(),
-                        this.$("input[name='password']").val(),
-                        _.bind(function(data){
-                            //$(this.el).attr('action',data.loginUrl);
-                            //form.submit();
-                            window.location = data.url;
-                        },this),
-                        _.bind(function(errors){
-
-                            this.__restoreForm();
-
-                            if(errors.length !== 0){
-                                this.trigger(
-                                    "invalid",
-                                    errors[0].getFieldName(),
-                                    errors[0].getErrorDescription()
-                                );
-                            }
-                        },this)
-                    );
-
-                    return false;
+                    Account.login($(this.el));
                 }
 
             });

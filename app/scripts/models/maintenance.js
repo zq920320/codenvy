@@ -5,7 +5,7 @@ define(["jquery","models/account"],function($,Account){
     return {
 
         getUserQueueInfo : function(success,error){
-            tenantName = Account.Utils.getQueryParameterByName("tenant");
+            tenantName = Account.getQueryParameterByName("tenant");
             $.ajax({
                 url : "/cloud-admin/rest/cloud-admin/update/state?tenant=" + tenantName,
                 type : "GET",
@@ -19,7 +19,8 @@ define(["jquery","models/account"],function($,Account){
                         }
                 },
                 error : function(){
-                        error();
+                    Account.removeCookie("autologin");
+                    error();
                 }
             });
         },

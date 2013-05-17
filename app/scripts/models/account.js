@@ -2,7 +2,7 @@
 
     var _gaq = _gaq || [];
 
-    define(["jquery","json", "models/tenant"],function($,JSON,Tenant){
+    define(["jquery","json", "models/tenant","cookies"],function($,JSON,Tenant){
 
         /*
             AccountError is used to report errors through error callback function
@@ -24,22 +24,10 @@
             };
         };
 
-        var Utils = {
-            getQueryParameterByName : function(name){
-                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-                var results = regex.exec(window.location.search);
-                if(results){
-                    return decodeURIComponent(results[1].replace(/\+/g, " "));
-                }
-            },
-
-            isBadGateway : function(jqXHR){
+        var isBadGateway = function(jqXHR){
                 return jqXHR.status === 502;
-            }
-
         };
-        // getQueryParameterByName replaces Utils.getQueryParameterByName
+
         var getQueryParameterByName = function(name){
                 name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
                 var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
@@ -71,9 +59,8 @@
         var loginWithGoogle = function(page,callback){
             if (isWebsocketEnabled()) {
                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/rest/ide/oauth/authenticate?oauth_provider=google&mode=federated_login" +
-                   "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" +
-                   "&redirect_after_login=/oauth/" + new Date().getTime();
+                var url = "/sso/server/gen?authType=oauth&oauth_provider=google" +
+                   "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email";
                 //window.location = url;
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -84,8 +71,7 @@
         var loginWithGithub = function(page,callback){
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/rest/ide/oauth/authenticate?oauth_provider=github&mode=federated_login&" +
-                "scope=user&scope=repo&redirect_after_login=/oauth/" + new Date().getTime();
+                var url = "/sso/server/gen?authType=oauth&oauth_provider=github&scope=user&scope=repo";
                 if(typeof callback !== 'undefined'){
                     callback(url);
                 }
@@ -118,9 +104,15 @@
             return true;
         };
 
+        var removeCookie = function(cookie){
+            if ($.cookie(cookie)){
+                $.cookie(cookie, null);
+            }
+        };
+
         return {
-            //FIXIT remove Utils.getQueryParameterByName
-            Utils : Utils,
+
+            removeCookie : removeCookie,
 
             isWebsocketEnabled :isWebsocketEnabled,
 
@@ -151,49 +143,20 @@
                 return (/^[A-Za-z]{1}[a-zA-Z0-9@_\.-]+$/).test(email);
             },
 
-            login : function(email,password,success,error){
-                isWebsocketEnabled();
-                var loginUrl = "/sso/server/gen?authType=jaas",
-                    queryString = window.location.search,
-                    jaasExists = queryString.match(/authType=jaas/);
-                if (!jaasExists){
-                    if(queryString !== null && queryString.length > 4){ ///?key=value >4 symbols
-                        loginUrl += "&" + queryString.substring(1);
-                    }
-                }else {
-                    loginUrl = queryString;
-                }
+            login : function(form){
 
-                $.ajax({
-                    url : loginUrl,
-                    type : "POST",
-                    data: {'email':email,'password':password},
-                    success : function(){
-                        success({url : "/private/select-tenant?authType=jaas"});
-                    },
-                    error : function(xhr){
-                        switch (xhr.status) {
-                            case 0:
-                                // we assume this is the case of successful authentication
-                                success({ url : "/sso/server/grant?authType=jaas" });
-                                break;
-                            case 400:
-                                error([new AccountError(null,"This kind of authentication is not supported.")]);
-                                break;
-                            case 403:
-                                error([new AccountError(null,xhr.responseText)]);
-                                break;
-                            case 500:
-                                error([new AccountError(null,"Internal server error. Please contact support.")]);
-                                break;
-                            default :
-                                error([new AccountError(null,xhr.status + " Something went wrong. Please contact support.")]);
-                                break;
-                        }
+                if (isWebsocketEnabled()){
+                    var loginUrl = "/sso/server/gen?authType=jaas";
+                    if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url"))
+                    {
+                        loginUrl += "&redirect_url=" + getQueryParameterByName("redirect_url");
+                        loginUrl += "&client_url=" + getQueryParameterByName("client_url");
                     }
-                });
 
-            },
+                    form.attr("action", loginUrl);
+                    form.submit();
+                    }
+                },
 
             loginWithGoogle : loginWithGoogle,
             loginWithGithub : loginWithGithub,
@@ -426,6 +389,8 @@
                 function hitServer(){
 
                     if(new Date().getTime() >= endTime){
+                    // removing autologin cookie if exist
+                    removeCookie("autologin");
                         if (errorType === "create"){
                             error([
                                 new AccountError(
@@ -459,7 +424,7 @@
                             }
                         },
                         error : function(xhr){
-                            if(Utils.isBadGateway(xhr)){
+                            if(isBadGateway(xhr)){
                                 error([
                                     new AccountError(null,"The requested domain is not available. Please, contact support.")
                                 ]);

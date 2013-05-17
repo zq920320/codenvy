@@ -15,6 +15,7 @@ require.config({
 
     paths: {
         jquery: 'vendor/jquery.min',
+        cookies: 'vendor/jquery.cookie',
         validation: 'vendor/jquery.validate',
         underscore: 'vendor/underscore',
         backbone: 'vendor/backbone',
