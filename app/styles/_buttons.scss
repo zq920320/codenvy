@@ -31,39 +31,38 @@
     border-radius: 5px;
     position: relative;
     cursor: pointer;
-    font-weight:300;
+    font-weight:400;
     font-size: 1em;
     line-height: 1em;
     text-align: center;
+    vertical-align: top;
 }
 
 .button-100 { width: 100px; }
+.button-150 { width: 150px; }
 .button-200 { width: 200px; }
 .button-400 { width: 400px; }
 
 .blue-button {
-    font-weight: 500;
     font-size: 1em;
-    font-color: #233041;
     text-shadow: 0px 1px 3px #98CEED;
     padding: 10px;
     margin: 1px;
     @include button();
 
-    @include background-image(linear-gradient(#7bbced 50%, #54aee1 50%));
-    @include box-shadow(0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset);
-    border: solid 1px #233041;
+    @include background-image(linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%));
+    @include box-shadow(0px 0px 0px 1px rgba(255, 255, 255, 0.5));
+    border: solid 1px #b1cbdc;
 
+    
     &:hover{
-        @include background-image(linear-gradient(#b3d5e8 0%, #7bbced 50%, #54aee1 50%));
-        @include box-shadow(0px 0px 0px 1px rgba(255, 255, 255, 0.5));
-        border: solid 1px #233041;
+        @include background-image(linear-gradient(#7bbced 50%, #54aee1 50%));
+        @include box-shadow(0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset);
     };
 
     &:active{
         @include background-image(linear-gradient(#54aee1 0%, #7bbced 60%));
         @include box-shadow(0px 2px 5px 0px rgba(0, 0, 0, 1) inset);
-        border: solid 1px #233041;
     };
 
 
@@ -95,8 +94,6 @@
     @include button();
 
     font-size: 0.8em;
-    font-weight: 400;
-
     text-shadow: 0px 1px 1px rgba(255,255,255,0.25);
 
     @include light-button-gradient;
@@ -121,9 +118,7 @@
 .sign-up-button {
 
     @include button();
-
     font-size: 0.8em;
-    font-weight: 400;
 
     @include signup-button-gradient;
     color:#233041;
@@ -143,6 +138,58 @@
     &:active{
         @include signup-button-active-gradient;
         @include box-shadow(0px 1px 3px 0px rgba(80, 80, 80, 0.6) inset);
+    };
+
+
+    &:disabled{ background-color: #455971; background-image:none; };
+}
+
+
+.dark-blue-button {
+    font-size: 1em;
+    color: #fff;
+    padding: 10px;
+    margin: 1px;
+    @include button();
+
+    @include background-image(linear-gradient(#51586b 50%, #3a4154 50%));
+    @include box-shadow(0px 0px 0px 1px rgba(255, 255, 255, 0.5));
+    border: solid 1px #233041;
+
+    &:hover{
+        @include background-image(linear-gradient(#51586b 50%, #3a4154 50%));
+        @include box-shadow(0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset);
+        border: solid 1px #233041;
+    };
+
+    &:active{
+        @include background-image(linear-gradient(#51586b 50%, #3a4154 50%));
+        @include box-shadow(0px 2px 5px 0px rgba(0, 0, 0, 1) inset);
+        border: solid 1px #233041;
+    };
+
+
+    &:disabled{ background-color: #455971; background-image:none; };
+}
+
+.dark-gray-button {
+    font-size: 1em;
+    padding: 10px;
+    margin: 1px;
+    @include button();
+
+    @include background-image(linear-gradient(#d8d8d8 50%, #bcbcbc 50%));
+    @include box-shadow(0px 0px 0px 1px rgba(255, 255, 255, 0.5));
+    border: solid 1px #bababa;
+
+    &:hover{
+        @include background-image(linear-gradient(#d8d8d8 50%, #bcbcbc 50%));
+        @include box-shadow(0px 18px 30px 0 rgba(0, 0, 0, 0.15) inset);
+    };
+
+    &:active{
+        @include background-image(linear-gradient(#d8d8d8 50%, #bcbcbc 50%));
+        @include box-shadow(0px 2px 5px 0px rgba(0, 0, 0, 1) inset);
     };
 
 

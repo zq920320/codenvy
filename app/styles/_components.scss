@@ -405,8 +405,6 @@ h1.enterprise-header-text {
         margin-bottom: 80px;
     }
 
-
-
 }
 
 /*
@@ -415,141 +413,202 @@ h1.enterprise-header-text {
 
 */
 
-.pricing-feature-list {
-    padding: 0; margin: 2em 0;
-    list-style-type: none;
-    line-height: 2em;
+.pricing-section {
+    border: solid 3px #EFEFEF;
+    margin: 0 1.5em 1.5em 1.5em;
+    padding: 0.5em 1.5em 0 1.5em;
+    background-color: #FDFDFD;
+    font-size:$base-font-size*0.875;
 
-    li {
-        padding: 0 0 1em 0; margin: 1em 0;
-        @include sep_line_small();
+    h3 { margin-top: 0; margin-bottom:  0; }
+    p { margin:0 0 0.5em 0;  }
 
-        a {
-            @include icon_info();
-            color: $text-on-dark-color;
-            padding-right: 30px;
+    &.plain {
+        background-color: #FFF;
+        border: none;
+    }
+}
+
+.pricing-row {
+    position: relative;
+    border-top: solid 1px #EDEDED;
+    padding: 0.5em 2em 0.3em 2em;
+}
+
+.pricing-row:nth-child(1) {
+    padding-top: 0;
+    border-top: none;
+}
+
+.pricing-row:nth-child(9) {
+    border-bottom: solid 1px #EDEDED;
+}
+
+h2.premium {
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+    margin: 0.6em 0 0.6em 0;
+}
+
+h3.community {
+    color: #60AFD9;
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+    font-size: 1.7em;
+}
+
+h3.premium {
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+    color: #222531;
+    font-size: 1.7em;
+}
+
+h3.addons {
+    color: #5B626C;
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+    font-size: 1.7em;
+}
+
+h3.super {
+    color: #787878;
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+    font-size: 1.7em;
+}
+
+.price-span {
+    @include respond-to(tablet-desktop){
+        position: absolute;
+        top: 50%;
+        height: 40px;
+        margin-top: -20px;
+        margin-right: 2em;
+        right: 0%;
+        text-align: right;
+    }
+
+    text-align: center;
+}
+
+.price-label {
+    border-radius: 5px;
+    padding: 7px 7px 8px 7px;
+    width: 150px;
+    display: inline-block;
+    text-align: center;
+    font-size: 1.6em;
+    margin-right: 25px;
+
+    &.no-button {
+        //account for the missing button
+        margin-right: 25px + 150px - 50px;
+    }
+
+    &.extended{
+        width: 200px;
+    };
+}
+
+.explanation-section {
+
+    margin:0.7em 0 0.7em 0;
+
+    table {
+        width: 100%;
+    }
+
+    td {
+        padding:1em;
+        border-bottom: solid 1px #EDEDED;
+    }
+
+    td:nth-child(2){
+        text-align: right;
+    };
+
+    p{
+        padding: 0; margin: 0;
+    }
+
+    strong {
+        font-weight: 500;
+    }
+}
+
+.explanation-section-header {
+    border-bottom: solid 1px #CCC;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.premium-features-title {
+    font-weight: 500;
+}
+
+ul.premium-features {
+    margin: 5px;
+    padding: 0;
+
+    li{
+        display: inline-block;
+        background:{
+            image: url('../images/pricing/icon_check_green.png');
+            repeat: no-repeat;
+            position: 0% 50%;
         }
 
-        &.highlight {
-            @include image_highlight();
+        padding-left: 26px;
+    }
+}
+
+.premium-explained {
+    margin: 1em 0 1.5em 0;
+
+    ul{
+        margin:0.5em 0 0 1em; padding:0;
+
+        li{
+            float: left;
+            width: 200px;
         }
     }
-
 }
 
-.pricing-poetry {
-    font-size:1em;
-    color:#8e979d;
-    font-weight:300;
-    padding:0.5em;
-    margin-top: 36px;
-}
+.premium-goodness-box {
+    border: solid 1px #EFEFEF;
+    min-height: 114px;
+    max-height: 114px;
+    padding: 10px 20px;
 
-.pricing-poetry.opensource {
-    margin-bottom: 14px;
-}
-
-.signup-opensource-button{
-    margin-top: 14px;
-}
-
-.pricing-feature {
-    padding: 15px;
-    p { margin-top: 5px; }
-    @include respond-to(mobile){
-        padding-bottom: 0;
+    strong{
+        text-align: center;
+        display: inline-block; width: 100%;
+        font-weight: 500;
+        margin-bottom: 5px;
     }
 }
 
-.pricing-feature:nth-child(2){
-    @include respond-to(mobile){
-        padding-top: 0;
-    }
-};
 
-.pricing-plans {
-    margin-top: 1em;
-}
+.credit-cards {
+    width: 320px;
 
-.container.open-source {
-    background-color:#2b3748;
-    border: solid 1px #313d4d;
-    padding: 0.8em;
-}
-
-.container.open-source-desc {
-    padding-top: 7px;
-}
-
-.pricing-box-open-source {
-    @include image_pricing_box_open_source();
-    height:128px;
-}
-
-.paid-plan {
-    background-color:#2b3748;
-    border: solid 1px #313d4d;
-    padding: 0.8em;
-}
-
-.pricing-box-business {
-    @include image_pricing_box_business();
-    height: 213px;
-}
-
-.pricing-box-premium {
-    @include image_pricing_box_premium();
-    height: 213px;
-}
-
-.pricing-box-secure {
-    @include image_pricing_box_secure();
-    height: 213px;
-}
-
-.pricing-enterprise-header {
-
-}
-
-.container.enterprise-teaser {
-    background-color: #42617B;
-    color:$text-on-dark-color;
-    padding: 1.5em;
-    a { color: $link-color-on-dark; }
-
-    h3 {
-        margin: 0 0 5px 0;
-        @include shiny-text-gradient();
+    background:{
+        image:url('../images/pricing/shopping.png');
+        repeat: no-repeat;
+        position: 50% 50%;
     }
 }
 
-.welcome-pack {
-    @include respond-to(tablet-desktop){
-        @include image_welcome_pack();
-        height: 212px;
+.faq {
+    h3{
+        font-size: 1.3em;
+        margin-bottom: 0.2em;
+        color: #60AFD9;
+    }
+
+    p {
+        margin-bottom: 1.3em;
     }
 }
 
-.container.pricing-dedicated {
-    @include respond-to(tablet-desktop){
-        padding-right: 10px;
-        padding-left: 50px;
-    }
-}
-
-.cloud-up {
-    @include respond-to(tablet-desktop){
-        @include image_cloud_up();
-        min-height: 232px;
-    }
-}
-
-.key-box {
-    @include respond-to(tablet-desktop){
-        @include image_key_box();
-        height: 250px;
-    }
-}
 
 /*
 
