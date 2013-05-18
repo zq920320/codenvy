@@ -279,6 +279,9 @@ public class MetricFactory {
             case JREBEL_USAGE_PERCENT:
                 metric = new JrebelUsagePercentMetric();
                 break;
+            case JREBEL_USER_PROFILE_INFO_GATHERING:
+                metric = new JrebelUserProfileInfoGatheringMetric();
+                break;
             case INVITATIONS_SENT:
                 metric = new InvitationsSentMetric();
                 break;

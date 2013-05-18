@@ -6,14 +6,14 @@
 # Sets some variables
 SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf"
 
-ANALYTICS_OPTS="-Danalytics.logs.directory=${CATALINA_HOME}/../logs-production \
+ANALYTICS_OPTS="-Danalytics.logs.directory=../logs-production \
                 -Danalytics.scripts.directory=${CATALINA_HOME}/scripts \
                 -Danalytics.result.directory=${CATALINA_HOME}/data/results \
                 -Danalytics.metrics.initial.values=${CATALINA_HOME}/analytics-conf/initial-values.xml \
-                -Danalytics.acton.ftp.properties=${CATALINA_HOME}/analytics-conf/acton-ftp.properties \
+                -Danalytics.job.acton.properties=${CATALINA_HOME}/analytics-conf/job-acton.properties \
+                -Danalytics.job.jrebel.properties=${CATALINA_HOME}/analytics-conf/job-jrebel.properties \
                 -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs \
                 -Dorganization.application.server.url="
-#                -Danalytics.acton.cron.scheduling="0 0 1 ? * *" \
 
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
 
@@ -24,7 +24,6 @@ JMX_OPTS="-Dcom.sun.management.jmxremote.authenticate=true \
 
 #uncomment if you want to debug app server
 #REMOTE_DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y"
-REMOTE_DEBUG=""
 
 export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $REMOTE_DEBUG $QUARTZ_OPTS"
 export CLASSPATH="${CATALINA_HOME}/conf/:${CATALINA_HOME}/lib/jul-to-slf4j.jar:\

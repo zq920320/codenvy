@@ -21,6 +21,7 @@ package com.codenvy.analytics.scripts.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class Event {
@@ -197,10 +198,20 @@ public class Event {
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("JREBEL", String.valueOf(jrebel));
         }
 
-        /** Create 'project-created' event. */
         public static Builder createProjectCreatedEvent(String user, String ws, String session, String project) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
                                 .withParam("PROJECT", project);
+        }
+
+        public static Builder createJRebelUserProfileInfo(String user,
+                                                          String ws,
+                                                          String userId,
+                                                          String firstName,
+                                                          String lastName,
+                                                          String phone) {
+            return new Builder().withContext(user, ws, UUID.randomUUID().toString()).withParam("EVENT", "jrebel-user-profile-info")
+                                .withParam("USER_ID", userId).withParam("FIRSTNAME", firstName).withParam("LASTNAME", lastName)
+                                .withParam("PHONE", phone);
         }
     }
 

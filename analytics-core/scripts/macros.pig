@@ -76,7 +76,7 @@ DEFINE extractSession(X) RETURNS Y {
 -- @return  {..., user : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractUser(X) RETURNS Y {
-  x1 = extractParam($X, 'USER', 'user');
+  x1 = smartExtractParam($X, 'USER', 'user');
   x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user;
   x3 = UNION x1, x2;
   x4 = DISTINCT x3;
@@ -99,8 +99,18 @@ DEFINE extractUserFromAliases(X) RETURNS Y {
 -- @return  {..., $paramFieldNameParam : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramFieldNameParam;
+  x1 = smartExtractParam($X, '$paramNameParam', '$paramFieldNameParam');
   $Y = FILTER x1 BY $paramFieldNameParam != '';
+};
+
+---------------------------------------------------------------------------
+-- Extract parameter value out of message and adds as field to tuple.
+-- @param paramNameParam - the parameter name
+-- @param paramFieldNameParam - the name of filed in the tuple
+-- @return  {..., $paramFieldNameParam : bytearray}
+---------------------------------------------------------------------------
+DEFINE smartExtractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
+  $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramFieldNameParam;
 };
 
 ---------------------------------------------------------------------------

@@ -22,6 +22,13 @@ import java.util.Set;
  */
 public enum ScriptType {
 
+    JREBEL_USER_PROFILE_GATHERING {
+        @Override
+        public Class< ? extends ValueData> getValueDataClass() {
+            return ListListStringValueData.class;
+        }
+    },
+
     EVENT_COUNT_USERS_CREATED_PROJECTS {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {

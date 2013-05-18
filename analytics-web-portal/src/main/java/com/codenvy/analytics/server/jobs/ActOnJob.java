@@ -57,9 +57,10 @@ import javax.net.ssl.SSLException;
  */
 public class ActOnJob implements Job {
 
+    private static final String FILE_NAME_TEMPLATE = "${file_name}";
+
     private static final String       EMAIL                     = "email";
 
-    // acton ftp parameters
     private static final String       FTP_PASSWORD_PARAM        = "ftp_password";
     private static final String       FTP_LOGIN_PARAM           = "ftp_login";
     private static final String       FTP_SERVER_PARAM          = "ftp_server";
@@ -68,7 +69,6 @@ public class ActOnJob implements Job {
     private static final String       FTP_MAX_EFFORTS_PARAM     = "ftp_maxEfforts";
     private static final String       FTP_AUTH_PARAM            = "ftp_auth";
 
-    // acton mail parameters
     private static final String       MAIL_SMTP_AUTH            = "mail.smtp.auth";
     private static final String       MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
     private static final String       MAIL_SMTP_HOST            = "mail.smtp.host";
@@ -79,25 +79,22 @@ public class ActOnJob implements Job {
     private static final String       MAIL_SUBJECT              = "mail.subject";
     private static final String       MAIL_TEXT                 = "mail.text";
 
-    // acton file parameters
-    private static final String       USER_PROFILE_ATTRIBUTES   = "user-profile-attributes";
+    private static final String       CRON_SCHEDULING           = "cron.scheduling";
+
     private static final String       USER_PROFILE_HEADERS      = "user-profile-headers";
-    private static final String       METRIC_NAMES              = "metric-names";
     private static final String       METRIC_HEADERS            = "metric-headers";
+    private static final String       USER_PROFILE_ATTRIBUTES   = "user-profile-attributes";
+    private static final String       METRIC_NAMES              = "metric-names";
 
     private static final Logger       LOGGER                    = LoggerFactory.getLogger(ActOnJob.class);
-    private static final String       ACTION_FTP_PROPERTIES     = System.getProperty("analytics.acton.ftp.properties");
-    private static final String       CRON_SCHEDULING           = System.getProperty("analytics.acton.cron.scheduling", "0 0 1 ? * *");
-    private static final String       ACTON_FILE_PROPERTIES     = "acton-file.properties";
+    private static final String       ACTION_PROPERTIES         = System.getProperty("analytics.job.acton.properties");
 
     private final ReadOnlyUserManager userManager;
-    private final Properties          actonFileProperties;
     private final Properties          actonProperties;
 
     public ActOnJob() throws OrganizationServiceException, IOException {
         this.userManager = new ReadOnlyUserManager();
-        this.actonProperties = readFTPProperties();
-        this.actonFileProperties = readActonProperties();
+        this.actonProperties = readProperties();
     }
 
     /**
@@ -106,17 +103,17 @@ public class ActOnJob implements Job {
     public ActOnJob(ReadOnlyUserManager userManager, Properties actonProperties) throws IOException {
         this.userManager = userManager;
         this.actonProperties = actonProperties;
-        this.actonFileProperties = readActonProperties();
     }
 
-    public static Trigger makeTrigger() {
-        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_SCHEDULING.replace("\\", ""))).build();
+    public Trigger getTrigger() {
+        String scheduling = actonProperties.getProperty(CRON_SCHEDULING);
+        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(scheduling)).build();
     }
 
     /**
      * @return initialized job
      */
-    public static JobDetail makeJob() {
+    public JobDetail getJobDetail() {
         JobDetailImpl jobDetail = new JobDetailImpl();
         jobDetail.setKey(new JobKey(ActOnJob.class.getName()));
         jobDetail.setJobClass(ActOnJob.class);
@@ -124,26 +121,13 @@ public class ActOnJob implements Job {
         return jobDetail;
     }
 
-    private static Properties readActonProperties() throws IOException {
-        Properties properties = new Properties();
-
-        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ACTON_FILE_PROPERTIES);
-        try {
-            properties.load(in);
-        } finally {
-            in.close();
-        }
-
-        return properties;
-    }
-
     /**
      * Reads FTP connections properties.
      */
-    private static Properties readFTPProperties() throws FileNotFoundException, IOException {
+    private Properties readProperties() throws FileNotFoundException, IOException {
         Properties ftpProps = new Properties();
 
-        InputStream in = new BufferedInputStream(new FileInputStream(ACTION_FTP_PROPERTIES));
+        InputStream in = new BufferedInputStream(new FileInputStream(ACTION_PROPERTIES));
         try {
             ftpProps.load(in);
         } finally {
@@ -189,8 +173,7 @@ public class ActOnJob implements Job {
         props.put(MAIL_SMTP_HOST, actonProperties.get(MAIL_SMTP_HOST));
         props.put(MAIL_SMTP_PORT, actonProperties.get(MAIL_SMTP_PORT));
 
-        Session session = Session.getInstance(props,
-                                              new javax.mail.Authenticator() {
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
                                                   protected PasswordAuthentication getPasswordAuthentication() {
                                                       return new PasswordAuthentication(actonProperties.getProperty(MAIL_USER),
                                                                                         actonProperties.getProperty(MAIL_PASSWORD));
@@ -202,8 +185,8 @@ public class ActOnJob implements Job {
             message.setFrom(new InternetAddress(actonProperties.getProperty(MAIL_USER)));
             message.setRecipients(Message.RecipientType.TO,
                                   InternetAddress.parse(actonProperties.getProperty(MAIL_TO)));
-            message.setSubject(actonProperties.getProperty(MAIL_SUBJECT));
-            message.setText(actonProperties.getProperty(MAIL_TEXT).replace("${file_name}", fileName));
+            message.setSubject(actonProperties.getProperty(MAIL_SUBJECT).replace(FILE_NAME_TEMPLATE, fileName));
+            message.setText(actonProperties.getProperty(MAIL_TEXT));
 
             Transport.send(message);
         } catch (MessagingException e) {
@@ -311,7 +294,7 @@ public class ActOnJob implements Job {
     }
 
     private void writeMetricsValues(Map<String, String> context, BufferedWriter out, String user) throws IOException {
-        String[] metricNames = actonFileProperties.getProperty(METRIC_NAMES).split(",");
+        String[] metricNames = actonProperties.getProperty(METRIC_NAMES).split(",");
 
         for (int i = 0; i < metricNames.length; i++) {
             context = Utils.clone(context);
@@ -342,7 +325,7 @@ public class ActOnJob implements Job {
     }
 
     private void writeUserProfileAttributes(BufferedWriter out, String user) throws IOException {
-        String[] attributesNames = actonFileProperties.getProperty(USER_PROFILE_ATTRIBUTES).split(",");
+        String[] attributesNames = actonProperties.getProperty(USER_PROFILE_ATTRIBUTES).split(",");
 
         Map<String, String> attributes;
         try {
@@ -376,9 +359,9 @@ public class ActOnJob implements Job {
     }
 
     private void writeHeaders(BufferedWriter out) throws IOException {
-        out.write(actonFileProperties.getProperty(USER_PROFILE_HEADERS));
+        out.write(actonProperties.getProperty(USER_PROFILE_HEADERS));
         out.write(",");
-        out.write(actonFileProperties.getProperty(METRIC_HEADERS));
+        out.write(actonProperties.getProperty(METRIC_HEADERS));
         out.newLine();
     }
 

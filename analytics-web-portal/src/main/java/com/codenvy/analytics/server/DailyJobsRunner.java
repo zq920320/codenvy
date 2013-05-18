@@ -5,6 +5,7 @@
 package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.server.jobs.ActOnJob;
+import com.codenvy.analytics.server.jobs.JRebelJob;
 import com.codenvy.analytics.server.jobs.TimeLineViewJob;
 
 import org.quartz.CronScheduleBuilder;
@@ -25,7 +26,6 @@ public class DailyJobsRunner implements ServletContextListener {
 
     private static final Logger LOGGER          = LoggerFactory.getLogger(DailyJobsRunner.class);
     private static final String CRON_EXPRESSION = "0 0 1 ? * *";
-    // private static final String CRON_EXPRESSION = "0 0/1 * * * ?";
     public static Scheduler     scheduler;
 
 
@@ -50,7 +50,12 @@ public class DailyJobsRunner implements ServletContextListener {
             scheduler.start();
 
             scheduler.scheduleJob(TimeLineViewJob.createJob(), makeTrigger());
-            scheduler.scheduleJob(ActOnJob.makeJob(), ActOnJob.makeTrigger());
+
+            ActOnJob actOnJob = new ActOnJob();
+            scheduler.scheduleJob(actOnJob.getJobDetail(), actOnJob.getTrigger());
+
+            JRebelJob jRebelJob = new JRebelJob();
+            scheduler.scheduleJob(jRebelJob.getJobDetail(), jRebelJob.getTrigger());
         } catch (Exception e) {
             LOGGER.error("Scheduler was not initialized", e);
         }
