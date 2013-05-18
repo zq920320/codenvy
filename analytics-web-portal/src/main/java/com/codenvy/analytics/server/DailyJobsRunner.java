@@ -16,6 +16,8 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -51,11 +53,19 @@ public class DailyJobsRunner implements ServletContextListener {
 
             scheduler.scheduleJob(TimeLineViewJob.createJob(), makeTrigger());
 
-            ActOnJob actOnJob = new ActOnJob();
-            scheduler.scheduleJob(actOnJob.getJobDetail(), actOnJob.getTrigger());
+            try {
+                ActOnJob actOnJob = new ActOnJob();
+                scheduler.scheduleJob(actOnJob.getJobDetail(), actOnJob.getTrigger());
+            } catch (FileNotFoundException e) {
+                LOGGER.warn("Configuration for ActOnJob doesn't exist.");
+            }
 
-            JRebelJob jRebelJob = new JRebelJob();
-            scheduler.scheduleJob(jRebelJob.getJobDetail(), jRebelJob.getTrigger());
+            try {
+                JRebelJob jRebelJob = new JRebelJob();
+                scheduler.scheduleJob(jRebelJob.getJobDetail(), jRebelJob.getTrigger());
+            } catch (Exception e) {
+                LOGGER.warn("Configuration for JRebelJob doesn't exist.");
+            }
         } catch (Exception e) {
             LOGGER.error("Scheduler was not initialized", e);
         }
