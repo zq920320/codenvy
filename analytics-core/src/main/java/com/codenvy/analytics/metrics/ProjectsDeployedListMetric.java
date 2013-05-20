@@ -13,16 +13,16 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class AppDeployedListMetric extends ScriptBasedMetric {
+public class ProjectsDeployedListMetric extends ScriptBasedMetric {
 
-    AppDeployedListMetric() {
-        super(MetricType.APP_DEPLOYED_LIST);
+    ProjectsDeployedListMetric() {
+        super(MetricType.PROJECTS_DEPLOYED_LIST);
     }
 
     /** {@inheritDoc} */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.APP_DEPLOYED_LIST;
+        return ScriptType.DETAILED_PROJECTS_DEPLOYED;
     }
 
     /** {@inheritDoc} */

@@ -16,35 +16,40 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class BuiltProjectsNumberMetric extends CalculateBasedMetric {
+public class ProjectsUniqueDeployedNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    BuiltProjectsNumberMetric() throws IOException {
-        super(MetricType.PROJECTS_UNIQUE_BUILT_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_BUILT_LIST);
+    ProjectsUniqueDeployedNumberMetric() throws IOException {
+        super(MetricType.PROJECTS_DEPLOYED_NUMBER);
+        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_LIST);
     }
 
-    /** {@inheritDoc} */
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<MetricParameter> getParams() {
         return basedMetric.getParams();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Class< ? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
         ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
         ProjectsFilter filter = new ProjectsFilter(valueData);
 
-        int size = filter.getUniqueProjects().getAll().size();
-
-        return new LongValueData(size);
+        return new LongValueData(filter.getUniqueProjects().getAll().size());
     }
 }

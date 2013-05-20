@@ -15,9 +15,9 @@
     <view>
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
 		<metric type="users_created_number" title="Created"/>
-        <metric type="users_created_projects_percent" format="%.0f%%" title="% Have Created Projects"/>
 		<metric type="users_destroyed_number" title="Purged"/>
         <metric type="total_users_number" title="Total"/>
+        <metric type="users_created_projects_percent" format="%.0f%%" title="% Have Created Projects"/>
         <metric type="active_users_number" title="# Active"/>
 		<metric type="active_users_percent" format="%.1f%%" title="% Active"/>
         <empty />
@@ -44,9 +44,13 @@
     <view>
         <date section="Projects" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="projects_created_number" title="Created"/>
-        <metric type="built_projects_percent" format="%.0f%%" title="% Built"/>
-		<metric type="projects_destroyed_number" title="Destroyed"/>
+        <metric type="projects_destroyed_number" title="Destroyed"/>
         <metric type="total_projects_number" title="Total"/>
+        <empty />
+        <metric type="projects_unique_built_number" format="%.0f" title="# Built"/>
+        <metric type="projects_unique_built_percent" format="%.0f%%" title="% Built"/>
+        <metric type="projects_unique_deployed_number" format="%.0f" title="# Deployed"/>
+        <metric type="projects_unique_deployed_percent" format="%.0f%%" title="% Deployed"/>
         <metric type="active_projects_number" title="# Active"/>
         <metric type="active_projects_percent" format="%.1f%%" title="% Active"/>
         <empty />

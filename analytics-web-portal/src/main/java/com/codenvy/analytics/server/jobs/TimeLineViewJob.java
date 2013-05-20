@@ -45,6 +45,8 @@ public class TimeLineViewJob implements Job {
 
         try {
             new TimeLineViewServiceImpl().updateTimelineView(new Date(), TimeUnit.DAY);
+            new TimeLineViewServiceImpl().updateTimelineView(new Date(), TimeUnit.WEEK);
+            new TimeLineViewServiceImpl().updateTimelineView(new Date(), TimeUnit.MONTH);
         } finally {
             LOGGER.info("TimeLineViewJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

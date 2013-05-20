@@ -15,13 +15,13 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class AppDeployedNumberMetric extends CalculateBasedMetric {
+public class ProjectsDeployedNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    AppDeployedNumberMetric() throws IOException {
-        super(MetricType.APP_DEPLOYED_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.APP_DEPLOYED_LIST);
+    ProjectsDeployedNumberMetric() throws IOException {
+        super(MetricType.PROJECTS_DEPLOYED_NUMBER);
+        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_LIST);
     }
 
 

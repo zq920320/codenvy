@@ -102,11 +102,11 @@ public class MetricFactory {
             case PROJECTS_CREATED_NUMBER:
                 metric = new ProjectsCreatedNumberMetric();
                 break;
-            case BUILT_PROJECTS_NUMBER:
+            case PROJECTS_UNIQUE_BUILT_NUMBER:
                 metric = new BuiltProjectsNumberMetric();
                 break;
-            case BUILT_PROJECTS_PERCENT:
-                metric = new BuiltProjectsPercentMetric();
+            case PROJECTS_UNIQUE_BUILT_PERCENT:
+                metric = new BuiltUniqueProjectsPercentMetric();
                 break;
             case PROJECTS_DESTROYED_NUMBER:
                 metric = new ProjectsDestroyedNumberMetric();
@@ -207,11 +207,17 @@ public class MetricFactory {
             case PROJECT_TYPE_OTHERS_PERCENT:
                 metric = new ProjectCreatedTypeOthersPercentMetric();
                 break;
-            case APP_DEPLOYED_LIST:
-                metric = new AppDeployedListMetric();
+            case PROJECTS_DEPLOYED_LIST:
+                metric = new ProjectsDeployedListMetric();
                 break;
-            case APP_DEPLOYED_NUMBER:
-                metric = new AppDeployedNumberMetric();
+            case PROJECTS_DEPLOYED_NUMBER:
+                metric = new ProjectsDeployedNumberMetric();
+                break;
+            case PROJECTS_UNIQUE_DEPLOYED_NUMBER:
+                metric = new ProjectsUniqueDeployedNumberMetric();
+                break;
+            case PROJECTS_UNIQUE_DEPLOYED_PERCENT:
+                metric = new ProjectsUniqueDeployedPercentMetric();
                 break;
             case PAAS_DEPLOYMENT_TYPES:
                 metric = new PaasDeploymentTypesMetric();

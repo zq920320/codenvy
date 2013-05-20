@@ -29,13 +29,6 @@ public enum ScriptType {
         }
     },
 
-    EVENT_COUNT_USERS_CREATED_PROJECTS {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
-        }
-    },
-
     EVENT_COUNT_WORKSPACE_CREATED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
@@ -51,13 +44,6 @@ public enum ScriptType {
     },
 
     EVENT_COUNT_USER_REMOVED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
-        }
-    },
-
-    EVENT_COUNT_DIST_PROJECT_BUILD {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return LongValueData.class;
@@ -127,7 +113,7 @@ public enum ScriptType {
         }
     },
 
-    APP_DEPLOYED_LIST {
+    DETAILED_PROJECTS_DEPLOYED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return ListListStringValueData.class;

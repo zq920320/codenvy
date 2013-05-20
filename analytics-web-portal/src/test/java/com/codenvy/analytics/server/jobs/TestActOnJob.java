@@ -67,7 +67,7 @@ public class TestActOnJob {
         Properties properties = new Properties();
         properties.put("user-profile-attributes", "email,firstName,lastName,phone,employer");
         properties.put("user-profile-headers", "email,firstName,lastName,phone,company");
-        properties.put("metric-names", "PROJECTS_CREATED_NUMBER,PROJECTS_BUILT_NUMBER,APP_DEPLOYED_NUMBER,PRODUCT_USAGE_TIME_TOTAL");
+        properties.put("metric-names", "PROJECTS_CREATED_NUMBER,PROJECTS_BUILT_NUMBER,PROJECTS_DEPLOYED_NUMBER,PRODUCT_USAGE_TIME_TOTAL");
         properties.put("metric-headers", "projects,builts,deployments,spentTime");
 
         ReadOnlyUserManager readOnlyUserManager = spy(new ReadOnlyUserManager(userManager));

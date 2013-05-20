@@ -49,7 +49,6 @@ public class TestAbstractFilter {
         assertEquals(filter.getIndex(MetricFilter.FILTER_USER), 1);
         assertEquals(filter.getIndex(MetricFilter.FILTER_PROJECT_NAME), 2);
         assertEquals(filter.getIndex(MetricFilter.FILTER_PROJECT_TYPE), 3);
-        assertEquals(filter.getIndex(MetricFilter.FILTER_PROJECT_PAAS), 4);
     }
 
     @Test

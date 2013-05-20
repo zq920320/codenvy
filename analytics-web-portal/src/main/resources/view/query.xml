@@ -9,21 +9,24 @@
         <metric type="total_workspaces_number" title="Workspaces: Total"/>
         <metric type="active_workspaces_number" title="Workspaces: # Active"/>
         <metric type="active_workspaces_percent" format="%.1f%%" title="Workspaces: % Active"/>
-		<metric type="users_created_number" title="Users: Created"/>
-		<metric type="users_created_projects_number" title="Users: # Have Created Projects"/>
-        <metric type="users_created_projects_percent" format="%.0f%%" title="Users: % Have Created Projects"/>
-		<metric type="users_destroyed_number" title="Users: Purged"/>
+        <metric type="users_created_number" title="Users: Created"/>
+        <metric type="users_created_projects_number" title="Users: # Have Created Projects"/>
+        <metric type="users_destroyed_number" title="Users: Purged"/>
         <metric type="total_users_number" title="Users: Total"/>
+        <metric type="users_created_projects_percent" format="%.0f%%" title="Users: % Have Created Projects"/>
         <metric type="active_users_number" title="Users: # Active"/>
-		<metric type="active_users_percent" format="%.1f%%" title="Users: % Active"/>
+        <metric type="active_users_percent" format="%.1f%%" title="Users: % Active"/>
         <metric type="users_added_to_workspace" format="%s" title="Users: How They Where Added To Workspaces"/>
         <metric type="users_sso_logged_in" format="%s" title="Users: Logged In Ways"/>
         <metric type="product_usage_time_total" format="%,.0f" title="Sessions: Product Usage Time (mins)"/>
         <metric type="product_usage_user_sessions_number" format="%,.0f" title="Sessions: # User Sessions"/>
         <metric type="projects_created_number" title="Projects: Created"/>
-        <metric type="built_projects_percent" format="%.0f%%" title="Projects: % Built"/>
-		<metric type="projects_destroyed_number" title="Projects: Destroyed"/>
+        <metric type="projects_destroyed_number" title="Projects: Destroyed"/>
         <metric type="total_projects_number" title="Projects: Total"/>
+        <metric type="projects_unique_built_number" format="%.0f" title="# Built"/>
+        <metric type="projects_unique_built_percent" format="%.0f%%" title="% Built"/>
+        <metric type="projects_unique_deployed_number" format="%.0f" title="Projects: # Deployed"/>
+        <metric type="projects_unique_deployed_percent" format="%.0f%%" title="Projects: % Deployed"/>
         <metric type="active_projects_number" title="Projects: # Active"/>
         <metric type="active_projects_percent" format="%.1f%%" title="Projects: % Active"/>
         <metric type="projects_created_types" format="%s" title="Projects: Created Types"/>
