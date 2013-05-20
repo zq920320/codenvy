@@ -1,7 +1,7 @@
 define(function(){
 
 	return {
-		userVoiceSubdomain : "cloudide",
+		userVoiceSubdomain : "codenvy",
 		userVoiceClientKey : "HFHriEB9vuXkTY7p23VxBw",
 
         // e.g. codenvy.con/contact?o=pricing-page
