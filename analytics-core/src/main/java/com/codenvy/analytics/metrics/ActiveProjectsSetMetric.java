@@ -4,6 +4,10 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.SetListStringValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
 import com.codenvy.analytics.scripts.ScriptType;
 
 
@@ -22,5 +26,18 @@ public class ActiveProjectsSetMetric extends ScriptBasedMetric {
     @Override
     protected ScriptType getScriptType() {
         return ScriptType.ACTIVE_PROJECTS;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isFilterSupported() {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected ProjectsFilter createFilter(ValueData valueData) {
+        SetListStringValueData setVD = (SetListStringValueData)valueData;
+        return new ProjectsFilter(new ListListStringValueData(setVD.getAll()));
     }
 }

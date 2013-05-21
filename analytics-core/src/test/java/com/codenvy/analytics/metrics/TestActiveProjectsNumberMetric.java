@@ -16,14 +16,14 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.analytics.scripts;
+package com.codenvy.analytics.metrics;
+
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -34,32 +34,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptActiveUsers extends BaseTest {
+public class TestActiveProjectsNumberMetric extends BaseTest {
 
     @Test
     public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-01").build());
 
-        // events should not be taken in account
-        events.add(Event.Builder.createUserSSOLoggedOutEvent("user3").withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session1", "project1", "type1").withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session2", "project1", "type1").withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session3", "project1", "type1").withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws2", "session4", "project1", "type1").withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectDestroyedEvent("user2", "ws2", "session5", "project1", "type1").withDate("2010-10-02")
+                                .build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
+        params.put(MetricParameter.FROM_DATE.getName(), "20101002");
+        params.put(MetricParameter.TO_DATE.getName(), "20101002");
+        params.put(PigScriptExecutor.LOG, log.getParent());
 
-        SetStringValueData valueData = (SetStringValueData)executeAndReturnResult(ScriptType.ACTIVE_USERS, log, params);
-        Set<String> value = valueData.getAll();
-
-        assertEquals(value.size(), 2);
-        assertTrue(value.contains("user1"));
-        assertTrue(value.contains("user2"));
+        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_PROJECTS_NUMBER);
+        assertEquals(metric.getValue(params), new LongValueData(2));
     }
 }

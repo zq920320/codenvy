@@ -7,6 +7,7 @@ package com.codenvy.analytics.metrics.value;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -19,7 +20,7 @@ public class ListListStringValueData extends ListValueData<ListStringValueData> 
         super();
     }
 
-    public ListListStringValueData(List<ListStringValueData> value) {
+    public ListListStringValueData(Collection<ListStringValueData> value) {
         super(value);
     }
 

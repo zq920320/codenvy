@@ -21,6 +21,16 @@ package com.codenvy.analytics.scripts;
 
 import static org.testng.Assert.assertTrue;
 
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.SetListStringValueData;
+import com.codenvy.analytics.scripts.util.Event;
+import com.codenvy.analytics.scripts.util.LogGenerator;
+
+import org.junit.Assert;
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,16 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.SetListStringValueData;
-import com.codenvy.analytics.scripts.util.Event;
-import com.codenvy.analytics.scripts.util.LogGenerator;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptActiveProjects extends BaseTest {
 
@@ -46,21 +46,11 @@ public class TestScriptActiveProjects extends BaseTest {
     public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
 
-        // 3 active projects
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1").withDate("2010-10-02")
-                        .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project2").withDate("2010-10-02")
-                        .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session", "project2").withDate("2010-10-02")
-                                .build());
-
-        // project already mentioned
-        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws2", "session", "project1").withDate("2010-10-02")
-                        .build());
-
-        // events should be ignored
-        events.add(Event.Builder.createProjectDestroyedEvent("user2", "ws2", "session", "project3")
-                                .withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project1", "type1").withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project2", "type1").withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session", "project2", "type1").withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws2", "session", "project1", "type1").withDate("2010-10-02").build());
+        events.add(Event.Builder.createProjectDestroyedEvent("user2", "ws2", "session", "project3", "type1").withDate("2010-10-02").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -71,15 +61,11 @@ public class TestScriptActiveProjects extends BaseTest {
         SetListStringValueData valueData = (SetListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_PROJECTS, log, params);
         Set<ListStringValueData> all = valueData.getAll();
 
-        Assert.assertEquals(all.size(), 3);
-
-        ListStringValueData value = new ListStringValueData(Arrays.asList(new String[]{"ws2", "project1"}));
-        assertTrue(all.contains(value));
-
-        value = new ListStringValueData(Arrays.asList(new String[]{"ws2", "project2"}));
-        assertTrue(all.contains(value));
-
-        value = new ListStringValueData(Arrays.asList(new String[]{"ws3", "project2"}));
-        assertTrue(all.contains(value));
+        Assert.assertEquals(all.size(), 5);
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws2", "user2", "project1", "type1"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws2", "user2", "project2", "type1"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws3", "user2", "project2", "type1"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws2", "user3", "project1", "type1"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws2", "user2", "project3", "type1"))));
     }
 }

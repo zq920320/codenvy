@@ -22,19 +22,19 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.scripts.util.Event;
+import com.codenvy.analytics.scripts.util.LogGenerator;
+
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.scripts.util.Event;
-import com.codenvy.analytics.scripts.util.LogGenerator;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptUsersWithoutActions extends BaseTest {
@@ -47,9 +47,9 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         events.add(Event.Builder.createUserCreatedEvent("user", "user2").withDate("2012-10-01").build());
         events.add(Event.Builder.createUserCreatedEvent("user", "user3").withDate("2012-10-02").build());
 
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2012-10-01")
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project", "type").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2012-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project", "type").withDate("2012-10-03")
                         .build());
 
         File log = LogGenerator.generateLog(events);
@@ -94,13 +94,13 @@ public class TestScriptUsersWithoutActions extends BaseTest {
     @Test
     public void testUsersWithoutBuilds() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project").withDate("2012-10-01")
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws", "session", "project", "type").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2012-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project", "type").withDate("2012-10-03")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2012-10-01")
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project", "type").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2012-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project", "type").withDate("2012-10-03")
                         .build());
 
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws", "session", "project", "type")
@@ -127,11 +127,11 @@ public class TestScriptUsersWithoutActions extends BaseTest {
     // @Test
     public void testUsersWithoutDeployes() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project").withDate("2012-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project", "type").withDate("2012-10-03")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project").withDate("2012-10-01")
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project", "type").withDate("2012-10-01")
                         .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project").withDate("2012-10-03")
+        events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project", "type").withDate("2012-10-03")
                         .build());
 
         events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas")

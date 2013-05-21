@@ -50,6 +50,6 @@ public class ProjectsUniqueDeployedNumberMetric extends CalculateBasedMetric {
         ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
         ProjectsFilter filter = new ProjectsFilter(valueData);
 
-        return new LongValueData(filter.getUniqueProjects().getAll().size());
+        return new LongValueData(filter.getUniqueProjects().size());
     }
 }

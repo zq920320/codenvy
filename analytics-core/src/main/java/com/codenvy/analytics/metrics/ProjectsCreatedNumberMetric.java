@@ -47,6 +47,6 @@ public class ProjectsCreatedNumberMetric extends CalculateBasedMetric {
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
         ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        return new LongValueData(valueData.getAll().size());
+        return new LongValueData(valueData.size());
     }
 }

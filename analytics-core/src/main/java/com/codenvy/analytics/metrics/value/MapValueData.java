@@ -34,6 +34,10 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
         return Collections.unmodifiableMap(value);
     }
 
+    public int size() {
+        return value.size();
+    }
+
     /**
      * {@inheritDoc}
      */

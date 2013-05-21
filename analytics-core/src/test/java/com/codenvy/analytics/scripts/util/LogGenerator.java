@@ -18,15 +18,26 @@
  */
 package com.codenvy.analytics.scripts.util;
 
-import java.io.*;
+import com.codenvy.analytics.BaseTest;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
+import java.util.UUID;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class LogGenerator {
 
     /** Generates log file with given events. */
     public static File generateLog(List<Event> events) throws IOException {
-        File log = File.createTempFile("log", "tmp");
+        File parent = new File(BaseTest.BASE_DIR, UUID.randomUUID().toString());
+        parent.mkdirs();
+
+        File log = new File(parent, UUID.randomUUID().toString());
+        log.createNewFile();
         log.deleteOnExit();
 
         Writer out = new BufferedWriter(new FileWriter(log));

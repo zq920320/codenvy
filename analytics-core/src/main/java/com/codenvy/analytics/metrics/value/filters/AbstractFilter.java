@@ -31,7 +31,7 @@ public abstract class AbstractFilter implements Filter {
     /** {@inheritDoc} */
     @Override
     public int size() {
-        return valueData.getAll().size();
+        return valueData.size();
     }
 
     /** {@inheritDoc} */

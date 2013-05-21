@@ -147,9 +147,9 @@ public class Event {
         }
 
         /** Create 'project-destroyed' event. */
-        public static Builder createProjectDestroyedEvent(String user, String ws, String session, String project) {
+        public static Builder createProjectDestroyedEvent(String user, String ws, String session, String project, String type) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "project-destroyed")
-                                .withParam("PROJECT", project);
+                                .withParam("PROJECT", project).withParam("TYPE", type);
         }
 
         /** Create 'project-built' event. */
@@ -198,9 +198,9 @@ public class Event {
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("JREBEL", String.valueOf(jrebel));
         }
 
-        public static Builder createProjectCreatedEvent(String user, String ws, String session, String project) {
+        public static Builder createProjectCreatedEvent(String user, String ws, String session, String project, String type) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
-                                .withParam("PROJECT", project);
+                                .withParam("PROJECT", project).withParam("TYPE", type);
         }
 
         public static Builder createJRebelUserProfileInfo(String user,

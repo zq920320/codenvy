@@ -32,6 +32,10 @@ public abstract class ListValueData<T> extends AbstractValueData {
         return Collections.unmodifiableList(value);
     }
 
+    public int size() {
+        return value.size();
+    }
+
     /** {@inheritedDoc} */
     @SuppressWarnings("unchecked")
     @Override

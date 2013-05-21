@@ -100,7 +100,7 @@ public class TestScriptEventCount extends BaseTest {
     @Test
     public void testEventCountProjectDestroyed() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project", "type").withDate("2010-10-01")
                         .build());
         File log = LogGenerator.generateLog(events);
 

@@ -34,6 +34,10 @@ public abstract class SetValueData<T> extends AbstractValueData {
         return Collections.unmodifiableSet(value);
     }
 
+    public int size() {
+        return value.size();
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -4,13 +4,13 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.SetValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class SizeOfSetMetric extends CalculateBasedMetric {
@@ -26,7 +26,7 @@ public abstract class SizeOfSetMetric extends CalculateBasedMetric {
     @Override
     public ValueData evaluate(Map<String, String> context) throws IOException {
         SetValueData< ? > valueData = (SetValueData< ? >)basedMetric.getValue(context);
-        return new LongValueData(valueData.getAll().size());
+        return new LongValueData(valueData.size());
     }
 
     /** {@inheritedDoc} */

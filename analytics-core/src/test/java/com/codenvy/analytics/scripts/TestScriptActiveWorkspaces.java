@@ -21,20 +21,20 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.scripts.util.Event;
+import com.codenvy.analytics.scripts.util.LogGenerator;
+
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.scripts.util.Event;
-import com.codenvy.analytics.scripts.util.LogGenerator;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptActiveWorkspaces extends BaseTest {
@@ -71,12 +71,12 @@ public class TestScriptActiveWorkspaces extends BaseTest {
     public void testEventFound2UseCase() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project").withDate("2010-10-02")
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "session", "project", "type").withDate("2010-10-02")
                                 .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session", "project").withDate("2010-10-02")
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws3", "session", "project", "type").withDate("2010-10-02")
                                 .build());
         events.add(Event.Builder.createUserCreatedEvent("userId", "hello@gmail").withDate("2010-10-03").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws5", "session", "project").withDate("2010-10-11")
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws5", "session", "project", "type").withDate("2010-10-11")
                                 .build());
 
         File log = LogGenerator.generateLog(events);

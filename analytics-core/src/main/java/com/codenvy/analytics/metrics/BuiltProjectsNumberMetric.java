@@ -43,7 +43,7 @@ public class BuiltProjectsNumberMetric extends CalculateBasedMetric {
         ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
         ProjectsFilter filter = new ProjectsFilter(valueData);
 
-        int size = filter.getUniqueProjects().getAll().size();
+        int size = filter.getUniqueProjects().size();
 
         return new LongValueData(size);
     }
