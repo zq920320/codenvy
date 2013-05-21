@@ -4,6 +4,10 @@
  */
 package com.codenvy.analytics.metrics.value;
 
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
+
+import org.apache.pig.data.Tuple;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,10 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.pig.data.Tuple;
-
-import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -73,10 +73,6 @@ public class ValueDataFactory {
             return createSetListStringValueData(iter);
         }
 
-        else if (clazz == ListDoubleValueData.class) {
-            return createListDoubleValueData(iter);
-        }
-
         else if (clazz == ListListStringValueData.class) {
             return createListListStringValueData(iter);
         }
@@ -121,22 +117,6 @@ public class ValueDataFactory {
         }
 
         return new SetListStringValueData(result);
-    }
-
-    private static ListDoubleValueData createListDoubleValueData(Iterator<Tuple> iter) throws IOException {
-        if (!iter.hasNext()) {
-            return new ListDoubleValueData(Collections.<Double> emptyList());
-        }
-
-        List<Double> result = new ArrayList<Double>();
-        while (iter.hasNext()) {
-            Tuple tuple = iter.next();
-
-            validateTupleSize(tuple, 1);
-            result.add((Double)tuple.get(0));
-        }
-
-        return new ListDoubleValueData(result);
     }
 
     private static ListStringValueData createListStringValueData(Iterator<Tuple> iter) throws IOException {

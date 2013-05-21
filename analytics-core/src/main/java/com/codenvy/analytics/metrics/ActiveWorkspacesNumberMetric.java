@@ -4,15 +4,49 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.SetListStringValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.Filter;
+import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
+
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActiveWorkspacesNumberMetric extends SizeOfSetMetric {
+public class ActiveWorkspacesNumberMetric extends CalculateBasedMetric {
+
+    private final Metric basedMetric;
 
     ActiveWorkspacesNumberMetric() throws IOException {
-        super(MetricType.ACTIVE_WORKSPACES_NUMBER, MetricFactory.createMetric(MetricType.ACTIVE_WORKSPACES_SET));
+        super(MetricType.ACTIVE_WORKSPACES_NUMBER);
+        this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_SET);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<MetricParameter> getParams() {
+        return basedMetric.getParams();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Class< ? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected ValueData evaluate(Map<String, String> context) throws IOException {
+        SetListStringValueData valueData = (SetListStringValueData)basedMetric.getValue(context);
+        ListListStringValueData listVD = new ListListStringValueData(valueData.getAll());
+
+        Filter filter = new UsersWorkspacesFilter(listVD);
+        return new LongValueData(filter.getAvailable(MetricFilter.FILTER_WS).size());
     }
 }

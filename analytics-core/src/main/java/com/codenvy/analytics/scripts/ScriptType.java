@@ -78,13 +78,6 @@ public enum ScriptType {
         }
     },
 
-    ACTIVE_WORKSPACES {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
-        }
-    },
-
     ACTIVE_PROJECTS {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
@@ -92,10 +85,10 @@ public enum ScriptType {
         }
     },
 
-    ACTIVE_USERS {
+    ACTIVE_USERS_WORKSPACES {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
+            return SetListStringValueData.class;
         }
     },
 

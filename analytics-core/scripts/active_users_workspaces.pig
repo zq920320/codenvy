@@ -4,8 +4,9 @@
 IMPORT 'macros.pig';
 
 f1 = loadResources('$log');
-f2 = filterByDate(f1, '$fromDate', '$toDate');
-fR = removeEvent(f2, 'user-sso-logged-out');
+fR = filterByDate(f1, '$fromDate', '$toDate');
 
 a1 = extractUser(fR);
-result = FOREACH a1 GENERATE user;
+aR = extractWs(a1);
+
+result = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user));

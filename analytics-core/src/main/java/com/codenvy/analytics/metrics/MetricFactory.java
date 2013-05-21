@@ -36,9 +36,6 @@ public class MetricFactory {
             case ACTIVE_WORKSPACES_NUMBER:
                 metric = new ActiveWorkspacesNumberMetric();
                 break;
-            case ACTIVE_WORKSPACES_SET:
-                metric = new ActiveWorkspacesSetMetric();
-                break;
             case ACTIVE_WORKSPACES_PERCENT:
                 metric = new ActiveWorkspacesPercentMetric();
                 break;
@@ -57,8 +54,8 @@ public class MetricFactory {
             case ACTIVE_USERS_NUMBER:
                 metric = new ActiveUsersNumberMetric();
                 break;
-            case ACTIVE_USERS_SET:
-                metric = new ActiveUsersSetMetric();
+            case ACTIVE_USERS_WORKAPCES_SET:
+                metric = new ActiveUsersWorkspacesSetMetric();
                 break;
             case ACTIVE_USERS_PERCENT:
                 metric = new ActiveUsersPercentMetric();

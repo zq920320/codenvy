@@ -16,15 +16,13 @@
  *    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  *    02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.codenvy.analytics.scripts;
+package com.codenvy.analytics.metrics;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.SetListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -32,14 +30,12 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptActiveUsersWorkspaces extends BaseTest {
+public class TestMetricActiveUsersWorkspacesNumber extends BaseTest {
 
     @Test
     public void testEventFound() throws Exception {
@@ -56,12 +52,12 @@ public class TestScriptActiveUsersWorkspaces extends BaseTest {
         Map<String, String> params = new HashMap<String, String>();
         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
         params.put(MetricParameter.TO_DATE.getName(), "20101002");
+        params.put(PigScriptExecutor.LOG, log.getParent());
 
-        SetListStringValueData valueData = (SetListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_USERS_WORKSPACES, log, params);
-        Set<ListStringValueData> value = valueData.getAll();
+        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_NUMBER);
+        assertEquals(metric.getValue(params), new LongValueData(2));
 
-        assertEquals(value.size(), 2);
-        assertTrue(value.contains(new ListStringValueData(Arrays.asList("ws1", "user1"))));
-        assertTrue(value.contains(new ListStringValueData(Arrays.asList("ws2", "user2"))));
+        metric = MetricFactory.createMetric(MetricType.ACTIVE_WORKSPACES_NUMBER);
+        assertEquals(metric.getValue(params), new LongValueData(2));
     }
 }
