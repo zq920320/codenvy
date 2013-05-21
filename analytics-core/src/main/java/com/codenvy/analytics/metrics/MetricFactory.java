@@ -285,8 +285,11 @@ public class MetricFactory {
             case JREBEL_USER_PROFILE_INFO_GATHERING:
                 metric = new JrebelUserProfileInfoGatheringMetric();
                 break;
-            case INVITATIONS_SENT:
-                metric = new InvitationsSentMetric();
+            case INVITATIONS_SENT_LIST:
+                metric = new InvitationsSentListMetric();
+                break;
+            case INVITATIONS_SENT_NUMBER:
+                metric = new InvitationsSentNumberMetric();
                 break;
             case INVITATIONS_ACCEPTED_PERCENT:
                 metric = new InvitationsAcceptedPercentMetric();

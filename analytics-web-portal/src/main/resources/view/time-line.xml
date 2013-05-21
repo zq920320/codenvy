@@ -121,7 +121,7 @@
     </view>
     <view>
         <date section="Invitations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <metric type="invitations_sent" title="Sent"/>
+        <metric type="invitations_sent_number" title="Sent"/>
         <metric type="invitations_accepted_percent" format="%.0f%%" title="Accepted"/>
         <empty />
     </view>

@@ -33,7 +33,7 @@
         <metric type="jrebel_eligible" title="JRebel: Eligible"/>
         <metric type="jrebel_usage" format="%s" title="JRebel: Usage"/>
         <metric type="paas_deployment_types" format="%s" title="PAAS"/>
-        <metric type="invitations_sent" title="Invitations: Sent"/>
+        <metric type="invitations_sent_number" title="Invitations: Sent"/>
         <metric type="invitations_accepted_percent" format="%.0f%%" title="Invitations: % Accepted"/>
     </view>
 </views>

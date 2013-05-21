@@ -47,7 +47,7 @@ public class TestScriptBasedMetrics extends BaseTest {
         Utils.putFromDate(context, Calendar.getInstance());
         Utils.putTimeUnit(context, TimeUnit.DAY);
 
-        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT));
+        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT_LIST));
 
         assertEquals(mockedMetric.getValue(context), new LongValueData(10L));
 
@@ -75,7 +75,7 @@ public class TestScriptBasedMetrics extends BaseTest {
         Utils.putToDate(context, calendar);
         Utils.putFromDate(context, calendar);
 
-        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT));
+        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT_LIST));
 
         assertEquals(mockedMetric.getValue(context), new LongValueData(10L));
         assertEquals(mockedMetric.load(context), new LongValueData(10L));

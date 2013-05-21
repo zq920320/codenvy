@@ -19,8 +19,13 @@
 package com.codenvy.analytics.scripts;
 
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -30,6 +35,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +128,9 @@ public class TestScriptEventCount extends BaseTest {
         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_INVITE, log, params);
-        Assert.assertEquals(value.getAsLong(), 1L);
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_INVITATIONS, log, params);
+
+        assertEquals(value.size(), 1L);
+        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws", "user", "email"))));
     }
 }

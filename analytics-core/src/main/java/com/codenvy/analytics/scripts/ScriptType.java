@@ -64,10 +64,10 @@ public enum ScriptType {
         }
     },
 
-    EVENT_COUNT_USER_INVITE {
+    USERS_INVITATIONS {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
