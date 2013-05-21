@@ -11,7 +11,10 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.SetListStringValueData;
+import com.codenvy.analytics.metrics.value.filters.Filter;
+import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
 import com.codenvy.organization.exception.OrganizationServiceException;
 
 import org.apache.commons.net.ftp.FTPReply;
@@ -369,9 +372,13 @@ public class ActOnJob implements Job {
      * Extracts list of all active users.
      */
     protected Set<String> getActiveUsers(Map<String, String> context) throws IOException {
-        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
-        SetStringValueData valueData = (SetStringValueData)metric.getValue(context);
+        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_SET);
 
-        return valueData.getAll();
+        SetListStringValueData valueData = (SetListStringValueData)metric.getValue(context);
+        ListListStringValueData listVD = new ListListStringValueData(valueData);
+
+        Filter filter = new UsersWorkspacesFilter(listVD);
+
+        return filter.getAvailable(MetricFilter.FILTER_USER).getAll();
     }
 }
