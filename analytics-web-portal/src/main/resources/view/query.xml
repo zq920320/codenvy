@@ -11,7 +11,6 @@
         <metric type="active_workspaces_percent" format="%.1f%%" title="Workspaces: % Active"/>
         <metric type="users_created_number" title="Users: Created"/>
         <metric type="users_created_projects_number" title="Users: # Have Created Projects"/>
-        <metric type="users_destroyed_number" title="Users: Purged"/>
         <metric type="total_users_number" title="Users: Total"/>
         <metric type="users_created_projects_percent" format="%.0f%%" title="Users: % Have Created Projects"/>
         <metric type="active_users_number" title="Users: # Active"/>

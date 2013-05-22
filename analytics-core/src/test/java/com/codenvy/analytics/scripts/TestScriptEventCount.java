@@ -73,35 +73,6 @@ public class TestScriptEventCount extends BaseTest {
         Assert.assertEquals(value.getAsLong(), 2L);
     }
 
-    @Test
-    public void testEventCountUserCreated() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserCreatedEvent("user1", "user@user1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user2", "user@user2").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("user3", "user@user3").withDate("2010-10-01").build());
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_CREATED, log, params);
-        Assert.assertEquals(value.getAsLong(), 3L);
-    }
-
-    @Test
-    public void testEventCountUserRemoved() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserRemovedEvent("user1").withDate("2010-10-01").build());
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_USER_REMOVED, log, params);
-        Assert.assertEquals(value.getAsLong(), 1L);
-    }
 
     @Test
     public void testEventCountProjectDestroyed() throws Exception {

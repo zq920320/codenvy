@@ -36,17 +36,17 @@ public enum ScriptType {
         }
     },
 
-    EVENT_COUNT_USER_CREATED {
+    USERS_CREATED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
-    EVENT_COUNT_USER_REMOVED {
+    USERS_REMOVED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
@@ -110,13 +110,6 @@ public enum ScriptType {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return ListListStringValueData.class;
-        }
-    },
-
-    DETAILED_USERS_CREATED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
         }
     },
 
