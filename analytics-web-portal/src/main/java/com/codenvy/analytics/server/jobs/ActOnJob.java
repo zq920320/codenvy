@@ -60,8 +60,7 @@ import javax.net.ssl.SSLException;
  */
 public class ActOnJob implements Job {
 
-    private static final String FILE_NAME_TEMPLATE = "${file_name}";
-
+    public static final String        FILE_NAME                 = "ideuserupdate.csv";
     private static final String       EMAIL                     = "email";
 
     private static final String       FTP_PASSWORD_PARAM        = "ftp_password";
@@ -188,7 +187,7 @@ public class ActOnJob implements Job {
             message.setFrom(new InternetAddress(actonProperties.getProperty(MAIL_USER)));
             message.setRecipients(Message.RecipientType.TO,
                                   InternetAddress.parse(actonProperties.getProperty(MAIL_TO)));
-            message.setSubject(actonProperties.getProperty(MAIL_SUBJECT).replace(FILE_NAME_TEMPLATE, fileName));
+            message.setSubject(actonProperties.getProperty(MAIL_SUBJECT));
             message.setText(actonProperties.getProperty(MAIL_TEXT));
 
             Transport.send(message);
@@ -293,7 +292,7 @@ public class ActOnJob implements Job {
     }
 
     private File createFile(Map<String, String> context) {
-        return new File(System.getProperty("java.io.tmpdir"), Utils.getToDateParam(context) + ".csv");
+        return new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
     }
 
     private void writeMetricsValues(Map<String, String> context, BufferedWriter out, String user) throws IOException {
