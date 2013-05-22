@@ -6,5 +6,5 @@ fR = filterByEvent(f2, 'user-created');
 
 tR = extractUserFromAliases(fR);
 
-result = FOREACH tR GENERATE user;
+result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(user));
 

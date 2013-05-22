@@ -15,7 +15,6 @@
     <view>
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
 		<metric type="users_created_number" title="Created"/>
-		<metric type="users_destroyed_number" title="Purged"/>
         <metric type="total_users_number" title="Total"/>
         <metric type="users_created_projects_percent" format="%.0f%%" title="% Have Created Projects"/>
         <metric type="active_users_number" title="# Active"/>

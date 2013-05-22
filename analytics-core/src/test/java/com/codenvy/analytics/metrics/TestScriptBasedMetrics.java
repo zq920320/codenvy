@@ -130,7 +130,7 @@ public class TestScriptBasedMetrics extends BaseTest {
 
         @Override
         protected ScriptType getScriptType() {
-            return ScriptType.EVENT_COUNT_USER_CREATED;
+            return ScriptType.USERS_CREATED;
         }
 
         @Override

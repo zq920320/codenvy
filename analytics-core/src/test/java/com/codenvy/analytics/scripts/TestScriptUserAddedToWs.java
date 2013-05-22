@@ -21,31 +21,34 @@ package com.codenvy.analytics.scripts;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptDetailsUserCreated extends BaseTest {
+public class TestScriptUserAddedToWs extends BaseTest {
 
     @Test
-    public void testScriptDetailsProjectCreatedTypes() throws Exception {
+    public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserCreatedEvent("id1", "user1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("id2", "user2").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("id3", "user3").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCreatedEvent("id4", "user1").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws1", "session", "ws1", "user1", "website")
+                        .withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws1", "session", "ws1", "user2", "website")
+                        .withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user3", "ws1", "session", "ws1", "user3", "invite")
+                        .withDate("2010-10-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -53,14 +56,12 @@ public class TestScriptDetailsUserCreated extends BaseTest {
         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
-        SetStringValueData value =
-                                   (SetStringValueData)executeAndReturnResult(ScriptType.DETAILED_USERS_CREATED, log, params);
-
-        Set<String> all = value.getAll();
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_ADDED_TO_WS, log, params);
+        List<ListStringValueData> all = value.getAll();
 
         assertEquals(all.size(), 3);
-        assertTrue(all.contains("user1"));
-        assertTrue(all.contains("user2"));
-        assertTrue(all.contains("user3"));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws1", "user1", "website"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws1", "user2", "website"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws1", "user3", "invite"))));
     }
 }

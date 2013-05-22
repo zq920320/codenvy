@@ -38,30 +38,6 @@ import java.util.Map;
 public class TestScriptDetails extends BaseTest {
 
     @Test
-    public void testScriptDetailsUserAddedToWs() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserAddedToWsEvent("user1", "ws1", "session", "ws1", "user1", "website")
-                        .withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user2", "ws1", "session", "ws1", "user2", "website")
-                        .withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user3", "ws1", "session", "ws1", "user3", "invite")
-                        .withDate("2010-10-01").build());
-
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_USER_ADDED_TO_WS, log, params);
-        Map<String, Long> all = value.getAll();
-
-        assertEquals(all.size(), 2);
-        assertEquals(all.get("website"), Long.valueOf(2));
-        assertEquals(all.get("invite"), Long.valueOf(1));
-    }
-
-    @Test
     public void testScriptDetailsUserSsoLoggedIn() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01").build());

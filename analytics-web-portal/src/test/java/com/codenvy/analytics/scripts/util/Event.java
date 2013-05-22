@@ -131,8 +131,8 @@ public class Event {
                                 .withParam("ALIASES", "[" + aliases + "]");
         }
 
-        public static Builder createUserRemovedEvent(String userId) {
-            return new Builder().withParam("EVENT", "user-removed").withParam("USER-ID", userId);
+        public static Builder createUserRemovedEvent(String user) {
+            return new Builder().withParam("EVENT", "user-removed").withParam("USER", user);
         }
 
         /** Create 'tenant-destroyed' event. */
