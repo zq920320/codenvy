@@ -20,19 +20,19 @@ package com.codenvy.analytics.scripts;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptDetails extends BaseTest {
@@ -82,37 +82,5 @@ public class TestScriptDetails extends BaseTest {
         assertEquals(all.get("google"), Long.valueOf(2));
         assertEquals(all.get("github"), Long.valueOf(1));
         assertEquals(all.get("jaas"), Long.valueOf(1));
-    }
-
-    @Test
-    public void testScriptDetailsApplicationCreatedPaas() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project1", "type", "paas1")
-                        .withDate("2010-10-01").build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project2", "type", "paas3")
-                        .withDate("2010-10-01").build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project3", "type", "paas3")
-                        .withDate("2010-10-01").build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user", "ws", "session", "project4", "type", "paas3")
-                        .withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectDeployedEvent("user", "ws", "session", "project4", "type", "local")
-                        .withDate("2010-10-01").build());
-
-
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        MapStringLongValueData value =
-                                       (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_APPLICATION_CREATED_PAAS, log,
-                                                                                      params);
-        Map<String, Long> all = value.getAll();
-
-        assertEquals(all.size(), 3);
-        assertEquals(all.get("paas1"), Long.valueOf(1));
-        assertEquals(all.get("paas3"), Long.valueOf(3));
-        assertEquals(all.get("local"), Long.valueOf(1));
     }
 }

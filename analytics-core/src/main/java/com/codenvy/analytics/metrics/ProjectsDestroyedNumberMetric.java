@@ -6,7 +6,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.scripts.ScriptType;
 
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */

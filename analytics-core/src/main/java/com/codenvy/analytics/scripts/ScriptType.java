@@ -127,14 +127,6 @@ public enum ScriptType {
         }
     },
 
-    DETAILS_APPLICATION_CREATED_PAAS {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            // TODO replace by SetValueData<T>
-            return MapStringLongValueData.class;
-        }
-    },
-
     DETAILS_USER_SSO_LOGGED_IN {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
