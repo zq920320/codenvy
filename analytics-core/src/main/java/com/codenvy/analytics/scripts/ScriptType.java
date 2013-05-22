@@ -71,10 +71,10 @@ public enum ScriptType {
         }
     },
 
-    EVENT_COUNT_JREBEL_USAGE {
+    JREBEL_USAGE {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
@@ -136,13 +136,6 @@ public enum ScriptType {
     },
 
     DETAILS_USER_SSO_LOGGED_IN {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return MapStringLongValueData.class;
-        }
-    },
-
-    DETAILS_JREBEL_USAGE {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;

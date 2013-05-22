@@ -89,7 +89,7 @@
     </view>
     <view>
         <date section="JRebel Usage" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <metric type="jrebel_eligible" title="Eligible"/>
+        <metric type="jrebel_usage_eligible" title="Eligible"/>
         <metric type="jrebel_usage_percent" format="%.0f%%" title="% Usage"/>
         <empty />
     </view>

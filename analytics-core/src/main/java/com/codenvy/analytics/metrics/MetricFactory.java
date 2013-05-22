@@ -273,14 +273,14 @@ public class MetricFactory {
             case PAAS_DEPLOYMENT_TYPE_TIER3_PERCENT:
                 metric = new PaasDeploymentTypeTier3PercentMetric();
                 break;
-            case JREBEL_ELIGIBLE:
-                metric = new JrebelElibigleMetric();
+            case JREBEL_USAGE_LIST:
+                metric = new JRebelUsageListMetric();
                 break;
-            case JREBEL_USAGE:
-                metric = new JrebelUsageMetric();
+            case JREBEL_USAGE_ELIGIBLE:
+                metric = new JRebelUsageEligibleMetric();
                 break;
             case JREBEL_USAGE_PERCENT:
-                metric = new JrebelUsagePercentMetric();
+                metric = new JRebelUsagePercentMetric();
                 break;
             case JREBEL_USER_PROFILE_INFO_GATHERING:
                 metric = new JrebelUserProfileInfoGatheringMetric();

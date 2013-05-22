@@ -30,8 +30,8 @@
         <metric type="active_projects_number" title="Projects: # Active"/>
         <metric type="active_projects_percent" format="%.1f%%" title="Projects: % Active"/>
         <metric type="projects_created_types" format="%s" title="Projects: Created Types"/>
-        <metric type="jrebel_eligible" title="JRebel: Eligible"/>
-        <metric type="jrebel_usage" format="%s" title="JRebel: Usage"/>
+        <metric type="jrebel_usage_eligible" title="JRebel: Eligible"/>
+        <metric type="jrebel_usage_percent" format="%s" title="JRebel: % Usage"/>
         <metric type="paas_deployment_types" format="%s" title="PAAS"/>
         <metric type="invitations_sent_number" title="Invitations: Sent"/>
         <metric type="invitations_accepted_percent" format="%.0f%%" title="Invitations: % Accepted"/>

@@ -4,9 +4,9 @@
  */
 package com.codenvy.analytics.metrics.value.filters;
 
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-
 import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 /**
@@ -29,7 +29,7 @@ public interface Filter {
      * @return the size of groups
      * @throws IllegalArgumentException if filter is not supported
      */
-    ValueData sizeOfGroups(MetricFilter key) throws IllegalArgumentException;
+    MapStringLongValueData sizeOfGroups(MetricFilter key) throws IllegalArgumentException;
 
     /**
      * @return applied filter

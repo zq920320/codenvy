@@ -19,21 +19,24 @@
 package com.codenvy.analytics.scripts;
 
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptJrebelUsage extends BaseTest {
@@ -55,21 +58,23 @@ public class TestScriptJrebelUsage extends BaseTest {
         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
-        Assert.assertEquals(value.getAsLong(), 4L);
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.JREBEL_USAGE, log, params);
+
+        assertEquals(value.size(), 4);
+        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws", "user1", "project1", "type", "false"))));
+        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws", "user1", "project2", "type", "false"))));
+        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws", "user2", "project3", "type", "false"))));
+        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws", "user2", "project4", "type", "false"))));
     }
 
     @Test
     public void testJRebelEligibleDistinction() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(
-                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-        events.add(
-                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-        events.add(
-                Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
+        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", false).withDate("2010-10-01").build());
         events.add(Event.Builder.createJRebelUsageEvent("user2", "ws1", "session", "project1", "type", false).withDate("2010-10-01")
-                        .build());
+                                .build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -77,52 +82,11 @@ public class TestScriptJrebelUsage extends BaseTest {
         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_JREBEL_USAGE, log, params);
-        Assert.assertEquals(value.getAsLong(), 3L);
-    }
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.JREBEL_USAGE, log, params);
 
-    @Test
-    public void testDetailedJRebelUsageDistinction() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(
-                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", true).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project1", "type", true).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", true).withDate("2010-10-01").build());
-
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_JREBEL_USAGE, log, params);
-        Map<String, Long> all = value.getAll();
-
-        Assert.assertEquals(all.get("true"), Long.valueOf(2));
-        Assert.assertEquals(all.get("false"), Long.valueOf(1));
-    }
-
-    @Test
-    public void testDetailedJRebelUsage() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(
-                Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project1", "type", false).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user1", "ws", "session", "project2", "type", true).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project3", "type", true).withDate("2010-10-01").build());
-        events.add(Event.Builder.createJRebelUsageEvent("user2", "ws", "session", "project4", "type", true).withDate("2010-10-01").build());
-
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_JREBEL_USAGE, log, params);
-
-        Map<String, Long> all = value.getAll();
-
-        Assert.assertEquals(all.get("true"), Long.valueOf(3));
-        Assert.assertEquals(all.get("false"), Long.valueOf(1));
+        assertEquals(value.size(), 3);
+        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws", "user1", "project1", "type", "false"))));
+        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws", "user2", "project3", "type", "false"))));
+        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws1", "user2", "project1", "type", "false"))));
     }
 }
