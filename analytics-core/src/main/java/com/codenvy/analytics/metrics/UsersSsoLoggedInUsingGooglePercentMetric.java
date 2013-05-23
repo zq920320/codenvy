@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class UsersSsoLoggedInUsingGooglePercentMetric extends ValueFromMapMetric {
     UsersSsoLoggedInUsingGooglePercentMetric() throws IOException {
-        super(MetricType.USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN),
+        super(MetricType.USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN_TYPES),
               ValueType.PERCENT, "google", "signed");
     }
 }

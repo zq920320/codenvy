@@ -26,11 +26,9 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -41,56 +39,10 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptEventCount extends BaseTest {
-    @Test
-    public void testEventCountTenantCreated() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-02").build());
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_WORKSPACE_CREATED, log, params);
-        Assert.assertEquals(value.getAsLong(), 2L);
-    }
+public class TestUsersInvitations extends BaseTest {
 
     @Test
-    public void testEventCountTenantDestroyed() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createTenantDestroyedEvent("ws1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createTenantDestroyedEvent("ws2").withDate("2010-10-01").build());
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED, log, params);
-        Assert.assertEquals(value.getAsLong(), 2L);
-    }
-
-
-    @Test
-    public void testEventCountProjectDestroyed() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project", "type").withDate("2010-10-01")
-                        .build());
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
-
-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, params);
-        Assert.assertEquals(value.getAsLong(), 1L);
-    }
-
-    @Test
-    public void testEventCountUserInvite() throws Exception {
+    public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserInviteEvent("user", "ws", "session", "email").withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);

@@ -7,13 +7,13 @@ package com.codenvy.analytics.metrics.value;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricType;
 
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricType;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -22,7 +22,7 @@ public class TestFSValueDataManager extends BaseTest {
 
     @Test(expectedExceptions = FileNotFoundException.class)
     public void shouldThrowExceptionIfFileNotExist() throws Exception {
-        FSValueDataManager.store(new StringValueData("test"), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        FSValueDataManager.store(new LongValueData(2), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
 
         File file = FSValueDataManager.getFile(MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
         file.delete();
@@ -39,6 +39,6 @@ public class TestFSValueDataManager extends BaseTest {
 
         assertTrue(file.exists());
 
-        FSValueDataManager.store(new StringValueData("test"), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+        FSValueDataManager.store(new LongValueData(2), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
     }
 }

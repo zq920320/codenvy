@@ -47,10 +47,10 @@ public class UsersCreatedProjectsNumberMetric extends CalculateBasedMetric {
         int count = 0;
 
         ProjectsFilter pFilter = new ProjectsFilter((ListListStringValueData)createdProjectsMetric.getValue(context));
-        Set<String> allUsersHaveCreatedProjects = pFilter.getAvailable(MetricFilter.FILTER_USER).getAll();
+        Set<String> allUsersHaveCreatedProjects = pFilter.getAvailable(MetricFilter.FILTER_USER);
         
         UsersFilter uFilter = new UsersFilter((ListListStringValueData)createdUsersMetric.getValue(context));
-        Set<String> usersCreated = uFilter.getAvailable(MetricFilter.FILTER_USER).getAll();
+        Set<String> usersCreated = uFilter.getAvailable(MetricFilter.FILTER_USER);
 
         for (String user : usersCreated) {
             if (allUsersHaveCreatedProjects.contains(user)) {

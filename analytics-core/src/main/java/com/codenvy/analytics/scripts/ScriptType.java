@@ -1,4 +1,5 @@
 /*
+
  *    Copyright (C) 2013 Codenvy.
  *
  */
@@ -7,10 +8,6 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.SetListStringValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.util.Arrays;
@@ -29,10 +26,10 @@ public enum ScriptType {
         }
     },
 
-    EVENT_COUNT_WORKSPACE_CREATED {
+    WORKSPACES_CREATED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
@@ -50,17 +47,17 @@ public enum ScriptType {
         }
     },
 
-    EVENT_COUNT_WORKSPACE_DESTROYED {
+    WORKSPACES_DESTROYED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
-    EVENT_COUNT_PROJECT_DESTROYED {
+    PROJECTS_DESTROYED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
@@ -81,14 +78,14 @@ public enum ScriptType {
     ACTIVE_PROJECTS {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return SetListStringValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
     ACTIVE_USERS_WORKSPACES {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return SetListStringValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
@@ -99,59 +96,59 @@ public enum ScriptType {
         }
     },
 
-    DETAILED_PROJECTS_CREATED {
+    PROJECTS_CREATED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return ListListStringValueData.class;
         }
     },
 
-    DETAILED_PROJECTS_DEPLOYED {
+    PROJECTS_DEPLOYED {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return ListListStringValueData.class;
         }
     },
 
-    DETAILED_PROJECTS_BUILT {
+    PROJECTS_BUILT {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
             return ListListStringValueData.class;
         }
     },
 
-    DETAILS_USER_SSO_LOGGED_IN {
+    USERS_SSO_LOGGED_IN {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return MapStringLongValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
     USERS_WITHOUT_PROJECTS {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
     USERS_WITHOUT_BUILDS {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
-    USERS_WITHOUT_DEPLOYS {
+    USERS_WITHOUT_DEPLOYES {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
+            return ListListStringValueData.class;
         }
     },
 
     USERS_WITHOUT_INVITES {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
+            return ListListStringValueData.class;
         }
     },
 

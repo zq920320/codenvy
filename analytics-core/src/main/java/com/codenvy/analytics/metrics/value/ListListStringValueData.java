@@ -24,10 +24,6 @@ public class ListListStringValueData extends ListValueData<ListStringValueData> 
         super(value);
     }
 
-    public ListListStringValueData(SetListStringValueData value) {
-        this(value.getAll());
-    }
-
     @Override
     protected ValueData createInstance(List<ListStringValueData> value) {
         return new ListListStringValueData(value);

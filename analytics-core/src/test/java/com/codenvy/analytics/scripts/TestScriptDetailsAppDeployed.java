@@ -61,7 +61,7 @@ public class TestScriptDetailsAppDeployed extends BaseTest {
         context.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         ListListStringValueData value =
-                                        (ListListStringValueData)executeAndReturnResult(ScriptType.DETAILED_PROJECTS_DEPLOYED, log, context);
+                                        (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_DEPLOYED, log, context);
 
         List<ListStringValueData> all = value.getAll();
         ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1", "paas1"));

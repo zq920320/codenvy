@@ -22,7 +22,7 @@ public class ProjectsDeployedListMetric extends ScriptBasedMetric {
     /** {@inheritDoc} */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.DETAILED_PROJECTS_DEPLOYED;
+        return ScriptType.PROJECTS_DEPLOYED;
     }
 
     /** {@inheritDoc} */

@@ -4,6 +4,10 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.DoubleValueData;
+import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,10 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import com.codenvy.analytics.metrics.value.DoubleValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>

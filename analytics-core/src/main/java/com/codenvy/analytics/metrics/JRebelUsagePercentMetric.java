@@ -6,7 +6,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.filters.Filter;
 
@@ -44,10 +43,10 @@ public class JRebelUsagePercentMetric extends CalculateBasedMetric {
         ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
         Filter filter = basedMetric.createFilter(value);
         
-        MapStringLongValueData sizeOfGroups = filter.sizeOfGroups(MetricFilter.FILTER_PROJECT_JREBEL_USAGE);
+        Map<String, Long> sizeOfGroups = filter.sizeOfGroups(MetricFilter.FILTER_PROJECT_JREBEL_USAGE);
 
         int total = filter.size();
-        Long usage = sizeOfGroups.getAll().get(JRebelUsageListMetric.JREBEL_USAGE_TRUE);
+        Long usage = sizeOfGroups.get(JRebelUsageListMetric.JREBEL_USAGE_TRUE);
 
         return total == 0 ? new DoubleValueData(Double.NaN) : new DoubleValueData(100D * usage / total);
     }

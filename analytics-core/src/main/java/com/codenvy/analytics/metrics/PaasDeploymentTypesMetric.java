@@ -45,6 +45,6 @@ public class PaasDeploymentTypesMetric extends CalculateBasedMetric {
         ProjectsDeployedFilter filter = new ProjectsDeployedFilter(listVD);
         filter = new ProjectsDeployedFilter(filter.getUniqueProjects());
         
-        return filter.sizeOfGroups(MetricFilter.FILTER_PROJECT_PAAS);
+        return new MapStringLongValueData(filter.sizeOfGroups(MetricFilter.FILTER_PROJECT_PAAS));
     }
 }

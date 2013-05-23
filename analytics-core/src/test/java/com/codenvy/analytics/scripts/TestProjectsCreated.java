@@ -38,10 +38,10 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptDetailsProjectCreated extends BaseTest {
+public class TestProjectsCreated extends BaseTest {
 
     @Test
-    public void testScriptDetailsProjectCreatedTypes() throws Exception {
+    public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "session", "project1", "type1")
                                 .withDate("2010-10-01").build());
@@ -59,7 +59,7 @@ public class TestScriptDetailsProjectCreated extends BaseTest {
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
         ListListStringValueData value =
-                                        (ListListStringValueData)executeAndReturnResult(ScriptType.DETAILED_PROJECTS_CREATED, log, params);
+                                        (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_CREATED, log, params);
 
         List<ListStringValueData> all = value.getAll();
         ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1"));

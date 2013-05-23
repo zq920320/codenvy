@@ -13,18 +13,16 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActiveUsersWorkspacesSetMetric extends ScriptBasedMetric {
+public class WorkspacesCreatedListMetric extends ScriptBasedMetric {
 
-    ActiveUsersWorkspacesSetMetric() {
-        super(MetricType.ACTIVE_USERS_WORKAPCES_SET);
+    WorkspacesCreatedListMetric() {
+        super(MetricType.WORKSPACES_CREATED_LIST);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.ACTIVE_USERS_WORKSPACES;
+        return ScriptType.WORKSPACES_CREATED;
     }
 
     /** {@inheritDoc} */

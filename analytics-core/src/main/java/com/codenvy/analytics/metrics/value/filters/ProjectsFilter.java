@@ -6,11 +6,6 @@ package com.codenvy.analytics.metrics.value.filters;
 
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * <li>0 - the workspace name</li><br>
@@ -22,10 +17,6 @@ import java.util.List;
  */
 public class ProjectsFilter extends AbstractFilter {
 
-    private final static int USER         = 0;
-    private final static int PROJECT_NAME = 2;
-    private final static int PROJECT_TYPE = 3;
-
     public ProjectsFilter(ListListStringValueData valueData) {
         super(valueData);
     }
@@ -34,27 +25,7 @@ public class ProjectsFilter extends AbstractFilter {
      * @return the unique projects only
      */
     public ListListStringValueData getUniqueProjects() {
-        HashSet<String> keys = new HashSet<String>();
-        List<ListStringValueData> result = new ArrayList<ListStringValueData>();
-
-        for (ListStringValueData item : valueData.getAll()) {
-            List<String> project = item.getAll();
-
-            StringBuilder builder = new StringBuilder();
-            builder.append(project.get(USER));
-            builder.append("/");
-            builder.append(project.get(PROJECT_NAME));
-            builder.append("/");
-            builder.append(project.get(PROJECT_TYPE));
-
-            String key = builder.toString();
-            if (!keys.contains(key)) {
-                keys.add(key);
-                result.add(item);
-            }
-        }
-
-        return new ListListStringValueData(result);
+        return getUniqueActions(MetricFilter.FILTER_WS, MetricFilter.FILTER_PROJECT_NAME, MetricFilter.FILTER_PROJECT_TYPE);
     }
 
     protected int getIndex(MetricFilter key) throws IllegalArgumentException {

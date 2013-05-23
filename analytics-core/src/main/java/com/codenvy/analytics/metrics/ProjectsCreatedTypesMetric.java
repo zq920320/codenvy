@@ -40,6 +40,6 @@ public class ProjectsCreatedTypesMetric extends CalculateBasedMetric {
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
         ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        return new ProjectsFilter(valueData).sizeOfGroups(MetricFilter.FILTER_PROJECT_TYPE);
+        return new MapStringLongValueData(new ProjectsFilter(valueData).sizeOfGroups(MetricFilter.FILTER_PROJECT_TYPE));
     }
 }

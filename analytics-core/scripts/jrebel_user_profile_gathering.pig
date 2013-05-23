@@ -9,7 +9,5 @@ t2 = smartExtractParam(t1, 'FIRSTNAME', 'firstname');
 t3 = smartExtractParam(t2, 'LASTNAME', 'lastname');
 tR = smartExtractParam(t3, 'PHONE', 'phone');
 
-x = FOREACH tR GENERATE TOTUPLE(TOTUPLE(user), TOTUPLE(firstname), TOTUPLE(lastname), TOTUPLE(phone));
-DUMP x;
-result = x;
+result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(user), TOTUPLE(firstname), TOTUPLE(lastname), TOTUPLE(phone));
 

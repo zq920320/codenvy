@@ -23,8 +23,8 @@ import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.SetListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptActiveUsersWorkspaces extends BaseTest {
@@ -57,8 +56,9 @@ public class TestScriptActiveUsersWorkspaces extends BaseTest {
         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
         params.put(MetricParameter.TO_DATE.getName(), "20101002");
 
-        SetListStringValueData valueData = (SetListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_USERS_WORKSPACES, log, params);
-        Set<ListStringValueData> value = valueData.getAll();
+        ListListStringValueData valueData =
+                                            (ListListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_USERS_WORKSPACES, log, params);
+        List<ListStringValueData> value = valueData.getAll();
 
         assertEquals(value.size(), 2);
         assertTrue(value.contains(new ListStringValueData(Arrays.asList("ws1", "user1"))));

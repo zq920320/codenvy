@@ -7,16 +7,16 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
+import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
 import com.codenvy.analytics.scripts.ScriptType;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsBuiltListMetric extends ScriptBasedMetric {
+public class ActiveUsersWorkspacesListMetric extends ScriptBasedMetric {
 
-    ProjectsBuiltListMetric() {
-        super(MetricType.PROJECTS_BUILT_LIST);
+    ActiveUsersWorkspacesListMetric() {
+        super(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
     }
 
     /**
@@ -24,7 +24,7 @@ public class ProjectsBuiltListMetric extends ScriptBasedMetric {
      */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.PROJECTS_BUILT;
+        return ScriptType.ACTIVE_USERS_WORKSPACES;
     }
 
     /** {@inheritDoc} */
@@ -36,6 +36,6 @@ public class ProjectsBuiltListMetric extends ScriptBasedMetric {
     /** {@inheritDoc} */
     @Override
     protected Filter createFilter(ValueData valueData) {
-        return new ProjectsFilter((ListListStringValueData)valueData);
+        return new UsersWorkspacesFilter((ListListStringValueData)valueData);
     }
 }

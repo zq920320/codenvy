@@ -4,22 +4,43 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsDestroyedNumberMetric extends ScriptBasedMetric {
+public class ProjectsDestroyedNumberMetric extends CalculateBasedMetric {
 
-    ProjectsDestroyedNumberMetric() {
+    private final Metric basedMetric;
+
+    ProjectsDestroyedNumberMetric() throws IOException {
         super(MetricType.PROJECTS_DESTROYED_NUMBER);
+        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DESTROYED_LIST);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
+    /** {@inheritDoc} */
     @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.EVENT_COUNT_PROJECT_DESTROYED;
+    public Set<MetricParameter> getParams() {
+        return basedMetric.getParams();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Class< ? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected ValueData evaluate(Map<String, String> context) throws IOException {
+        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
+        return new LongValueData(value.size());
     }
 }

@@ -23,7 +23,6 @@ import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
@@ -34,38 +33,28 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptDetailedProjectsBuilt extends BaseTest {
+public class TestProjectsDestroyed extends BaseTest {
 
     @Test
-    public void testScriptDetailsProjectCreatedTypes() throws Exception {
+    public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "session", "project1", "type1")
-                                .withDate("2010-10-01").build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws2", "session", "project1", "type1", "paas1")
-                                .withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectDeployedEvent("user3", "ws4", "session", "project4", "type2", "local")
-                                .withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project", "type").withDate("2010-10-01").build());
 
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        context.put(MetricParameter.TO_DATE.getName(), "20101001");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
+        params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
-        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_BUILT, log, context);
-
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_DESTROYED, log, params);
         List<ListStringValueData> all = value.getAll();
-        ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1"));
-        ListStringValueData item2 = new ListStringValueData(Arrays.asList("ws2", "user1", "project1", "type1"));
-        ListStringValueData item3 = new ListStringValueData(Arrays.asList("ws4", "user3", "project4", "type2"));
 
-        assertEquals(all.size(), 3);
-        assertTrue(all.contains(item1));
-        assertTrue(all.contains(item2));
-        assertTrue(all.contains(item3));
+        assertEquals(all.size(), 1);
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws", "user", "project", "type"))));
     }
 }

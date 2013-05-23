@@ -6,7 +6,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.SetListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.filters.Filter;
 import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
@@ -25,7 +24,7 @@ public class ActiveUsersNumberMetric extends CalculateBasedMetric {
 
     ActiveUsersNumberMetric() throws IOException {
         super(MetricType.ACTIVE_USERS_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_SET);
+        this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
     }
 
     /** {@inheritDoc} */
@@ -43,8 +42,7 @@ public class ActiveUsersNumberMetric extends CalculateBasedMetric {
     /** {@inheritDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        SetListStringValueData valueData = (SetListStringValueData)basedMetric.getValue(context);
-        ListListStringValueData listVD = new ListListStringValueData(valueData.getAll());
+        ListListStringValueData listVD = (ListListStringValueData)basedMetric.getValue(context);
 
         Filter filter = new UsersWorkspacesFilter(listVD);
         return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());

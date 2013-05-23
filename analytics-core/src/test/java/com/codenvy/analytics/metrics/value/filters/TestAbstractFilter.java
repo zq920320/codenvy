@@ -10,8 +10,6 @@ import static org.testng.Assert.assertTrue;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -72,8 +70,7 @@ public class TestAbstractFilter {
 
     @Test
     public void testGetAvailable() throws Exception {
-        SetStringValueData available = filter.getAvailable(MetricFilter.FILTER_PROJECT_NAME);
-        Set<String> all = available.getAll();
+        Set<String> all = filter.getAvailable(MetricFilter.FILTER_PROJECT_NAME);
 
         assertEquals(all.size(), 3);
         assertTrue(all.contains("project1"));
@@ -83,8 +80,7 @@ public class TestAbstractFilter {
 
     @Test
     public void testSizeGroup() throws Exception {
-        MapStringLongValueData sizeOfGroups = filter.sizeOfGroups(MetricFilter.FILTER_PROJECT_TYPE);
-        Map<String, Long> all = sizeOfGroups.getAll();
+        Map<String, Long> all = filter.sizeOfGroups(MetricFilter.FILTER_PROJECT_TYPE);
 
         assertEquals(all.size(), 3);
         assertEquals(all.get("type1"), Long.valueOf(1));

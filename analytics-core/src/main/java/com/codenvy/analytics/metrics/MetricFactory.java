@@ -27,8 +27,14 @@ public class MetricFactory {
             case WORKSPACES_CREATED_NUMBER:
                 metric = new WorkspacesCreatedNumberMetric();
                 break;
+            case WORKSPACES_CREATED_LIST:
+                metric = new WorkspacesCreatedListMetric();
+                break;
             case WORKSPACES_DESTROYED_NUMBER:
                 metric = new WorkspacesDestoryedNumberMetric();
+                break;
+            case WORKSPACES_DESTROYED_LIST:
+                metric = new WorkspacesDestroyedListMetric();
                 break;
             case TOTAL_WORKSPACES_NUMBER:
                 metric = new TotalWorkspacesMetric();
@@ -57,8 +63,8 @@ public class MetricFactory {
             case ACTIVE_USERS_NUMBER:
                 metric = new ActiveUsersNumberMetric();
                 break;
-            case ACTIVE_USERS_WORKAPCES_SET:
-                metric = new ActiveUsersWorkspacesSetMetric();
+            case ACTIVE_USERS_WORKAPCES_LIST:
+                metric = new ActiveUsersWorkspacesListMetric();
                 break;
             case ACTIVE_USERS_PERCENT:
                 metric = new ActiveUsersPercentMetric();
@@ -78,8 +84,11 @@ public class MetricFactory {
             case USERS_ADDED_TO_WORKSPACE_FROM_INVITE_PERCENT:
                 metric = new UsersAddedToWsFromInvitePercentMetric();
                 break;
-            case USERS_SSO_LOGGED_IN:
-                metric = new UsersSsoLoggedInMetric();
+            case USERS_SSO_LOGGED_IN_LIST:
+                metric = new UsersSsoLoggedInListMetric();
+                break;
+            case USERS_SSO_LOGGED_IN_TYPES:
+                metric = new UsersSsoLoggedInTypesMetric();
                 break;
             case USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT:
                 metric = new UsersSsoLoggedInUsingGooglePercentMetric();
@@ -108,6 +117,9 @@ public class MetricFactory {
             case PROJECTS_UNIQUE_BUILT_PERCENT:
                 metric = new BuiltUniqueProjectsPercentMetric();
                 break;
+            case PROJECTS_DESTROYED_LIST:
+                metric = new ProjectsDestroyedListMetric();
+                break;
             case PROJECTS_DESTROYED_NUMBER:
                 metric = new ProjectsDestroyedNumberMetric();
                 break;
@@ -117,8 +129,8 @@ public class MetricFactory {
             case ACTIVE_PROJECTS_NUMBER:
                 metric = new ActiveProjectsNumberMetric();
                 break;
-            case ACTIVE_PROJECTS_SET:
-                metric = new ActiveProjectsSetMetric();
+            case ACTIVE_PROJECTS_LIST:
+                metric = new ActiveProjectsListMetric();
                 break;
             case ACTIVE_PROJECTS_PERCENT:
                 metric = new ActiveProjectsPercentMetric();

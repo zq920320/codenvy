@@ -6,17 +6,17 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
 import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
 import com.codenvy.analytics.scripts.ScriptType;
+
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsBuiltListMetric extends ScriptBasedMetric {
+public class ActiveProjectsListMetric extends ScriptBasedMetric {
 
-    ProjectsBuiltListMetric() {
-        super(MetricType.PROJECTS_BUILT_LIST);
+    ActiveProjectsListMetric() {
+        super(MetricType.ACTIVE_PROJECTS_LIST);
     }
 
     /**
@@ -24,7 +24,7 @@ public class ProjectsBuiltListMetric extends ScriptBasedMetric {
      */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.PROJECTS_BUILT;
+        return ScriptType.ACTIVE_PROJECTS;
     }
 
     /** {@inheritDoc} */
@@ -35,7 +35,7 @@ public class ProjectsBuiltListMetric extends ScriptBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Filter createFilter(ValueData valueData) {
+    protected ProjectsFilter createFilter(ValueData valueData) {
         return new ProjectsFilter((ListListStringValueData)valueData);
     }
 }

@@ -23,7 +23,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -31,10 +32,10 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptUsersWithoutActions extends BaseTest {
@@ -58,11 +59,11 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         putFromDate(params, "20121001");
         putToDate(params, "20121003");
 
-        SetStringValueData value = (SetStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_PROJECTS, log, params);
-        Set<String> all = value.getAll();
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_PROJECTS, log, params);
+        List<ListStringValueData> all = value.getAll();
 
         assertEquals(all.size(), 1);
-        assertTrue(all.contains("user2"));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user2"))));
     }
 
     /** Run script which find all events. */
@@ -83,11 +84,11 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         putFromDate(params, "20121001");
         putToDate(params, "20121003");
 
-        SetStringValueData value = (SetStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_INVITES, log, params);
-        Set<String> all = value.getAll();
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_INVITES, log, params);
+        List<ListStringValueData> all = value.getAll();
 
         assertEquals(all.size(), 1);
-        assertTrue(all.contains("user3"));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user3"))));
     }
 
     /** Run script which find all events. */
@@ -116,28 +117,27 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         putFromDate(params, "20121001");
         putToDate(params, "20121003");
 
-        SetStringValueData value = (SetStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_BUILDS, log, params);
-        Set<String> all = value.getAll();
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_BUILDS, log, params);
+        List<ListStringValueData> all = value.getAll();
 
         assertEquals(all.size(), 1);
-        assertTrue(all.contains("user4"));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user4"))));
     }
 
     /** Run script which find all events. */
-    // @Test
+    @Test
     public void testUsersWithoutDeployes() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createProjectCreatedEvent("user2", "ws", "session", "project", "type").withDate("2012-10-03")
-                        .build());
+                                .build());
         events.add(Event.Builder.createProjectCreatedEvent("user3", "ws", "session", "project", "type").withDate("2012-10-01")
-                        .build());
+                                .build());
         events.add(Event.Builder.createProjectCreatedEvent("user4", "ws", "session", "project", "type").withDate("2012-10-03")
-                        .build());
-
-        events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas")
-                        .withDate("2010-10-03").build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws", "session", "project", "type", "paas")
-                        .withDate("2010-10-01").build());
+                                .build());
+        events.add(Event.Builder.createProjectDeployedEvent("user2", "ws", "session", "project", "type", "paas").withDate("2012-10-03")
+                                .build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws", "session", "project", "type", "paas").withDate("2012-10-01")
+                                .build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -145,10 +145,10 @@ public class TestScriptUsersWithoutActions extends BaseTest {
         putFromDate(params, "20121001");
         putToDate(params, "20121003");
 
-        SetStringValueData value = (SetStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_DEPLOYS, log, params);
-        Set<String> all = value.getAll();
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_WITHOUT_DEPLOYES, log, params);
+        List<ListStringValueData> all = value.getAll();
 
         assertEquals(all.size(), 1);
-        assertTrue(all.contains("user4"));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user4"))));
     }
 }

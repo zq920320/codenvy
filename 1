@@ -1,0 +1,1884 @@
+diff --git a/analytics-core/scripts/active_projects.pig b/analytics-core/scripts/active_projects.pig
+index 37dac18..309c6f6 100644
+--- a/analytics-core/scripts/active_projects.pig
++++ b/analytics-core/scripts/active_projects.pig
+@@ -8,4 +8,5 @@ a2 = extractUser(a1);
+ a3 = extractParam(a2, 'PROJECT', 'project');
+ aR = extractParam(a3, 'TYPE', 'type');
+ 
+-result = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type));
++r1 = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type));
++result = DISTINCT r1;
+diff --git a/analytics-core/scripts/active_users_workspaces.pig b/analytics-core/scripts/active_users_workspaces.pig
+index 88933bb..e971685 100644
+--- a/analytics-core/scripts/active_users_workspaces.pig
++++ b/analytics-core/scripts/active_users_workspaces.pig
+@@ -9,4 +9,5 @@ fR = filterByDate(f1, '$fromDate', '$toDate');
+ a1 = extractUser(fR);
+ aR = extractWs(a1);
+ 
+-result = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user));
++r1 = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user));
++result = DISTINCT r1;
+diff --git a/analytics-core/scripts/detailed_projects_built.pig b/analytics-core/scripts/detailed_projects_built.pig
+deleted file mode 100644
+index c90124f..0000000
+--- a/analytics-core/scripts/detailed_projects_built.pig
++++ /dev/null
+@@ -1,13 +0,0 @@
+-IMPORT 'macros.pig';
+-
+-f1 = loadResources('$log');
+-f2 = filterByDate(f1, '$fromDate', '$toDate');
+-fR = filterByEvent(f2, 'project-built,application-created,project-deployed');
+-
+-t1 = extractWs(fR);
+-t2 = extractUser(t1);
+-t3 = extractParam(t2, 'TYPE', 'type');
+-tR = extractParam(t3, 'PROJECT', 'project');
+-
+-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type));
+-
+diff --git a/analytics-core/scripts/detailed_projects_created.pig b/analytics-core/scripts/detailed_projects_created.pig
+deleted file mode 100644
+index b299d14..0000000
+--- a/analytics-core/scripts/detailed_projects_created.pig
++++ /dev/null
+@@ -1,13 +0,0 @@
+-IMPORT 'macros.pig';
+-
+-f1 = loadResources('$log');
+-f2 = filterByDate(f1, '$fromDate', '$toDate');
+-fR = filterByEvent(f2, 'project-created');
+-
+-t1 = extractWs(fR);
+-t2 = extractUser(t1);
+-t3 = extractParam(t2, 'TYPE', 'type');
+-tR = extractParam(t3, 'PROJECT', 'project');
+-
+-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type));
+-
+diff --git a/analytics-core/scripts/detailed_projects_deployed.pig b/analytics-core/scripts/detailed_projects_deployed.pig
+deleted file mode 100644
+index 303740a..0000000
+--- a/analytics-core/scripts/detailed_projects_deployed.pig
++++ /dev/null
+@@ -1,14 +0,0 @@
+-IMPORT 'macros.pig';
+-
+-f1 = loadResources('$log');
+-f2 = filterByDate(f1, '$fromDate', '$toDate');
+-fR = filterByEvent(f2, 'project-deployed,application-created');
+-
+-t1 = extractWs(fR);
+-t2 = extractUser(t1);
+-t3 = extractParam(t2, 'TYPE', 'type');
+-t4 = extractParam(t3, 'PROJECT', 'project');
+-tR = extractParam(t4, 'PAAS', 'paas');
+-
+-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type), TOTUPLE(paas));
+-
+diff --git a/analytics-core/scripts/details_user_sso_logged_in.pig b/analytics-core/scripts/details_user_sso_logged_in.pig
+deleted file mode 100644
+index d96cb28..0000000
+--- a/analytics-core/scripts/details_user_sso_logged_in.pig
++++ /dev/null
+@@ -1,7 +0,0 @@
+----------------------------------------------------------------------------
+--- Reveals detail information what ways were used by users to log in.
+----------------------------------------------------------------------------
+-IMPORT 'macros.pig';
+-
+-result = countSecondParamInDist2ParamsEvent('$log', '$fromDate', '$toDate', 'user-sso-logged-in', 'USER', 'USING');
+-
+diff --git a/analytics-core/scripts/event_count_project_destroyed.pig b/analytics-core/scripts/event_count_project_destroyed.pig
+deleted file mode 100644
+index 4f9811d..0000000
+--- a/analytics-core/scripts/event_count_project_destroyed.pig
++++ /dev/null
+@@ -1,7 +0,0 @@
+----------------------------------------------------------------------------
+--- Finds total number of 'project-destroyed' events.
+----------------------------------------------------------------------------
+-IMPORT 'macros.pig';
+-
+-result = countEvents('$log', '$fromDate', '$toDate', 'project-destroyed');
+-
+diff --git a/analytics-core/scripts/event_count_workspace_created.pig b/analytics-core/scripts/event_count_workspace_created.pig
+deleted file mode 100644
+index 6946efd..0000000
+--- a/analytics-core/scripts/event_count_workspace_created.pig
++++ /dev/null
+@@ -1,7 +0,0 @@
+----------------------------------------------------------------------------
+--- Finds total number of 'tenant-created' events.
+----------------------------------------------------------------------------
+-IMPORT 'macros.pig';
+-
+-result = countEvents('$log', '$fromDate', '$toDate', 'tenant-created');
+-
+diff --git a/analytics-core/scripts/event_count_workspace_destroyed.pig b/analytics-core/scripts/event_count_workspace_destroyed.pig
+deleted file mode 100644
+index 049a65a..0000000
+--- a/analytics-core/scripts/event_count_workspace_destroyed.pig
++++ /dev/null
+@@ -1,7 +0,0 @@
+----------------------------------------------------------------------------
+--- Finds total number of 'tenant-destroyed' events.
+----------------------------------------------------------------------------
+-IMPORT 'macros.pig';
+-
+-result = countEvents('$log', '$fromDate', '$toDate', 'tenant-destroyed');
+-
+diff --git a/analytics-core/scripts/jrebel_user_profile_gathering.pig b/analytics-core/scripts/jrebel_user_profile_gathering.pig
+index 99e5787..ff4f2df 100644
+--- a/analytics-core/scripts/jrebel_user_profile_gathering.pig
++++ b/analytics-core/scripts/jrebel_user_profile_gathering.pig
+@@ -9,7 +9,5 @@ t2 = smartExtractParam(t1, 'FIRSTNAME', 'firstname');
+ t3 = smartExtractParam(t2, 'LASTNAME', 'lastname');
+ tR = smartExtractParam(t3, 'PHONE', 'phone');
+ 
+-x = FOREACH tR GENERATE TOTUPLE(TOTUPLE(user), TOTUPLE(firstname), TOTUPLE(lastname), TOTUPLE(phone));
+-DUMP x;
+-result = x;
++result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(user), TOTUPLE(firstname), TOTUPLE(lastname), TOTUPLE(phone));
+ 
+diff --git a/analytics-core/scripts/macros.pig b/analytics-core/scripts/macros.pig
+index 4c4ede5..8c1c613 100644
+--- a/analytics-core/scripts/macros.pig
++++ b/analytics-core/scripts/macros.pig
+@@ -114,81 +114,6 @@ DEFINE smartExtractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
+ };
+ 
+ ---------------------------------------------------------------------------
+--- Counts how many times every distinct value of given field have met.
+--- @param fieldNameParam - the field name
+--- @return {countByField : {(field : bytearray, count : long)}}
+----------------------------------------------------------------------------
+-DEFINE countByField(X, fieldNameParam) RETURNS Y {
+-  x1 = GROUP $X BY $fieldNameParam;
+-  $Y = FOREACH x1 GENERATE FLATTEN(group) AS field, COUNT($X) AS count;
+-};
+-
+----------------------------------------------------------------------------
+--- Counts the number of tuples.
+--- @return {count : long}
+----------------------------------------------------------------------------
+-DEFINE countAll(X) RETURNS Y {
+-  x1 = GROUP $X ALL;
+-  $Y = FOREACH x1 GENERATE COUNT($X) AS count;
+-};
+-
+----------------------------------------------------------------------------
+--- Counts the number of given events in every workspace separatly.
+--- @param eventsParam - comma separated list of events
+--- @return {countByField : {(field : bytearray, count : long)}}
+----------------------------------------------------------------------------
+-DEFINE countEventsInWs(X, eventsParam) RETURNS Y {
+-  z1 = filterByEvent($X, '$eventsParam');
+-  z2 = extractWs(z1);
+-  $Y = countByField(z2, 'ws');
+-};
+-
+----------------------------------------------------------------------------
+--- Counts the number of given events in every workspace separatly.
+--- @param eventsParam - comma separated list of events
+--- @return {ws : bytearray, count : long}
+----------------------------------------------------------------------------
+-DEFINE countEventsInWsFlatten(X, eventsParam) RETURNS Y {
+-  w1 = countEventsInWs($X, '$eventsParam');
+-  w2 = FOREACH w1 GENERATE FLATTEN(countByField);
+-  $Y = FOREACH w2 GENERATE countByField::field AS ws, countByField::count AS count;
+-};
+-
+------------------------------------------------------------------------------
+--- Finds top workspaces in which events had place.
+--- @param logParam - the list of resources to load
+--- @param fromDateParam - beginning of the time frame
+--- @param toDateParam - ending of the time frame
+--- @param topParam - how many workspaces should be in result
+--- @param eventsParam - comma separated list of events
+--- @return {(field : bytearray, count : long)}
+----------------------------------------------------------------------------
+-DEFINE topWsByEvents(logParam, fromDateParam, toDateParam, topParam, eventsParam) RETURNS Y {
+-  w1 = loadResources('$logParam');
+-  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+-  w3 = countEventsInWs(w2, '$eventsParam');
+-
+-  $Y = FOREACH w3 {
+-    GENERATE TOP($topParam, 1, countByField);
+-  }
+-};
+-
+------------------------------------------------------------------------------
+--- Counts the number of given events.
+--- @param logParam - the list of resources to load
+--- @param fromDateParam - beginning of the time frame
+--- @param toDateParam - ending of the time frame
+--- @param eventsParam - comma separated list of events
+--- @return {count : long}
+----------------------------------------------------------------------------
+-DEFINE countEvents(logParam, fromDateParam, toDateParam, eventsParam) RETURNS Y {
+-  w1 = loadResources('$logParam');
+-  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+-  w3 = filterByEvent(w2,'$eventsParam');
+-  $Y = countAll(w3);
+-};
+-
+----------------------------------------------------------------------------
+ -- Calculates the difference between two relation.
+ -- The relations should be preprocessed using 'prepareSet'.
+ -- @return {{(bytearray)}}
+@@ -221,94 +146,6 @@ DEFINE prepareSet(X, fieldNameParam) RETURNS Y {
+   $Y = DISTINCT w1;
+ };
+ 
+----------------------------------------------------------------------------
+--- Finds amount of occurence of every parameter's value in
+--- unique sequences consisting of fixed event, workspace and two parameter's value.
+--- @param logParam - the list of resources to load
+--- @param fromDateParam - beginning of the time frame
+--- @param toDateParam - ending of the time frame
+--- @param eventParam - which event should be taken in account
+--- @param paramNameParam - the first parameter name
+--- @param secondParamNameParam - the second parameter name
+--- @return {countByField : {(field : bytearray, count : long)}}
+----------------------------------------------------------------------------
+-DEFINE countSecondParamInDist2ParamsEventWs(logParam, fromDateParam, toDateParam, eventParam, paramNameParam, secondParamNameParam) RETURNS Y {
+-  w1 = loadResources('$logParam');
+-  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+-  w3 = filterByEvent(w2, '$eventParam');
+-
+-  w4 = extractWs(w3);
+-  w5 = extractParam(w4, '$paramNameParam', 'paramFieldName');
+-  w6 = extractParam(w5, '$secondParamNameParam', 'secondParamFieldName');
+-  w7 = FOREACH w6 GENERATE ws, paramFieldName, secondParamFieldName;
+-  w8 = DISTINCT w7;
+-
+-  $Y = countByField(w8, 'secondParamFieldName');
+-};
+ 
+----------------------------------------------------------------------------
+--- Finds amount of occurence of every parameter's value in
+--- unique sequences consisting of fixed event and two parameter's value.
+--- @param logParam - the list of resources to load
+--- @param fromDateParam - beginning of the time frame
+--- @param toDateParam - ending of the time frame
+--- @param eventParam - which event should be taken in account
+--- @param paramNameParam - the first parameter name
+--- @param secondParamNameParam - the second parameter name
+--- @return {countByField : {(field : bytearray, count : long)}}
+----------------------------------------------------------------------------
+-DEFINE countSecondParamInDist2ParamsEvent(logParam, fromDateParam, toDateParam, eventParam, paramNameParam, secondParamNameParam) RETURNS Y {
+-  w1 = loadResources('$logParam');
+-  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+-  w3 = filterByEvent(w2, '$eventParam');
+-
+-  w5 = extractParam(w3, '$paramNameParam', 'paramFieldName');
+-  w6 = extractParam(w5, '$secondParamNameParam', 'secondParamFieldName');
+-  w7 = FOREACH w6 GENERATE paramFieldName, secondParamFieldName;
+-  w8 = DISTINCT w7;
+-
+-  $Y = countByField(w8, 'secondParamFieldName');
+-};
+ 
+----------------------------------------------------------------------------
+--- Finds amount of occurence of every parameter's value in
+--- sequences consisting of fixed event and parameter's value.
+--- @param logParam - the list of resources to load
+--- @param fromDateParam - beginning of the time frame
+--- @param toDateParam - ending of the time frame
+--- @param eventParam - comma separated list of events
+--- @param paramNameParam - the first parameter name
+--- @return {countByField : {(field : bytearray, count : long)}}
+----------------------------------------------------------------------------
+-DEFINE countParamInParamEvent(logParam, fromDateParam, toDateParam, eventParam, paramNameParam) RETURNS Y {
+-  w1 = loadResources('$logParam');
+-  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+-  w3 = filterByEvent(w2, '$eventParam');
+-  w4 = extractParam(w3, '$paramNameParam', 'paramFieldName');
+-  $Y = countByField(w4, 'paramFieldName');
+-};
+-
+----------------------------------------------------------------------------
+--- Finds amount of occurence of every parameter's value in
+--- sequences consisting of fixed event and parameter's value.
+--- @param logParam - the list of resources to load
+--- @param fromDateParam - beginning of the time frame
+--- @param toDateParam - ending of the time frame
+--- @param eventParam - comma separated list of events
+--- @param paramNameParam - the first parameter name
+--- @return {count : long}
+----------------------------------------------------------------------------
+-DEFINE countAllInDistParamEventWs(logParam, fromDateParam, toDateParam, eventParam, paramNameParam) RETURNS Y {
+-  w1 = loadResources('$logParam');
+-  w2 = filterByDate(w1, '$fromDateParam', '$toDateParam');
+-  w3 = filterByEvent(w2, '$eventParam');
+-
+-  w5 = extractWs(w3);
+-  w6 = extractParam(w5, '$paramNameParam', 'paramValue');
+-
+-  w7 = FOREACH w6 GENERATE ws, paramValue;
+-  w8 = DISTINCT w7;
+-
+-  $Y = countAll(w8);
+-};
+ 
+diff --git a/analytics-core/scripts/users_without_builds.pig b/analytics-core/scripts/users_without_builds.pig
+index f69f74b..8e395e5 100644
+--- a/analytics-core/scripts/users_without_builds.pig
++++ b/analytics-core/scripts/users_without_builds.pig
+@@ -20,5 +20,7 @@ b1 = filterByEvent(fR, 'project-built,application-created,project-deployed');
+ b2 = extractUser(b1);
+ bR = prepareSet(b2, 'user');
+ 
+-result = differSets(aR, bR);
++r1 = differSets(aR, bR);
++r2 = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(user));
++result = DISTINCT r2;
+ 
+diff --git a/analytics-core/scripts/users_without_deployes.pig b/analytics-core/scripts/users_without_deployes.pig
+index 1bfd104..d2000f4 100644
+--- a/analytics-core/scripts/users_without_deployes.pig
++++ b/analytics-core/scripts/users_without_deployes.pig
+@@ -20,4 +20,6 @@ b1 = filterByEvent(fR, 'application-created,project-deployed');
+ b2 = extractUser(b1);
+ bR = prepareSet(b2, 'user');
+ 
+-result = differSets(aR, bR);
++r1 = differSets(aR, bR);
++r2 = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(user));
++result = DISTINCT r2;
+diff --git a/analytics-core/scripts/users_without_invites.pig b/analytics-core/scripts/users_without_invites.pig
+index 6a330f0..54d7a80 100644
+--- a/analytics-core/scripts/users_without_invites.pig
++++ b/analytics-core/scripts/users_without_invites.pig
+@@ -22,5 +22,7 @@ b1 = filterByEvent(fR, 'user-invite');
+ b2 = extractUser(b1);
+ bR = prepareSet(b2, 'user');
+ 
+-result = differSets(aR, bR);
++r1 = differSets(aR, bR);
++r2 = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(user));
++result = DISTINCT r2;
+ 
+diff --git a/analytics-core/scripts/users_without_projects.pig b/analytics-core/scripts/users_without_projects.pig
+index 14cc360..42286ee 100644
+--- a/analytics-core/scripts/users_without_projects.pig
++++ b/analytics-core/scripts/users_without_projects.pig
+@@ -21,5 +21,7 @@ b1 = filterByEvent(fR, 'project-created');
+ b2 = extractUser(b1);
+ bR = prepareSet(b2, 'user');
+ 
+-result = differSets(aR, bR);
++r1 = differSets(aR, bR);
++r2 = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(user));
++result = DISTINCT r2;
+ 
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveProjectsListMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveProjectsListMetric.java
+index 8cf4976..b8f5752 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveProjectsListMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveProjectsListMetric.java
+@@ -5,7 +5,6 @@
+ package com.codenvy.analytics.metrics;
+ 
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+-import com.codenvy.analytics.metrics.value.SetListStringValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
+ import com.codenvy.analytics.scripts.ScriptType;
+@@ -14,10 +13,10 @@ import com.codenvy.analytics.scripts.ScriptType;
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+-public class ActiveProjectsSetMetric extends ScriptBasedMetric {
++public class ActiveProjectsListMetric extends ScriptBasedMetric {
+ 
+-    ActiveProjectsSetMetric() {
+-        super(MetricType.ACTIVE_PROJECTS_SET);
++    ActiveProjectsListMetric() {
++        super(MetricType.ACTIVE_PROJECTS_LIST);
+     }
+ 
+     /**
+@@ -37,7 +36,6 @@ public class ActiveProjectsSetMetric extends ScriptBasedMetric {
+     /** {@inheritDoc} */
+     @Override
+     protected ProjectsFilter createFilter(ValueData valueData) {
+-        SetListStringValueData setVD = (SetListStringValueData)valueData;
+-        return new ProjectsFilter(new ListListStringValueData(setVD.getAll()));
++        return new ProjectsFilter((ListListStringValueData)valueData);
+     }
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveProjectsNumberMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveProjectsNumberMetric.java
+index 696454e..4b10c1d 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveProjectsNumberMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveProjectsNumberMetric.java
+@@ -18,11 +18,11 @@ import java.util.Set;
+  */
+ public class ActiveProjectsNumberMetric extends CalculateBasedMetric {
+ 
+-    private final ActiveProjectsSetMetric basedMetric;
++    private final ActiveProjectsListMetric basedMetric;
+ 
+     ActiveProjectsNumberMetric() throws IOException {
+         super(MetricType.ACTIVE_PROJECTS_NUMBER);
+-        this.basedMetric = (ActiveProjectsSetMetric)MetricFactory.createMetric(MetricType.ACTIVE_PROJECTS_SET);
++        this.basedMetric = (ActiveProjectsListMetric)MetricFactory.createMetric(MetricType.ACTIVE_PROJECTS_LIST);
+     }
+ 
+     /** {@inheritDoc} */
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveUsersNumberMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveUsersNumberMetric.java
+index abadd29..890765d 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveUsersNumberMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveUsersNumberMetric.java
+@@ -6,7 +6,6 @@ package com.codenvy.analytics.metrics;
+ 
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+ import com.codenvy.analytics.metrics.value.LongValueData;
+-import com.codenvy.analytics.metrics.value.SetListStringValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ import com.codenvy.analytics.metrics.value.filters.Filter;
+ import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
+@@ -25,7 +24,7 @@ public class ActiveUsersNumberMetric extends CalculateBasedMetric {
+ 
+     ActiveUsersNumberMetric() throws IOException {
+         super(MetricType.ACTIVE_USERS_NUMBER);
+-        this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_SET);
++        this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
+     }
+ 
+     /** {@inheritDoc} */
+@@ -43,8 +42,7 @@ public class ActiveUsersNumberMetric extends CalculateBasedMetric {
+     /** {@inheritDoc} */
+     @Override
+     protected ValueData evaluate(Map<String, String> context) throws IOException {
+-        SetListStringValueData valueData = (SetListStringValueData)basedMetric.getValue(context);
+-        ListListStringValueData listVD = new ListListStringValueData(valueData.getAll());
++        ListListStringValueData listVD = (ListListStringValueData)basedMetric.getValue(context);
+ 
+         Filter filter = new UsersWorkspacesFilter(listVD);
+         return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveUsersWorkspacesListMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveUsersWorkspacesListMetric.java
+index 96101fb..8bfa385 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveUsersWorkspacesListMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveUsersWorkspacesListMetric.java
+@@ -13,10 +13,10 @@ import com.codenvy.analytics.scripts.ScriptType;
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+-public class ActiveUsersWorkspacesSetMetric extends ScriptBasedMetric {
++public class ActiveUsersWorkspacesListMetric extends ScriptBasedMetric {
+ 
+-    ActiveUsersWorkspacesSetMetric() {
+-        super(MetricType.ACTIVE_USERS_WORKAPCES_SET);
++    ActiveUsersWorkspacesListMetric() {
++        super(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
+     }
+ 
+     /**
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveWorkspacesNumberMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveWorkspacesNumberMetric.java
+index 146e0bc..310f350 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveWorkspacesNumberMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ActiveWorkspacesNumberMetric.java
+@@ -6,7 +6,6 @@ package com.codenvy.analytics.metrics;
+ 
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+ import com.codenvy.analytics.metrics.value.LongValueData;
+-import com.codenvy.analytics.metrics.value.SetListStringValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ import com.codenvy.analytics.metrics.value.filters.Filter;
+ import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
+@@ -25,7 +24,7 @@ public class ActiveWorkspacesNumberMetric extends CalculateBasedMetric {
+ 
+     ActiveWorkspacesNumberMetric() throws IOException {
+         super(MetricType.ACTIVE_WORKSPACES_NUMBER);
+-        this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_SET);
++        this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
+     }
+ 
+     /** {@inheritDoc} */
+@@ -43,8 +42,7 @@ public class ActiveWorkspacesNumberMetric extends CalculateBasedMetric {
+     /** {@inheritDoc} */
+     @Override
+     protected ValueData evaluate(Map<String, String> context) throws IOException {
+-        SetListStringValueData valueData = (SetListStringValueData)basedMetric.getValue(context);
+-        ListListStringValueData listVD = new ListListStringValueData(valueData.getAll());
++        ListListStringValueData listVD = (ListListStringValueData)basedMetric.getValue(context);
+ 
+         Filter filter = new UsersWorkspacesFilter(listVD);
+         return new LongValueData(filter.getAvailable(MetricFilter.FILTER_WS).size());
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/JRebelUsagePercentMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/JRebelUsagePercentMetric.java
+index eabe179..b92e79d 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/JRebelUsagePercentMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/JRebelUsagePercentMetric.java
+@@ -6,7 +6,6 @@ package com.codenvy.analytics.metrics;
+ 
+ import com.codenvy.analytics.metrics.value.DoubleValueData;
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ import com.codenvy.analytics.metrics.value.filters.Filter;
+ 
+@@ -44,10 +43,10 @@ public class JRebelUsagePercentMetric extends CalculateBasedMetric {
+         ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
+         Filter filter = basedMetric.createFilter(value);
+         
+-        MapStringLongValueData sizeOfGroups = filter.sizeOfGroups(MetricFilter.FILTER_PROJECT_JREBEL_USAGE);
++        Map<String, Long> sizeOfGroups = filter.sizeOfGroups(MetricFilter.FILTER_PROJECT_JREBEL_USAGE);
+ 
+         int total = filter.size();
+-        Long usage = sizeOfGroups.getAll().get(JRebelUsageListMetric.JREBEL_USAGE_TRUE);
++        Long usage = sizeOfGroups.get(JRebelUsageListMetric.JREBEL_USAGE_TRUE);
+ 
+         return total == 0 ? new DoubleValueData(Double.NaN) : new DoubleValueData(100D * usage / total);
+     }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricFactory.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricFactory.java
+index 76e2d8f..e526f01 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricFactory.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricFactory.java
+@@ -27,9 +27,15 @@ public class MetricFactory {
+             case WORKSPACES_CREATED_NUMBER:
+                 metric = new WorkspacesCreatedNumberMetric();
+                 break;
++            case WORKSPACES_CREATED_LIST:
++                metric = new WorkspacesCreatedListMetric();
++                break;
+             case WORKSPACES_DESTROYED_NUMBER:
+                 metric = new WorkspacesDestoryedNumberMetric();
+                 break;
++            case WORKSPACES_DESTROYED_LIST:
++                metric = new WorkspacesDestroyedListMetric();
++                break;
+             case TOTAL_WORKSPACES_NUMBER:
+                 metric = new TotalWorkspacesMetric();
+                 break;
+@@ -57,8 +63,8 @@ public class MetricFactory {
+             case ACTIVE_USERS_NUMBER:
+                 metric = new ActiveUsersNumberMetric();
+                 break;
+-            case ACTIVE_USERS_WORKAPCES_SET:
+-                metric = new ActiveUsersWorkspacesSetMetric();
++            case ACTIVE_USERS_WORKAPCES_LIST:
++                metric = new ActiveUsersWorkspacesListMetric();
+                 break;
+             case ACTIVE_USERS_PERCENT:
+                 metric = new ActiveUsersPercentMetric();
+@@ -78,8 +84,11 @@ public class MetricFactory {
+             case USERS_ADDED_TO_WORKSPACE_FROM_INVITE_PERCENT:
+                 metric = new UsersAddedToWsFromInvitePercentMetric();
+                 break;
+-            case USERS_SSO_LOGGED_IN:
+-                metric = new UsersSsoLoggedInMetric();
++            case USERS_SSO_LOGGED_IN_LIST:
++                metric = new UsersSsoLoggedInListMetric();
++                break;
++            case USERS_SSO_LOGGED_IN_TYPES:
++                metric = new UsersSsoLoggedInTypesMetric();
+                 break;
+             case USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT:
+                 metric = new UsersSsoLoggedInUsingGooglePercentMetric();
+@@ -108,6 +117,9 @@ public class MetricFactory {
+             case PROJECTS_UNIQUE_BUILT_PERCENT:
+                 metric = new BuiltUniqueProjectsPercentMetric();
+                 break;
++            case PROJECTS_DESTROYED_LIST:
++                metric = new ProjectsDestroyedListMetric();
++                break;
+             case PROJECTS_DESTROYED_NUMBER:
+                 metric = new ProjectsDestroyedNumberMetric();
+                 break;
+@@ -117,8 +129,8 @@ public class MetricFactory {
+             case ACTIVE_PROJECTS_NUMBER:
+                 metric = new ActiveProjectsNumberMetric();
+                 break;
+-            case ACTIVE_PROJECTS_SET:
+-                metric = new ActiveProjectsSetMetric();
++            case ACTIVE_PROJECTS_LIST:
++                metric = new ActiveProjectsListMetric();
+                 break;
+             case ACTIVE_PROJECTS_PERCENT:
+                 metric = new ActiveProjectsPercentMetric();
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricFilter.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricFilter.java
+index 3e39cc2..f61de90 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricFilter.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricFilter.java
+@@ -14,5 +14,6 @@ public enum MetricFilter {
+     FILTER_PROJECT_TYPE,
+     FILTER_PROJECT_PAAS,
+     FILTER_PROJECT_JREBEL_USAGE,
+-    FILTER_USER_ADDED_FROM
++    FILTER_USER_ADDED_FROM,
++    FILTER_USER_SSO_LOGGEDIN_USING,
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricType.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricType.java
+index 26837ec..22b5952 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricType.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/MetricType.java
+@@ -8,7 +8,9 @@ package com.codenvy.analytics.metrics;
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+ public enum MetricType {
++    WORKSPACES_CREATED_LIST,
+     WORKSPACES_CREATED_NUMBER,
++    WORKSPACES_DESTROYED_LIST,
+     WORKSPACES_DESTROYED_NUMBER,
+     TOTAL_WORKSPACES_NUMBER,
+     ACTIVE_WORKSPACES_NUMBER,
+@@ -18,7 +20,7 @@ public enum MetricType {
+     USERS_CREATED_NUMBER,
+     USERS_DESTROYED_NUMBER,
+     TOTAL_USERS_NUMBER,
+-    ACTIVE_USERS_WORKAPCES_SET,
++    ACTIVE_USERS_WORKAPCES_LIST,
+     ACTIVE_USERS_NUMBER,
+     ACTIVE_USERS_PERCENT,
+     USERS_CREATED_PROJECTS_NUMBER,
+@@ -26,18 +28,20 @@ public enum MetricType {
+     USERS_ADDED_TO_WORKSPACE_LIST,
+     USERS_ADDED_TO_WORKSPACE_FROM_WEBSITE_PERCENT,
+     USERS_ADDED_TO_WORKSPACE_FROM_INVITE_PERCENT,
+-    USERS_SSO_LOGGED_IN,
++    USERS_SSO_LOGGED_IN_TYPES,
++    USERS_SSO_LOGGED_IN_LIST,
+     USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT,
+     USERS_SSO_LOGGED_IN_USING_GITHUB_PERCENT,
+     USERS_SSO_LOGGED_IN_USING_FORM_PERCENT,
+     PRODUCT_USAGE_TIME_TOTAL,
+     PRODUCT_USAGE_USER_SESSIONS_NUMBER,
+     PRODUCT_USAGE_TIME_LIST,
++    PROJECTS_DESTROYED_LIST,
+     PROJECTS_DESTROYED_NUMBER,
+     TOTAL_PROJECTS_NUMBER,
+     PROJECTS_UNIQUE_BUILT_NUMBER,
+     PROJECTS_UNIQUE_BUILT_PERCENT,
+-    ACTIVE_PROJECTS_SET,
++    ACTIVE_PROJECTS_LIST,
+     ACTIVE_PROJECTS_NUMBER,
+     ACTIVE_PROJECTS_PERCENT,
+     PROJECTS_CREATED_NUMBER,
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/PaasDeploymentTypesMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/PaasDeploymentTypesMetric.java
+index 9edab96..89e276d 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/PaasDeploymentTypesMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/PaasDeploymentTypesMetric.java
+@@ -5,7 +5,6 @@
+ package com.codenvy.analytics.metrics;
+ 
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ import com.codenvy.analytics.metrics.value.filters.ProjectsDeployedFilter;
+ 
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsBuiltListMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsBuiltListMetric.java
+index fb11fa4..02c5243 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsBuiltListMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsBuiltListMetric.java
+@@ -24,7 +24,7 @@ public class ProjectsBuiltListMetric extends ScriptBasedMetric {
+      */
+     @Override
+     protected ScriptType getScriptType() {
+-        return ScriptType.DETAILED_PROJECTS_BUILT;
++        return ScriptType.PROJECTS_BUILT;
+     }
+ 
+     /** {@inheritDoc} */
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsCreatedListMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsCreatedListMetric.java
+index 3ae95bf..b95a8e3 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsCreatedListMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsCreatedListMetric.java
+@@ -24,7 +24,7 @@ public class ProjectsCreatedListMetric extends ScriptBasedMetric {
+      */
+     @Override
+     protected ScriptType getScriptType() {
+-        return ScriptType.DETAILED_PROJECTS_CREATED;
++        return ScriptType.PROJECTS_CREATED;
+     }
+ 
+     /** {@inheritDoc} */
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsCreatedTypesMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsCreatedTypesMetric.java
+index 9f9e51f..c81e9aa 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsCreatedTypesMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsCreatedTypesMetric.java
+@@ -5,7 +5,6 @@
+ package com.codenvy.analytics.metrics;
+ 
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
+ 
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsDeployedListMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsDeployedListMetric.java
+index a00aee0..d008d4c 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsDeployedListMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsDeployedListMetric.java
+@@ -22,7 +22,7 @@ public class ProjectsDeployedListMetric extends ScriptBasedMetric {
+     /** {@inheritDoc} */
+     @Override
+     protected ScriptType getScriptType() {
+-        return ScriptType.DETAILED_PROJECTS_DEPLOYED;
++        return ScriptType.PROJECTS_DEPLOYED;
+     }
+ 
+     /** {@inheritDoc} */
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsDestroyedNumberMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsDestroyedNumberMetric.java
+index ce9e5cc..cb02c8a 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsDestroyedNumberMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ProjectsDestroyedNumberMetric.java
+@@ -4,22 +4,43 @@
+  */
+ package com.codenvy.analytics.metrics;
+ 
+-import com.codenvy.analytics.scripts.ScriptType;
++import com.codenvy.analytics.metrics.value.ListListStringValueData;
++import com.codenvy.analytics.metrics.value.LongValueData;
++import com.codenvy.analytics.metrics.value.ValueData;
++
++import java.io.IOException;
++import java.util.Map;
++import java.util.Set;
+ 
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+-public class ProjectsDestroyedNumberMetric extends ScriptBasedMetric {
++public class ProjectsDestroyedNumberMetric extends CalculateBasedMetric {
++
++    private final Metric basedMetric;
+ 
+-    ProjectsDestroyedNumberMetric() {
++    ProjectsDestroyedNumberMetric() throws IOException {
+         super(MetricType.PROJECTS_DESTROYED_NUMBER);
++        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DESTROYED_LIST);
++    }
++
++
++    /** {@inheritDoc} */
++    @Override
++    public Set<MetricParameter> getParams() {
++        return basedMetric.getParams();
++    }
++
++    /** {@inheritDoc} */
++    @Override
++    protected Class< ? extends ValueData> getValueDataClass() {
++        return LongValueData.class;
+     }
+ 
+-    /**
+-     * {@inheritDoc}
+-     */
++    /** {@inheritDoc} */
+     @Override
+-    protected ScriptType getScriptType() {
+-        return ScriptType.EVENT_COUNT_PROJECT_DESTROYED;
++    protected ValueData evaluate(Map<String, String> context) throws IOException {
++        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
++        return new LongValueData(value.size());
+     }
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersCreatedProjectsNumberMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersCreatedProjectsNumberMetric.java
+index b02ede1..7224a3c 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersCreatedProjectsNumberMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersCreatedProjectsNumberMetric.java
+@@ -47,10 +47,10 @@ public class UsersCreatedProjectsNumberMetric extends CalculateBasedMetric {
+         int count = 0;
+ 
+         ProjectsFilter pFilter = new ProjectsFilter((ListListStringValueData)createdProjectsMetric.getValue(context));
+-        Set<String> allUsersHaveCreatedProjects = pFilter.getAvailable(MetricFilter.FILTER_USER).getAll();
++        Set<String> allUsersHaveCreatedProjects = pFilter.getAvailable(MetricFilter.FILTER_USER);
+         
+         UsersFilter uFilter = new UsersFilter((ListListStringValueData)createdUsersMetric.getValue(context));
+-        Set<String> usersCreated = uFilter.getAvailable(MetricFilter.FILTER_USER).getAll();
++        Set<String> usersCreated = uFilter.getAvailable(MetricFilter.FILTER_USER);
+ 
+         for (String user : usersCreated) {
+             if (allUsersHaveCreatedProjects.contains(user)) {
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersDestroyedNumberMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersDestroyedNumberMetric.java
+index 697cdcf..878e7e7 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersDestroyedNumberMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersDestroyedNumberMetric.java
+@@ -20,7 +20,7 @@ public class UsersDestroyedNumberMetric extends CalculateBasedMetric {
+     private final Metric basedMetric;
+ 
+     UsersDestroyedNumberMetric() throws IOException {
+-        super(MetricType.USERS_CREATED_NUMBER);
++        super(MetricType.USERS_DESTROYED_NUMBER);
+         this.basedMetric = MetricFactory.createMetric(MetricType.USERS_DESTROYED_LIST);
+     }
+ 
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInTypesMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInTypesMetric.java
+index 6269b49..e91f589 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInTypesMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInTypesMetric.java
+@@ -4,22 +4,45 @@
+  */
+ package com.codenvy.analytics.metrics;
+ 
+-import com.codenvy.analytics.scripts.ScriptType;
++import com.codenvy.analytics.metrics.value.ListListStringValueData;
++import com.codenvy.analytics.metrics.value.ValueData;
++import com.codenvy.analytics.metrics.value.filters.UsersSSOLoggedInFilter;
++
++import java.io.IOException;
++import java.util.Map;
++import java.util.Set;
+ 
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+-public class UsersSsoLoggedInMetric extends ScriptBasedMetric {
++public class UsersSsoLoggedInTypesMetric extends CalculateBasedMetric {
++
++    private final UsersSsoLoggedInListMetric basedMetric;
+ 
+-    UsersSsoLoggedInMetric() {
+-        super(MetricType.USERS_SSO_LOGGED_IN);
++    UsersSsoLoggedInTypesMetric() throws IOException {
++        super(MetricType.USERS_SSO_LOGGED_IN_TYPES);
++        this.basedMetric = (UsersSsoLoggedInListMetric)MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN_LIST);
+     }
+ 
+-    /**
+-     * {@inheritDoc}
+-     */
++    /** {@inheritDoc} */
++    public Set<MetricParameter> getParams() {
++        return basedMetric.getParams();
++    }
++
++    /** {@inheritDoc} */
+     @Override
+-    protected ScriptType getScriptType() {
+-        return ScriptType.DETAILS_USER_SSO_LOGGED_IN;
++    protected Class< ? extends ValueData> getValueDataClass() {
++        return MapStringLongValueData.class;
++    }
++
++    /** {@inheritDoc} */
++    @Override
++    protected ValueData evaluate(Map<String, String> context) throws IOException {
++        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
++
++        UsersSSOLoggedInFilter filter = basedMetric.createFilter(value);
++        filter = basedMetric.createFilter(filter.getUniqueLoggedInEvents());
++
++        return filter.sizeOfGroups(MetricFilter.FILTER_USER_SSO_LOGGEDIN_USING);
+     }
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingFormPercentMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingFormPercentMetric.java
+index c95a4b8..3b16245 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingFormPercentMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingFormPercentMetric.java
+@@ -11,7 +11,7 @@ import java.io.IOException;
+  */
+ public class UsersSsoLoggedInUsingFormPercentMetric extends ValueFromMapMetric {
+     UsersSsoLoggedInUsingFormPercentMetric() throws IOException {
+-        super(MetricType.USERS_SSO_LOGGED_IN_USING_FORM_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN), ValueType.PERCENT,
++        super(MetricType.USERS_SSO_LOGGED_IN_USING_FORM_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN_TYPES), ValueType.PERCENT,
+               "jaas", "signed");
+     }
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingGithubPercentMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingGithubPercentMetric.java
+index bf81e5a..23a41f9 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingGithubPercentMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingGithubPercentMetric.java
+@@ -12,7 +12,7 @@ import java.io.IOException;
+ public class UsersSsoLoggedInUsingGithubPercentMetric extends ValueFromMapMetric {
+ 
+     UsersSsoLoggedInUsingGithubPercentMetric() throws IOException {
+-        super(MetricType.USERS_SSO_LOGGED_IN_USING_GITHUB_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN),
++        super(MetricType.USERS_SSO_LOGGED_IN_USING_GITHUB_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN_TYPES),
+               ValueType.PERCENT, "github", "signed");
+     }
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingGooglePercentMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingGooglePercentMetric.java
+index 722be17..fd6fcdd 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingGooglePercentMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/UsersSsoLoggedInUsingGooglePercentMetric.java
+@@ -11,7 +11,7 @@ import java.io.IOException;
+  */
+ public class UsersSsoLoggedInUsingGooglePercentMetric extends ValueFromMapMetric {
+     UsersSsoLoggedInUsingGooglePercentMetric() throws IOException {
+-        super(MetricType.USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN),
++        super(MetricType.USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN_TYPES),
+               ValueType.PERCENT, "google", "signed");
+     }
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ValueFromMapMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ValueFromMapMetric.java
+index 4c2fb36..b48dfc6 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/ValueFromMapMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/ValueFromMapMetric.java
+@@ -4,6 +4,9 @@
+  */
+ package com.codenvy.analytics.metrics;
+ 
++import com.codenvy.analytics.metrics.value.DoubleValueData;
++import com.codenvy.analytics.metrics.value.ValueData;
++
+ import java.io.IOException;
+ import java.util.Arrays;
+ import java.util.Collection;
+@@ -13,10 +16,6 @@ import java.util.Map;
+ import java.util.Map.Entry;
+ import java.util.Set;
+ 
+-import com.codenvy.analytics.metrics.value.DoubleValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+-import com.codenvy.analytics.metrics.value.ValueData;
+-
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/WorkspacesCreatedNumberMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/WorkspacesCreatedNumberMetric.java
+index c7c9f0d..918b974 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/WorkspacesCreatedNumberMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/WorkspacesCreatedNumberMetric.java
+@@ -4,20 +4,42 @@
+  */
+ package com.codenvy.analytics.metrics;
+ 
+-import com.codenvy.analytics.scripts.ScriptType;
++import com.codenvy.analytics.metrics.value.ListListStringValueData;
++import com.codenvy.analytics.metrics.value.LongValueData;
++import com.codenvy.analytics.metrics.value.ValueData;
++
++import java.io.IOException;
++import java.util.Map;
++import java.util.Set;
+ 
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+-public class WorkspacesCreatedNumberMetric extends ScriptBasedMetric {
++public class WorkspacesCreatedNumberMetric extends CalculateBasedMetric {
++
++    private final Metric basedMetric;
+ 
+-    WorkspacesCreatedNumberMetric() {
++    WorkspacesCreatedNumberMetric() throws IOException {
+         super(MetricType.WORKSPACES_CREATED_NUMBER);
++        this.basedMetric = MetricFactory.createMetric(MetricType.WORKSPACES_CREATED_LIST);
+     }
+ 
++    /** {@inheritDoc} */
++    @Override
++    public Set<MetricParameter> getParams() {
++        return basedMetric.getParams();
++    }
++
++    /** {@inheritDoc} */
++    @Override
++    protected Class< ? extends ValueData> getValueDataClass() {
++        return LongValueData.class;
++    }
+ 
++    /** {@inheritDoc} */
+     @Override
+-    protected ScriptType getScriptType() {
+-        return ScriptType.EVENT_COUNT_WORKSPACE_CREATED;
++    protected ValueData evaluate(Map<String, String> context) throws IOException {
++        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
++        return new LongValueData(value.size());
+     }
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/WorkspacesDestoryedNumberMetric.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/WorkspacesDestoryedNumberMetric.java
+index 639ab51..c5ad3da 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/WorkspacesDestoryedNumberMetric.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/WorkspacesDestoryedNumberMetric.java
+@@ -4,23 +4,43 @@
+  */
+ package com.codenvy.analytics.metrics;
+ 
+-import com.codenvy.analytics.scripts.ScriptType;
++import com.codenvy.analytics.metrics.value.ListListStringValueData;
++import com.codenvy.analytics.metrics.value.LongValueData;
++import com.codenvy.analytics.metrics.value.ValueData;
++
++import java.io.IOException;
++import java.util.Map;
++import java.util.Set;
+ 
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+-public class WorkspacesDestoryedNumberMetric extends ScriptBasedMetric {
++public class WorkspacesDestoryedNumberMetric extends CalculateBasedMetric {
++
++    private final Metric basedMetric;
+ 
+-    WorkspacesDestoryedNumberMetric() {
++    WorkspacesDestoryedNumberMetric() throws IOException {
+         super(MetricType.WORKSPACES_DESTROYED_NUMBER);
++        this.basedMetric = MetricFactory.createMetric(MetricType.WORKSPACES_DESTROYED_LIST);
++    }
++
++    /** {@inheritDoc} */
++    @Override
++    public Set<MetricParameter> getParams() {
++        return basedMetric.getParams();
+     }
+ 
++    /** {@inheritDoc} */
++    @Override
++    protected Class< ? extends ValueData> getValueDataClass() {
++        return LongValueData.class;
++    }
+ 
+-    /**
+-     * {@inheritDoc}
+-     */
++    /** {@inheritDoc} */
+     @Override
+-    protected ScriptType getScriptType() {
+-        return ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED;
++    protected ValueData evaluate(Map<String, String> context) throws IOException {
++        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
++        return new LongValueData(value.size());
+     }
++
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/ListListStringValueData.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/ListListStringValueData.java
+index 0421f79..d4832f4 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/ListListStringValueData.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/ListListStringValueData.java
+@@ -24,10 +24,6 @@ public class ListListStringValueData extends ListValueData<ListStringValueData>
+         super(value);
+     }
+ 
+-    public ListListStringValueData(SetListStringValueData value) {
+-        this(value.getAll());
+-    }
+-
+     @Override
+     protected ValueData createInstance(List<ListStringValueData> value) {
+         return new ListListStringValueData(value);
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/ValueDataFactory.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/ValueDataFactory.java
+index 26b5180..cd1e066 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/ValueDataFactory.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/ValueDataFactory.java
+@@ -13,12 +13,8 @@ import java.lang.reflect.Constructor;
+ import java.lang.reflect.InvocationTargetException;
+ import java.util.ArrayList;
+ import java.util.Collections;
+-import java.util.HashMap;
+-import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+-import java.util.Map;
+-import java.util.Set;
+ 
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+@@ -44,11 +40,7 @@ public class ValueDataFactory {
+      * Instantiates {@link ValueData} from result obtained by {@link ScriptExecutor}.
+      */
+     public static ValueData createValueData(Class< ? > clazz, Iterator<Tuple> iter) throws IOException {
+-        if (clazz == StringValueData.class) {
+-            Tuple tuple = ensureSingleResult(iter);
+-            return createStringValueData(tuple);
+-
+-        } else if (clazz == LongValueData.class) {
++        if (clazz == LongValueData.class) {
+             Tuple tuple = ensureSingleResult(iter);
+             return createLongValueData(tuple);
+ 
+@@ -56,23 +48,10 @@ public class ValueDataFactory {
+             Tuple tuple = ensureSingleResult(iter);
+             return createDoubleValueData(tuple);
+         }
+-
+-        else if (clazz == SetStringValueData.class) {
+-            return createSetStringValueData(iter);
+-        }
+-
+         else if (clazz == ListStringValueData.class) {
+             return createListStringValueData(iter);
+         }
+ 
+-        else if (clazz == MapStringLongValueData.class) {
+-            return createMapStringLongValueData(iter);
+-        }
+-
+-        else if (clazz == SetListStringValueData.class) {
+-            return createSetListStringValueData(iter);
+-        }
+-
+         else if (clazz == ListListStringValueData.class) {
+             return createListListStringValueData(iter);
+         }
+@@ -100,25 +79,6 @@ public class ValueDataFactory {
+     }
+ 
+ 
+-    @SuppressWarnings({"rawtypes", "unchecked"})
+-    private static ValueData createSetListStringValueData(Iterator<Tuple> iter) throws IOException {
+-        if (!iter.hasNext()) {
+-            return new SetListStringValueData(Collections.<ListStringValueData> emptySet());
+-        }
+-
+-        Set<ListStringValueData> result = new HashSet<ListStringValueData>();
+-        while (iter.hasNext()) {
+-            Tuple tuple = iter.next();
+-
+-            validateTupleSize(tuple, 1);
+-
+-            Iterator iterator = ((Tuple)tuple.get(0)).iterator();
+-            result.add(createListStringValueData(iterator));
+-        }
+-
+-        return new SetListStringValueData(result);
+-    }
+-
+     private static ListStringValueData createListStringValueData(Iterator<Tuple> iter) throws IOException {
+         if (!iter.hasNext()) {
+             return new ListStringValueData(Collections.<String> emptyList());
+@@ -135,42 +95,6 @@ public class ValueDataFactory {
+         return new ListStringValueData(result);
+     }
+ 
+-    private static ValueData createMapStringLongValueData(Iterator<Tuple> iter) throws IOException {
+-        if (!iter.hasNext()) {
+-            return new MapStringLongValueData(Collections.<String, Long> emptyMap());
+-        }
+-
+-        Map<String, Long> result = new HashMap<String, Long>();
+-        while (iter.hasNext()) {
+-            Tuple tuple = iter.next();
+-
+-            validateTupleSize(tuple, 2);
+-
+-            String key = tuple.get(0).toString();
+-            Long value = (Long)tuple.get(1);
+-
+-            result.put(key, value);
+-        }
+-
+-        return new MapStringLongValueData(result);
+-    }
+-
+-    private static ValueData createSetStringValueData(Iterator<Tuple> iter) throws IOException {
+-        if (!iter.hasNext()) {
+-            return new SetStringValueData(Collections.<String> emptySet());
+-        }
+-
+-        Set<String> result = new HashSet<String>();
+-        while (iter.hasNext()) {
+-            Tuple tuple = iter.next();
+-
+-            validateTupleSize(tuple, 1);
+-            result.add(tuple.get(0).toString());
+-        }
+-
+-        return new SetStringValueData(result);
+-    }
+-
+     private static ValueData createLongValueData(Tuple tuple) throws IOException {
+         Long value = tuple == null ? 0L : (Long)tuple.get(0);
+         return new LongValueData(value);
+@@ -181,11 +105,6 @@ public class ValueDataFactory {
+         return new DoubleValueData(value);
+     }
+ 
+-    private static ValueData createStringValueData(Tuple tuple) throws IOException {
+-        String value = tuple == null ? "" : tuple.get(0).toString();
+-        return new StringValueData(value);
+-    }
+-
+     private static Tuple ensureSingleResult(Iterator<Tuple> iter) throws IOException {
+         Tuple tuple = iter.hasNext() ? iter.next() : null;
+ 
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/AbstractFilter.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/AbstractFilter.java
+index 5a399f4..2dbafb2 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/AbstractFilter.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/AbstractFilter.java
+@@ -7,8 +7,6 @@ package com.codenvy.analytics.metrics.value.filters;
+ import com.codenvy.analytics.metrics.MetricFilter;
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+ import com.codenvy.analytics.metrics.value.ListStringValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+-import com.codenvy.analytics.metrics.value.SetStringValueData;
+ 
+ import java.util.ArrayList;
+ import java.util.HashMap;
+@@ -42,14 +40,14 @@ public abstract class AbstractFilter implements Filter {
+ 
+     /** {@inheritDoc} */
+     @Override
+-    public MapStringLongValueData sizeOfGroups(MetricFilter key) throws IllegalArgumentException {
++    public Map<String, Long> sizeOfGroups(MetricFilter key) throws IllegalArgumentException {
+         return sizeOfGroups(getIndex(key));
+     }
+ 
+ 
+     /** {@inheritDoc} */
+     @Override
+-    public SetStringValueData getAvailable(MetricFilter key) throws IllegalArgumentException {
++    public Set<String> getAvailable(MetricFilter key) throws IllegalArgumentException {
+         return getAvailable(getIndex(key));
+     }
+ 
+@@ -59,6 +57,29 @@ public abstract class AbstractFilter implements Filter {
+         return size(getIndex(key), value);
+     }
+ 
++    protected ListListStringValueData getUniqueActions(MetricFilter... filters) {
++        HashSet<String> keys = new HashSet<String>();
++        List<ListStringValueData> result = new ArrayList<ListStringValueData>();
++
++        for (ListStringValueData item : valueData.getAll()) {
++            List<String> all = item.getAll();
++
++            StringBuilder builder = new StringBuilder();
++            for (MetricFilter filter : filters) {
++                builder.append(all.get(getIndex(filter)));
++                builder.append(".");
++            }
++
++            String key = builder.toString();
++            if (!keys.contains(key)) {
++                keys.add(key);
++                result.add(item);
++            }
++        }
++
++        return new ListListStringValueData(result);
++    }
++
+     private int size(int index, String value) {
+         int result = 0;
+ 
+@@ -71,28 +92,28 @@ public abstract class AbstractFilter implements Filter {
+         return result;
+     }
+ 
+-    private SetStringValueData getAvailable(int index) {
++    private Set<String> getAvailable(int index) {
+         Set<String> result = new HashSet<String>();
+ 
+         for (ListStringValueData item : valueData.getAll()) {
+             result.add(item.getAll().get(index));
+         }
+ 
+-        return new SetStringValueData(result);
++        return result;
+     }
+ 
+ 
+-    protected MapStringLongValueData sizeOfGroups(int index) throws IllegalArgumentException {
+-        Map<String, Long> map = new HashMap<String, Long>();
++    protected Map<String, Long> sizeOfGroups(int index) throws IllegalArgumentException {
++        Map<String, Long> result = new HashMap<String, Long>();
+ 
+         for (ListStringValueData item : valueData.getAll()) {
+             String key = item.getAll().get(index);
+ 
+-            long prevValue = map.containsKey(key) ? map.get(key) : 0;
+-            map.put(key, prevValue + 1);
++            long prevValue = result.containsKey(key) ? result.get(key) : 0;
++            result.put(key, prevValue + 1);
+         }
+ 
+-        return new MapStringLongValueData(map);
++        return result;
+     }
+ 
+     private ListListStringValueData apply(int index, String value) {
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/Filter.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/Filter.java
+index 710d753..c261f08 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/Filter.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/Filter.java
+@@ -5,10 +5,11 @@
+ package com.codenvy.analytics.metrics.value.filters;
+ 
+ import com.codenvy.analytics.metrics.MetricFilter;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+-import com.codenvy.analytics.metrics.value.SetStringValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ 
++import java.util.Map;
++import java.util.Set;
++
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+  */
+@@ -29,7 +30,7 @@ public interface Filter {
+      * @return the size of groups
+      * @throws IllegalArgumentException if filter is not supported
+      */
+-    MapStringLongValueData sizeOfGroups(MetricFilter key) throws IllegalArgumentException;
++    Map<String, Long> sizeOfGroups(MetricFilter key) throws IllegalArgumentException;
+ 
+     /**
+      * @return applied filter
+@@ -41,5 +42,5 @@ public interface Filter {
+      * @return available values for given filter
+      * @throws IllegalArgumentException if filter is not supported
+      */
+-    SetStringValueData getAvailable(MetricFilter key) throws IllegalArgumentException;
++    Set<String> getAvailable(MetricFilter key) throws IllegalArgumentException;
+ }
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/ProjectsFilter.java b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/ProjectsFilter.java
+index ae3c019..f6582d0 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/ProjectsFilter.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/metrics/value/filters/ProjectsFilter.java
+@@ -6,11 +6,6 @@ package com.codenvy.analytics.metrics.value.filters;
+ 
+ import com.codenvy.analytics.metrics.MetricFilter;
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+-import com.codenvy.analytics.metrics.value.ListStringValueData;
+-
+-import java.util.ArrayList;
+-import java.util.HashSet;
+-import java.util.List;
+ 
+ /**
+  * <li>0 - the workspace name</li><br>
+@@ -22,10 +17,6 @@ import java.util.List;
+  */
+ public class ProjectsFilter extends AbstractFilter {
+ 
+-    private final static int USER         = 0;
+-    private final static int PROJECT_NAME = 2;
+-    private final static int PROJECT_TYPE = 3;
+-
+     public ProjectsFilter(ListListStringValueData valueData) {
+         super(valueData);
+     }
+@@ -34,27 +25,7 @@ public class ProjectsFilter extends AbstractFilter {
+      * @return the unique projects only
+      */
+     public ListListStringValueData getUniqueProjects() {
+-        HashSet<String> keys = new HashSet<String>();
+-        List<ListStringValueData> result = new ArrayList<ListStringValueData>();
+-
+-        for (ListStringValueData item : valueData.getAll()) {
+-            List<String> project = item.getAll();
+-
+-            StringBuilder builder = new StringBuilder();
+-            builder.append(project.get(USER));
+-            builder.append("/");
+-            builder.append(project.get(PROJECT_NAME));
+-            builder.append("/");
+-            builder.append(project.get(PROJECT_TYPE));
+-
+-            String key = builder.toString();
+-            if (!keys.contains(key)) {
+-                keys.add(key);
+-                result.add(item);
+-            }
+-        }
+-
+-        return new ListListStringValueData(result);
++        return getUniqueActions(MetricFilter.FILTER_WS, MetricFilter.FILTER_PROJECT_NAME, MetricFilter.FILTER_PROJECT_TYPE);
+     }
+ 
+     protected int getIndex(MetricFilter key) throws IllegalArgumentException {
+diff --git a/analytics-core/src/main/java/com/codenvy/analytics/scripts/ScriptType.java b/analytics-core/src/main/java/com/codenvy/analytics/scripts/ScriptType.java
+index 68a8955..0463c76 100644
+--- a/analytics-core/src/main/java/com/codenvy/analytics/scripts/ScriptType.java
++++ b/analytics-core/src/main/java/com/codenvy/analytics/scripts/ScriptType.java
+@@ -1,4 +1,5 @@
+ /*
++
+  *    Copyright (C) 2013 Codenvy.
+  *
+  */
+@@ -7,10 +8,6 @@ package com.codenvy.analytics.scripts;
+ 
+ import com.codenvy.analytics.metrics.MetricParameter;
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+-import com.codenvy.analytics.metrics.value.LongValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+-import com.codenvy.analytics.metrics.value.SetListStringValueData;
+-import com.codenvy.analytics.metrics.value.SetStringValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ 
+ import java.util.Arrays;
+@@ -29,10 +26,10 @@ public enum ScriptType {
+         }
+     },
+ 
+-    EVENT_COUNT_WORKSPACE_CREATED {
++    WORKSPACES_CREATED {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return LongValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+@@ -50,17 +47,17 @@ public enum ScriptType {
+         }
+     },
+ 
+-    EVENT_COUNT_WORKSPACE_DESTROYED {
++    WORKSPACES_DESTROYED {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return LongValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+-    EVENT_COUNT_PROJECT_DESTROYED {
++    PROJECTS_DESTROYED {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return LongValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+@@ -81,14 +78,14 @@ public enum ScriptType {
+     ACTIVE_PROJECTS {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return SetListStringValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+     ACTIVE_USERS_WORKSPACES {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return SetListStringValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+@@ -99,59 +96,59 @@ public enum ScriptType {
+         }
+     },
+ 
+-    DETAILED_PROJECTS_CREATED {
++    PROJECTS_CREATED {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+             return ListListStringValueData.class;
+         }
+     },
+ 
+-    DETAILED_PROJECTS_DEPLOYED {
++    PROJECTS_DEPLOYED {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+             return ListListStringValueData.class;
+         }
+     },
+ 
+-    DETAILED_PROJECTS_BUILT {
++    PROJECTS_BUILT {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+             return ListListStringValueData.class;
+         }
+     },
+ 
+-    DETAILS_USER_SSO_LOGGED_IN {
++    USERS_SSO_LOGGED_IN {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return MapStringLongValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+     USERS_WITHOUT_PROJECTS {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return SetStringValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+     USERS_WITHOUT_BUILDS {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return SetStringValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+-    USERS_WITHOUT_DEPLOYS {
++    USERS_WITHOUT_DEPLOYES {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return SetStringValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+     USERS_WITHOUT_INVITES {
+         @Override
+         public Class< ? extends ValueData> getValueDataClass() {
+-            return SetStringValueData.class;
++            return ListListStringValueData.class;
+         }
+     },
+ 
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/metrics/TestProjectsDeployedPaasMetric.java b/analytics-core/src/test/java/com/codenvy/analytics/metrics/TestProjectsDeployedPaasMetric.java
+index 9a9b702..807c653 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/metrics/TestProjectsDeployedPaasMetric.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/metrics/TestProjectsDeployedPaasMetric.java
+@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
+ 
+ import com.codenvy.analytics.BaseTest;
+ import com.codenvy.analytics.metrics.value.DoubleValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+ import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
+ import com.codenvy.analytics.scripts.util.Event;
+ import com.codenvy.analytics.scripts.util.LogGenerator;
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/metrics/TestValueFromMapMetric.java b/analytics-core/src/test/java/com/codenvy/analytics/metrics/TestValueFromMapMetric.java
+index cdad899..a0a0be7 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/metrics/TestValueFromMapMetric.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/metrics/TestValueFromMapMetric.java
+@@ -11,7 +11,6 @@ import static org.testng.Assert.assertEquals;
+ 
+ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
+ import com.codenvy.analytics.metrics.value.DoubleValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+ import com.codenvy.analytics.metrics.value.ValueData;
+ 
+ import org.testng.annotations.Test;
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/metrics/value/TestFSValueDataManager.java b/analytics-core/src/test/java/com/codenvy/analytics/metrics/value/TestFSValueDataManager.java
+index 37805a5..4beec95 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/metrics/value/TestFSValueDataManager.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/metrics/value/TestFSValueDataManager.java
+@@ -7,13 +7,13 @@ package com.codenvy.analytics.metrics.value;
+ import static org.testng.Assert.assertFalse;
+ import static org.testng.Assert.assertTrue;
+ 
+-import java.io.File;
+-import java.io.FileNotFoundException;
++import com.codenvy.analytics.BaseTest;
++import com.codenvy.analytics.metrics.MetricType;
+ 
+ import org.testng.annotations.Test;
+ 
+-import com.codenvy.analytics.BaseTest;
+-import com.codenvy.analytics.metrics.MetricType;
++import java.io.File;
++import java.io.FileNotFoundException;
+ 
+ /**
+  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+@@ -22,7 +22,7 @@ public class TestFSValueDataManager extends BaseTest {
+ 
+     @Test(expectedExceptions = FileNotFoundException.class)
+     public void shouldThrowExceptionIfFileNotExist() throws Exception {
+-        FSValueDataManager.store(new StringValueData("test"), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
++        FSValueDataManager.store(new LongValueData(2), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+ 
+         File file = FSValueDataManager.getFile(MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+         file.delete();
+@@ -39,6 +39,6 @@ public class TestFSValueDataManager extends BaseTest {
+ 
+         assertTrue(file.exists());
+ 
+-        FSValueDataManager.store(new StringValueData("test"), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
++        FSValueDataManager.store(new LongValueData(2), MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
+     }
+ }
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/metrics/value/filters/TestAbstractFilter.java b/analytics-core/src/test/java/com/codenvy/analytics/metrics/value/filters/TestAbstractFilter.java
+index e2d8cc1..3c0ac2e 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/metrics/value/filters/TestAbstractFilter.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/metrics/value/filters/TestAbstractFilter.java
+@@ -10,8 +10,6 @@ import static org.testng.Assert.assertTrue;
+ import com.codenvy.analytics.metrics.MetricFilter;
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+ import com.codenvy.analytics.metrics.value.ListStringValueData;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+-import com.codenvy.analytics.metrics.value.SetStringValueData;
+ 
+ import org.testng.annotations.BeforeMethod;
+ import org.testng.annotations.Test;
+@@ -72,8 +70,7 @@ public class TestAbstractFilter {
+ 
+     @Test
+     public void testGetAvailable() throws Exception {
+-        SetStringValueData available = filter.getAvailable(MetricFilter.FILTER_PROJECT_NAME);
+-        Set<String> all = available.getAll();
++        Set<String> all = filter.getAvailable(MetricFilter.FILTER_PROJECT_NAME);
+ 
+         assertEquals(all.size(), 3);
+         assertTrue(all.contains("project1"));
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestProjectsCreated.java b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestProjectsCreated.java
+index 16b09c6..a6b0cd8 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestProjectsCreated.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestProjectsCreated.java
+@@ -38,10 +38,10 @@ import java.util.List;
+ import java.util.Map;
+ 
+ /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+-public class TestScriptDetailsProjectCreated extends BaseTest {
++public class TestProjectsCreated extends BaseTest {
+ 
+     @Test
+-    public void testScriptDetailsProjectCreatedTypes() throws Exception {
++    public void testExecute() throws Exception {
+         List<Event> events = new ArrayList<Event>();
+         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "session", "project1", "type1")
+                                 .withDate("2010-10-01").build());
+@@ -59,7 +59,7 @@ public class TestScriptDetailsProjectCreated extends BaseTest {
+         params.put(MetricParameter.TO_DATE.getName(), "20101001");
+ 
+         ListListStringValueData value =
+-                                        (ListListStringValueData)executeAndReturnResult(ScriptType.DETAILED_PROJECTS_CREATED, log, params);
++                                        (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_CREATED, log, params);
+ 
+         List<ListStringValueData> all = value.getAll();
+         ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1"));
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptActiveProjects.java b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptActiveProjects.java
+index 1e952b2..be2dd6a 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptActiveProjects.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptActiveProjects.java
+@@ -23,8 +23,8 @@ import static org.testng.Assert.assertTrue;
+ 
+ import com.codenvy.analytics.BaseTest;
+ import com.codenvy.analytics.metrics.MetricParameter;
++import com.codenvy.analytics.metrics.value.ListListStringValueData;
+ import com.codenvy.analytics.metrics.value.ListStringValueData;
+-import com.codenvy.analytics.metrics.value.SetListStringValueData;
+ import com.codenvy.analytics.scripts.util.Event;
+ import com.codenvy.analytics.scripts.util.LogGenerator;
+ 
+@@ -37,7 +37,6 @@ import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+-import java.util.Set;
+ 
+ /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+ public class TestScriptActiveProjects extends BaseTest {
+@@ -58,8 +57,8 @@ public class TestScriptActiveProjects extends BaseTest {
+         params.put(MetricParameter.FROM_DATE.getName(), "20101002");
+         params.put(MetricParameter.TO_DATE.getName(), "20101002");
+ 
+-        SetListStringValueData valueData = (SetListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_PROJECTS, log, params);
+-        Set<ListStringValueData> all = valueData.getAll();
++        ListListStringValueData valueData = (ListListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_PROJECTS, log, params);
++        List<ListStringValueData> all = valueData.getAll();
+ 
+         Assert.assertEquals(all.size(), 5);
+         assertTrue(all.contains(new ListStringValueData(Arrays.asList("ws2", "user2", "project1", "type1"))));
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptActiveUsersWorkspaces.java b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptActiveUsersWorkspaces.java
+index 1ae66fa..5cfebd8 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptActiveUsersWorkspaces.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptActiveUsersWorkspaces.java
+@@ -23,8 +23,8 @@ import static org.testng.Assert.assertTrue;
+ 
+ import com.codenvy.analytics.BaseTest;
+ import com.codenvy.analytics.metrics.MetricParameter;
++import com.codenvy.analytics.metrics.value.ListListStringValueData;
+ import com.codenvy.analytics.metrics.value.ListStringValueData;
+-import com.codenvy.analytics.metrics.value.SetListStringValueData;
+ import com.codenvy.analytics.scripts.util.Event;
+ import com.codenvy.analytics.scripts.util.LogGenerator;
+ 
+@@ -36,7 +36,6 @@ import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+-import java.util.Set;
+ 
+ /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+ public class TestScriptActiveUsersWorkspaces extends BaseTest {
+@@ -57,8 +56,9 @@ public class TestScriptActiveUsersWorkspaces extends BaseTest {
+         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
+         params.put(MetricParameter.TO_DATE.getName(), "20101002");
+ 
+-        SetListStringValueData valueData = (SetListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_USERS_WORKSPACES, log, params);
+-        Set<ListStringValueData> value = valueData.getAll();
++        ListListStringValueData valueData =
++                                            (ListListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_USERS_WORKSPACES, log, params);
++        List<ListStringValueData> value = valueData.getAll();
+ 
+         assertEquals(value.size(), 2);
+         assertTrue(value.contains(new ListStringValueData(Arrays.asList("ws1", "user1"))));
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptDetailedProjectsBuilt.java b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptDetailedProjectsBuilt.java
+index 6cc3b2e..29d7c87 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptDetailedProjectsBuilt.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptDetailedProjectsBuilt.java
+@@ -56,7 +56,7 @@ public class TestScriptDetailedProjectsBuilt extends BaseTest {
+         context.put(MetricParameter.FROM_DATE.getName(), "20101001");
+         context.put(MetricParameter.TO_DATE.getName(), "20101001");
+ 
+-        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.DETAILED_PROJECTS_BUILT, log, context);
++        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_BUILT, log, context);
+ 
+         List<ListStringValueData> all = value.getAll();
+         ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1"));
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptDetailsAppDeployed.java b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptDetailsAppDeployed.java
+index b384e42..4f2b236 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptDetailsAppDeployed.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestScriptDetailsAppDeployed.java
+@@ -61,7 +61,7 @@ public class TestScriptDetailsAppDeployed extends BaseTest {
+         context.put(MetricParameter.TO_DATE.getName(), "20101001");
+ 
+         ListListStringValueData value =
+-                                        (ListListStringValueData)executeAndReturnResult(ScriptType.DETAILED_PROJECTS_DEPLOYED, log, context);
++                                        (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_DEPLOYED, log, context);
+ 
+         List<ListStringValueData> all = value.getAll();
+         ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "project1", "type1", "paas1"));
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestUsersInvitations.java b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestUsersInvitations.java
+index 8d7f69d..354d946 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestUsersInvitations.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestUsersInvitations.java
+@@ -26,11 +26,9 @@ import com.codenvy.analytics.BaseTest;
+ import com.codenvy.analytics.metrics.MetricParameter;
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+ import com.codenvy.analytics.metrics.value.ListStringValueData;
+-import com.codenvy.analytics.metrics.value.LongValueData;
+ import com.codenvy.analytics.scripts.util.Event;
+ import com.codenvy.analytics.scripts.util.LogGenerator;
+ 
+-import org.testng.Assert;
+ import org.testng.annotations.Test;
+ 
+ import java.io.File;
+@@ -41,56 +39,10 @@ import java.util.List;
+ import java.util.Map;
+ 
+ /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+-public class TestScriptEventCount extends BaseTest {
+-    @Test
+-    public void testEventCountTenantCreated() throws Exception {
+-        List<Event> events = new ArrayList<Event>();
+-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-01").build());
+-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
+-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user2").withDate("2010-10-02").build());
+-        File log = LogGenerator.generateLog(events);
+-
+-        Map<String, String> params = new HashMap<String, String>();
+-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
+-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
+-
+-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_WORKSPACE_CREATED, log, params);
+-        Assert.assertEquals(value.getAsLong(), 2L);
+-    }
+-
+-    @Test
+-    public void testEventCountTenantDestroyed() throws Exception {
+-        List<Event> events = new ArrayList<Event>();
+-        events.add(Event.Builder.createTenantDestroyedEvent("ws1").withDate("2010-10-01").build());
+-        events.add(Event.Builder.createTenantDestroyedEvent("ws2").withDate("2010-10-01").build());
+-        File log = LogGenerator.generateLog(events);
+-
+-        Map<String, String> params = new HashMap<String, String>();
+-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
+-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
+-
+-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_WORKSPACE_DESTROYED, log, params);
+-        Assert.assertEquals(value.getAsLong(), 2L);
+-    }
+-
+-
+-    @Test
+-    public void testEventCountProjectDestroyed() throws Exception {
+-        List<Event> events = new ArrayList<Event>();
+-        events.add(Event.Builder.createProjectDestroyedEvent("user", "ws", "session", "project", "type").withDate("2010-10-01")
+-                        .build());
+-        File log = LogGenerator.generateLog(events);
+-
+-        Map<String, String> params = new HashMap<String, String>();
+-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
+-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
+-
+-        LongValueData value = (LongValueData)executeAndReturnResult(ScriptType.EVENT_COUNT_PROJECT_DESTROYED, log, params);
+-        Assert.assertEquals(value.getAsLong(), 1L);
+-    }
++public class TestUsersInvitations extends BaseTest {
+ 
+     @Test
+-    public void testEventCountUserInvite() throws Exception {
++    public void testExecute() throws Exception {
+         List<Event> events = new ArrayList<Event>();
+         events.add(Event.Builder.createUserInviteEvent("user", "ws", "session", "email").withDate("2010-10-01").build());
+         File log = LogGenerator.generateLog(events);
+diff --git a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestUsersSSOLoggedIn.java b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestUsersSSOLoggedIn.java
+index dfb03a5..61317ce 100644
+--- a/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestUsersSSOLoggedIn.java
++++ b/analytics-core/src/test/java/com/codenvy/analytics/scripts/TestUsersSSOLoggedIn.java
+@@ -19,10 +19,12 @@
+ package com.codenvy.analytics.scripts;
+ 
+ import static org.testng.Assert.assertEquals;
++import static org.testng.Assert.assertTrue;
+ 
+ import com.codenvy.analytics.BaseTest;
+ import com.codenvy.analytics.metrics.MetricParameter;
+-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
++import com.codenvy.analytics.metrics.value.ListListStringValueData;
++import com.codenvy.analytics.metrics.value.ListStringValueData;
+ import com.codenvy.analytics.scripts.util.Event;
+ import com.codenvy.analytics.scripts.util.LogGenerator;
+ 
+@@ -30,15 +32,16 @@ import org.testng.annotations.Test;
+ 
+ import java.io.File;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ 
+ /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+-public class TestScriptDetails extends BaseTest {
++public class TestUsersSSOLoggedIn extends BaseTest {
+ 
+     @Test
+-    public void testScriptDetailsUserSsoLoggedIn() throws Exception {
++    public void testExecute() throws Exception {
+         List<Event> events = new ArrayList<Event>();
+         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01").build());
+         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "github").withDate("2010-10-01").build());
+@@ -51,12 +54,13 @@ public class TestScriptDetails extends BaseTest {
+         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
+         params.put(MetricParameter.TO_DATE.getName(), "20101001");
+ 
+-        MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, params);
+-        Map<String, Long> all = value.getAll();
++        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_SSO_LOGGED_IN, log, params);
++        List<ListStringValueData> all = value.getAll();
+ 
+-        assertEquals(all.size(), 3);
+-        assertEquals(all.get("google"), Long.valueOf(2));
+-        assertEquals(all.get("github"), Long.valueOf(1));
+-        assertEquals(all.get("jaas"), Long.valueOf(1));
++        assertEquals(all.size(), 4);
++        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user1", "google"))));
++        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user1", "github"))));
++        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user2", "google"))));
++        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user3", "jaas"))));
+     }
+ }
+diff --git a/analytics-web-portal/src/main/java/com/codenvy/analytics/server/jobs/ActOnJob.java b/analytics-web-portal/src/main/java/com/codenvy/analytics/server/jobs/ActOnJob.java
+index ba09e6a..45b21c4 100644
+--- a/analytics-web-portal/src/main/java/com/codenvy/analytics/server/jobs/ActOnJob.java
++++ b/analytics-web-portal/src/main/java/com/codenvy/analytics/server/jobs/ActOnJob.java
+@@ -12,7 +12,6 @@ import com.codenvy.analytics.metrics.MetricType;
+ import com.codenvy.analytics.metrics.TimeUnit;
+ import com.codenvy.analytics.metrics.Utils;
+ import com.codenvy.analytics.metrics.value.ListListStringValueData;
+-import com.codenvy.analytics.metrics.value.SetListStringValueData;
+ import com.codenvy.analytics.metrics.value.filters.Filter;
+ import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
+ import com.codenvy.organization.exception.OrganizationServiceException;
+@@ -371,13 +370,11 @@ public class ActOnJob implements Job {
+      * Extracts list of all active users.
+      */
+     protected Set<String> getActiveUsers(Map<String, String> context) throws IOException {
+-        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_SET);
+-
+-        SetListStringValueData valueData = (SetListStringValueData)metric.getValue(context);
+-        ListListStringValueData listVD = new ListListStringValueData(valueData);
++        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
+ 
++        ListListStringValueData listVD = (ListListStringValueData)metric.getValue(context);
+         Filter filter = new UsersWorkspacesFilter(listVD);
+ 
+-        return filter.getAvailable(MetricFilter.FILTER_USER).getAll();
++        return filter.getAvailable(MetricFilter.FILTER_USER);
+     }
+ }

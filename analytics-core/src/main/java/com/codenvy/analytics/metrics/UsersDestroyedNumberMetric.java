@@ -20,7 +20,7 @@ public class UsersDestroyedNumberMetric extends CalculateBasedMetric {
     private final Metric basedMetric;
 
     UsersDestroyedNumberMetric() throws IOException {
-        super(MetricType.USERS_CREATED_NUMBER);
+        super(MetricType.USERS_DESTROYED_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.USERS_DESTROYED_LIST);
     }
 

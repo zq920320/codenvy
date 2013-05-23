@@ -7,8 +7,6 @@ package com.codenvy.analytics.metrics.value.filters;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,14 +40,14 @@ public abstract class AbstractFilter implements Filter {
 
     /** {@inheritDoc} */
     @Override
-    public MapStringLongValueData sizeOfGroups(MetricFilter key) throws IllegalArgumentException {
+    public Map<String, Long> sizeOfGroups(MetricFilter key) throws IllegalArgumentException {
         return sizeOfGroups(getIndex(key));
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public SetStringValueData getAvailable(MetricFilter key) throws IllegalArgumentException {
+    public Set<String> getAvailable(MetricFilter key) throws IllegalArgumentException {
         return getAvailable(getIndex(key));
     }
 
@@ -57,6 +55,29 @@ public abstract class AbstractFilter implements Filter {
     @Override
     public int size(MetricFilter key, String value) throws IllegalArgumentException {
         return size(getIndex(key), value);
+    }
+
+    protected ListListStringValueData getUniqueActions(MetricFilter... filters) {
+        HashSet<String> keys = new HashSet<String>();
+        List<ListStringValueData> result = new ArrayList<ListStringValueData>();
+
+        for (ListStringValueData item : valueData.getAll()) {
+            List<String> all = item.getAll();
+
+            StringBuilder builder = new StringBuilder();
+            for (MetricFilter filter : filters) {
+                builder.append(all.get(getIndex(filter)));
+                builder.append(".");
+            }
+
+            String key = builder.toString();
+            if (!keys.contains(key)) {
+                keys.add(key);
+                result.add(item);
+            }
+        }
+
+        return new ListListStringValueData(result);
     }
 
     private int size(int index, String value) {
@@ -71,28 +92,28 @@ public abstract class AbstractFilter implements Filter {
         return result;
     }
 
-    private SetStringValueData getAvailable(int index) {
+    private Set<String> getAvailable(int index) {
         Set<String> result = new HashSet<String>();
 
         for (ListStringValueData item : valueData.getAll()) {
             result.add(item.getAll().get(index));
         }
 
-        return new SetStringValueData(result);
+        return result;
     }
 
 
-    protected MapStringLongValueData sizeOfGroups(int index) throws IllegalArgumentException {
-        Map<String, Long> map = new HashMap<String, Long>();
+    protected Map<String, Long> sizeOfGroups(int index) throws IllegalArgumentException {
+        Map<String, Long> result = new HashMap<String, Long>();
 
         for (ListStringValueData item : valueData.getAll()) {
             String key = item.getAll().get(index);
 
-            long prevValue = map.containsKey(key) ? map.get(key) : 0;
-            map.put(key, prevValue + 1);
+            long prevValue = result.containsKey(key) ? result.get(key) : 0;
+            result.put(key, prevValue + 1);
         }
 
-        return new MapStringLongValueData(map);
+        return result;
     }
 
     private ListListStringValueData apply(int index, String value) {

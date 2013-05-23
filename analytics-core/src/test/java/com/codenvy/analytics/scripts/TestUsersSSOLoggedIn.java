@@ -19,10 +19,12 @@
 package com.codenvy.analytics.scripts;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -30,15 +32,16 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptDetails extends BaseTest {
+public class TestUsersSSOLoggedIn extends BaseTest {
 
     @Test
-    public void testScriptDetailsUserSsoLoggedIn() throws Exception {
+    public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "github").withDate("2010-10-01").build());
@@ -51,12 +54,13 @@ public class TestScriptDetails extends BaseTest {
         params.put(MetricParameter.FROM_DATE.getName(), "20101001");
         params.put(MetricParameter.TO_DATE.getName(), "20101001");
 
-        MapStringLongValueData value = (MapStringLongValueData)executeAndReturnResult(ScriptType.DETAILS_USER_SSO_LOGGED_IN, log, params);
-        Map<String, Long> all = value.getAll();
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_SSO_LOGGED_IN, log, params);
+        List<ListStringValueData> all = value.getAll();
 
-        assertEquals(all.size(), 3);
-        assertEquals(all.get("google"), Long.valueOf(2));
-        assertEquals(all.get("github"), Long.valueOf(1));
-        assertEquals(all.get("jaas"), Long.valueOf(1));
+        assertEquals(all.size(), 4);
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user1", "google"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user1", "github"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user2", "google"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user3", "jaas"))));
     }
 }

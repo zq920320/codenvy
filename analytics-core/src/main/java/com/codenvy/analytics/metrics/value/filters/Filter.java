@@ -5,9 +5,10 @@
 package com.codenvy.analytics.metrics.value.filters;
 
 import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -29,7 +30,7 @@ public interface Filter {
      * @return the size of groups
      * @throws IllegalArgumentException if filter is not supported
      */
-    MapStringLongValueData sizeOfGroups(MetricFilter key) throws IllegalArgumentException;
+    Map<String, Long> sizeOfGroups(MetricFilter key) throws IllegalArgumentException;
 
     /**
      * @return applied filter
@@ -41,5 +42,5 @@ public interface Filter {
      * @return available values for given filter
      * @throws IllegalArgumentException if filter is not supported
      */
-    SetStringValueData getAvailable(MetricFilter key) throws IllegalArgumentException;
+    Set<String> getAvailable(MetricFilter key) throws IllegalArgumentException;
 }

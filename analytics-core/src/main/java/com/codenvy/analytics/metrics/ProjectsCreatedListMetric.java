@@ -24,7 +24,7 @@ public class ProjectsCreatedListMetric extends ScriptBasedMetric {
      */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.DETAILED_PROJECTS_CREATED;
+        return ScriptType.PROJECTS_CREATED;
     }
 
     /** {@inheritDoc} */

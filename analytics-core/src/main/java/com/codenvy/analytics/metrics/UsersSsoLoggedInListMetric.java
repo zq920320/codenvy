@@ -6,25 +6,22 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
+import com.codenvy.analytics.metrics.value.filters.UsersSSOLoggedInFilter;
 import com.codenvy.analytics.scripts.ScriptType;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsBuiltListMetric extends ScriptBasedMetric {
+public class UsersSsoLoggedInListMetric extends ScriptBasedMetric {
 
-    ProjectsBuiltListMetric() {
-        super(MetricType.PROJECTS_BUILT_LIST);
+    UsersSsoLoggedInListMetric() {
+        super(MetricType.USERS_SSO_LOGGED_IN_LIST);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.PROJECTS_BUILT;
+        return ScriptType.USERS_SSO_LOGGED_IN;
     }
 
     /** {@inheritDoc} */
@@ -33,9 +30,8 @@ public class ProjectsBuiltListMetric extends ScriptBasedMetric {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected Filter createFilter(ValueData valueData) {
-        return new ProjectsFilter((ListListStringValueData)valueData);
+    protected UsersSSOLoggedInFilter createFilter(ValueData valueData) {
+        return new UsersSSOLoggedInFilter((ListListStringValueData)valueData);
     }
 }

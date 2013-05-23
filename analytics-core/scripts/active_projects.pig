@@ -8,4 +8,5 @@ a2 = extractUser(a1);
 a3 = extractParam(a2, 'PROJECT', 'project');
 aR = extractParam(a3, 'TYPE', 'type');
 
-result = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type));
+r1 = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type));
+result = DISTINCT r1;

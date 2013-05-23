@@ -5,27 +5,24 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.SetListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.Filter;
 import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
 import com.codenvy.analytics.scripts.ScriptType;
-
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActiveProjectsSetMetric extends ScriptBasedMetric {
+public class ProjectsDestroyedListMetric extends ScriptBasedMetric {
 
-    ActiveProjectsSetMetric() {
-        super(MetricType.ACTIVE_PROJECTS_SET);
+    ProjectsDestroyedListMetric() {
+        super(MetricType.PROJECTS_DESTROYED_LIST);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.ACTIVE_PROJECTS;
+        return ScriptType.PROJECTS_DESTROYED;
     }
 
     /** {@inheritDoc} */
@@ -36,8 +33,7 @@ public class ActiveProjectsSetMetric extends ScriptBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected ProjectsFilter createFilter(ValueData valueData) {
-        SetListStringValueData setVD = (SetListStringValueData)valueData;
-        return new ProjectsFilter(new ListListStringValueData(setVD.getAll()));
+    protected Filter createFilter(ValueData valueData) {
+        return new ProjectsFilter((ListListStringValueData)valueData);
     }
 }

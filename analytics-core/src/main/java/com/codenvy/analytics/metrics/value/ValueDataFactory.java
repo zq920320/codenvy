@@ -14,11 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -44,11 +42,7 @@ public class ValueDataFactory {
      * Instantiates {@link ValueData} from result obtained by {@link ScriptExecutor}.
      */
     public static ValueData createValueData(Class< ? > clazz, Iterator<Tuple> iter) throws IOException {
-        if (clazz == StringValueData.class) {
-            Tuple tuple = ensureSingleResult(iter);
-            return createStringValueData(tuple);
-
-        } else if (clazz == LongValueData.class) {
+        if (clazz == LongValueData.class) {
             Tuple tuple = ensureSingleResult(iter);
             return createLongValueData(tuple);
 
@@ -56,83 +50,20 @@ public class ValueDataFactory {
             Tuple tuple = ensureSingleResult(iter);
             return createDoubleValueData(tuple);
         }
-
-        else if (clazz == SetStringValueData.class) {
-            return createSetStringValueData(iter);
-        }
-
         else if (clazz == ListStringValueData.class) {
             return createListStringValueData(iter);
-        }
-
-        else if (clazz == MapStringLongValueData.class) {
-            return createMapStringLongValueData(iter);
-        }
-
-        else if (clazz == SetListStringValueData.class) {
-            return createSetListStringValueData(iter);
         }
 
         else if (clazz == ListListStringValueData.class) {
             return createListListStringValueData(iter);
         }
 
+        else if (clazz == MapStringLongValueData.class) {
+            return createMapStringLongValueData(iter);
+        }
+
+
         throw new IOException("Unknown class " + clazz.getName());
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static ListListStringValueData createListListStringValueData(Iterator<Tuple> iter) throws IOException {
-        if (!iter.hasNext()) {
-            return new ListListStringValueData(Collections.<ListStringValueData> emptyList());
-        }
-
-        List<ListStringValueData> result = new ArrayList<ListStringValueData>();
-        while (iter.hasNext()) {
-            Tuple tuple = iter.next();
-
-            validateTupleSize(tuple, 1);
-
-            Iterator iterator = ((Tuple)tuple.get(0)).iterator();
-            result.add(createListStringValueData(iterator));
-        }
-
-        return new ListListStringValueData(result);
-    }
-
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static ValueData createSetListStringValueData(Iterator<Tuple> iter) throws IOException {
-        if (!iter.hasNext()) {
-            return new SetListStringValueData(Collections.<ListStringValueData> emptySet());
-        }
-
-        Set<ListStringValueData> result = new HashSet<ListStringValueData>();
-        while (iter.hasNext()) {
-            Tuple tuple = iter.next();
-
-            validateTupleSize(tuple, 1);
-
-            Iterator iterator = ((Tuple)tuple.get(0)).iterator();
-            result.add(createListStringValueData(iterator));
-        }
-
-        return new SetListStringValueData(result);
-    }
-
-    private static ListStringValueData createListStringValueData(Iterator<Tuple> iter) throws IOException {
-        if (!iter.hasNext()) {
-            return new ListStringValueData(Collections.<String> emptyList());
-        }
-
-        List<String> result = new ArrayList<String>();
-        while (iter.hasNext()) {
-            Tuple tuple = iter.next();
-
-            validateTupleSize(tuple, 1);
-            result.add(tuple.get(0).toString());
-        }
-
-        return new ListStringValueData(result);
     }
 
     private static ValueData createMapStringLongValueData(Iterator<Tuple> iter) throws IOException {
@@ -155,12 +86,33 @@ public class ValueDataFactory {
         return new MapStringLongValueData(result);
     }
 
-    private static ValueData createSetStringValueData(Iterator<Tuple> iter) throws IOException {
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static ListListStringValueData createListListStringValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new SetStringValueData(Collections.<String> emptySet());
+            return new ListListStringValueData(Collections.<ListStringValueData> emptyList());
         }
 
-        Set<String> result = new HashSet<String>();
+        List<ListStringValueData> result = new ArrayList<ListStringValueData>();
+        while (iter.hasNext()) {
+            Tuple tuple = iter.next();
+
+            validateTupleSize(tuple, 1);
+
+            Iterator iterator = ((Tuple)tuple.get(0)).iterator();
+            result.add(createListStringValueData(iterator));
+        }
+
+        return new ListListStringValueData(result);
+    }
+
+
+    private static ListStringValueData createListStringValueData(Iterator<Tuple> iter) throws IOException {
+        if (!iter.hasNext()) {
+            return new ListStringValueData(Collections.<String> emptyList());
+        }
+
+        List<String> result = new ArrayList<String>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
@@ -168,7 +120,7 @@ public class ValueDataFactory {
             result.add(tuple.get(0).toString());
         }
 
-        return new SetStringValueData(result);
+        return new ListStringValueData(result);
     }
 
     private static ValueData createLongValueData(Tuple tuple) throws IOException {
@@ -179,11 +131,6 @@ public class ValueDataFactory {
     private static ValueData createDoubleValueData(Tuple tuple) throws IOException {
         Double value = tuple == null ? 0D : (Double)tuple.get(0);
         return new DoubleValueData(value);
-    }
-
-    private static ValueData createStringValueData(Tuple tuple) throws IOException {
-        String value = tuple == null ? "" : tuple.get(0).toString();
-        return new StringValueData(value);
     }
 
     private static Tuple ensureSingleResult(Iterator<Tuple> iter) throws IOException {

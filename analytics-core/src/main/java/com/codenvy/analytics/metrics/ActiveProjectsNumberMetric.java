@@ -18,11 +18,11 @@ import java.util.Set;
  */
 public class ActiveProjectsNumberMetric extends CalculateBasedMetric {
 
-    private final ActiveProjectsSetMetric basedMetric;
+    private final ActiveProjectsListMetric basedMetric;
 
     ActiveProjectsNumberMetric() throws IOException {
         super(MetricType.ACTIVE_PROJECTS_NUMBER);
-        this.basedMetric = (ActiveProjectsSetMetric)MetricFactory.createMetric(MetricType.ACTIVE_PROJECTS_SET);
+        this.basedMetric = (ActiveProjectsListMetric)MetricFactory.createMetric(MetricType.ACTIVE_PROJECTS_LIST);
     }
 
     /** {@inheritDoc} */
