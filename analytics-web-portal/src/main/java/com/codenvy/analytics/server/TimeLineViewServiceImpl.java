@@ -36,8 +36,8 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class TimeLineViewServiceImpl extends RemoteServiceServlet implements TimeLineViewService {
 
-    private static final String     TIMELINE_DIR             = "timeline";
     private static final Logger     LOGGER                   = LoggerFactory.getLogger(TimeLineViewServiceImpl.class);
+    private static final String     TIMELINE_DIR             = "timeline";
     private static final String     VIEW_TIME_LINE           = "view/time-line.xml";
     private static final String     HISTORY_LENGTH_ATTRIBUTE = "history-length";
 
@@ -59,36 +59,45 @@ public class TimeLineViewServiceImpl extends RemoteServiceServlet implements Tim
     /**
      * {@inheritDoc}
      */
-    public List<TimeLineViewData> getViews(Date date, TimeUnit timeUnit) {
+    public List<TimeLineViewData> getViews(TimeUnit timeUnit, Map<String, String> filters) {
         try {
-            return loadTables(date, timeUnit);
+            Map<String, String> context = Utils.initializeContext(timeUnit, new Date());
+            context.putAll(filters);
+
+            if (filters.isEmpty()) {
+                return loadTables(context);
+            } else {
+                return calculateTimelineView(context);
+            }
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
     }
 
-    public void updateTimelineView(Date date, TimeUnit timeUnit) {
-        try {
-            Map<String, String> context = Utils.initializeContext(timeUnit, date);
+    /**
+     * Calculates view for given {@link TimeUnit} and preserves data.
+     */
+    public void update(TimeUnit timeUnit) throws Exception {
+        Map<String, String> context = Utils.initializeContext(timeUnit, new Date());
+        saveTables(calculateTimelineView(context), timeUnit);
+    }
 
-            List<TimeLineViewData> result = new ArrayList<TimeLineViewData>();
-            int length = Integer.valueOf(viewLayout.getAttributes().get(HISTORY_LENGTH_ATTRIBUTE)) + 1;
+    private List<TimeLineViewData> calculateTimelineView(Map<String, String> context) throws Exception {
+        List<TimeLineViewData> result = new ArrayList<TimeLineViewData>();
+        int length = Integer.valueOf(viewLayout.getAttributes().get(HISTORY_LENGTH_ATTRIBUTE)) + 1;
 
-            for (List<RowLayout> rows : viewLayout.getLayout()) {
-                TimeLineViewData data = new TimeLineViewData();
+        for (List<RowLayout> rows : viewLayout.getLayout()) {
+            TimeLineViewData data = new TimeLineViewData();
 
-                for (RowLayout row : rows) {
-                    data.add(row.fill(context, length));
-                }
-
-                result.add(data);
+            for (RowLayout row : rows) {
+                data.add(row.fill(context, length));
             }
 
-            saveTables(result, timeUnit);
-        } catch (Throwable e) {
-            LOGGER.error(e.getMessage(), e);
+            result.add(data);
         }
+
+        return result;
     }
 
     private void saveTables(List<TimeLineViewData> tables, TimeUnit timeUnit) throws IOException {
@@ -105,11 +114,13 @@ public class TimeLineViewServiceImpl extends RemoteServiceServlet implements Tim
         saveTablesToFile(tables, file);
     }
 
-    private List<TimeLineViewData> loadTables(Date date, TimeUnit timeUnit) throws IOException {
-        File file = getFile(timeUnit);
+    private List<TimeLineViewData> loadTables(Map<String, String> context) throws Exception {
+        TimeUnit timeUnit = Utils.getTimeUnit(context);
 
+        File file = getFile(timeUnit);
         if (!file.exists()) {
-            updateTimelineView(date, timeUnit);
+            List<TimeLineViewData> timelineView = calculateTimelineView(context);
+            saveTables(timelineView, timeUnit);
         }
 
         return loadTablesFromFile(file);
@@ -125,6 +136,7 @@ public class TimeLineViewServiceImpl extends RemoteServiceServlet implements Tim
         }
     }
 
+    @SuppressWarnings("unchecked")
     private List<TimeLineViewData> loadTablesFromFile(File file) throws IOException {
         ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 
@@ -141,5 +153,4 @@ public class TimeLineViewServiceImpl extends RemoteServiceServlet implements Tim
         return new File(FSValueDataManager.RESULT_DIRECTORY + File.separator + TIMELINE_DIR + File.separator
                         + timeUnit.toString());
     }
-
 }

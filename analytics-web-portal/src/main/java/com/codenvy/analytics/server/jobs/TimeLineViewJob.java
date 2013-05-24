@@ -16,8 +16,6 @@ import org.quartz.impl.JobDetailImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
@@ -43,10 +41,15 @@ public class TimeLineViewJob implements Job {
         LOGGER.info("TimeLineViewJob is started");
         long start = System.currentTimeMillis();
 
+
         try {
-            new TimeLineViewServiceImpl().updateTimelineView(new Date(), TimeUnit.DAY);
-            new TimeLineViewServiceImpl().updateTimelineView(new Date(), TimeUnit.WEEK);
-            new TimeLineViewServiceImpl().updateTimelineView(new Date(), TimeUnit.MONTH);
+            TimeLineViewServiceImpl service = new TimeLineViewServiceImpl();
+
+            service.update(TimeUnit.DAY);
+            service.update(TimeUnit.WEEK);
+            service.update(TimeUnit.MONTH);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         } finally {
             LOGGER.info("TimeLineViewJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

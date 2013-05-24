@@ -22,25 +22,21 @@ public interface Filter {
 
     /**
      * @return the number of elements if given filer will be applied
-     * @throws IllegalArgumentException if filter is not supported
      */
-    int size(MetricFilter key, String value) throws IllegalArgumentException;
+    int size(MetricFilter key, String value);
 
     /**
      * @return the size of groups
-     * @throws IllegalArgumentException if filter is not supported
      */
-    Map<String, Long> sizeOfGroups(MetricFilter key) throws IllegalArgumentException;
+    Map<String, Long> sizeOfGroups(MetricFilter key);
 
     /**
      * @return applied filter
-     * @throws IllegalArgumentException if filter is not supported
      */
-    ValueData apply(MetricFilter key, String value) throws IllegalArgumentException;
+    ValueData apply(MetricFilter key, String value);
 
     /**
      * @return available values for given filter
-     * @throws IllegalArgumentException if filter is not supported
      */
-    Set<String> getAvailable(MetricFilter key) throws IllegalArgumentException;
+    Set<String> getAvailable(MetricFilter key);
 }

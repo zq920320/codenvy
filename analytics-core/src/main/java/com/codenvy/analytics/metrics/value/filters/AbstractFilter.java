@@ -9,6 +9,7 @@ import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,27 +35,43 @@ public abstract class AbstractFilter implements Filter {
 
     /** {@inheritDoc} */
     @Override
-    public ListListStringValueData apply(MetricFilter key, String value) throws IllegalArgumentException {
-        return apply(getIndex(key), value);
+    public ListListStringValueData apply(MetricFilter key, String value) {
+        try {
+            return apply(getIndex(key), value);
+        } catch (IllegalArgumentException e) {
+            return ListListStringValueData.EMPYT;
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public Map<String, Long> sizeOfGroups(MetricFilter key) throws IllegalArgumentException {
-        return sizeOfGroups(getIndex(key));
+    public Map<String, Long> sizeOfGroups(MetricFilter key) {
+        try {
+            return sizeOfGroups(getIndex(key));
+        } catch (IllegalArgumentException e) {
+            return Collections.<String, Long> emptyMap();
+        }
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public Set<String> getAvailable(MetricFilter key) throws IllegalArgumentException {
-        return getAvailable(getIndex(key));
+    public Set<String> getAvailable(MetricFilter key) {
+        try {
+            return getAvailable(getIndex(key));
+        } catch (IllegalArgumentException e) {
+            return Collections.<String> emptySet();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public int size(MetricFilter key, String value) throws IllegalArgumentException {
-        return size(getIndex(key), value);
+    public int size(MetricFilter key, String value) {
+        try {
+            return size(getIndex(key), value);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
     }
 
     protected ListListStringValueData getUniqueActions(MetricFilter... filters) {
@@ -84,7 +101,7 @@ public abstract class AbstractFilter implements Filter {
         int result = 0;
 
         for (ListStringValueData item : valueData.getAll()) {
-            if (item.getAll().get(index).equals(value)) {
+            if (item.getAll().get(index).contains(value)) {
                 result++;
             }
         }
@@ -120,7 +137,7 @@ public abstract class AbstractFilter implements Filter {
         List<ListStringValueData> list = new ArrayList<ListStringValueData>();
 
         for (ListStringValueData item : valueData.getAll()) {
-            if (item.getAll().get(index).equals(value)) {
+            if (item.getAll().get(index).contains(value)) {
                 list.add(item);
             }
         }

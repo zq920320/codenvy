@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -15,6 +16,10 @@ import java.util.List;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class ListListStringValueData extends ListValueData<ListStringValueData> {
+
+    public static final ListListStringValueData EMPYT = new ListListStringValueData(Collections.<ListStringValueData> emptyList());
+
+    private static final long                   serialVersionUID = 1L;
 
     public ListListStringValueData() {
         super();

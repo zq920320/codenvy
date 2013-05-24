@@ -48,6 +48,8 @@ public class JRebelUsagePercentMetric extends CalculateBasedMetric {
         int total = filter.size();
         Long usage = sizeOfGroups.get(JRebelUsageListMetric.JREBEL_USAGE_TRUE);
 
-        return total == 0 ? new DoubleValueData(Double.NaN) : new DoubleValueData(100D * usage / total);
+        return usage == null ? new DoubleValueData(0) : (total == 0 ? new DoubleValueData(Double.NaN) : new DoubleValueData(100D * usage
+                                                                                                                            / total));
+
     }
 }

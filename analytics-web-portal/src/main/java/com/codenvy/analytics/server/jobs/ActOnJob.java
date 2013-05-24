@@ -11,11 +11,13 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.filters.Filter;
 import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
 import com.codenvy.organization.exception.OrganizationServiceException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.quartz.CronScheduleBuilder;
@@ -40,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -58,8 +61,8 @@ import javax.net.ssl.SSLException;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class ActOnJob implements Job {
-
     public static final String        FILE_NAME                 = "ideuserupdate.csv";
+
     private static final String       EMAIL                     = "email";
 
     private static final String       FTP_PASSWORD_PARAM        = "ftp_password";
@@ -163,6 +166,18 @@ public class ActOnJob implements Job {
             LOGGER.info("ActOnJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
+
+    private void backup(File srcFile, Map<String, String> context) throws IOException {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
+        
+        File dir = new File(FSValueDataManager.RESULT_DIRECTORY, "acton");
+        dir = new File(dir, df.format(Utils.getToDate(context).getTime()));
+        
+        File dstFile = new File(dir, FILE_NAME);
+
+        FileUtils.copyFile(srcFile, dstFile);
+    }
+
 
     /**
      * Sends notification about transfered file.
@@ -271,7 +286,9 @@ public class ActOnJob implements Job {
 
     protected File prepareFile() throws IOException {
         Map<String, String> context = initilalizeContext();
-        File file = createFile(context);
+        File file = new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
+
+        backup(file, context);
 
         Set<String> activeUsers = getActiveUsers(context);
 
@@ -288,10 +305,6 @@ public class ActOnJob implements Job {
         }
 
         return file;
-    }
-
-    private File createFile(Map<String, String> context) {
-        return new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
     }
 
     private void writeMetricsValues(Map<String, String> context, BufferedWriter out, String user) throws IOException {

@@ -1,3 +1,7 @@
+/*
+ *    Copyright (C) 2013 Codenvy.
+ *
+ */
 package com.codenvy.analytics.client.presenter;
 
 import com.codenvy.analytics.client.GWTLoader;
@@ -15,8 +19,12 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public abstract class MainViewPresenter implements Presenter {
     private final HandlerManager eventBus;
+
     protected final Display      display;
 
     public interface Display {

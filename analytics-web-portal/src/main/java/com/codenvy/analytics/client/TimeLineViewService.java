@@ -10,17 +10,15 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
-
+import java.util.Map;
 
 /** The client side stub for the RPC service. */
-
 @RemoteServiceRelativePath("timeLineView")
 public interface TimeLineViewService extends RemoteService {
 
     /**
      * Returns rows for timeline view.
      */
-    List<TimeLineViewData> getViews(Date date, TimeUnit timeUnit) throws IOException;
+    List<TimeLineViewData> getViews(TimeUnit timeUnit, Map<String, String> filters) throws IOException;
 }

@@ -14,6 +14,7 @@ t4 = extractParam(t3, 'PROJECT', 'project');
 t5 = extractParam(t4, 'JREBEL', 'jrebel');
 tR = DISTINCT t5;
 
-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type), TOTUPLE(jrebel));
+r1 = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type), TOTUPLE(jrebel));
+result = DISTINCT r1;
 
 

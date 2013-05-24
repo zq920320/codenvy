@@ -8,10 +8,13 @@ import com.codenvy.analytics.shared.TimeLineViewData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
@@ -20,30 +23,37 @@ import java.util.List;
 
 public class TimelineView extends MainView implements TimelineViewPresenter.Display {
 
-    private final FlexTable contentTable = new FlexTable();
-
-    private final ListBox   timeUnitBox = new ListBox();
+    private final TextBox   userNameFilter    = new TextBox();
+    private final Button    applyFilterButton = new Button("Go");
+    private final FlexTable contentTable      = new FlexTable();
+    private final ListBox   timeUnitBox       = new ListBox();
 
     public TimelineView() {
         super();
 
         HorizontalPanel timeUnitPanel = new HorizontalPanel();
-        Label timeUnitLabel = new Label("Time Unit:");
-        timeUnitLabel.getElement().setAttribute("align", "middle");
+        Label label = new Label("Time Unit:");
+        label.getElement().setAttribute("align", "middle");
         timeUnitPanel.add(new Label("Time Unit: "));
         timeUnitPanel.add(timeUnitBox);
-        
-        timeUnitPanel.getElement().setAttribute("align", "right");
+        timeUnitBox.getElement().setAttribute("align", "right");
 
-        getSubHeaderPanel().add(timeUnitPanel);
+        HorizontalPanel domainPanel = new HorizontalPanel();
+        domainPanel.add(new Label("Users email: "));
+        domainPanel.add(userNameFilter);
+        domainPanel.add(applyFilterButton);
+
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(timeUnitPanel);
+        verticalPanel.add(domainPanel);
+
+        getSubHeaderPanel().add(verticalPanel);
         for (TimeUnit timeUnit : TimeUnit.values()) {
             timeUnitBox.addItem(timeUnit.toString().toLowerCase());
         }
 
         timeUnitBox.setVisibleItemCount(1);
-
         getMainPanel().add(contentTable);
-
     }
 
     public Widget asWidget() {
@@ -56,6 +66,14 @@ public class TimelineView extends MainView implements TimelineViewPresenter.Disp
 
     public ListBox getTimeUnitBox() {
         return timeUnitBox;
+    }
+
+    public String getUserFilter() {
+        return userNameFilter.getText();
+    }
+
+    public Button getApplyFilterButton() {
+        return applyFilterButton;
     }
 
     public void setData(List<TimeLineViewData> result) {

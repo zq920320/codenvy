@@ -12,12 +12,12 @@ public class ParameterDateBox extends DateBox {
 
     public ParameterDateBox(final Map<String, String> selectedParameters, final String parameterName, String dafaultValue) {
         super();
+
         setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("dd MMM yyyy")));
         setValue(DateTimeFormat.getFormat("yyyyMMdd").parse(dafaultValue));
         selectedParameters.put(parameterName, dafaultValue);
 
         this.addValueChangeHandler(new ValueChangeHandler<Date>() {
-            
             public void onValueChange(ValueChangeEvent<Date> event) {
                 selectedParameters.put(parameterName, DateTimeFormat.getFormat("yyyyMMdd").format(event.getValue()));
             }

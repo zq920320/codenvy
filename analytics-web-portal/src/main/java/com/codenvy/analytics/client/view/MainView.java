@@ -59,21 +59,17 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         return timelineViewButton;
     }
 
-
     public Button getWorkspaceViewButton() {
         return workspaceViewButton;
     }
-
 
     public Button getUserViewButton() {
         return userViewButton;
     }
 
-
     public Button getProjectViewButton() {
         return projectViewButton;
     }
-
 
     public Button getQueryViewButton() {
         return queryViewButton;

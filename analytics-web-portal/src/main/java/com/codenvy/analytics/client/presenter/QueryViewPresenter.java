@@ -1,3 +1,7 @@
+/*
+ *    Copyright (C) 2013 Codenvy.
+ *
+ */
 package com.codenvy.analytics.client.presenter;
 
 import com.codenvy.analytics.client.QueryServiceAsync;
@@ -18,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public class QueryViewPresenter extends MainViewPresenter {
 
     private final QueryServiceAsync queryService;
