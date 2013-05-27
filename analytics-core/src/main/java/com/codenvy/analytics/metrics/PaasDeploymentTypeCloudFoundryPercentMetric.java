@@ -13,7 +13,6 @@ public class PaasDeploymentTypeCloudFoundryPercentMetric extends ValueFromMapMet
 
     PaasDeploymentTypeCloudFoundryPercentMetric() throws IOException {
         super(MetricType.PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_PERCENT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES),
-              ValueType.PERCENT,
-              "CloudFoundry");
+              ValueType.PERCENT, "CloudFoundry", "Amazon");
     }
 }

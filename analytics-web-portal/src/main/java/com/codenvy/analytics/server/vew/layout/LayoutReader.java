@@ -4,6 +4,16 @@
  */
 package com.codenvy.analytics.server.vew.layout;
 
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -13,16 +23,6 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class LayoutReader {
@@ -101,10 +101,19 @@ public class LayoutReader {
                     layout.add(createMetricRow(element));
                 } else if (nodeName.equals("empty")) {
                     layout.add(new EmptyRowLayoutImpl());
+                } else if (nodeName.equals("total")) {
+                    layout.add(createTotalRow(element));
                 }
             }
         }
         return layout;
+    }
+
+    private RowLayout createTotalRow(Element element) throws IOException {
+        String format = element.getAttribute("format");
+        String types = element.getAttribute("types");
+
+        return new TotalRowLayoutImpl(types, format);
     }
 
     protected RowLayout createDateRow(Element element) {
@@ -115,7 +124,7 @@ public class LayoutReader {
         return new DateRowLayoutImpl(section, formatDay, formatWeek, formatMonth);
     }
 
-    protected MetricRowLayoutImpl createMetricRow(Element element) throws IOException {
+    protected AbstractRow createMetricRow(Element element) throws IOException {
         Metric metric = MetricFactory.createMetric(element.getAttribute("type").toUpperCase());
         String format = element.getAttribute("format");
         String title = element.getAttribute("title");

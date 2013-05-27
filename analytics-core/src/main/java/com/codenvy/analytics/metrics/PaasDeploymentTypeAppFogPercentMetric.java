@@ -13,6 +13,6 @@ public class PaasDeploymentTypeAppFogPercentMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeAppFogPercentMetric() throws IOException {
         super(MetricType.PAAS_DEPLOYMENT_TYPE_APPFOG_PERCENT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES), ValueType.PERCENT,
-              "Appfog");
+              "Appfog", "Amazon");
     }
 }

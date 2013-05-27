@@ -20,7 +20,6 @@ package com.codenvy.analytics.metrics;
 
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.value.DoubleValueData;
@@ -69,6 +68,6 @@ public class TestJRebelUsagePercentMetric extends BaseTest {
         params.put(PigScriptExecutor.LOG, log.getParent());
 
         Metric metric = MetricFactory.createMetric(MetricType.JREBEL_USAGE_PERCENT);
-        assertTrue(Double.valueOf(metric.getValue(params).getAsDouble()).isNaN());
+        assertEquals(metric.getValue(params).getAsDouble(), 0D);
     }
 }

@@ -112,7 +112,7 @@ public class MetricFactory {
                 metric = new ProjectsCreatedNumberMetric();
                 break;
             case PROJECTS_UNIQUE_BUILT_NUMBER:
-                metric = new BuiltProjectsNumberMetric();
+                metric = new ProjectsUniqueBuiltNumberMetric();
                 break;
             case PROJECTS_UNIQUE_BUILT_PERCENT:
                 metric = new BuiltUniqueProjectsPercentMetric();

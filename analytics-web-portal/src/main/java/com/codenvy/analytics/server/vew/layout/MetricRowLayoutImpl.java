@@ -7,8 +7,6 @@ package com.codenvy.analytics.server.vew.layout;
 import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.value.DoubleValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class MetricRowLayoutImpl implements RowLayout {
+public class MetricRowLayoutImpl extends AbstractRow {
 
     private static final String DEFAULT_FORMAT = "%.0f";
 
@@ -61,18 +59,6 @@ public class MetricRowLayoutImpl implements RowLayout {
         return row;
     }
     
-    private String print(String format, ValueData valueData) {
-        if (format.contains("d")) {
-            return String.format(format, valueData.getAsLong());
-        } else if (format.contains("f")) {
-            return String.format(format, valueData.getAsDouble());
-        } else if (format.contains("s")) {
-            return String.format(format, valueData.getAsString());
-        }
-        
-        return valueData.getAsString();
-    }
-
     /**
      * @return {@link #format}
      */
@@ -92,17 +78,5 @@ public class MetricRowLayoutImpl implements RowLayout {
      */
     public Metric getMetric() {
         return metric;
-    }
-
-    /** Checks if received value might be displayed in view. */
-    private boolean isPrintable(ValueData value) {
-        if (value instanceof DoubleValueData
-            && (Double.isNaN(value.getAsDouble()) || Double.isInfinite(value.getAsDouble()) || value.getAsDouble() == 0)) {
-            return false;
-        } else if (value instanceof LongValueData && value.getAsLong() == 0) {
-            return false;
-        }
-
-        return true;
     }
 }

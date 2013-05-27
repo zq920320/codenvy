@@ -16,11 +16,11 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class BuiltProjectsNumberMetric extends CalculateBasedMetric {
+public class ProjectsUniqueBuiltNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    BuiltProjectsNumberMetric() throws IOException {
+    ProjectsUniqueBuiltNumberMetric() throws IOException {
         super(MetricType.PROJECTS_UNIQUE_BUILT_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_BUILT_LIST);
     }

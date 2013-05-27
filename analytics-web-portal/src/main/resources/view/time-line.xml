@@ -23,12 +23,14 @@
 	</view>
 	<view>		
 		<date section="Added To Workspace" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="users_added_to_workspace_from_website_percent,users_added_to_workspace_from_invite_percent" format="%.0f%%"/>
         <metric type="users_added_to_workspace_from_website_percent" format="%.0f%%" title="From Website"/>
         <metric type="users_added_to_workspace_from_invite_percent" format="%.0f%%" title="By Invitation"/>
         <empty />
 	</view>
 	<view>
 		<date section="Users Logged in Ways" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="users_sso_logged_in_using_github_percent,users_sso_logged_in_using_google_percent,users_sso_logged_in_using_form_percent" format="%.0f%%" />
         <metric type="users_sso_logged_in_using_google_percent" format="%.0f%%" title="Google Auth"/>
         <metric type="users_sso_logged_in_using_github_percent" format="%.0f%%" title="Github Auth"/>
         <metric type="users_sso_logged_in_using_form_percent" format="%.0f%%" title="Form Auth"/>
@@ -56,6 +58,7 @@
     </view>
     <view>
         <date section="# Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="project_type_java_jar_number,project_type_java_war_number,project_type_java_jsp_number,project_type_java_spring_number,project_type_php_number,project_type_python_number,project_type_javascript_number,project_type_ruby_number,project_type_mmp_number,project_type_nodejs_number,project_type_android_number,project_type_others_number" format="%.0f"/>
         <metric type="project_type_java_jar_number" format="%.0f" title="Java Jar"/>
         <metric type="project_type_java_war_number" format="%.0f" title="Java War"/>
         <metric type="project_type_java_jsp_number" format="%.0f" title="Java JSP"/>
@@ -72,6 +75,7 @@
     </view>
     <view>
         <date section="% Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="project_type_java_jar_percent,project_type_java_war_percent,project_type_java_jsp_percent,project_type_java_spring_percent,project_type_php_percent,project_type_python_percent,project_type_javascript_percent,project_type_ruby_percent,project_type_mmp_percent,project_type_nodejs_percent,project_type_android_percent,project_type_others_percent" format="%.0f%%"/>
         <metric type="project_type_java_jar_percent" format="%.1f%%" title="Java Jar"/>
         <metric type="project_type_java_war_percent" format="%.1f%%" title="Java War"/>
         <metric type="project_type_java_jsp_percent" format="%.1f%%" title="Java JSP"/>
@@ -94,6 +98,7 @@
     </view>
     <view>
         <date section="# Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="paas_deployment_type_aws_number,paas_deployment_type_appfog_number,paas_deployment_type_cloudbees_number,paas_deployment_type_cloudfoundry_number,paas_deployment_type_gae_number,paas_deployment_type_heroku_number,paas_deployment_type_openshift_number,paas_deployment_type_tier3_number,paas_deployment_type_local_number" format="%.0f"/>
         <metric type="paas_deployment_type_aws_number" format="%.0f" title="AWS"/>
         <metric type="paas_deployment_type_appfog_number" format="%.0f" title="AppFog"/>
         <metric type="paas_deployment_type_cloudbees_number" format="%.0f" title="CloudBees"/>
@@ -107,6 +112,7 @@
     </view>
     <view>
         <date section="% Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="paas_deployment_type_aws_percent,paas_deployment_type_appfog_percent,paas_deployment_type_cloudbees_percent,paas_deployment_type_cloudfoundry_percent,paas_deployment_type_gae_percent,paas_deployment_type_heroku_percent,paas_deployment_type_openshift_percent,paas_deployment_type_tier3_percent,paas_deployment_type_local_percent" format="%.0f%%"/>
         <metric type="paas_deployment_type_aws_percent" format="%.1f%%" title="AWS"/>
         <metric type="paas_deployment_type_appfog_percent" format="%.1f%%" title="AppFog"/>
         <metric type="paas_deployment_type_cloudbees_percent" format="%.1f%%" title="CloudBees"/>

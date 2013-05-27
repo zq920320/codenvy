@@ -74,7 +74,7 @@ public class TimelineViewPresenter extends MainViewPresenter implements Presente
     private void update(TimeUnit timeUnit, String userFilter) {
         Map<String, String> filters = new HashMap<String, String>();
         if (!userFilter.isEmpty()) {
-            filters.put(MetricFilter.FILTER_USER.name(), userFilter);
+            filters.put(MetricFilter.FILTER_USER.name(), "*" + userFilter + "*");
         }
 
         getDisplay().getContentTable().clear();

@@ -101,7 +101,7 @@ public abstract class AbstractFilter implements Filter {
         int result = 0;
 
         for (ListStringValueData item : valueData.getAll()) {
-            if (item.getAll().get(index).contains(value)) {
+            if (isAccepted(item.getAll().get(index), value)) {
                 result++;
             }
         }
@@ -137,12 +137,26 @@ public abstract class AbstractFilter implements Filter {
         List<ListStringValueData> list = new ArrayList<ListStringValueData>();
 
         for (ListStringValueData item : valueData.getAll()) {
-            if (item.getAll().get(index).contains(value)) {
+            if (isAccepted(item.getAll().get(index), value)) {
                 list.add(item);
             }
         }
 
         return new ListListStringValueData(list);
+    }
+
+    private boolean isAccepted(String str, String filterValue) {
+        if (filterValue.startsWith("*")) {
+            if (filterValue.endsWith("*")) {
+                return str.contains(filterValue.substring(1, filterValue.length() - 1));
+            } else {
+                return str.startsWith(filterValue.substring(1));
+            }
+        } else if (filterValue.endsWith("*")) {
+            return str.endsWith(filterValue.substring(0, filterValue.length() - 1));
+        } else {
+            return str.equals(filterValue);
+        }
     }
 
     /**

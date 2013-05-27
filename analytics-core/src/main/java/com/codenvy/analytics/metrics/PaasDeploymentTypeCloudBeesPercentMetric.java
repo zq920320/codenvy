@@ -13,6 +13,6 @@ public class PaasDeploymentTypeCloudBeesPercentMetric extends ValueFromMapMetric
 
     PaasDeploymentTypeCloudBeesPercentMetric() throws IOException {
         super(MetricType.PAAS_DEPLOYMENT_TYPE_CLOUDBEES_PERCENT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES), ValueType.PERCENT,
-              "CloudBees");
+              "CloudBees", "Amazon");
     }
 }

@@ -33,19 +33,20 @@ public class TimelineView extends MainView implements TimelineViewPresenter.Disp
 
         HorizontalPanel timeUnitPanel = new HorizontalPanel();
         Label label = new Label("Time Unit:");
-        label.getElement().setAttribute("align", "middle");
         timeUnitPanel.add(new Label("Time Unit: "));
         timeUnitPanel.add(timeUnitBox);
-        timeUnitBox.getElement().setAttribute("align", "right");
 
         HorizontalPanel domainPanel = new HorizontalPanel();
-        domainPanel.add(new Label("Users email: "));
+        label = new Label("Users email: ");
+        label.getElement().setAttribute("vertical-align", "midle");
+        domainPanel.add(label);
         domainPanel.add(userNameFilter);
         domainPanel.add(applyFilterButton);
 
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.add(timeUnitPanel);
         verticalPanel.add(domainPanel);
+        verticalPanel.getElement().setAttribute("align", "center");
 
         getSubHeaderPanel().add(verticalPanel);
         for (TimeUnit timeUnit : TimeUnit.values()) {

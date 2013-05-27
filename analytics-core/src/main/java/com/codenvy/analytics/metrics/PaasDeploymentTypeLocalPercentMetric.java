@@ -13,6 +13,6 @@ public class PaasDeploymentTypeLocalPercentMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeLocalPercentMetric() throws IOException {
         super(MetricType.PAAS_DEPLOYMENT_TYPE_LOCAL_PERCENT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES), ValueType.PERCENT,
-              "LOCAL");
+              "LOCAL", "Amazon");
     }
 }

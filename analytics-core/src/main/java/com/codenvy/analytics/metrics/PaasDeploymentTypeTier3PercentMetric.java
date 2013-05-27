@@ -12,7 +12,7 @@ import java.io.IOException;
 public class PaasDeploymentTypeTier3PercentMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeTier3PercentMetric() throws IOException {
-        super(MetricType.PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES),
-              ValueType.NUMBER, "Tier3 Web Fabric");
+        super(MetricType.PAAS_DEPLOYMENT_TYPE_TIER3_PERCENT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES),
+              ValueType.PERCENT, "Tier3 Web Fabric", "Amazon");
     }
 }

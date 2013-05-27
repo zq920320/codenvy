@@ -13,6 +13,6 @@ public class PaasDeploymentTypeGaePercentMetric extends ValueFromMapMetric {
 
     PaasDeploymentTypeGaePercentMetric() throws IOException {
         super(MetricType.PAAS_DEPLOYMENT_TYPE_GAE_PERCENT, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES), ValueType.PERCENT,
-              "GAE");
+              "GAE", "Amazon");
     }
 }
