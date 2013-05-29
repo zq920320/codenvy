@@ -10,7 +10,6 @@
         <metric type="active_workspaces_number" title="Workspaces: # Active"/>
         <metric type="users_created_number" title="Users: Created"/>
         <metric type="total_users_number" title="Users: Total"/>
-        <metric type="users_created_projects_relatively_to_new_users_percent" format="%.0f%%" title="Users: % Have Created Projects"/>
         <metric type="active_users_number" title="Users: # Active"/>
         <metric type="invitations_sent_number" title="Users: Sent Invitations"/>
         <metric type="invitations_accepted_percent" format="%.0f%%" title="Users: Accepted Invitations"/>

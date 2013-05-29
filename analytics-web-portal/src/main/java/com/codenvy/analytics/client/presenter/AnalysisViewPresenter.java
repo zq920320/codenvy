@@ -4,7 +4,7 @@
  */
 package com.codenvy.analytics.client.presenter;
 
-import com.codenvy.analytics.client.SingupAnalysisViewServiceAsync;
+import com.codenvy.analytics.client.AnalysisViewServiceAsync;
 import com.codenvy.analytics.shared.TimeLineViewData;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -15,16 +15,16 @@ import java.util.List;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class SingupAnalysisViewPresenter extends MainViewPresenter implements Presenter {
+public class AnalysisViewPresenter extends MainViewPresenter implements Presenter {
 
-    private final SingupAnalysisViewServiceAsync service;
+    private final AnalysisViewServiceAsync service;
 
     public interface Display extends MainViewPresenter.Display {
         FlexTable getContentTable();
         void setData(List<TimeLineViewData> result);
     }
 
-    public SingupAnalysisViewPresenter(SingupAnalysisViewServiceAsync service, HandlerManager eventBus, Display view) {
+    public AnalysisViewPresenter(AnalysisViewServiceAsync service, HandlerManager eventBus, Display view) {
         super(eventBus, view);
         this.service = service;
 

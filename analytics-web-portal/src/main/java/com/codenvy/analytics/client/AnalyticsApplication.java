@@ -16,10 +16,10 @@ public class AnalyticsApplication {
     public void onModuleLoad() {
         QueryServiceAsync queryService = GWT.create(QueryService.class);
         TimeLineViewServiceAsync viewService = GWT.create(TimeLineViewService.class);
-        SingupAnalysisViewServiceAsync singupService = GWT.create(SingupAnalysisViewService.class);
+        AnalysisViewServiceAsync analysisService = GWT.create(AnalysisViewService.class);
 
         HandlerManager eventBus = new HandlerManager(null);
-        AppController appViewer = new AppController(queryService, viewService, singupService, eventBus);
+        AppController appViewer = new AppController(queryService, viewService, analysisService, eventBus);
         appViewer.go(RootPanel.get());
     }
 }

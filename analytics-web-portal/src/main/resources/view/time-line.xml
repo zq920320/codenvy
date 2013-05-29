@@ -15,7 +15,6 @@
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="users_created_number" title="Created"/>
         <metric type="total_users_number" title="Total"/>
-        <metric type="users_created_projects_relatively_to_new_users_percent" format="%.0f%%" title="% Have Created Projects"/>
         <metric type="active_users_number" title="# Active"/>
         <empty />
     </view>
@@ -27,17 +26,16 @@
     </view>
     <view>
         <date section="Authentication Type" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <total types="users_sso_logged_in_using_github_percent,users_sso_logged_in_using_google_percent,users_sso_logged_in_using_form_percent" format="%.0f%%" />
         <metric type="users_sso_logged_in_using_google_percent" format="%.0f%%" title="Google Auth"/>
         <metric type="users_sso_logged_in_using_github_percent" format="%.0f%%" title="Github Auth"/>
         <metric type="users_sso_logged_in_using_form_percent" format="%.0f%%" title="Form Auth"/>
         <empty />
     </view>
     <view>
-        <date section="Product Usage Time (mins)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <total types="product_usage_time_60_more,product_usage_time_10_60,product_usage_time_0_10" format="%,.0f" />
+        <date section="Usage Time (mins)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="product_usage_time_60_more,product_usage_time_10_60,product_usage_time_0_10" format="%,.0f"/>
         <metric type="product_usage_time_0_10" format="%,.0f" title="Sessions &#0060; 10 Mins"/>
-        <metric type="product_usage_time_10_60" format="%,.0f" title="Sessions Between 10 And 60 Mins"/>
+        <metric type="product_usage_time_10_60" format="%,.0f" title="Sessions &#0060;10 And &#0062;60 Mins"/>
         <metric type="product_usage_time_60_more" format="%,.0f" title="Sessions &#0062; 60 Mins"/>
         <empty />
     </view>
@@ -45,7 +43,7 @@
         <date section="# User Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="product_usage_user_sessions_number_0_10,product_usage_user_sessions_number_10_60,product_usage_user_sessions_number_60_MORE" format="%,.0f" />
         <metric type="product_usage_user_sessions_number_0_10" format="%,.0f" title="# &#0060; 10 Mins"/>
-        <metric type="product_usage_user_sessions_number_10_60" format="%,.0f" title="# Between 10 And 60 Mins"/>
+        <metric type="product_usage_user_sessions_number_10_60" format="%,.0f" title="# &#0060; 10&#0062;60 Mins"/>
         <metric type="product_usage_user_sessions_number_60_more" format="%,.0f" title="# &#0062; 60 Mins"/>
         <empty />
     </view>

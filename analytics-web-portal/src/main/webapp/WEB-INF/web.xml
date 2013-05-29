@@ -17,8 +17,8 @@
     </servlet>
 
     <servlet>
-      <servlet-name>SingupAnalysisViewServlet</servlet-name>
-      <servlet-class>com.codenvy.analytics.server.SingupAnalysisViewServiceImpl</servlet-class>
+      <servlet-name>AnalysisViewServlet</servlet-name>
+      <servlet-class>com.codenvy.analytics.server.AnalysisViewServiceImpl</servlet-class>
     </servlet>
 
     <servlet>
@@ -27,8 +27,8 @@
     </servlet>
 
     <servlet-mapping>
-      <servlet-name>SingupAnalysisViewServlet</servlet-name>
-      <url-pattern>/AnalyticsApplication/SingupAnalysisView</url-pattern>
+      <servlet-name>AnalysisViewServlet</servlet-name>
+      <url-pattern>/AnalyticsApplication/AnalysisView</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -20,7 +20,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
     private final GWTLoader       gwtLoader     = new GWTLoader();
 
     private final Button          timelineViewButton;
-    private final Button          singupAnalysisButton;
+    private final Button          analysisButton;
     private final Button          workspaceViewButton;
     private final Button          userViewButton;
     private final Button          projectViewButton;
@@ -32,7 +32,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     public MainView() {
         timelineViewButton = new Button("Time Line");
-        singupAnalysisButton = new Button("Singup Analysis");
+        analysisButton = new Button("Analysis");
         workspaceViewButton = new Button("Workspace");
         userViewButton = new Button("User");
         projectViewButton = new Button("Project");
@@ -40,7 +40,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
         HorizontalPanel hp = new HorizontalPanel();
         hp.add(timelineViewButton);
-        hp.add(singupAnalysisButton);
+        hp.add(analysisButton);
         hp.add(workspaceViewButton);
         hp.add(userViewButton);
         hp.add(projectViewButton);
@@ -83,8 +83,8 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     /** {@inheritDoc} */
     @Override
-    public HasClickHandlers getSingupAnalysisViewButton() {
-        return singupAnalysisButton;
+    public HasClickHandlers getAnalysisViewButton() {
+        return analysisButton;
     }
 
     public Button getQueryViewButton() {

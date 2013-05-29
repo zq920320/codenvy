@@ -7,7 +7,7 @@ package com.codenvy.analytics.client.presenter;
 import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.event.ProjectViewEvent;
 import com.codenvy.analytics.client.event.QueryViewEvent;
-import com.codenvy.analytics.client.event.SingupAnalysisViewEvent;
+import com.codenvy.analytics.client.event.AnalysisViewEvent;
 import com.codenvy.analytics.client.event.TimelineViewEvent;
 import com.codenvy.analytics.client.event.UserViewEvent;
 import com.codenvy.analytics.client.event.WorkspaceViewEvent;
@@ -39,7 +39,7 @@ public abstract class MainViewPresenter implements Presenter {
 
         HasClickHandlers getQueryViewButton();
 
-        HasClickHandlers getSingupAnalysisViewButton();
+        HasClickHandlers getAnalysisViewButton();
 
         HorizontalPanel getHeaderPanel();
 
@@ -88,9 +88,9 @@ public abstract class MainViewPresenter implements Presenter {
             }
         });
 
-        display.getSingupAnalysisViewButton().addClickHandler(new ClickHandler() {
+        display.getAnalysisViewButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                eventBus.fireEvent(new SingupAnalysisViewEvent());
+                eventBus.fireEvent(new AnalysisViewEvent());
             }
         });
     }

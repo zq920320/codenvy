@@ -37,7 +37,7 @@ public class TotalRowLayoutImpl extends AbstractRow {
     @Override
     public List<String> fill(Map<String, String> context, int length) throws Exception {
         List<String> row = new ArrayList<String>(length);
-        row.add("");
+        row.add("Total");
 
         for (int i = 1; i < length; i++) {
             try {

@@ -75,9 +75,6 @@ public class MetricFactory {
             case USERS_CREATED_PROJECTS_NUMBER:
                 metric = new UsersCreatedProjectsNumberMetric();
                 break;
-            case USERS_CREATED_PROJECTS_RELATIVELY_TO_NEW_USERS_PERCENT:
-                metric = new UsersCreatedRelativelyToNewUsersProjectsNumberMetric();
-                break;
             case USERS_BUILT_PROJECTS_NUMBER:
                 metric = new UsersBuiltProjectsNumberMetric();
                 break;

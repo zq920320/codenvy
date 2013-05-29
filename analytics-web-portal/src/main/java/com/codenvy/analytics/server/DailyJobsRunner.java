@@ -6,6 +6,7 @@ package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.server.jobs.ActOnJob;
 import com.codenvy.analytics.server.jobs.JRebelJob;
+import com.codenvy.analytics.server.jobs.AnalysisViewJob;
 import com.codenvy.analytics.server.jobs.TimeLineViewJob;
 
 import org.quartz.CronScheduleBuilder;
@@ -52,6 +53,7 @@ public class DailyJobsRunner implements ServletContextListener {
             scheduler.start();
 
             scheduler.scheduleJob(TimeLineViewJob.createJob(), makeTrigger());
+            scheduler.scheduleJob(AnalysisViewJob.createJob(), makeTrigger());
 
             try {
                 ActOnJob actOnJob = new ActOnJob();

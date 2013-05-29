@@ -5,7 +5,7 @@
 package com.codenvy.analytics.client.view;
 
 import com.codenvy.analytics.client.GWTLoader;
-import com.codenvy.analytics.client.presenter.SingupAnalysisViewPresenter;
+import com.codenvy.analytics.client.presenter.AnalysisViewPresenter;
 import com.codenvy.analytics.client.resources.GWTCellTableResource;
 import com.codenvy.analytics.shared.TimeLineViewData;
 import com.google.gwt.core.client.GWT;
@@ -21,11 +21,11 @@ import java.util.List;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class SingupAnalysisView extends MainView implements SingupAnalysisViewPresenter.Display {
+public class AnalysisView extends MainView implements AnalysisViewPresenter.Display {
 
     private final FlexTable contentTable;
 
-    public SingupAnalysisView() {
+    public AnalysisView() {
         super();
 
         this.contentTable = new FlexTable();
@@ -45,7 +45,8 @@ public class SingupAnalysisView extends MainView implements SingupAnalysisViewPr
         ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
         dataProvider.addDataDisplay(table);
 
-        createsColumns(table);
+        List<String> headers = rowIterator.next();
+        createsColumns(table, headers);
 
         List<List<String>> list = dataProvider.getList();
         while (rowIterator.hasNext()) {
@@ -55,10 +56,10 @@ public class SingupAnalysisView extends MainView implements SingupAnalysisViewPr
         return table;
     }
 
-    private void createsColumns(CellTable<List<String>> table) {
-        for (int i = 0; i < 2; i++) {
+    private void createsColumns(CellTable<List<String>> table, List<String> headers) {
+        for (int i = 0; i < headers.size(); i++) {
             CustomColumn column = new CustomColumn(i);
-            table.addColumn(column);
+            table.addColumn(column, headers.get(i));
         }
     }
 

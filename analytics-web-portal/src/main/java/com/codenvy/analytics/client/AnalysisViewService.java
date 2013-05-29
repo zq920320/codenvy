@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.List;
 
 /** The client side stub for the RPC service. */
-@RemoteServiceRelativePath("SingupAnalysisView")
-public interface SingupAnalysisViewService extends RemoteService {
+@RemoteServiceRelativePath("AnalysisView")
+public interface AnalysisViewService extends RemoteService {
 
     /**
      * Returns data for view.

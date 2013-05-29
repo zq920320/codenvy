@@ -6,7 +6,7 @@ package com.codenvy.analytics.server;
 
 import static org.testng.Assert.assertEquals;
 
-import com.codenvy.analytics.client.SingupAnalysisViewService;
+import com.codenvy.analytics.client.AnalysisViewService;
 import com.codenvy.analytics.metrics.InitialValueContainer;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestSingupAnalysis {
+public class TestAnalysis {
 
     private final String LOG_DIR = "target" + File.separator + UUID.randomUUID().toString();
 
@@ -42,16 +42,16 @@ public class TestSingupAnalysis {
 
     @Test
     public void testPrepareFile() throws Exception {
-        SingupAnalysisViewService service = new SingupAnalysisViewServiceImpl();
+        AnalysisViewService service = new AnalysisViewServiceImpl();
         List<TimeLineViewData> data = service.getData();
 
         TimeLineViewData timeLineViewData = data.get(0);
-        assertEquals(timeLineViewData.get(0).get(1), "12"); // total accounts
-        assertEquals(timeLineViewData.get(1).get(1), "3"); // created
-        assertEquals(timeLineViewData.get(2).get(1), "2"); // built
-        assertEquals(timeLineViewData.get(3).get(1), "2"); // deploy
-        assertEquals(timeLineViewData.get(4).get(1), "1"); // deploy local and paas
-        assertEquals(timeLineViewData.get(5).get(1), ""); // invites
+        assertEquals(timeLineViewData.get(1).get(1), "12"); // total accounts
+        assertEquals(timeLineViewData.get(2).get(1), "3"); // created
+        assertEquals(timeLineViewData.get(3).get(1), "2"); // built
+        assertEquals(timeLineViewData.get(4).get(1), "2"); // deploy
+        assertEquals(timeLineViewData.get(5).get(1), "1"); // deploy local and paas
+        assertEquals(timeLineViewData.get(6).get(1), ""); // invites
     }
 
     private File prepareInitValues() throws Exception {
