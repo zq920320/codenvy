@@ -7,39 +7,44 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
 /**
+ * Number of users, who built at least one project.
+ * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class JRebelUsageEligibleMetric extends CalculateBasedMetric {
+public class UsersDeployedProjectsNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    JRebelUsageEligibleMetric() throws IOException {
-        super(MetricType.JREBEL_USAGE_ELIGIBLE);
-        this.basedMetric = MetricFactory.createMetric(MetricType.JREBEL_USAGE_LIST);
+    UsersDeployedProjectsNumberMetric() throws IOException {
+        super(MetricType.USERS_DEPLOYED_PROJECTS_NUMBER);
+        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_LIST);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
     public Set<MetricParameter> getParams() {
         return basedMetric.getParams();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
     protected Class< ? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
         ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
-        return new LongValueData(value.size());
+        ProjectsFilter filter = new ProjectsFilter(value);
+        
+        return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
     }
 }

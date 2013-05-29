@@ -1,9 +1,15 @@
+/*
+ *    Copyright (C) 2013 Codenvy.
+ *
+ */
 package com.codenvy.analytics.client;
 
 import com.codenvy.analytics.client.event.ProjectViewEvent;
 import com.codenvy.analytics.client.event.ProjectViewEventHandler;
 import com.codenvy.analytics.client.event.QueryViewEvent;
 import com.codenvy.analytics.client.event.QueryViewEventHandler;
+import com.codenvy.analytics.client.event.SingupAnalysisViewEvent;
+import com.codenvy.analytics.client.event.SingupAnalysisViewEventHandler;
 import com.codenvy.analytics.client.event.TimelineViewEvent;
 import com.codenvy.analytics.client.event.TimelineViewEventHandler;
 import com.codenvy.analytics.client.event.UserViewEvent;
@@ -13,11 +19,13 @@ import com.codenvy.analytics.client.event.WorkspaceViewEventHandler;
 import com.codenvy.analytics.client.presenter.Presenter;
 import com.codenvy.analytics.client.presenter.ProjectViewPresenter;
 import com.codenvy.analytics.client.presenter.QueryViewPresenter;
+import com.codenvy.analytics.client.presenter.SingupAnalysisViewPresenter;
 import com.codenvy.analytics.client.presenter.TimelineViewPresenter;
 import com.codenvy.analytics.client.presenter.UserViewPresenter;
 import com.codenvy.analytics.client.presenter.WorkspaceViewPresenter;
 import com.codenvy.analytics.client.view.ProjectView;
 import com.codenvy.analytics.client.view.QueryView;
+import com.codenvy.analytics.client.view.SingupAnalysisView;
 import com.codenvy.analytics.client.view.TimelineView;
 import com.codenvy.analytics.client.view.UserView;
 import com.codenvy.analytics.client.view.WorkspaceView;
@@ -26,29 +34,35 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Label;
 
-
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public class AppController implements Presenter, ValueChangeHandler<String> {
-    private static final String            QUERY     = "query";
+    private static final String                  SINGUP_ANALYSIS = "singupAnalysis";
+    private static final String                  QUERY           = "query";
+    private static final String                  PROJECT         = "project";
+    private static final String                  WORKSPACE       = "workspace";
+    private static final String                  USER            = "user";
+    private static final String                  TIMELINE        = "timeline";
 
-    private static final String            PROJECT   = "project";
+    private final HandlerManager                 eventBus;
+    private final QueryServiceAsync              queryService;
+    private final TimeLineViewServiceAsync       timelineService;
+    private final SingupAnalysisViewServiceAsync singupService;
 
-    private static final String            WORKSPACE = "workspace";
+    private HasWidgets                           container;
 
-    private static final String            USER      = "user";
+    public AppController(QueryServiceAsync queryService,
+                         TimeLineViewServiceAsync timelineService,
+                         SingupAnalysisViewServiceAsync singupService,
+                         HandlerManager eventBus) {
 
-    private static final String            TIMELINE  = "timeline";
-
-    private final HandlerManager           eventBus;
-    private final QueryServiceAsync        queryService;
-    private final TimeLineViewServiceAsync timelineService;
-    private HasWidgets                     container;
-
-    public AppController(QueryServiceAsync queryService, TimeLineViewServiceAsync timelineService, HandlerManager eventBus) {
         this.eventBus = eventBus;
         this.queryService = queryService;
         this.timelineService = timelineService;
+        this.singupService = singupService;
+
         bind();
     }
 
@@ -89,6 +103,13 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
                                     doShowQueryView();
                                 }
                             });
+
+        eventBus.addHandler(SingupAnalysisViewEvent.TYPE,
+                            new SingupAnalysisViewEventHandler() {
+                                public void onLoad(SingupAnalysisViewEvent event) {
+                                    doSingupAnalysisView();
+                                }
+                            });
     }
 
     private void doShowTimelineView() {
@@ -111,6 +132,10 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
         History.newItem(QUERY);
     }
 
+    private void doSingupAnalysisView() {
+        History.newItem(SINGUP_ANALYSIS);
+    }
+
     public void go(final HasWidgets container) {
         this.container = container;
         if ("".equals(History.getToken())) {
@@ -123,24 +148,22 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
 
     public void onValueChange(ValueChangeEvent<String> event) {
         String token = event.getValue();
-        container.add(new Label(event.getValue()));
+
         if (token != null) {
             Presenter presenter = null;
 
             if (token.equals(TIMELINE)) {
                 presenter = new TimelineViewPresenter(timelineService, eventBus, new TimelineView());
-            }
-            else if (token.equals(USER)) {
+            } else if (token.equals(USER)) {
                 presenter = new UserViewPresenter(eventBus, new UserView());
-            }
-            else if (token.equals(WORKSPACE)) {
+            } else if (token.equals(WORKSPACE)) {
                 presenter = new WorkspaceViewPresenter(eventBus, new WorkspaceView());
-            }
-            else if (token.equals(PROJECT)) {
+            } else if (token.equals(PROJECT)) {
                 presenter = new ProjectViewPresenter(eventBus, new ProjectView());
-            }
-            else if (token.equals(QUERY)) {
+            } else if (token.equals(QUERY)) {
                 presenter = new QueryViewPresenter(queryService, eventBus, new QueryView());
+            } else if (token.equals(SINGUP_ANALYSIS)) {
+                presenter = new SingupAnalysisViewPresenter(singupService, eventBus, new SingupAnalysisView());
             }
 
             if (presenter != null) {

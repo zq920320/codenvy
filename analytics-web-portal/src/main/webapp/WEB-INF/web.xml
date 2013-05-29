@@ -17,9 +17,19 @@
     </servlet>
 
     <servlet>
+      <servlet-name>SingupAnalysisViewServlet</servlet-name>
+      <servlet-class>com.codenvy.analytics.server.SingupAnalysisViewServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet>
       <servlet-name>timeLineViewServlet</servlet-name>
       <servlet-class>com.codenvy.analytics.server.TimeLineViewServiceImpl</servlet-class>
     </servlet>
+
+    <servlet-mapping>
+      <servlet-name>SingupAnalysisViewServlet</servlet-name>
+      <url-pattern>/AnalyticsApplication/SingupAnalysisView</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
       <servlet-name>timeLineViewServlet</servlet-name>

@@ -27,17 +27,11 @@ import javax.xml.parsers.ParserConfigurationException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class LayoutReader {
 
-    private final String resource;
-
-    public LayoutReader(String resource) {
-        this.resource = resource;
-    }
-
     /**
      * Reads resource layout.
      */
-    public ViewLayout read() throws IOException, SAXException, ParserConfigurationException {
-        InputStream in = readResource();
+    public static ViewLayout read(String resource) throws IOException, SAXException, ParserConfigurationException {
+        InputStream in = readResource(resource);
 
         try {
             Node rootNode = getRooNode(in);
@@ -51,7 +45,7 @@ public class LayoutReader {
         }
     }
 
-    protected List<List<RowLayout>> fetchLayout(Node rootNode) throws IOException {
+    protected static List<List<RowLayout>> fetchLayout(Node rootNode) throws IOException {
         NodeList viewNodes = ((Element)rootNode).getElementsByTagName("view");
 
         List<List<RowLayout>> layout = new ArrayList<List<RowLayout>>();
@@ -64,7 +58,7 @@ public class LayoutReader {
         return layout;
     }
 
-    protected Map<String, String> fetchAttributes(Node rootNode) {
+    protected static Map<String, String> fetchAttributes(Node rootNode) {
         Map<String, String> attributes = new HashMap<String, String>();
 
         NamedNodeMap nodeMap = rootNode.getAttributes();
@@ -75,18 +69,18 @@ public class LayoutReader {
         return attributes;
     }
 
-    protected InputStream readResource() {
+    protected static InputStream readResource(String resource) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
     }
 
-    protected Node getRooNode(InputStream in) throws SAXException, IOException, ParserConfigurationException {
+    protected static Node getRooNode(InputStream in) throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         Document doc = dbFactory.newDocumentBuilder().parse(in);
 
         return doc.getElementsByTagName("views").item(0);
     }
 
-    protected List<RowLayout> readRowLayout(NodeList rowNodes) throws IOException {
+    protected static List<RowLayout> readRowLayout(NodeList rowNodes) throws IOException {
         List<RowLayout> layout = new ArrayList<RowLayout>();
         for (int j = 0; j < rowNodes.getLength(); j++) {
             Node rowNode = rowNodes.item(j);
@@ -109,14 +103,14 @@ public class LayoutReader {
         return layout;
     }
 
-    private RowLayout createTotalRow(Element element) throws IOException {
+    private static RowLayout createTotalRow(Element element) throws IOException {
         String format = element.getAttribute("format");
         String types = element.getAttribute("types");
 
         return new TotalRowLayoutImpl(types, format);
     }
 
-    protected RowLayout createDateRow(Element element) {
+    protected static RowLayout createDateRow(Element element) {
         String section = element.getAttribute("section");
         String formatDay = element.getAttribute("formatDay");
         String formatWeek = element.getAttribute("formatWeek");
@@ -124,7 +118,7 @@ public class LayoutReader {
         return new DateRowLayoutImpl(section, formatDay, formatWeek, formatMonth);
     }
 
-    protected AbstractRow createMetricRow(Element element) throws IOException {
+    protected static AbstractRow createMetricRow(Element element) throws IOException {
         Metric metric = MetricFactory.createMetric(element.getAttribute("type").toUpperCase());
         String format = element.getAttribute("format");
         String title = element.getAttribute("title");

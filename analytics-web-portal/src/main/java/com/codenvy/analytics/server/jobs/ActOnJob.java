@@ -288,8 +288,6 @@ public class ActOnJob implements Job {
         Map<String, String> context = initilalizeContext();
         File file = new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
 
-        backup(file, context);
-
         Set<String> activeUsers = getActiveUsers(context);
 
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
@@ -303,6 +301,8 @@ public class ActOnJob implements Job {
         } finally {
             out.close();
         }
+
+        // backup(file, context);
 
         return file;
     }

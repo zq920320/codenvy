@@ -37,7 +37,6 @@ public class TimelineViewPresenter extends MainViewPresenter implements Presente
 
         FlexTable getContentTable();
 
-
         void setData(List<TimeLineViewData> result);
     }
 

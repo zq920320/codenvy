@@ -8,8 +8,6 @@ import com.codenvy.analytics.client.TimeLineViewService;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
-import com.codenvy.analytics.server.vew.layout.LayoutReader;
-import com.codenvy.analytics.server.vew.layout.RowLayout;
 import com.codenvy.analytics.server.vew.layout.ViewLayout;
 import com.codenvy.analytics.shared.TimeLineViewData;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -25,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -44,17 +41,7 @@ public class TimeLineViewServiceImpl extends RemoteServiceServlet implements Tim
     /**
      * Time line view layout.
      */
-    private static final ViewLayout viewLayout;
-
-    static {
-        LayoutReader layout = new LayoutReader(VIEW_TIME_LINE);
-        try {
-            viewLayout = layout.read();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new IllegalStateException(e);
-        }
-    }
+    private static final ViewLayout viewLayout               = ViewLayout.initialize(VIEW_TIME_LINE);
 
     /**
      * {@inheritDoc}
@@ -84,20 +71,8 @@ public class TimeLineViewServiceImpl extends RemoteServiceServlet implements Tim
     }
 
     private List<TimeLineViewData> calculateTimelineView(Map<String, String> context) throws Exception {
-        List<TimeLineViewData> result = new ArrayList<TimeLineViewData>();
         int length = Integer.valueOf(viewLayout.getAttributes().get(HISTORY_LENGTH_ATTRIBUTE)) + 1;
-
-        for (List<RowLayout> rows : viewLayout.getLayout()) {
-            TimeLineViewData data = new TimeLineViewData();
-
-            for (RowLayout row : rows) {
-                data.add(row.fill(context, length));
-            }
-
-            result.add(data);
-        }
-
-        return result;
+        return viewLayout.retrieveData(context, length);
     }
 
     private void saveTables(List<TimeLineViewData> tables, TimeUnit timeUnit) throws IOException {

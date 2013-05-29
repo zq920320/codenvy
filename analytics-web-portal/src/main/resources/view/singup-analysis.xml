@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (C) 2013 Codenvy.
+-->
+<views>
+    <view>
+        <metric type="total_users_number" title="Total Accounts"/>
+        <metric type="users_created_projects_number" title="Created Project"/>
+        <metric type="users_built_projects_number" title="Created Project &amp; Built"/>
+        <metric type="users_deployed_projects_number" title="Created Project &amp; Built &amp; deployed locally"/>
+        <metric type="users_deployed_local_and_paas_projects_number" title="Created Project &amp; Built &amp; deployed locally &amp; deployed PAAS"/>
+        <metric type="users_invitations_sent_number" title="Sent Invites"/>
+    </view>
+</views>
+

@@ -60,18 +60,24 @@ public class Event {
             builder.append("[");
             builder.append(context.user);
             builder.append("]");
+        } else {
+            builder.append("[]");
         }
 
         if (context.ws != null) {
             builder.append("[");
             builder.append(context.ws);
             builder.append("]");
+        } else {
+            builder.append("[]");
         }
 
         if (context.session != null) {
             builder.append("[");
             builder.append(context.session);
             builder.append("]");
+        } else {
+            builder.append("[]");
         }
 
         builder.append(" - ");

@@ -37,6 +37,50 @@ public class ProductUsageTimeFilter extends AbstractFilter {
         return total / 60;
     }
 
+    /**
+     * Returns number of user sessions.
+     * 
+     * @param min the time in seconds
+     * @param max the time in seconds
+     */
+    public long getNumberOfSessions(long min, boolean inclusiveMin, long max, boolean inclusiveMax) {
+        long result = 0;
+
+        for (ListStringValueData item : valueData.getAll()) {
+            long duration = Long.valueOf(item.getAll().get(SESSION_DURATION));
+
+            if (acceptInterval(min, inclusiveMin, max, inclusiveMax, duration)) {
+                ++result;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns usage time
+     * 
+     * @param min the time in seconds
+     * @param max the time in seconds
+     */
+    public long getUsageTime(long min, boolean inclusiveMin, long max, boolean inclusiveMax) {
+        long result = 0;
+
+        for (ListStringValueData item : valueData.getAll()) {
+            long duration = Long.valueOf(item.getAll().get(SESSION_DURATION));
+
+            if (acceptInterval(min, inclusiveMin, max, inclusiveMax, duration)) {
+                result += duration;
+            }
+        }
+
+        return result / 60;
+    }
+
+    private boolean acceptInterval(long min, boolean inclusiveMin, long max, boolean inclusiveMax, long duration) {
+        return (min < duration || (min <= duration && inclusiveMin)) && (duration < max || (duration <= max && inclusiveMax));
+    }
+
     protected int getIndex(MetricFilter key) throws IllegalArgumentException {
         switch (key) {
             case FILTER_WS:

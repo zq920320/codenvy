@@ -14,42 +14,37 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Number of users, who built at least one project.
+ * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsUniqueDeployedNumberMetric extends CalculateBasedMetric {
+public class UsersBuiltProjectsNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    ProjectsUniqueDeployedNumberMetric() throws IOException {
-        super(MetricType.PROJECTS_DEPLOYED_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_LIST);
+    UsersBuiltProjectsNumberMetric() throws IOException {
+        super(MetricType.USERS_BUILT_PROJECTS_NUMBER);
+        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_BUILT_LIST);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritedDoc} */
     @Override
     public Set<MetricParameter> getParams() {
         return basedMetric.getParams();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritedDoc} */
     @Override
     protected Class< ? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritedDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        ProjectsFilter filter = new ProjectsFilter(valueData);
-
-        return new LongValueData(filter.getUniqueProjects().size());
+        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
+        ProjectsFilter filter = new ProjectsFilter(value);
+        
+        return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
     }
 }

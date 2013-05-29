@@ -13,7 +13,6 @@ public class PaasDeploymentTypeCloudFoundryNumberMetric extends ValueFromMapMetr
 
     PaasDeploymentTypeCloudFoundryNumberMetric() throws IOException {
         super(MetricType.PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_NUMBER, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES),
-              ValueType.NUMBER,
-              "CloudFoundry");
+              ValueType.NUMBER, "CloudFoundry");
     }
 }

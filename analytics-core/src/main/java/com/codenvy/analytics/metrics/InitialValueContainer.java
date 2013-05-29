@@ -4,6 +4,17 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.ValueDataFactory;
+
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,24 +28,13 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.ValueDataFactory;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class InitialValueContainer {
 
     /** Runtime parameter name. Contains the directory where script are located. */
-    private static final String                     ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY =
+    public static final String                      ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY =
                                                                                                 "analytics.metrics.initial.values";
 
     /** The value of {@value #ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY} runtime parameter. */

@@ -1,20 +1,28 @@
+/*
+ *    Copyright (C) 2013 Codenvy.
+ *
+ */
 package com.codenvy.analytics.client.view;
 
 import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.presenter.MainViewPresenter;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public abstract class MainView extends Composite implements MainViewPresenter.Display {
     private final GWTLoader       gwtLoader     = new GWTLoader();
 
     private final Button          timelineViewButton;
+    private final Button          singupAnalysisButton;
     private final Button          workspaceViewButton;
     private final Button          userViewButton;
-
     private final Button          projectViewButton;
     private final Button          queryViewButton;
 
@@ -23,7 +31,8 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
     private final HorizontalPanel subHeaderPanel = new HorizontalPanel();
 
     public MainView() {
-        timelineViewButton = new Button("Timeline");
+        timelineViewButton = new Button("Time Line");
+        singupAnalysisButton = new Button("Singup Analysis");
         workspaceViewButton = new Button("Workspace");
         userViewButton = new Button("User");
         projectViewButton = new Button("Project");
@@ -31,6 +40,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
         HorizontalPanel hp = new HorizontalPanel();
         hp.add(timelineViewButton);
+        hp.add(singupAnalysisButton);
         hp.add(workspaceViewButton);
         hp.add(userViewButton);
         hp.add(projectViewButton);
@@ -69,6 +79,12 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     public Button getProjectViewButton() {
         return projectViewButton;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public HasClickHandlers getSingupAnalysisViewButton() {
+        return singupAnalysisButton;
     }
 
     public Button getQueryViewButton() {

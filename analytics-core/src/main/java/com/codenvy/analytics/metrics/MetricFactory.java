@@ -54,6 +54,9 @@ public class MetricFactory {
             case USERS_CREATED_NUMBER:
                 metric = new UsersCreatedNumberMetric();
                 break;
+            case USERS_INVITATIONS_SENT_NUMBER:
+                metric = new UsersInvitationsSentNumberMetric();
+                break;
             case USERS_DESTROYED_NUMBER:
                 metric = new UsersDestroyedNumberMetric();
                 break;
@@ -72,8 +75,17 @@ public class MetricFactory {
             case USERS_CREATED_PROJECTS_NUMBER:
                 metric = new UsersCreatedProjectsNumberMetric();
                 break;
-            case USERS_CREATED_PROJECTS_PERCENT:
-                metric = new UsersCreatedProjectsPercentMetric();
+            case USERS_CREATED_PROJECTS_RELATIVELY_TO_NEW_USERS_PERCENT:
+                metric = new UsersCreatedRelativelyToNewUsersProjectsNumberMetric();
+                break;
+            case USERS_BUILT_PROJECTS_NUMBER:
+                metric = new UsersBuiltProjectsNumberMetric();
+                break;
+            case USERS_DEPLOYED_PROJECTS_NUMBER:
+                metric = new UsersDeployedProjectsNumberMetric();
+                break;
+            case USERS_DEPLOYED_LOCAL_AND_PAAS_PROJECTS_NUMBER:
+                metric = new UsersDeployedLocalAndPaasProjectsNumberMetric();
                 break;
             case USERS_ADDED_TO_WORKSPACE_LIST:
                 metric = new UsersAddedToWorkspaceListMetric();
@@ -102,20 +114,32 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();
                 break;
+            case PRODUCT_USAGE_TIME_0_10:
+                metric = new ProductUsageTime0_10Metric();
+                break;
+            case PRODUCT_USAGE_TIME_10_60:
+                metric = new ProductUsageTime10_60Metric();
+                break;
+            case PRODUCT_USAGE_TIME_60_MORE:
+                metric = new ProductUsageTime60_MoreMetric();
+                break;
             case PRODUCT_USAGE_TIME_LIST:
                 metric = new ProductUsageTimeListlMetric();
                 break;
             case PRODUCT_USAGE_USER_SESSIONS_NUMBER:
                 metric = new ProductUsageUserSessionsNumberMetric();
                 break;
+            case PRODUCT_USAGE_USER_SESSIONS_NUMBER_0_10:
+                metric = new ProductUsageUserSessionsNumber0_10Metric();
+                break;
+            case PRODUCT_USAGE_USER_SESSIONS_NUMBER_10_60:
+                metric = new ProductUsageUserSessionsNumber10_60Metric();
+                break;
+            case PRODUCT_USAGE_USER_SESSIONS_NUMBER_60_MORE:
+                metric = new ProductUsageUserSessionsNumber60_MoreMetric();
+                break;
             case PROJECTS_CREATED_NUMBER:
                 metric = new ProjectsCreatedNumberMetric();
-                break;
-            case PROJECTS_UNIQUE_BUILT_NUMBER:
-                metric = new ProjectsUniqueBuiltNumberMetric();
-                break;
-            case PROJECTS_UNIQUE_BUILT_PERCENT:
-                metric = new BuiltUniqueProjectsPercentMetric();
                 break;
             case PROJECTS_DESTROYED_LIST:
                 metric = new ProjectsDestroyedListMetric();
@@ -222,14 +246,14 @@ public class MetricFactory {
             case PROJECTS_DEPLOYED_LIST:
                 metric = new ProjectsDeployedListMetric();
                 break;
+            case PROJECTS_DEPLOYED_LOCAL_LIST:
+                metric = new ProjectsDeployedLocalListMetric();
+                break;
+            case PROJECTS_DEPLOYED_PAAS_LIST:
+                metric = new ProjectsDeployedPaasListMetric();
+                break;
             case PROJECTS_DEPLOYED_NUMBER:
                 metric = new ProjectsDeployedNumberMetric();
-                break;
-            case PROJECTS_UNIQUE_DEPLOYED_NUMBER:
-                metric = new ProjectsUniqueDeployedNumberMetric();
-                break;
-            case PROJECTS_UNIQUE_DEPLOYED_PERCENT:
-                metric = new ProjectsUniqueDeployedPercentMetric();
                 break;
             case PAAS_DEPLOYMENT_TYPES:
                 metric = new PaasDeploymentTypesMetric();
@@ -290,12 +314,6 @@ public class MetricFactory {
                 break;
             case JREBEL_USAGE_LIST:
                 metric = new JRebelUsageListMetric();
-                break;
-            case JREBEL_USAGE_ELIGIBLE:
-                metric = new JRebelUsageEligibleMetric();
-                break;
-            case JREBEL_USAGE_PERCENT:
-                metric = new JRebelUsagePercentMetric();
                 break;
             case JREBEL_USER_PROFILE_INFO_GATHERING:
                 metric = new JrebelUserProfileInfoGatheringMetric();

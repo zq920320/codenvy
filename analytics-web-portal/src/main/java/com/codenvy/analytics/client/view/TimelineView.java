@@ -1,3 +1,7 @@
+/*
+ *    Copyright (C) 2013 Codenvy.
+ *
+ */
 package com.codenvy.analytics.client.view;
 
 import com.codenvy.analytics.client.GWTLoader;
@@ -21,6 +25,9 @@ import com.google.gwt.view.client.ListDataProvider;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public class TimelineView extends MainView implements TimelineViewPresenter.Display {
 
     private final TextBox   userNameFilter    = new TextBox();

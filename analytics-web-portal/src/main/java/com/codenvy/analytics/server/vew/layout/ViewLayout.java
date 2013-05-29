@@ -4,19 +4,26 @@
  */
 package com.codenvy.analytics.server.vew.layout;
 
-import java.util.Collections;
+import com.codenvy.analytics.shared.TimeLineViewData;
+
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ViewLayout {
 
     private final Map<String, String>   attributes;
-    private final List<List<RowLayout>> layout;
+    private final List<List<RowLayout>> rowLayouts;
 
-    public ViewLayout(Map<String, String> attributes, List<List<RowLayout>> layout) {
+    ViewLayout(Map<String, String> attributes, List<List<RowLayout>> rowLayouts) {
         this.attributes = attributes;
-        this.layout = Collections.unmodifiableList(layout);
+        this.rowLayouts = rowLayouts;
     }
 
     /**
@@ -27,9 +34,39 @@ public class ViewLayout {
     }
 
     /**
-     * @return {@link #layout}
+     * @return {@link #rowLayouts}
      */
     public List<List<RowLayout>> getLayout() {
-        return layout;
+        return rowLayouts;
+    }
+
+    /**
+     * Layout initialization.
+     */
+    public static ViewLayout initialize(String resource) {
+        try {
+            return LayoutReader.read(resource);
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Retrieves data based on given context.
+     */
+    public List<TimeLineViewData> retrieveData(Map<String, String> context, int length) throws Exception {
+        List<TimeLineViewData> result = new ArrayList<TimeLineViewData>();
+
+        for (List<RowLayout> rows : rowLayouts) {
+            TimeLineViewData data = new TimeLineViewData();
+
+            for (RowLayout row : rows) {
+                data.add(row.fill(context, length));
+            }
+
+            result.add(data);
+        }
+
+        return result;
     }
 }

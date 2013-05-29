@@ -9,6 +9,6 @@ import com.google.gwt.event.shared.EventHandler;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface QueryViewEventHandler extends EventHandler {
-    void onLoad(QueryViewEvent event);
+public interface SingupAnalysisViewEventHandler extends EventHandler {
+    void onLoad(SingupAnalysisViewEvent event);
 }

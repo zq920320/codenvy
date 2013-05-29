@@ -18,154 +18,36 @@ import java.util.Set;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum ScriptType {
-
-    JREBEL_USER_PROFILE_GATHERING {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    WORKSPACES_CREATED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_CREATED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_REMOVED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    WORKSPACES_DESTROYED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    PROJECTS_DESTROYED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_INVITATIONS {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    JREBEL_USAGE {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    ACTIVE_PROJECTS {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    ACTIVE_USERS_WORKSPACES {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_ADDED_TO_WS {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    PROJECTS_CREATED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    PROJECTS_DEPLOYED {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    PROJECTS_BUILT {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_SSO_LOGGED_IN {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_WITHOUT_PROJECTS {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_WITHOUT_BUILDS {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_WITHOUT_DEPLOYES {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    USERS_WITHOUT_INVITES {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-
-    PRODUCT_USAGE_TIME {
-        @Override
-        public Class< ? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    };
+    JREBEL_USER_PROFILE_GATHERING,
+    WORKSPACES_CREATED,
+    USERS_CREATED,
+    USERS_REMOVED,
+    WORKSPACES_DESTROYED,
+    PROJECTS_DESTROYED,
+    USERS_INVITATIONS,
+    JREBEL_USAGE,
+    ACTIVE_PROJECTS,
+    ACTIVE_USERS_WORKSPACES,
+    USERS_ADDED_TO_WS,
+    PROJECTS_CREATED,
+    PROJECTS_DEPLOYED,
+    PROJECTS_DEPLOYED_LOCAL,
+    PROJECTS_DEPLOYED_PAAS,
+    PROJECTS_BUILT,
+    USERS_SSO_LOGGED_IN,
+    USERS_WITHOUT_PROJECTS,
+    USERS_WITHOUT_BUILDS,
+    USERS_WITHOUT_DEPLOYES,
+    USERS_WITHOUT_INVITES,
+    PRODUCT_USAGE_TIME;
 
     /** @return what date type is represented in result */
-    public abstract Class< ? extends ValueData> getValueDataClass();
+    public Class< ? extends ValueData> getValueDataClass() {
+        return ListListStringValueData.class;
+    }
 
     /** @return list of mandatory parameters required to be passed to the script */
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<MetricParameter>(
-                                                  Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                          MetricParameter.TO_DATE}));
+        return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

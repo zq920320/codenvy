@@ -7,44 +7,43 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
+import com.codenvy.analytics.metrics.value.filters.Filter;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
 /**
+ * Number of users, who created at least one project.
+ * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsUniqueBuiltNumberMetric extends CalculateBasedMetric {
+public class UsersInvitationsSentNumberMetric extends CalculateBasedMetric {
 
-    private final Metric basedMetric;
+    private final InvitationsSentListMetric basedMetric;
 
-    ProjectsUniqueBuiltNumberMetric() throws IOException {
-        super(MetricType.PROJECTS_UNIQUE_BUILT_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_BUILT_LIST);
+    UsersInvitationsSentNumberMetric() throws IOException {
+        super(MetricType.USERS_INVITATIONS_SENT_NUMBER);
+        this.basedMetric = (InvitationsSentListMetric)MetricFactory.createMetric(MetricType.INVITATIONS_SENT_LIST);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
     public Set<MetricParameter> getParams() {
         return basedMetric.getParams();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
     protected Class< ? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
         ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        ProjectsFilter filter = new ProjectsFilter(valueData);
-
-        int size = filter.getUniqueProjects().size();
-
-        return new LongValueData(size);
+        Filter filter = basedMetric.createFilter(valueData);
+        return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
     }
 }

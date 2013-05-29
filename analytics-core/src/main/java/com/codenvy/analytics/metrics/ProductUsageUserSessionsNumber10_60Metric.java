@@ -7,42 +7,42 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
+import com.codenvy.analytics.metrics.value.filters.ProductUsageTimeFilter;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Number of users, who created at least one project.
- * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersCreatedProjectsNumberMetric extends CalculateBasedMetric {
+public class ProductUsageUserSessionsNumber10_60Metric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    UsersCreatedProjectsNumberMetric() throws IOException {
-        super(MetricType.USERS_CREATED_PROJECTS_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST);
+    public ProductUsageUserSessionsNumber10_60Metric() throws IOException {
+        super(MetricType.PRODUCT_USAGE_USER_SESSIONS_NUMBER_10_60);
+        this.basedMetric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_LIST);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
         return basedMetric.getParams();
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     protected Class< ? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ProjectsFilter filter = new ProjectsFilter((ListListStringValueData)basedMetric.getValue(context));
-        return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
+        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
+
+        ProductUsageTimeFilter filter = new ProductUsageTimeFilter(value);
+        return new LongValueData(filter.getNumberOfSessions(10 * 60, true, 60 * 60, true));
     }
 }

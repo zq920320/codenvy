@@ -1,3 +1,7 @@
+/*
+ *    Copyright (C) 2013 Codenvy.
+ *
+ */
 package com.codenvy.analytics.client.view;
 
 import com.codenvy.analytics.client.GWTLoader;
@@ -10,6 +14,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public class QueryView extends MainView implements QueryViewPresenter.Display {
     private final ListBox       queryListBox   = new ListBox();
     private final FlexTable     parameterTable = new FlexTable();

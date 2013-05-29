@@ -9,7 +9,6 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.server.vew.layout.LayoutReader;
 import com.codenvy.analytics.server.vew.layout.MetricRowLayoutImpl;
 import com.codenvy.analytics.server.vew.layout.RowLayout;
 import com.codenvy.analytics.server.vew.layout.ViewLayout;
@@ -38,17 +37,7 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
     /**
      * Query view layout.
      */
-    private static final ViewLayout viewLayout;
-
-    static {
-        LayoutReader layout = new LayoutReader(VIEW_QUERY);
-        try {
-            viewLayout = layout.read();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new IllegalStateException(e);
-        }
-    }
+    private static final ViewLayout viewLayout   = ViewLayout.initialize(VIEW_QUERY);
 
     /** {@inheritedDoc} */
     public Map<String, String> getMetricTypes() {

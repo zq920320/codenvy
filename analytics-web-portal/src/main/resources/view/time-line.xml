@@ -9,27 +9,24 @@
         <metric type="workspaces_destroyed_number" title="Destroyed"/>
         <metric type="total_workspaces_number" title="Total"/>
         <metric type="active_workspaces_number" title="# Active"/>
-        <metric type="active_workspaces_percent" format="%.1f%%" title="% Active"/>
         <empty />
     </view>
     <view>
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-		<metric type="users_created_number" title="Created"/>
+        <metric type="users_created_number" title="Created"/>
         <metric type="total_users_number" title="Total"/>
-        <metric type="users_created_projects_percent" format="%.0f%%" title="% Have Created Projects"/>
+        <metric type="users_created_projects_relatively_to_new_users_percent" format="%.0f%%" title="% Have Created Projects"/>
         <metric type="active_users_number" title="# Active"/>
-		<metric type="active_users_percent" format="%.1f%%" title="% Active"/>
         <empty />
-	</view>
-	<view>		
-		<date section="Added To Workspace" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <total types="users_added_to_workspace_from_website_percent,users_added_to_workspace_from_invite_percent" format="%.0f%%"/>
-        <metric type="users_added_to_workspace_from_website_percent" format="%.0f%%" title="From Website"/>
-        <metric type="users_added_to_workspace_from_invite_percent" format="%.0f%%" title="By Invitation"/>
+    </view>
+    <view>
+        <date section="Invitations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <metric type="invitations_sent_number" title="Sent"/>
+        <metric type="invitations_accepted_percent" format="%.0f%%" title="Accepted"/>
         <empty />
-	</view>
-	<view>
-		<date section="Users Logged in Ways" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+    </view>
+    <view>
+        <date section="Authentication Type" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="users_sso_logged_in_using_github_percent,users_sso_logged_in_using_google_percent,users_sso_logged_in_using_form_percent" format="%.0f%%" />
         <metric type="users_sso_logged_in_using_google_percent" format="%.0f%%" title="Google Auth"/>
         <metric type="users_sso_logged_in_using_github_percent" format="%.0f%%" title="Github Auth"/>
@@ -37,9 +34,19 @@
         <empty />
     </view>
     <view>
-        <date section="Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <metric type="product_usage_time_total" format="%,.0f" title="Product usage time (mins)"/>
-        <metric type="product_usage_user_sessions_number" format="%,.0f" title="# User Sessions"/>
+        <date section="Product Usage Time (mins)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="product_usage_time_60_more,product_usage_time_10_60,product_usage_time_0_10" format="%,.0f" />
+        <metric type="product_usage_time_0_10" format="%,.0f" title="Sessions &#0060; 10 Mins"/>
+        <metric type="product_usage_time_10_60" format="%,.0f" title="Sessions Between 10 And 60 Mins"/>
+        <metric type="product_usage_time_60_more" format="%,.0f" title="Sessions &#0062; 60 Mins"/>
+        <empty />
+    </view>
+    <view>
+        <date section="# User Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <total types="product_usage_user_sessions_number_0_10,product_usage_user_sessions_number_10_60,product_usage_user_sessions_number_60_MORE" format="%,.0f" />
+        <metric type="product_usage_user_sessions_number_0_10" format="%,.0f" title="# &#0060; 10 Mins"/>
+        <metric type="product_usage_user_sessions_number_10_60" format="%,.0f" title="# Between 10 And 60 Mins"/>
+        <metric type="product_usage_user_sessions_number_60_more" format="%,.0f" title="# &#0062; 60 Mins"/>
         <empty />
     </view>
     <view>
@@ -47,13 +54,6 @@
         <metric type="projects_created_number" title="Created"/>
         <metric type="projects_destroyed_number" title="Destroyed"/>
         <metric type="total_projects_number" title="Total"/>
-        <empty />
-        <metric type="projects_unique_built_number" format="%.0f" title="# Built"/>
-        <metric type="projects_unique_built_percent" format="%.0f%%" title="% Built"/>
-        <metric type="projects_unique_deployed_number" format="%.0f" title="# Deployed"/>
-        <metric type="projects_unique_deployed_percent" format="%.0f%%" title="% Deployed"/>
-        <metric type="active_projects_number" title="# Active"/>
-        <metric type="active_projects_percent" format="%.1f%%" title="% Active"/>
         <empty />
     </view>
     <view>
@@ -74,29 +74,6 @@
         <empty />
     </view>
     <view>
-        <date section="% Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <total types="project_type_java_jar_percent,project_type_java_war_percent,project_type_java_jsp_percent,project_type_java_spring_percent,project_type_php_percent,project_type_python_percent,project_type_javascript_percent,project_type_ruby_percent,project_type_mmp_percent,project_type_nodejs_percent,project_type_android_percent,project_type_others_percent" format="%.0f%%"/>
-        <metric type="project_type_java_jar_percent" format="%.1f%%" title="Java Jar"/>
-        <metric type="project_type_java_war_percent" format="%.1f%%" title="Java War"/>
-        <metric type="project_type_java_jsp_percent" format="%.1f%%" title="Java JSP"/>
-        <metric type="project_type_java_spring_percent" format="%.1f%%" title="Java Spring"/>
-        <metric type="project_type_php_percent" format="%.1f%%" title="PHP"/>
-        <metric type="project_type_python_percent" format="%.1f%%" title="Python"/>
-        <metric type="project_type_javascript_percent" format="%.1f%%" title="JavaScript"/>
-        <metric type="project_type_ruby_percent" format="%.1f%%" title="Ruby"/>
-        <metric type="project_type_mmp_percent" format="%.1f%%" title="Maven Multi Project"/>
-        <metric type="project_type_nodejs_percent" format="%.1f%%" title="Node.js"/>
-        <metric type="project_type_android_percent" format="%.1f%%" title="Android"/>
-        <metric type="project_type_others_percent" format="%.1f%%" title="Others"/>
-        <empty />
-    </view>
-    <view>
-        <date section="JRebel Usage" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <metric type="jrebel_usage_eligible" title="Eligible"/>
-        <metric type="jrebel_usage_percent" format="%.0f%%" title="% Usage"/>
-        <empty />
-    </view>
-    <view>
         <date section="# Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="paas_deployment_type_aws_number,paas_deployment_type_appfog_number,paas_deployment_type_cloudbees_number,paas_deployment_type_cloudfoundry_number,paas_deployment_type_gae_number,paas_deployment_type_heroku_number,paas_deployment_type_openshift_number,paas_deployment_type_tier3_number,paas_deployment_type_local_number" format="%.0f"/>
         <metric type="paas_deployment_type_aws_number" format="%.0f" title="AWS"/>
@@ -108,26 +85,6 @@
         <metric type="paas_deployment_type_openshift_number" format="%.0f" title="OpenShift"/>
         <metric type="paas_deployment_type_tier3_number" format="%.0f" title="Tier3"/>
         <metric type="paas_deployment_type_local_number" format="%.0f" title="Local"/>
-        <empty />
-    </view>
-    <view>
-        <date section="% Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <total types="paas_deployment_type_aws_percent,paas_deployment_type_appfog_percent,paas_deployment_type_cloudbees_percent,paas_deployment_type_cloudfoundry_percent,paas_deployment_type_gae_percent,paas_deployment_type_heroku_percent,paas_deployment_type_openshift_percent,paas_deployment_type_tier3_percent,paas_deployment_type_local_percent" format="%.0f%%"/>
-        <metric type="paas_deployment_type_aws_percent" format="%.1f%%" title="AWS"/>
-        <metric type="paas_deployment_type_appfog_percent" format="%.1f%%" title="AppFog"/>
-        <metric type="paas_deployment_type_cloudbees_percent" format="%.1f%%" title="CloudBees"/>
-        <metric type="paas_deployment_type_cloudfoundry_percent" format="%.1f%%" title="CloudFoundry"/>
-        <metric type="paas_deployment_type_gae_percent" format="%.1f%%" title="GAE"/>
-        <metric type="paas_deployment_type_heroku_percent" format="%.1f%%" title="Heroku"/>
-        <metric type="paas_deployment_type_openshift_percent" format="%.1f%%" title="OpenShift"/>
-        <metric type="paas_deployment_type_tier3_percent" format="%.1f%%" title="Tier3"/>
-        <metric type="paas_deployment_type_local_percent" format="%.1f%%" title="Local"/>
-        <empty />
-    </view>
-    <view>
-        <date section="Invitations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
-        <metric type="invitations_sent_number" title="Sent"/>
-        <metric type="invitations_accepted_percent" format="%.0f%%" title="Accepted"/>
         <empty />
     </view>
 </views>
