@@ -97,6 +97,8 @@ public class LayoutReader {
                     layout.add(new EmptyRowLayoutImpl());
                 } else if (nodeName.equals("total")) {
                     layout.add(createTotalRow(element));
+                } else if (nodeName.equals("title")) {
+                    layout.add(createTitleRow(element));
                 }
             }
         }
@@ -108,6 +110,11 @@ public class LayoutReader {
         String types = element.getAttribute("types");
 
         return new TotalRowLayoutImpl(types, format);
+    }
+
+    private static RowLayout createTitleRow(Element element) throws IOException {
+        String name = element.getAttribute("name");
+        return new TitleRowLayoutImpl(name);
     }
 
     protected static RowLayout createDateRow(Element element) {

@@ -81,8 +81,8 @@ public class MetricFactory {
             case USERS_DEPLOYED_PROJECTS_NUMBER:
                 metric = new UsersDeployedProjectsNumberMetric();
                 break;
-            case USERS_DEPLOYED_LOCAL_AND_PAAS_PROJECTS_NUMBER:
-                metric = new UsersDeployedLocalAndPaasProjectsNumberMetric();
+            case USERS_DEPLOYED_PAAS_PROJECTS_NUMBER:
+                metric = new UsersDeployedPaasProjectsNumberMetric();
                 break;
             case USERS_ADDED_TO_WORKSPACE_LIST:
                 metric = new UsersAddedToWorkspaceListMetric();

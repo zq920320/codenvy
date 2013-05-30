@@ -46,12 +46,13 @@ public class TestAnalysis {
         List<TimeLineViewData> data = service.getData();
 
         TimeLineViewData timeLineViewData = data.get(0);
-        assertEquals(timeLineViewData.get(1).get(1), "12"); // total accounts
-        assertEquals(timeLineViewData.get(2).get(1), "3"); // created
-        assertEquals(timeLineViewData.get(3).get(1), "2"); // built
-        assertEquals(timeLineViewData.get(4).get(1), "2"); // deploy
-        assertEquals(timeLineViewData.get(5).get(1), "1"); // deploy local and paas
-        assertEquals(timeLineViewData.get(6).get(1), ""); // invites
+        assertEquals(timeLineViewData.get(1).get(1), "12"); // total users
+        assertEquals(timeLineViewData.get(2).get(1), "2"); // new users
+        assertEquals(timeLineViewData.get(3).get(1), "3"); // created projects
+        assertEquals(timeLineViewData.get(4).get(1), "2"); // built
+        assertEquals(timeLineViewData.get(5).get(1), "2"); // deploy
+        assertEquals(timeLineViewData.get(6).get(1), "2"); // deploy to paas
+        assertEquals(timeLineViewData.get(7).get(1), ""); // invites
     }
 
     private File prepareInitValues() throws Exception {

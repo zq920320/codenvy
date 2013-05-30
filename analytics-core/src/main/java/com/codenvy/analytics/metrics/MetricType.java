@@ -23,10 +23,10 @@ public enum MetricType {
     ACTIVE_USERS_WORKAPCES_LIST,
     ACTIVE_USERS_NUMBER,
     ACTIVE_USERS_PERCENT,
-    USERS_CREATED_PROJECTS_NUMBER,
-    USERS_BUILT_PROJECTS_NUMBER,
-    USERS_DEPLOYED_PROJECTS_NUMBER,
-    USERS_DEPLOYED_LOCAL_AND_PAAS_PROJECTS_NUMBER, // number of users, who deployed projects locally and paas
+    USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
+    USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
+    USERS_DEPLOYED_PROJECTS_NUMBER, // number of users, who deployed project at least once
+    USERS_DEPLOYED_PAAS_PROJECTS_NUMBER, // number of users, who deployed projects locally and paas
     USERS_INVITATIONS_SENT_NUMBER, // number of users, who sent invitation at least once
     USERS_ADDED_TO_WORKSPACE_LIST,
     USERS_ADDED_TO_WORKSPACE_FROM_WEBSITE_PERCENT,

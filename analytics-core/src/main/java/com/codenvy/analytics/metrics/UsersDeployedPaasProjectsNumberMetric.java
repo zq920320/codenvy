@@ -18,13 +18,13 @@ import java.util.Set;
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersBuiltProjectsNumberMetric extends CalculateBasedMetric {
+public class UsersDeployedPaasProjectsNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    UsersBuiltProjectsNumberMetric() throws IOException {
-        super(MetricType.USERS_BUILT_PROJECTS_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_BUILT_LIST);
+    UsersDeployedPaasProjectsNumberMetric() throws IOException {
+        super(MetricType.USERS_DEPLOYED_PAAS_PROJECTS_NUMBER);
+        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_PAAS_LIST);
     }
 
     /** {@inheritedDoc} */

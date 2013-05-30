@@ -42,8 +42,7 @@ public class UsersInvitationsSentNumberMetric extends CalculateBasedMetric {
     /** {@inheritedDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        Filter filter = basedMetric.createFilter(valueData);
+        Filter filter = basedMetric.createFilter((ListListStringValueData)basedMetric.getValue(context));
         return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
     }
 }
