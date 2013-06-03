@@ -62,6 +62,11 @@
                 var url = "/sso/server/gen?authType=oauth&oauth_provider=google" +
                    "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email";
                 //window.location = url;
+                if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url")){
+                   url += "&redirect_url=" + getQueryParameterByName("redirect_url");
+                   url += "&client_url=" + getQueryParameterByName("client_url");
+                }
+
                 if(typeof callback !== 'undefined'){
                     callback(url);
                 }
@@ -72,6 +77,11 @@
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
                 var url = "/sso/server/gen?authType=oauth&oauth_provider=github&scope=user&scope=repo";
+                if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url")){
+                   url += "&redirect_url=" + getQueryParameterByName("redirect_url");
+                   url += "&client_url=" + getQueryParameterByName("client_url");
+                }
+
                 if(typeof callback !== 'undefined'){
                     callback(url);
                 }
