@@ -7,6 +7,7 @@ package com.codenvy.analytics.server.vew.template;
 import com.codenvy.analytics.shared.TableData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,10 @@ public class Table {
         }
 
         return data;
+    }
+
+    public List<Row> getRows() {
+        return Collections.unmodifiableList(rows);
     }
 
     public int getLength() {

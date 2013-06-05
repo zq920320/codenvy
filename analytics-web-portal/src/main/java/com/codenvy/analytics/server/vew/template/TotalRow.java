@@ -7,7 +7,9 @@ package com.codenvy.analytics.server.vew.template;
 
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.shared.RowData;
 
 import org.w3c.dom.Element;
 
@@ -36,8 +38,8 @@ public class TotalRow extends AbstractRow {
 
     /** {@inheritDoc} */
     @Override
-    public List<List<String>> fill(Map<String, String> context, int length) throws Exception {
-        List<String> row = new ArrayList<String>(length);
+    public List<RowData> fill(Map<String, String> context, int length) throws Exception {
+        RowData row = new RowData();
 
         row.add("Total");
 
@@ -54,9 +56,11 @@ public class TotalRow extends AbstractRow {
             } else {
                 row.add("");
             }
+
+            context = Utils.prevDateInterval(context);
         }
 
-        ArrayList<List<String>> result = new ArrayList<>();
+        ArrayList<RowData> result = new ArrayList<>();
         result.add(row);
 
         return result;

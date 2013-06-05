@@ -9,6 +9,7 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.shared.RowData;
 
 import org.w3c.dom.Element;
 
@@ -32,13 +33,13 @@ public class ListRow implements Row {
 
     /** {@inheritDoc} */
     @Override
-    public List<List<String>> fill(Map<String, String> context, int length) throws Exception {
-        ArrayList<List<String>> result = new ArrayList<>();
+    public List<RowData> fill(Map<String, String> context, int length) throws Exception {
+        ArrayList<RowData> result = new ArrayList<>();
 
         ListListStringValueData valueData = (ListListStringValueData)metric.getValue(context);
 
         for (ListStringValueData litVd : valueData.getAll()) {
-            List<String> row = new ArrayList<String>(length);
+            RowData row = new RowData();
 
             List<String> item = litVd.getAll();
             for (int i = 0; i < length; i++) {

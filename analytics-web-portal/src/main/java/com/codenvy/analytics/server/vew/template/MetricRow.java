@@ -10,6 +10,7 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.shared.RowData;
 
 import org.w3c.dom.Element;
 
@@ -42,8 +43,8 @@ public class MetricRow extends AbstractRow {
      * <li>Others columns are filed by metric's value.</li><br>
      * {@inheritedDoc}
      */
-    public List<List<String>> fill(Map<String, String> context, int length) throws Exception {
-        List<String> row = new ArrayList<String>(length);
+    public List<RowData> fill(Map<String, String> context, int length) throws Exception {
+        RowData row = new RowData();
         row.add(title);
 
         for (int i = 1; i < length; i++) {
@@ -64,7 +65,7 @@ public class MetricRow extends AbstractRow {
             }
         }
 
-        ArrayList<List<String>> result = new ArrayList<>();
+        ArrayList<RowData> result = new ArrayList<>();
         result.add(row);
 
         return result;

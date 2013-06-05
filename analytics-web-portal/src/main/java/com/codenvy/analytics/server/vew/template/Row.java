@@ -5,6 +5,8 @@
 package com.codenvy.analytics.server.vew.template;
 
 
+import com.codenvy.analytics.shared.RowData;
+
 import java.util.List;
 import java.util.Map;
 
@@ -17,5 +19,5 @@ public interface Row {
      * @param context the execution context
      * @param length how many columns should be filled
      */
-    List<List<String>> fill(Map<String, String> context, int length) throws Exception;
+    List<RowData> fill(Map<String, String> context, int length) throws Exception;
 }

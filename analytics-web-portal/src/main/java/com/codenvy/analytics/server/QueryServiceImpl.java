@@ -10,6 +10,8 @@ import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.server.vew.template.Display;
+import com.codenvy.analytics.server.vew.template.MetricRow;
+import com.codenvy.analytics.server.vew.template.Row;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import org.slf4j.Logger;
@@ -41,13 +43,13 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
     public Map<String, String> getMetricTypes() {
         Map<String, String> types = new LinkedHashMap<String, String>();
 
-        // TODO
-        // for (Row row : display.getLayout().get(0)) {
-        // MetricRowLayoutImpl metricRow = (MetricRowLayoutImpl)row;
-        // Metric metric = metricRow.getMetric();
-        //
-        // types.put(metricRow.getTitle(), metric.getType().name());
-        // }
+        for (Row row : display.getLayout().get(0).getRows()) {
+            if (row instanceof MetricRow) {
+                MetricRow metricRow = (MetricRow)row;
+                Metric metric = metricRow.getMetric();
+                types.put(metricRow.getTitle(), metric.getType().name());
+            }
+        }
 
         return types;
     }
@@ -91,14 +93,15 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
     }
 
     private String getValue(Map<String, String> context, Metric metric) throws Exception {
-        // for (Row row : display.getLayout().get(0)) {
-        // MetricRowLayoutImpl metricRow = (MetricRowLayoutImpl)row;
-        //
-        // if (metricRow.getMetric().getType() == metric.getType()) {
-        // return metricRow.fill(context, 2).get(1);
-        // }
-        // }
-        // TODO
+        for (Row row : display.getLayout().get(0).getRows()) {
+            if (row instanceof MetricRow) {
+                MetricRow metricRow = (MetricRow)row;
+
+                if (metricRow.getMetric().getType() == metric.getType()) {
+                    return metricRow.fill(context, 2).get(0).get(1);
+                }
+            }
+        }
 
         throw new IllegalStateException("Layout for metric " + metric.getType() + " not found");
     }

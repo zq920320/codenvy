@@ -5,6 +5,8 @@
 package com.codenvy.analytics.server.vew.template;
 
 
+import com.codenvy.analytics.shared.RowData;
+
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -28,8 +30,8 @@ class TitleRow implements Row {
     /**
      * {@inheritedDoc}
      */
-    public List<List<String>> fill(Map<String, String> context, int length) {
-        List<String> row = new ArrayList<String>(length);
+    public List<RowData> fill(Map<String, String> context, int length) {
+        RowData row = new RowData();
 
         int count = Math.min(length, titles.length);
         for (int i = 0; i < count; i++) {
@@ -40,7 +42,7 @@ class TitleRow implements Row {
             row.add("");
         }
 
-        ArrayList<List<String>> result = new ArrayList<>();
+        ArrayList<RowData> result = new ArrayList<>();
         result.add(row);
 
         return result;

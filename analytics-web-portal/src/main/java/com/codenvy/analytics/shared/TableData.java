@@ -5,7 +5,6 @@
 package com.codenvy.analytics.shared;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +13,7 @@ import java.util.Map;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 @SuppressWarnings("serial")
-public class TableData extends ArrayList<List<String>> {
+public class TableData extends ArrayList<RowData> {
     
     private static final long   serialVersionUID = -4742685800442075709L;
 

@@ -6,6 +6,7 @@ package com.codenvy.analytics.server.vew.template;
 
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.shared.RowData;
 
 import org.w3c.dom.Element;
 
@@ -38,11 +39,11 @@ class DateRow implements Row {
 
     /** {@inheritDoc} */
     @Override
-    public List<List<String>> fill(Map<String, String> context, int length) throws Exception {
+    public List<RowData> fill(Map<String, String> context, int length) throws Exception {
         TimeUnit timeUnit = Utils.getTimeUnit(context);
         DateFormat df = new SimpleDateFormat(dateFormat.get(timeUnit));
 
-        List<String> row = new ArrayList<String>(length);
+        RowData row = new RowData();
         row.add(sectionName);
 
         for (int i = 1; i < length; i++) {
@@ -54,7 +55,7 @@ class DateRow implements Row {
             context = Utils.prevDateInterval(context);
         }
 
-        ArrayList<List<String>> result = new ArrayList<>();
+        ArrayList<RowData> result = new ArrayList<>();
         result.add(row);
 
         return result;

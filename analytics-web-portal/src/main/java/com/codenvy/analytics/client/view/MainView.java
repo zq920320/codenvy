@@ -8,6 +8,7 @@ import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.presenter.MainViewPresenter;
 import com.codenvy.analytics.client.resources.GWTCellTableResource;
 import com.codenvy.analytics.client.resources.GWTDataGridResource;
+import com.codenvy.analytics.shared.RowData;
 import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -202,22 +203,22 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
     }
 
     protected Widget createCellTable(TableData tableData) {
-        CellTable<List<String>> cellTable = new CellTable<List<String>>(Integer.MAX_VALUE, GWTCellTableResource.RESOURCES);
+        CellTable<RowData> cellTable = new CellTable<RowData>(Integer.MAX_VALUE, GWTCellTableResource.RESOURCES);
         return initializeTable(cellTable, tableData);
     }
 
     protected Widget createDataGrid(TableData tableData) {
-        DataGrid<List<String>> dataGrid = new DataGrid<List<String>>(Integer.MAX_VALUE, GWTDataGridResource.RESOURCES);
+        DataGrid<RowData> dataGrid = new DataGrid<RowData>(Integer.MAX_VALUE, GWTDataGridResource.RESOURCES);
         return initializeTable(dataGrid, tableData);
     }
 
-    protected Widget initializeTable(AbstractCellTable<List<String>> cellTable, TableData tableData) {
-        ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
+    protected Widget initializeTable(AbstractCellTable<RowData> cellTable, TableData tableData) {
+        ListDataProvider<RowData> dataProvider = new ListDataProvider<RowData>();
         dataProvider.addDataDisplay(cellTable);
 
-        List<List<String>> list = dataProvider.getList();
+        List<RowData> list = dataProvider.getList();
 
-        Iterator<List<String>> rowDataIterator = tableData.iterator();
+        Iterator<RowData> rowDataIterator = tableData.iterator();
 
         createColumns(cellTable, rowDataIterator.next());
         addContent(list, rowDataIterator);
@@ -229,14 +230,14 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         return cellTable;
     }
 
-    private void addContent(List<List<String>> list, Iterator<List<String>> rowDataIterator) {
+    private void addContent(List<RowData> list, Iterator<RowData> rowDataIterator) {
         while (rowDataIterator.hasNext()) {
             list.add(rowDataIterator.next());
         }
     }
 
-    private void addSortHandler(AbstractCellTable<List<String>> table, TableData tableData, ListDataProvider<List<String>> dataProvider) {
-        ListHandler<List<String>> sortHandler = new ListHandler<List<String>>(dataProvider.getList());
+    private void addSortHandler(AbstractCellTable<RowData> table, TableData tableData, ListDataProvider<RowData> dataProvider) {
+        ListHandler<RowData> sortHandler = new ListHandler<RowData>(dataProvider.getList());
 
         CustomColumn defaultSortColumn = null;
 
@@ -260,7 +261,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         }
     }
 
-    protected void createColumns(AbstractCellTable<List<String>> table, List<String> headers) {
+    protected void createColumns(AbstractCellTable<RowData> table, RowData headers) {
         for (int i = 0; i < headers.size(); i++) {
             CustomColumn column = new CustomColumn(i, headers.get(i));
             table.addColumn(column, headers.get(i));
@@ -268,7 +269,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
     }
 
 
-    private class CustomColumn extends TextColumn<List<String>> {
+    private class CustomColumn extends TextColumn<RowData> {
         private final String name;
         private final int    number;
 
@@ -281,7 +282,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
          * {@inheritDoc}
          */
         @Override
-        public String getValue(List<String> object) {
+        public String getValue(RowData object) {
             return object.get(number);
         }
     }
@@ -302,7 +303,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         return tabPanel;
     }
 
-    private final class DataComparator implements Comparator<List<String>> {
+    private final class DataComparator implements Comparator<RowData> {
         private final int index;
         private final int rate;
 
@@ -315,7 +316,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
          * Comparator. First tries to compare value as Long and than as String.
          */
         @Override
-        public int compare(List<String> o1, List<String> o2) {
+        public int compare(RowData o1, RowData o2) {
             String value1 = o1.get(index);
             String value2 = o2.get(index);
 
