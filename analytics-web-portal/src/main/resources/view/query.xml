@@ -2,8 +2,8 @@
 <!--
     Copyright (C) 2013 Codenvy.
 -->
-<views>
-    <view>
+<display>
+    <table>
         <metric type="workspaces_created_number" title="Workspaces: Created"/>
         <metric type="workspaces_destroyed_number" title="Workspaces: Destroyed"/>
         <metric type="total_workspaces_number" title="Workspaces: Total"/>
@@ -21,6 +21,6 @@
         <metric type="total_projects_number" title="Projects: Total"/>
         <metric type="projects_created_types" format="%s" title="Projects: Created Types"/>
         <metric type="paas_deployment_types" format="%s" title="Projects: Deployment Types"/>
-    </view>
-</views>
+    </table>
+</display>
 

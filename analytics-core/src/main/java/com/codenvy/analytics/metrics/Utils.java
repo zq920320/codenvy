@@ -171,6 +171,18 @@ public class Utils {
      * 
      * @throws if any exception is occurred
      */
+    public static void initDateInterval(Date date, Map<String, String> context) throws IOException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        initDateInterval(calendar, context);
+    }
+
+    /**
+     * Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT}
+     * 
+     * @throws if any exception is occurred
+     */
     public static void initDateInterval(Calendar date, Map<String, String> context) throws IOException {
         TimeUnit timeUnit = getTimeUnit(context);
 
@@ -319,12 +331,23 @@ public class Utils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
-        Map<String, String> context = new HashMap<String, String>();
+        Map<String, String> context = newContext();
 
         putTimeUnit(context, timeUnit);
         initDateInterval(cal, context);
 
         return timeUnit == TimeUnit.DAY ? context = Utils.prevDateInterval(context) : context;
+    }
+
+    public static Map<String, String> initializeContext(int interval) throws IOException {
+        Map<String, String> context = newContext();
+        context.put(MetricParameter.TO_DATE.getName(), MetricParameter.TO_DATE.getDefaultValue());
+
+        Calendar calendar = getToDate(context);
+        calendar.add(Calendar.DAY_OF_MONTH, -(interval - 1));
+
+        putFromDate(context, calendar);
+        return context;
     }
 
     public static Map<String, String> clone(Map<String, String> context) {
@@ -354,6 +377,9 @@ public class Utils {
             String value = context.get(name);
 
             switch (parameter) {
+                case INTERVAL:
+                    break;
+
                 case TIME_UNIT:
                     TimeUnit.valueOf(value.toUpperCase());
                     break;

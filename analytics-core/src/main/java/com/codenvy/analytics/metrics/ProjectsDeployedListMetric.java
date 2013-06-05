@@ -13,7 +13,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsDeployedListMetric extends ScriptBasedMetric {
+public class ProjectsDeployedListMetric extends PersistableScriptBasedMetric {
 
     ProjectsDeployedListMetric() {
         super(MetricType.PROJECTS_DEPLOYED_LIST);

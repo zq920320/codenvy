@@ -11,7 +11,7 @@ import com.codenvy.analytics.metrics.value.filters.UsersFilter;
 import com.codenvy.analytics.scripts.ScriptType;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersDestroyedListMetric extends ScriptBasedMetric {
+public class UsersDestroyedListMetric extends PersistableScriptBasedMetric {
 
     UsersDestroyedListMetric() {
         super(MetricType.USERS_DESTROYED_LIST);

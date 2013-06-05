@@ -4,11 +4,10 @@
  */
 package com.codenvy.analytics.client.presenter;
 
-import com.codenvy.analytics.client.AnalysisViewServiceAsync;
-import com.codenvy.analytics.shared.TimeLineViewData;
+import com.codenvy.analytics.client.AnalysisServiceAsync;
+import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
 
 import java.util.List;
 
@@ -17,14 +16,13 @@ import java.util.List;
  */
 public class AnalysisViewPresenter extends MainViewPresenter implements Presenter {
 
-    private final AnalysisViewServiceAsync service;
+    private final AnalysisServiceAsync service;
 
     public interface Display extends MainViewPresenter.Display {
-        FlexTable getContentTable();
-        void setData(List<TimeLineViewData> result);
+        void setData(List<TableData> result);
     }
 
-    public AnalysisViewPresenter(AnalysisViewServiceAsync service, HandlerManager eventBus, Display view) {
+    public AnalysisViewPresenter(AnalysisServiceAsync service, HandlerManager eventBus, Display view) {
         super(eventBus, view);
         this.service = service;
 
@@ -35,13 +33,13 @@ public class AnalysisViewPresenter extends MainViewPresenter implements Presente
         getDisplay().getContentTable().clear();
         getDisplay().getGWTLoader().show();
 
-        service.getData(new AsyncCallback<List<TimeLineViewData>>() {
+        service.getData(new AsyncCallback<List<TableData>>() {
             public void onFailure(Throwable caught) {
                 getDisplay().getGWTLoader().hide();
                 getDisplay().getContentTable().setText(0, 0, caught.getMessage());
             }
 
-            public void onSuccess(List<TimeLineViewData> result) {
+            public void onSuccess(List<TableData> result) {
                 getDisplay().getGWTLoader().hide();
                 getDisplay().setData(result);
             }

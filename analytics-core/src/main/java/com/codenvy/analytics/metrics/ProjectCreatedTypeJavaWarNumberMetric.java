@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class ProjectCreatedTypeJavaWarNumberMetric extends AbstractProjectsCreatedMetric {
 
-    ProjectCreatedTypeJavaWarNumberMetric() throws IOException {
+    ProjectCreatedTypeJavaWarNumberMetric() {
         super(MetricType.PROJECT_TYPE_JAVA_WAR_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "War",
               ValueType.NUMBER);
     }

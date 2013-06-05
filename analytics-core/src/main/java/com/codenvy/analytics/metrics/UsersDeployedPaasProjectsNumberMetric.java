@@ -22,7 +22,7 @@ public class UsersDeployedPaasProjectsNumberMetric extends CalculateBasedMetric 
 
     private final Metric basedMetric;
 
-    UsersDeployedPaasProjectsNumberMetric() throws IOException {
+    UsersDeployedPaasProjectsNumberMetric() {
         super(MetricType.USERS_DEPLOYED_PAAS_PROJECTS_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_PAAS_LIST);
     }

@@ -21,7 +21,7 @@ public class InvitationsAcceptedPercentMetric extends CalculateBasedMetric {
     private final Metric                          invitationSentMetric;
     private final UsersAddedToWorkspaceListMetric userAddedToWsMetric;
 
-    InvitationsAcceptedPercentMetric() throws IOException {
+    InvitationsAcceptedPercentMetric() {
         super(MetricType.INVITATIONS_ACCEPTED_PERCENT);
 
         this.invitationSentMetric = MetricFactory.createMetric(MetricType.INVITATIONS_SENT_NUMBER);

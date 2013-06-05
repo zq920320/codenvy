@@ -20,7 +20,7 @@ public class PaasDeploymentTypesMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
     
-    PaasDeploymentTypesMetric() throws IOException {
+    PaasDeploymentTypesMetric() {
         super(MetricType.PAAS_DEPLOYMENT_TYPES);
         this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_LIST);
     }

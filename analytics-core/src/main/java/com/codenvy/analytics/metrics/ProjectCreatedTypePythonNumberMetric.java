@@ -4,8 +4,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-
 import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 
 /**
@@ -13,7 +11,7 @@ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
  */
 public class ProjectCreatedTypePythonNumberMetric extends AbstractProjectsCreatedMetric {
 
-    ProjectCreatedTypePythonNumberMetric() throws IOException {
+    ProjectCreatedTypePythonNumberMetric() {
         super(MetricType.PROJECT_TYPE_PYTHON_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "Python",
               ValueType.NUMBER);
     }

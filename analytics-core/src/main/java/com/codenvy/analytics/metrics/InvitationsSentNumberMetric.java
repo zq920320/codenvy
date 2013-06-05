@@ -19,7 +19,7 @@ public class InvitationsSentNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    InvitationsSentNumberMetric() throws IOException {
+    InvitationsSentNumberMetric() {
         super(MetricType.INVITATIONS_SENT_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.INVITATIONS_SENT_LIST);
     }

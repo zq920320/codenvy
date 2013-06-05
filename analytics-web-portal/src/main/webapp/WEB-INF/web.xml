@@ -7,7 +7,7 @@
     <display-name>Analytics Service</display-name>
 
     <listener>
-      <listener-class>com.codenvy.analytics.server.DailyJobsRunner</listener-class>
+      <listener-class>com.codenvy.analytics.server.jobs.DailyJobsRunner</listener-class>
     </listener>
     <!-- Servlets -->
     
@@ -17,23 +17,23 @@
     </servlet>
 
     <servlet>
-      <servlet-name>AnalysisViewServlet</servlet-name>
-      <servlet-class>com.codenvy.analytics.server.AnalysisViewServiceImpl</servlet-class>
+      <servlet-name>AnalysisServlet</servlet-name>
+      <servlet-class>com.codenvy.analytics.server.AnalysisServiceImpl</servlet-class>
     </servlet>
 
     <servlet>
-      <servlet-name>timeLineViewServlet</servlet-name>
-      <servlet-class>com.codenvy.analytics.server.TimeLineViewServiceImpl</servlet-class>
+      <servlet-name>TimeLineServlet</servlet-name>
+      <servlet-class>com.codenvy.analytics.server.TimeLineServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
-      <servlet-name>AnalysisViewServlet</servlet-name>
-      <url-pattern>/AnalyticsApplication/AnalysisView</url-pattern>
+      <servlet-name>AnalysisServlet</servlet-name>
+      <url-pattern>/AnalyticsApplication/Analysis</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-      <servlet-name>timeLineViewServlet</servlet-name>
-      <url-pattern>/AnalyticsApplication/timeLineView</url-pattern>
+      <servlet-name>TimeLineServlet</servlet-name>
+      <url-pattern>/AnalyticsApplication/TimeLine</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>

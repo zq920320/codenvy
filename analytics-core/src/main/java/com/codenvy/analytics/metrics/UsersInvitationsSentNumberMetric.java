@@ -4,7 +4,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.filters.Filter;
@@ -22,7 +21,7 @@ public class UsersInvitationsSentNumberMetric extends CalculateBasedMetric {
 
     private final InvitationsSentListMetric basedMetric;
 
-    UsersInvitationsSentNumberMetric() throws IOException {
+    UsersInvitationsSentNumberMetric() {
         super(MetricType.USERS_INVITATIONS_SENT_NUMBER);
         this.basedMetric = (InvitationsSentListMetric)MetricFactory.createMetric(MetricType.INVITATIONS_SENT_LIST);
     }
@@ -42,7 +41,7 @@ public class UsersInvitationsSentNumberMetric extends CalculateBasedMetric {
     /** {@inheritedDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        Filter filter = basedMetric.createFilter((ListListStringValueData)basedMetric.getValue(context));
+        Filter filter = basedMetric.createFilter(basedMetric.getValue(context));
         return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
     }
 }

@@ -22,7 +22,7 @@ public class ActiveWorkspacesNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    ActiveWorkspacesNumberMetric() throws IOException {
+    ActiveWorkspacesNumberMetric() {
         super(MetricType.ACTIVE_WORKSPACES_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
     }

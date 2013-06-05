@@ -25,6 +25,16 @@ DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Filters events by date of occurrence.
+-- @param fromDateParam - date in format 'YYYYMMDD'
+-- @param toDateParam  - date in format 'YYYYMMDD'
+---------------------------------------------------------------------------
+DEFINE filterByDateInterval(X, toDateParam, interval) RETURNS Y {
+  $Y = FILTER $X BY MilliSecondsBetween(AddDuration(SubtractDuration(ToDate('$toDateParam', 'yyyyMMdd'), '$interval'), 'P1D'), dt) <= 0 AND
+                    MilliSecondsBetween(AddDuration(ToDate('$toDateParam', 'yyyyMMdd'), 'P1D'), dt) > 0;
+};
+
+---------------------------------------------------------------------------
 -- Filters events by date of occurrence. Keeps only in $lastMinutesParam.
 -- @param lastMinutesParam - time interval in minutes
 -- @return {..., curentDt : datetime}
@@ -146,6 +156,98 @@ DEFINE prepareSet(X, fieldNameParam) RETURNS Y {
   $Y = DISTINCT w1;
 };
 
+---------------------------------------------------------------------------------------------
+--                             USAGE TIME MACROSES                                         --
+---------------------------------------------------------------------------------------------
 
+---------------------------------------------------------------------------------------------
+-- Groups events occurred for specific user in specific workspace.
+-- @return {ws: bytearray,user: bytearray,dt: datetime,
+--          intervals: {(ws: bytearray,user: bytearray,dt: datetime,delta: long)}}
+---------------------------------------------------------------------------------------------
+DEFINE groupEvents(X) RETURNS Y {
+  x1 = FOREACH $X GENERATE ws, user, dt;
+  x2 = FOREACH $X GENERATE ws, user, dt;
 
+  x3 = JOIN x1 BY (ws, user), x2 BY (ws, user);
 
+  ---------------------------------------------------------------------------------------------
+  -- Calculates the seconds beetwen every events (delta: long)
+  ---------------------------------------------------------------------------------------------
+  x4 = FOREACH x3 GENERATE x1::ws AS ws, x1::user AS user, x1::dt AS dt, SecondsBetween(x2::dt, x1::dt) AS delta;
+
+  ---------------------------------------------------------------------------------------------
+  -- For every event forms the list of its 'delta'
+  ---------------------------------------------------------------------------------------------
+  x5 = GROUP x4 BY (ws, user, dt);
+  $Y = FOREACH x5 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, $1 AS intervals;
+};
+
+---------------------------------------------------------------------------------------------
+-- The list of all users sessions in all workspaces
+-- @return {ws: bytearray,user: bytearray,dt: datetime,delta: long}
+---------------------------------------------------------------------------------------------
+DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
+  tR = groupEvents($X);
+
+  ---------------------------------------------------------------------------------------------
+  -- For every event keeps only the closest surrounded 'delta'
+  ---------------------------------------------------------------------------------------------
+  k1 = FOREACH tR {
+      negativeDelta = FILTER intervals BY delta < 0;
+      positiveDelta = FILTER intervals BY delta > 0;
+      GENERATE ws, user, dt, MAX(negativeDelta.delta) AS before, MIN(positiveDelta.delta) AS after;
+  }
+
+  ---------------------------------------------------------------------------------------------
+  -- Marks the start and the end of every session
+  ---------------------------------------------------------------------------------------------
+  k2 = FOREACH k1 GENERATE ws, user, dt, (before IS NULL ? -999999 : before) AS before, (after IS NULL ? 999999 : after) AS after;
+  k3 = FOREACH k2 GENERATE ws, user, dt, (before < -(long)$inactiveInterval*60 ? (after <= (long)$inactiveInterval*60 ? 'start'
+										          			    : 'none')
+									     : (after <= (long)$inactiveInterval*60 ? 'none'
+														    : 'end')) AS flag;
+  kR = FILTER k3 BY flag != 'none';
+
+  ---------------------------------------------------------------------------------------------
+  -- For every the start session event finds the corresponding the end session event
+  ---------------------------------------------------------------------------------------------
+  l1 = FOREACH kR GENERATE *;
+  l2 = FOREACH kR GENERATE *;
+
+  ---------------------------------------------------------------------------------------------
+  -- Prepares pairs of all potential 'start-end' session events
+  ---------------------------------------------------------------------------------------------
+  l3 = JOIN l1 BY (ws, user), l2 BY (ws, user);
+  l4 = FILTER l3 BY l1::flag == 'start' AND l2::flag == 'end';
+
+  ---------------------------------------------------------------------------------------------
+  -- The correc pair is with minimum positive time interval between them
+  ---------------------------------------------------------------------------------------------
+  l5 = FOREACH l4 GENERATE l1::ws AS ws, l1::user AS user, l1::dt AS dt, SecondsBetween(l2::dt, l1::dt) AS delta;
+  l6 = FILTER l5 BY delta > 0;
+  l7 = GROUP l6 BY (ws, user, dt);
+
+  $Y = FOREACH l7 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MIN(l6.delta) AS delta;
+};
+
+---------------------------------------------------------------------------------------------
+-- Counts number of users sessions and its length
+-- @param X - {..., user : bytearray, delta : long}
+-- @return {user: bytearray,count: loing, time: long}
+---------------------------------------------------------------------------------------------
+DEFINE usersByTimeSpent(X) RETURNS Y {
+  w1 = GROUP $X BY user;
+  $Y = FOREACH w1 GENERATE FLATTEN(group) AS user, COUNT($X.delta) AS count, SUM($X.delta) AS time;
+};
+
+---------------------------------------------------------------------------------------------
+-- Counts number of users sessions and its length
+-- @param X - {..., user : bytearray, delta : long}
+-- @return {user: bytearray,count: loing, time: long}
+---------------------------------------------------------------------------------------------
+DEFINE domainsByTimeSpent(X) RETURNS Y {
+  w1 = FOREACH $X GENERATE REGEX_EXTRACT(user, '.*@(.*)', 1) AS user, delta;
+  w2 = GROUP w1 BY user;
+  $Y = FOREACH w2 GENERATE FLATTEN(group) AS user, COUNT(w1.delta) AS count, SUM(w1.delta) AS time;
+};

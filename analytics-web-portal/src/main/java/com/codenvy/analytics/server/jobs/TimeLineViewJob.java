@@ -5,7 +5,7 @@
 package com.codenvy.analytics.server.jobs;
 
 import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.server.TimeLineViewServiceImpl;
+import com.codenvy.analytics.server.TimeLineServiceImpl;
 
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -43,7 +43,7 @@ public class TimeLineViewJob implements Job {
 
 
         try {
-            TimeLineViewServiceImpl service = new TimeLineViewServiceImpl();
+            TimeLineServiceImpl service = new TimeLineServiceImpl();
 
             service.update(TimeUnit.DAY);
             service.update(TimeUnit.WEEK);

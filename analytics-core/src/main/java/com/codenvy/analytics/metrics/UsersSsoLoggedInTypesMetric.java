@@ -20,7 +20,7 @@ public class UsersSsoLoggedInTypesMetric extends CalculateBasedMetric {
 
     private final UsersSsoLoggedInListMetric basedMetric;
 
-    UsersSsoLoggedInTypesMetric() throws IOException {
+    UsersSsoLoggedInTypesMetric() {
         super(MetricType.USERS_SSO_LOGGED_IN_TYPES);
         this.basedMetric = (UsersSsoLoggedInListMetric)MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN_LIST);
     }

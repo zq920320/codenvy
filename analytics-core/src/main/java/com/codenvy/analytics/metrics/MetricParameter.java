@@ -48,6 +48,18 @@ public enum MetricParameter {
         }
     },
 
+    INTERVAL {
+        @Override
+        public String getDefaultValue() {
+            return "P1D";
+        }
+
+        @Override
+        public String getName() {
+            return "interval";
+        }
+    },
+
     TO_DATE {
         @Override
         public String getDefaultValue() {

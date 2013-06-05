@@ -20,7 +20,7 @@ public class ProductUsageTime10_60Metric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    public ProductUsageTime10_60Metric() throws IOException {
+    public ProductUsageTime10_60Metric() {
         super(MetricType.PRODUCT_USAGE_TIME_10_60);
         this.basedMetric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_LIST);
     }

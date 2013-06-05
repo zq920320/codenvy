@@ -4,8 +4,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-
 import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 
 /**
@@ -13,7 +11,7 @@ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
  */
 public class ProjectCreatedTypeJavaScriptNumberMetric extends AbstractProjectsCreatedMetric {
 
-    ProjectCreatedTypeJavaScriptNumberMetric() throws IOException {
+    ProjectCreatedTypeJavaScriptNumberMetric() {
         super(MetricType.PROJECT_TYPE_JAVASCRIPT_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "JavaScript",
               ValueType.NUMBER);
     }

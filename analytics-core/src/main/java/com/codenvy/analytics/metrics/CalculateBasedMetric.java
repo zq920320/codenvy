@@ -29,4 +29,7 @@ public abstract class CalculateBasedMetric extends AbstractMetric {
         }
         return evaluate(context);
     }
+
+    /** Evaluating */
+    protected abstract ValueData evaluate(Map<String, String> context) throws IOException;
 }

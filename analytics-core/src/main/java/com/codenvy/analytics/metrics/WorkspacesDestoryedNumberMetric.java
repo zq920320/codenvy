@@ -19,7 +19,7 @@ public class WorkspacesDestoryedNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    WorkspacesDestoryedNumberMetric() throws IOException {
+    WorkspacesDestoryedNumberMetric() {
         super(MetricType.WORKSPACES_DESTROYED_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.WORKSPACES_DESTROYED_LIST);
     }

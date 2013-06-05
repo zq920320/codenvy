@@ -2,59 +2,59 @@
 <!--
     Copyright (C) 2013 Codenvy.
 -->
-<views history-length="20">
-    <view>
+<display>
+    <table length="20">
         <date section="Workspaces" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="workspaces_created_number" title="Created"/>
         <metric type="workspaces_destroyed_number" title="Destroyed"/>
         <metric type="total_workspaces_number" title="Total"/>
         <metric type="active_workspaces_number" title="# Active"/>
         <empty />
-    </view>
-    <view>
+    </table>
+    <table length="20">
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="users_created_number" title="Created"/>
         <metric type="total_users_number" title="Total"/>
         <metric type="active_users_number" title="# Active"/>
         <empty />
-    </view>
-    <view>
+    </table>
+    <table length="20">
         <date section="Invitations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="invitations_sent_number" title="Sent"/>
         <metric type="invitations_accepted_percent" format="%.0f%%" title="Accepted"/>
         <empty />
-    </view>
-    <view>
+    </table>
+    <table length="20">
         <date section="Authentication Type" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="users_sso_logged_in_using_google_percent" format="%.0f%%" title="Google Auth"/>
         <metric type="users_sso_logged_in_using_github_percent" format="%.0f%%" title="Github Auth"/>
         <metric type="users_sso_logged_in_using_form_percent" format="%.0f%%" title="Form Auth"/>
         <empty />
-    </view>
-    <view>
+    </table>
+    <table length="20">
         <date section="Usage Time (mins)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="product_usage_time_60_more,product_usage_time_10_60,product_usage_time_0_10" format="%,.0f"/>
         <metric type="product_usage_time_0_10" format="%,.0f" title="Sessions &#0060; 10 Mins"/>
         <metric type="product_usage_time_10_60" format="%,.0f" title="Sessions &#0060;10 And &#0062;60 Mins"/>
         <metric type="product_usage_time_60_more" format="%,.0f" title="Sessions &#0062; 60 Mins"/>
         <empty />
-    </view>
-    <view>
+    </table>
+    <table length="20">
         <date section="# User Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="product_usage_user_sessions_number_0_10,product_usage_user_sessions_number_10_60,product_usage_user_sessions_number_60_MORE" format="%,.0f" />
         <metric type="product_usage_user_sessions_number_0_10" format="%,.0f" title="# &#0060; 10 Mins"/>
         <metric type="product_usage_user_sessions_number_10_60" format="%,.0f" title="# &#0060; 10&#0062;60 Mins"/>
         <metric type="product_usage_user_sessions_number_60_more" format="%,.0f" title="# &#0062; 60 Mins"/>
         <empty />
-    </view>
-    <view>
+    </table>
+    <table length="20">
         <date section="Projects" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="projects_created_number" title="Created"/>
         <metric type="projects_destroyed_number" title="Destroyed"/>
         <metric type="total_projects_number" title="Total"/>
         <empty />
-    </view>
-    <view>
+    </table>
+    <table length="20">
         <date section="# Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="project_type_java_jar_number,project_type_java_war_number,project_type_java_jsp_number,project_type_java_spring_number,project_type_php_number,project_type_python_number,project_type_javascript_number,project_type_ruby_number,project_type_mmp_number,project_type_nodejs_number,project_type_android_number,project_type_others_number" format="%.0f"/>
         <metric type="project_type_java_jar_number" format="%.0f" title="Java Jar"/>
@@ -70,8 +70,8 @@
         <metric type="project_type_android_number" format="%.0f" title="Android"/>
         <metric type="project_type_others_number" format="%.0f" title="Others"/>
         <empty />
-    </view>
-    <view>
+    </table>
+    <table length="20">
         <date section="# Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="paas_deployment_type_aws_number,paas_deployment_type_appfog_number,paas_deployment_type_cloudbees_number,paas_deployment_type_cloudfoundry_number,paas_deployment_type_gae_number,paas_deployment_type_heroku_number,paas_deployment_type_openshift_number,paas_deployment_type_tier3_number,paas_deployment_type_local_number" format="%.0f"/>
         <metric type="paas_deployment_type_aws_number" format="%.0f" title="AWS"/>
@@ -84,6 +84,6 @@
         <metric type="paas_deployment_type_tier3_number" format="%.0f" title="Tier3"/>
         <metric type="paas_deployment_type_local_number" format="%.0f" title="Local"/>
         <empty />
-    </view>
-</views>
+    </table>
+</display>
 

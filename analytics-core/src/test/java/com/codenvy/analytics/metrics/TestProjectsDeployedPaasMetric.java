@@ -69,8 +69,5 @@ public class TestProjectsDeployedPaasMetric extends BaseTest {
 
         metric = MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPE_LOCAL_NUMBER);
         assertEquals(metric.getValue(context), new DoubleValueData(1));
-
-        metric = MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPE_LOCAL_PERCENT);
-        assertEquals(metric.getValue(context), new DoubleValueData(20));
     }
 }

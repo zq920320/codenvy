@@ -12,7 +12,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersSsoLoggedInListMetric extends ScriptBasedMetric {
+public class UsersSsoLoggedInListMetric extends PersistableScriptBasedMetric {
 
     UsersSsoLoggedInListMetric() {
         super(MetricType.USERS_SSO_LOGGED_IN_LIST);

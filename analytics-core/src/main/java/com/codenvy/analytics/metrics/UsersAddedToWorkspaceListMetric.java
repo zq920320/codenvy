@@ -13,7 +13,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersAddedToWorkspaceListMetric extends ScriptBasedMetric {
+public class UsersAddedToWorkspaceListMetric extends PersistableScriptBasedMetric {
 
     public static final String INVITE  = "invite";
     public static final String WEBSITE = "website";

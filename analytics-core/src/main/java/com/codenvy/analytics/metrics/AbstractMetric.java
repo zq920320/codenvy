@@ -4,11 +4,11 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.ValueData;
+
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.codenvy.analytics.metrics.value.ValueData;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -48,7 +48,4 @@ public abstract class AbstractMetric implements Metric {
 
     /** @return what data type is represented in result */
     protected abstract Class< ? extends ValueData> getValueDataClass();
-
-    /** Evaluating */
-    protected abstract ValueData evaluate(Map<String, String> context) throws IOException;
 }

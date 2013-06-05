@@ -19,7 +19,7 @@ public class ProjectsCreatedTypesMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    ProjectsCreatedTypesMetric() throws IOException {
+    ProjectsCreatedTypesMetric() {
         super(MetricType.PROJECTS_CREATED_TYPES);
         this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST);
     }

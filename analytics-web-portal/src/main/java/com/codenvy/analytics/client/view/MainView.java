@@ -6,17 +6,39 @@ package com.codenvy.analytics.client.view;
 
 import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.presenter.MainViewPresenter;
+import com.codenvy.analytics.client.resources.GWTCellTableResource;
+import com.codenvy.analytics.client.resources.GWTDataGridResource;
+import com.codenvy.analytics.shared.TableData;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.cellview.client.AbstractCellTable;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public abstract class MainView extends Composite implements MainViewPresenter.Display {
+
     private final GWTLoader       gwtLoader     = new GWTLoader();
 
     private final Button          timelineViewButton;
@@ -26,8 +48,10 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
     private final Button          projectViewButton;
     private final Button          queryViewButton;
 
-    private final VerticalPanel   mainPanel = new VerticalPanel();   ;
-    private final HorizontalPanel headerPanel   = new HorizontalPanel();
+    private final FlexTable       contentTable   = new FlexTable();
+
+    private final VerticalPanel   mainPanel      = new VerticalPanel();
+    private final HorizontalPanel headerPanel    = new HorizontalPanel();
     private final HorizontalPanel subHeaderPanel = new HorizontalPanel();
 
     public MainView() {
@@ -47,6 +71,8 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         hp.add(queryViewButton);
         hp.getElement().setAttribute("align", "center");
 
+        mainPanel.setWidth("100%");
+
         headerPanel.add(hp);
         headerPanel.setWidth("100%");
         headerPanel.getElement().setAttribute("align", "middle");
@@ -54,29 +80,43 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         subHeaderPanel.setWidth("100%");
         subHeaderPanel.getElement().setAttribute("align", "middle");
 
+        contentTable.getElement().setAttribute("align", "center");
+        contentTable.setWidth("100%");
+
         mainPanel.add(headerPanel);
         mainPanel.add(subHeaderPanel);
+        mainPanel.add(contentTable);
         mainPanel.getElement().setAttribute("align", "center");
 
         initWidget(mainPanel);
     }
 
+    /** {@inheritDoc} */
+    @Override
     public Widget asWidget() {
         return this;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public Button getTimelineViewButton() {
         return timelineViewButton;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public Button getWorkspaceViewButton() {
         return workspaceViewButton;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public Button getUserViewButton() {
         return userViewButton;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public Button getProjectViewButton() {
         return projectViewButton;
     }
@@ -87,23 +127,205 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         return analysisButton;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public Button getQueryViewButton() {
         return queryViewButton;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public VerticalPanel getMainPanel() {
         return mainPanel;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public HorizontalPanel getHeaderPanel() {
         return headerPanel;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public HorizontalPanel getSubHeaderPanel() {
         return subHeaderPanel;
     }
 
-    public GWTLoader getGwtLoader() {
+    /** {@inheritDoc} */
+    @Override
+    public GWTLoader getGWTLoader() {
         return gwtLoader;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public FlexTable getContentTable() {
+        return contentTable;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setData(List<TableData> result) {
+        Map<String, TabLayoutPanel> tabs = new HashMap<String, TabLayoutPanel>();
+
+        for (int i = 0; i < result.size(); i++) {
+            TableData tableData = result.get(i);
+
+            switch (tableData.getWidget()) {
+                case CELL_TABLE:
+                    Widget widget = createCellTable(tableData);
+                    getContentTable().setWidget(i, 0, widget);
+                    break;
+
+                case TAB_PANEL:
+                    String tabId = tableData.getTabId();
+
+                    if (!tabs.containsKey(tabId)) {
+                        TabLayoutPanel tabPanel = createTabPanel();
+                        tabs.put(tabId, tabPanel);
+
+                        getContentTable().setWidget(i, 0, tabPanel);
+                    }
+
+                    TabLayoutPanel tabPanel = tabs.get(tabId);
+                    tabPanel.add(createDataGrid(tableData), tableData.getTitle());
+                    break;
+
+                default:
+                    continue;
+            }
+        }
+
+        for (TabLayoutPanel panel : tabs.values()) {
+            panel.selectTab(0);
+        }
+    }
+
+    protected Widget createCellTable(TableData tableData) {
+        CellTable<List<String>> cellTable = new CellTable<List<String>>(Integer.MAX_VALUE, GWTCellTableResource.RESOURCES);
+        return initializeTable(cellTable, tableData);
+    }
+
+    protected Widget createDataGrid(TableData tableData) {
+        DataGrid<List<String>> dataGrid = new DataGrid<List<String>>(Integer.MAX_VALUE, GWTDataGridResource.RESOURCES);
+        return initializeTable(dataGrid, tableData);
+    }
+
+    protected Widget initializeTable(AbstractCellTable<List<String>> cellTable, TableData tableData) {
+        ListDataProvider<List<String>> dataProvider = new ListDataProvider<List<String>>();
+        dataProvider.addDataDisplay(cellTable);
+
+        List<List<String>> list = dataProvider.getList();
+
+        Iterator<List<String>> rowDataIterator = tableData.iterator();
+
+        createColumns(cellTable, rowDataIterator.next());
+        addContent(list, rowDataIterator);
+
+        if (tableData.isSortable()) {
+            addSortHandler(cellTable, tableData, dataProvider);
+        }
+
+        return cellTable;
+    }
+
+    private void addContent(List<List<String>> list, Iterator<List<String>> rowDataIterator) {
+        while (rowDataIterator.hasNext()) {
+            list.add(rowDataIterator.next());
+        }
+    }
+
+    private void addSortHandler(AbstractCellTable<List<String>> table, TableData tableData, ListDataProvider<List<String>> dataProvider) {
+        ListHandler<List<String>> sortHandler = new ListHandler<List<String>>(dataProvider.getList());
+
+        CustomColumn defaultSortColumn = null;
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            final CustomColumn column = (CustomColumn)table.getColumn(i);
+            column.setSortable(true);
+            column.setDefaultSortAscending(false);
+
+            if (column.name.equals(tableData.getDefaultSortColumn())) {
+                defaultSortColumn = column;
+            }
+
+            sortHandler.setComparator(column, new DataComparator(column.number, false));
+        }
+
+        table.addColumnSortHandler(sortHandler);
+
+        if (defaultSortColumn != null) {
+            Collections.sort(dataProvider.getList(), new DataComparator(defaultSortColumn.number, true));
+            table.getColumnSortList().push(defaultSortColumn);
+        }
+    }
+
+    protected void createColumns(AbstractCellTable<List<String>> table, List<String> headers) {
+        for (int i = 0; i < headers.size(); i++) {
+            CustomColumn column = new CustomColumn(i, headers.get(i));
+            table.addColumn(column, headers.get(i));
+        }
+    }
+
+
+    private class CustomColumn extends TextColumn<List<String>> {
+        private final String name;
+        private final int    number;
+
+        public CustomColumn(int number, String name) {
+            this.number = number;
+            this.name = name;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String getValue(List<String> object) {
+            return object.get(number);
+        }
+    }
+
+    protected TabLayoutPanel createTabPanel() {
+        TabLayoutPanel tabPanel = new TabLayoutPanel(25, Unit.PX);
+        tabPanel.setSize("90%", "400px");
+        
+        // workaround for DataGrid issue
+        tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+            @Override
+            public void onSelection(SelectionEvent<Integer> event) {
+                TabLayoutPanel panel = (TabLayoutPanel)event.getSource();
+                panel.onResize();
+            }
+        });
+
+        return tabPanel;
+    }
+
+    private final class DataComparator implements Comparator<List<String>> {
+        private final int index;
+        private final int rate;
+
+        private DataComparator(int index, boolean reverseOrder) {
+            this.index = index;
+            this.rate = reverseOrder ? -1 : 1;
+        }
+
+        /**
+         * Comparator. First tries to compare value as Long and than as String.
+         */
+        @Override
+        public int compare(List<String> o1, List<String> o2) {
+            String value1 = o1.get(index);
+            String value2 = o2.get(index);
+
+            try {
+                Long longV1 = Long.valueOf(value1);
+                Long longV2 = Long.valueOf(value2);
+                return longV1.compareTo(longV2) * rate;
+            } catch (NumberFormatException e) {
+                return value1.compareTo(value2) * rate;
+            }
+        }
     }
 }

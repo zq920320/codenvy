@@ -122,7 +122,7 @@ public class TestScriptBasedMetrics extends BaseTest {
     /**
      * For testing purpose only.
      */
-    class TestedMetric extends ScriptBasedMetric {
+    class TestedMetric extends PersistableScriptBasedMetric {
 
         TestedMetric(MetricType metricType) {
             super(metricType);

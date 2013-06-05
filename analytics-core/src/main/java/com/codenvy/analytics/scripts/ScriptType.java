@@ -39,7 +39,20 @@ public enum ScriptType {
     USERS_WITHOUT_BUILDS,
     USERS_WITHOUT_DEPLOYES,
     USERS_WITHOUT_INVITES,
-    PRODUCT_USAGE_TIME;
+    PRODUCT_USAGE_TIME,
+    PRODUCT_USAGE_TIME_TOP_USERS {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{MetricParameter.INTERVAL, MetricParameter.TO_DATE}));
+        }
+    },
+
+    PRODUCT_USAGE_TIME_TOP_DOMAINS {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{MetricParameter.INTERVAL, MetricParameter.TO_DATE}));
+        }
+    };
 
     /** @return what date type is represented in result */
     public Class< ? extends ValueData> getValueDataClass() {

@@ -4,14 +4,13 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class TotalProjectsMetric extends CumulativeMetric {
 
-    TotalProjectsMetric() throws IOException {
+    TotalProjectsMetric() {
         super(MetricType.TOTAL_PROJECTS_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_NUMBER),
               MetricFactory.createMetric(MetricType.PROJECTS_DESTROYED_NUMBER));
     }

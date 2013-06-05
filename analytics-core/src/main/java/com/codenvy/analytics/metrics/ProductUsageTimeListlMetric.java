@@ -13,7 +13,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProductUsageTimeListlMetric extends ScriptBasedMetric {
+public class ProductUsageTimeListlMetric extends PersistableScriptBasedMetric {
 
     ProductUsageTimeListlMetric() {
         super(MetricType.PRODUCT_USAGE_TIME_LIST);

@@ -9,9 +9,7 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.server.vew.layout.MetricRowLayoutImpl;
-import com.codenvy.analytics.server.vew.layout.RowLayout;
-import com.codenvy.analytics.server.vew.layout.ViewLayout;
+import com.codenvy.analytics.server.vew.template.Display;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import org.slf4j.Logger;
@@ -30,25 +28,26 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class QueryServiceImpl extends RemoteServiceServlet implements QueryService {
 
-    private static final Logger     LOGGER       = LoggerFactory.getLogger(QueryServiceImpl.class);
-    private static final String     VIEW_QUERY   = "view/query.xml";
-    private static final String     SERVER_ERROR = "Server Error";
+    private static final Logger  LOGGER       = LoggerFactory.getLogger(QueryServiceImpl.class);
+    private static final String  VIEW_QUERY   = "view/query.xml";
+    private static final String  SERVER_ERROR = "Server Error";
 
     /**
      * Query view layout.
      */
-    private static final ViewLayout viewLayout   = ViewLayout.initialize(VIEW_QUERY);
+    private static final Display display      = Display.initialize(VIEW_QUERY);
 
     /** {@inheritedDoc} */
     public Map<String, String> getMetricTypes() {
         Map<String, String> types = new LinkedHashMap<String, String>();
 
-        for (RowLayout row : viewLayout.getLayout().get(0)) {
-            MetricRowLayoutImpl metricRow = (MetricRowLayoutImpl)row;
-            Metric metric = metricRow.getMetric();
-
-            types.put(metricRow.getTitle(), metric.getType().name());
-        }
+        // TODO
+        // for (Row row : display.getLayout().get(0)) {
+        // MetricRowLayoutImpl metricRow = (MetricRowLayoutImpl)row;
+        // Metric metric = metricRow.getMetric();
+        //
+        // types.put(metricRow.getTitle(), metric.getType().name());
+        // }
 
         return types;
     }
@@ -92,13 +91,14 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
     }
 
     private String getValue(Map<String, String> context, Metric metric) throws Exception {
-        for (RowLayout row : viewLayout.getLayout().get(0)) {
-            MetricRowLayoutImpl metricRow = (MetricRowLayoutImpl)row;
-
-            if (metricRow.getMetric().getType() == metric.getType()) {
-                return metricRow.fill(context, 2).get(1);
-            }
-        }
+        // for (Row row : display.getLayout().get(0)) {
+        // MetricRowLayoutImpl metricRow = (MetricRowLayoutImpl)row;
+        //
+        // if (metricRow.getMetric().getType() == metric.getType()) {
+        // return metricRow.fill(context, 2).get(1);
+        // }
+        // }
+        // TODO
 
         throw new IllegalStateException("Layout for metric " + metric.getType() + " not found");
     }

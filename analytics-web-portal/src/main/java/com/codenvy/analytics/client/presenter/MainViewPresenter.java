@@ -5,20 +5,24 @@
 package com.codenvy.analytics.client.presenter;
 
 import com.codenvy.analytics.client.GWTLoader;
+import com.codenvy.analytics.client.event.AnalysisViewEvent;
 import com.codenvy.analytics.client.event.ProjectViewEvent;
 import com.codenvy.analytics.client.event.QueryViewEvent;
-import com.codenvy.analytics.client.event.AnalysisViewEvent;
 import com.codenvy.analytics.client.event.TimelineViewEvent;
 import com.codenvy.analytics.client.event.UserViewEvent;
 import com.codenvy.analytics.client.event.WorkspaceViewEvent;
+import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -50,6 +54,10 @@ public abstract class MainViewPresenter implements Presenter {
         GWTLoader getGWTLoader();
 
         Widget asWidget();
+
+        FlexTable getContentTable();
+
+        void setData(List<TableData> data);
     }
 
     public MainViewPresenter(HandlerManager eventBus, Display view) {

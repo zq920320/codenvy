@@ -20,13 +20,13 @@ import com.codenvy.analytics.client.presenter.AnalysisViewPresenter;
 import com.codenvy.analytics.client.presenter.Presenter;
 import com.codenvy.analytics.client.presenter.ProjectViewPresenter;
 import com.codenvy.analytics.client.presenter.QueryViewPresenter;
-import com.codenvy.analytics.client.presenter.TimelineViewPresenter;
+import com.codenvy.analytics.client.presenter.TimeLineViewPresenter;
 import com.codenvy.analytics.client.presenter.UserViewPresenter;
 import com.codenvy.analytics.client.presenter.WorkspaceViewPresenter;
 import com.codenvy.analytics.client.view.AnalysisView;
 import com.codenvy.analytics.client.view.ProjectView;
 import com.codenvy.analytics.client.view.QueryView;
-import com.codenvy.analytics.client.view.TimelineView;
+import com.codenvy.analytics.client.view.TimeLineView;
 import com.codenvy.analytics.client.view.UserView;
 import com.codenvy.analytics.client.view.WorkspaceView;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -48,14 +48,14 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
 
     private final HandlerManager           eventBus;
     private final QueryServiceAsync        queryService;
-    private final TimeLineViewServiceAsync timelineService;
-    private final AnalysisViewServiceAsync analysisService;
+    private final TimeLineServiceAsync     timelineService;
+    private final AnalysisServiceAsync analysisService;
 
     private HasWidgets                     container;
 
     public AppController(QueryServiceAsync queryService,
-                         TimeLineViewServiceAsync timelineService,
-                         AnalysisViewServiceAsync analysisService,
+                         TimeLineServiceAsync timelineService,
+                         AnalysisServiceAsync analysisService,
                          HandlerManager eventBus) {
 
         this.eventBus = eventBus;
@@ -153,7 +153,7 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
             Presenter presenter = null;
 
             if (token.equals(TIMELINE)) {
-                presenter = new TimelineViewPresenter(timelineService, eventBus, new TimelineView());
+                presenter = new TimeLineViewPresenter(timelineService, eventBus, new TimeLineView());
             } else if (token.equals(USER)) {
                 presenter = new UserViewPresenter(eventBus, new UserView());
             } else if (token.equals(WORKSPACE)) {

@@ -4,14 +4,13 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class PaasDeploymentTypeOpenShiftNumberMetric extends ValueFromMapMetric {
 
-    PaasDeploymentTypeOpenShiftNumberMetric() throws IOException {
+    PaasDeploymentTypeOpenShiftNumberMetric() {
         super(MetricType.PAAS_DEPLOYMENT_TYPE_OPENSHIFT_NUMBER, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES), ValueType.NUMBER,
               "OpenShift");
     }

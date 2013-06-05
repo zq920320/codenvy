@@ -20,7 +20,7 @@ public class ActiveProjectsNumberMetric extends CalculateBasedMetric {
 
     private final ActiveProjectsListMetric basedMetric;
 
-    ActiveProjectsNumberMetric() throws IOException {
+    ActiveProjectsNumberMetric() {
         super(MetricType.ACTIVE_PROJECTS_NUMBER);
         this.basedMetric = (ActiveProjectsListMetric)MetricFactory.createMetric(MetricType.ACTIVE_PROJECTS_LIST);
     }

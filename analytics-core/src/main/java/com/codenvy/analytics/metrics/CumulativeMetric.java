@@ -4,12 +4,12 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
 
 /**
  * The value of the metric will be calculated as: previous value + added value - removed value.
@@ -22,7 +22,7 @@ public abstract class CumulativeMetric extends CalculateBasedMetric {
     private final Metric                addedMetric;
     private final Metric                removedMetric;
 
-    CumulativeMetric(MetricType metricType, Metric addedMetric, Metric removedMetric) throws IOException {
+    CumulativeMetric(MetricType metricType, Metric addedMetric, Metric removedMetric) {
         super(metricType);
 
         this.iValueContainer = InitialValueContainer.getInstance();

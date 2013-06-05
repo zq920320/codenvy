@@ -4,7 +4,6 @@
  */
 package com.codenvy.analytics.client.view;
 
-import com.codenvy.analytics.client.GWTLoader;
 import com.codenvy.analytics.client.presenter.QueryViewPresenter;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
@@ -12,7 +11,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -31,10 +29,6 @@ public class QueryView extends MainView implements QueryViewPresenter.Display {
         getMainPanel().add(resultPanel);
     }
 
-    public Widget asWidget() {
-        return this;
-    }
-
     public ListBox getQueryListBox() {
         return queryListBox;
     }
@@ -50,9 +44,5 @@ public class QueryView extends MainView implements QueryViewPresenter.Display {
     public void setData(String data) {
         resultPanel.clear();
         resultPanel.add(new Label(data));
-    }
-
-    public GWTLoader getGWTLoader() {
-        return super.getGwtLoader();
     }
 }

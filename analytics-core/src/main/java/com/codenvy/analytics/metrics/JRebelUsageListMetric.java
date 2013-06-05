@@ -13,7 +13,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class JRebelUsageListMetric extends ScriptBasedMetric {
+public class JRebelUsageListMetric extends PersistableScriptBasedMetric {
 
     public static final String JREBEL_USAGE_TRUE = "true";
 

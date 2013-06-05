@@ -13,7 +13,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class WorkspacesDestroyedListMetric extends ScriptBasedMetric {
+public class WorkspacesDestroyedListMetric extends PersistableScriptBasedMetric {
 
     WorkspacesDestroyedListMetric() {
         super(MetricType.WORKSPACES_DESTROYED_LIST);

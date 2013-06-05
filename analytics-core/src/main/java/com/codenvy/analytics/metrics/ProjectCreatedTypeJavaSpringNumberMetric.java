@@ -4,8 +4,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-
 import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 
 /**
@@ -14,7 +12,7 @@ import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 public class ProjectCreatedTypeJavaSpringNumberMetric extends AbstractProjectsCreatedMetric {
 
 
-    ProjectCreatedTypeJavaSpringNumberMetric() throws IOException {
+    ProjectCreatedTypeJavaSpringNumberMetric() {
         super(MetricType.PROJECT_TYPE_JAVA_SPRING_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "Spring",
               ValueType.NUMBER);
     }

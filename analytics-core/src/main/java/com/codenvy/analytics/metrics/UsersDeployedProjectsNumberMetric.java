@@ -22,7 +22,7 @@ public class UsersDeployedProjectsNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    UsersDeployedProjectsNumberMetric() throws IOException {
+    UsersDeployedProjectsNumberMetric() {
         super(MetricType.USERS_DEPLOYED_PROJECTS_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_LIST);
     }

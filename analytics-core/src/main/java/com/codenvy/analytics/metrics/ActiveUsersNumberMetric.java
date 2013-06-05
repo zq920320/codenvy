@@ -22,7 +22,7 @@ public class ActiveUsersNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    ActiveUsersNumberMetric() throws IOException {
+    ActiveUsersNumberMetric() {
         super(MetricType.ACTIVE_USERS_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
     }

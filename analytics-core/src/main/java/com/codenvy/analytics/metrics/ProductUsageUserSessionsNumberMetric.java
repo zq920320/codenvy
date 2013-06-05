@@ -20,7 +20,7 @@ public class ProductUsageUserSessionsNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    public ProductUsageUserSessionsNumberMetric() throws IOException {
+    public ProductUsageUserSessionsNumberMetric() {
         super(MetricType.PRODUCT_USAGE_USER_SESSIONS_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_LIST);
     }

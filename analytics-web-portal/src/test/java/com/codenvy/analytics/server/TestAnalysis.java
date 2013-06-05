@@ -6,12 +6,12 @@ package com.codenvy.analytics.server;
 
 import static org.testng.Assert.assertEquals;
 
-import com.codenvy.analytics.client.AnalysisViewService;
+import com.codenvy.analytics.client.AnalysisService;
 import com.codenvy.analytics.metrics.InitialValueContainer;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-import com.codenvy.analytics.shared.TimeLineViewData;
+import com.codenvy.analytics.shared.TableData;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -42,10 +42,10 @@ public class TestAnalysis {
 
     @Test
     public void testPrepareFile() throws Exception {
-        AnalysisViewService service = new AnalysisViewServiceImpl();
-        List<TimeLineViewData> data = service.getData();
+        AnalysisService service = new AnalysisServiceImpl();
+        List<TableData> data = service.getData();
 
-        TimeLineViewData timeLineViewData = data.get(0);
+        TableData timeLineViewData = data.get(0);
         assertEquals(timeLineViewData.get(1).get(1), "12"); // total users
         assertEquals(timeLineViewData.get(2).get(1), "2"); // new users
         assertEquals(timeLineViewData.get(3).get(1), "3"); // created projects

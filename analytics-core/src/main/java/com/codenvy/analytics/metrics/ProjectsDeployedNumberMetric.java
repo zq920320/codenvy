@@ -19,7 +19,7 @@ public class ProjectsDeployedNumberMetric extends CalculateBasedMetric {
 
     private final Metric basedMetric;
 
-    ProjectsDeployedNumberMetric() throws IOException {
+    ProjectsDeployedNumberMetric() {
         super(MetricType.PROJECTS_DEPLOYED_NUMBER);
         this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_LIST);
     }

@@ -4,7 +4,7 @@
  */
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.server.AnalysisViewServiceImpl;
+import com.codenvy.analytics.server.AnalysisServiceImpl;
 
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -41,7 +41,7 @@ public class AnalysisViewJob implements Job {
         long start = System.currentTimeMillis();
 
         try {
-            new AnalysisViewServiceImpl().update();
+            new AnalysisServiceImpl().update();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
