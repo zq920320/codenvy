@@ -91,6 +91,8 @@ public class TestProductUsageTimeTopDomains extends BaseTest {
                                 .withTime("20:30:00").build());
 
         FileUtils.deleteDirectory(new File(BASE_DIR, "USERS"));
+        FileUtils.deleteDirectory(new File(BASE_DIR, "DOMAINS"));
+        FileUtils.deleteDirectory(new File(BASE_DIR, "LOG"));
 
         File log = LogGenerator.generateLog(events);
 

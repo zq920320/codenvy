@@ -74,6 +74,8 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
             FileUtils.deleteDirectory(dir);
         }
 
+        FileUtils.deleteDirectory(new File(FSValueDataManager.RESULT_DIRECTORY, "LOG"));
+
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
         executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, context);
 

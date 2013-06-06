@@ -291,7 +291,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     protected TabLayoutPanel createTabPanel() {
         TabLayoutPanel tabPanel = new TabLayoutPanel(25, Unit.PX);
-        tabPanel.setSize("70%", "400px");
+        tabPanel.setSize("90%", "400px");
         
         // workaround for DataGrid issue
         tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {

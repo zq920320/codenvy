@@ -31,6 +31,7 @@ import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -91,6 +92,10 @@ public class TestProductUsageTimeTopUsers extends BaseTest {
 
 
         File log = LogGenerator.generateLog(events);
+
+        FileUtils.deleteDirectory(new File(BASE_DIR, "USERS"));
+        FileUtils.deleteDirectory(new File(BASE_DIR, "DOMAINS"));
+        FileUtils.deleteDirectory(new File(BASE_DIR, "LOG"));
 
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.RESULT_DIR.getName(), BASE_DIR);
