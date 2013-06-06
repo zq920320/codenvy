@@ -4,6 +4,7 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.scripts.ScriptType;
 
@@ -24,15 +25,14 @@ public class ProductUsageTimeTopUsersByLifeTimeMetric extends ScriptBasedMetric 
      */
     @Override
     protected ScriptType getScriptType() {
-        return ScriptType.PRODUCT_USAGE_TIME_TOP_USERS;
+        return ScriptType.PRODUCT_USAGE_TIME_TOP;
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        context = Utils.newContext();
-        context.put(MetricParameter.TO_DATE.getName(), MetricParameter.TO_DATE.getDefaultValue());
         context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
 
         return super.getValue(context);
     }

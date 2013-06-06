@@ -55,7 +55,7 @@ public class BaseTest {
         executionParams.put(PigScriptExecutor.LOG, log.getAbsolutePath());
         PigScriptExecutor scriptExecutor = new PigScriptExecutor();
 
-        return scriptExecutor.execute(type, executionParams);
+        return scriptExecutor.executeAndReturn(type, executionParams);
     }
 
     protected void putToDate(Map<String, String> params, String toDate) {

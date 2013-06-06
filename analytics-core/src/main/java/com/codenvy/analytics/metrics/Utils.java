@@ -4,6 +4,8 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -377,6 +379,18 @@ public class Utils {
             String value = context.get(name);
 
             switch (parameter) {
+                case RESULT_DIR:
+                    break;
+
+                case ENTITY:
+                    for (ENTITY_TYPE eType : ENTITY_TYPE.values()) {
+                        if (eType.name().equals(value)) {
+                            continue;
+                        }
+                    }
+
+                    throw new IllegalArgumentException("The illegal entity parameter value " + value);
+
                 case INTERVAL:
                     break;
 

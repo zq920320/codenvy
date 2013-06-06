@@ -6,14 +6,20 @@ package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.client.AnalysisService;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
 import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +44,7 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
         }
 
         try {
-            List<TableData> data = display.retrieveData(getContext());
+            List<TableData> data = retrieveData();
             PersisterUtil.saveTablesToFile(data, FILE_NAME);
 
             return data;
@@ -52,11 +58,74 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.TO_DATE.getName(), MetricParameter.TO_DATE.getDefaultValue());
         context.put(MetricParameter.FROM_DATE.getName(), MetricParameter.FROM_DATE.getDefaultValue());
+        context.put(MetricParameter.RESULT_DIR.getName(), FSValueDataManager.RESULT_DIRECTORY);
         return context;
     }
 
     public void update() throws Exception {
-        PersisterUtil.saveTablesToFile(display.retrieveData(getContext()), FILE_NAME);
+        PersisterUtil.saveTablesToFile(retrieveData(), FILE_NAME);
     }
 
+    private List<TableData> retrieveData() throws Exception {
+        Map<String, String> context = getContext();
+
+        for (ENTITY_TYPE eType : ENTITY_TYPE.values()) {
+            File dir = new File(FSValueDataManager.RESULT_DIRECTORY, eType.name());
+            FileUtils.deleteDirectory(dir);
+        }
+
+        ScriptExecutor executor = ScriptExecutor.INSTANCE;
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
+
+        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P30D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P90D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
+
+        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P30D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P90D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+
+        context.remove(MetricParameter.ENTITY.getName());
+        context.remove(MetricParameter.INTERVAL.getName());
+
+        return display.retrieveData(context);
+    }
 }

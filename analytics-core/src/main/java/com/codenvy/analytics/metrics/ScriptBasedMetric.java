@@ -7,7 +7,6 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,11 +68,11 @@ public abstract class ScriptBasedMetric extends AbstractMetric {
         }
 
         ScriptExecutor sExecutor = getScriptExecutor();
-        return sExecutor.execute(getScriptType(), context);
+        return sExecutor.executeAndReturn(getScriptType(), context);
     }
 
     protected ScriptExecutor getScriptExecutor() {
-        return new PigScriptExecutor();
+        return ScriptExecutor.INSTANCE;
     }
 
     protected void acquire(String executionKey) {

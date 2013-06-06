@@ -80,7 +80,7 @@ public class PigScriptExecutor implements ScriptExecutor {
      * {@inheritDoc}
      */
     @Override
-    public ValueData execute(ScriptType scriptType, Map<String, String> context) throws IOException {
+    public ValueData executeAndReturn(ScriptType scriptType, Map<String, String> context) throws IOException {
         context = Utils.clone(context);
         validateParameters(scriptType, context);
 

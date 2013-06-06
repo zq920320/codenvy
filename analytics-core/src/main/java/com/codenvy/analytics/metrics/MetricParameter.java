@@ -48,15 +48,39 @@ public enum MetricParameter {
         }
     },
 
+    ENTITY {
+        @Override
+        public String getDefaultValue() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "entity";
+        }
+    },
+
     INTERVAL {
         @Override
         public String getDefaultValue() {
-            return "P1D";
+            return null;
         }
 
         @Override
         public String getName() {
             return "interval";
+        }
+    },
+
+    RESULT_DIR {
+        @Override
+        public String getDefaultValue() {
+            return ".";
+        }
+
+        @Override
+        public String getName() {
+            return "resultDir";
         }
     },
 
@@ -90,4 +114,12 @@ public enum MetricParameter {
      * @return the parameter's name is used in script
      */
     public abstract String getName();
+
+    /**
+     * Enumeration for {@link MetricParameter#ENTITY}
+     */
+    public enum ENTITY_TYPE {
+        USERS,
+        DOMAINS
+    }
 }

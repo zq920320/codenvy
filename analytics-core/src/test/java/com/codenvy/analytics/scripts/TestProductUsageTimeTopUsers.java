@@ -24,6 +24,8 @@ import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
+import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
@@ -34,7 +36,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +71,7 @@ public class TestProductUsageTimeTopUsers extends BaseTest {
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-08-15")
                                 .withTime("20:30:00").build());
 
-        // 25 min, in 3 months
+        // 25 min, in 3 monthsr
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-07-15")
                                 .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-07-15")
@@ -91,14 +92,39 @@ public class TestProductUsageTimeTopUsers extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.INTERVAL.getName(), "P1D");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
+        Map<String, String> context = Utils.newContext();
+        context.put(MetricParameter.RESULT_DIR.getName(), BASE_DIR);
+        context.put(MetricParameter.TO_DATE.getName(), "20101001");
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
 
-        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_TOP_USERS, log,
-                                                                                        params);
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
+
+        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P30D");
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P90D");
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+
+        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_TOP, log,
+                                                                                        context);
         List<ListStringValueData> all = value.getAll();
-
         ListStringValueData item1 = new ListStringValueData(Arrays.asList("user1", "7", "5", "10", "15", "20", "25", "30", "35"));
 
         assertEquals(all.size(), 1);

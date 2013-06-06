@@ -234,7 +234,7 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
 ---------------------------------------------------------------------------------------------
 -- Counts number of users sessions and its length
 -- @param X - {..., user : bytearray, delta : long}
--- @return {user: bytearray,count: loing, time: long}
+-- @return {user: bytearray,count: long, time: long}
 ---------------------------------------------------------------------------------------------
 DEFINE usersByTimeSpent(X) RETURNS Y {
   w1 = GROUP $X BY user;
@@ -244,10 +244,10 @@ DEFINE usersByTimeSpent(X) RETURNS Y {
 ---------------------------------------------------------------------------------------------
 -- Counts number of users sessions and its length
 -- @param X - {..., user : bytearray, delta : long}
--- @return {user: bytearray,count: loing, time: long}
+-- @return {user: bytearray,count: long, time: long}
 ---------------------------------------------------------------------------------------------
 DEFINE domainsByTimeSpent(X) RETURNS Y {
-  w1 = FOREACH $X GENERATE REGEX_EXTRACT(user, '.*@(.*)', 1) AS user, delta;
+  w1 = FOREACH $X GENERATE REGEX_EXTRACT(user, '.*@(.*)', 1) AS user, count, delta;
   w2 = GROUP w1 BY user;
-  $Y = FOREACH w2 GENERATE FLATTEN(group) AS user, COUNT(w1.delta) AS count, SUM(w1.delta) AS time;
+  $Y = FOREACH w2 GENERATE FLATTEN(group) AS user, SUM(w1.count) AS count, SUM(w1.delta) AS time;
 };
