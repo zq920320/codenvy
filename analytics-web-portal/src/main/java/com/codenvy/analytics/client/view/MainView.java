@@ -213,6 +213,8 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
     }
 
     protected Widget initializeTable(AbstractCellTable<RowData> cellTable, TableData tableData) {
+        cellTable.getElement().setAttribute("align", "center");
+
         ListDataProvider<RowData> dataProvider = new ListDataProvider<RowData>();
         dataProvider.addDataDisplay(cellTable);
 
@@ -289,7 +291,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     protected TabLayoutPanel createTabPanel() {
         TabLayoutPanel tabPanel = new TabLayoutPanel(25, Unit.PX);
-        tabPanel.setSize("90%", "400px");
+        tabPanel.setSize("70%", "400px");
         
         // workaround for DataGrid issue
         tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {

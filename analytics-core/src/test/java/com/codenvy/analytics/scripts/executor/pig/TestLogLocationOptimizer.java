@@ -21,14 +21,16 @@ package com.codenvy.analytics.scripts.executor.pig;
 import static org.junit.Assert.assertEquals;
 
 import com.codenvy.analytics.BaseTest;
-
-
-import java.io.File;
-import java.util.Calendar;
-import java.util.UUID;
+import com.codenvy.analytics.metrics.MetricParameter;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.UUID;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -37,9 +39,29 @@ public class TestLogLocationOptimizer extends BaseTest {
     private String baseDir;
 
     @BeforeMethod
-    public void setUp()
-    {
+    public void setUp() {
         baseDir = BASE_DIR + File.separator + UUID.randomUUID();
+    }
+
+    @Test
+    public void testMonth1() throws Exception {
+        generateDirs("20130930", "20131101");
+
+        File dir1 = new File(baseDir, "2013" + File.separator + "09" + File.separator + "30");
+        File dir2 = new File(baseDir, "2013" + File.separator + "10");
+        File dir3 = new File(baseDir, "2013" + File.separator + "11" + File.separator + "01");
+
+        assertEquals(dir1.getPath() + "," + dir2.getPath() + "," + dir3.getPath(),
+                     LogLocationOptimizer.generatePaths(baseDir, "20130930", "20131101"));
+    }
+
+    @Test
+    public void testMonth2() throws Exception {
+        generateDirs("20130901", "20130930");
+
+        File dir1 = new File(baseDir, "2013" + File.separator + "09");
+
+        assertEquals(dir1.getPath(), LogLocationOptimizer.generatePaths(baseDir, "20130901", "20130930"));
     }
 
     @Test
@@ -71,48 +93,29 @@ public class TestLogLocationOptimizer extends BaseTest {
         assertEquals("", LogLocationOptimizer.generatePaths(baseDir, "20131231", "20140103"));
     }
 
-    @Test
-    public void testPathsStringGenerationByLast10Minutes() throws Exception {
-        Calendar cal = Calendar.getInstance();
+    private void generateDirs(String fromDate, String toDate) throws Exception {
+        DateFormat dateFormat = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
 
-        File dir1 = new File(generatePath(cal));
-        dir1.mkdirs();
+        Calendar from = Calendar.getInstance();
+        from.setTime(dateFormat.parse(fromDate));
 
-        assertEquals(dir1.getPath(), LogLocationOptimizer.generatePaths(baseDir, "10"));
-    }
+        Calendar to = Calendar.getInstance();
+        to.setTime(dateFormat.parse(toDate));
 
-    /**
-     * 1440m=1d
-     */
-    @Test
-    public void testPathsStringGenerationByLast1440Minutes() throws Exception {
-        Calendar cal = Calendar.getInstance();
-        String path2 = generatePath(cal);
+        while (!from.after(to)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(baseDir).append(File.separator);
+            sb.append(from.get(Calendar.YEAR)).append(File.separator);
 
-        cal.add(Calendar.DAY_OF_MONTH, -1);
-        String path1 = generatePath(cal);
+            int month = from.get(Calendar.MONTH) + 1;
+            sb.append(month < 10 ? "0" : "").append(month).append(File.separator);
 
-        File dir1 = new File(path1);
-        File dir2 = new File(path2);
+            int day = from.get(Calendar.DAY_OF_MONTH);
+            sb.append(day < 10 ? "0" : "").append(day);
 
-        dir1.mkdirs();
-        dir2.mkdirs();
+            new File(sb.toString()).mkdirs();
 
-        assertEquals(dir1.getPath() + "," + dir2.getPath(), LogLocationOptimizer.generatePaths(baseDir, "1440"));
-    }
-
-    private String generatePath(Calendar cal)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append(baseDir).append(File.separator);
-        sb.append(cal.get(Calendar.YEAR)).append(File.separator);
-
-        int month = cal.get(Calendar.MONTH) + 1;
-        sb.append(month < 10 ? "0" : "").append(month).append(File.separator);
-
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        sb.append(day < 10 ? "0" : "").append(day);
-
-        return sb.toString();
+            from.add(Calendar.DAY_OF_MONTH, 1);
+        }
     }
 }	
