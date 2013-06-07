@@ -99,7 +99,7 @@ public class TestProductUsageTimeTopUsers extends BaseTest {
 
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.RESULT_DIR.getName(), BASE_DIR);
-        context.put(MetricParameter.TO_DATE.getName(), "20151001");
+        context.put(MetricParameter.TO_DATE.getName(), "20101001");
         execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
