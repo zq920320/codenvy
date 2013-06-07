@@ -243,7 +243,7 @@ DEFINE usersByTimeSpent(X) RETURNS Y {
 
 ---------------------------------------------------------------------------------------------
 -- Counts number of users sessions and its length
--- @param X - {..., user : bytearray, delta : long}
+-- @param X - {..., user : bytearray, count : long, delta : long}
 -- @return {user: bytearray,count: long, time: long}
 ---------------------------------------------------------------------------------------------
 DEFINE domainsByTimeSpent(X) RETURNS Y {
@@ -251,3 +251,20 @@ DEFINE domainsByTimeSpent(X) RETURNS Y {
   w2 = GROUP w1 BY user;
   $Y = FOREACH w2 GENERATE FLATTEN(group) AS user, SUM(w1.count) AS count, SUM(w1.delta) AS time;
 };
+
+
+---------------------------------------------------------------------------------------------
+-- Counts number of users sessions and its length
+-- @param X - {..., user : bytearray, count : long, delta : long}
+-- @return {user: bytearray,count: long, time: long}
+---------------------------------------------------------------------------------------------
+DEFINE companiesByTimeSpent(X, resultDirParam) RETURNS Y {
+  w1 = LOAD '$resultDirParam/COMPANIES' USING PigStorage() AS (user: chararray, firstName: chararray, lastName: chararray, company: chararray);
+  w2 = JOIN $X BY user LEFT, w1 BY user;
+  w3 = FILTER w2 BY w1::company IS NOT NULL;
+  w4 = FOREACH w3 GENERATE w1::company AS user, $X::count AS count, $X::delta AS delta;
+
+  w5 = GROUP w4 BY user;
+  $Y = FOREACH w5 GENERATE FLATTEN(group) AS user, SUM(w4.count) AS count, SUM(w4.delta) AS time;
+};
+

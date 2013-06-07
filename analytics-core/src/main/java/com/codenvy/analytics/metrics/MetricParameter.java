@@ -120,6 +120,7 @@ public enum MetricParameter {
      */
     public enum ENTITY_TYPE {
         USERS,
+        COMPANIES,
         DOMAINS
     }
 }

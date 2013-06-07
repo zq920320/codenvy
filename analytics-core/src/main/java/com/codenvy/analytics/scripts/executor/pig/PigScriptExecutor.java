@@ -29,6 +29,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,7 +130,10 @@ public class PigScriptExecutor implements ScriptExecutor {
         try {
             LOGGER.info("Script execution " + scriptType + " is started with data located: " + path);
 
-            PigServer server = new PigServer(execType);
+            Properties properties = new Properties();
+            properties.put("pig.temp.dir", "/home/tolusha/temp");
+
+            PigServer server = new PigServer(execType, properties);
             try {
                 server.registerScript(scriptContent, context);
             } finally {

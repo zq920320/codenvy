@@ -131,6 +131,27 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_TOP_USERS_BY_LIFETIME:
                 metric = new ProductUsageTimeTopUsersByLifeTimeMetric();
                 break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY:
+                metric = new ProductUsageTimeTopCompaniesBy1DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_7DAY:
+                metric = new ProductUsageTimeTopCompaniesBy7DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_30DAY:
+                metric = new ProductUsageTimeTopCompaniesBy30DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_60DAY:
+                metric = new ProductUsageTimeTopCompaniesBy60DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_90DAY:
+                metric = new ProductUsageTimeTopCompaniesBy90DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_365DAY:
+                metric = new ProductUsageTimeTopCompaniesBy365DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME:
+                metric = new ProductUsageTimeTopCompaniesByLifeTimeMetric();
+                break;
             case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_1DAY:
                 metric = new ProductUsageTimeTopDomainsBy1DayMetric();
                 break;

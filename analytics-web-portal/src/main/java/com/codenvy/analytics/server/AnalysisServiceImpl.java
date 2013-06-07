@@ -78,6 +78,7 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
 
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, context);
+        executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
 
@@ -124,6 +125,29 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
 
         context.put(MetricParameter.INTERVAL.getName(), "P100Y");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+
+        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P30D");
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P90D");
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
+
+        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
 
         context.remove(MetricParameter.ENTITY.getName());
         context.remove(MetricParameter.INTERVAL.getName());

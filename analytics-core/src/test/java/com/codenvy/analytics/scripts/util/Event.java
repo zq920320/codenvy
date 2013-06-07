@@ -203,6 +203,21 @@ public class Event {
                                 .withParam("PROJECT", project).withParam("TYPE", type);
         }
 
+        public static Builder createUserUpdateProfile(String user,
+                                                      String firstName,
+                                                      String lastName,
+                                                      String company,
+                                                      String phone,
+                                                      String jobTitle) {
+            return new Builder().withContext(user, "", "")
+                                .withParam("EVENT", "user-update-profile")
+                                .withParam("FIRSTNAME", firstName)
+                                .withParam("LASTNAME", lastName)
+                                .withParam("COMPANY", company)
+                                .withParam("PHONE", phone)
+                                .withParam("JOBTITLE", jobTitle);
+        }
+
         public static Builder createJRebelUserProfileInfo(String user,
                                                           String ws,
                                                           String userId,

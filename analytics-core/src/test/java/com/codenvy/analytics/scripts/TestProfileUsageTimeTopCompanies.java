@@ -18,7 +18,6 @@
  */
 package com.codenvy.analytics.scripts;
 
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -41,96 +40,124 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestProductUsageTimeTopUsers extends BaseTest {
+public class TestProfileUsageTimeTopCompanies extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f1", "l1", "company", "", "").withDate("2010-10-01").build());
 
         // 5 min in day
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-10-01")
                                 .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-10-01")
                                 .withTime("20:30:00").build());
 
         // 10 min, in week
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-09-30")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-09-30")
                                 .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-09-30")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-09-30")
                                 .withTime("20:30:00").build());
 
 
         // 15 min, in month
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-09-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-09-15")
                                 .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-09-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-09-15")
                                 .withTime("20:30:00").build());
 
         // 20 min, in 2 months
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-08-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-08-15")
                                 .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-08-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-08-15")
                                 .withTime("20:30:00").build());
 
-        // 25 min, in 3 monthsr
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-07-15")
+        // 25 min, in 3 months
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-07-15")
                                 .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-07-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-07-15")
                                 .withTime("20:30:00").build());
 
         // 30 min, in 1 year
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-05-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-05-15")
                                 .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-05-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-05-15")
                                 .withTime("20:30:00").build());
 
         // 35 min, in lifetime
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2009-05-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2009-05-15")
                                 .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2009-05-15")
+        events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2009-05-15")
                                 .withTime("20:30:00").build());
-
 
         File log = LogGenerator.generateLog(events);
 
         FileUtils.deleteDirectory(new File(BASE_DIR, "USERS"));
-        FileUtils.deleteDirectory(new File(BASE_DIR, "DOMAINS"));
+        FileUtils.deleteDirectory(new File(BASE_DIR, "COMPANIES"));
         FileUtils.deleteDirectory(new File(BASE_DIR, "LOG"));
 
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.RESULT_DIR.getName(), BASE_DIR);
-        context.put(MetricParameter.TO_DATE.getName(), "20151001");
+        context.put(MetricParameter.TO_DATE.getName(), "20101001");
+        execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, log, context);
+
         execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
 
-        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
-
         context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P30D");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P90D");
-        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, log, context);
 
+        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        context.put(MetricParameter.INTERVAL.getName(), "P1D");
         ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_TOP, log,
                                                                                         context);
         List<ListStringValueData> all = value.getAll();
-        ListStringValueData item1 = new ListStringValueData(Arrays.asList("user1", "7", "5", "10", "15", "20", "25", "30", "35"));
+        ListStringValueData item1 = new ListStringValueData(Arrays.asList("company", "7", "5", "10", "15", "20", "25", "30", "35"));
 
         assertEquals(all.size(), 1);
         assertTrue(all.contains(item1));

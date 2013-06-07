@@ -41,11 +41,39 @@ public enum ScriptType {
     USERS_WITHOUT_INVITES,
     PRODUCT_USAGE_TIME,
 
+    USERS_PROFILE_LOG_PREPARATION {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.RESULT_DIR}));
+        }
+    },
+
     PRODUCT_USAGE_TIME_LOG_PREPARATION {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR}));
+        }
+    },
+
+    PRODUCT_USAGE_TIME_TOP {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.RESULT_DIR,
+                    MetricParameter.INTERVAL,
+                    MetricParameter.TO_DATE}));
+        }
+    },
+
+    PRODUCT_USAGE_TIME_COMPANIES {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.RESULT_DIR,
+                    MetricParameter.INTERVAL,
+                    MetricParameter.TO_DATE}));
         }
     },
 
@@ -59,15 +87,6 @@ public enum ScriptType {
         }
     },
 
-    PRODUCT_USAGE_TIME_TOP {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.INTERVAL,
-                    MetricParameter.TO_DATE}));
-        }
-    },
 
     PRODUCT_USAGE_TIME_DOMAINS {
         @Override
