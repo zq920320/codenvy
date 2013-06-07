@@ -77,53 +77,53 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
         FileUtils.deleteDirectory(new File(FSValueDataManager.RESULT_DIRECTORY, "LOG"));
 
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
 
         context.put(MetricParameter.INTERVAL.getName(), "P1D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P7D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P30D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P60D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P90D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P365D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P100Y");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
 
         context.put(MetricParameter.INTERVAL.getName(), "P1D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P7D");
         executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P30D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P60D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P90D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P365D");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P100Y");
-        executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
+        executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
         context.remove(MetricParameter.ENTITY.getName());
         context.remove(MetricParameter.INTERVAL.getName());

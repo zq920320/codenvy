@@ -58,6 +58,12 @@ public class BaseTest {
         return scriptExecutor.executeAndReturn(type, executionParams);
     }
 
+    protected void execute(ScriptType type, File log, Map<String, String> executionParams) throws IOException {
+        executionParams.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        PigScriptExecutor scriptExecutor = new PigScriptExecutor();
+        scriptExecutor.execute(type, executionParams);
+    }
+
     protected void putToDate(Map<String, String> params, String toDate) {
         params.put(MetricParameter.TO_DATE.getName(), toDate);
     }

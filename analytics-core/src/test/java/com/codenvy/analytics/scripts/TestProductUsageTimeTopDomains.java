@@ -99,56 +99,56 @@ public class TestProductUsageTimeTopDomains extends BaseTest {
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.RESULT_DIR.getName(), BASE_DIR);
         context.put(MetricParameter.TO_DATE.getName(), "20101001");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P1D");
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P7D");
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P30D");
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
         executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P60D");
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P90D");
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
         executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P365D");
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
         executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P100Y");
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
         context.put(MetricParameter.INTERVAL.getName(), "P1D");

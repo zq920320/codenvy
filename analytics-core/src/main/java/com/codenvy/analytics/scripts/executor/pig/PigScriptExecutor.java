@@ -110,6 +110,37 @@ public class PigScriptExecutor implements ScriptExecutor {
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
+        context = Utils.clone(context);
+        validateParameters(scriptType, context);
+
+        if (!isExecutionAllowed(context)) {
+            throw new IOException("There is nothing to process");
+        }
+
+        String path = getInspectedPaths(context);
+        if (path.isEmpty()) {
+            throw new IOException("There is nothing to process");
+        }
+
+        InputStream scriptContent = readScriptContent(scriptType);
+        try {
+            LOGGER.info("Script execution " + scriptType + " is started with data located: " + path);
+
+            PigServer server = new PigServer(execType);
+            try {
+                server.registerScript(scriptContent, context);
+            } finally {
+                server.shutdown();
+            }
+        } finally {
+            LOGGER.info("Execution " + scriptType + " is finished");
+            scriptContent.close();
+        }
+    }
+
     /** @return if it is allowed to execute query. */
     protected boolean isExecutionAllowed(Map<String, String> context) throws IOException {
         Calendar toDate = Utils.getToDate(context);
@@ -255,4 +286,5 @@ public class PigScriptExecutor implements ScriptExecutor {
         byte[] bytes = getStreamContentAsBytes(is);
         return new String(bytes, "UTF-8");
     }
+
 }

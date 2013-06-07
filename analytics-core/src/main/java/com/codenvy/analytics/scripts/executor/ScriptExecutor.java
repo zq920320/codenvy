@@ -27,4 +27,13 @@ public interface ScriptExecutor {
      */
     ValueData executeAndReturn(ScriptType scriptType, Map<String, String> context) throws IOException;
 
+    /**
+     * Run the script.
+     * 
+     * @param scriptType specific script type to execute
+     * @param context contains all necessary value parameters required but given {@link ScriptType}
+     * @throws IOException if something gone wrong or if a required parameter is absent
+     */
+    void execute(ScriptType scriptType, Map<String, String> context) throws IOException;
+
 }

@@ -100,30 +100,30 @@ public class TestProductUsageTimeTopUsers extends BaseTest {
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.RESULT_DIR.getName(), BASE_DIR);
         context.put(MetricParameter.TO_DATE.getName(), "20101001");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
 
         context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
 
         context.put(MetricParameter.INTERVAL.getName(), "P1D");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P7D");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P30D");
         executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P60D");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P90D");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P365D");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P100Y");
-        executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
+        execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
         context.put(MetricParameter.INTERVAL.getName(), "P1D");
 
