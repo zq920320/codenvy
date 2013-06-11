@@ -8,6 +8,7 @@ package com.codenvy.analytics.server.jobs;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
@@ -26,6 +27,7 @@ public class DailyJobsRunner implements ServletContextListener {
 
     private static final Logger LOGGER          = LoggerFactory.getLogger(DailyJobsRunner.class);
     private static final String CRON_EXPRESSION = "0 0 1 ? * *";
+
     public static Scheduler     scheduler;
 
 
@@ -33,6 +35,11 @@ public class DailyJobsRunner implements ServletContextListener {
      * {@inheritDoc}
      */
     public void contextDestroyed(ServletContextEvent arg0) {
+        try {
+            scheduler.shutdown();
+        } catch (SchedulerException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     /**
@@ -51,6 +58,7 @@ public class DailyJobsRunner implements ServletContextListener {
 
             scheduler.scheduleJob(TimeLineViewJob.createJob(), makeTrigger());
             scheduler.scheduleJob(AnalysisViewJob.createJob(), makeTrigger());
+            scheduler.scheduleJob(UsersProfilePreparation.createJob(), makeTrigger());
 
             try {
                 ActOnJob actOnJob = new ActOnJob();

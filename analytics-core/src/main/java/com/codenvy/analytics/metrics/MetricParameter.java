@@ -24,6 +24,18 @@ import java.util.Calendar;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
+    ALIAS {
+        @Override
+        public String getDefaultValue() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "alias";
+        }
+    },
+
     TIME_UNIT {
         @Override
         public String getDefaultValue() {

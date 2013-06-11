@@ -156,6 +156,28 @@ DEFINE prepareSet(X, fieldNameParam) RETURNS Y {
   $Y = DISTINCT w1;
 };
 
+---------------------------------------------------------------------------
+-- Finds last updates user profile
+-- @return {user : chararray, firstName : chararray, lastName : chararray, company : chararry}
+---------------------------------------------------------------------------
+DEFINE prepareUserProfiles(X) RETURNS Y {
+  w2 = filterByEvent($X, 'user-update-profile');
+  w3 = extractUser(w2);
+  w4 = smartExtractParam(w3, 'FIRSTNAME', 'firstName');
+  w5 = smartExtractParam(w4, 'LASTNAME', 'lastName');
+  w6 = smartExtractParam(w5, 'COMPANY', 'company');
+  w = FOREACH w6 GENERATE user, firstName, lastName, company, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
+
+  -------------------------------------
+  -- Finds the most last update
+  -------------------------------------
+  y1 = GROUP w BY user;
+  y2 = FOREACH y1 GENERATE *, MAX(w.delta) AS maxDelta;
+  y3 = FOREACH y2 GENERATE group AS user, maxDelta, FLATTEN(w);
+  y4 = FILTER y3 BY delta == maxDelta;
+  $Y = FOREACH y4 GENERATE user, w::firstName AS firstName, w::lastName AS lastName, w::company AS company;
+};
+
 ---------------------------------------------------------------------------------------------
 --                             USAGE TIME MACROSES                                         --
 ---------------------------------------------------------------------------------------------

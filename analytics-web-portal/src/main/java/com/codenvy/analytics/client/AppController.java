@@ -39,29 +39,32 @@ import com.google.gwt.user.client.ui.HasWidgets;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class AppController implements Presenter, ValueChangeHandler<String> {
-    private static final String            ANALYSIS  = "analysis";
-    private static final String            QUERY     = "query";
-    private static final String            PROJECT   = "project";
-    private static final String            WORKSPACE = "workspace";
-    private static final String            USER      = "user";
-    private static final String            TIMELINE  = "timeline";
+    private static final String        ANALYSIS  = "analysis";
+    private static final String        QUERY     = "query";
+    private static final String        PROJECT   = "project";
+    private static final String        WORKSPACE = "workspace";
+    private static final String        USER      = "user";
+    private static final String        TIMELINE  = "timeline";
 
-    private final HandlerManager           eventBus;
-    private final QueryServiceAsync        queryService;
-    private final TimeLineServiceAsync     timelineService;
+    private final HandlerManager       eventBus;
+    private final QueryServiceAsync    queryService;
+    private final UserServiceAsync     userService;
+    private final TimeLineServiceAsync timelineService;
     private final AnalysisServiceAsync analysisService;
 
-    private HasWidgets                     container;
+    private HasWidgets                 container;
 
     public AppController(QueryServiceAsync queryService,
                          TimeLineServiceAsync timelineService,
                          AnalysisServiceAsync analysisService,
+                         UserServiceAsync userService,
                          HandlerManager eventBus) {
 
         this.eventBus = eventBus;
         this.queryService = queryService;
         this.timelineService = timelineService;
         this.analysisService = analysisService;
+        this.userService = userService;
 
         bind();
     }
@@ -155,7 +158,7 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
             if (token.equals(TIMELINE)) {
                 presenter = new TimeLineViewPresenter(timelineService, eventBus, new TimeLineView());
             } else if (token.equals(USER)) {
-                presenter = new UserViewPresenter(eventBus, new UserView());
+                presenter = new UserViewPresenter(userService, eventBus, new UserView());
             } else if (token.equals(WORKSPACE)) {
                 presenter = new WorkspaceViewPresenter(eventBus, new WorkspaceView());
             } else if (token.equals(PROJECT)) {

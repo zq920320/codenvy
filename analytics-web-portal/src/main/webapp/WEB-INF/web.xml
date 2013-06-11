@@ -22,6 +22,11 @@
     </servlet>
 
     <servlet>
+      <servlet-name>UserServlet</servlet-name>
+      <servlet-class>com.codenvy.analytics.server.UserServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet>
       <servlet-name>TimeLineServlet</servlet-name>
       <servlet-class>com.codenvy.analytics.server.TimeLineServiceImpl</servlet-class>
     </servlet>
@@ -29,6 +34,11 @@
     <servlet-mapping>
       <servlet-name>AnalysisServlet</servlet-name>
       <url-pattern>/AnalyticsApplication/Analysis</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>UserServlet</servlet-name>
+      <url-pattern>/AnalyticsApplication/User</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

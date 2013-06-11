@@ -53,7 +53,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     private final VerticalPanel   mainPanel      = new VerticalPanel();
     private final HorizontalPanel headerPanel    = new HorizontalPanel();
-    private final HorizontalPanel subHeaderPanel = new HorizontalPanel();
+    private final VerticalPanel   subHeaderPanel = new VerticalPanel();
 
     public MainView() {
         timelineViewButton = new Button("Time Line");
@@ -148,7 +148,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     /** {@inheritDoc} */
     @Override
-    public HorizontalPanel getSubHeaderPanel() {
+    public VerticalPanel getSubHeaderPanel() {
         return subHeaderPanel;
     }
 
@@ -166,7 +166,16 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     /** {@inheritDoc} */
     @Override
+    public void setErrorMessage(String message) {
+        getContentTable().clear();
+        getContentTable().setText(0, 0, message);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void setData(List<TableData> result) {
+        getContentTable().clear();
+
         Map<String, TabLayoutPanel> tabs = new HashMap<String, TabLayoutPanel>();
 
         for (int i = 0; i < result.size(); i++) {

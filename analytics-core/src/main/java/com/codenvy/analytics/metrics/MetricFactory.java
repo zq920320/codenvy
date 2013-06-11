@@ -95,6 +95,21 @@ public class MetricFactory {
             case USERS_SSO_LOGGED_IN_USING_FORM_PERCENT:
                 metric = new UsersSsoLoggedInUsingFormPercentMetric();
                 break;
+            case USER_PROFILE:
+                metric = new UsersProfileMetric();
+                break;
+            case USER_PROFILE_FIRSTNAME:
+                metric = new UsersProfileFirstNameMetric();
+                break;
+            case USER_PROFILE_LASTNAME:
+                metric = new UsersProfileLastNameMetric();
+                break;
+            case USER_PROFILE_EMAIL:
+                metric = new UsersProfileEmailMetric();
+                break;
+            case USER_PROFILE_COMPANY:
+                metric = new UsersProfileCompanyMetric();
+                break;
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();
                 break;

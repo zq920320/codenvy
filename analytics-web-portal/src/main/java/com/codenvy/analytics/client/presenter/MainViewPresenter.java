@@ -47,7 +47,7 @@ public abstract class MainViewPresenter implements Presenter {
 
         HorizontalPanel getHeaderPanel();
 
-        HorizontalPanel getSubHeaderPanel();
+        VerticalPanel getSubHeaderPanel();
 
         VerticalPanel getMainPanel();
 
@@ -57,7 +57,14 @@ public abstract class MainViewPresenter implements Presenter {
 
         FlexTable getContentTable();
 
+        /**
+         * Show data onto page
+         * 
+         * @param data the retrieved data from the server
+         */
         void setData(List<TableData> data);
+
+        void setErrorMessage(String message);
     }
 
     public MainViewPresenter(HandlerManager eventBus, Display view) {

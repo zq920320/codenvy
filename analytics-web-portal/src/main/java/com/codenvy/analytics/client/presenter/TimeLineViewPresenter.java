@@ -63,7 +63,6 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
     }
 
     private void update(TimeUnit timeUnit, String userFilter) {
-        getDisplay().getContentTable().clear();
         getDisplay().getGWTLoader().show();
 
         timelineService.getData(timeUnit, userFilter, new AsyncCallback<List<TableData>>() {

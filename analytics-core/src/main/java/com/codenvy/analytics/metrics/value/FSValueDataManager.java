@@ -102,6 +102,8 @@ public class FSValueDataManager {
                 element = translateDateToRelativePath(entry.getValue());
             } else if (Utils.isToDateParam(entry) && !Utils.containsFromDateParam(uuid)) {
                 element = translateDateToRelativePath(entry.getValue());
+            } else if (Utils.isAlias(entry)) {
+                element = translateAliasToRelativePath(entry.getValue());
             } else {
                 element = entry.getValue().toLowerCase();
             }
@@ -112,6 +114,28 @@ public class FSValueDataManager {
 
         builder.append(FILE_NAME);
         return new File(dir, builder.toString());
+    }
+
+    /** Translates user's alias to relative path */
+    private static String translateAliasToRelativePath(String alias) {
+        if (alias.length() < 3) {
+            return alias;
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(alias.substring(0, 1));
+        builder.append(File.separatorChar);
+
+        builder.append(alias.substring(1, 2));
+        builder.append(File.separatorChar);
+
+        builder.append(alias.substring(2, 3));
+        builder.append(File.separatorChar);
+
+        builder.append(alias.substring(3));
+
+        return builder.toString();
     }
 
     /** Translate date from format yyyyMMdd into format like yyyy/MM/dd and {@link File#separatorChar} is used as delimiter. */

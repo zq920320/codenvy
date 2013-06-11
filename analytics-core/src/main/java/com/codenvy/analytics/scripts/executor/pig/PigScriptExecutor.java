@@ -131,7 +131,6 @@ public class PigScriptExecutor implements ScriptExecutor {
             LOGGER.info("Script execution " + scriptType + " is started with data located: " + path);
 
             Properties properties = new Properties();
-            properties.put("pig.temp.dir", "/home/tolusha/temp");
 
             PigServer server = new PigServer(execType, properties);
             try {

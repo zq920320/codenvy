@@ -153,6 +153,11 @@ public class Utils {
         return entry.getKey().equals(MetricParameter.TO_DATE.getName());
     }
 
+    /** @param true if entry's key is {@link MetricParameter#ALIAS} */
+    public static boolean isAlias(Entry<String, String> entry) {
+        return entry.getKey().equals(MetricParameter.ALIAS.getName());
+    }
+
     /** @param true if entry's key is {@link MetricParameter#FROM_DATE} */
     public static boolean isFromDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.FROM_DATE.getName());

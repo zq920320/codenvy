@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (C) 2013 Codenvy.
+-->
+<display>
+    <table length="2">
+        <title name="Profile" />
+	<metric type="user_profile_email" title="E-mail" format="%s"/>
+	<metric type="user_profile_firstname" title="First name" format="%s"/>
+	<metric type="user_profile_lastname" title="Last name" format="%s"/>
+	<metric type="user_profile_company" title="Company" format="%s"/>
+        <empty />
+    </table>
+
+    <table length="2">
+        <title name="Statistics" />
+	<metric type="invitations_sent_number" title="Invitations sent"/>
+	<metric type="product_usage_time_total" title="Total time spent (mins)" format="%,.0f"/>
+	<metric type="product_usage_user_sessions_number" title="Coding sessions" format="%,.0f"/>
+	<metric type="projects_created_number" title="Projects created"/>
+        <metric type="projects_destroyed_number" title="Projects destroyed"/>
+	<metric type="projects_built_number" title="Projects built"/>
+	<metric type="projects_deployed_number" title="Projects deploy"/>
+        <empty />
+    </table>
+
+    <table length="2">
+        <title name="Recent Activity" />
+        <empty />
+    </table>
+</display>
+
