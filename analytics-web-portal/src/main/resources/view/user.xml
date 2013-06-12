@@ -9,6 +9,9 @@
 	<metric type="user_profile_firstname" title="First name" format="%s"/>
 	<metric type="user_profile_lastname" title="Last name" format="%s"/>
 	<metric type="user_profile_company" title="Company" format="%s"/>
+	<empty />
+	<empty />
+	<empty />
     </table>
 
     <table length="2">
@@ -22,8 +25,8 @@
 	<metric type="projects_deployed_number" title="Projects deploy"/>
     </table>
 
-    <table length="1" width="100%">
-        <title name="Recent Activity" />
+    <table length="2" widget="tab_panel" tabId="1" tabName="Recent Activity" sortable="true" defaultSortColumn="Date">
+        <title name="Date,Event"/>
 	<list type="user_activity" noTitle="true" format="%s"/>
     </table>
 </display>

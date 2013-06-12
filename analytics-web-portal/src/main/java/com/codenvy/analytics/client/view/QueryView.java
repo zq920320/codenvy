@@ -19,7 +19,7 @@ public class QueryView extends MainView implements QueryViewPresenter.Display {
     private final ListBox       queryListBox   = new ListBox();
     private final FlexTable     parameterTable = new FlexTable();
     private final Button        runQueryButton = new Button("Run Query");
-    private final VerticalPanel resultPanel    = new VerticalPanel();     ;
+    private final VerticalPanel resultPanel    = new VerticalPanel();
 
     public QueryView() {
         super();

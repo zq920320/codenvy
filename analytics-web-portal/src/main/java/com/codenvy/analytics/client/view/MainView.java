@@ -181,11 +181,23 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         for (int i = 0; i < result.size(); i++) {
             TableData tableData = result.get(i);
 
+            String posXStr = tableData.getAttributes().get("posX");
+            String posYStr = tableData.getAttributes().get("posY");
+
+            int posX = posXStr != null ? Integer.valueOf(posXStr) : i;
+            int posY = posYStr != null ? Integer.valueOf(posYStr) : 0;
+            
+            Widget widget;
             switch (tableData.getWidget()) {
                 case CELL_TABLE:
-                    Widget widget = createCellTable(tableData);
-                    getContentTable().setWidget(i, 0, widget);
+                    widget = createCellTable(tableData);
+                    getContentTable().setWidget(posX, posY, widget);
                     break;
+                    
+                case DATA_GRID:
+                    widget = createDataGrid(tableData);
+                    getContentTable().setWidget(posX, posY, widget);
+                    break;                    
 
                 case TAB_PANEL:
                     String tabId = tableData.getTabId();
@@ -194,7 +206,7 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
                         TabLayoutPanel tabPanel = createTabPanel();
                         tabs.put(tabId, tabPanel);
 
-                        getContentTable().setWidget(i, 0, tabPanel);
+                        getContentTable().setWidget(posX, posY, tabPanel);
                     }
 
                     TabLayoutPanel tabPanel = tabs.get(tabId);
@@ -213,17 +225,29 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     protected Widget createCellTable(TableData tableData) {
         CellTable<RowData> cellTable = new CellTable<RowData>(Integer.MAX_VALUE, GWTCellTableResource.RESOURCES);
+        setAttributes(cellTable, tableData);
+
+        return initializeTable(cellTable, tableData);
+    }
+
+
+    protected Widget createDataGrid(TableData tableData) {
+        DataGrid<RowData> dataGrid = new DataGrid<RowData>(Integer.MAX_VALUE, GWTDataGridResource.RESOURCES);
+        setAttributes(dataGrid, tableData);
+
+        return initializeTable(dataGrid, tableData);
+    }
+
+    protected void setAttributes(AbstractCellTable<RowData> cellTable, TableData tableData) {
         String width = tableData.getAttributes().get("width");
         if (width != null) {
             cellTable.getElement().setAttribute("width", width);
         }
 
-        return initializeTable(cellTable, tableData);
-    }
-
-    protected Widget createDataGrid(TableData tableData) {
-        DataGrid<RowData> dataGrid = new DataGrid<RowData>(Integer.MAX_VALUE, GWTDataGridResource.RESOURCES);
-        return initializeTable(dataGrid, tableData);
+        String height = tableData.getAttributes().get("height");
+        if (height != null) {
+            cellTable.getElement().setAttribute("height", width);
+        }
     }
 
     protected Widget initializeTable(AbstractCellTable<RowData> cellTable, TableData tableData) {

@@ -45,6 +45,8 @@ public class ValueDataFactory {
     public static ValueData createEmptyValueData(Class< ? extends ValueData> clazz) throws IOException {
         if (clazz == ListStringValueData.class) {
             return ListStringValueData.EMPTY;
+        } else if (clazz == ListListStringValueData.class) {
+            return ListListStringValueData.EMPTY;
         }
 
         throw new IOException("Unknown class " + clazz.getName());

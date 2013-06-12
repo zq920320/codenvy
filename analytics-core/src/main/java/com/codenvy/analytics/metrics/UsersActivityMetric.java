@@ -4,11 +4,18 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.events.MessageTransformer;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,6 +39,25 @@ public class UsersActivityMetric extends ReadBasedMetric {
     /** {@inheritDoc} */
     @Override
     protected Class< ? extends ValueData> getValueDataClass() {
-        return ListStringValueData.class;
+        return ListListStringValueData.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        ListStringValueData valueData = (ListStringValueData)super.getValue(context);
+        List<ListStringValueData> newValue = new ArrayList<>(valueData.size());
+
+        for (String item : valueData.getAll()) {
+            newValue.add(new ListStringValueData(MessageTransformer.transform(item)));
+        }
+
+        return new ListListStringValueData(newValue);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected ValueData createEmptyValueData() throws IOException {
+        return ValueDataFactory.createEmptyValueData(ListStringValueData.class);
     }
 }

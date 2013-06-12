@@ -28,7 +28,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         // TODO duplicate
-        // TODO is not needed for profile
         Calendar fromDate = Utils.getFromDate(context);
         Calendar toDate = Utils.getToDate(context);
 
@@ -53,8 +52,12 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         try {
             return FSValueDataManager.load(metricType, makeUUID(dayContext));
         } catch (FileNotFoundException e) {
-            return ValueDataFactory.createEmptyValueData(getValueDataClass());
+            return createEmptyValueData();
         }
+    }
+
+    protected ValueData createEmptyValueData() throws IOException {
+        return ValueDataFactory.createEmptyValueData(getValueDataClass());
     }
 }
 
