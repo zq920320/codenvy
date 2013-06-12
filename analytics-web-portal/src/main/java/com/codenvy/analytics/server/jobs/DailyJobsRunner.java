@@ -4,8 +4,6 @@
  */
 package com.codenvy.analytics.server.jobs;
 
-
-
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -59,6 +57,7 @@ public class DailyJobsRunner implements ServletContextListener {
             scheduler.scheduleJob(TimeLineViewJob.createJob(), makeTrigger());
             scheduler.scheduleJob(AnalysisViewJob.createJob(), makeTrigger());
             scheduler.scheduleJob(UsersProfilePreparation.createJob(), makeTrigger());
+            scheduler.scheduleJob(UsersActivityPreparation.createJob(), makeTrigger());
 
             try {
                 ActOnJob actOnJob = new ActOnJob();

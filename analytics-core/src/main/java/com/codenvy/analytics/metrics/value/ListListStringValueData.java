@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class ListListStringValueData extends ListValueData<ListStringValueData> {
 
-    public static final ListListStringValueData EMPYT = new ListListStringValueData(Collections.<ListStringValueData> emptyList());
+    public static final ListListStringValueData EMPTY = new ListListStringValueData(Collections.<ListStringValueData> emptyList());
 
     private static final long                   serialVersionUID = 1L;
 

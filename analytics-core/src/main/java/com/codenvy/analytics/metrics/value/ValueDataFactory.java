@@ -6,6 +6,7 @@ package com.codenvy.analytics.metrics.value;
 
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
+import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
 
 import java.io.IOException;
@@ -39,6 +40,17 @@ public class ValueDataFactory {
     }
 
     /**
+     * Instantiates empty {@link ValueData}.
+     */
+    public static ValueData createEmptyValueData(Class< ? extends ValueData> clazz) throws IOException {
+        if (clazz == ListStringValueData.class) {
+            return ListStringValueData.EMPTY;
+        }
+
+        throw new IOException("Unknown class " + clazz.getName());
+    }
+
+    /**
      * Instantiates {@link ValueData} from result obtained by {@link ScriptExecutor}.
      */
     public static ValueData createValueData(Class< ? > clazz, Iterator<Tuple> iter) throws IOException {
@@ -62,9 +74,34 @@ public class ValueDataFactory {
             return createMapStringLongValueData(iter);
         }
 
+        else if (clazz == MapStringListValueData.class) {
+            return createMapStringListValueData(iter);
+        }
+
 
         throw new IOException("Unknown class " + clazz.getName());
     }
+
+    private static ValueData createMapStringListValueData(Iterator<Tuple> iter) throws IOException {
+        if (!iter.hasNext()) {
+            return new MapStringListValueData(Collections.<String, ListStringValueData> emptyMap());
+        }
+
+        Map<String, ListStringValueData> result = new HashMap<String, ListStringValueData>();
+        while (iter.hasNext()) {
+            Tuple tuple = iter.next();
+
+            validateTupleSize(tuple, 2);
+
+            String key = tuple.get(0).toString();
+            ListStringValueData value = createListStringValueData(((DataBag)tuple.get(1)).iterator());
+
+            result.put(key, value);
+        }
+
+        return new MapStringListValueData(result);
+    }
+
 
     private static ValueData createMapStringLongValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {

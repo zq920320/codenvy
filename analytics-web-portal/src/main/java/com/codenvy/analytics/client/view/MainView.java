@@ -213,6 +213,11 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
 
     protected Widget createCellTable(TableData tableData) {
         CellTable<RowData> cellTable = new CellTable<RowData>(Integer.MAX_VALUE, GWTCellTableResource.RESOURCES);
+        String width = tableData.getAttributes().get("width");
+        if (width != null) {
+            cellTable.getElement().setAttribute("width", width);
+        }
+
         return initializeTable(cellTable, tableData);
     }
 

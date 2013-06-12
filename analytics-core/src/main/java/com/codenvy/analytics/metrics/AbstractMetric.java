@@ -27,7 +27,6 @@ public abstract class AbstractMetric implements Metric {
         return metricType;
     }
 
-
     /** Preparation unique sequences to identify stored value. */
     protected LinkedHashMap<String, String> makeUUID(Map<String, String> context) throws IOException {
         LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();

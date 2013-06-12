@@ -27,9 +27,9 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
     public interface Display extends MainViewPresenter.Display {
         ListBox getTimeUnitBox();
 
-        Button getApplyFilterButton();
+        Button getSearchButton();
 
-        String getUserFilter();
+        String getUserEmail();
     }
 
     private TimeUnit currentTimeUnit = TimeUnit.DAY;
@@ -47,15 +47,15 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
                 TimeUnit newCurrentTimeUnit = TimeUnit.values()[getDisplay().getTimeUnitBox().getSelectedIndex()];
                 if (newCurrentTimeUnit != currentTimeUnit) {
                     currentTimeUnit = newCurrentTimeUnit;
-                    update(currentTimeUnit, getDisplay().getUserFilter());
+                    update(currentTimeUnit, getDisplay().getUserEmail());
                 }
             }
         });
 
-        getDisplay().getApplyFilterButton().addClickHandler(new ClickHandler() {
+        getDisplay().getSearchButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 currentTimeUnit = TimeUnit.values()[getDisplay().getTimeUnitBox().getSelectedIndex()];
-                update(currentTimeUnit, getDisplay().getUserFilter());
+                update(currentTimeUnit, getDisplay().getUserEmail());
             }
         });
 

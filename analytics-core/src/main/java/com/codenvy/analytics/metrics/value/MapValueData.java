@@ -151,5 +151,5 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
 
     protected abstract K readKey(ObjectInput in) throws IOException;
 
-    protected abstract V readValue(ObjectInput in) throws IOException;
+    protected abstract V readValue(ObjectInput in) throws IOException, ClassNotFoundException;
 }

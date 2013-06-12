@@ -21,19 +21,22 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricRow extends AbstractRow {
 
-    private static final String ATTRIBUTE_FORMAT = "format";
-    private static final String ATTRIBUTE_TYPE   = "type";
-    private static final String ATTRIBUTE_TITLE  = "title";
+    private static final String ATTRIBUTE_FORMAT   = "format";
+    private static final String ATTRIBUTE_TYPE     = "type";
+    private static final String ATTRIBUTE_TITLE    = "title";
+    private static final String ATTRIBUTE_NO_TITLE = "noTitle";
 
-    private static final String DEFAULT_FORMAT   = "%.0f";
+    private static final String DEFAULT_FORMAT     = "%.0f";
 
     private final Metric        metric;
     private final String        format;
     private final String        title;
+    private final boolean       noTitle;
 
-    private MetricRow(Metric metric, String title, String format) {
+    private MetricRow(Metric metric, String title, boolean noTitle, String format) {
         this.metric = metric;
         this.title = title;
+        this.noTitle = noTitle;
         this.format = format == null || format.isEmpty() ? DEFAULT_FORMAT : format;
     }
 
@@ -45,9 +48,14 @@ public class MetricRow extends AbstractRow {
      */
     public List<RowData> fill(Map<String, String> context, int length) throws Exception {
         RowData row = new RowData();
-        row.add(title);
 
-        for (int i = 1; i < length; i++) {
+        if (!noTitle) {
+            row.add(title);
+        }
+
+        int startIndex = noTitle ? 0 : 1;
+
+        for (int i = startIndex; i < length; i++) {
             try {
                 ValueData valueData = metric.getValue(context);
 
@@ -97,7 +105,8 @@ public class MetricRow extends AbstractRow {
         Metric metric = MetricFactory.createMetric(element.getAttribute(ATTRIBUTE_TYPE));
         String format = element.getAttribute(ATTRIBUTE_FORMAT);
         String title = element.getAttribute(ATTRIBUTE_TITLE);
+        String noTitle = element.getAttribute(ATTRIBUTE_NO_TITLE);
 
-        return new MetricRow(metric, title, format);
+        return new MetricRow(metric, title, noTitle == null || noTitle.isEmpty() ? false : Boolean.valueOf(noTitle), format);
     }
 }

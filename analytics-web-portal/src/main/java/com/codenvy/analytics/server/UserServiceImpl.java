@@ -31,8 +31,6 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
     /** {@inheritDoc} */
     @Override
     public List<TableData> getData(String userEmail) throws IOException {
-        userEmail = "gennady.azarenkov@exoplatform.com"; // TODO empty
-
         Map<String, String> context = Utils.newContext();
         context.put(MetricFilter.FILTER_USER.name(), userEmail);
         context.put(MetricParameter.ALIAS.getName(), userEmail);

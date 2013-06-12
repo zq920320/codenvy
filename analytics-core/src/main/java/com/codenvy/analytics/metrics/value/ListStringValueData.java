@@ -7,6 +7,7 @@ package com.codenvy.analytics.metrics.value;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -14,6 +15,10 @@ import java.util.List;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class ListStringValueData extends ListValueData<String> {
+
+    private static final long               serialVersionUID = 7837928230988898876L;
+
+    public static final ListStringValueData EMPTY = new ListStringValueData(new ArrayList<String>(0));
 
     public ListStringValueData() {
     }

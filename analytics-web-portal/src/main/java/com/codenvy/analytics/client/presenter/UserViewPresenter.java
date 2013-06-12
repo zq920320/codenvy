@@ -47,11 +47,7 @@ public class UserViewPresenter extends MainViewPresenter implements Presenter {
             /** {@inheritDoc} */
             @Override
             public void onClick(ClickEvent event) {
-                getDisplay().getGWTLoader().show();
-
                 retrieveData(getDisplay().getUserEmail());
-
-                getDisplay().getGWTLoader().hide();
             }
         });
     }
@@ -60,17 +56,20 @@ public class UserViewPresenter extends MainViewPresenter implements Presenter {
      * Retrieves data from the server.
      */
     private void retrieveData(String userEmail) {
+        getDisplay().getGWTLoader().show();
 
         userService.getData(userEmail, new AsyncCallback<List<TableData>>() {
             /** {@inheritDoc} */
             @Override
             public void onSuccess(List<TableData> result) {
+                getDisplay().getGWTLoader().hide();
                 getDisplay().setData(result);
             }
 
             /** {@inheritDoc} */
             @Override
             public void onFailure(Throwable caught) {
+                getDisplay().getGWTLoader().hide();
                 getDisplay().setErrorMessage(caught.getMessage());
             }
         });

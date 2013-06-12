@@ -39,7 +39,7 @@ public abstract class AbstractFilter implements Filter {
         try {
             return apply(getIndex(key), value);
         } catch (IllegalArgumentException e) {
-            return ListListStringValueData.EMPYT;
+            return ListListStringValueData.EMPTY;
         }
     }
 

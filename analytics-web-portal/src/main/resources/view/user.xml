@@ -9,7 +9,6 @@
 	<metric type="user_profile_firstname" title="First name" format="%s"/>
 	<metric type="user_profile_lastname" title="Last name" format="%s"/>
 	<metric type="user_profile_company" title="Company" format="%s"/>
-        <empty />
     </table>
 
     <table length="2">
@@ -21,12 +20,11 @@
         <metric type="projects_destroyed_number" title="Projects destroyed"/>
 	<metric type="projects_built_number" title="Projects built"/>
 	<metric type="projects_deployed_number" title="Projects deploy"/>
-        <empty />
     </table>
 
-    <table length="2">
+    <table length="1" width="100%">
         <title name="Recent Activity" />
-        <empty />
+	<list type="user_activity" noTitle="true" format="%s"/>
     </table>
 </display>
 

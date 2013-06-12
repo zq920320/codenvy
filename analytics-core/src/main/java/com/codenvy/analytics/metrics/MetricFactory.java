@@ -98,6 +98,9 @@ public class MetricFactory {
             case USER_PROFILE:
                 metric = new UsersProfileMetric();
                 break;
+            case USER_ACTIVITY:
+                metric = new UsersActivityMetric();
+                break;
             case USER_PROFILE_FIRSTNAME:
                 metric = new UsersProfileFirstNameMetric();
                 break;
