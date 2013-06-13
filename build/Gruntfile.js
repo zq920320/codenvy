@@ -91,7 +91,7 @@ module.exports = function( grunt ) {
 
                 // styles
 
-                {expand: true, cwd: '../app/_site/styles/', src : '*.css', dest: 'dist/gh/styles/'},
+                {expand: true, cwd: '../app/styles/', src : '*.css', dest: 'dist/gh/styles/'},
 
                 // images
 
@@ -123,7 +123,7 @@ module.exports = function( grunt ) {
 
                 // styles
 
-                {expand: true, cwd: '../app/_site/styles/', src : '*.css', dest: 'dist/stage/styles/'},
+                {expand: true, cwd: '../app/styles/', src : '*.css', dest: 'dist/stage/styles/'},
 
                 // images
 
