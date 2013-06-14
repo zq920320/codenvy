@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -34,17 +35,17 @@ import java.util.Map;
  */
 public class TestScriptBasedMetrics extends BaseTest {
 
-    private Map<String, String> context;
+    private LinkedHashMap<String, String> context;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        context = new HashMap<String, String>();
+        context = new LinkedHashMap<String, String>();
     }
 
     @Test(expectedExceptions = FileNotFoundException.class)
     public void shouldNotStoreValue() throws Exception {
-        Utils.putToDate(context, Calendar.getInstance());
         Utils.putFromDate(context, Calendar.getInstance());
+        Utils.putToDate(context, Calendar.getInstance());
         Utils.putTimeUnit(context, TimeUnit.DAY);
 
         TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT_LIST));
@@ -59,8 +60,8 @@ public class TestScriptBasedMetrics extends BaseTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
-        Utils.putToDate(context, calendar);
         Utils.putFromDate(context, calendar);
+        Utils.putToDate(context, calendar);
 
         TestedMetric mockedMetric = spy(new TestedMetric(MetricType.PROJECTS_CREATED_LIST));
 
@@ -72,8 +73,8 @@ public class TestScriptBasedMetrics extends BaseTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
-        Utils.putToDate(context, calendar);
         Utils.putFromDate(context, calendar);
+        Utils.putToDate(context, calendar);
 
         TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT_LIST));
 
@@ -88,8 +89,8 @@ public class TestScriptBasedMetrics extends BaseTest {
         fromDate.add(Calendar.DAY_OF_MONTH, -6);
 
         Map<String, String> context = new HashMap<String, String>(3);
-        Utils.putToDate(context, toDate);
         Utils.putFromDate(context, fromDate);
+        Utils.putToDate(context, toDate);
         Utils.putTimeUnit(context, TimeUnit.WEEK);
 
         TestedMetric mockedMetric = spy(new TestedMetric(MetricType.USERS_CREATED_NUMBER));

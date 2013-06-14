@@ -28,6 +28,7 @@ public enum MetricType {
     USERS_INVITATIONS_SENT_NUMBER, // number of users, who sent invitation at least once
     USERS_ADDED_TO_WORKSPACE_LIST,
     USER_ACTIVITY,
+    USER_SESSIONS,
     USER_PROFILE,
     USER_PROFILE_EMAIL,
     USER_PROFILE_FIRSTNAME,

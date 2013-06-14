@@ -29,5 +29,9 @@
         <title name="Date,Event"/>
 	<list type="user_activity" noTitle="true" format="%s"/>
     </table>
+    <table length="3" widget="tab_panel" tabId="1" tabName="Sessions" sortable="true" defaultSortColumn="Session started">
+        <title name="Session started,Session finished,Duration,Workspace"/>
+	<list type="user_sessions" noTitle="true" format="%s"/>
+    </table>
 </display>
 

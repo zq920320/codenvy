@@ -52,8 +52,8 @@ public class TestScriptJRebelUserProfileGahtering extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        context.put(MetricParameter.TO_DATE.getName(), "20101001");
+        context.put(MetricParameter.FROM_DATE.name(), "20101001");
+        context.put(MetricParameter.TO_DATE.name(), "20101001");
 
         ListListStringValueData valueData =
                                             (ListListStringValueData)executeAndReturnResult(ScriptType.JREBEL_USER_PROFILE_GATHERING, log,

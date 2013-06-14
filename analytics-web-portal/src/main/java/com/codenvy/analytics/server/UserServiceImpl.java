@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,17 +32,15 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
     public List<TableData> getData(String userEmail) throws IOException {
         Map<String, String> context = Utils.newContext();
         context.put(MetricFilter.FILTER_USER.name(), userEmail);
-        context.put(MetricParameter.ALIAS.getName(), userEmail);
-        context.put(MetricParameter.FROM_DATE.getName(), MetricParameter.FROM_DATE.getDefaultValue());
-        context.put(MetricParameter.TO_DATE.getName(), MetricParameter.TO_DATE.getDefaultValue());
+        context.put(MetricParameter.ALIAS.name(), userEmail);
+        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
+        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
 
         try {
             return display.retrieveData(context);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
+            throw new IOException(e);
         }
-
-        return new ArrayList<TableData>();
     }
 }

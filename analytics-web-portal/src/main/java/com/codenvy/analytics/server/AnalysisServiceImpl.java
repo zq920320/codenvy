@@ -56,9 +56,9 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
 
     private Map<String, String> getContext() {
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.TO_DATE.getName(), MetricParameter.TO_DATE.getDefaultValue());
-        context.put(MetricParameter.FROM_DATE.getName(), MetricParameter.FROM_DATE.getDefaultValue());
-        context.put(MetricParameter.RESULT_DIR.getName(), FSValueDataManager.RESULT_DIRECTORY);
+        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
+        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
+        context.put(MetricParameter.RESULT_DIR.name(), FSValueDataManager.RESULT_DIRECTORY);
         return context;
     }
 
@@ -80,77 +80,77 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, context);
         executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
 
-        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
+        context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.USERS.name());
 
-        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        context.put(MetricParameter.INTERVAL.name(), "P1D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        context.put(MetricParameter.INTERVAL.name(), "P7D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P30D");
+        context.put(MetricParameter.INTERVAL.name(), "P30D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        context.put(MetricParameter.INTERVAL.name(), "P60D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P90D");
+        context.put(MetricParameter.INTERVAL.name(), "P90D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        context.put(MetricParameter.INTERVAL.name(), "P365D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        context.put(MetricParameter.INTERVAL.name(), "P100Y");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_USERS, context);
 
-        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
+        context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.DOMAINS.name());
 
-        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        context.put(MetricParameter.INTERVAL.name(), "P1D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        context.put(MetricParameter.INTERVAL.name(), "P7D");
         executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P30D");
+        context.put(MetricParameter.INTERVAL.name(), "P30D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        context.put(MetricParameter.INTERVAL.name(), "P60D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P90D");
+        context.put(MetricParameter.INTERVAL.name(), "P90D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        context.put(MetricParameter.INTERVAL.name(), "P365D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        context.put(MetricParameter.INTERVAL.name(), "P100Y");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_DOMAINS, context);
 
-        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.COMPANIES.name());
+        context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.COMPANIES.name());
 
-        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        context.put(MetricParameter.INTERVAL.name(), "P1D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        context.put(MetricParameter.INTERVAL.name(), "P7D");
         executor.executeAndReturn(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P30D");
+        context.put(MetricParameter.INTERVAL.name(), "P30D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        context.put(MetricParameter.INTERVAL.name(), "P60D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P90D");
+        context.put(MetricParameter.INTERVAL.name(), "P90D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        context.put(MetricParameter.INTERVAL.name(), "P365D");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        context.put(MetricParameter.INTERVAL.name(), "P100Y");
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_COMPANIES, context);
 
-        context.remove(MetricParameter.ENTITY.getName());
-        context.remove(MetricParameter.INTERVAL.getName());
+        context.remove(MetricParameter.ENTITY.name());
+        context.remove(MetricParameter.INTERVAL.name());
 
         return display.retrieveData(context);
     }

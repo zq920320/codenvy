@@ -27,9 +27,9 @@ public class TestCumulativeMetric extends BaseTest {
 
     public void testEvaluateValue() throws Exception {
         Map<String, String> contextCurrentDate = new HashMap<String, String>();
-        contextCurrentDate.put(MetricParameter.FROM_DATE.getName(), "20130331");
-        contextCurrentDate.put(MetricParameter.TO_DATE.getName(), "20130331");
-        contextCurrentDate.put(MetricParameter.TIME_UNIT.getName(), TimeUnit.DAY.toString());
+        contextCurrentDate.put(MetricParameter.FROM_DATE.name(), "20130331");
+        contextCurrentDate.put(MetricParameter.TO_DATE.name(), "20130331");
+        contextCurrentDate.put(MetricParameter.TIME_UNIT.name(), TimeUnit.DAY.toString());
         
         Metric mockedAddedMetric = mock(Metric.class);
         Metric mockedRemovedMetric = mock(Metric.class);

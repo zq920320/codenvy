@@ -53,8 +53,8 @@ public class TestScriptActiveUsersWorkspaces extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101002");
+        params.put(MetricParameter.FROM_DATE.name(), "20101001");
+        params.put(MetricParameter.TO_DATE.name(), "20101002");
 
         ListListStringValueData valueData =
                                             (ListListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_USERS_WORKSPACES, log, params);

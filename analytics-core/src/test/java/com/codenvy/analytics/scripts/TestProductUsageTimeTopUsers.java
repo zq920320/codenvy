@@ -98,34 +98,34 @@ public class TestProductUsageTimeTopUsers extends BaseTest {
         FileUtils.deleteDirectory(new File(BASE_DIR, "LOG"));
 
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.RESULT_DIR.getName(), BASE_DIR);
-        context.put(MetricParameter.TO_DATE.getName(), "20101001");
+        context.put(MetricParameter.RESULT_DIR.name(), BASE_DIR);
+        context.put(MetricParameter.TO_DATE.name(), "20101001");
         execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
 
-        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
+        context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.USERS.name());
 
-        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        context.put(MetricParameter.INTERVAL.name(), "P1D");
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P7D");
+        context.put(MetricParameter.INTERVAL.name(), "P7D");
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P30D");
+        context.put(MetricParameter.INTERVAL.name(), "P30D");
         executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P60D");
+        context.put(MetricParameter.INTERVAL.name(), "P60D");
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P90D");
+        context.put(MetricParameter.INTERVAL.name(), "P90D");
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P365D");
+        context.put(MetricParameter.INTERVAL.name(), "P365D");
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
+        context.put(MetricParameter.INTERVAL.name(), "P100Y");
         execute(ScriptType.PRODUCT_USAGE_TIME_USERS, log, context);
 
-        context.put(MetricParameter.INTERVAL.getName(), "P1D");
+        context.put(MetricParameter.INTERVAL.name(), "P1D");
 
         ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_TOP, log,
                                                                                         context);

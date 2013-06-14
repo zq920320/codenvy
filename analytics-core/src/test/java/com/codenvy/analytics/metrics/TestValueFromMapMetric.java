@@ -42,9 +42,9 @@ public class TestValueFromMapMetric {
         DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
 
         Map<String, String> context = new HashMap<String, String>();
-        context.put(MetricParameter.FROM_DATE.getName(), df.format(new Date()));
-        context.put(MetricParameter.TO_DATE.getName(), df.format(new Date()));
-        context.put(MetricParameter.TIME_UNIT.getName(), TimeUnit.DAY.toString());
+        context.put(MetricParameter.FROM_DATE.name(), df.format(new Date()));
+        context.put(MetricParameter.TO_DATE.name(), df.format(new Date()));
+        context.put(MetricParameter.TIME_UNIT.name(), TimeUnit.DAY.toString());
 
         TestedMetric testedMetric = new TestedMetric(MetricType.PROJECT_TYPE_JAVA_JAR_NUMBER, mockedMetric, ValueType.NUMBER, "key1");
 

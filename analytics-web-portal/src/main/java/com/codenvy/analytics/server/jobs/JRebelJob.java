@@ -12,15 +12,9 @@ import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 
-import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
-import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.impl.JobDetailImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +52,6 @@ public class JRebelJob implements Job {
     private static final String MAIL_TO                        = "mail.to";
     private static final String MAIL_SUBJECT                   = "mail.subject";
     private static final String MAIL_TEXT                      = "mail.text";
-    private static final String CRON_SCHEDULING                = "cron.scheduling";
 
     private static final Logger LOGGER                         = LoggerFactory.getLogger(JRebelJob.class);
     private static final String JREBEL_PROPERTIES              = System.getProperty("analytics.job.jrebel.properties");
@@ -67,22 +60,6 @@ public class JRebelJob implements Job {
 
     public JRebelJob() throws IOException {
         this.jrebelProperties = readProperties();
-    }
-
-    /**
-     * @return initialized job
-     */
-    public JobDetail getJobDetail() {
-        JobDetailImpl jobDetail = new JobDetailImpl();
-        jobDetail.setKey(new JobKey(JRebelJob.class.getName()));
-        jobDetail.setJobClass(JRebelJob.class);
-
-        return jobDetail;
-    }
-
-    public Trigger getTrigger() {
-        String scheduling = jrebelProperties.getProperty(CRON_SCHEDULING);
-        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(scheduling)).build();
     }
 
     private Properties readProperties() throws IOException {

@@ -53,8 +53,8 @@ public class TestScriptDetailedProjectsBuilt extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        context.put(MetricParameter.TO_DATE.getName(), "20101001");
+        context.put(MetricParameter.FROM_DATE.name(), "20101001");
+        context.put(MetricParameter.TO_DATE.name(), "20101001");
 
         ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_BUILT, log, context);
 

@@ -32,7 +32,7 @@ public abstract class AbstractMetric implements Metric {
         LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 
         for (MetricParameter param : getParams()) {
-            String paramKey = param.getName();
+            String paramKey = param.name();
             String paramValue = context.get(paramKey);
 
             if (paramValue == null) {

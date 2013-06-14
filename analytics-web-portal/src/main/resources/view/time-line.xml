@@ -8,14 +8,14 @@
         <metric type="workspaces_created_number" title="Created"/>
         <metric type="workspaces_destroyed_number" title="Destroyed"/>
         <metric type="total_workspaces_number" title="Total"/>
-        <metric type="active_workspaces_number" title="# Active"/>
+        <metric type="active_workspaces_number" title="Active"/>
         <empty />
     </table>
     <table length="20">
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <metric type="users_created_number" title="Created"/>
         <metric type="total_users_number" title="Total"/>
-        <metric type="active_users_number" title="# Active"/>
+        <metric type="active_users_number" title="Active"/>
         <empty />
     </table>
     <table length="20">
@@ -42,9 +42,9 @@
     <table length="20">
         <date section="# User Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="product_usage_user_sessions_number_0_10,product_usage_user_sessions_number_10_60,product_usage_user_sessions_number_60_MORE" format="%,.0f" />
-        <metric type="product_usage_user_sessions_number_0_10" format="%,.0f" title="# &#0060; 10 Mins"/>
-        <metric type="product_usage_user_sessions_number_10_60" format="%,.0f" title="# &#0060; 10&#0062;60 Mins"/>
-        <metric type="product_usage_user_sessions_number_60_more" format="%,.0f" title="# &#0062; 60 Mins"/>
+        <metric type="product_usage_user_sessions_number_0_10" format="%,.0f" title="&#0060; 10 Mins"/>
+        <metric type="product_usage_user_sessions_number_10_60" format="%,.0f" title="&#0060; 10 And &#0062;60 Mins"/>
+        <metric type="product_usage_user_sessions_number_60_more" format="%,.0f" title="&#0062; 60 Mins"/>
         <empty />
     </table>
     <table length="20">
@@ -55,7 +55,7 @@
         <empty />
     </table>
     <table length="20">
-        <date section="# Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <date section="Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="project_type_java_jar_number,project_type_java_war_number,project_type_java_jsp_number,project_type_java_spring_number,project_type_php_number,project_type_python_number,project_type_javascript_number,project_type_ruby_number,project_type_mmp_number,project_type_nodejs_number,project_type_android_number,project_type_others_number" format="%.0f"/>
         <metric type="project_type_java_jar_number" format="%.0f" title="Java Jar"/>
         <metric type="project_type_java_war_number" format="%.0f" title="Java War"/>
@@ -72,7 +72,7 @@
         <empty />
     </table>
     <table length="20">
-        <date section="# Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
+        <date section="Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="paas_deployment_type_aws_number,paas_deployment_type_appfog_number,paas_deployment_type_cloudbees_number,paas_deployment_type_cloudfoundry_number,paas_deployment_type_gae_number,paas_deployment_type_heroku_number,paas_deployment_type_openshift_number,paas_deployment_type_tier3_number,paas_deployment_type_local_number" format="%.0f"/>
         <metric type="paas_deployment_type_aws_number" format="%.0f" title="AWS"/>
         <metric type="paas_deployment_type_appfog_number" format="%.0f" title="AppFog"/>

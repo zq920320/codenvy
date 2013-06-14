@@ -19,12 +19,10 @@
 package com.codenvy.analytics.scripts;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -32,7 +30,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +46,13 @@ public class TestUsersProfilePreparation extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101002");
+        params.put(MetricParameter.FROM_DATE.name(), "20101001");
+        params.put(MetricParameter.TO_DATE.name(), "20101002");
 
-        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_PROFILE_PREPARATION, log, params);
+        MapStringListListStringValueData value =
+                                                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_PROFILE_PREPARATION,
+                                                                                                          log, params);
 
         assertEquals(value.size(), 1L);
-        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("user1@gmail.com", "f2", "l2", "company"))));
     }
 }

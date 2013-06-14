@@ -31,8 +31,8 @@ public class ProductUsageTimeTopDomainsBy7DayMetric extends ScriptBasedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        context.put(MetricParameter.INTERVAL.getName(), "P7D");
-        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
+        context.put(MetricParameter.INTERVAL.name(), "P7D");
+        context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.DOMAINS.name());
 
         return super.getValue(context);
 

@@ -4,7 +4,7 @@
 IMPORT 'macros.pig';
 
 l1 = loadResources('$log');
-lR = filterByDate(l1, '$fromDate', '$toDate');
+lR = filterByDate(l1, '$FROM_DATE', '$TO_DATE');
 
 SPLIT lR INTO a1 IF INDEXOF(message, '#null#', 0) >= 0, b1 IF INDEXOF(message, '##', 0) >= 0, c1 IF INDEXOF(message, '[][][]', 0) >= 0;
 

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -111,12 +112,12 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
     }
 
     /** Stores value into the file. */
-    protected void store(ValueData value, Map<String, String> uuid) throws IOException {
+    protected void store(ValueData value, LinkedHashMap<String, String> uuid) throws IOException {
         FSValueDataManager.store(value, metricType, uuid);
     }
 
     /** Loads value from the file. */
-    protected ValueData load(Map<String, String> uuid) throws IOException {
+    protected ValueData load(LinkedHashMap<String, String> uuid) throws IOException {
         return FSValueDataManager.load(metricType, uuid);
     }
 

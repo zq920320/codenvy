@@ -23,8 +23,8 @@ import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -50,16 +50,15 @@ public class TestUsersActivityPreparation extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
+        params.put(MetricParameter.FROM_DATE.name(), "20101001");
+        params.put(MetricParameter.TO_DATE.name(), "20101001");
 
-        MapStringListValueData value = (MapStringListValueData)executeAndReturnResult(ScriptType.USERS_ACTIVITY_PREPARATION, log, params);
+        MapStringListListStringValueData value = (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_ACTIVITY_PREPARATION, log, params);
 
-        Map<String, ListStringValueData> all = value.getAll();
+        Map<String, ListListStringValueData> all = value.getAll();
         assertEquals(all.size(), 1);
         assertTrue(all.containsKey("user1"));
 
-        List<String> list = all.get("user1").getAll();
-        assertEquals(list.size(), 2);
+        assertEquals(all.get("user1").getAll().size(), 2);
     }
 }

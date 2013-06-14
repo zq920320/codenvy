@@ -2,7 +2,7 @@
  *    Copyright (C) 2013 Codenvy.
  *
  */
-package com.codenvy.analytics.events;
+package com.codenvy.analytics.metrics;
 
 import java.util.ArrayList;
 import java.util.List;

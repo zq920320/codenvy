@@ -4,8 +4,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
-
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -71,7 +69,7 @@ public class Utils {
      * Extracts {@link MetricParameter#TIME_UNIT} parameter value from context.
      */
     public static TimeUnit getTimeUnit(Map<String, String> context) {
-        return TimeUnit.valueOf(context.get(MetricParameter.TIME_UNIT.getName()));
+        return TimeUnit.valueOf(context.get(MetricParameter.TIME_UNIT.name()));
     }
 
     public static boolean isTimeUnitDay(Map<String, String> context) {
@@ -82,85 +80,85 @@ public class Utils {
      * Extracts {@link MetricParameter#TIME_UNIT} parameter value from context.
      */
     public static String getTimeUnitParam(Map<String, String> context) {
-        return context.get(MetricParameter.TIME_UNIT.getName());
+        return context.get(MetricParameter.TIME_UNIT.name());
     }
 
     /**
      * Extracts {@link MetricParameter#FROM_DATE} parameter value from context.
      */
     public static String getFromDateParam(Map<String, String> context) {
-        return context.get(MetricParameter.FROM_DATE.getName());
+        return context.get(MetricParameter.FROM_DATE.name());
     }
 
     /**
      * Extracts {@link MetricParameter#TO_DATE} parameter value from context.
      */
     public static String getToDateParam(Map<String, String> context) {
-        return context.get(MetricParameter.TO_DATE.getName());
+        return context.get(MetricParameter.TO_DATE.name());
     }
 
     /**
      * @return fromDate value
      */
     public static Calendar getFromDate(Map<String, String> context) throws IOException {
-        return parseDate(context.get(MetricParameter.FROM_DATE.getName()));
+        return parseDate(context.get(MetricParameter.FROM_DATE.name()));
     }
 
     /**
      * @return toDate value
      */
     public static Calendar getToDate(Map<String, String> context) throws IOException {
-        return parseDate(context.get(MetricParameter.TO_DATE.getName()));
+        return parseDate(context.get(MetricParameter.TO_DATE.name()));
     }
 
     /**
      * Puts {@link MetricParameter#FROM_DATE} parameter into context.
      */
     public static void putFromDate(Map<String, String> context, Calendar fromDate) {
-        context.put(MetricParameter.FROM_DATE.getName(), formatDate(fromDate));
+        context.put(MetricParameter.FROM_DATE.name(), formatDate(fromDate));
     }
 
     /**
      * Puts {@link MetricParameter#TO_DATE} parameter into context.
      */
     public static void putToDate(Map<String, String> context, Calendar toDate) {
-        context.put(MetricParameter.TO_DATE.getName(), formatDate(toDate));
+        context.put(MetricParameter.TO_DATE.name(), formatDate(toDate));
     }
 
     /**
      * Puts {@link MetricParameter#FROM_DATE} parameter into context.
      */
     public static void putFromDate(Map<String, String> context, Date fromDate) {
-        context.put(MetricParameter.FROM_DATE.getName(), formatDate(fromDate));
+        context.put(MetricParameter.FROM_DATE.name(), formatDate(fromDate));
     }
 
     /**
      * Puts {@link MetricParameter#TO_DATE} parameter into context.
      */
     public static void putToDate(Map<String, String> context, Date toDate) {
-        context.put(MetricParameter.TO_DATE.getName(), formatDate(toDate));
+        context.put(MetricParameter.TO_DATE.name(), formatDate(toDate));
     }
 
     /**
      * Puts {@link MetricParameter#TO_DATE} parameter into context.
      */
     public static void putTimeUnit(Map<String, String> context, TimeUnit timeUnit) {
-        context.put(MetricParameter.TIME_UNIT.getName(), timeUnit.toString());
+        context.put(MetricParameter.TIME_UNIT.name(), timeUnit.toString());
     }
 
     /** @param true if entry's key is {@link MetricParameter#TO_DATE} */
     public static boolean isToDateParam(Entry<String, String> entry) {
-        return entry.getKey().equals(MetricParameter.TO_DATE.getName());
+        return entry.getKey().equals(MetricParameter.TO_DATE.name());
     }
 
     /** @param true if entry's key is {@link MetricParameter#ALIAS} */
     public static boolean isAlias(Entry<String, String> entry) {
-        return entry.getKey().equals(MetricParameter.ALIAS.getName());
+        return entry.getKey().equals(MetricParameter.ALIAS.name());
     }
 
     /** @param true if entry's key is {@link MetricParameter#FROM_DATE} */
     public static boolean isFromDateParam(Entry<String, String> entry) {
-        return entry.getKey().equals(MetricParameter.FROM_DATE.getName());
+        return entry.getKey().equals(MetricParameter.FROM_DATE.name());
     }
 
     /** @param true if context contains {@link MetricParameter#TO_DATE} */
@@ -348,7 +346,7 @@ public class Utils {
 
     public static Map<String, String> initializeContext(int interval) throws IOException {
         Map<String, String> context = newContext();
-        context.put(MetricParameter.TO_DATE.getName(), MetricParameter.TO_DATE.getDefaultValue());
+        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
 
         Calendar calendar = getToDate(context);
         calendar.add(Calendar.DAY_OF_MONTH, -(interval - 1));
@@ -372,89 +370,14 @@ public class Utils {
      * Validates context. Throws {@link IllegalArgumentException} if something wrong.
      */
     public static void validate(Map<String, String> context, Metric metric) throws IllegalArgumentException {
-        final String df = "yyyy MMM dd";
-
         for (MetricParameter parameter : metric.getParams()) {
-            String name = parameter.getName();
+            String name = parameter.name();
             
             if (!context.containsKey(name)) {
                 throw new IllegalArgumentException("Parameter " + name + " was not set.");
             }
             
-            String value = context.get(name);
-
-            switch (parameter) {
-                case RESULT_DIR:
-                    break;
-
-                case ENTITY:
-                    for (ENTITY_TYPE eType : ENTITY_TYPE.values()) {
-                        if (eType.name().equals(value)) {
-                            continue;
-                        }
-                    }
-
-                    throw new IllegalArgumentException("The illegal entity parameter value " + value);
-
-                case INTERVAL:
-                    break;
-
-                case TIME_UNIT:
-                    TimeUnit.valueOf(value.toUpperCase());
-                    break;
-
-                case FROM_DATE:
-                    try {
-                        Calendar fromDate = Utils.parseDate(value);
-                        Calendar minDate = Utils.parseDate(parameter.getDefaultValue());
-
-                        if (fromDate.before(minDate)) {
-                            throw new IllegalArgumentException("The illegal fromDate parameter value '"
-                                                               + Utils.formatDate(fromDate, df)
-                                                               + "' The lowest allowed date is '"
-                                                               + Utils.formatDate(minDate, df)
-                                                               + "'");
-                        }
-                    } catch (IOException e) {
-                        throw new IllegalArgumentException("fromDate parameter has illegal format '" + value
-                                                           + "' The only supported format is 'yyyyMMdd'");
-                    }
-                    break;
-
-                case TO_DATE:
-                    try {
-                        Calendar toDate = Utils.parseDate(value);
-                        Calendar maxDate = Utils.parseDate(parameter.getDefaultValue());
-
-                        if (toDate.after(maxDate)) {
-                            throw new IllegalArgumentException("The illegal toDate parameter value: '"
-                                                               + Utils.formatDate(toDate, df)
-                                                               + "' The higest allowed date is '"
-                                                               + Utils.formatDate(maxDate, df)
-                                                               + "'");
-
-                        }
-
-                        if (containsFromDateParam(context)) {
-                            Calendar fromDate = getFromDate(context);
-                            if (fromDate.after(toDate)) {
-                                throw new IllegalArgumentException("The illegal toDate parameter value: '"
-                                                                   + Utils.formatDate(toDate, df)
-                                                                   + "'. Should be higher than fromDate parameter value: '"
-                                                                   + Utils.formatDate(fromDate, df)
-                                                                   + "'");
-                            }
-                        }
-
-                    } catch (IOException e) {
-                        throw new IllegalArgumentException("toDate parameter has illegal format '" + value
-                                                           + "'. The only supported format is 'yyyyMMdd'");
-                    }
-                    break;
-
-                default:
-                    throw new IllegalArgumentException("Unknown parameter " + name);
-            }
+            parameter.validate(context.get(name), context);
         }
     }
 }

@@ -7,7 +7,6 @@ package com.codenvy.analytics.server.vew.template;
 
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ListValueData;
 import com.codenvy.analytics.shared.RowData;
 
@@ -21,17 +20,15 @@ import java.util.Map;
 public class ListRow implements Row {
 
     private static final String ATTRIBUTE_TYPE   = "type";
-    private static final String ATTRIBUTE_TITLE = "title";
 
     private final Metric        metric;
-    private final String        title;
 
-    private ListRow(Metric metric, String title) {
+    private ListRow(Metric metric) {
         this.metric = metric;
-        this.title = title;
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
     public List<RowData> fill(Map<String, String> context, int length) throws Exception {
         ArrayList<RowData> result = new ArrayList<>();
@@ -40,13 +37,9 @@ public class ListRow implements Row {
         for (Object list : valueData.getAll()) {
             RowData row = new RowData();
 
-            if (list instanceof String) {
-                row.add((String)list);
-            } else if (list instanceof ListStringValueData) {
-                List<String> item = ((ListValueData<String>)list).getAll();
-                for (int i = 0; i < length; i++) {
-                    row.add(item.get(i));
-                }
+            List<String> item = ((ListValueData<String>)list).getAll();
+            for (int i = 0; i < length; i++) {
+                row.add(item.get(i));
             }
 
             result.add(row);
@@ -65,7 +58,6 @@ public class ListRow implements Row {
     /** Factory method */
     public static ListRow initialize(Element element) {
         Metric metric = MetricFactory.createMetric(element.getAttribute(ATTRIBUTE_TYPE));
-        String title = element.getAttribute(ATTRIBUTE_TITLE);
-        return new ListRow(metric, title);
+        return new ListRow(metric);
     }
 }

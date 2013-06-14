@@ -101,6 +101,9 @@ public class MetricFactory {
             case USER_ACTIVITY:
                 metric = new UsersActivityMetric();
                 break;
+            case USER_SESSIONS:
+                metric = new UsersSessionsMetric();
+                break;
             case USER_PROFILE_FIRSTNAME:
                 metric = new UsersProfileFirstNameMetric();
                 break;

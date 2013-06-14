@@ -11,24 +11,16 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.filters.Filter;
 import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
 import com.codenvy.organization.exception.OrganizationServiceException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
-import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
-import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.impl.JobDetailImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -83,8 +74,6 @@ public class ActOnJob implements Job {
     private static final String       MAIL_SUBJECT              = "mail.subject";
     private static final String       MAIL_TEXT                 = "mail.text";
 
-    private static final String       CRON_SCHEDULING           = "cron.scheduling";
-
     private static final String       USER_PROFILE_HEADERS      = "user-profile-headers";
     private static final String       METRIC_HEADERS            = "metric-headers";
     private static final String       USER_PROFILE_ATTRIBUTES   = "user-profile-attributes";
@@ -107,22 +96,6 @@ public class ActOnJob implements Job {
     public ActOnJob(ReadOnlyUserManager userManager, Properties actonProperties) throws IOException {
         this.userManager = userManager;
         this.actonProperties = actonProperties;
-    }
-
-    public Trigger getTrigger() {
-        String scheduling = actonProperties.getProperty(CRON_SCHEDULING);
-        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(scheduling)).build();
-    }
-
-    /**
-     * @return initialized job
-     */
-    public JobDetail getJobDetail() {
-        JobDetailImpl jobDetail = new JobDetailImpl();
-        jobDetail.setKey(new JobKey(ActOnJob.class.getName()));
-        jobDetail.setJobClass(ActOnJob.class);
-
-        return jobDetail;
     }
 
     /**
@@ -166,18 +139,6 @@ public class ActOnJob implements Job {
             LOGGER.info("ActOnJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
-
-    private void backup(File srcFile, Map<String, String> context) throws IOException {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
-        
-        File dir = new File(FSValueDataManager.RESULT_DIRECTORY, "acton");
-        dir = new File(dir, df.format(Utils.getToDate(context).getTime()));
-        
-        File dstFile = new File(dir, FILE_NAME);
-
-        FileUtils.copyFile(srcFile, dstFile);
-    }
-
 
     /**
      * Sends notification about transfered file.

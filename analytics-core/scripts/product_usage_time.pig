@@ -3,7 +3,7 @@ IMPORT 'macros.pig';
 %DEFAULT inactiveInterval '10';  -- in minutes
 
 f1 = loadResources('$log');
-fR = filterByDate(f1, '$fromDate', '$toDate');
+fR = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 
 t1 = extractUser(fR);
 tR = extractWs(t1);

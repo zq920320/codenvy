@@ -27,7 +27,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        // TODO duplicate
         Calendar fromDate = Utils.getFromDate(context);
         Calendar toDate = Utils.getToDate(context);
 

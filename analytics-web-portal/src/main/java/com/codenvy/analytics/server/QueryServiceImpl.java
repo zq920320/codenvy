@@ -61,7 +61,7 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
         Metric metric = MetricFactory.createMetric(metricTitle);
 
         for (MetricParameter sp : metric.getParams()) {
-            parameters.put(sp.getName(), sp.getDefaultValue());
+            parameters.put(sp.name(), sp.getDefaultValue());
         }
 
         return parameters;
@@ -114,7 +114,7 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
 
         for (MetricParameter sp : metric.getParams()) {
             ArrayList<String> metricParameter = new ArrayList<String>();
-            metricParameter.add(sp.getName());
+            metricParameter.add(sp.name());
             metricParameter.add(sp.getDefaultValue());
             metricParameter.add(prepareParamName(sp));
             parameters.add(metricParameter);

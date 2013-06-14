@@ -4,7 +4,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.events.MessageTransformer;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;

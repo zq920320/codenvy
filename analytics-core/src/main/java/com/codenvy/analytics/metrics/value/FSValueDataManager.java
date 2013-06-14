@@ -19,7 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 /**
@@ -42,7 +42,7 @@ public class FSValueDataManager {
     /**
      * {@inheritDoc}
      */
-    public static ValueData load(MetricType metricType, Map<String, String> uuid) throws IOException {
+    public static ValueData load(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
         File file = getFile(metricType, uuid);
         validateExistance(file);
 
@@ -64,7 +64,7 @@ public class FSValueDataManager {
     /**
      * {@inheritDoc}
      */
-    public static void store(ValueData value, MetricType metricType, Map<String, String> uuid) throws IOException {
+    public static void store(ValueData value, MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
         File file = getFile(metricType, uuid);
         ensureDestination(file);
 
@@ -88,7 +88,7 @@ public class FSValueDataManager {
     /**
      * Returns the file to store in or load value from.
      */
-    protected static File getFile(MetricType metricType, Map<String, String> uuid) throws IOException {
+    protected static File getFile(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
         File dir = new File(RESULT_DIRECTORY);
 
         StringBuilder builder = new StringBuilder();

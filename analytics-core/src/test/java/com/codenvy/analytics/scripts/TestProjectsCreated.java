@@ -55,8 +55,8 @@ public class TestProjectsCreated extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101001");
-        params.put(MetricParameter.TO_DATE.getName(), "20101001");
+        params.put(MetricParameter.FROM_DATE.name(), "20101001");
+        params.put(MetricParameter.TO_DATE.name(), "20101001");
 
         ListListStringValueData value =
                                         (ListListStringValueData)executeAndReturnResult(ScriptType.PROJECTS_CREATED, log, params);

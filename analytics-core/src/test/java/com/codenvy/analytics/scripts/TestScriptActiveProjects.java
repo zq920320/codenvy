@@ -54,8 +54,8 @@ public class TestScriptActiveProjects extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101002");
-        params.put(MetricParameter.TO_DATE.getName(), "20101002");
+        params.put(MetricParameter.FROM_DATE.name(), "20101002");
+        params.put(MetricParameter.TO_DATE.name(), "20101002");
 
         ListListStringValueData valueData = (ListListStringValueData)executeAndReturnResult(ScriptType.ACTIVE_PROJECTS, log, params);
         List<ListStringValueData> all = valueData.getAll();

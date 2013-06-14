@@ -28,7 +28,7 @@ import org.testng.annotations.BeforeClass;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -38,16 +38,16 @@ public class BaseTest {
     /** Relative path to temporary files. */
     public static final String        BASE_DIR = "target";
 
-    protected TupleFactory            tupleFactory;
-    protected HashMap<String, String> uuid;
+    protected TupleFactory                  tupleFactory;
+    protected LinkedHashMap<String, String> uuid;
 
     @BeforeClass
     public void setUp() throws Exception {
         tupleFactory = TupleFactory.getInstance();
 
-        uuid = new HashMap<String, String>();
-        uuid.put(MetricParameter.FROM_DATE.getName(), "20130520");
-        uuid.put(MetricParameter.TO_DATE.getName(), "20130520");
+        uuid = new LinkedHashMap<String, String>();
+        uuid.put(MetricParameter.FROM_DATE.name(), "20130520");
+        uuid.put(MetricParameter.TO_DATE.name(), "20130520");
     }
 
     protected ValueData executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
@@ -65,10 +65,10 @@ public class BaseTest {
     }
 
     protected void putToDate(Map<String, String> params, String toDate) {
-        params.put(MetricParameter.TO_DATE.getName(), toDate);
+        params.put(MetricParameter.TO_DATE.name(), toDate);
     }
 
     protected void putFromDate(Map<String, String> params, String toDate) {
-        params.put(MetricParameter.FROM_DATE.getName(), toDate);
+        params.put(MetricParameter.FROM_DATE.name(), toDate);
     }
 }

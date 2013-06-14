@@ -157,7 +157,7 @@ public class PigScriptExecutor implements ScriptExecutor {
      */
     private void validateParameters(ScriptType scriptType, Map<String, String> context) throws IOException {
         for (MetricParameter param : scriptType.getParams()) {
-            if (!context.containsKey(param.getName())) {
+            if (!context.containsKey(param.name())) {
                 throw new IOException("Key field " + param + " is absent in execution context");
             }
         }

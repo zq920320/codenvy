@@ -52,8 +52,8 @@ public class TestActiveProjectsNumberMetric extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.getName(), "20101002");
-        params.put(MetricParameter.TO_DATE.getName(), "20101002");
+        params.put(MetricParameter.FROM_DATE.name(), "20101002");
+        params.put(MetricParameter.TO_DATE.name(), "20101002");
         params.put(PigScriptExecutor.LOG, log.getParent());
 
         Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_PROJECTS_NUMBER);

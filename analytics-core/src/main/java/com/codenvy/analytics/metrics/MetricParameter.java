@@ -18,9 +18,11 @@
  */
 package com.codenvy.analytics.metrics;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
@@ -31,8 +33,10 @@ public enum MetricParameter {
         }
 
         @Override
-        public String getName() {
-            return "alias";
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            if (value == null) {
+                throw new IllegalArgumentException("ALIAS parameter is null");
+            }
         }
     },
 
@@ -43,8 +47,8 @@ public enum MetricParameter {
         }
 
         @Override
-        public String getName() {
-            return "timeUnit";
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            TimeUnit.valueOf(value.toUpperCase());
         }
     },
 
@@ -55,8 +59,22 @@ public enum MetricParameter {
         }
 
         @Override
-        public String getName() {
-            return "fromDate";
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            try {
+                Calendar fromDate = Utils.parseDate(value);
+                Calendar minDate = Utils.parseDate(getDefaultValue());
+
+                if (fromDate.before(minDate)) {
+                    throw new IllegalArgumentException("The illegal FROM_DATE parameter value '"
+                                                       + Utils.formatDate(fromDate, PARAM_DATE_FORMAT)
+                                                       + "' The lowest allowed date is '"
+                                                       + Utils.formatDate(minDate, PARAM_DATE_FORMAT)
+                                                       + "'");
+                }
+            } catch (IOException e) {
+                throw new IllegalArgumentException("FROM_DATE parameter has illegal format '" + value
+                                                   + "' The only supported format is '" + PARAM_DATE_FORMAT + "'");
+            }
         }
     },
 
@@ -67,8 +85,14 @@ public enum MetricParameter {
         }
 
         @Override
-        public String getName() {
-            return "entity";
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            for (ENTITY_TYPE eType : ENTITY_TYPE.values()) {
+                if (eType.name().equals(value)) {
+                    return;
+                }
+            }
+
+            throw new IllegalArgumentException("The illegal ENTITY parameter value " + value);
         }
     },
 
@@ -79,20 +103,24 @@ public enum MetricParameter {
         }
 
         @Override
-        public String getName() {
-            return "interval";
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            if (value == null) {
+                throw new IllegalArgumentException("INTERVAL parameter is null");
+            }
         }
     },
 
     RESULT_DIR {
         @Override
         public String getDefaultValue() {
-            return ".";
+            return null;
         }
 
         @Override
-        public String getName() {
-            return "resultDir";
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            if (value == null) {
+                throw new IllegalArgumentException("RESULT_DIR parameter is null");
+            }
         }
     },
 
@@ -107,29 +135,48 @@ public enum MetricParameter {
         }
 
         @Override
-        public String getName() {
-            return "toDate";
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            try {
+                Calendar toDate = Utils.parseDate(value);
+                Calendar maxDate = Utils.parseDate(getDefaultValue());
+
+                if (toDate.after(maxDate)) {
+                    throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
+                                                       + Utils.formatDate(toDate, PARAM_DATE_FORMAT)
+                                                       + "' The higest allowed date is '"
+                                                       + Utils.formatDate(maxDate, PARAM_DATE_FORMAT)
+                                                       + "'");
+
+                }
+
+                if (Utils.containsFromDateParam(context)) {
+                    Calendar fromDate = Utils.getFromDate(context);
+                    if (fromDate.after(toDate)) {
+                        throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
+                                                           + Utils.formatDate(toDate, PARAM_DATE_FORMAT)
+                                                           + "'. Should be higher than fromDate parameter value: '"
+                                                           + Utils.formatDate(fromDate, PARAM_DATE_FORMAT)
+                                                           + "'");
+                    }
+                }
+
+            } catch (IOException e) {
+                throw new IllegalArgumentException("TO_DATE parameter has illegal format '" + value
+                                                   + "'. The only supported format is 'yyyyMMdd'");
+            }
         }
     };
 
-    /**
-     * The date format is used in scripts.
-     */
-    public static final String PARAM_DATE_FORMAT = "yyyyMMdd";
-
-    /**
-     * @return the default value for given parameter.
-     */
+    /** @return the default value for given parameter. */
     public abstract String getDefaultValue();
 
-    /**
-     * @return the parameter's name is used in script
-     */
-    public abstract String getName();
+    /** Validates the value of parameter. Throws {@link IllegalArgumentException} if something wrong. */
+    public abstract void validate(String value, Map<String, String> context) throws IllegalStateException;
 
-    /**
-     * Enumeration for {@link MetricParameter#ENTITY}
-     */
+    /** The date format is used in scripts. */
+    public static final String PARAM_DATE_FORMAT = "yyyyMMdd";
+
+    /** Enumeration for {@link MetricParameter#ENTITY} */
     public enum ENTITY_TYPE {
         USERS,
         COMPANIES,

@@ -17,7 +17,7 @@ import java.util.Map;
 public class ProductUsageTimeTopDomainsByLifeTimeMetric extends ScriptBasedMetric {
 
     ProductUsageTimeTopDomainsByLifeTimeMetric() {
-        super(MetricType.PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_1DAY);
+        super(MetricType.PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME);
     }
 
     /**
@@ -31,8 +31,8 @@ public class ProductUsageTimeTopDomainsByLifeTimeMetric extends ScriptBasedMetri
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        context.put(MetricParameter.INTERVAL.getName(), "P100Y");
-        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.DOMAINS.name());
+        context.put(MetricParameter.INTERVAL.name(), "P100Y");
+        context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.DOMAINS.name());
 
         return super.getValue(context);
     }

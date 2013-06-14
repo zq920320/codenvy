@@ -12,17 +12,15 @@ import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertEquals;
 
 import com.codenvy.analytics.BaseTest;
-
-
-import java.io.ByteArrayInputStream;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import java.io.ByteArrayInputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -51,24 +49,24 @@ public class TestInitialValueContainer extends BaseTest {
     @BeforeMethod
     public void setUp() throws Exception {
         context1 = new LinkedHashMap<String, String>();
-        context1.put("fromDate", "20091102");
-        context1.put("toDate", "20091102");
+        context1.put("FROM_DATE", "20091102");
+        context1.put("TO_DATE", "20091102");
 
         context2 = new LinkedHashMap<String, String>();
-        context2.put("fromDate", "20091103");
-        context2.put("toDate", "20091103");
+        context2.put("FROM_DATE", "20091103");
+        context2.put("TO_DATE", "20091103");
 
         context3 = new LinkedHashMap<String, String>();
-        context3.put("fromDate", "20091103");
-        context3.put("toDate", "20091103");
+        context3.put("FROM_DATE", "20091103");
+        context3.put("TO_DATE", "20091103");
 
         context4 = new LinkedHashMap<String, String>();
-        context4.put("fromDate", "20091104");
-        context4.put("toDate", "20091104");
+        context4.put("FROM_DATE", "20091104");
+        context4.put("TO_DATE", "20091104");
 
         context5 = new LinkedHashMap<String, String>();
-        context5.put("fromDate", "20091101");
-        context5.put("toDate", "20091101");
+        context5.put("FROM_DATE", "20091101");
+        context5.put("TO_DATE", "20091101");
 
 
         mockedContainer = spy(InitialValueContainer.getInstance());

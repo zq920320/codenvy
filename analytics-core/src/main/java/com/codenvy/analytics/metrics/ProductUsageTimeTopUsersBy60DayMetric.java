@@ -31,8 +31,8 @@ public class ProductUsageTimeTopUsersBy60DayMetric extends ScriptBasedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        context.put(MetricParameter.INTERVAL.getName(), "P60D");
-        context.put(MetricParameter.ENTITY.getName(), ENTITY_TYPE.USERS.name());
+        context.put(MetricParameter.INTERVAL.name(), "P60D");
+        context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.USERS.name());
 
         return super.getValue(context);
     }

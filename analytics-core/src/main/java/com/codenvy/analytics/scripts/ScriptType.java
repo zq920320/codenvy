@@ -8,7 +8,7 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListValueData;
+import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.util.Arrays;
@@ -41,11 +41,25 @@ public enum ScriptType {
     USERS_WITHOUT_DEPLOYES,
     USERS_WITHOUT_INVITES,
     PRODUCT_USAGE_TIME,
-    USERS_PROFILE_PREPARATION,
+
+    USERS_PROFILE_PREPARATION {
+        @Override
+        public Class< ? extends ValueData> getValueDataClass() {
+            return MapStringListListStringValueData.class;
+        }
+    },
+
+    USERS_SESSIONS_PREPARATION {
+        @Override
+        public Class< ? extends ValueData> getValueDataClass() {
+            return MapStringListListStringValueData.class;
+        }
+    },
+
     USERS_ACTIVITY_PREPARATION {
         @Override
         public Class< ? extends ValueData> getValueDataClass() {
-            return MapStringListValueData.class;
+            return MapStringListListStringValueData.class;
         }
     },
 
@@ -94,7 +108,6 @@ public enum ScriptType {
                     MetricParameter.TO_DATE}));
         }
     },
-
 
     PRODUCT_USAGE_TIME_DOMAINS {
         @Override

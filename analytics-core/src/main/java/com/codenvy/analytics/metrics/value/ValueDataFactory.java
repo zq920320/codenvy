@@ -76,7 +76,7 @@ public class ValueDataFactory {
             return createMapStringLongValueData(iter);
         }
 
-        else if (clazz == MapStringListValueData.class) {
+        else if (clazz == MapStringListListStringValueData.class) {
             return createMapStringListValueData(iter);
         }
 
@@ -86,22 +86,22 @@ public class ValueDataFactory {
 
     private static ValueData createMapStringListValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new MapStringListValueData(Collections.<String, ListStringValueData> emptyMap());
+            return new MapStringListListStringValueData(Collections.<String, ListListStringValueData> emptyMap());
         }
 
-        Map<String, ListStringValueData> result = new HashMap<String, ListStringValueData>();
+        Map<String, ListListStringValueData> result = new HashMap<String, ListListStringValueData>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
             validateTupleSize(tuple, 2);
 
             String key = tuple.get(0).toString();
-            ListStringValueData value = createListStringValueData(((DataBag)tuple.get(1)).iterator());
+            ListListStringValueData value = createListListStringValueData(((DataBag)tuple.get(1)).iterator());
 
             result.put(key, value);
         }
 
-        return new MapStringListValueData(result);
+        return new MapStringListListStringValueData(result);
     }
 
 
@@ -124,7 +124,6 @@ public class ValueDataFactory {
 
         return new MapStringLongValueData(result);
     }
-
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static ListListStringValueData createListListStringValueData(Iterator<Tuple> iter) throws IOException {
