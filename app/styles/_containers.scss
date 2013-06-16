@@ -89,14 +89,36 @@
     padding-bottom: 2em;
 }
 
-.container.super-light-n-framed {
+.container.light-n-framed-nopad {
     @include framing;
 
-    padding-top: 2em;
+    background-color:#fff;
+    padding-top: 0;
     padding-bottom: 2em;
 }
 
+.container.super-light-n-framed-nopad {
+    @include framing;
+    background-color:#fff;
+    padding-top: 0;
+    padding-bottom: 2em;
+}
 
+.container.partial-framed {
+    border-left: solid 1px $container-border-color;
+    border-right: solid 1px $container-border-color;
+    background-color:#fff;
+    padding-top: 1em;
+    padding-bottom: 0;
+}
+
+.container.partial-framed-nopad {
+    border-left: solid 1px $container-border-color;
+    border-right: solid 1px $container-border-color;
+    background-color:#fff;
+    padding-top: 0;
+    padding-bottom: 0;
+}
 .container.light-gradient {
     @include light-gradient;
 }
