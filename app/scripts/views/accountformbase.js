@@ -16,12 +16,12 @@ define(["jquery","models/account","views/form","validation"],
         var AccountFormBase = Form.extend({
 
             settings : {
-                noDomainErrorMessage : "Please specify a domain name.",
+                noDomainErrorMessage : "Please specify a workspace name.",
                 noEmailErrorMessage : "Please provide an email address.",
                 noPasswordErrorMessage : "Please provide your account password.",
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match.",
                 invalidEmailErrorMessage : "Please, provide a valid email address which should start with Latin letters and contain Latin letters, digits, dashes, underscores and periods",
-                invalidDomainNameErrorMessage : "Your domain name should start with Latin letters and must only contain Latin letters, digits or a dash in the middle of a domain name."
+                invalidDomainNameErrorMessage : "Your workspace name should start with Latin letters and must only contain Latin letters, digits or a dash in the middle of a workspace name."
             },
 
             __validationRules : function(){
