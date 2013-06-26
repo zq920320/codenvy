@@ -145,12 +145,12 @@
                 }
 
                 return (
-                    /^[A-Za-z]{1}[A-Za-z0-9\-]{0,19}\.codenvy\.com/g
+                    /^[a-z0-9][a-z0-9_.-]{2,19}$/
                 ).exec(domain) !== null ;
             },
 
             isValidEmail : function(email){
-                return (/^[A-Za-z]{1}[a-zA-Z0-9@_\.-]+$/).test(email);
+                return (/^[^\+]+$/).test(email);
             },
 
             login : function(form){

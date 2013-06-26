@@ -7,7 +7,7 @@ define(["jquery","models/account","views/form","validation"],
         */
 
         jQuery.validator.addMethod("validDomain", function(value) {
-            return Account.isValidDomain(value+".codenvy.com");
+            return Account.isValidDomain(value.toLowerCase());
         });
         jQuery.validator.addMethod("checkEmail", function(value) {
             return Account.isValidEmail(value);
@@ -20,8 +20,8 @@ define(["jquery","models/account","views/form","validation"],
                 noEmailErrorMessage : "Please provide an email address.",
                 noPasswordErrorMessage : "Please provide your account password.",
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match.",
-                invalidEmailErrorMessage : "Please, provide a valid email address which should start with Latin letters and contain Latin letters, digits, dashes, underscores and periods",
-                invalidDomainNameErrorMessage : "Your workspace name should start with Latin letters and must only contain Latin letters, digits or a dash in the middle of a workspace name."
+                invalidEmailErrorMessage : "Please, provide an email address which no contain '+'",
+                invalidDomainNameErrorMessage : "Your workspace name should start with a Latin letter or a digit and must only contain a Latin letters, digits, underscores or a dashes."
             },
 
             __validationRules : function(){
