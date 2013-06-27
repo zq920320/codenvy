@@ -436,7 +436,7 @@
                         error : function(xhr){
                             if(isBadGateway(xhr)){
                                 error([
-                                    new AccountError(null,"The requested domain is not available. Please, contact support.")
+                                    new AccountError(null,"The requested workspace is not available. Please, contact support.")
                                 ]);
                             } else {
                                 error([
