@@ -132,18 +132,6 @@
 
             isValidDomain : function(domain){
 
-                //check for the trailing dash
-                var d = domain || "", ds = d.split(".codenvy.com");
-
-                if(ds.length === 2){
-
-                    var name = ds[0];
-
-                    if(name[name.length-1] === '-'){
-                        return false;
-                    }
-                }
-
                 return (
                     /^[a-z0-9][a-z0-9_.-]{2,19}$/
                 ).exec(domain) !== null ;
