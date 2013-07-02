@@ -8,7 +8,7 @@
     </formats>
     <fileSets>
       <fileSet>
-        <directory>${basedir}/build/dist/prod</directory>
+        <directory>target/dist/prod</directory>
         <outputDirectory>/</outputDirectory>
       </fileSet>
     </fileSets>

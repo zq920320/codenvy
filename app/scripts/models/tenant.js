@@ -13,7 +13,7 @@
 
             __buildTenantUrl : function(){
                 return window.location.protocol +
-                    "//" + this.get("name") + "." + window.location.host + location.search.substr(0);
+                    "//" + window.location.host + "/ide/" + this.get("name") + location.search.substr(0);
             }
 
         });

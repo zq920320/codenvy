@@ -1,11 +1,29 @@
 temp
-target
 dist
-.DS_Store
 .sass-cache
 _site
 test/scripts
 .bin
 app/**/*.css
+
+# Idea #
+##################
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Eclipse  #
+###################
+.classpath
 .project
 .settings/
+target/
+bin/
+test-output/
+
+
+# OS generated files #
+######################
+*~
+.DS_Store

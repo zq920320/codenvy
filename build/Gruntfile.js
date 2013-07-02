@@ -87,31 +87,31 @@ module.exports = function( grunt ) {
             files: [
                 // scripts
 
-                {expand: true, cwd: '../app/scripts/', src: ['**'], dest: 'dist/gh/scripts/'},
+                {expand: true, cwd: '../app/scripts/', src: ['**'], dest: '../target/dist/gh/scripts/'},
 
                 // styles
 
-                {expand: true, cwd: '../app/_site/styles/', src : '*.css', dest: 'dist/gh/styles/'},
+                {expand: true, cwd: '../app/styles/', src : '*.css', dest: '../target/dist/gh/styles/'},
 
                 // images
 
-                {expand: true, cwd: '../app/images/', src: ['**'], dest: 'dist/gh/images/'},
+                {expand: true, cwd: '../app/images/', src: ['**'], dest: '../target/dist/gh/images/'},
 
                 // fonts
 
-                {expand: true, cwd: '../app/fonts/', src: ['**'], dest: 'dist/gh/fonts/'},
+                {expand: true, cwd: '../app/fonts/', src: ['**'], dest: '../target/dist/gh/fonts/'},
 
                 // pages
 
-                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html'], dest: 'dist/gh/'},
+                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html'], dest: '../target/dist/gh/'},
 
                 // templates
 
-                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/gh/templates/'},
+                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: '../target/dist/gh/templates/'},
                 
                 // robots.txt
 
-                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: 'dist/gh/'}
+                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/gh/'}
             ]
         },
 
@@ -119,31 +119,31 @@ module.exports = function( grunt ) {
             files: [
                 // scripts
 
-                {expand: true, cwd: '../app/scripts/', src: ['**'], dest: 'dist/stage/scripts/'},
+                {expand: true, cwd: '../app/scripts/', src: ['**'], dest: '../target/dist/stage/scripts/'},
 
                 // styles
 
-                {expand: true, cwd: '../app/_site/styles/', src : '*.css', dest: 'dist/stage/styles/'},
+                {expand: true, cwd: '../app/styles/', src : '*.css', dest: '../target/dist/stage/styles/'},
 
                 // images
 
-                {expand: true, cwd: '../app/images/', src: ['**'], dest: 'dist/stage/images/'},
+                {expand: true, cwd: '../app/images/', src: ['**'], dest: '../target/dist/stage/images/'},
 
                 // fonts
 
-                {expand: true, cwd: '../app/fonts/', src: ['**'], dest: 'dist/stage/fonts/'},
+                {expand: true, cwd: '../app/fonts/', src: ['**'], dest: '../target/dist/stage/fonts/'},
 
                 // pages
 
-                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html'], dest: 'dist/stage/'},
+                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html'], dest: '../target/dist/stage/'},
 
                 // templates
 
-                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: 'dist/stage/templates/'},
+                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: '../target/dist/stage/templates/'},
                 
                 // robots.txt
 
-                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: 'dist/stage/'}
+                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/stage/'}
             ]
         },
 
@@ -155,7 +155,7 @@ module.exports = function( grunt ) {
                     expand: true,
                     cwd: '../dist/scripts/',
                     src: ['vendor/modernizr*.js','*.amd-app.js'],
-                    dest: 'dist/prod/scripts/'
+                    dest: '../target/dist/prod/scripts/'
                 },
 
                 // styles
@@ -164,7 +164,7 @@ module.exports = function( grunt ) {
                     expand: true,
                     cwd: '../dist/styles/',
                     src : '*.css',
-                    dest: 'dist/prod/styles/'
+                    dest: '../target/dist/prod/styles/'
                 },
 
                 // images
@@ -173,7 +173,7 @@ module.exports = function( grunt ) {
                     expand: true,
                     cwd: '../dist/images/',
                     src: ['**'],
-                    dest: 'dist/prod/images/'
+                    dest: '../target/dist/prod/images/'
                 },
 
                 // fonts
@@ -182,7 +182,7 @@ module.exports = function( grunt ) {
                     expand: true,
                     cwd: '../dist/fonts/',
                     src: ['**'],
-                    dest: 'dist/prod/fonts/'
+                    dest: '../target/dist/prod/fonts/'
                 },
 
                 // pages
@@ -191,12 +191,12 @@ module.exports = function( grunt ) {
                     expand: true,
                     cwd: '../dist/_site/',
                     src: ['*.html','**/*.html'],
-                    dest: 'dist/prod/'
+                    dest: '../target/dist/prod/'
                 },
                 
                 // robots.txt
 
-                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: 'dist/prod/'}
+                {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/prod/'}
             ]
         }
     },

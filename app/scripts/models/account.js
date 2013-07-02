@@ -62,6 +62,11 @@
                 var url = "/sso/server/gen?authType=oauth&oauth_provider=google" +
                    "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email";
                 //window.location = url;
+                if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url")){
+                   url += "&redirect_url=" + getQueryParameterByName("redirect_url");
+                   url += "&client_url=" + getQueryParameterByName("client_url");
+                }
+
                 if(typeof callback !== 'undefined'){
                     callback(url);
                 }
@@ -72,6 +77,11 @@
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
                 var url = "/sso/server/gen?authType=oauth&oauth_provider=github&scope=user&scope=repo";
+                if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url")){
+                   url += "&redirect_url=" + getQueryParameterByName("redirect_url");
+                   url += "&client_url=" + getQueryParameterByName("client_url");
+                }
+
                 if(typeof callback !== 'undefined'){
                     callback(url);
                 }
@@ -122,25 +132,13 @@
 
             isValidDomain : function(domain){
 
-                //check for the trailing dash
-                var d = domain || "", ds = d.split(".codenvy.com");
-
-                if(ds.length === 2){
-
-                    var name = ds[0];
-
-                    if(name[name.length-1] === '-'){
-                        return false;
-                    }
-                }
-
                 return (
-                    /^[A-Za-z]{1}[A-Za-z0-9\-]{0,19}\.codenvy\.com/g
+                    /^[a-z0-9][a-z0-9_.-]{2,19}$/
                 ).exec(domain) !== null ;
             },
 
             isValidEmail : function(email){
-                return (/^[A-Za-z]{1}[a-zA-Z0-9@_\.-]+$/).test(email);
+                return (/^[^\+]+$/).test(email);
             },
 
             login : function(form){
@@ -426,7 +424,7 @@
                         error : function(xhr){
                             if(isBadGateway(xhr)){
                                 error([
-                                    new AccountError(null,"The requested domain is not available. Please, contact support.")
+                                    new AccountError(null,"The requested workspace is not available. Please, contact support.")
                                 ]);
                             } else {
                                 error([
