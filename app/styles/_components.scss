@@ -766,15 +766,37 @@ a.blue-link{
 }
 
 p a {
+#details p a {
     color: #60AFD9; 
 }
 
 
+/*
+
+    Home Page CTA
+
+ */
+ 
+ .cta {
+    max-width: 947px;
+    width: auto;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0;   
+}
+
+ .cta-mobile {
+    max-width: 480px;
+    width: auto;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0;   
+}
 
 
-
-
-
+ .cta-banner, .cta-banner-m {
+    display: none;
+}
 
 
 
