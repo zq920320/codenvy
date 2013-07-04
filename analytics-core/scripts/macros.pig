@@ -160,22 +160,15 @@ DEFINE prepareSet(X, fieldNameParam) RETURNS Y {
 -- Finds last updates user profile
 -- @return {user : chararray, firstName : chararray, lastName : chararray, company : chararry}
 ---------------------------------------------------------------------------
-DEFINE prepareUserProfiles(X) RETURNS Y {
-  w2 = filterByEvent($X, 'user-update-profile');
-  w3 = extractUser(w2);
-  w4 = smartExtractParam(w3, 'FIRSTNAME', 'firstName');
-  w5 = smartExtractParam(w4, 'LASTNAME', 'lastName');
-  w6 = smartExtractParam(w5, 'COMPANY', 'company');
-  w = FOREACH w6 GENERATE user, firstName, lastName, company, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
-
+DEFINE lastUserProfileUpdate(X) RETURNS Y {
   -------------------------------------
   -- Finds the most last update
   -------------------------------------
-  y1 = GROUP w BY user;
-  y2 = FOREACH y1 GENERATE *, MAX(w.delta) AS maxDelta;
-  y3 = FOREACH y2 GENERATE group AS user, maxDelta, FLATTEN(w);
+  y1 = GROUP $X BY user;
+  y2 = FOREACH y1 GENERATE *, MAX($X.delta) AS maxDelta;
+  y3 = FOREACH y2 GENERATE group AS user, maxDelta, FLATTEN($X);
   y4 = FILTER y3 BY delta == maxDelta;
-  $Y = FOREACH y4 GENERATE user, w::firstName AS firstName, w::lastName AS lastName, w::company AS company;
+  $Y = FOREACH y4 GENERATE user, $X::firstName AS firstName, $X::lastName AS lastName, $X::company AS company;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -281,7 +274,7 @@ DEFINE domainsByTimeSpent(X) RETURNS Y {
 -- @return {user: bytearray,count: long, time: long}
 ---------------------------------------------------------------------------------------------
 DEFINE companiesByTimeSpent(X, resultDirParam) RETURNS Y {
-  w1 = LOAD '$resultDirParam/COMPANIES' USING PigStorage() AS (user: chararray, firstName: chararray, lastName: chararray, company: chararray);
+  w1 = LOAD '$resultDirParam/PROFILES' USING PigStorage() AS (user: chararray, firstName: chararray, lastName: chararray, company: chararray);
   w2 = JOIN $X BY user LEFT, w1 BY user;
   w3 = FILTER w2 BY w1::company IS NOT NULL;
   w4 = FOREACH w3 GENERATE w1::company AS user, $X::count AS count, $X::delta AS delta;

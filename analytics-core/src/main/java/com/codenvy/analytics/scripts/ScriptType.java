@@ -67,7 +67,9 @@ public enum ScriptType {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR}));
+                    MetricParameter.RESULT_DIR,
+                    MetricParameter.FROM_DATE,
+                    MetricParameter.TO_DATE}));
         }
     },
 

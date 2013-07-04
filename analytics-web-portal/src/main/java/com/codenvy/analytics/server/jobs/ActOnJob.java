@@ -51,7 +51,7 @@ import javax.net.ssl.SSLException;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActOnJob implements Job {
+public class ActOnJob implements Job, ForceableJobRunByContext {
     public static final String        FILE_NAME                 = "ideuserupdate.csv";
 
     private static final String       EMAIL                     = "email";
@@ -118,11 +118,20 @@ public class ActOnJob implements Job {
      * {@inheritDoc}
      */
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        try {
+            run(initilalizeContext());
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new JobExecutionException(e);
+        }
+    }
+
+    private void run(Map<String, String> context) throws IOException {
         LOGGER.info("ActOnJob is started");
         long start = System.currentTimeMillis();
 
         try {
-            File file = prepareFile();
+            File file = prepareFile(context);
 
             transfer(file);
             sendMail(file.getName());
@@ -132,9 +141,6 @@ public class ActOnJob implements Job {
             if (!file.delete()) {
                 LOGGER.warn("File " + file.getName() + " can not be removed");
             }
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
         } finally {
             LOGGER.info("ActOnJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
@@ -245,8 +251,7 @@ public class ActOnJob implements Job {
         }
     }
 
-    protected File prepareFile() throws IOException {
-        Map<String, String> context = initilalizeContext();
+    protected File prepareFile(Map<String, String> context) throws IOException {
         File file = new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
 
         Set<String> activeUsers = getActiveUsers(context);
@@ -262,8 +267,6 @@ public class ActOnJob implements Job {
         } finally {
             out.close();
         }
-
-        // backup(file, context);
 
         return file;
     }
@@ -350,5 +353,11 @@ public class ActOnJob implements Job {
         Filter filter = new UsersWorkspacesFilter(listVD);
 
         return filter.getAvailable(MetricFilter.FILTER_USER);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void forceRun(Map<String, String> context) throws Exception {
+        run(context);
     }
 }

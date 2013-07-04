@@ -13,12 +13,10 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TimeLineViewJob implements Job {
+public class TimeLineViewJob implements Job, ForceableRunOnceJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeLineViewJob.class);
 
@@ -34,7 +32,7 @@ public class TimeLineViewJob implements Job {
     }
 
     /** {@inheritDoc} */
-    public void forceRun(Map<String, String> context) throws Exception {
+    public void forceRun() throws Exception {
         run();
     }
 

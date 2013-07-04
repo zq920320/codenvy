@@ -78,7 +78,6 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
 
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
         executor.execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, context);
-        executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
 
         context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.USERS.name());
 

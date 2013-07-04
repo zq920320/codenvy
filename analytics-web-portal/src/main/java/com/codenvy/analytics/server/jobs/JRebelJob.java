@@ -38,7 +38,7 @@ import javax.mail.internet.MimeMessage;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class JRebelJob implements Job {
+public class JRebelJob implements Job, ForceableJobRunByContext {
 
     private static final String MESSAGE_TEMPLATE_DATE          = "${date}";
     private static final String MESSAGE_TEMPLATE_USER_PROFILES = "${user_profiles}";
@@ -79,12 +79,22 @@ public class JRebelJob implements Job {
      * {@inheritDoc}
      */
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        try {
+            Map<String, String> initializeContext = Utils.initializeContext(TimeUnit.DAY, new Date());
+
+            run(initializeContext);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new JobExecutionException(e);
+        }
+    }
+
+    private void run(Map<String, String> initializeContext) throws IOException {
         LOGGER.info("JRebelJob is started");
         long start = System.currentTimeMillis();
 
         try {
             Metric metric = MetricFactory.createMetric(MetricType.JREBEL_USER_PROFILE_INFO_GATHERING);
-            Map<String, String> initializeContext = Utils.initializeContext(TimeUnit.DAY, new Date());
 
             ListListStringValueData value = (ListListStringValueData)metric.getValue(initializeContext);
             StringBuilder builder = new StringBuilder();
@@ -94,10 +104,7 @@ public class JRebelJob implements Job {
             }
 
             sendMail(builder.toString(), Utils.getToDateParam(initializeContext));
-        } catch (IOException e) {
-            throw new JobExecutionException(e);
-        }
-        finally {
+        } finally {
             LOGGER.info("JRebelJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
@@ -130,4 +137,9 @@ public class JRebelJob implements Job {
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void forceRun(Map<String, String> context) throws Exception {
+        run(context);
+    }
 }

@@ -118,12 +118,12 @@ public class PigScriptExecutor implements ScriptExecutor {
         validateParameters(scriptType, context);
 
         if (!isExecutionAllowed(context)) {
-            throw new IOException("There is nothing to process");
+            return;
         }
 
         String path = getInspectedPaths(context);
         if (path.isEmpty()) {
-            throw new IOException("There is nothing to process");
+            return;
         }
 
         InputStream scriptContent = readScriptContent(scriptType);

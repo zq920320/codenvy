@@ -43,7 +43,8 @@ import java.util.Set;
  */
 public class TestActOnJob {
 
-    private ActOnJob job;
+    private ActOnJob            job;
+    private Map<String, String> context;
 
     @BeforeMethod
     private void setUp() throws IOException, OrganizationServiceException {
@@ -53,7 +54,7 @@ public class TestActOnJob {
         String date = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
         File file = prepareLog(date);
 
-        Map<String, String> context = Utils.initializeContext(TimeUnit.DAY, new Date());
+        context = Utils.initializeContext(TimeUnit.DAY, new Date());
         context.put(PigScriptExecutor.LOG, file.getAbsolutePath());
 
         Map<String, String> attributes = new HashMap<String, String>();
@@ -79,7 +80,7 @@ public class TestActOnJob {
 
     @Test
     public void testPrepareFile() throws Exception {
-        File jobFile = job.prepareFile();
+        File jobFile = job.prepareFile(context);
         assertEquals(jobFile.getName(), ActOnJob.FILE_NAME);
 
         Set<String> content = read(jobFile);

@@ -12,12 +12,10 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class AnalysisViewJob implements Job {
+public class AnalysisViewJob implements Job, ForceableRunOnceJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisViewJob.class);
 
@@ -33,7 +31,7 @@ public class AnalysisViewJob implements Job {
     }
 
     /** {@inheritDoc} */
-    public void forceRun(Map<String, String> context) throws Exception {
+    public void forceRun() throws Exception {
         run();
     }
 
@@ -48,5 +46,4 @@ public class AnalysisViewJob implements Job {
             LOGGER.info("AnalysisViewJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
-
 }

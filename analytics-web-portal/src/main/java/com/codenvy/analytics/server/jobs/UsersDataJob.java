@@ -17,12 +17,14 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
+import org.apache.commons.io.FileUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -31,7 +33,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersDataJob implements Job, ForceableJob {
+public class UsersDataJob implements Job, ForceableJobRunByContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersDataJob.class);
 
@@ -58,21 +60,28 @@ public class UsersDataJob implements Job, ForceableJob {
         long start = System.currentTimeMillis();
 
         try {
+            prepareDirs();
+
             ScriptExecutor executor = ScriptExecutor.INSTANCE;
+            Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
 
             ValueData result = executor.executeAndReturn(ScriptType.USERS_ACTIVITY_PREPARATION, context);
             store(MetricType.USER_ACTIVITY, result, context);
 
-            result = executor.executeAndReturn(ScriptType.USERS_PROFILE_PREPARATION, context);
-            store(MetricType.USER_PROFILE, result, context);
+            executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
 
             result = executor.executeAndReturn(ScriptType.USERS_SESSIONS_PREPARATION, context);
             store(MetricType.USER_SESSIONS, result, context);
+
+            result = executor.executeAndReturn(ScriptType.USERS_PROFILE_PREPARATION, context);
+            store(MetricType.USER_PROFILE, result, context);
+
+            MetricFactory.createMetric(MetricType.PROJECTS_BUILT_NUMBER).getValue(context);
+            MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_NUMBER).getValue(context);
         } finally {
             LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
-
 
     private void store(MetricType metricType, ValueData valueData, Map<String, String> executeContext) throws IOException {
         if (!(valueData instanceof MapStringListListStringValueData)) {
@@ -111,5 +120,21 @@ public class UsersDataJob implements Job, ForceableJob {
         }
 
         return uuid;
+    }
+
+    private void prepareDirs() throws IOException {
+        File srcDir = new File(FSValueDataManager.RESULT_DIRECTORY, "PROFILES");
+        File destDir = new File(FSValueDataManager.RESULT_DIRECTORY, "PREV_PROFILES");
+
+        if (destDir.exists()) {
+            FileUtils.deleteDirectory(destDir);
+        }
+
+        if (srcDir.exists()) {
+            FileUtils.moveDirectory(srcDir, destDir);
+        } else {
+            destDir.mkdirs();
+            File.createTempFile("prefix", "suffix", destDir);
+        }
     }
 }

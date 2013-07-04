@@ -44,19 +44,13 @@ public class UsersActivityMetric extends ReadBasedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        ListStringValueData valueData = (ListStringValueData)super.getValue(context);
+        ListListStringValueData valueData = (ListListStringValueData) super.getValue(context);
         List<ListStringValueData> newValue = new ArrayList<>(valueData.size());
 
-        for (String item : valueData.getAll()) {
-            newValue.add(new ListStringValueData(MessageTransformer.transform(item)));
+        for (ListStringValueData item : valueData.getAll()) {
+            newValue.add(new ListStringValueData(MessageTransformer.transform(item.getAll().get(0))));
         }
 
         return new ListListStringValueData(newValue);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected ValueData createEmptyValueData() throws IOException {
-        return ValueDataFactory.createEmptyValueData(ListStringValueData.class);
     }
 }

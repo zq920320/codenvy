@@ -146,6 +146,14 @@ public class Utils {
         context.put(MetricParameter.TIME_UNIT.name(), timeUnit.toString());
     }
 
+    /**
+     * Puts {@link MetricParameter#RESULT_DIR} parameter into context.
+     */
+    public static void putResultDir(Map<String, String> context, String resultDir) {
+        context.put(MetricParameter.RESULT_DIR.name(), resultDir);
+    }
+
+
     /** @param true if entry's key is {@link MetricParameter#TO_DATE} */
     public static boolean isToDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.TO_DATE.name());

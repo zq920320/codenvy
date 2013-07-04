@@ -75,10 +75,10 @@ public class TestUsersSessionsPreparation extends BaseTest {
         params.put(MetricParameter.TO_DATE.name(), "20101001");
 
         MapStringListListStringValueData value =
-                                                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_ACTIVITY_PREPARATION,
+                                                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_SESSIONS_PREPARATION,
                                                                                                           log, params);
 
         Map<String, ListListStringValueData> all = value.getAll();
-        assertEquals(all.size(), 3);
+        assertEquals(all.size(), 2);
     }
 }

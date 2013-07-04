@@ -40,24 +40,4 @@ public class UsersSessionsMetric extends ReadBasedMetric {
     protected Class< ? extends ValueData> getValueDataClass() {
         return ListListStringValueData.class;
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        ListStringValueData valueData = (ListStringValueData)super.getValue(context);
-        List<ListStringValueData> newValue = new ArrayList<>(valueData.size());
-
-        // TODO
-        // for (String item : valueData.getAll()) {
-        // newValue.add(new ListStringValueData(new Arrays));
-        // }
-
-        return new ListListStringValueData(newValue);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected ValueData createEmptyValueData() throws IOException {
-        return ValueDataFactory.createEmptyValueData(ListStringValueData.class);
-    }
 }

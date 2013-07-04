@@ -35,7 +35,7 @@
         <date section="Usage Time (mins)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="product_usage_time_60_more,product_usage_time_10_60,product_usage_time_0_10" format="%,.0f"/>
         <metric type="product_usage_time_0_10" format="%,.0f" title="Sessions &#0060; 10 Mins"/>
-        <metric type="product_usage_time_10_60" format="%,.0f" title="Sessions &#0060;10 And &#0062;60 Mins"/>
+        <metric type="product_usage_time_10_60" format="%,.0f" title="Sessions &#0060;10 And &#0062; 60 Mins"/>
         <metric type="product_usage_time_60_more" format="%,.0f" title="Sessions &#0062; 60 Mins"/>
         <empty />
     </table>
@@ -43,7 +43,7 @@
         <date section="# User Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" />
         <total types="product_usage_user_sessions_number_0_10,product_usage_user_sessions_number_10_60,product_usage_user_sessions_number_60_MORE" format="%,.0f" />
         <metric type="product_usage_user_sessions_number_0_10" format="%,.0f" title="&#0060; 10 Mins"/>
-        <metric type="product_usage_user_sessions_number_10_60" format="%,.0f" title="&#0060; 10 And &#0062;60 Mins"/>
+        <metric type="product_usage_user_sessions_number_10_60" format="%,.0f" title="&#0060; 10 And &#0062; 60 Mins"/>
         <metric type="product_usage_user_sessions_number_60_more" format="%,.0f" title="&#0062; 60 Mins"/>
         <empty />
     </table>
@@ -67,7 +67,6 @@
         <metric type="project_type_ruby_number" format="%.0f" title="Ruby"/>
         <metric type="project_type_mmp_number" format="%.0f" title="Maven Multi Project"/>
         <metric type="project_type_nodejs_number" format="%.0f" title="Node.js"/>
-        <metric type="project_type_android_number" format="%.0f" title="Android"/>
         <metric type="project_type_others_number" format="%.0f" title="Others"/>
         <empty />
     </table>

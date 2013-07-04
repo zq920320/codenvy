@@ -4,6 +4,7 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
@@ -31,33 +32,34 @@ public class UsersProfileMetric extends ReadBasedMetric {
     /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                 MetricParameter.ALIAS}));
     }
 
     /** {@inheritDoc} */
     @Override
     protected Class< ? extends ValueData> getValueDataClass() {
-        return ListStringValueData.class;
+        return ListListStringValueData.class;
     }
 
     protected String getEmail(Map<String, String> context) throws IOException {
-        ListStringValueData data = (ListStringValueData)getValue(context);
-        return data == ListStringValueData.EMPTY ? "" : data.getAll().get(0);
+        return getItem(context, 0);
     }
 
     protected String getFirstName(Map<String, String> context) throws IOException {
-        ListStringValueData data = (ListStringValueData)getValue(context);
-        return data == ListStringValueData.EMPTY ? "" : data.getAll().get(1);
+        return getItem(context, 1);
     }
 
     protected String getLastName(Map<String, String> context) throws IOException {
-        ListStringValueData data = (ListStringValueData)getValue(context);
-        return data == ListStringValueData.EMPTY ? "" : data.getAll().get(2);
+        return getItem(context, 2);
     }
 
     protected String getCompany(Map<String, String> context) throws IOException {
-        ListStringValueData data = (ListStringValueData)getValue(context);
-        return data == ListStringValueData.EMPTY ? "" : data.getAll().get(3);
+        return getItem(context, 3);
+    }
+
+    private String getItem(Map<String, String> context, int index) throws IOException  {
+        ListListStringValueData data = (ListListStringValueData)getValue(context);
+        return data.getAll().get(0).getAll().get(index);
     }
 }

@@ -4,7 +4,7 @@
 -->
 <display>
     <table length="2">
-	<title name="Singup Analysis" />
+	<title name="Signup Analysis" />
         <metric type="total_users_number" title="Total Users"/>
         <metric type="users_created_number" title="Total Accounts (Logged)"/>
         <metric type="users_created_projects_number" title="Created Project"/>

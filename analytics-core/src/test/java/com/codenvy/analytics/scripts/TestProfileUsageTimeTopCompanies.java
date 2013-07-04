@@ -34,6 +34,7 @@ import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +46,26 @@ public class TestProfileUsageTimeTopCompanies extends BaseTest {
     @Test
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f1", "l1", "company", "", "").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "", "").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "", "").withDate("2010-10-02").build());
+        File log = LogGenerator.generateLog(events);
+
+        Map<String, String> context = Utils.newContext();
+        context.put(MetricParameter.RESULT_DIR.name(), BASE_DIR);
+        context.put(MetricParameter.FROM_DATE.name(), "20101001");
+        context.put(MetricParameter.TO_DATE.name(), "20101002");
+
+        runUsersProfileLogPreparationScript(log, context);
+
+        events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company", "", "").withDate("2010-10-03").build());
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f4", "l4", "company", "", "").withDate("2010-10-04").build());
+        log = LogGenerator.generateLog(events);
+
+        context.put(MetricParameter.FROM_DATE.name(), "20101003");
+        context.put(MetricParameter.TO_DATE.name(), "20101004");
+
+        runUsersProfileLogPreparationScript(log, context);
 
         // 5 min in day
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-10-01")
@@ -90,16 +110,13 @@ public class TestProfileUsageTimeTopCompanies extends BaseTest {
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2009-05-15")
                                 .withTime("20:30:00").build());
 
-        File log = LogGenerator.generateLog(events);
+        log = LogGenerator.generateLog(events);
 
         FileUtils.deleteDirectory(new File(BASE_DIR, "USERS"));
-        FileUtils.deleteDirectory(new File(BASE_DIR, "COMPANIES"));
         FileUtils.deleteDirectory(new File(BASE_DIR, "LOG"));
 
-        Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.RESULT_DIR.name(), BASE_DIR);
+        context.put(MetricParameter.FROM_DATE.name(), "20101001");
         context.put(MetricParameter.TO_DATE.name(), "20101001");
-        execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, log, context);
 
         execute(ScriptType.PRODUCT_USAGE_TIME_LOG_PREPARATION, log, context);
 
@@ -161,5 +178,23 @@ public class TestProfileUsageTimeTopCompanies extends BaseTest {
 
         assertEquals(all.size(), 1);
         assertTrue(all.contains(item1));
+    }
+
+    private void runUsersProfileLogPreparationScript(File log, Map<String, String> context) throws IOException {
+        File srcDir = new File(BASE_DIR, "PROFILES");
+        File destDir = new File(BASE_DIR, "PREV_PROFILES");
+
+        if (destDir.exists()) {
+            FileUtils.deleteDirectory(destDir);
+        }
+
+        if (srcDir.exists()) {
+            FileUtils.moveDirectory(srcDir, destDir);
+        } else {
+            destDir.mkdirs();
+            File.createTempFile("prefix", "suffix", destDir);
+        }
+
+        execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, log, context);
     }
 }
