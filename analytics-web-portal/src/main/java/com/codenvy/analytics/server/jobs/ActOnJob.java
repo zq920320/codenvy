@@ -4,18 +4,12 @@
  */
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.ldap.ReadOnlyUserManager;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
-import com.codenvy.organization.exception.OrganizationServiceException;
-
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
+import com.codenvy.analytics.server.service.MailService;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.quartz.Job;
@@ -24,91 +18,49 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketException;
+import java.io.*;
 import java.net.SocketTimeoutException;
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.net.ssl.SSLException;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActOnJob implements Job, ForceableJobRunByContext {
-    public static final String        FILE_NAME                 = "ideuserupdate.csv";
+public class ActOnJob implements Job, ForceableRunOnceJob {
+    public static final String FILE_NAME = "ideuserupdate.csv";
 
-    private static final String       EMAIL                     = "email";
+    private static final String FTP_PASSWORD_PARAM = "ftp_password";
+    private static final String FTP_LOGIN_PARAM = "ftp_login";
+    private static final String FTP_SERVER_PARAM = "ftp_server";
+    private static final String FTP_PORT_PARAM = "ftp_port";
+    private static final String FTP_TIMEOUT_PARAM = "ftp_timeout";
+    private static final String FTP_MAX_EFFORTS_PARAM = "ftp_maxEfforts";
+    private static final String FTP_AUTH_PARAM = "ftp_auth";
 
-    private static final String       FTP_PASSWORD_PARAM        = "ftp_password";
-    private static final String       FTP_LOGIN_PARAM           = "ftp_login";
-    private static final String       FTP_SERVER_PARAM          = "ftp_server";
-    private static final String       FTP_PORT_PARAM            = "ftp_port";
-    private static final String       FTP_TIMEOUT_PARAM         = "ftp_timeout";
-    private static final String       FTP_MAX_EFFORTS_PARAM     = "ftp_maxEfforts";
-    private static final String       FTP_AUTH_PARAM            = "ftp_auth";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActOnJob.class);
+    private static final String ACTION_PROPERTIES = System.getProperty("analytics.job.acton.properties");
 
-    private static final String       MAIL_SMTP_AUTH            = "mail.smtp.auth";
-    private static final String       MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
-    private static final String       MAIL_SMTP_HOST            = "mail.smtp.host";
-    private static final String       MAIL_SMTP_PORT            = "mail.smtp.port";
-    private static final String       MAIL_USER                 = "mail.user";
-    private static final String       MAIL_PASSWORD             = "mail.password";
-    private static final String       MAIL_TO                   = "mail.to";
-    private static final String       MAIL_SUBJECT              = "mail.subject";
-    private static final String       MAIL_TEXT                 = "mail.text";
+    //email,firstName,lastName,phone,employer,projects,builts,deployments,spentTime
 
-    private static final String       USER_PROFILE_HEADERS      = "user-profile-headers";
-    private static final String       METRIC_HEADERS            = "metric-headers";
-    private static final String       USER_PROFILE_ATTRIBUTES   = "user-profile-attributes";
-    private static final String       METRIC_NAMES              = "metric-names";
+    private final Properties actonProperties;
 
-    private static final Logger       LOGGER                    = LoggerFactory.getLogger(ActOnJob.class);
-    private static final String       ACTION_PROPERTIES         = System.getProperty("analytics.job.acton.properties");
-
-    private final ReadOnlyUserManager userManager;
-    private final Properties          actonProperties;
-
-    public ActOnJob() throws OrganizationServiceException, IOException {
-        this.userManager = new ReadOnlyUserManager();
+    public ActOnJob() throws IOException {
         this.actonProperties = readProperties();
     }
 
-    /**
-     * For testing purpose.
-     */
-    public ActOnJob(ReadOnlyUserManager userManager, Properties actonProperties) throws IOException {
-        this.userManager = userManager;
-        this.actonProperties = actonProperties;
+    public ActOnJob(Properties properties) throws IOException {
+        this.actonProperties = properties;
     }
 
     /**
      * Reads FTP connections properties.
      */
-    private Properties readProperties() throws FileNotFoundException, IOException {
+    private Properties readProperties() throws IOException {
         Properties ftpProps = new Properties();
 
-        InputStream in = new BufferedInputStream(new FileInputStream(ACTION_PROPERTIES));
-        try {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(ACTION_PROPERTIES))) {
             ftpProps.load(in);
-        } finally {
-            in.close();
         }
 
         return ftpProps;
@@ -119,24 +71,22 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
      */
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            run(initilalizeContext());
+            run();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }
 
-    private void run(Map<String, String> context) throws IOException {
+    private void run() throws IOException {
         LOGGER.info("ActOnJob is started");
         long start = System.currentTimeMillis();
 
         try {
-            File file = prepareFile(context);
+            File file = prepareFile();
 
             transfer(file);
-            sendMail(file.getName());
-
-            LOGGER.info("File " + file.getName() + " was transfered successfully");
+            sendMail();
 
             if (!file.delete()) {
                 LOGGER.warn("File " + file.getName() + " can not be removed");
@@ -146,42 +96,15 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         }
     }
 
-    /**
-     * Sends notification about transfered file.
-     */
-    protected void sendMail(String fileName) throws IOException {
-        Properties props = new Properties();
-        props.put(MAIL_SMTP_AUTH, actonProperties.get(MAIL_SMTP_AUTH));
-        props.put(MAIL_SMTP_STARTTLS_ENABLE, actonProperties.get(MAIL_SMTP_STARTTLS_ENABLE));
-        props.put(MAIL_SMTP_HOST, actonProperties.get(MAIL_SMTP_HOST));
-        props.put(MAIL_SMTP_PORT, actonProperties.get(MAIL_SMTP_PORT));
-
-        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-                                                  protected PasswordAuthentication getPasswordAuthentication() {
-                                                      return new PasswordAuthentication(actonProperties.getProperty(MAIL_USER),
-                                                                                        actonProperties.getProperty(MAIL_PASSWORD));
-                                                  }
-                                              });
-
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(actonProperties.getProperty(MAIL_USER)));
-            message.setRecipients(Message.RecipientType.TO,
-                                  InternetAddress.parse(actonProperties.getProperty(MAIL_TO)));
-            message.setSubject(actonProperties.getProperty(MAIL_SUBJECT));
-            message.setText(actonProperties.getProperty(MAIL_TEXT));
-
-            Transport.send(message);
-        } catch (MessagingException e) {
-            throw new IOException(e);
-        }
+    protected void sendMail() throws IOException {
+        MailService mailService = new MailService(actonProperties);
+        mailService.send();
     }
-
 
     /**
      * Sends file directly to FTP server.
      */
-    private void transfer(File file) throws SocketException, IOException {
+    private void transfer(File file) throws IOException {
         final String auth = actonProperties.getProperty(FTP_AUTH_PARAM);
         final int maxEfforts = Integer.valueOf(actonProperties.getProperty(FTP_MAX_EFFORTS_PARAM));
 
@@ -197,7 +120,6 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
 
             } catch (SocketTimeoutException e) {
                 LOGGER.error(e.getMessage());
-                continue;
 
             } catch (IOException e) {
                 if (ftp.isConnected()) {
@@ -214,7 +136,7 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         ftp.disconnect();
     }
 
-    private void openConnection(FTPSClient ftp) throws SocketException, IOException, SSLException {
+    private void openConnection(FTPSClient ftp) throws IOException {
         final int timeout = Integer.valueOf(actonProperties.getProperty(FTP_TIMEOUT_PARAM));
         final int port = Integer.valueOf(actonProperties.getProperty(FTP_PORT_PARAM));
         final String server = actonProperties.getProperty(FTP_SERVER_PARAM);
@@ -240,46 +162,48 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         ftp.setFileType(FTPSClient.ASCII_FILE_TYPE);
     }
 
-    private void doTransfer(File file, FTPSClient ftp) throws FileNotFoundException, IOException {
-        InputStream in = new FileInputStream(file);
-        try {
+    private void doTransfer(File file, FTPSClient ftp) throws IOException {
+        try (InputStream in = new FileInputStream(file)) {
             if (!ftp.storeFile(file.getName(), in)) {
                 throw new IOException("File " + file.getName() + " was not transfered to the server");
             }
-        } finally {
-            in.close();
         }
     }
 
-    protected File prepareFile(Map<String, String> context) throws IOException {
+    protected File prepareFile() throws IOException {
+        Map<String, String> context = initializeContext();
+
         File file = new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
 
-        Set<String> activeUsers = getActiveUsers(context);
-
-        BufferedWriter out = new BufferedWriter(new FileWriter(file));
-        try {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeaders(out);
 
-            for (String user : activeUsers) {
+            ListListStringValueData valueData = (ListListStringValueData) ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.ACTON, context);
+            for (ListStringValueData item : valueData.getAll()) {
+                String user = item.getAll().get(0);
+
                 writeUserProfileAttributes(out, user);
-                writeMetricsValues(context, out, user);
+                writeMetricsValues(out, item);
             }
-        } finally {
-            out.close();
         }
 
         return file;
     }
 
-    private void writeMetricsValues(Map<String, String> context, BufferedWriter out, String user) throws IOException {
-        String[] metricNames = actonProperties.getProperty(METRIC_NAMES).split(",");
+    protected Map<String, String> initializeContext() {
+        Map<String, String> context = Utils.newContext();
+        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
+        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
 
-        for (int i = 0; i < metricNames.length; i++) {
-            context = Utils.clone(context);
-            context.put(MetricFilter.FILTER_USER.name(), user);
+        return context;
+    }
 
-            writeMetricValue(out, metricNames[i], context);
-            if (i < metricNames.length - 1) {
+    private void writeMetricsValues(BufferedWriter out, ListStringValueData item) throws IOException {
+        List<String> all = item.getAll();
+        for (int i = 1; i < all.size(); i++) { // skip email
+            out.write(all.get(i));
+
+            if (i < all.size() - 1) {
                 out.write(",");
             }
         }
@@ -287,40 +211,26 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         out.newLine();
     }
 
-    /**
-     * Initializes context.<br>
-     * {@link Utils#initializeContext(TimeUnit, Date)}
-     */
-    protected Map<String, String> initilalizeContext() throws IOException {
-        return Utils.initializeContext(TimeUnit.DAY, new Date());
-    }
+    protected void writeUserProfileAttributes(BufferedWriter out, String user) throws IOException {
+        Map<String, String> context = Utils.newContext();
+        context.put(MetricParameter.ALIAS.name(), user);
 
-    private void writeMetricValue(BufferedWriter out, String metricName, Map<String, String> context) throws IOException {
-        Metric metric = MetricFactory.createMetric(metricName);
+        Metric metric = MetricFactory.createMetric(MetricType.USER_PROFILE_EMAIL);
+        writeString(out, metric.getValue(context).getAsString());
 
-        String value = metric.getValue(context).getAsString();
-        out.write(value);
-    }
+        metric = MetricFactory.createMetric(MetricType.USER_PROFILE_FIRSTNAME);
+        writeString(out, metric.getValue(context).getAsString());
 
-    private void writeUserProfileAttributes(BufferedWriter out, String user) throws IOException {
-        String[] attributesNames = actonProperties.getProperty(USER_PROFILE_ATTRIBUTES).split(",");
+        metric = MetricFactory.createMetric(MetricType.USER_PROFILE_LASTNAME);
+        writeString(out, metric.getValue(context).getAsString());
 
-        Map<String, String> attributes;
-        try {
-            attributes = userManager.getUserAttributes(user);
-        } catch (OrganizationServiceException e) {
-            throw new IOException(e);
-        }
+        metric = MetricFactory.createMetric(MetricType.USER_PROFILE_PHONE);
+        writeString(out, metric.getValue(context).getAsString());
 
-        for (String name : attributesNames) {
-            if (name.equals(EMAIL)) {
-                writeString(out, user);
-            } else {
-                writeString(out, attributes.get(name));
-            }
+        metric = MetricFactory.createMetric(MetricType.USER_PROFILE_COMPANY);
+        writeString(out, metric.getValue(context).getAsString());
 
-            out.write(",");
-        }
+        out.write(",");
     }
 
     /**
@@ -337,27 +247,15 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
     }
 
     private void writeHeaders(BufferedWriter out) throws IOException {
-        out.write(actonProperties.getProperty(USER_PROFILE_HEADERS));
-        out.write(",");
-        out.write(actonProperties.getProperty(METRIC_HEADERS));
+        out.write("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime");
         out.newLine();
     }
 
     /**
-     * Extracts list of all active users.
+     * {@inheritDoc}
      */
-    protected Set<String> getActiveUsers(Map<String, String> context) throws IOException {
-        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
-
-        ListListStringValueData listVD = (ListListStringValueData)metric.getValue(context);
-        Filter filter = new UsersWorkspacesFilter(listVD);
-
-        return filter.getAvailable(MetricFilter.FILTER_USER);
-    }
-
-    /** {@inheritDoc} */
     @Override
-    public void forceRun(Map<String, String> context) throws Exception {
-        run(context);
+    public void forceRun() throws Exception {
+        run();
     }
 }

@@ -5,13 +5,12 @@
 package com.codenvy.analytics.server.jobs;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.ldap.ReadOnlyUserManager;
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
@@ -23,10 +22,7 @@ import com.codenvy.organization.exception.OrganizationServiceException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,8 +50,7 @@ public class TestActOnJob {
         String date = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
         File file = prepareLog(date);
 
-        context = Utils.initializeContext(TimeUnit.DAY, new Date());
-        context.put(PigScriptExecutor.LOG, file.getAbsolutePath());
+        System.setProperty(PigScriptExecutor.ANALYTICS_LOGS_DIRECTORY_PROPERTY, file.getParent());
 
         Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("firstName", "Chuck");
@@ -65,31 +60,31 @@ public class TestActOnJob {
         
         UserManager userManager = mock(UserManager.class);
 
-        Properties properties = new Properties();
-        properties.put("user-profile-attributes", "email,firstName,lastName,phone,employer");
-        properties.put("user-profile-headers", "email,firstName,lastName,phone,company");
-        properties.put("metric-names", "PROJECTS_CREATED_NUMBER,PROJECTS_BUILT_NUMBER,PROJECTS_DEPLOYED_NUMBER,PRODUCT_USAGE_TIME_TOTAL");
-        properties.put("metric-headers", "projects,builts,deployments,spentTime");
-
         ReadOnlyUserManager readOnlyUserManager = spy(new ReadOnlyUserManager(userManager));
         doReturn(attributes).when(readOnlyUserManager).getUserAttributes(anyString());
 
-        job = spy(new ActOnJob(readOnlyUserManager, properties));
-        doReturn(context).when(job).initilalizeContext();
+        Map<String, String> context = Utils.newContext();
+        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
+        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
+        context.put(PigScriptExecutor.LOG, file.getAbsolutePath());
+
+        job = spy(new ActOnJob(null));
+        doReturn(context).when(job).initializeContext();
+        doNothing().when(job).writeUserProfileAttributes(any(BufferedWriter.class), any(String.class));
     }
 
     @Test
     public void testPrepareFile() throws Exception {
-        File jobFile = job.prepareFile(context);
+        File jobFile = job.prepareFile();
         assertEquals(jobFile.getName(), ActOnJob.FILE_NAME);
 
         Set<String> content = read(jobFile);
 
         assertEquals(content.size(), 4);
         assertTrue(content.contains("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime"));
-        assertTrue(content.contains("\"user1\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",2,0,0,5"));
-        assertTrue(content.contains("\"user2\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",1,2,1,10"));
-        assertTrue(content.contains("\"user3\",\"Chuck\",\"Norris\",\"00000000\",\"Eath\",0,1,1,0"));
+        assertTrue(content.contains("2,0,0,5"));
+        assertTrue(content.contains("1,2,1,10"));
+        assertTrue(content.contains("0,1,1,0"));
     }
 
 

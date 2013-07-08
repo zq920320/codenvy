@@ -116,6 +116,9 @@ public class MetricFactory {
             case USER_PROFILE_COMPANY:
                 metric = new UsersProfileCompanyMetric();
                 break;
+            case USER_PROFILE_PHONE:
+                metric = new UsersProfilePhoneMetric();
+                break;
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();
                 break;

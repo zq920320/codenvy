@@ -58,6 +58,10 @@ public class UsersProfileMetric extends ReadBasedMetric {
         return getItem(context, 3);
     }
 
+    protected String getPhone(Map<String, String> context) throws IOException {
+        return getItem(context, 4);
+    }
+
     private String getItem(Map<String, String> context, int index) throws IOException  {
         ListListStringValueData data = (ListListStringValueData)getValue(context);
         return data.getAll().get(0).getAll().get(index);

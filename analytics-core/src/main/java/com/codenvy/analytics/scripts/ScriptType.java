@@ -41,6 +41,7 @@ public enum ScriptType {
     USERS_WITHOUT_DEPLOYES,
     USERS_WITHOUT_INVITES,
     PRODUCT_USAGE_TIME,
+    ACTON,
 
     USERS_PROFILE_PREPARATION {
         @Override
@@ -66,7 +67,7 @@ public enum ScriptType {
     USERS_PROFILE_LOG_PREPARATION {
         @Override
         public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR,
                     MetricParameter.FROM_DATE,
                     MetricParameter.TO_DATE}));
@@ -76,7 +77,7 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME_LOG_PREPARATION {
         @Override
         public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR}));
         }
     },
@@ -84,7 +85,7 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME_TOP {
         @Override
         public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR,
                     MetricParameter.INTERVAL,
                     MetricParameter.TO_DATE}));
@@ -94,7 +95,7 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME_COMPANIES {
         @Override
         public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR,
                     MetricParameter.INTERVAL,
                     MetricParameter.TO_DATE}));
@@ -104,7 +105,7 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME_USERS {
         @Override
         public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR,
                     MetricParameter.INTERVAL,
                     MetricParameter.TO_DATE}));
@@ -114,7 +115,7 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME_DOMAINS {
         @Override
         public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR,
                     MetricParameter.INTERVAL,
                     MetricParameter.TO_DATE}));
@@ -128,6 +129,6 @@ public enum ScriptType {
 
     /** @return list of mandatory parameters required to be passed to the script */
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }
