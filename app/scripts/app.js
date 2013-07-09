@@ -12,7 +12,8 @@ define(["jquery","config",
         "views/setprofileuserform",
         "views/inviteorganization",
         "views/errorresponse",
-        "views/maintenancepage"
+        "views/maintenancepage",
+        "views/gc_banner"
         ],
 
     function($,Config,
@@ -29,7 +30,8 @@ define(["jquery","config",
         SetProfileUser,
         InviteOrganization,
         ErrorResponse,
-        MaintenancePage){
+        MaintenancePage,
+        GC_banner){
 
         function modernize(){
             Modernizr.load({
@@ -79,6 +81,9 @@ define(["jquery","config",
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
+
+                            // <!--  Home Page CTA Banner Rotation   -->
+                            new GC_banner();
                         }());
                     }
 
