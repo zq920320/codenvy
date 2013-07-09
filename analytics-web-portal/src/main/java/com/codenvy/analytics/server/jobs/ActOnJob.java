@@ -143,9 +143,11 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
         final String username = actonProperties.getProperty(FTP_LOGIN_PARAM);
         final String password = actonProperties.getProperty(FTP_PASSWORD_PARAM);
 
-        ftp.setDataTimeout(timeout);
         ftp.setDefaultTimeout(timeout);
         ftp.connect(server, port);
+
+        ftp.setSendBufferSize(65536);
+        ftp.setBufferSize(65536);
 
         if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
             throw new IOException("FTP connection failed");
@@ -182,7 +184,13 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
             for (ListStringValueData item : valueData.getAll()) {
                 String user = item.getAll().get(0);
 
-                writeUserProfileAttributes(out, user);
+                try {
+                    writeUserProfileAttributes(out, user);
+                } catch (Exception e) {
+                    LOGGER.warn("There is no information about " + user);
+                    continue;
+                }
+
                 writeMetricsValues(out, item);
             }
         }
@@ -217,19 +225,22 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
 
         Metric metric = MetricFactory.createMetric(MetricType.USER_PROFILE_EMAIL);
         writeString(out, metric.getValue(context).getAsString());
+        out.write(",");
 
         metric = MetricFactory.createMetric(MetricType.USER_PROFILE_FIRSTNAME);
         writeString(out, metric.getValue(context).getAsString());
+        out.write(",");
 
         metric = MetricFactory.createMetric(MetricType.USER_PROFILE_LASTNAME);
         writeString(out, metric.getValue(context).getAsString());
+        out.write(",");
 
         metric = MetricFactory.createMetric(MetricType.USER_PROFILE_PHONE);
         writeString(out, metric.getValue(context).getAsString());
+        out.write(",");
 
         metric = MetricFactory.createMetric(MetricType.USER_PROFILE_COMPANY);
         writeString(out, metric.getValue(context).getAsString());
-
         out.write(",");
     }
 

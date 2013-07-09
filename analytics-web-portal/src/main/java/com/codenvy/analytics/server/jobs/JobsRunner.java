@@ -7,46 +7,40 @@ package com.codenvy.analytics.server.jobs;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
-
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.TriggerBuilder;
+import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class JobsRunner implements ServletContextListener {
 
-    private static final Logger LOGGER                      = LoggerFactory.getLogger(JobsRunner.class);
-    private static final String ANALYTICS_FORCE_RUN_JOBS    = "analytics.force.run.jobs";
-    private static final String CRON_TIMETABLE              = "0 0 1 ? * *";
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobsRunner.class);
+    private static final String ANALYTICS_FORCE_RUN_JOBS_CONDITION = "analytics.force.run.jobs.condition";
+    private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS = "analytics.force.run.jobs.class";
+    private static final String CRON_TIMETABLE = "0 0 1 ? * *";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
-    private static final String FORCE_RUN_CONDITION_ONCE    = "ONCE";
+    private static final String FORCE_RUN_CONDITION_ONCE = "ONCE";
     private static final String FORCE_RUN_CONDITION_LASTDAY = "LASTDAY";
 
-    private Scheduler           scheduler;
+    private Scheduler scheduler;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void contextDestroyed(ServletContextEvent context) {
         try {
@@ -56,12 +50,14 @@ public class JobsRunner implements ServletContextListener {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void contextInitialized(ServletContextEvent context) {
         initializeScheduler();
 
-        String forceRunCondition = System.getProperty(ANALYTICS_FORCE_RUN_JOBS);
+        String forceRunCondition = System.getProperty(ANALYTICS_FORCE_RUN_JOBS_CONDITION);
         if (forceRunCondition != null) {
             forceRunJobs(forceRunCondition);
         }
@@ -71,25 +67,29 @@ public class JobsRunner implements ServletContextListener {
         try {
             Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Scheduler.DEFAULT_GROUP));
 
+            String forceRunClass = System.getProperty(ANALYTICS_FORCE_RUN_JOBS_CLASS);
             for (JobKey key : jobKeys) {
-                Job job = scheduler.getJobDetail(key).getJobClass().getConstructor().newInstance();
+                Class<? extends Job> jobClass = scheduler.getJobDetail(key).getJobClass();
+                Job job = jobClass.getConstructor().newInstance();
 
-                switch (forceRunCondition.toUpperCase()) {
-                    case FORCE_RUN_CONDITION_LASTDAY:
-                        executeLastDay(job);
-                        break;
+                if (forceRunClass == null || forceRunClass.equals(jobClass.getName())) {
+                    switch (forceRunCondition.toUpperCase()) {
+                        case FORCE_RUN_CONDITION_LASTDAY:
+                            executeLastDay(job);
+                            break;
 
-                    case FORCE_RUN_CONDITION_ONCE:
-                        executeOnce(job);
-                        break;
+                        case FORCE_RUN_CONDITION_ONCE:
+                            executeOnce(job);
+                            break;
 
-                    case FORCE_RUN_CONDITION_ALLTIME:
-                        executeAllTime(job);
-                        break;
+                        case FORCE_RUN_CONDITION_ALLTIME:
+                            executeAllTime(job);
+                            break;
 
-                    default:
-                        executeSpecificDay(job, forceRunCondition);
-                        break;
+                        default:
+                            executeSpecificDay(job, forceRunCondition);
+                            break;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -105,7 +105,7 @@ public class JobsRunner implements ServletContextListener {
             context.put(MetricParameter.TIME_UNIT.name(), TimeUnit.DAY.name());
 
             do {
-                ((ForceableJobRunByContext)job).forceRun(context);
+                ((ForceableJobRunByContext) job).forceRun(context);
                 context = Utils.nextDateInterval(context);
             } while (!Utils.getToDateParam(context).equals(MetricParameter.TO_DATE.getDefaultValue()));
 
@@ -123,20 +123,20 @@ public class JobsRunner implements ServletContextListener {
             context.put(MetricParameter.TO_DATE.name(), forceRunCondition);
             context.put(MetricParameter.TIME_UNIT.name(), TimeUnit.DAY.name());
 
-            ((ForceableJobRunByContext)job).forceRun(context);
+            ((ForceableJobRunByContext) job).forceRun(context);
         }
     }
 
     private void executeLastDay(Job job) throws Exception {
         if (job instanceof ForceableJobRunByContext) {
             Map<String, String> context = Utils.initializeContext(TimeUnit.DAY, new Date());
-            ((ForceableJobRunByContext)job).forceRun(context);
+            ((ForceableJobRunByContext) job).forceRun(context);
         }
     }
 
     private void executeOnce(Job job) throws Exception {
         if (job instanceof ForceableRunOnceJob) {
-            ((ForceableRunOnceJob)job).forceRun();
+            ((ForceableRunOnceJob) job).forceRun();
         }
     }
 
@@ -165,11 +165,11 @@ public class JobsRunner implements ServletContextListener {
         System.setProperty("org.quartz.threadPool.threadCount", "1"); // to sure run order
     }
 
-    private void initializeJob(Class< ? extends Job> clazz) throws SchedulerException {
+    private void initializeJob(Class<? extends Job> clazz) throws SchedulerException {
         try {
             clazz.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-            | NoSuchMethodException | SecurityException e) {
+                | NoSuchMethodException | SecurityException e) {
             return;
         }
 
@@ -181,7 +181,7 @@ public class JobsRunner implements ServletContextListener {
         return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_TIMETABLE)).build();
     }
 
-    private JobDetail creeteJobDetail(Class< ? extends Job> clazz) {
+    private JobDetail creeteJobDetail(Class<? extends Job> clazz) {
         JobDetailImpl jobDetail = new JobDetailImpl();
         jobDetail.setKey(new JobKey(clazz.getName()));
         jobDetail.setJobClass(clazz);

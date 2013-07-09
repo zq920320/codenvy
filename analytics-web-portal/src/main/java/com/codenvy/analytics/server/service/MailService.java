@@ -28,7 +28,7 @@ public class MailService {
     private final Properties mailProps;
 
     public MailService(Properties mailProps) {
-        this.mailProps = new Properties(mailProps);
+        this.mailProps = mailProps;
     }
 
     public void send() throws IOException {

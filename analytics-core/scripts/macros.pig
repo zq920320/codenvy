@@ -168,7 +168,7 @@ DEFINE lastUserProfileUpdate(X) RETURNS Y {
   y2 = FOREACH y1 GENERATE *, MAX($X.delta) AS maxDelta;
   y3 = FOREACH y2 GENERATE group AS user, maxDelta, FLATTEN($X);
   y4 = FILTER y3 BY delta == maxDelta;
-  $Y = FOREACH y4 GENERATE user, $X::firstName AS firstName, $X::lastName AS lastName, $X::company AS company;
+  $Y = FOREACH y4 GENERATE user, $X::firstName AS firstName, $X::lastName AS lastName, $X::company AS company, $X::phone AS phone, $X::job AS job;
 };
 
 ---------------------------------------------------------------------------------------------
