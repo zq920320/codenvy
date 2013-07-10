@@ -26,6 +26,7 @@ public enum ScriptType {
     WORKSPACES_DESTROYED,
     PROJECTS_DESTROYED,
     USERS_INVITATIONS,
+    USERS_SHELL_LAUNCHED,
     JREBEL_USAGE,
     ACTIVE_PROJECTS,
     ACTIVE_USERS_WORKSPACES,
@@ -43,23 +44,50 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME,
     ACTON,
 
+    USERS_SEGMENT_ANALYSIS_1 {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.RESULT_DIR,
+                    MetricParameter.TO_DATE}));
+        }
+    },
+
+    USERS_SEGMENT_ANALYSIS_2 {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.RESULT_DIR,
+                    MetricParameter.TO_DATE}));
+        }
+    },
+
+    USERS_SEGMENT_ANALYSIS_3 {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.RESULT_DIR,
+                    MetricParameter.TO_DATE}));
+        }
+    },
+
     USERS_PROFILE_PREPARATION {
         @Override
-        public Class< ? extends ValueData> getValueDataClass() {
+        public Class<? extends ValueData> getValueDataClass() {
             return MapStringListListStringValueData.class;
         }
     },
 
     USERS_SESSIONS_PREPARATION {
         @Override
-        public Class< ? extends ValueData> getValueDataClass() {
+        public Class<? extends ValueData> getValueDataClass() {
             return MapStringListListStringValueData.class;
         }
     },
 
     USERS_ACTIVITY_PREPARATION {
         @Override
-        public Class< ? extends ValueData> getValueDataClass() {
+        public Class<? extends ValueData> getValueDataClass() {
             return MapStringListListStringValueData.class;
         }
     },
@@ -122,12 +150,16 @@ public enum ScriptType {
         }
     };
 
-    /** @return what date type is represented in result */
-    public Class< ? extends ValueData> getValueDataClass() {
+    /**
+     * @return what date type is represented in result
+     */
+    public Class<? extends ValueData> getValueDataClass() {
         return ListListStringValueData.class;
     }
 
-    /** @return list of mandatory parameters required to be passed to the script */
+    /**
+     * @return list of mandatory parameters required to be passed to the script
+     */
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }

@@ -6,5 +6,4 @@ a3 = extractWs(a2);
 r = FOREACH a3 GENERATE ws, user, dt;
 
 STORE r INTO '$RESULT_DIR/LOG' USING PigStorage();
-result = FOREACH r GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt));
 

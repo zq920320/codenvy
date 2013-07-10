@@ -26,8 +26,8 @@ DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
 
 ---------------------------------------------------------------------------
 -- Filters events by date of occurrence.
--- @param fromDateParam - date in format 'YYYYMMDD'
 -- @param toDateParam  - date in format 'YYYYMMDD'
+-- @interval
 ---------------------------------------------------------------------------
 DEFINE filterByDateInterval(X, toDateParam, interval) RETURNS Y {
   $Y = FILTER $X BY MilliSecondsBetween(AddDuration(SubtractDuration(ToDate('$toDateParam', 'yyyyMMdd'), '$interval'), 'P1D'), dt) <= 0 AND
@@ -35,13 +35,12 @@ DEFINE filterByDateInterval(X, toDateParam, interval) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
--- Filters events by date of occurrence. Keeps only in $lastMinutesParam.
--- @param lastMinutesParam - time interval in minutes
--- @return {..., curentDt : datetime}
+-- Filters events by date of occurrence.
+-- @param toDateParam  - date in format 'YYYYMMDD'
+-- @interval
 ---------------------------------------------------------------------------
-DEFINE filterByLastMinutes(X, lastMinutesParam) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, CurrentTime() AS currentDt;
-  $Y = FILTER x1 BY MinutesBetween(currentDt, dt) < (long) $lastMinutesParam;
+DEFINE filterByDateIntervalAfter(X, toDateParam, interval) RETURNS Y {
+  $Y = FILTER $X BY MilliSecondsBetween(AddDuration(SubtractDuration(ToDate('$toDateParam', 'yyyyMMdd'), '$interval'), 'P1D'), dt) > 0;
 };
 
 ---------------------------------------------------------------------------
@@ -283,3 +282,39 @@ DEFINE companiesByTimeSpent(X, resultDirParam) RETURNS Y {
   $Y = FOREACH w5 GENERATE FLATTEN(group) AS user, SUM(w4.count) AS count, SUM(w4.delta) AS time;
 };
 
+
+---------------------------------------------------------------------------------------------
+--                             USERS SEGMENT ANALYSIS                                      --
+---------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------
+-- Caculates the group of records which satisfy given condition and
+-- timeframe
+--------------------------------------------------------------------
+DEFINE calculateConditionAndDate(X, condition, toDateParam, interval) RETURNS Y {
+    w1 = filterByDateIntervalAfter($X, '$toDateParam', '$interval');
+    w2 = usersByTimeSpent(w1);
+    w3 = FILTER w2 BY $condition;
+    $Y = GROUP w3 ALL;
+};
+
+--------------------------------------------------------------------
+-- Replaces NULL with 0 
+--------------------------------------------------------------------
+DEFINE fixNumbers(X) RETURNS Y {
+    $Y = FOREACH $X GENERATE ($0 IS NULL ? 0 : $0), ($1 IS NULL ? 0 : $1), ($2 IS NULL ? 0 : $2), ($3 IS NULL ? 0 : $3), ($4 IS NULL ? 0 : $4), ($5 IS NULL ? 0 : $5);
+};
+
+--------------------------------------------------------------------
+-- Caculates the group of records which satisfy given condition
+--------------------------------------------------------------------
+DEFINE calculateCondition(X, conditionParam, toDateParam, s) RETURNS Y {
+    z1 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P1D');
+    z7 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P7D');
+    z30 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P30D');
+    z60 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P60D');
+    z90 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P90D');
+    z365 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P365D');
+    z = FOREACH s GENERATE COUNT(z1.$1), COUNT(z7.$1), COUNT(z30.$1), COUNT(z60.$1), COUNT(z90.$1), COUNT(z365.$1);
+    $Y = fixNumbers(z);
+};

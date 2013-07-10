@@ -86,6 +86,12 @@ public class MetricFactory {
             case USERS_SSO_LOGGED_IN_TYPES:
                 metric = new UsersSsoLoggedInTypesMetric();
                 break;
+            case USERS_SHELL_LAUNCHED_LIST:
+                metric = new UsersShellLaunchedListMetric();
+                break;
+            case USERS_SHELL_LAUNCHED_NUMBER:
+                metric = new UsersShellLaunchedNumberMetric();
+                break;
             case USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT:
                 metric = new UsersSsoLoggedInUsingGooglePercentMetric();
                 break;
@@ -118,6 +124,15 @@ public class MetricFactory {
                 break;
             case USER_PROFILE_PHONE:
                 metric = new UsersProfilePhoneMetric();
+                break;
+            case USERS_SEGMENT_ANALYSIS_CONDITION_1:
+                metric = new UsersSegmentAnalysisCondition1();
+                break;
+            case USERS_SEGMENT_ANALYSIS_CONDITION_2:
+                metric = new UsersSegmentAnalysisCondition2();
+                break;
+            case USERS_SEGMENT_ANALYSIS_CONDITION_3:
+                metric = new UsersSegmentAnalysisCondition3();
                 break;
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();
