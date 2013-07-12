@@ -368,7 +368,7 @@
 
             waitForTenant : function(success, error){
                 //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
-                var errorType = getQueryParameterByName("errorType");//create OR start
+                var type = getQueryParameterByName("type");//create OR start
                 var redirectUrl = getQueryParameterByName("redirect_url");
                 var tenantName = getQueryParameterByName("tenantName");
                 if(typeof tenantName === 'undefined'){
@@ -377,7 +377,7 @@
                     ]);
                 }
 
-                var MAX_WAIT_TIME_SECONDS = 120,
+                var MAX_WAIT_TIME_SECONDS = 180,
                     PING_TIMEOUT_MILLISECONDS = 500,
                     endTime = new Date().getTime() + MAX_WAIT_TIME_SECONDS * 1000;
 
@@ -389,18 +389,20 @@
                     if(new Date().getTime() >= endTime){
                     // removing autologin cookie if exist
                     removeCookie("autologin");
-                        if (errorType === "create"){
+                        if (type === "create"){
                             error([
                                 new AccountError(
                                     null,
-                                    "Tenant creation delayed, we will send credentials on your email when tenant started."
+                                    "Workspace creation delayed. We'll email you the credentials after your workspace is created."
                                 )
                             ]);
+                        } else if (type === "factory"){
+                            window.location = "error/error-factory-creation";              
                         }else{
                             error([
                                 new AccountError(
                                     null,
-                                    "The requested tenant <strong>'" + tenantName + "'</strong> is not available. Please, contact support."
+                                    "The requested workspace <strong>'" + tenantName + "'</strong> is not available. Please, contact support."
                                 )
 
                             ]);

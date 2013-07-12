@@ -67,6 +67,12 @@ define(["jquery","underscore","backbone","models/account"],
                 return new IDELoader();
             },
 
+            setLoaderMessage : function() {
+                if (Account.getQueryParameterByName("type")==="factory"){
+                    $(".loader-text").html("Creating your environment");
+                }
+            },
+
             IDELoader : IDELoader
 
         };

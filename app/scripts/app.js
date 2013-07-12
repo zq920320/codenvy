@@ -163,7 +163,7 @@ define(["jquery","config",
 
                             var ideloader = new IDELoader.IDELoader(),
                                 errorReport = ErrorReport.get(errorContainer);
-
+                            ideloader.setLoaderMessage();
                             ideloader.on("ready",function(d){
                                 window.location.href = d.url;
                             });

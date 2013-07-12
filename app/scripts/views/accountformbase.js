@@ -3,7 +3,7 @@ define(["jquery","models/account","views/form","validation"],
     function($,Account,Form){
 
         /*
-            Custom validator for .codenvy.com tenant names
+            Custom validator for codenvy.com workspace names
         */
 
         jQuery.validator.addMethod("validDomain", function(value) {
