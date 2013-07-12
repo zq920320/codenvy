@@ -19,14 +19,14 @@ import java.util.Map.Entry;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class Utils {
-    
+
     private Utils() {
     }
 
     /**
      * Parse date represented by give string using {@link MetricParameter#PARAM_DATE_FORMAT} format. Wraps {@link ParseException} into
      * {@link IOException}.
-     * 
+     *
      * @throws IOException if exception is occurred
      */
     public static Calendar parseDate(String date) throws IOException {
@@ -154,34 +154,44 @@ public class Utils {
     }
 
 
-    /** @param true if entry's key is {@link MetricParameter#TO_DATE} */
+    /**
+     * @param true if entry's key is {@link MetricParameter#TO_DATE}
+     */
     public static boolean isToDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.TO_DATE.name());
     }
 
-    /** @param true if entry's key is {@link MetricParameter#ALIAS} */
+    /**
+     * @param true if entry's key is {@link MetricParameter#ALIAS}
+     */
     public static boolean isAlias(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.ALIAS.name());
     }
 
-    /** @param true if entry's key is {@link MetricParameter#FROM_DATE} */
+    /**
+     * @param true if entry's key is {@link MetricParameter#FROM_DATE}
+     */
     public static boolean isFromDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.FROM_DATE.name());
     }
 
-    /** @param true if context contains {@link MetricParameter#TO_DATE} */
+    /**
+     * @param true if context contains {@link MetricParameter#TO_DATE}
+     */
     public static boolean containsToDateParam(Map<String, String> context) {
         return getToDateParam(context) != null;
     }
 
-    /** @param true if context contains {@link MetricParameter#FROM_DATE} */
+    /**
+     * @param true if context contains {@link MetricParameter#FROM_DATE}
+     */
     public static boolean containsFromDateParam(Map<String, String> context) {
         return getFromDateParam(context) != null;
     }
 
     /**
      * Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT}
-     * 
+     *
      * @throws if any exception is occurred
      */
     public static void initDateInterval(Date date, Map<String, String> context) throws IOException {
@@ -193,7 +203,7 @@ public class Utils {
 
     /**
      * Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT}
-     * 
+     *
      * @throws if any exception is occurred
      */
     public static void initDateInterval(Calendar date, Map<String, String> context) throws IOException {
@@ -209,14 +219,22 @@ public class Utils {
             case MONTH:
                 initByMonth(date, context);
                 break;
+            case LIFETIME:
+                initByLifeTime(context);
+                break;
         }
     }
 
+    private static void initByLifeTime(Map<String, String> context) {
+        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
+        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
+    }
+
     private static void initByWeek(Calendar date, Map<String, String> context) {
-        Calendar fromDate = (Calendar)date.clone();
+        Calendar fromDate = (Calendar) date.clone();
         fromDate.add(Calendar.DAY_OF_MONTH, fromDate.getActualMinimum(Calendar.DAY_OF_WEEK) - fromDate.get(Calendar.DAY_OF_WEEK));
 
-        Calendar toDate = (Calendar)date.clone();
+        Calendar toDate = (Calendar) date.clone();
         toDate.add(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_WEEK) - toDate.get(Calendar.DAY_OF_WEEK));
 
         putFromDate(context, fromDate);
@@ -224,10 +242,10 @@ public class Utils {
     }
 
     private static void initByMonth(Calendar date, Map<String, String> context) {
-        Calendar fromDate = (Calendar)date.clone();
+        Calendar fromDate = (Calendar) date.clone();
         fromDate.set(Calendar.DAY_OF_MONTH, 1);
 
-        Calendar toDate = (Calendar)date.clone();
+        Calendar toDate = (Calendar) date.clone();
         toDate.set(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
         putFromDate(context, fromDate);
@@ -259,6 +277,8 @@ public class Utils {
             case MONTH:
                 nextMonth(fromDate, toDate, resultContext);
                 break;
+            case LIFETIME:
+                break;
         }
 
         return resultContext;
@@ -284,6 +304,8 @@ public class Utils {
             case MONTH:
                 prevMonth(fromDate, toDate, resultContext);
                 break;
+            case LIFETIME:
+                break;
         }
 
         return resultContext;
@@ -298,10 +320,10 @@ public class Utils {
     }
 
     private static void prevMonth(Calendar fromDate, Calendar toDate, Map<String, String> context) {
-        toDate = (Calendar)fromDate.clone();
+        toDate = (Calendar) fromDate.clone();
         toDate.add(Calendar.DAY_OF_MONTH, -1);
 
-        fromDate = (Calendar)toDate.clone();
+        fromDate = (Calendar) toDate.clone();
         fromDate.set(Calendar.DAY_OF_MONTH, 1);
 
         putFromDate(context, fromDate);
@@ -316,7 +338,7 @@ public class Utils {
     }
 
     private static void nextMonth(Calendar fromDate, Calendar toDate, Map<String, String> context) {
-        fromDate = (Calendar)toDate.clone();
+        fromDate = (Calendar) toDate.clone();
         fromDate.add(Calendar.DAY_OF_MONTH, 1);
 
         toDate.add(Calendar.MONTH, 1);
@@ -380,11 +402,11 @@ public class Utils {
     public static void validate(Map<String, String> context, Metric metric) throws IllegalArgumentException {
         for (MetricParameter parameter : metric.getParams()) {
             String name = parameter.name();
-            
+
             if (!context.containsKey(name)) {
                 throw new IllegalArgumentException("Parameter " + name + " was not set.");
             }
-            
+
             parameter.validate(context.get(name), context);
         }
     }

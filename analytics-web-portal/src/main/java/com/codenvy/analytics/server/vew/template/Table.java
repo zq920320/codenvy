@@ -4,6 +4,9 @@
  */
 package com.codenvy.analytics.server.vew.template;
 
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.shared.TableData;
 
 import java.util.ArrayList;
@@ -32,8 +35,13 @@ public class Table {
 
     public TableData retrieveData(Map<String, String> context) throws Exception {
         TableData data = new TableData(attributes);
-
         int length = getLength();
+
+        String timeUnitParam = context.get(MetricParameter.TIME_UNIT.name());
+        if (timeUnitParam != null && Utils.getTimeUnit(context) == TimeUnit.LIFETIME) {
+            length = 2;
+        }
+
         for (Row row : rows) {
             data.addAll(row.fill(context, length));
         }

@@ -44,9 +44,6 @@ public class TestMetricActiveUsersWorkspacesNumber extends BaseTest {
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withDate("2010-10-01").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2010-10-02").build());
 
-        // events should not be taken in account
-        events.add(Event.Builder.createUserSSOLoggedOutEvent("user3").withDate("2010-10-01").build());
-
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();

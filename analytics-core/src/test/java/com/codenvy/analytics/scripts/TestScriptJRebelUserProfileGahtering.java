@@ -47,8 +47,6 @@ public class TestScriptJRebelUserProfileGahtering extends BaseTest {
                                 .build());
         events.add(Event.Builder.createJRebelUserProfileInfo("user2", "ws2", "userId2", "", "last2", "phone2").withDate("2010-10-01")
                                 .build());
-        events.add(Event.Builder.createJRebelUserProfileInfo("", "ws3", "userId3", "", "last3", "phone3").withDate("2010-10-01")
-                                .build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();

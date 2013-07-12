@@ -25,6 +25,13 @@ DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Removes events where user and was are both 'default'
+---------------------------------------------------------------------------
+DEFINE skipDefaults(X) RETURNS Y {
+  $Y = FILTER $X BY user != 'default' AND ws != 'default';
+};
+
+---------------------------------------------------------------------------
 -- Filters events by date of occurrence.
 -- @param toDateParam  - date in format 'YYYYMMDD'
 -- @interval
@@ -64,11 +71,8 @@ DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
 -- @return  {..., ws : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractWs(X) RETURNS Y {
-  x1 = extractParam($X, 'WS', 'ws');
-  x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws;
-  x3 = UNION x1, x2;
-  x4 = DISTINCT x3;
-  $Y = FILTER x4 BY ws != '' AND ws != 'default';
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws1, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws2;
+  $Y = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws;
 };
 
 ---------------------------------------------------------------------------
@@ -85,11 +89,8 @@ DEFINE extractSession(X) RETURNS Y {
 -- @return  {..., user : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractUser(X) RETURNS Y {
-  x1 = smartExtractParam($X, 'USER', 'user');
-  x2 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user;
-  x3 = UNION x1, x2;
-  x4 = DISTINCT x3;
-  $Y = FILTER x4 BY user != '';
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user1, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user2;
+  $Y = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : 'default')) AS user;
 };
 
 ---------------------------------------------------------------------------
@@ -108,17 +109,6 @@ DEFINE extractUserFromAliases(X) RETURNS Y {
 -- @return  {..., $paramFieldNameParam : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
-  x1 = smartExtractParam($X, '$paramNameParam', '$paramFieldNameParam');
-  $Y = FILTER x1 BY $paramFieldNameParam != '';
-};
-
----------------------------------------------------------------------------
--- Extract parameter value out of message and adds as field to tuple.
--- @param paramNameParam - the parameter name
--- @param paramFieldNameParam - the name of filed in the tuple
--- @return  {..., $paramFieldNameParam : bytearray}
----------------------------------------------------------------------------
-DEFINE smartExtractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
   $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramFieldNameParam;
 };
 
@@ -180,8 +170,9 @@ DEFINE lastUserProfileUpdate(X) RETURNS Y {
 --          intervals: {(ws: bytearray,user: bytearray,dt: datetime,delta: long)}}
 ---------------------------------------------------------------------------------------------
 DEFINE groupEvents(X) RETURNS Y {
-  x1 = FOREACH $X GENERATE ws, user, dt;
-  x2 = FOREACH $X GENERATE ws, user, dt;
+  x0 = skipDefaults($X);
+  x1 = FOREACH x0 GENERATE ws, user, dt;
+  x2 = FOREACH x0 GENERATE ws, user, dt;
 
   x3 = JOIN x1 BY (ws, user), x2 BY (ws, user);
 

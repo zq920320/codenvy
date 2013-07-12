@@ -46,6 +46,7 @@ public class TimeLineViewJob implements Job, ForceableRunOnceJob {
             service.update(TimeUnit.DAY);
             service.update(TimeUnit.WEEK);
             service.update(TimeUnit.MONTH);
+            service.update(TimeUnit.LIFETIME);
         } finally {
             LOGGER.info("TimeLineViewJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

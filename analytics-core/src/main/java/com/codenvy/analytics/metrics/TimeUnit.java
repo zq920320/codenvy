@@ -10,5 +10,6 @@ package com.codenvy.analytics.metrics;
 public enum TimeUnit {
     DAY,
     WEEK,
-    MONTH;
+    MONTH,
+    LIFETIME
 }
