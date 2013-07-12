@@ -25,9 +25,11 @@ import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -47,15 +49,6 @@ public class TestActon extends BaseTest {
                 .withDate("2010-10-01").withTime("20:05:00").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "paas1")
                 .withDate("2010-10-01").withTime("20:10:00").build());
-
-        events.add(Event.Builder.createUserInviteEvent("user2", "ws1", "session", "email")
-                .withDate("2010-10-01").withTime("20:00:00").build());
-        events.add(Event.Builder.createUserInviteEvent("user2", "ws1", "session", "email")
-                .withDate("2010-10-01").withTime("20:05:00").build());
-
-        events.add(Event.Builder.createProjectDeployedEvent("user3", "ws4", "session", "project4", "type2", "local")
-                .withDate("2010-10-01").build());
-
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
@@ -63,12 +56,47 @@ public class TestActon extends BaseTest {
         params.put(MetricParameter.FROM_DATE.name(), "20101001");
         params.put(MetricParameter.TO_DATE.name(), "20101001");
 
-        ListListStringValueData valueData = (ListListStringValueData) executeAndReturnResult(ScriptType.ACTON, log, params);
+        runScript(log, params);
+
+        events = new ArrayList<Event>();
+        events.add(Event.Builder.createUserInviteEvent("user2", "ws1", "session", "email")
+                .withDate("2010-10-02").withTime("20:00:00").build());
+        events.add(Event.Builder.createUserInviteEvent("user2", "ws1", "session", "email")
+                .withDate("2010-10-02").withTime("20:05:00").build());
+
+        events.add(Event.Builder.createProjectDeployedEvent("user3", "ws4", "session", "project4", "type2", "local")
+                .withDate("2010-10-02").build());
+        log = LogGenerator.generateLog(events);
+
+        params = new HashMap<String, String>();
+        params.put(MetricParameter.RESULT_DIR.name(), BASE_DIR);
+        params.put(MetricParameter.FROM_DATE.name(), "20101002");
+        params.put(MetricParameter.TO_DATE.name(), "20101002");
+
+        ListListStringValueData valueData = (ListListStringValueData) runScript(log, params);
         List<ListStringValueData> all = valueData.getAll();
 
         assertEquals(all.size(), 3);
         assertTrue(all.contains(new ListStringValueData(Arrays.asList("user1", "1", "2", "1", "10"))));
         assertTrue(all.contains(new ListStringValueData(Arrays.asList("user2", "0", "0", "0", "5"))));
         assertTrue(all.contains(new ListStringValueData(Arrays.asList("user3", "0", "1", "1", "0"))));
+    }
+
+    private ValueData runScript(File log, Map<String, String> context) throws IOException {
+        File srcDir = new File(BASE_DIR, "ACTON");
+        File destDir = new File(BASE_DIR, "PREV_ACTON");
+
+        if (destDir.exists()) {
+            FileUtils.deleteDirectory(destDir);
+        }
+
+        if (srcDir.exists()) {
+            FileUtils.moveDirectory(srcDir, destDir);
+        } else {
+            destDir.mkdirs();
+            File.createTempFile("prefix", "suffix", destDir);
+        }
+
+        return executeAndReturnResult(ScriptType.ACTON, log, context);
     }
 }

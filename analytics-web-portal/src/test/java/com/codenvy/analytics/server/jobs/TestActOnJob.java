@@ -11,8 +11,8 @@ import static org.testng.Assert.assertTrue;
 
 import com.codenvy.analytics.ldap.ReadOnlyUserManager;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -26,12 +26,10 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -66,6 +64,7 @@ public class TestActOnJob {
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
         context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
+        Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
         context.put(PigScriptExecutor.LOG, file.getAbsolutePath());
 
         job = spy(new ActOnJob(null));
@@ -75,7 +74,7 @@ public class TestActOnJob {
 
     @Test
     public void testPrepareFile() throws Exception {
-        File jobFile = job.prepareFile();
+        File jobFile = job.prepareFile(context);
         assertEquals(jobFile.getName(), ActOnJob.FILE_NAME);
 
         Set<String> content = read(jobFile);

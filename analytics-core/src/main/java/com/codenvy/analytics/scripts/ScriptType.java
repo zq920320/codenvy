@@ -38,7 +38,15 @@ public enum ScriptType {
     PROJECTS_BUILT,
     USERS_SSO_LOGGED_IN,
     PRODUCT_USAGE_TIME,
-    ACTON,
+    ACTON {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.RESULT_DIR,
+                    MetricParameter.FROM_DATE,
+                    MetricParameter.TO_DATE}));
+        }
+    },
 
     USERS_SEGMENT_ANALYSIS_1 {
         @Override

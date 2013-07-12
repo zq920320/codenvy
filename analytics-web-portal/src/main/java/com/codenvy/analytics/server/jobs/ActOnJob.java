@@ -5,11 +5,14 @@
 package com.codenvy.analytics.server.jobs;
 
 import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.service.MailService;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.quartz.Job;
@@ -20,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.SocketTimeoutException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -27,7 +31,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActOnJob implements Job, ForceableRunOnceJob {
+public class ActOnJob implements Job, ForceableJobRunByContext {
     public static final String FILE_NAME = "ideuserupdate.csv";
 
     private static final String FTP_PASSWORD_PARAM = "ftp_password";
@@ -40,8 +44,6 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActOnJob.class);
     private static final String ACTION_PROPERTIES = System.getProperty("analytics.job.acton.properties");
-
-    //email,firstName,lastName,phone,employer,projects,builts,deployments,spentTime
 
     private final Properties actonProperties;
 
@@ -71,19 +73,20 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
      */
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            run();
+            Map<String, String> executionContext = Utils.initializeContext(TimeUnit.DAY, new Date());
+            run(executionContext);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }
 
-    private void run() throws IOException {
+    private void run(Map<String, String> context) throws IOException {
         LOGGER.info("ActOnJob is started");
         long start = System.currentTimeMillis();
 
         try {
-            File file = prepareFile();
+            File file = prepareFile(context);
 
             transfer(file);
             sendMail();
@@ -172,15 +175,15 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
         }
     }
 
-    protected File prepareFile() throws IOException {
-        Map<String, String> context = initializeContext();
+    protected File prepareFile(Map<String, String> context) throws IOException {
+        Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
 
         File file = new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeaders(out);
 
-            ListListStringValueData valueData = (ListListStringValueData) ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.ACTON, context);
+            ListListStringValueData valueData = (ListListStringValueData) runScript(context);
             for (ListStringValueData item : valueData.getAll()) {
                 String user = item.getAll().get(0);
 
@@ -196,6 +199,24 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
         }
 
         return file;
+    }
+
+    private ValueData runScript(Map<String, String> context) throws IOException {
+        File srcDir = new File(Utils.getResultDir(context), "ACTON");
+        File destDir = new File(Utils.getResultDir(context), "PREV_ACTON");
+
+        if (destDir.exists()) {
+            FileUtils.deleteDirectory(destDir);
+        }
+
+        if (srcDir.exists()) {
+            FileUtils.moveDirectory(srcDir, destDir);
+        } else {
+            destDir.mkdirs();
+            File.createTempFile("prefix", "suffix", destDir);
+        }
+
+        return  ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.ACTON, context);
     }
 
     protected Map<String, String> initializeContext() {
@@ -266,7 +287,7 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
      * {@inheritDoc}
      */
     @Override
-    public void forceRun() throws Exception {
-        run();
+    public void forceRun(Map<String, String> context) throws Exception {
+        run(context);
     }
 }

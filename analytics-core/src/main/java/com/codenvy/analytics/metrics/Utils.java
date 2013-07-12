@@ -410,4 +410,8 @@ public class Utils {
             parameter.validate(context.get(name), context);
         }
     }
+
+    public static String getResultDir(Map<String, String> context) {
+        return context.get(MetricParameter.RESULT_DIR.name());
+    }
 }
