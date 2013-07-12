@@ -73,8 +73,7 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
      */
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            Map<String, String> executionContext = Utils.initializeContext(TimeUnit.DAY, new Date());
-            run(executionContext);
+            run(initializeContext());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new JobExecutionException(e);
@@ -219,12 +218,8 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         return  ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.ACTON, context);
     }
 
-    protected Map<String, String> initializeContext() {
-        Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
-        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
-
-        return context;
+    protected Map<String, String> initializeContext() throws IOException {
+        return Utils.initializeContext(TimeUnit.DAY, new Date());
     }
 
     private void writeMetricsValues(BufferedWriter out, ListStringValueData item) throws IOException {

@@ -61,14 +61,12 @@ public class TestActOnJob {
         ReadOnlyUserManager readOnlyUserManager = spy(new ReadOnlyUserManager(userManager));
         doReturn(attributes).when(readOnlyUserManager).getUserAttributes(anyString());
 
-        Map<String, String> context = Utils.newContext();
+        context = Utils.newContext();
         context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
         context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
-        Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
         context.put(PigScriptExecutor.LOG, file.getAbsolutePath());
 
         job = spy(new ActOnJob(null));
-        doReturn(context).when(job).initializeContext();
         doNothing().when(job).writeUserProfileAttributes(any(BufferedWriter.class), any(String.class));
     }
 
