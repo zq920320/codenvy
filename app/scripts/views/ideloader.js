@@ -13,6 +13,8 @@ define(["jquery","underscore","backbone","models/account"],
                     _.bind(this.onTenantError,this)
                 );
             }
+
+
         };
 
         _.extend(IDELoader.prototype, Backbone.Events, {
@@ -61,16 +63,18 @@ define(["jquery","underscore","backbone","models/account"],
             }
         });
 
+        _.extend(IDELoader.prototype, Backbone.View, {
+          setLoaderMessage : function() {
+                if (Account.getQueryParameterByName("type")==="factory" || Account.getQueryParameterByName("type")==="create"){
+                    $(".loader-text").html("Creating your environment");
+                }
+            }
+        });
+
         return {
 
             get : function(){
                 return new IDELoader();
-            },
-
-            setLoaderMessage : function() {
-                if (Account.getQueryParameterByName("type")==="factory"){
-                    $(".loader-text").html("Creating your environment");
-                }
             },
 
             IDELoader : IDELoader
