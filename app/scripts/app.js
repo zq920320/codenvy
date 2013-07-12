@@ -63,7 +63,16 @@ define(["jquery","config",
                         setProfileUserForm = $(".cloud-ide-profile"),
                         inviteOrganization = $(".organization"),
                         errorResponse = $(".ErrorIcon"),
-                        maintenancePage = $(".maintenance");
+                        maintenancePage = $(".maintenance"),
+                        gcBannerElement = $(".cta");
+
+
+                    if(gcBannerElement.length !== 0){
+                        (function(){
+                            // <!--  CTA Banner Rotation   -->
+                            new GC_banner();
+                        }());
+                    }
 
                     if(signupForm.length !== 0){
                         (function(){
@@ -81,9 +90,7 @@ define(["jquery","config",
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
-
-                            // <!--  Home Page CTA Banner Rotation   -->
-                            new GC_banner();
+                            
                         }());
                     }
 

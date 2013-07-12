@@ -435,6 +435,11 @@ h1.enterprise-header-text {
     padding: 0.5em 2em 0.3em 2em;
 }
 
+.pricing-row-notop {
+    position: relative;
+    padding: 0.5em 2em 0.3em 2em;
+}
+
 .pricing-row:nth-child(1) {
     padding-top: 0;
     border-top: none;
@@ -769,6 +774,14 @@ a.blue-link{
     color: #60AFD9; 
 }
 
+/*
+    Features blue anchor links
+
+ */
+ 
+.container.light-n-framed p a {
+    color: #60AFD9; 
+}
 
 /*
 
