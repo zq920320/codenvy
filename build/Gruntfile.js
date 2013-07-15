@@ -252,7 +252,8 @@ module.exports = function( grunt ) {
                 stdout: true,
                 failOnError: true,
                 execOptions: {
-                    cwd: '../'
+                    cwd: '../',
+                    maxBuffer: 512000
                 }
             }
         },
