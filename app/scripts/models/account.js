@@ -355,9 +355,16 @@
             return string;
             },
 
-            getTenants : function(success,error){
+            getTenants : function(success,error,redirect){
                 $.when(Tenant.getTenants()).done(function(tenants){
-                    success(tenants);
+
+                    switch (tenants.length) {
+                        case 0: redirect({url:"/ws-create"});
+                            break;
+                        case 1: redirect({url:"ide/" + tenants[0]});
+                            break;
+                        default: success(tenants);
+                }
                 }).fail(function(msg){
                     error([
                         new  AccountError(null,msg)

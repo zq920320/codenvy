@@ -17,8 +17,14 @@ define(["jquery","underscore",
 
                 Account.getTenants(
                     _.bind(this.onGotTennants,this),
-                    _.bind(this.onErrorGettingTennants,this)
+                    _.bind(this.onErrorGettingTennants,this),
+                    _.bind(this.onRedirect,this)
                 );
+            },
+
+            onRedirect : function(d){
+                var queryParam = window.location.search;
+                window.location = d.url + queryParam;
             },
 
             onGotTennants : function(tenants){
