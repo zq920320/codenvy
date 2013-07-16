@@ -1,0 +1,45 @@
+---
+    layout : focused
+    title: Codenvy - Login
+---
+
+<div class="content">
+    <div class="container">
+        <div class="row cws">
+            <div class="span2"></div>
+            <div class="span8">
+                <div class="container dark login rounded shadow">
+                    <div class="error-container"><%= (request.getAttribute("errorMessage") == null) ? "" : request.getAttribute("errorMessage") %></div>
+                    <h2 class="shiny center">Create your account</h2>
+                    <hr class="short-line">
+                <form class="create-form">
+                    <div class="field">
+                        <input name="email" type="text" class="required email" placeholder="Sign up with your email">
+                    </div>
+                    <div class="field">
+                        <input name="domain" type="text" class="required domain-name" placeholder="Choose your workspace name" maxlength="20">
+                    </div>
+                    <div class="field">
+                        <input type="submit" class="signup-button blue-button" value="Sign up for free">
+                        <div class="working hidden">working...</div>
+                    </div>
+                </form>
+
+                    <div class="aternative-login">
+                        <a href="#" class="oauth-button google"></a>
+                        <a href="#" class="oauth-button github"></a>
+                    </div>
+                    <p class="create-terms">By signing up, you agree to the <a href="{{ 'tos.html' | url }}">Terms of Service</a> and the <a href="{{ 'privacy.html' | url }}">Privacy Policy</a>.</p>
+                </div>
+            </div>
+            <div class="span2"></div>
+        </div>
+</div>
+
+<footer >
+    <nav>
+        <ul>
+            <li><a class="footer-link" href="{{'login.html' | url}}">Already have an account? Sign in.</a></li>
+        </ul>
+    </nav>
+</footer>

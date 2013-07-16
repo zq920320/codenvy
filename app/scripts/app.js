@@ -13,7 +13,8 @@ define(["jquery","config",
         "views/inviteorganization",
         "views/errorresponse",
         "views/maintenancepage",
-        "views/gc_banner"
+        "views/gc_banner",
+        "views/ws_createform"
         ],
 
     function($,Config,
@@ -31,7 +32,8 @@ define(["jquery","config",
         InviteOrganization,
         ErrorResponse,
         MaintenancePage,
-        GC_banner){
+        GC_banner,
+        WSCreateForm){
 
         function modernize(){
             Modernizr.load({
@@ -64,13 +66,34 @@ define(["jquery","config",
                         inviteOrganization = $(".organization"),
                         errorResponse = $(".ErrorIcon"),
                         maintenancePage = $(".maintenance"),
-                        gcBannerElement = $(".cta");
+                        gcBannerElement = $(".cta"),
+                        wsCreateForm = $(".create-form");
 
 
                     if(gcBannerElement.length !== 0){
                         (function(){
                             // <!--  CTA Banner Rotation   -->
                             new GC_banner();
+                        }());
+                    }
+
+                    if(wsCreateForm.length !== 0){
+                        (function(){
+                            var form = WSCreateForm.get(wsCreateForm),
+                            errorReport = ErrorReport.get(errorContainer);
+
+                            form.on("submitting", function(){
+                                errorReport.hide();
+                            });
+
+                            form.on("success", function(d){
+                                window.location.href = d.url;
+                            });
+
+                            form.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+                            
                         }());
                     }
 
