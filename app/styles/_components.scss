@@ -241,7 +241,29 @@ $used-by-logos : "../images/landing/logos/amazon.png"
     @include transform(translate(0,0));
     @include transition(0.3s);
 }
+/*
+  
+    Create WS
 
+*/
+.aternative-create {
+    @include image_line_small;
+    @include transition(0.6s);
+    padding: 12px 10px 10px 10px;
+    text-align: center;
+    opacity: 1;
+    min-height: 100px;
+}
+
+.aternative-create .pulled-up {
+    @include transform(translate(0,-147px));
+}
+
+.aternative-create .collapsed {
+    opacity: 0;
+    @include transform(translate(0,0));
+    @include transition(0.3s);
+}
 
 /*
     Domain picker
@@ -822,13 +844,13 @@ a.blue-link{
 
 }
 .create-terms {
-    position: absolute;
-    left: 90px;
+    position: relative;
     bottom: 0px;
     font-size: 0.8em;
     line-height: 1.1em;
     font-weight: 200;
     opacity: 0.7;
     color: #f3f3f3;
+    padding: 0px;
 }
 
