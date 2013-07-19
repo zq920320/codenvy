@@ -35,6 +35,7 @@ define(["jquery","underscore",
                     this.$(".domain-list").append(
                         this.tenantTemplate(tenant.toJSON())
                     );
+
                 },this);
             },
 
