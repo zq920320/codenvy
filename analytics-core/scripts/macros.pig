@@ -209,10 +209,13 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
   ---------------------------------------------------------------------------------------------
   k2 = FOREACH k1 GENERATE ws, user, dt, (before IS NULL ? -999999 : before) AS before, (after IS NULL ? 999999 : after) AS after;
   k3 = FOREACH k2 GENERATE ws, user, dt, (before < -(long)$inactiveInterval*60 ? (after <= (long)$inactiveInterval*60 ? 'start'
-										          			    : 'none')
+										          			    : 'single')
 									     : (after <= (long)$inactiveInterval*60 ? 'none'
 														    : 'end')) AS flag;
-  kR = FILTER k3 BY flag != 'none';
+  kR = FILTER k3 BY flag == 'start' OR flag == 'end';
+
+  k4 = FILTER k3 BY flag == 'single';
+  kS = FOREACH k4 GENERATE ws, user, dt, 0 AS delta;
 
   ---------------------------------------------------------------------------------------------
   -- For every the start session event finds the corresponding the end session event
@@ -232,8 +235,9 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
   l5 = FOREACH l4 GENERATE l1::ws AS ws, l1::user AS user, l1::dt AS dt, SecondsBetween(l2::dt, l1::dt) AS delta;
   l6 = FILTER l5 BY delta > 0;
   l7 = GROUP l6 BY (ws, user, dt);
+  l = FOREACH l7 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MIN(l6.delta) AS delta;
 
-  $Y = FOREACH l7 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MIN(l6.delta) AS delta;
+  $Y = UNION kS, l;
 };
 
 ---------------------------------------------------------------------------------------------

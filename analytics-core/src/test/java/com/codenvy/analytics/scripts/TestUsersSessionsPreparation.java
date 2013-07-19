@@ -79,6 +79,6 @@ public class TestUsersSessionsPreparation extends BaseTest {
                                                                                                           log, params);
 
         Map<String, ListListStringValueData> all = value.getAll();
-        assertEquals(all.size(), 2);
+        assertEquals(all.size(), 3);
     }
 }

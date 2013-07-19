@@ -83,10 +83,12 @@ public class TestScriptProductUsageTime extends BaseTest {
         ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "2010-10-01T20:00:00.000Z", "420"));
         ListStringValueData item2 = new ListStringValueData(Arrays.asList("ws1", "user2", "2010-10-01T20:25:00.000Z", "240"));
         ListStringValueData item3 = new ListStringValueData(Arrays.asList("ws1", "user1", "2010-10-01T21:00:00.000Z", "420"));
+        ListStringValueData item4 = new ListStringValueData(Arrays.asList("ws1", "user3", "2010-10-01T20:25:00.000Z", "0"));
 
-        assertEquals(all.size(), 3);
+        assertEquals(all.size(), 4);
         assertTrue(all.contains(item1));
         assertTrue(all.contains(item2));
         assertTrue(all.contains(item3));
+        assertTrue(all.contains(item4));
     }
 }
