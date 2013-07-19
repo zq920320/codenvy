@@ -144,6 +144,7 @@ module.exports = function( grunt ) {
                 // robots.txt
 
                 {expand: true, cwd: '../app/_site/', src: ['*.txt'], dest: '../target/dist/stage/'}
+
             ]
         },
 

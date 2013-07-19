@@ -60,12 +60,8 @@
             if (isWebsocketEnabled()) {
                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
                 var url = "/sso/server/gen?authType=oauth&oauth_provider=google" +
-                   "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email";
-                //window.location = url;
-                if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url")){
-                   url += "&redirect_url=" + getQueryParameterByName("redirect_url");
-                   url += "&client_url=" + getQueryParameterByName("client_url");
-                }
+                   "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email"+
+                   "&" + window.location.search.substring(1);
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -76,11 +72,8 @@
         var loginWithGithub = function(page,callback){
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/sso/server/gen?authType=oauth&oauth_provider=github&scope=user&scope=repo";
-                if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url")){
-                   url += "&redirect_url=" + getQueryParameterByName("redirect_url");
-                   url += "&client_url=" + getQueryParameterByName("client_url");
-                }
+                var url = "/sso/server/gen?authType=oauth&oauth_provider=github&scope=user&scope=repo" +
+                "&" + window.location.search.substring(1);
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -144,13 +137,10 @@
             login : function(form){
 
                 if (isWebsocketEnabled()){
-                    var loginUrl = "/sso/server/gen?authType=jaas";
-                    if(getQueryParameterByName("redirect_url") && getQueryParameterByName("client_url"))
-                    {
-                        loginUrl += "&redirect_url=" + getQueryParameterByName("redirect_url");
-                        loginUrl += "&client_url=" + getQueryParameterByName("client_url");
+                    var loginUrl = "/sso/server/gen?" + window.location.search.substring(1);
+                    if (getQueryParameterByName("authType")!=="jaas"){
+                        loginUrl += "&authType=jaas";
                     }
-
                     form.attr("action", loginUrl);
                     form.submit();
                     }
@@ -161,10 +151,11 @@
 
             createTenant : function(email,domain,success,error){
 
-                var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm/";
-
+                var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm/" +
+                 encodeURIComponent(domain.toLowerCase()) + "/" + encodeURIComponent(email.toLowerCase()) + 
+                 "?" + window.location.search.substring(1);
                 $.ajax({
-                    url : tenantServiceUrl + encodeURIComponent(domain.toLowerCase()) + "/" + encodeURIComponent(email.toLowerCase()),
+                    url : tenantServiceUrl,
                     type : "POST",
                     data: {},
                     success : function(){
