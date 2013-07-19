@@ -9,10 +9,10 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class DoubleValueData extends AbstractValueData {
+
+    private static final long serialVersionUID = 1L;
 
     private double value;
 
@@ -27,41 +27,31 @@ public class DoubleValueData extends AbstractValueData {
         this.value = value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         return Double.toString(value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected DoubleValueData doUnion(ValueData valueData) {
         return new DoubleValueData(value + valueData.getAsDouble());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public double getAsDouble() {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(Object object) {
         return value == ((DoubleValueData)object).value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int doHashCode() {
         return (int)value;

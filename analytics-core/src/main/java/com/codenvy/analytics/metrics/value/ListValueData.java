@@ -13,10 +13,10 @@ import java.util.Collections;
 import java.util.List;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class ListValueData<T> extends AbstractValueData {
+
+    private static final long serialVersionUID = 1L;
 
     private List<T> value;
 
@@ -49,7 +49,7 @@ public abstract class ListValueData<T> extends AbstractValueData {
 
         return createInstance(newValue);
     }
-    
+
     /** {@inheritedDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -94,17 +94,15 @@ public abstract class ListValueData<T> extends AbstractValueData {
         return builder.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(Object object) {
-        ListValueData< ? > valueData = (ListValueData< ? >)object;
+        ListValueData<?> valueData = (ListValueData<?>)object;
 
         if (this.value.size() != valueData.value.size()) {
             return false;
         }
-        
+
         for (int i = 0; i < this.value.size(); i++) {
             if (!this.value.get(i).equals(valueData.value.get(i))) {
                 return false;
@@ -115,9 +113,7 @@ public abstract class ListValueData<T> extends AbstractValueData {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
         int hash = 0;

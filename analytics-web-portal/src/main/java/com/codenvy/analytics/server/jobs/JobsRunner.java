@@ -7,6 +7,7 @@ package com.codenvy.analytics.server.jobs;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
+
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
@@ -22,25 +23,21 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class JobsRunner implements ServletContextListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobsRunner.class);
+    private static final Logger LOGGER                             = LoggerFactory.getLogger(JobsRunner.class);
     private static final String ANALYTICS_FORCE_RUN_JOBS_CONDITION = "analytics.force.run.jobs.condition";
-    private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS = "analytics.force.run.jobs.class";
-    private static final String CRON_TIMETABLE = "0 0 1 ? * *";
+    private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS     = "analytics.force.run.jobs.class";
+    private static final String CRON_TIMETABLE                     = "0 0 1 ? * *";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
-    private static final String FORCE_RUN_CONDITION_ONCE = "ONCE";
+    private static final String FORCE_RUN_CONDITION_ONCE    = "ONCE";
     private static final String FORCE_RUN_CONDITION_LASTDAY = "LASTDAY";
 
     private Scheduler scheduler;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void contextDestroyed(ServletContextEvent context) {
         try {
@@ -50,9 +47,7 @@ public class JobsRunner implements ServletContextListener {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void contextInitialized(ServletContextEvent context) {
         initializeScheduler();
@@ -105,7 +100,7 @@ public class JobsRunner implements ServletContextListener {
             context.put(MetricParameter.TIME_UNIT.name(), TimeUnit.DAY.name());
 
             do {
-                ((ForceableJobRunByContext) job).forceRun(context);
+                ((ForceableJobRunByContext)job).forceRun(context);
                 context = Utils.nextDateInterval(context);
             } while (!Utils.getToDateParam(context).equals(MetricParameter.TO_DATE.getDefaultValue()));
 
@@ -123,26 +118,24 @@ public class JobsRunner implements ServletContextListener {
             context.put(MetricParameter.TO_DATE.name(), forceRunCondition);
             context.put(MetricParameter.TIME_UNIT.name(), TimeUnit.DAY.name());
 
-            ((ForceableJobRunByContext) job).forceRun(context);
+            ((ForceableJobRunByContext)job).forceRun(context);
         }
     }
 
     private void executeLastDay(Job job) throws Exception {
         if (job instanceof ForceableJobRunByContext) {
             Map<String, String> context = Utils.initializeContext(TimeUnit.DAY, new Date());
-            ((ForceableJobRunByContext) job).forceRun(context);
+            ((ForceableJobRunByContext)job).forceRun(context);
         }
     }
 
     private void executeOnce(Job job) throws Exception {
         if (job instanceof ForceableRunOnceJob) {
-            ((ForceableRunOnceJob) job).forceRun();
+            ((ForceableRunOnceJob)job).forceRun();
         }
     }
 
-    /**
-     * Creates scheduler and adds available jobs.
-     */
+    /** Creates scheduler and adds available jobs. */
     public void initializeScheduler() {
         try {
             setDefaultSchedulerProperties();
@@ -155,6 +148,7 @@ public class JobsRunner implements ServletContextListener {
             initializeJob(AnalysisViewJob.class);
             initializeJob(ActOnJob.class);
             initializeJob(JRebelJob.class);
+            initializeJob(CheckLogsJob.class);
 
         } catch (Exception e) {
             LOGGER.error("Scheduler was not initialized properly", e);

@@ -13,6 +13,7 @@
         <metric type="users_deployed_paas_projects_number" title="&amp; Deployed to PAAS"/>
         <metric type="users_invitations_sent_number" title="Sent Invites"/>
         <metric type="users_shell_launched_number" title="Shell launched"/>
+        <metric type="users_have_complete_profile_number" title="Have Complete Profile"/>
 	<empty />
     </table>
 

@@ -12,6 +12,7 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.service.MailService;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
@@ -28,64 +29,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ActOnJob implements Job, ForceableJobRunByContext {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class ActOnJob implements Job, ForceableRunOnceJob {
     public static final String FILE_NAME = "ideuserupdate.csv";
 
-    private static final String FTP_PASSWORD_PARAM = "ftp_password";
-    private static final String FTP_LOGIN_PARAM = "ftp_login";
-    private static final String FTP_SERVER_PARAM = "ftp_server";
-    private static final String FTP_PORT_PARAM = "ftp_port";
-    private static final String FTP_TIMEOUT_PARAM = "ftp_timeout";
+    private static final String FTP_PASSWORD_PARAM    = "ftp_password";
+    private static final String FTP_LOGIN_PARAM       = "ftp_login";
+    private static final String FTP_SERVER_PARAM      = "ftp_server";
+    private static final String FTP_PORT_PARAM        = "ftp_port";
+    private static final String FTP_TIMEOUT_PARAM     = "ftp_timeout";
     private static final String FTP_MAX_EFFORTS_PARAM = "ftp_maxEfforts";
-    private static final String FTP_AUTH_PARAM = "ftp_auth";
+    private static final String FTP_AUTH_PARAM        = "ftp_auth";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ActOnJob.class);
+    private static final Logger LOGGER            = LoggerFactory.getLogger(ActOnJob.class);
     private static final String ACTION_PROPERTIES = System.getProperty("analytics.job.acton.properties");
 
     private final Properties actonProperties;
 
     public ActOnJob() throws IOException {
-        this.actonProperties = readProperties();
+        this.actonProperties = Utils.readProperties(ACTION_PROPERTIES);
     }
 
     public ActOnJob(Properties properties) throws IOException {
         this.actonProperties = properties;
     }
 
-    /**
-     * Reads FTP connections properties.
-     */
-    private Properties readProperties() throws IOException {
-        Properties ftpProps = new Properties();
-
-        try (InputStream in = new BufferedInputStream(new FileInputStream(ACTION_PROPERTIES))) {
-            ftpProps.load(in);
-        }
-
-        return ftpProps;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            run(initializeContext());
+            run();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }
 
-    private void run(Map<String, String> context) throws IOException {
+    private void run() throws IOException {
         LOGGER.info("ActOnJob is started");
         long start = System.currentTimeMillis();
 
         try {
-            File file = prepareFile(context);
+            File file = prepareFile(initializeContext());
 
             transfer(file);
             sendMail();
@@ -103,9 +87,7 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         mailService.send();
     }
 
-    /**
-     * Sends file directly to FTP server.
-     */
+    /** Sends file directly to FTP server. */
     private void transfer(File file) throws IOException {
         final String auth = actonProperties.getProperty(FTP_AUTH_PARAM);
         final int maxEfforts = Integer.valueOf(actonProperties.getProperty(FTP_MAX_EFFORTS_PARAM));
@@ -182,7 +164,7 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeaders(out);
 
-            ListListStringValueData valueData = (ListListStringValueData) runScript(context);
+            ListListStringValueData valueData = (ListListStringValueData)runScript(context);
             for (ListStringValueData item : valueData.getAll()) {
                 String user = item.getAll().get(0);
 
@@ -215,11 +197,15 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
             File.createTempFile("prefix", "suffix", destDir);
         }
 
-        return  ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.ACTON, context);
+        return ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.ACTON, context);
     }
 
     protected Map<String, String> initializeContext() throws IOException {
-        return Utils.initializeContext(TimeUnit.DAY, new Date());
+        Map<String, String> context = Utils.newContext();
+        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
+        Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
+
+        return context;
     }
 
     private void writeMetricsValues(BufferedWriter out, ListStringValueData item) throws IOException {
@@ -260,9 +246,7 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         out.write(",");
     }
 
-    /**
-     * Write string value accordingly to CSV specification.
-     */
+    /** Write string value accordingly to CSV specification. */
     private void writeString(BufferedWriter out, String str) throws IOException {
         if (str == null) {
             out.write("");
@@ -278,11 +262,9 @@ public class ActOnJob implements Job, ForceableJobRunByContext {
         out.newLine();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public void forceRun(Map<String, String> context) throws Exception {
-        run(context);
+    public void forceRun() throws Exception {
+        run();
     }
 }

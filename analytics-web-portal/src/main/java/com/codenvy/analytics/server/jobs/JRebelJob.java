@@ -39,7 +39,7 @@ public class JRebelJob implements Job, ForceableJobRunByContext {
     private final Properties    jrebelProperties;
 
     public JRebelJob() throws IOException {
-        this.jrebelProperties = readProperties();
+        this.jrebelProperties = Utils.readProperties(JREBEL_PROPERTIES_RESOURCE);
     }
 
     /** {@inheritDoc} */
@@ -91,15 +91,5 @@ public class JRebelJob implements Job, ForceableJobRunByContext {
         }
 
         return builder;
-    }
-
-    private Properties readProperties() throws IOException {
-        Properties properties = new Properties();
-
-        try (InputStream in = new BufferedInputStream(new FileInputStream(new File(JREBEL_PROPERTIES_RESOURCE)))) {
-            properties.load(in);
-        }
-
-        return properties;
     }
 }

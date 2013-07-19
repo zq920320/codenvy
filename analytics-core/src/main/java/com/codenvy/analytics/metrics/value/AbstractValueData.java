@@ -4,16 +4,14 @@
  */
 package com.codenvy.analytics.metrics.value;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractValueData implements ValueData {
 
-    private Integer               hash;
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * {@inheritDoc}
-     */
+    private Integer hash;
+
+    /** {@inheritDoc} */
     @Override
     public ValueData union(ValueData valueData) {
         if (getClass() != valueData.getClass()) {
@@ -32,7 +30,7 @@ public abstract class AbstractValueData implements ValueData {
 
     /**
      * Combines two value data into one single instance.
-     * 
+     *
      * @param valueData
      * @return new unmodifiable {@link ValueData}
      */
@@ -40,22 +38,16 @@ public abstract class AbstractValueData implements ValueData {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object object) {
         return getClass() == object.getClass() && doEquals(object);
     }
 
-    /**
-     * @see #equals(Object)
-     */
+    /** @see #equals(Object) */
     protected abstract boolean doEquals(Object object);
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         if (hash == null) {
@@ -64,25 +56,19 @@ public abstract class AbstractValueData implements ValueData {
 
         return hash;
     }
-    
 
-    /**
-     * @see #hashCode()
-     */
+
+    /** @see #hashCode() */
     abstract protected int doHashCode();
 
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public long getAsLong() {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public double getAsDouble() {
         throw new UnsupportedOperationException();

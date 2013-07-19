@@ -60,15 +60,13 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
         long start = System.currentTimeMillis();
 
         try {
-            prepareDirs();
+            prepareDir("PROFILES");
 
             ScriptExecutor executor = ScriptExecutor.INSTANCE;
             Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
 
             ValueData result = executor.executeAndReturn(ScriptType.USERS_ACTIVITY_PREPARATION, context);
             store(MetricType.USER_ACTIVITY, result, context);
-
-            executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
 
             result = executor.executeAndReturn(ScriptType.USERS_SESSIONS_PREPARATION, context);
             store(MetricType.USER_SESSIONS, result, context);
@@ -122,9 +120,9 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
         return uuid;
     }
 
-    private void prepareDirs() throws IOException {
-        File srcDir = new File(FSValueDataManager.RESULT_DIRECTORY, "PROFILES");
-        File destDir = new File(FSValueDataManager.RESULT_DIRECTORY, "PREV_PROFILES");
+    private void prepareDir(String directory) throws IOException {
+        File srcDir = new File(FSValueDataManager.RESULT_DIRECTORY, directory);
+        File destDir = new File(FSValueDataManager.RESULT_DIRECTORY, "PREV_" + directory);
 
         if (destDir.exists()) {
             FileUtils.deleteDirectory(destDir);

@@ -11,12 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ListStringValueData extends ListValueData<String> {
 
-    private static final long               serialVersionUID = 7837928230988898876L;
+    private static final long serialVersionUID = 1L;
 
     public static final ListStringValueData EMPTY = new ListStringValueData(new ArrayList<String>(0));
 

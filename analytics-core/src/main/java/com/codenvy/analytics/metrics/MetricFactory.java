@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MetricFactory {
 
-    private static ConcurrentHashMap<MetricType, Metric> metrics = new ConcurrentHashMap<MetricType, Metric>();
+    private static ConcurrentHashMap<MetricType, Metric> metrics = new ConcurrentHashMap<>();
 
     /**
      * Creates new metric or returns existed one.
@@ -133,6 +133,9 @@ public class MetricFactory {
                 break;
             case USERS_SEGMENT_ANALYSIS_CONDITION_3:
                 metric = new UsersSegmentAnalysisCondition3();
+                break;
+            case USERS_HAVE_COMPLETE_PROFILE_NUMBER:
+                metric = new UsersHaveCompleteProfileNumberMetric();
                 break;
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();

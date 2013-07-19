@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class StringValueData extends AbstractValueData {
+
+    private static final long serialVersionUID = 1L;
 
     private String value;
 

@@ -15,9 +15,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum ScriptType {
     JREBEL_USER_PROFILE_GATHERING,
     WORKSPACES_CREATED,
@@ -43,7 +41,6 @@ public enum ScriptType {
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR,
-                    MetricParameter.FROM_DATE,
                     MetricParameter.TO_DATE}));
         }
     },
@@ -152,19 +149,26 @@ public enum ScriptType {
                     MetricParameter.INTERVAL,
                     MetricParameter.TO_DATE}));
         }
-    };
+    },
+
 
     /**
-     * @return what date type is represented in result
+     * Is responsible to find invalid messages like with empty or null value parameters, without user or workspace
+     * data.
      */
+    CHECK_LOGS_1,
+
+    /** Returns the list of unique events that were generated. */
+    CHECK_LOGS_2;
+
+    /** @return what date type is represented in result */
     public Class<? extends ValueData> getValueDataClass() {
         return ListListStringValueData.class;
     }
 
-    /**
-     * @return list of mandatory parameters required to be passed to the script
-     */
+    /** @return list of mandatory parameters required to be passed to the script */
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        return new LinkedHashSet<>(
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

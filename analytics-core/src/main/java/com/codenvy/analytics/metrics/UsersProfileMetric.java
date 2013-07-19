@@ -5,7 +5,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
@@ -23,47 +22,56 @@ public class UsersProfileMetric extends ReadBasedMetric {
         super(MetricType.USER_PROFILE);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         return evaluate(context);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                 MetricParameter.ALIAS}));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
+    protected Class<? extends ValueData> getValueDataClass() {
         return ListListStringValueData.class;
     }
 
-    protected String getEmail(Map<String, String> context) throws IOException {
-        return getItem(context, 0);
+    protected String getEmail(ListListStringValueData data) {
+        return getItem(data, 0);
     }
 
-    protected String getFirstName(Map<String, String> context) throws IOException {
-        return getItem(context, 1);
+    protected String getFirstName(ListListStringValueData data) {
+        return getItem(data, 1);
     }
 
-    protected String getLastName(Map<String, String> context) throws IOException {
-        return getItem(context, 2);
+    protected String getLastName(ListListStringValueData data) {
+        return getItem(data, 2);
     }
 
-    protected String getCompany(Map<String, String> context) throws IOException {
-        return getItem(context, 3);
+    protected String getCompany(ListListStringValueData data) {
+        return getItem(data, 3);
     }
 
-    protected String getPhone(Map<String, String> context) throws IOException {
-        return getItem(context, 4);
+    protected String getPhone(ListListStringValueData data) {
+        return getItem(data, 4);
     }
 
-    private String getItem(Map<String, String> context, int index) throws IOException  {
-        ListListStringValueData data = (ListListStringValueData)getValue(context);
+    protected String getJob(ListListStringValueData data) {
+        return getItem(data, 5);
+    }
+
+    private String getItem(ListListStringValueData data, int index) {
         return data.getAll().get(0).getAll().get(index);
     }
 }

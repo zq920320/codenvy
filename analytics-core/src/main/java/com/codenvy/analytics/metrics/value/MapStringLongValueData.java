@@ -9,10 +9,10 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MapStringLongValueData extends MapValueData<String, Long> {
+
+    private static final long serialVersionUID = 1L;
 
     public MapStringLongValueData() {
         super();

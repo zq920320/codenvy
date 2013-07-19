@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class MapValueData<K, V> extends AbstractValueData {
+
+    private static final long serialVersionUID = 1L;
 
     protected Map<K, V> value;
 
@@ -23,13 +23,11 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
     }
 
     public MapValueData(Map<K, V> value) {
-        this.value = new HashMap<K,V>(value.size());
+        this.value = new HashMap<K, V>(value.size());
         this.value.putAll(value);
     }
 
-    /**
-     * @return unmodifiable {@link #value}
-     */
+    /** @return unmodifiable {@link #value} */
     public Map<K, V> getAll() {
         return Collections.unmodifiableMap(value);
     }
@@ -38,9 +36,7 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
         return value.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
@@ -111,12 +107,12 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
     /** {@inheritedDoc} */
     @Override
     protected boolean doEquals(Object object) {
-        MapValueData< ? , ? > valueData = (MapValueData< ? , ? >)object;
-        
+        MapValueData<?, ?> valueData = (MapValueData<?, ?>)object;
+
         if (this.value.size() != valueData.value.size()) {
             return false;
         }
-        
+
         for (Entry<K, V> entry : this.value.entrySet()) {
             if (!entry.getValue().equals(valueData.value.get(entry.getKey()))) {
                 return false;

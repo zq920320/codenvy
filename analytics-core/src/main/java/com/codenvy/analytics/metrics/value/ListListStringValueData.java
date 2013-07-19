@@ -12,14 +12,13 @@ import java.util.Collections;
 import java.util.List;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ListListStringValueData extends ListValueData<ListStringValueData> {
 
-    public static final ListListStringValueData EMPTY = new ListListStringValueData(Collections.<ListStringValueData> emptyList());
+    private static final long serialVersionUID = 1L;
 
-    private static final long                   serialVersionUID = 1L;
+    public static final ListListStringValueData EMPTY =
+            new ListListStringValueData(Collections.<ListStringValueData>emptyList());
 
     public ListListStringValueData() {
         super();

@@ -4,30 +4,27 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class Utils {
 
     private Utils() {
     }
 
     /**
-     * Parse date represented by give string using {@link MetricParameter#PARAM_DATE_FORMAT} format. Wraps {@link ParseException} into
+     * Parse date represented by give string using {@link MetricParameter#PARAM_DATE_FORMAT} format. Wraps {@link
+     * ParseException} into
      * {@link IOException}.
      *
-     * @throws IOException if exception is occurred
+     * @throws IOException
+     *         if exception is occurred
      */
     public static Calendar parseDate(String date) throws IOException {
         try {
@@ -42,32 +39,24 @@ public class Utils {
         }
     }
 
-    /**
-     * Formats date.
-     */
+    /** Formats date. */
     public static String formatDate(Calendar calendar, String format) {
         DateFormat df = new SimpleDateFormat(format);
         return df.format(calendar.getTime());
     }
 
-    /**
-     * Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}.
-     */
+    /** Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}. */
     public static String formatDate(Calendar calendar) {
         return formatDate(calendar.getTime());
     }
 
-    /**
-     * Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}.
-     */
+    /** Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}. */
     public static String formatDate(Date date) {
         DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
         return df.format(date);
     }
 
-    /**
-     * Extracts {@link MetricParameter#TIME_UNIT} parameter value from context.
-     */
+    /** Extracts {@link MetricParameter#TIME_UNIT} parameter value from context. */
     public static TimeUnit getTimeUnit(Map<String, String> context) {
         return TimeUnit.valueOf(context.get(MetricParameter.TIME_UNIT.name()));
     }
@@ -76,114 +65,97 @@ public class Utils {
         return getTimeUnitParam(context) != null && getTimeUnit(context) == TimeUnit.DAY;
     }
 
-    /**
-     * Extracts {@link MetricParameter#TIME_UNIT} parameter value from context.
-     */
+    /** Extracts {@link MetricParameter#TIME_UNIT} parameter value from context. */
     public static String getTimeUnitParam(Map<String, String> context) {
         return context.get(MetricParameter.TIME_UNIT.name());
     }
 
-    /**
-     * Extracts {@link MetricParameter#FROM_DATE} parameter value from context.
-     */
+    /** Extracts {@link MetricParameter#FROM_DATE} parameter value from context. */
     public static String getFromDateParam(Map<String, String> context) {
         return context.get(MetricParameter.FROM_DATE.name());
     }
 
-    /**
-     * Extracts {@link MetricParameter#TO_DATE} parameter value from context.
-     */
+    /** Extracts {@link MetricParameter#TO_DATE} parameter value from context. */
     public static String getToDateParam(Map<String, String> context) {
         return context.get(MetricParameter.TO_DATE.name());
     }
 
-    /**
-     * @return fromDate value
-     */
+    /** @return fromDate value */
     public static Calendar getFromDate(Map<String, String> context) throws IOException {
         return parseDate(context.get(MetricParameter.FROM_DATE.name()));
     }
 
-    /**
-     * @return toDate value
-     */
+    /** @return toDate value */
     public static Calendar getToDate(Map<String, String> context) throws IOException {
         return parseDate(context.get(MetricParameter.TO_DATE.name()));
     }
 
-    /**
-     * Puts {@link MetricParameter#FROM_DATE} parameter into context.
-     */
+    /** Puts {@link MetricParameter#FROM_DATE} parameter into context. */
     public static void putFromDate(Map<String, String> context, Calendar fromDate) {
         context.put(MetricParameter.FROM_DATE.name(), formatDate(fromDate));
     }
 
-    /**
-     * Puts {@link MetricParameter#TO_DATE} parameter into context.
-     */
+    /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
     public static void putToDate(Map<String, String> context, Calendar toDate) {
         context.put(MetricParameter.TO_DATE.name(), formatDate(toDate));
     }
 
-    /**
-     * Puts {@link MetricParameter#FROM_DATE} parameter into context.
-     */
+    /** Puts {@link MetricParameter#FROM_DATE} parameter into context. */
     public static void putFromDate(Map<String, String> context, Date fromDate) {
         context.put(MetricParameter.FROM_DATE.name(), formatDate(fromDate));
     }
 
-    /**
-     * Puts {@link MetricParameter#TO_DATE} parameter into context.
-     */
+    /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
     public static void putToDate(Map<String, String> context, Date toDate) {
         context.put(MetricParameter.TO_DATE.name(), formatDate(toDate));
     }
 
-    /**
-     * Puts {@link MetricParameter#TO_DATE} parameter into context.
-     */
+    /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
     public static void putTimeUnit(Map<String, String> context, TimeUnit timeUnit) {
         context.put(MetricParameter.TIME_UNIT.name(), timeUnit.toString());
     }
 
-    /**
-     * Puts {@link MetricParameter#RESULT_DIR} parameter into context.
-     */
+    /** Puts {@link MetricParameter#RESULT_DIR} parameter into context. */
     public static void putResultDir(Map<String, String> context, String resultDir) {
         context.put(MetricParameter.RESULT_DIR.name(), resultDir);
     }
 
 
     /**
-     * @param true if entry's key is {@link MetricParameter#TO_DATE}
+     * @param true
+     *         if entry's key is {@link MetricParameter#TO_DATE}
      */
     public static boolean isToDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.TO_DATE.name());
     }
 
     /**
-     * @param true if entry's key is {@link MetricParameter#ALIAS}
+     * @param true
+     *         if entry's key is {@link MetricParameter#ALIAS}
      */
     public static boolean isAlias(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.ALIAS.name());
     }
 
     /**
-     * @param true if entry's key is {@link MetricParameter#FROM_DATE}
+     * @param true
+     *         if entry's key is {@link MetricParameter#FROM_DATE}
      */
     public static boolean isFromDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.FROM_DATE.name());
     }
 
     /**
-     * @param true if context contains {@link MetricParameter#TO_DATE}
+     * @param true
+     *         if context contains {@link MetricParameter#TO_DATE}
      */
     public static boolean containsToDateParam(Map<String, String> context) {
         return getToDateParam(context) != null;
     }
 
     /**
-     * @param true if context contains {@link MetricParameter#FROM_DATE}
+     * @param true
+     *         if context contains {@link MetricParameter#FROM_DATE}
      */
     public static boolean containsFromDateParam(Map<String, String> context) {
         return getFromDateParam(context) != null;
@@ -192,7 +164,8 @@ public class Utils {
     /**
      * Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT}
      *
-     * @throws if any exception is occurred
+     * @throws if
+     *         any exception is occurred
      */
     public static void initDateInterval(Date date, Map<String, String> context) throws IOException {
         Calendar calendar = Calendar.getInstance();
@@ -204,7 +177,8 @@ public class Utils {
     /**
      * Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT}
      *
-     * @throws if any exception is occurred
+     * @throws if
+     *         any exception is occurred
      */
     public static void initDateInterval(Calendar date, Map<String, String> context) throws IOException {
         TimeUnit timeUnit = getTimeUnit(context);
@@ -231,21 +205,23 @@ public class Utils {
     }
 
     private static void initByWeek(Calendar date, Map<String, String> context) {
-        Calendar fromDate = (Calendar) date.clone();
-        fromDate.add(Calendar.DAY_OF_MONTH, fromDate.getActualMinimum(Calendar.DAY_OF_WEEK) - fromDate.get(Calendar.DAY_OF_WEEK));
+        Calendar fromDate = (Calendar)date.clone();
+        fromDate.add(Calendar.DAY_OF_MONTH,
+                     fromDate.getActualMinimum(Calendar.DAY_OF_WEEK) - fromDate.get(Calendar.DAY_OF_WEEK));
 
-        Calendar toDate = (Calendar) date.clone();
-        toDate.add(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_WEEK) - toDate.get(Calendar.DAY_OF_WEEK));
+        Calendar toDate = (Calendar)date.clone();
+        toDate.add(Calendar.DAY_OF_MONTH,
+                   toDate.getActualMaximum(Calendar.DAY_OF_WEEK) - toDate.get(Calendar.DAY_OF_WEEK));
 
         putFromDate(context, fromDate);
         putToDate(context, toDate);
     }
 
     private static void initByMonth(Calendar date, Map<String, String> context) {
-        Calendar fromDate = (Calendar) date.clone();
+        Calendar fromDate = (Calendar)date.clone();
         fromDate.set(Calendar.DAY_OF_MONTH, 1);
 
-        Calendar toDate = (Calendar) date.clone();
+        Calendar toDate = (Calendar)date.clone();
         toDate.set(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
         putFromDate(context, fromDate);
@@ -257,9 +233,7 @@ public class Utils {
         putToDate(context, date);
     }
 
-    /**
-     * Shift date interval forward depending on {@link TimeUnit}. Should also be placed in context.
-     */
+    /** Shift date interval forward depending on {@link TimeUnit}. Should also be placed in context. */
     public static Map<String, String> nextDateInterval(Map<String, String> context) throws IOException {
         Map<String, String> resultContext = new HashMap<String, String>(context);
 
@@ -284,9 +258,7 @@ public class Utils {
         return resultContext;
     }
 
-    /**
-     * Shift date interval backward depending on {@link TimeUnit}. Should also be placed in context.
-     */
+    /** Shift date interval backward depending on {@link TimeUnit}. Should also be placed in context. */
     public static Map<String, String> prevDateInterval(Map<String, String> context) throws IOException {
         Map<String, String> resultContext = new HashMap<String, String>(context);
 
@@ -320,10 +292,10 @@ public class Utils {
     }
 
     private static void prevMonth(Calendar fromDate, Calendar toDate, Map<String, String> context) {
-        toDate = (Calendar) fromDate.clone();
+        toDate = (Calendar)fromDate.clone();
         toDate.add(Calendar.DAY_OF_MONTH, -1);
 
-        fromDate = (Calendar) toDate.clone();
+        fromDate = (Calendar)toDate.clone();
         fromDate.set(Calendar.DAY_OF_MONTH, 1);
 
         putFromDate(context, fromDate);
@@ -338,7 +310,7 @@ public class Utils {
     }
 
     private static void nextMonth(Calendar fromDate, Calendar toDate, Map<String, String> context) {
-        fromDate = (Calendar) toDate.clone();
+        fromDate = (Calendar)toDate.clone();
         fromDate.add(Calendar.DAY_OF_MONTH, 1);
 
         toDate.add(Calendar.MONTH, 1);
@@ -396,9 +368,7 @@ public class Utils {
         return new HashMap<String, String>();
     }
 
-    /**
-     * Validates context. Throws {@link IllegalArgumentException} if something wrong.
-     */
+    /** Validates context. Throws {@link IllegalArgumentException} if something wrong. */
     public static void validate(Map<String, String> context, Metric metric) throws IllegalArgumentException {
         for (MetricParameter parameter : metric.getParams()) {
             String name = parameter.name();
@@ -413,5 +383,15 @@ public class Utils {
 
     public static String getResultDir(Map<String, String> context) {
         return context.get(MetricParameter.RESULT_DIR.name());
+    }
+
+    public static Properties readProperties(String resource) throws IOException {
+        Properties properties = new Properties();
+
+        try (InputStream in = new BufferedInputStream(new FileInputStream(new File(resource)))) {
+            properties.load(in);
+        }
+
+        return properties;
     }
 }

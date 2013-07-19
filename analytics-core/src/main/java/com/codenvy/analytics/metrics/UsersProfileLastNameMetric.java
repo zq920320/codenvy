@@ -4,6 +4,7 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
@@ -32,7 +33,8 @@ public class UsersProfileLastNameMetric extends CalculateBasedMetric {
     /** {@inheritDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        return new StringValueData(basedMetric.getLastName(context));
+        ListListStringValueData valueData = (ListListStringValueData) basedMetric.getValue(context);
+        return new StringValueData(basedMetric.getLastName(valueData));
     }
 
     /** {@inheritDoc} */
