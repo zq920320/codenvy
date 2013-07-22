@@ -23,9 +23,9 @@
             model : Tenant,
             parse : function(response){
                 return _.map(_.filter(response, function(r){
-                    return r.isTemporary==='false';
+                    return r.temporary===false;
                 }), function(r){
-                    return { name : r.workspaceName };
+                    return { name : r.name };
                 });
             },
             fetch : function(options){
