@@ -348,11 +348,10 @@
 
             getTenants : function(success,error,redirect){
                 $.when(Tenant.getTenants()).done(function(tenants){
-
                     switch (tenants.length) {
                         case 0: redirect({url:"/ws-create"});
                             break;
-                        case 1: redirect({url:"ide/" + tenants[0]});
+                        case 1: redirect({url:"/ide/" + tenants[0].toJSON().name});
                             break;
                         default: success(tenants);
                 }

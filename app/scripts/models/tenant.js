@@ -22,8 +22,10 @@
             url : "/rest/private/profile/tenants",
             model : Tenant,
             parse : function(response){
-                return _.map(response, function(r){
-                    return { name : r };
+                return _.map(_.filter(response, function(r){
+                    return r.temporary===false;
+                }), function(r){
+                    return { name : r.name };
                 });
             },
             fetch : function(options){
