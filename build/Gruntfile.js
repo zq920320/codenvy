@@ -103,7 +103,7 @@ module.exports = function( grunt ) {
 
                 // pages
 
-                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html'], dest: '../target/dist/gh/'},
+                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html','*.xml'], dest: '../target/dist/gh/'},
 
                 // templates
 
@@ -135,7 +135,7 @@ module.exports = function( grunt ) {
 
                 // pages
 
-                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html'], dest: '../target/dist/stage/'},
+                {expand: true, cwd: '../app/_site/', src: ['*.html','**/*.html','*.xml'], dest: '../target/dist/stage/'},
 
                 // templates
 
@@ -191,7 +191,7 @@ module.exports = function( grunt ) {
                 {
                     expand: true,
                     cwd: '../dist/_site/',
-                    src: ['*.html','**/*.html'],
+                    src: ['*.html','**/*.html','*.xml'],
                     dest: '../target/dist/prod/'
                 },
                 
