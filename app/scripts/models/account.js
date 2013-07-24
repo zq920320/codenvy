@@ -416,6 +416,10 @@
                                 success({
                                     url : buildRedirectUrl()
                                 });
+                            } else if(xhr.responseText === "CREATION_FAIL"){
+                                success({
+                                    url : "/error/error-create-tenant"
+                                });
                             }else{
                                 setTimeout(hitServer,PING_TIMEOUT_MILLISECONDS);
                             }
