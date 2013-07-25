@@ -31,8 +31,17 @@ public class Table {
 
         context = overrideTimeInterval(context);
 
+        TimeIntervalRule timeIntervalRule = getTimeIntervalRule();
+        int columnsCount = getColumnsCount();
+
+        // Timeline usecase with TimeUnit.LIFETIME
+        if (Utils.containsTimeUnitParam(context) && Utils.getTimeUnit(context) == TimeUnit.LIFETIME &&
+            timeIntervalRule == TimeIntervalRule.NONE) {
+            columnsCount = 2;
+        }
+
         for (Row row : rows) {
-            List<RowData> rowDatas = row.retrieveData(context, getColumnsCount(), getTimeIntervalRule());
+            List<RowData> rowDatas = row.retrieveData(context, columnsCount, timeIntervalRule);
             data.addAll(rowDatas);
         }
 

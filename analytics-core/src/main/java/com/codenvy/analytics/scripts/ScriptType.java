@@ -1,7 +1,5 @@
 /*
-
  *    Copyright (C) 2013 Codenvy.
- *
  */
 package com.codenvy.analytics.scripts;
 

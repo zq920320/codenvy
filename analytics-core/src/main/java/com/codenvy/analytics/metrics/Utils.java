@@ -65,6 +65,10 @@ public class Utils {
     public static String getFromDateParam(Map<String, String> context) {
         return context.get(MetricParameter.FROM_DATE.name());
     }
+    /** Extracts {@link MetricParameter#TIME_UNIT} parameter value from context. */
+    public static String getTimeUnitParam(Map<String, String> context) {
+        return context.get(MetricParameter.TIME_UNIT.name());
+    }
 
     /** Extracts {@link MetricParameter#TO_DATE} parameter value from context. */
     public static String getToDateParam(Map<String, String> context) {
@@ -135,6 +139,11 @@ public class Utils {
     /** @return true if context contains {@link MetricParameter#FROM_DATE} */
     public static boolean containsFromDateParam(Map<String, String> context) {
         return getFromDateParam(context) != null;
+    }
+
+    /** @return true if context contains {@link MetricParameter#TIME_UNIT} */
+    public static boolean containsTimeUnitParam(Map<String, String> context) {
+        return getTimeUnitParam(context) != null;
     }
 
     /** Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT} */
