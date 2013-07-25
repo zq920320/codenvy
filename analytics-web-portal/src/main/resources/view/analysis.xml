@@ -3,112 +3,133 @@
     Copyright (C) 2013 Codenvy.
 -->
 <display>
-    <table length="20" time-interval-rule="lifetime_decreased_monthly">
+    <table length="20" time-interval-rule="lifetime_decreased_monthly" csvFileName="signup_analysis.csv">
         <date section="Signup Analysis" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="MMM yyyy"/>
         <metric type="total_users_number" title="Total Users"/>
-        <metric type="users_created_number" title="Total Accounts (Logged)" />
-        <metric type="users_created_projects_number" title="Created Project" />
-        <metric type="users_built_projects_number" title="&amp; Built" />
-        <metric type="users_deployed_projects_number" title="&amp; Deployed" />
-        <metric type="users_deployed_paas_projects_number" title="&amp; Deployed to PAAS" />
-        <metric type="users_invitations_sent_number" title="Sent Invites" />
-        <metric type="users_shell_launched_number" title="Shell launched" />
-        <metric type="users_completed_profile" title="Have Complete Profile" />
-	<empty />
+        <metric type="users_created_number" title="Total Accounts (Logged)"/>
+        <metric type="users_created_projects_number" title="Created Project"/>
+        <metric type="users_built_projects_number" title="&amp; Built"/>
+        <metric type="users_deployed_projects_number" title="&amp; Deployed"/>
+        <metric type="users_deployed_paas_projects_number" title="&amp; Deployed to PAAS"/>
+        <metric type="users_invitations_sent_number" title="Sent Invites"/>
+        <metric type="users_shell_launched_number" title="Shell launched"/>
+        <metric type="users_completed_profile" title="Have Complete Profile"/>
+        <empty/>
     </table>
 
-    <table length="7">
-	<title name="Condition, 1 Day,7 Days,30 Days,60 Days,90 Days,365 Days" />
+    <table length="7" csvFileName="users_analysis.csv">
+        <title name="Condition, 1 Day,7 Days,30 Days,60 Days,90 Days,365 Days"/>
         <list type="users_segment_analysis_condition_1" title="Visits &#0060;5 Or Lifetime &#0060;120"/>
         <list type="users_segment_analysis_condition_2" title="Visits &#0062;=5 And Lifetime &#0062;=120 And Lifetime &#0060;300"/>
         <list type="users_segment_analysis_condition_3" title="Visits &#0062;5 And Lifetime &#0062;=300"/>
-	<empty />
+        <empty/>
     </table>
 
-    <table length="9" widget="tab_panel" tabId="1" tabName="By 1 Day" sortable="true" defaultSortColumn="1 Day">
-	<title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_users_by_1day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 1 Day" sortable="true"
+           defaultSortColumn="1 Day">
+        <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_1day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="1" tabName="By 7 Days" sortable="true" defaultSortColumn="7 Days">
-	<title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_users_by_7day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 7 Days"
+           sortable="true" defaultSortColumn="7 Days">
+        <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_7day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="1" tabName="By 30 Days" sortable="true" defaultSortColumn="30 Days">
-	<title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_users_by_30day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 30 Days"
+           sortable="true" defaultSortColumn="30 Days">
+        <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_30day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="1" tabName="By 60 Days" sortable="true" defaultSortColumn="60 Days">
-	<title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_users_by_60day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 60 Days"
+           sortable="true" defaultSortColumn="60 Days">
+        <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_60day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="1" tabName="By 90 Days" sortable="true" defaultSortColumn="90 Days">
-	<title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_users_by_90day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 90 Days"
+           sortable="true" defaultSortColumn="90 Days">
+        <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_90day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="1" tabName="By 365 Days" sortable="true" defaultSortColumn="365 Days">
-	<title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_users_by_365day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 365 Days"
+           sortable="true" defaultSortColumn="365 Days">
+        <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_365day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="1" tabName="By Lifetime" sortable="true" defaultSortColumn="Lifetime">
-	<title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_users_by_lifetime.csv" length="9" widget="tab_panel" tabId="1" tabName="By Lifetime"
+           sortable="true" defaultSortColumn="Lifetime">
+        <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_lifetime"/>
     </table>
 
-    <table length="9" widget="tab_panel" tabId="2" tabName="By 1 Day" sortable="true" defaultSortColumn="1 Day">
-	<title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_domains_by_1day.csv" length="9" widget="tab_panel" tabId="2" tabName="By 1 Day"
+           sortable="true" defaultSortColumn="1 Day">
+        <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_domains_by_1day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="2" tabName="By 7 Day" sortable="true" defaultSortColumn="7 Days">
-	<title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_domains_by_7day.csv" length="9" widget="tab_panel" tabId="2" tabName="By 7 Day"
+           sortable="true" defaultSortColumn="7 Days">
+        <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_domains_by_7day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="2" tabName="By 30 Days" sortable="true" defaultSortColumn="30 Days">
-	<title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_domains_by_30day.csv" length="9" widget="tab_panel" tabId="2" tabName="By 30 Days"
+           sortable="true" defaultSortColumn="30 Days">
+        <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_domains_by_30day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="2" tabName="By 60 Days" sortable="true" defaultSortColumn="60 Days">
-	<title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_domains_by_60day.csv" length="9" widget="tab_panel" tabId="2" tabName="By 60 Days"
+           sortable="true" defaultSortColumn="60 Days">
+        <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_domains_by_60day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="2" tabName="By 90 Days" sortable="true" defaultSortColumn="90 Days">
-	<title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_domains_by_90day.csv" length="9" widget="tab_panel" tabId="2" tabName="By 90 Days"
+           sortable="true" defaultSortColumn="90 Days">
+        <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_domains_by_90day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="2" tabName="By 365 Days" sortable="true" defaultSortColumn="365 Days">
-	<title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_domains_by_365day.csv" length="9" widget="tab_panel" tabId="2" tabName="By 365 Days"
+           sortable="true" defaultSortColumn="365 Days">
+        <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_domains_by_365day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="2" tabName="By Lifetime" sortable="true" defaultSortColumn="Lifetime">
-	<title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_domains_by_lifetime.csv" length="9" widget="tab_panel" tabId="2" tabName="By Lifetime"
+           sortable="true" defaultSortColumn="Lifetime">
+        <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_domains_by_lifetime"/>
     </table>
 
-    <table length="9" widget="tab_panel" tabId="3" tabName="By 1 Day" sortable="true" defaultSortColumn="1 Day">
-	<title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_companies_by_1day.csv" length="9" widget="tab_panel" tabId="3" tabName="By 1 Day"
+           sortable="true" defaultSortColumn="1 Day">
+        <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_1day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="3" tabName="By 7 Day" sortable="true" defaultSortColumn="7 Days">
-	<title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_companies_by_7day.csv" length="9" widget="tab_panel" tabId="3" tabName="By 7 Day"
+           sortable="true" defaultSortColumn="7 Days">
+        <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_7day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="3" tabName="By 30 Days" sortable="true" defaultSortColumn="30 Days">
-	<title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_companies_by_30day.csv" length="9" widget="tab_panel" tabId="3" tabName="By 30 Days"
+           sortable="true" defaultSortColumn="30 Days">
+        <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_30day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="3" tabName="By 60 Days" sortable="true" defaultSortColumn="60 Days">
-	<title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_companies_by_60day.csv" length="9" widget="tab_panel" tabId="3" tabName="By 60 Days"
+           sortable="true" defaultSortColumn="60 Days">
+        <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_60day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="3" tabName="By 90 Days" sortable="true" defaultSortColumn="90 Days">
-	<title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_companies_by_90day.csv" length="9" widget="tab_panel" tabId="3" tabName="By 90 Days"
+           sortable="true" defaultSortColumn="90 Days">
+        <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_90day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="3" tabName="By 365 Days" sortable="true" defaultSortColumn="365 Days">
-	<title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_companies_by_365day.csv" length="9" widget="tab_panel" tabId="3" tabName="By 365 Days"
+           sortable="true" defaultSortColumn="365 Days">
+        <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_365day"/>
     </table>
-    <table length="9" widget="tab_panel" tabId="3" tabName="By Lifetime" sortable="true" defaultSortColumn="Lifetime">
-	<title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime" />
+    <table csvFileName="product_usage_time_top_companies_by_lifetime.csv" length="9" widget="tab_panel" tabId="3" tabName="By Lifetime"
+           sortable="true" defaultSortColumn="Lifetime">
+        <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_lifetime"/>
     </table>
 </display>

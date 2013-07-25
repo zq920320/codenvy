@@ -7,6 +7,8 @@
 SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf"
 
 ANALYTICS_OPTS="-Danalytics.logs.directory=../logs-production \
+                -Danalytics.csv.reports.directory=${CATALINA_HOME}/webapps/reports \
+                -Danalytics.csv.reports.backup.directory=${CATALINA_HOME}/reports \
                 -Danalytics.scripts.directory=${CATALINA_HOME}/scripts \
                 -Danalytics.result.directory=${CATALINA_HOME}/data/results \
                 -Danalytics.metrics.initial.values=${CATALINA_HOME}/analytics-conf/initial-values.xml \

@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +29,7 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
     private static final String  FILE_NAME_PREFIX = "timeline";
     private static final Display display          = Display.initialize("view/time-line.xml");
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public List<TableData> getData(TimeUnit timeUnit, String userFilter) {
         try {
             Map<String, String> context = Utils.initializeContext(timeUnit);
@@ -42,13 +39,14 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
                 return display.retrieveData(context);
             } else {
                 try {
-                    return PersisterUtil.loadTablesFromFile(getFileName(timeUnit));
+                    return PersisterUtil.loadTablesFromBinFile(getBinFileName(timeUnit));
                 } catch (IOException e) {
                     // let's calculate then
                 }
 
                 List<TableData> data = display.retrieveData(context);
-                PersisterUtil.saveTablesToFile(data, getFileName(timeUnit));
+                PersisterUtil.saveTablesToCsvFile(data, getCsvFileName(timeUnit));
+                PersisterUtil.saveTablesToBinFile(data, getBinFileName(timeUnit));
 
                 return data;
             }
@@ -58,15 +56,20 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
         }
     }
 
-    /**
-     * Calculates view for given {@link TimeUnit} and preserves data.
-     */
+    /** Calculates view for given {@link TimeUnit} and preserves data. */
     public void update(TimeUnit timeUnit) throws Exception {
         Map<String, String> context = Utils.initializeContext(timeUnit);
-        PersisterUtil.saveTablesToFile(display.retrieveData(context), getFileName(timeUnit));
+        List<TableData> tables = display.retrieveData(context);
+
+        PersisterUtil.saveTablesToCsvFile(tables, getCsvFileName(timeUnit));
+        PersisterUtil.saveTablesToBinFile(tables, getBinFileName(timeUnit));
     }
 
-    private String getFileName(TimeUnit timeUnit) {
+    private String getCsvFileName(TimeUnit timeUnit) {
+        return FILE_NAME_PREFIX + "_" + timeUnit.name() + ".csv";
+    }
+
+    private String getBinFileName(TimeUnit timeUnit) {
         return FILE_NAME_PREFIX + "-" + timeUnit.name() + ".bin";
     }
 }

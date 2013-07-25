@@ -39,14 +39,18 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
     @Override
     public List<TableData> getData() {
         try {
-            return PersisterUtil.loadTablesFromFile(FILE_NAME);
+            return PersisterUtil.loadTablesFromBinFile(FILE_NAME);
         } catch (IOException e) {
             // let's calculate then
         }
 
         try {
             List<TableData> data = retrieveData();
-            PersisterUtil.saveTablesToFile(data, FILE_NAME);
+
+            for (TableData table : data){
+                PersisterUtil.saveTableToCsvFile(table, table.getCsvFileName());
+            }
+            PersisterUtil.saveTablesToBinFile(data, FILE_NAME);
 
             return data;
         } catch (Throwable e) {
@@ -65,7 +69,12 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
     }
 
     public void update() throws Exception {
-        PersisterUtil.saveTablesToFile(retrieveData(), FILE_NAME);
+        List<TableData> data = retrieveData();
+
+        for (TableData table : data){
+            PersisterUtil.saveTableToCsvFile(table, table.getCsvFileName());
+        }
+        PersisterUtil.saveTablesToBinFile(data, FILE_NAME);
     }
 
     private List<TableData> retrieveData() throws Exception {
