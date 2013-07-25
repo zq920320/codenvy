@@ -145,6 +145,65 @@ form .field {
     position: relative;
 }
 
+/**
+ * Profile form
+*/    
+.profile-form .field {
+    padding: 10px;
+    position: relative;
+    font-size: 14px;
+}
+.profile-form .field p {
+    color: $white-text;
+    text-align: left;
+    padding: 0px 0px 6px 0px;
+    margin: 0px;
+    font-size: 14px;
+    font-weight: bold;
+    }
+.profile-form input[type='text'],
+.profile-form  select,
+.profile-form  input[type='password'],
+.profile-form  select option {
+    /** @include input-element-text(); */
+    color: $white-text;
+    font-size: 0.875em;
+    font-weight: lighter;
+    height: 2em;
+    background-color: $text-box-background-color;
+    border: none;
+    color:$text-box-font-color;
+
+
+    @include box-shadow(
+        $text-box-drop-shadow-color 0px 1px 1px,
+        $text-box-inset-shadow-color 0px 1px 1px inset
+    );
+
+    @include input-textbox-padding();
+    
+}
+
+.profile-email p {
+    color: $white-text;
+    text-align: center;
+    font-size: 0.875em;
+    font-weight: normal;
+    padding: 0px 0px 6px 0px;
+    margin: 0px;
+}
+
+#account_value {
+    color: $white-text;
+    font-weight: bold;
+}
+
+.profile-form  input[type='submit'] {
+    color: $black-text;
+    font-size: 0.875em;
+    font-weight: normal;
+}
+
 @mixin placeholder($color){
 	::-webkit-input-placeholder {
     	color:$color;
