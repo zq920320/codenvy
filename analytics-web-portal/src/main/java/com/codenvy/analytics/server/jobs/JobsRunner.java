@@ -124,7 +124,7 @@ public class JobsRunner implements ServletContextListener {
 
     private void executeLastDay(Job job) throws Exception {
         if (job instanceof ForceableJobRunByContext) {
-            Map<String, String> context = Utils.initializeContext(TimeUnit.DAY, new Date());
+            Map<String, String> context = Utils.initializeContext(TimeUnit.DAY);
             ((ForceableJobRunByContext)job).forceRun(context);
         }
     }

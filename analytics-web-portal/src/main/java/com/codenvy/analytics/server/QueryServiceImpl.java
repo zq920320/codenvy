@@ -12,6 +12,7 @@ import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.server.vew.template.MetricRow;
 import com.codenvy.analytics.server.vew.template.Row;
+import com.codenvy.analytics.server.vew.template.Table;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import org.slf4j.Logger;
@@ -98,7 +99,7 @@ public class QueryServiceImpl extends RemoteServiceServlet implements QueryServi
                 MetricRow metricRow = (MetricRow)row;
 
                 if (metricRow.getMetric().getType() == metric.getType()) {
-                    return metricRow.fill(context, 2).get(0).get(1);
+                    return metricRow.retrieveData(context, 2, Table.TimeIntervalRule.NONE).get(0).get(1);
                 }
             }
         }

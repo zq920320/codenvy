@@ -36,7 +36,8 @@ public class ListRow implements Row {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<RowData> fill(Map<String, String> context, int length) throws Exception {
+    public List<RowData> retrieveData(Map<String, String> context, int columnsCount,
+                                      Table.TimeIntervalRule overrideContextRule) throws Exception {
         ArrayList<RowData> result = new ArrayList<>();
 
         ListValueData<?> valueData = (ListValueData<?>) metric.getValue(context);
@@ -45,11 +46,11 @@ public class ListRow implements Row {
 
             if (title != null && !title.isEmpty()) {
                 row.add(title);
-                length--;
+                columnsCount--;
             }
 
             List<String> item = ((ListValueData<String>) list).getAll();
-            for (int i = 0; i < length; i++) {
+            for (int i = 0; i < columnsCount; i++) {
                 row.add(item.get(i));
             }
 

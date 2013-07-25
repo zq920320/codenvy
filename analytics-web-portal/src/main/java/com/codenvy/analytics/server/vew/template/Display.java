@@ -4,6 +4,8 @@
  */
 package com.codenvy.analytics.server.vew.template;
 
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.shared.TableData;
 
 import org.xml.sax.SAXException;
@@ -69,7 +71,7 @@ public class Display {
      * @throws Exception if something gone wrong
      */
     public List<TableData> retrieveData(Map<String, String> context) throws Exception {
-        List<TableData> result = new ArrayList<TableData>(templates.size());
+        List<TableData> result = new ArrayList<>(templates.size());
 
         for (Table table : templates) {
             result.add(table.retrieveData(context));

@@ -18,9 +18,6 @@
  */
 package com.codenvy.analytics.scripts;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
@@ -40,14 +37,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProfileUsageTimeTopCompanies extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "", "").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "", "").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "1", "1")
+                        .withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "1", "1")
+                        .withDate("2010-10-02").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
@@ -55,60 +57,62 @@ public class TestProfileUsageTimeTopCompanies extends BaseTest {
         context.put(MetricParameter.FROM_DATE.name(), "20101001");
         context.put(MetricParameter.TO_DATE.name(), "20101002");
 
-        runUsersProfileLogPreparationScript(log, context);
+        runUsersProfileLogPreparationScript(log, context, 2);
 
         events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company", "", "").withDate("2010-10-03").build());
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f4", "l4", "company", "", "").withDate("2010-10-04").build());
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company", "1", "1")
+                        .withDate("2010-10-03").build());
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f4", "l4", "company", "1", "1")
+                        .withDate("2010-10-04").build());
         log = LogGenerator.generateLog(events);
 
         context.put(MetricParameter.FROM_DATE.name(), "20101003");
         context.put(MetricParameter.TO_DATE.name(), "20101004");
 
-        runUsersProfileLogPreparationScript(log, context);
+        runUsersProfileLogPreparationScript(log, context, 0);
 
         // 5 min in day
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-10-01")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-10-01")
-                                .withTime("20:30:00").build());
+                        .withTime("20:30:00").build());
 
         // 10 min, in week
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-09-30")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-09-30")
-                                .withTime("20:30:00").build());
+                        .withTime("20:30:00").build());
 
 
         // 15 min, in month
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-09-15")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-09-15")
-                                .withTime("20:30:00").build());
+                        .withTime("20:30:00").build());
 
         // 20 min, in 2 months
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-08-15")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-08-15")
-                                .withTime("20:30:00").build());
+                        .withTime("20:30:00").build());
 
         // 25 min, in 3 months
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-07-15")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-07-15")
-                                .withTime("20:30:00").build());
+                        .withTime("20:30:00").build());
 
         // 30 min, in 1 year
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-05-15")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2010-05-15")
-                                .withTime("20:30:00").build());
+                        .withTime("20:30:00").build());
 
         // 35 min, in lifetime
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2009-05-15")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1@gmail.com", "ws1", "", "", "").withDate("2009-05-15")
-                                .withTime("20:30:00").build());
+                        .withTime("20:30:00").build());
 
         log = LogGenerator.generateLog(events);
 
@@ -171,16 +175,19 @@ public class TestProfileUsageTimeTopCompanies extends BaseTest {
 
         context.put(MetricParameter.ENTITY.name(), ENTITY_TYPE.COMPANIES.name());
         context.put(MetricParameter.INTERVAL.name(), "P1D");
-        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_TOP, log,
-                                                                                        context);
+        ListListStringValueData value =
+                (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_TOP, log,
+                                                                context);
         List<ListStringValueData> all = value.getAll();
-        ListStringValueData item1 = new ListStringValueData(Arrays.asList("company", "7", "5", "10", "15", "20", "25", "30", "35"));
+        ListStringValueData item1 =
+                new ListStringValueData(Arrays.asList("company", "7", "5", "10", "15", "20", "25", "30", "35"));
 
         assertEquals(all.size(), 1);
         assertTrue(all.contains(item1));
     }
 
-    private void runUsersProfileLogPreparationScript(File log, Map<String, String> context) throws IOException {
+    private void runUsersProfileLogPreparationScript(File log, Map<String, String> context, long completedProfiles)
+            throws IOException {
         File srcDir = new File(BASE_DIR, "PROFILES");
         File destDir = new File(BASE_DIR, "PREV_PROFILES");
 

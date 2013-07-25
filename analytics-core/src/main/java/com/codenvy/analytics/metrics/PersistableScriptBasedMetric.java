@@ -6,6 +6,7 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.ValueDataFactory;
 import com.codenvy.analytics.metrics.value.filters.Filter;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -38,7 +39,7 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
         Calendar fromDate = Utils.getFromDate(context);
         Calendar toDate = Utils.getToDate(context);
 
-        ValueData total = null;
+        ValueData total = ValueDataFactory.createEmptyValueData(getValueDataClass());
 
         Map<String, String> dayContext = Utils.clone(context);
         while (!fromDate.after(toDate)) {
@@ -47,7 +48,7 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
             Utils.putTimeUnit(dayContext, TimeUnit.DAY);
 
             ValueData dayValue = evaluate(dayContext);
-            total = total == null ? dayValue : total.union(dayValue);
+            total = total.union(dayValue);
 
             fromDate.add(Calendar.DAY_OF_MONTH, 1);
         }
@@ -98,7 +99,7 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
     }
 
     /**
-     * @return {@link ValueDataFilter} over {@link ValueData}
+     * @return {@link Filter} over {@link ValueData}
      */
     protected Filter createFilter(ValueData valueData) {
         throw new UnsupportedOperationException();

@@ -134,8 +134,11 @@ public class MetricFactory {
             case USERS_SEGMENT_ANALYSIS_CONDITION_3:
                 metric = new UsersSegmentAnalysisCondition3();
                 break;
-            case USERS_HAVE_COMPLETE_PROFILE_NUMBER:
-                metric = new UsersHaveCompleteProfileNumberMetric();
+            case USERS_UPDATE_PROFILE_LIST:
+                metric = new UsersUpdateProfileList();
+                break;
+            case USERS_COMPLETED_PROFILE:
+                metric = new UsersCompletedProfile();
                 break;
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();

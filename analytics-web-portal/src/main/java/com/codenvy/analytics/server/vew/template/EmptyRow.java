@@ -5,40 +5,27 @@
 package com.codenvy.analytics.server.vew.template;
 
 
-import com.codenvy.analytics.shared.RowData;
-
 import org.w3c.dom.Element;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-class EmptyRow implements Row {
+class EmptyRow extends AbstractRow {
 
-    /**
-     * {@link EmptyRow} constructor.
-     */
+    /** {@link EmptyRow} constructor. */
     private EmptyRow() {
+        super();
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<RowData> fill(Map<String, String> context, int length) {
-        RowData row = new RowData();
-
-        for (int i = 0; i < length; i++) {
-            row.add("");
-        }
-
-        ArrayList<RowData> result = new ArrayList<>();
-        result.add(row);
-
-        return result;
+    protected String doRetrieve(Map<String, String> context, int columnNumber) throws IOException {
+        return "";
     }
 
     /** Factory method */
-    public static EmptyRow initialize(Element element) {
+    public static EmptyRow initialize() {
         return new EmptyRow();
     }
 }

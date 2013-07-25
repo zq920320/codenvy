@@ -8,6 +8,7 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
@@ -36,6 +37,8 @@ public enum ScriptType {
     PROJECTS_BUILT,
     USERS_SSO_LOGGED_IN,
     PRODUCT_USAGE_TIME,
+    USERS_UPDATE_PROFILE,
+
     ACTON {
         @Override
         public Set<MetricParameter> getParams() {

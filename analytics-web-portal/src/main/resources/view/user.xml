@@ -27,11 +27,11 @@
 
     <table length="2" widget="tab_panel" tabId="1" tabName="Recent Activity" sortable="true" defaultSortColumn="Date">
         <title name="Date,Event"/>
-	<list type="user_activity" noTitle="true" format="%s"/>
+	<list type="user_activity" format="%s"/>
     </table>
     <table length="3" widget="tab_panel" tabId="1" tabName="Sessions" sortable="true" defaultSortColumn="Session started">
         <title name="Workspace,Session started,Duration (sec.)"/>
-	<list type="user_sessions" noTitle="true" format="%s"/>
+	<list type="user_sessions" format="%s"/>
     </table>
 </display>
 

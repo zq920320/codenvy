@@ -7,63 +7,48 @@ package com.codenvy.analytics.server.vew.template;
 
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.shared.RowData;
 
 import org.w3c.dom.Element;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TotalRow extends AbstractRow {
 
-    private static final String ATTRIBUTE_TYPES = "types";
+    private static final String ATTRIBUTE_TYPES  = "types";
     private static final String ATTRIBUTE_FORMAT = "format";
 
     private final List<Metric> metrics;
     private final String       format;
 
-    /**
-     * {@link TotalRow} constructor.
-     */
+    /** {@link TotalRow} constructor. */
     private TotalRow(List<Metric> metrics, String format) {
+        super();
+
         this.format = format;
         this.metrics = metrics;
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<RowData> fill(Map<String, String> context, int length) throws Exception {
-        RowData row = new RowData();
+    protected String doRetrieve(Map<String, String> context, int columnNumber) throws IOException {
+        switch (columnNumber) {
+            case 0:
+                return "Total";
+            default:
+                ValueData total = null;
 
-        row.add("Total");
+                for (Metric metric : metrics) {
+                    ValueData newValue = metric.getValue(context);
+                    total = total == null ? newValue : total.union(newValue);
+                }
 
-        for (int i = 1; i < length; i++) {
-            ValueData total = null;
-
-            for (Metric metric : metrics) {
-                ValueData newValue = metric.getValue(context);
-                total = total == null ? newValue : total.union(newValue);
-            }
-
-            if (isPrintable(total)) {
-                row.add(print(format, total));
-            } else {
-                row.add("");
-            }
-
-            context = Utils.prevDateInterval(context);
+                return getAsString(total, format);
         }
-
-        ArrayList<RowData> result = new ArrayList<>();
-        result.add(row);
-
-        return result;
     }
 
     /** Factory method */

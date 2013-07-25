@@ -7,6 +7,7 @@ package com.codenvy.analytics.server;
 import com.codenvy.analytics.client.AnalysisService;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
+import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.scripts.ScriptType;
@@ -56,6 +57,7 @@ public class AnalysisServiceImpl extends RemoteServiceServlet implements Analysi
 
     private Map<String, String> getContext() {
         Map<String, String> context = Utils.newContext();
+        context.put(MetricParameter.TIME_UNIT.name(), TimeUnit.MONTH.name());
         context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
         context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
         context.put(MetricParameter.RESULT_DIR.name(), FSValueDataManager.RESULT_DIRECTORY);

@@ -3,17 +3,17 @@
     Copyright (C) 2013 Codenvy.
 -->
 <display>
-    <table length="2">
-	<title name="Signup Analysis" />
+    <table length="20" time-interval-rule="lifetime_decreased_monthly">
+        <date section="Signup Analysis" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="MMM yyyy"/>
         <metric type="total_users_number" title="Total Users"/>
-        <metric type="users_created_number" title="Total Accounts (Logged)"/>
-        <metric type="users_created_projects_number" title="Created Project"/>
-        <metric type="users_built_projects_number" title="&amp; Built"/>
-        <metric type="users_deployed_projects_number" title="&amp; Deployed"/>
-        <metric type="users_deployed_paas_projects_number" title="&amp; Deployed to PAAS"/>
-        <metric type="users_invitations_sent_number" title="Sent Invites"/>
-        <metric type="users_shell_launched_number" title="Shell launched"/>
-        <metric type="users_have_complete_profile_number" title="Have Complete Profile"/>
+        <metric type="users_created_number" title="Total Accounts (Logged)" />
+        <metric type="users_created_projects_number" title="Created Project" />
+        <metric type="users_built_projects_number" title="&amp; Built" />
+        <metric type="users_deployed_projects_number" title="&amp; Deployed" />
+        <metric type="users_deployed_paas_projects_number" title="&amp; Deployed to PAAS" />
+        <metric type="users_invitations_sent_number" title="Sent Invites" />
+        <metric type="users_shell_launched_number" title="Shell launched" />
+        <metric type="users_completed_profile" title="Have Complete Profile" />
 	<empty />
     </table>
 

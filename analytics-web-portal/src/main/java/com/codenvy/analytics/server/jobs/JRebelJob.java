@@ -45,7 +45,7 @@ public class JRebelJob implements Job, ForceableJobRunByContext {
     /** {@inheritDoc} */
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            Map<String, String> executionContext = Utils.initializeContext(TimeUnit.DAY, new Date());
+            Map<String, String> executionContext = Utils.initializeContext(TimeUnit.DAY);
             run(executionContext);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

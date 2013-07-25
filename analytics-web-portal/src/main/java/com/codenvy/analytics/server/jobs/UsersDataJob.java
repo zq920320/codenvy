@@ -4,12 +4,7 @@
  */
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
@@ -26,13 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersDataJob implements Job, ForceableJobRunByContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersDataJob.class);
@@ -41,7 +33,7 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            Map<String, String> execContext = Utils.initializeContext(TimeUnit.DAY, new Date());
+            Map<String, String> execContext = Utils.initializeContext(TimeUnit.DAY);
             run(execContext);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -65,6 +57,8 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
             ScriptExecutor executor = ScriptExecutor.INSTANCE;
             Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
 
+            executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
+
             ValueData result = executor.executeAndReturn(ScriptType.USERS_ACTIVITY_PREPARATION, context);
             store(MetricType.USER_ACTIVITY, result, context);
 
@@ -81,7 +75,8 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
         }
     }
 
-    private void store(MetricType metricType, ValueData valueData, Map<String, String> executeContext) throws IOException {
+    private void store(MetricType metricType, ValueData valueData, Map<String, String> executeContext)
+            throws IOException {
         if (!(valueData instanceof MapStringListListStringValueData)) {
             throw new IOException("MapStringListListStringValueData class is expected");
         }
@@ -97,8 +92,9 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
         }
     }
 
-    private LinkedHashMap<String, String> makeUUID(MetricType metricType, Map<String, String> executeContext, String user) throws IOException {
-        LinkedHashMap<String, String> uuid = new LinkedHashMap<String, String>(3);
+    private LinkedHashMap<String, String> makeUUID(MetricType metricType, Map<String, String> executeContext,
+                                                   String user) throws IOException {
+        LinkedHashMap<String, String> uuid = new LinkedHashMap<>(3);
 
         Metric metric = MetricFactory.createMetric(metricType);
         for (MetricParameter param : metric.getParams()) {

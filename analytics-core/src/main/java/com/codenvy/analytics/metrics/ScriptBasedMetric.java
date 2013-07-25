@@ -17,13 +17,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class ScriptBasedMetric extends AbstractMetric {
 
-    private static final Logger                                     LOGGER     = LoggerFactory.getLogger(ScriptBasedMetric.class);
-    protected static final ConcurrentHashMap<String, AtomicBoolean> executions = new ConcurrentHashMap<String, AtomicBoolean>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptBasedMetric.class);
+
+    protected static final ConcurrentHashMap<String, AtomicBoolean> executions = new ConcurrentHashMap<>();
 
     ScriptBasedMetric(MetricType metricType) {
         super(metricType);
@@ -58,7 +57,7 @@ public abstract class ScriptBasedMetric extends AbstractMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
+    protected Class<? extends ValueData> getValueDataClass() {
         return getScriptType().getValueDataClass();
     }
 
@@ -103,8 +102,6 @@ public abstract class ScriptBasedMetric extends AbstractMetric {
         }
     }
 
-    /**
-     * @return corresponding {@link ScriptType} for metric calculation.
-     */
+    /** @return corresponding {@link ScriptType} for metric calculation. */
     abstract protected ScriptType getScriptType();
 }

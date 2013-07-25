@@ -61,15 +61,6 @@ public class Utils {
         return TimeUnit.valueOf(context.get(MetricParameter.TIME_UNIT.name()));
     }
 
-    public static boolean isTimeUnitDay(Map<String, String> context) {
-        return getTimeUnitParam(context) != null && getTimeUnit(context) == TimeUnit.DAY;
-    }
-
-    /** Extracts {@link MetricParameter#TIME_UNIT} parameter value from context. */
-    public static String getTimeUnitParam(Map<String, String> context) {
-        return context.get(MetricParameter.TIME_UNIT.name());
-    }
-
     /** Extracts {@link MetricParameter#FROM_DATE} parameter value from context. */
     public static String getFromDateParam(Map<String, String> context) {
         return context.get(MetricParameter.FROM_DATE.name());
@@ -121,52 +112,32 @@ public class Utils {
     }
 
 
-    /**
-     * @param true
-     *         if entry's key is {@link MetricParameter#TO_DATE}
-     */
+    /** @return true if entry's key is {@link MetricParameter#TO_DATE} */
     public static boolean isToDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.TO_DATE.name());
     }
 
-    /**
-     * @param true
-     *         if entry's key is {@link MetricParameter#ALIAS}
-     */
+    /** @return true if entry's key is {@link MetricParameter#ALIAS} */
     public static boolean isAlias(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.ALIAS.name());
     }
 
-    /**
-     * @param true
-     *         if entry's key is {@link MetricParameter#FROM_DATE}
-     */
+    /** @return true if entry's key is {@link MetricParameter#FROM_DATE} */
     public static boolean isFromDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.FROM_DATE.name());
     }
 
-    /**
-     * @param true
-     *         if context contains {@link MetricParameter#TO_DATE}
-     */
+    /** @return true if context contains {@link MetricParameter#TO_DATE} */
     public static boolean containsToDateParam(Map<String, String> context) {
         return getToDateParam(context) != null;
     }
 
-    /**
-     * @param true
-     *         if context contains {@link MetricParameter#FROM_DATE}
-     */
+    /** @return true if context contains {@link MetricParameter#FROM_DATE} */
     public static boolean containsFromDateParam(Map<String, String> context) {
         return getFromDateParam(context) != null;
     }
 
-    /**
-     * Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT}
-     *
-     * @throws if
-     *         any exception is occurred
-     */
+    /** Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT} */
     public static void initDateInterval(Date date, Map<String, String> context) throws IOException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -174,12 +145,7 @@ public class Utils {
         initDateInterval(calendar, context);
     }
 
-    /**
-     * Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT}
-     *
-     * @throws if
-     *         any exception is occurred
-     */
+    /** Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT} */
     public static void initDateInterval(Calendar date, Map<String, String> context) throws IOException {
         TimeUnit timeUnit = getTimeUnit(context);
 
@@ -260,7 +226,7 @@ public class Utils {
 
     /** Shift date interval backward depending on {@link TimeUnit}. Should also be placed in context. */
     public static Map<String, String> prevDateInterval(Map<String, String> context) throws IOException {
-        Map<String, String> resultContext = new HashMap<String, String>(context);
+        Map<String, String> resultContext = new HashMap<>(context);
 
         Calendar fromDate = getFromDate(context);
         Calendar toDate = getToDate(context);
@@ -334,9 +300,8 @@ public class Utils {
         putToDate(context, toDate);
     }
 
-    public static Map<String, String> initializeContext(TimeUnit timeUnit, Date date) throws IOException {
+    public static Map<String, String> initializeContext(TimeUnit timeUnit) throws IOException {
         Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
 
         Map<String, String> context = newContext();
 
@@ -344,17 +309,6 @@ public class Utils {
         initDateInterval(cal, context);
 
         return timeUnit == TimeUnit.DAY ? context = Utils.prevDateInterval(context) : context;
-    }
-
-    public static Map<String, String> initializeContext(int interval) throws IOException {
-        Map<String, String> context = newContext();
-        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
-
-        Calendar calendar = getToDate(context);
-        calendar.add(Calendar.DAY_OF_MONTH, -(interval - 1));
-
-        putFromDate(context, calendar);
-        return context;
     }
 
     public static Map<String, String> clone(Map<String, String> context) {
@@ -393,5 +347,23 @@ public class Utils {
         }
 
         return properties;
+    }
+
+    /**
+     * Puts the default value of {@link MetricParameter#FROM_DATE} parameter into the context.
+     *
+     * @param context
+     */
+    public static void putFromDateDefault(Map<String, String> context) {
+        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
+    }
+
+    /**
+     * Puts the default value of {@link MetricParameter#TO_DATE} parameter into the context.
+     *
+     * @param context
+     */
+    public static void putToDateDefault(Map<String, String> context) {
+        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
     }
 }

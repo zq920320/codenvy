@@ -35,7 +35,7 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
      */
     public List<TableData> getData(TimeUnit timeUnit, String userFilter) {
         try {
-            Map<String, String> context = Utils.initializeContext(timeUnit, new Date());
+            Map<String, String> context = Utils.initializeContext(timeUnit);
 
             if (!userFilter.isEmpty()) {
                 context.put(MetricFilter.FILTER_USER.name(), "*" + userFilter + "*");
@@ -62,7 +62,7 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
      * Calculates view for given {@link TimeUnit} and preserves data.
      */
     public void update(TimeUnit timeUnit) throws Exception {
-        Map<String, String> context = Utils.initializeContext(timeUnit, new Date());
+        Map<String, String> context = Utils.initializeContext(timeUnit);
         PersisterUtil.saveTablesToFile(display.retrieveData(context), getFileName(timeUnit));
     }
 

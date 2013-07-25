@@ -10,12 +10,10 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractMetric implements Metric {
 
-    protected final MetricType       metricType;
+    protected final MetricType metricType;
 
     AbstractMetric(MetricType metricType) {
         this.metricType = metricType;
@@ -35,7 +33,9 @@ public abstract class AbstractMetric implements Metric {
             String paramKey = param.name();
             String paramValue = context.get(paramKey);
 
-            if (paramValue == null) {
+            if (paramKey.equals(MetricParameter.RESULT_DIR.name())) {
+                continue;
+            } else if (paramValue == null) {
                 throw new IOException("There is no parameter " + paramKey + " in context");
             }
 
@@ -46,5 +46,5 @@ public abstract class AbstractMetric implements Metric {
     }
 
     /** @return what data type is represented in result */
-    protected abstract Class< ? extends ValueData> getValueDataClass();
+    protected abstract Class<? extends ValueData> getValueDataClass();
 }

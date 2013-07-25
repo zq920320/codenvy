@@ -15,9 +15,11 @@ public interface Row {
 
     /**
      * Fills row.
-     * 
+     *
      * @param context the execution context
-     * @param length how many columns should be filled
+     * @param columnsCount how many columns should be filled
+     * @param overrideContextRule
      */
-    List<RowData> fill(Map<String, String> context, int length) throws Exception;
+    List<RowData> retrieveData(Map<String, String> context, int columnsCount,
+                               Table.TimeIntervalRule overrideContextRule) throws Exception;
 }

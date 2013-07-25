@@ -27,6 +27,8 @@ public enum MetricType {
     USERS_DEPLOYED_PAAS_PROJECTS_NUMBER, // number of users, who deployed projects locally and paas
     USERS_INVITATIONS_SENT_NUMBER, // number of users, who sent invitation at least once
     USERS_ADDED_TO_WORKSPACE_LIST,
+    USERS_UPDATE_PROFILE_LIST,
+    USERS_COMPLETED_PROFILE,
     USER_ACTIVITY,
     USER_SESSIONS,
     USER_PROFILE,
@@ -115,6 +117,5 @@ public enum MetricType {
     INVITATIONS_SENT_NUMBER,
     USERS_SHELL_LAUNCHED_LIST,
     USERS_SHELL_LAUNCHED_NUMBER,
-    USERS_HAVE_COMPLETE_PROFILE_NUMBER,
     INVITATIONS_ACCEPTED_PERCENT
 }

@@ -115,7 +115,7 @@ public class TemplateReader {
                         break;
 
                     case ROW_EMPTY:
-                        row = EmptyRow.initialize(element);
+                        row = EmptyRow.initialize();
                         break;
 
                     case ROW_TOTAL:
