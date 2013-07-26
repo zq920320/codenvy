@@ -131,7 +131,7 @@
             },
 
             isValidEmail : function(email){
-                return (/^[^\+]+$/).test(email);
+                return (/^[^\+\/]+$/).test(email);
             },
 
             login : function(form){
