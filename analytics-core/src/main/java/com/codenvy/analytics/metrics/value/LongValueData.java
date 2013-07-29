@@ -11,7 +11,8 @@ import java.io.ObjectOutput;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class LongValueData extends AbstractValueData {
 
-    private static final long serialVersionUID = 1L;
+    private static final long          serialVersionUID = 1L;
+    public static final  LongValueData EMPTY            = new LongValueData(0);
 
     private long value;
 

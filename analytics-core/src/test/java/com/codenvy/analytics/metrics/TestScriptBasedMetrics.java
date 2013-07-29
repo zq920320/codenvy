@@ -135,6 +135,11 @@ public class TestScriptBasedMetrics extends BaseTest {
         }
 
         @Override
+        protected Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
         protected ValueData executeScript(Map<String, String> context) throws IOException {
             return new LongValueData(10);
         }

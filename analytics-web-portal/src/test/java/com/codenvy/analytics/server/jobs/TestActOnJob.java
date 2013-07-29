@@ -4,15 +4,8 @@
  */
 package com.codenvy.analytics.server.jobs;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import com.codenvy.analytics.ldap.ReadOnlyUserManager;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -24,17 +17,13 @@ import org.testng.annotations.Test;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestActOnJob {
 
     private ActOnJob            job;
@@ -55,11 +44,8 @@ public class TestActOnJob {
         attributes.put("lastName", "Norris");
         attributes.put("phone", "00000000");
         attributes.put("employer", "Eath");
-        
-        UserManager userManager = mock(UserManager.class);
 
-        ReadOnlyUserManager readOnlyUserManager = spy(new ReadOnlyUserManager(userManager));
-        doReturn(attributes).when(readOnlyUserManager).getUserAttributes(anyString());
+        UserManager userManager = mock(UserManager.class);
 
         context = Utils.newContext();
         context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
@@ -87,7 +73,7 @@ public class TestActOnJob {
 
     private Set<String> read(File jobFile) throws IOException {
         Set<String> result = new HashSet<String>();
-        
+
         BufferedReader reader = new BufferedReader(new FileReader(jobFile));
         try {
             String line;
@@ -97,7 +83,7 @@ public class TestActOnJob {
         } finally {
             reader.close();
         }
-        
+
         return result;
     }
 
@@ -110,23 +96,29 @@ public class TestActOnJob {
         events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withTime("09:00:00").withDate(date).build());
 
         // projects created
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate(date).withTime("10:00:00")
-                                .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate(date).withTime("10:05:00")
-                                .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate(date).withTime("10:00:00")
-                                .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate(date)
+                        .withTime("10:00:00")
+                        .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate(date)
+                        .withTime("10:05:00")
+                        .build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate(date)
+                        .withTime("10:00:00")
+                        .build());
 
         // projects built
-        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withTime("10:06:00").withDate(date)
-                                .build());
+        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withTime("10:06:00")
+                        .withDate(date)
+                        .build());
 
 
         // projects deployed
-        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1").withTime("10:10:00")
-                                .withDate(date).build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2").withTime("10:00:00")
-                                .withDate(date).build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
+                        .withTime("10:10:00")
+                        .withDate(date).build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2")
+                        .withTime("10:00:00")
+                        .withDate(date).build());
 
         return LogGenerator.generateLog(events);
     }

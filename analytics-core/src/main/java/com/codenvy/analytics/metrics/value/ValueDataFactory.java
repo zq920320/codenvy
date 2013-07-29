@@ -12,50 +12,39 @@ import org.apache.pig.data.Tuple;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ValueDataFactory {
 
 
-    /**
-     * Instantiates {@link ValueData} from raw string.
-     */
-    public static ValueData createValueData(Class< ? > clazz, String value) throws NoSuchMethodException,
-                                                                           SecurityException,
-                                                                           InstantiationException,
-                                                                           IllegalAccessException,
-                                                                           IllegalArgumentException,
-                                                                           InvocationTargetException {
+    /** Instantiates {@link ValueData} from raw string. */
+    public static ValueData createValueData(Class<?> clazz, String value) throws NoSuchMethodException,
+                                                                                 SecurityException,
+                                                                                 InstantiationException,
+                                                                                 IllegalAccessException,
+                                                                                 IllegalArgumentException,
+                                                                                 InvocationTargetException {
 
-        Constructor< ? > constructor = clazz.getConstructor(String.class);
+        Constructor<?> constructor = clazz.getConstructor(String.class);
         return (ValueData)constructor.newInstance(value);
     }
 
-    /**
-     * Instantiates empty {@link ValueData}.
-     */
-    public static ValueData createEmptyValueData(Class< ? extends ValueData> clazz) throws IOException {
+    /** Instantiates empty {@link ValueData}. */
+    public static ValueData createEmptyValueData(Class<? extends ValueData> clazz) throws IOException {
         if (clazz == ListStringValueData.class) {
             return ListStringValueData.EMPTY;
         } else if (clazz == ListListStringValueData.class) {
             return ListListStringValueData.EMPTY;
+        } else if (clazz == LongValueData.class) {
+            return LongValueData.EMPTY;
         }
 
         throw new IOException("Unknown class " + clazz.getName());
     }
 
-    /**
-     * Instantiates {@link ValueData} from result obtained by {@link ScriptExecutor}.
-     */
-    public static ValueData createValueData(Class< ? > clazz, Iterator<Tuple> iter) throws IOException {
+    /** Instantiates {@link ValueData} from result obtained by {@link ScriptExecutor}. */
+    public static ValueData createValueData(Class<?> clazz, Iterator<Tuple> iter) throws IOException {
         if (clazz == LongValueData.class) {
             Tuple tuple = ensureSingleResult(iter);
             return createLongValueData(tuple);
@@ -63,20 +52,13 @@ public class ValueDataFactory {
         } else if (clazz == DoubleValueData.class) {
             Tuple tuple = ensureSingleResult(iter);
             return createDoubleValueData(tuple);
-        }
-        else if (clazz == ListStringValueData.class) {
+        } else if (clazz == ListStringValueData.class) {
             return createListStringValueData(iter);
-        }
-
-        else if (clazz == ListListStringValueData.class) {
+        } else if (clazz == ListListStringValueData.class) {
             return createListListStringValueData(iter);
-        }
-
-        else if (clazz == MapStringLongValueData.class) {
+        } else if (clazz == MapStringLongValueData.class) {
             return createMapStringLongValueData(iter);
-        }
-
-        else if (clazz == MapStringListListStringValueData.class) {
+        } else if (clazz == MapStringListListStringValueData.class) {
             return createMapStringListValueData(iter);
         }
 
@@ -86,7 +68,7 @@ public class ValueDataFactory {
 
     private static ValueData createMapStringListValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new MapStringListListStringValueData(Collections.<String, ListListStringValueData> emptyMap());
+            return new MapStringListListStringValueData(Collections.<String, ListListStringValueData>emptyMap());
         }
 
         Map<String, ListListStringValueData> result = new HashMap<String, ListListStringValueData>();
@@ -107,7 +89,7 @@ public class ValueDataFactory {
 
     private static ValueData createMapStringLongValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new MapStringLongValueData(Collections.<String, Long> emptyMap());
+            return new MapStringLongValueData(Collections.<String, Long>emptyMap());
         }
 
         Map<String, Long> result = new HashMap<String, Long>();
@@ -128,7 +110,7 @@ public class ValueDataFactory {
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static ListListStringValueData createListListStringValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new ListListStringValueData(Collections.<ListStringValueData> emptyList());
+            return new ListListStringValueData(Collections.<ListStringValueData>emptyList());
         }
 
         List<ListStringValueData> result = new ArrayList<ListStringValueData>();
@@ -147,7 +129,7 @@ public class ValueDataFactory {
 
     private static ListStringValueData createListStringValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
-            return new ListStringValueData(Collections.<String> emptyList());
+            return new ListStringValueData(Collections.<String>emptyList());
         }
 
         List<String> result = new ArrayList<String>();
