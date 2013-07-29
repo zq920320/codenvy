@@ -97,7 +97,7 @@ public class PersisterUtil {
     }
 
     private static File getCsvFile(String directoryParent, String fileName) {
-        return new File(getTodayCsvDirectory(directoryParent), fileName);
+        return new File(getTodayCsvDirectory(directoryParent), fileName.toLowerCase());
     }
 
     private static File getTodayCsvDirectory(String parentName) {
@@ -110,6 +110,9 @@ public class PersisterUtil {
     }
 
     private static String getTodayCsvDirectoryName() {
-        return new SimpleDateFormat("MM_dd_yyyy").format(Calendar.getInstance().getTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+
+        return new SimpleDateFormat("MM_dd_yyyy").format(calendar.getTime());
     }
 }

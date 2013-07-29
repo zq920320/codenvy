@@ -29,7 +29,7 @@ public class RowData extends ArrayList<String> {
             StringBuffer elementBuffer = new StringBuffer(element.replace("\"", "\"\""));
             elementBuffer.insert(0, '\"');
             elementBuffer.append('\"');
-            rowBuffer.append(element);
+            rowBuffer.append(elementBuffer);
             rowBuffer.append(",");
         }
         rowBuffer.deleteCharAt(rowBuffer.lastIndexOf(","));
