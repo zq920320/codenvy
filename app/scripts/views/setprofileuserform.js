@@ -92,7 +92,7 @@ define(["jquery","underscore","views/accountformbase","models/account"], functio
             },
             
             getUserProfileInfo : function(error){
-                window.onload = Account.getUserProfile(error);
+                Account.getUserProfile(error);
             }
         });
 

@@ -220,6 +220,7 @@ define(["jquery","config",
                             var form = SetProfileUser.get(setProfileUserForm),
                                 errorReport = ErrorReport.get(errorContainer),
                                 successReport = SuccessReport.get(errorContainer);
+
                             form.getUserProfileInfo(function(field,message){
                                 errorReport.show(message);
                                 });

@@ -2,7 +2,7 @@
 
     var _gaq = _gaq || [];
 
-    define(["jquery","json", "models/tenant","cookies"],function($,JSON,Tenant){
+    define(["jquery","json", "models/tenant","models/profile","cookies"],function($,JSON,Tenant,Profile){
 
         /*
             AccountError is used to report errors through error callback function
@@ -45,9 +45,12 @@
         */
 
 
-        function onReceiveUserProfileInfo(request)
+        function onReceiveUserProfileInfo(response)
         {
-                var user = JSON.parse(request.responseText);
+                var user = response.profile.attributes;
+                var email = response.aliases;
+                
+                document.getElementById("account_value").innerHTML = email;
                 document.getElementsByName("first_name")[0].value = user.firstName || "";
                 document.getElementsByName("last_name")[0].value = user.lastName || "";
                 document.getElementsByName("phone_work")[0].value = user.phone || "";
@@ -289,7 +292,18 @@
             },
 
             // get User`s profile in Profile page
-            getUserProfile : function(error){
+            getUserProfile : function(success,error,redirect){
+                $.when(Profile.getUser()).done(function(user){
+                   onReceiveUserProfileInfo(user.attributes);
+                }).fail(function(msg){
+                    error([
+                        new  AccountError(null,msg)
+                    ]);
+                });
+            },
+/*            getUserProfile : function(error){
+                var profile = Profile.getUser();
+                    window.console.log(profile);
                 var profileUrl = "/rest/private/profile/current";
                 $.ajax({
                     url : profileUrl,
@@ -302,7 +316,7 @@
                         error(null,xhr.responseText);
                     }
                 });
-            },
+            },*/
 
             /**
              * Encode all special characters including ~!*()'. Replace " " on "+"
