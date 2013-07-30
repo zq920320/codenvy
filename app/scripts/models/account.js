@@ -11,6 +11,7 @@
             new AccountError("password","Your password is too short")
 
         */
+        var user = user || {}; // Account
 
         var AccountError = function(fieldName, errorDescription){
             return {
@@ -47,15 +48,16 @@
 
         function onReceiveUserProfileInfo(response)
         {
-                var user = response.profile.attributes;
+                user = response;
+                var userProfile = response.profile.attributes;
                 var email = response.aliases;
                 
                 document.getElementById("account_value").innerHTML = email;
-                document.getElementsByName("first_name")[0].value = user.firstName || "";
-                document.getElementsByName("last_name")[0].value = user.lastName || "";
-                document.getElementsByName("phone_work")[0].value = user.phone || "";
-                document.getElementsByName("company")[0].value = user.employer || "";
-                document.getElementsByName("title")[0].value = user.jobtitle || "";
+                document.getElementsByName("first_name")[0].value = userProfile.firstName || "";
+                document.getElementsByName("last_name")[0].value = userProfile.lastName || "";
+                document.getElementsByName("phone_work")[0].value = userProfile.phone || "";
+                document.getElementsByName("company")[0].value = userProfile.employer || "";
+                document.getElementsByName("title")[0].value = userProfile.jobtitle || "";
         }
 
 
@@ -274,7 +276,8 @@
             updateProfile : function(body,success,error){
 
                 var profileUrl = "/rest/private/profile/current";
-
+                user.profile.attributes = body; //Updating profile attributes
+                body = JSON.stringify(user);
                 $.ajax({
                     url : profileUrl,
                     type : "POST",

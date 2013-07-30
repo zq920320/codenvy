@@ -12,7 +12,7 @@
 
             fetch : function(options){
 			    var dfd = $.Deferred();
-			    $.when(Backbone.Model.prototype.fetch.apply(this,arguments))
+			    $.when(Backbone.Model.prototype.fetch.apply(this,options))
 			        .done(_.bind(function(){
 			            dfd.resolve(this);
 			        },this))
