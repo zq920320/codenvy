@@ -131,7 +131,7 @@
             },
 
             isValidEmail : function(email){
-                return (/^[^\+]+$/).test(email);
+                return (/^[^\+\/]+$/).test(email);
             },
 
             login : function(form){
@@ -349,7 +349,7 @@
             getTenants : function(success,error,redirect){
                 $.when(Tenant.getTenants()).done(function(tenants){
                     switch (tenants.length) {
-                        case 0: redirect({url:"/ws-create"});
+                        case 0: redirect({url:"/create-account"});
                             break;
                         case 1: redirect({url:"/ide/" + tenants[0].toJSON().name});
                             break;
