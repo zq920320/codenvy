@@ -26,16 +26,30 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
-    ALIAS {
+    COMPANY_NAME {
         @Override
         public String getDefaultValue() {
-            return null;
+            return "";
         }
 
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null) {
-                throw new IllegalArgumentException("ALIAS parameter is null");
+            if (value == null || value.isEmpty()) {
+                throw new IllegalArgumentException("COMPANY_PARAMETER parameter is null or empty");
+            }
+        }
+    },
+
+    ALIAS {
+        @Override
+        public String getDefaultValue() {
+            return "";
+        }
+
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            if (value == null || value.isEmpty()) {
+                throw new IllegalArgumentException("ALIAS parameter is null or empty");
             }
         }
     },

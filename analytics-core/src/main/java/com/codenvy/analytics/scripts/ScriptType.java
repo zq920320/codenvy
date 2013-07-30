@@ -21,7 +21,7 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
@@ -167,6 +167,20 @@ public enum ScriptType {
         }
     },
 
+    USERS_BY_COMPANY {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.RESULT_DIR,
+                    MetricParameter.COMPANY_NAME,
+                    MetricParameter.TO_DATE}));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return ListStringValueData.class;
+        }
+    },
 
     /**
      * Is responsible to find invalid messages like with empty or null value parameters, without user or workspace
