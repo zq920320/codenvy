@@ -33,21 +33,28 @@ import com.google.gwt.user.client.ui.TextBox;
  */
 public class TimeLineView extends MainView implements TimeLineViewPresenter.Display {
 
-    private final TextBox userEmail;
-    private final Button  searchButton;
+    private final TextBox searchField;
+    private final Button findBtn;
     private final ListBox timeUnitBox;
+    private final ListBox searchCategoryBox;
 
     public TimeLineView() {
         super();
 
-        this.userEmail = new TextBox();
-        this.searchButton = new Button("Find");
-        this.timeUnitBox = new ListBox();
+        this.searchField = new TextBox();
+        this.findBtn = new Button("Go");
 
+        this.timeUnitBox = new ListBox();
         for (TimeUnit timeUnit : TimeUnit.values()) {
             timeUnitBox.addItem(timeUnit.toString().toLowerCase());
         }
         timeUnitBox.setVisibleItemCount(1);
+
+        this.searchCategoryBox = new ListBox();
+        for (TimeLineViewPresenter.SearchCategory category : TimeLineViewPresenter.SearchCategory.values()) {
+            searchCategoryBox.addItem(category.toString().toLowerCase());
+        }
+        searchCategoryBox.setVisibleItemCount(1);
 
         constructView();
     }
@@ -61,9 +68,12 @@ public class TimeLineView extends MainView implements TimeLineViewPresenter.Disp
         table.setWidget(0, 0, new Label("Time Unit:"));
         table.setWidget(0, 1, timeUnitBox);
 
-        table.setWidget(1, 0, new Label("E-mail:"));
-        table.setWidget(1, 1, userEmail);
-        table.setWidget(1, 2, searchButton);
+        table.setWidget(1, 0, new Label("Search by:"));
+        table.setWidget(1, 1, searchCategoryBox);
+
+        table.setWidget(2, 0, new Label(""));
+        table.setWidget(2, 1, searchField);
+        table.setWidget(2, 2, findBtn);
         panel.add(table);
 
         getSubHeaderPanel().add(panel);
@@ -77,13 +87,20 @@ public class TimeLineView extends MainView implements TimeLineViewPresenter.Disp
 
     /** {@inheritDoc} */
     @Override
-    public String getUserEmail() {
-        return userEmail.getText();
+    public ListBox getSearchCategoryBox() {
+        return searchCategoryBox;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Button getSearchButton() {
-        return searchButton;
+    public TextBox getSearchField() {
+        return searchField;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public Button getFindBtn() {
+        return findBtn;
+    }
+
 }

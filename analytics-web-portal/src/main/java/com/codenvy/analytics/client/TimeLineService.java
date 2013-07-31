@@ -25,6 +25,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import java.util.List;
+import java.util.Map;
 
 /** The client side stub for the RPC service. */
 @RemoteServiceRelativePath("TimeLine")
@@ -32,8 +33,6 @@ public interface TimeLineService extends RemoteService {
 
     /**
      * Retrieves data from server.
-     * 
-     * @param context execution context
      */
-    List<TableData> getData(TimeUnit timeUnit, String userFilter);
+    List<TableData> getData(TimeUnit timeUnit, Map<String, String> filterContext);
 }

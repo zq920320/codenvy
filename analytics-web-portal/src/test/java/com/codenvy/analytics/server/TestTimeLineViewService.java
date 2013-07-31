@@ -43,6 +43,6 @@ public class TestTimeLineViewService {
         filters.put(MetricFilter.FILTER_USER.name(), "gmail.com");
 
         TimeLineService service = new TimeLineServiceImpl();
-        service.getData(TimeUnit.DAY, "gmail.com");
+        service.getData(TimeUnit.DAY, filters);
     }
 }

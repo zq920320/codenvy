@@ -20,6 +20,8 @@
 package com.codenvy.analytics.client.presenter;
 
 import com.codenvy.analytics.client.TimeLineServiceAsync;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -30,8 +32,11 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -42,18 +47,21 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
     public interface Display extends MainViewPresenter.Display {
         ListBox getTimeUnitBox();
 
-        Button getSearchButton();
+        ListBox getSearchCategoryBox();
 
-        String getUserEmail();
+        TextBox getSearchField();
+
+        Button getFindBtn();
     }
 
     private TimeUnit currentTimeUnit = TimeUnit.DAY;
+    private SearchCategory searchCategory = SearchCategory.EMAIL;
 
     public TimeLineViewPresenter(TimeLineServiceAsync timelineService, HandlerManager eventBus, Display view) {
         super(eventBus, view);
         this.timelineService = timelineService;
 
-        update(currentTimeUnit, "");
+        update();
     }
 
     public void bind() {
@@ -62,25 +70,38 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
                 TimeUnit newCurrentTimeUnit = TimeUnit.values()[getDisplay().getTimeUnitBox().getSelectedIndex()];
                 if (newCurrentTimeUnit != currentTimeUnit) {
                     currentTimeUnit = newCurrentTimeUnit;
-                    update(currentTimeUnit, getDisplay().getUserEmail());
+
+                    update();
                 }
             }
         });
 
-        getDisplay().getSearchButton().addClickHandler(new ClickHandler() {
+        getDisplay().getSearchCategoryBox().addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+                SearchCategory newSearchCategory = SearchCategory.values()[getDisplay().getSearchCategoryBox().getSelectedIndex()];
+                if (newSearchCategory != searchCategory) {
+                    searchCategory = newSearchCategory;
+
+                    getDisplay().getSearchField().setText("");
+
+                    update();
+                }
+            }
+        });
+
+        getDisplay().getFindBtn().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                currentTimeUnit = TimeUnit.values()[getDisplay().getTimeUnitBox().getSelectedIndex()];
-                update(currentTimeUnit, getDisplay().getUserEmail());
+                update();
             }
         });
 
         super.bind();
     }
 
-    private void update(TimeUnit timeUnit, String userFilter) {
+    private void update() {
         getDisplay().getGWTLoader().show();
 
-        timelineService.getData(timeUnit, userFilter, new AsyncCallback<List<TableData>>() {
+        timelineService.getData(currentTimeUnit, prepareFilterContext(), new AsyncCallback<List<TableData>>() {
             public void onFailure(Throwable caught) {
                 getDisplay().getGWTLoader().hide();
                 getDisplay().getContentTable().setText(0, 0, caught.getMessage());
@@ -93,7 +114,40 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
         });
     }
 
+    private Map<String, String> prepareFilterContext() {
+        String filterValue = getDisplay().getSearchField().getText();
+
+        if (!filterValue.isEmpty()) {
+            Map<String, String> filterContext = new HashMap<String, String>(1);
+
+            switch (searchCategory) {
+                case EMAIL:
+                    filterContext.put(MetricFilter.FILTER_USER.name(), filterValue);
+                    break;
+                case DOMAIN:
+                    if (!filterValue.startsWith("@")) {
+                        filterValue += "@";
+                    }
+
+                    filterContext.put(MetricFilter.FILTER_USER.name(), filterValue);
+                    break;
+                case COMPANY:
+                    break;
+            }
+
+            return filterContext;
+        } else {
+            return new HashMap<String, String>(0);
+        }
+    }
+
     private Display getDisplay() {
         return (Display)display;
+    }
+
+    public static enum SearchCategory {
+        EMAIL,
+        DOMAIN,
+        COMPANY
     }
 }

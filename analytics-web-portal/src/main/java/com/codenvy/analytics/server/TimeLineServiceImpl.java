@@ -20,13 +20,11 @@
 package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.client.TimeLineService;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,12 +43,12 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
     private static final Display display          = Display.initialize("view/time-line.xml");
 
     /** {@inheritDoc} */
-    public List<TableData> getData(TimeUnit timeUnit, String userFilter) {
+    public List<TableData> getData(TimeUnit timeUnit, Map<String, String> filterContext) {
         try {
             Map<String, String> context = Utils.initializeContext(timeUnit);
 
-            if (!userFilter.isEmpty()) {
-                context.put(MetricFilter.FILTER_USER.name(), "*" + userFilter + "*");
+            if (!filterContext.isEmpty()) {
+                context.putAll(filterContext);
                 return display.retrieveData(context);
             } else {
                 try {
