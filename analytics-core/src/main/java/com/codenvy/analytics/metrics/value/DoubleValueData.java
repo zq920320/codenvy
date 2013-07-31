@@ -79,6 +79,7 @@ public class DoubleValueData extends AbstractValueData {
 
     }
 
+    /** {@inheritedDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         value = in.readDouble();

@@ -72,7 +72,6 @@ public abstract class AbstractValueData implements ValueData {
         return hash;
     }
 
-
     /** @see #hashCode() */
     abstract protected int doHashCode();
 

@@ -58,6 +58,10 @@ public class MetricCalculator {
     }
 
     private static void storeCommonData(LongValueData valueData, MetricType metricType, Map<String, String> context) throws IOException {
+        if (valueData.getAsLong() == 0) { // TODO let's do it in much smarter way
+            return;
+        }
+
         LinkedHashMap<String, String> uuid = new LinkedHashMap<>(2);
 
         Utils.putFromDate(uuid, Utils.getFromDate(context));
@@ -70,6 +74,10 @@ public class MetricCalculator {
      * Stores {@link ValueData} under the directory related to given entity.
      */
     private static void storeEntityData(MapStringLongValueData valueData, MetricType metricType, MetricParameter.ENTITY_TYPE entityType, Map<String, String> context) throws IOException {
+        if (valueData.size() == 0) { // TODO let's do it in much smarter way
+            return;
+        }
+
         LinkedHashMap<String, String> uuid = new LinkedHashMap<>(4);
 
         Utils.putFromDate(uuid, Utils.getFromDate(context));
