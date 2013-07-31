@@ -115,6 +115,9 @@ public class MetricFactory {
             case USERS_SSO_LOGGED_IN_USING_FORM_PERCENT:
                 metric = new UsersSsoLoggedInUsingFormPercentMetric();
                 break;
+            case USER_CODE_REFACTOR:
+                metric = new UserCodeRefactorMetric();
+                break;
             case USER_PROFILE:
                 metric = new UsersProfileMetric();
                 break;

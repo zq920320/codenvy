@@ -50,6 +50,24 @@ DEFINE skipDefaults(X) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Return the number of tuples in the relation
+-- @return {countAll : long}
+---------------------------------------------------------------------------
+DEFINE countAll(X) RETURNS Y {
+	x1 = GROUP $X ALL;
+	$Y = FOREACH x1 GENERATE COUNT($X.$1) AS countAll;
+};
+
+---------------------------------------------------------------------------
+-- Return the number of tuples in the relation
+-- @return {fieldNameParam : chararray, countAll : long}
+---------------------------------------------------------------------------
+DEFINE countByField(X, fieldNameParam) RETURNS Y {
+	x1 = GROUP $X BY $fieldNameParam;
+	$Y = FOREACH x1 GENERATE group AS $fieldNameParam, COUNT($X.$1) AS countAll;
+};
+
+---------------------------------------------------------------------------
 -- Filters events by date of occurrence.
 -- @param toDateParam  - date in format 'YYYYMMDD'
 -- @interval

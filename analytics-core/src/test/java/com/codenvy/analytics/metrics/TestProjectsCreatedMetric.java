@@ -19,22 +19,19 @@
 
 package com.codenvy.analytics.metrics;
 
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.testng.Assert.assertEquals;
-
 import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -86,7 +83,7 @@ public class TestProjectsCreatedMetric {
         assertEquals(valueData.getAsDouble(), Double.valueOf(50));
     }
 
-    class TestedProjectsCreatedMetric extends AbstractProjectsCreatedMetric {
+    public class TestedProjectsCreatedMetric extends AbstractProjectsCreatedMetric {
         TestedProjectsCreatedMetric(MetricType metricType, Metric basedMetric, String type, ValueType valueType) {
             super(metricType, basedMetric, type, valueType);
         }

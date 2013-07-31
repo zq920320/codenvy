@@ -22,6 +22,7 @@ package com.codenvy.analytics.server;
 import com.codenvy.analytics.client.TimeLineService;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 
 import org.testng.annotations.Test;
@@ -36,7 +37,7 @@ public class TestTimeLineViewService {
 
     @Test
     public void testRun() throws Exception {
-        System.setProperty(PigScriptExecutor.ANALYTICS_LOGS_DIRECTORY_PROPERTY, PigScriptExecutor.RESULT_DIRECTORY);
+        System.setProperty(PigScriptExecutor.ANALYTICS_LOGS_DIRECTORY_PROPERTY, FSValueDataManager.RESULT_DIRECTORY);
         
         Map<String, String> filters = new HashMap<String, String>();
         filters.put(MetricFilter.FILTER_USER.name(), "gmail.com");

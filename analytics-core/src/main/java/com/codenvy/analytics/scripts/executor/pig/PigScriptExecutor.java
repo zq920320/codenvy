@@ -25,7 +25,6 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.pig.ExecType;
 import org.apache.pig.PigServer;
@@ -33,13 +32,7 @@ import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
@@ -64,17 +57,11 @@ public class PigScriptExecutor implements ScriptExecutor {
     /** Runtime parameter name. Contains the directory where logs are located. */
     public static final String  ANALYTICS_LOGS_DIRECTORY_PROPERTY    = "analytics.logs.directory";
 
-    /** Runtime parameter name. Contains the directory where results are stored. */
-    private static final String ANALYTICS_RESULT_DIRECTORY_PROPERTY  = "analytics.result.directory";
-
     /** The value of {@value #ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY} runtime parameter. */
     public static final String  SCRIPTS_DIRECTORY                    = System.getProperty(ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY);
 
     /** The value of {@value #ANALYTICS_LOGS_DIRECTORY_PROPERTY} runtime parameter. */
     public static final String  LOGS_DIRECTORY                       = System.getProperty(ANALYTICS_LOGS_DIRECTORY_PROPERTY);
-
-    /** The value of {@value ScriptService#ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
-    public static final String  RESULT_DIRECTORY                     = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
 
     /**
      * Parameter name in Pig script contains the resources are needed to be inspected. Can be either the name of single resource (file or
@@ -257,8 +244,6 @@ public class PigScriptExecutor implements ScriptExecutor {
 
     /**
      * Extracts relative path to pig script out of IMPORT command.
-     * 
-     * @return absolute path to script located in {@value #SCRIPTS_DIRECTORY}.
      */
     private File extractRelativePath(final String regex, String scriptContnent, Matcher matcher) throws IOException {
         String importCommand = scriptContnent.substring(matcher.start(), matcher.end());

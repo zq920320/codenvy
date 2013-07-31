@@ -121,6 +121,16 @@ public class Utils {
     }
 
     /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
+    public static void putToDate(Map<String, String> context, String toDate) {
+        context.put(MetricParameter.TO_DATE.name(), toDate);
+    }
+
+    /** Puts {@link MetricParameter#FROM_DATE} parameter into context. */
+    public static void putFromDate(Map<String, String> context, String fromDate) {
+        context.put(MetricParameter.FROM_DATE.name(), fromDate);
+    }
+
+    /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
     public static void putTimeUnit(Map<String, String> context, TimeUnit timeUnit) {
         context.put(MetricParameter.TIME_UNIT.name(), timeUnit.toString());
     }

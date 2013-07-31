@@ -62,7 +62,7 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
             Utils.putToDate(dayContext, fromDate);
             Utils.putTimeUnit(dayContext, TimeUnit.DAY);
 
-            ValueData dayValue = evaluate(dayContext);
+            ValueData dayValue = evaluateAndStore(dayContext);
             total = total.union(dayValue);
 
             fromDate.add(Calendar.DAY_OF_MONTH, 1);
@@ -72,7 +72,7 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
     }
 
 
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
+    protected ValueData evaluateAndStore(Map<String, String> context) throws IOException {
         String executionKey = metricType.name() + makeUUID(context).toString();
 
         acquire(executionKey);

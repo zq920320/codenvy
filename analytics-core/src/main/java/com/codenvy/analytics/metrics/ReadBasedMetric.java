@@ -25,12 +25,11 @@ import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Map;
+import java.util.*;
 
 /**
  * It is supposed to read precalculated {@link ValueData} from storage.
- * 
+ *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
@@ -39,13 +38,15 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         super(metricType);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         Calendar fromDate = Utils.getFromDate(context);
         Calendar toDate = Utils.getToDate(context);
 
-        ValueData total = null;
+        ValueData total = createEmptyValueData();
 
         Map<String, String> dayContext = Utils.clone(context);
         while (!fromDate.after(toDate)) {
@@ -54,7 +55,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             Utils.putTimeUnit(dayContext, TimeUnit.DAY);
 
             ValueData dayValue = evaluate(dayContext);
-            total = total == null ? dayValue : total.union(dayValue);
+            total = total.union(dayValue);
 
             fromDate.add(Calendar.DAY_OF_MONTH, 1);
         }
@@ -62,15 +63,92 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return total;
     }
 
+    /**
+     * @return {@link ValueData}
+     */
     protected ValueData evaluate(Map<String, String> dayContext) throws IOException {
+        return getFilteredValue(makeUUID(dayContext), dayContext);
+    }
+
+    private ValueData getFilteredValue(LinkedHashMap<String, String> uuid, Map<String, String> dayContext) throws IOException {
+        List<MetricFilter> availableFilters = getAvailableFilters(dayContext);
+        if (availableFilters.isEmpty()) {
+            return getDirectValue(uuid);
+        } else if (availableFilters.size() > 1) {
+            throw new IllegalStateException("Number of filters greater then 1");
+        }
+
+        ValueData valueData = createEmptyValueData();
+
+        for (MetricFilter filter : availableFilters) {
+            String[] allFilterValues = dayContext.get(filter.name()).split(",");
+
+            for (String filterValue : allFilterValues) {
+                putFilterValue(filter, filterValue.trim(), uuid);
+
+                Map<String, String> clonedDayContext = Utils.clone(dayContext);
+                clonedDayContext.remove(filter.name());
+
+                valueData = valueData.union(getFilteredValue(uuid, clonedDayContext));
+            }
+        }
+
+        return valueData;
+    }
+
+    /**
+     * @return all available filters from context
+     */
+    private List<MetricFilter> getAvailableFilters(Map<String, String> dayContext) {
+        List<MetricFilter> filters = new ArrayList<>(3);
+
+        for (MetricFilter filterKey : MetricFilter.values()) {
+            if (dayContext.containsKey(filterKey.name())) {
+                filters.add(filterKey);
+            }
+        }
+
+        return filters;
+    }
+
+    private void putFilterValue(MetricFilter filterKey, String filterValue, LinkedHashMap<String, String> uuid) {
+        switch (filterKey) {
+            case FILTER_WS:
+                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.WS.name());
+                uuid.put(MetricParameter.ALIAS.name(), filterValue);
+                break;
+
+            case FILTER_USER:
+                if (filterValue.startsWith("@")) {
+                    uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.DOMAINS.name());
+                    uuid.put(MetricParameter.ALIAS.name(), filterValue.substring(1));
+                } else {
+                    uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.USERS.name());
+                    uuid.put(MetricParameter.ALIAS.name(), filterValue);
+                }
+
+                break;
+
+            default:
+                throw new IllegalArgumentException("Filter " + filterKey + " is not supported");
+        }
+    }
+
+    /**
+     * @return {@link ValueData} from the storage, if data is absent then empty value will be returned
+     */
+    private ValueData getDirectValue(LinkedHashMap<String, String> uuid) throws IOException {
         try {
-            return FSValueDataManager.load(metricType, makeUUID(dayContext));
+            return FSValueDataManager.load(metricType, uuid);
         } catch (FileNotFoundException e) {
             return createEmptyValueData();
         }
     }
 
-    protected ValueData createEmptyValueData() throws IOException {
+    /**
+     * @return empty {@link ValueData}
+     */
+    private ValueData createEmptyValueData() throws IOException {
         return ValueDataFactory.createEmptyValueData(getValueDataClass());
     }
 }

@@ -192,8 +192,9 @@ public enum MetricParameter {
 
     /** Enumeration for {@link MetricParameter#ENTITY} */
     public enum ENTITY_TYPE {
+        WS,
+        DOMAINS,
         USERS,
-        COMPANIES,
-        DOMAINS
+        COMPANIES
     }
 }

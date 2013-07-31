@@ -20,13 +20,9 @@
 package com.codenvy.analytics.server.jobs;
 
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.*;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
-
 import org.apache.commons.io.FileUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -85,12 +81,14 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
 
             MetricFactory.createMetric(MetricType.PROJECTS_BUILT_NUMBER).getValue(context);
             MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_NUMBER).getValue(context);
+
+            MetricCalculator.process(MetricType.USER_CODE_REFACTOR, context);
         } finally {
             LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
-    private void store(MetricType metricType, ValueData valueData, Map<String, String> executeContext)
+    private void store(MetricType metricType, ValueData valueData, Map<String, String> context)
             throws IOException {
         if (!(valueData instanceof MapStringListListStringValueData)) {
             throw new IOException("MapStringListListStringValueData class is expected");
@@ -102,7 +100,7 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
         for (String user : all.keySet()) {
             ListListStringValueData item = all.get(user);
 
-            LinkedHashMap<String, String> uuid = makeUUID(metricType, executeContext, user);
+            LinkedHashMap<String, String> uuid = makeUUID(metricType, context, user);
             FSValueDataManager.store(item, metricType, uuid);
         }
     }

@@ -19,30 +19,24 @@
 
 package com.codenvy.analytics.metrics;
 
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.scripts.ScriptType;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 
 /**
@@ -138,7 +132,7 @@ public class TestScriptBasedMetrics extends BaseTest {
     /**
      * For testing purpose only.
      */
-    class TestedMetric extends PersistableScriptBasedMetric {
+    public class TestedMetric extends PersistableScriptBasedMetric {
 
         TestedMetric(MetricType metricType) {
             super(metricType);

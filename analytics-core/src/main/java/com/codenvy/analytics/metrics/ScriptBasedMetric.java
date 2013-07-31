@@ -50,10 +50,10 @@ public abstract class ScriptBasedMetric extends AbstractMetric {
             LOGGER.debug("Calculation " + getType() + " with context " + context.toString());
         }
 
-        return evaluate(context);
+        return evaluateAndStore(context);
     }
 
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
+    protected ValueData evaluateAndStore(Map<String, String> context) throws IOException {
         String executionKey = metricType.name() + makeUUID(context).toString();
 
         acquire(executionKey);

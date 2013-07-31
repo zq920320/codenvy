@@ -20,10 +20,7 @@ package com.codenvy.analytics.scripts;
 
 
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.*;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -51,6 +48,34 @@ public enum ScriptType {
     USERS_SSO_LOGGED_IN,
     PRODUCT_USAGE_TIME,
     USERS_UPDATE_PROFILE,
+
+    USER_CODE_REFACTOR {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+    },
+
+    USER_CODE_REFACTOR_BY_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+    },
+
+    USER_CODE_REFACTOR_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+    },
+
+    USER_CODE_REFACTOR_BY_DOMAINS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+    },
 
     ACTON {
         @Override

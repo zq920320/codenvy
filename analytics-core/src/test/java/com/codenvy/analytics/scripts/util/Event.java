@@ -241,6 +241,20 @@ public class Event {
                                 .withParam("LASTNAME", lastName)
                                 .withParam("PHONE", phone);
         }
+
+        public static Builder createUserCodeRefactorEvent(String ws,
+                                                          String user,
+                                                          String project,
+                                                          String type,
+                                                          String feature) {
+            return new Builder().withContext(user, ws, UUID.randomUUID().toString())
+                    .withParam("EVENT", "user-code-refactor")
+                    .withParam("WS", ws)
+                    .withParam("USER", user)
+                    .withParam("PROJECT", project)
+                    .withParam("TYPE", type)
+                    .withParam("FEATURE", feature);
+        }
     }
 
     /** Event context contains 3 parameters. */
