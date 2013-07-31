@@ -126,7 +126,7 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
                     break;
                 case DOMAIN:
                     if (!filterValue.startsWith("@")) {
-                        filterValue += "@";
+                        filterValue = "@" + filterValue;
                     }
 
                     filterContext.put(MetricFilter.FILTER_USER.name(), filterValue);
