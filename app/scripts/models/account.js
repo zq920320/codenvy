@@ -11,7 +11,7 @@
             new AccountError("password","Your password is too short")
 
         */
-        var user = user || {}; // Account
+        var user = user || {}; // User to store user's data from server
 
         var AccountError = function(fieldName, errorDescription){
             return {
@@ -45,13 +45,15 @@
 
         */
 
+        /*
 
+            Filling the Profile page
+        */
         function onReceiveUserProfileInfo(response)
         {
-                user = response;
-                var userProfile = response.profile.attributes;
-                var email = response.aliases;
-                
+                user = response.attributes; // store attributes
+                var userProfile = user.profile.attributes;
+                var email = user.aliases;
                 document.getElementById("account_value").innerHTML = email;
                 document.getElementsByName("first_name")[0].value = userProfile.firstName || "";
                 document.getElementsByName("last_name")[0].value = userProfile.lastName || "";
@@ -274,52 +276,24 @@
             },
             // update User`s profile in Profile page
             updateProfile : function(body,success,error){
-
-                var profileUrl = "/rest/private/profile/current";
                 user.profile.attributes = body; //Updating profile attributes
-                body = JSON.stringify(user);
-                $.ajax({
-                    url : profileUrl,
-                    type : "POST",
-                    data : body,
-                    contentType: "application/json",
-                    success : function(){
-                        success({url: "/"});
-                    },
-                    error : function(xhr){
-                        error([
-                            new AccountError(null,xhr.responseText)
-                        ]);
-                    }
+                $.when(Profile.updateUser(user)).done(success).fail(function(msg){
+                    error([
+                        new  AccountError(null,msg)
+                    ]);
                 });
             },
 
             // get User`s profile in Profile page
-            getUserProfile : function(success,error,redirect){
+            getUserProfile : function(success,error){
                 $.when(Profile.getUser()).done(function(user){
-                   onReceiveUserProfileInfo(user.attributes);
+                   onReceiveUserProfileInfo(user);
                 }).fail(function(msg){
                     error([
                         new  AccountError(null,msg)
                     ]);
                 });
             },
-/*            getUserProfile : function(error){
-                var profile = Profile.getUser();
-                    window.console.log(profile);
-                var profileUrl = "/rest/private/profile/current";
-                $.ajax({
-                    url : profileUrl,
-                    type : "GET",
-                    contentType: "application/json",
-                    success : function(output, status, xhr){
-                        onReceiveUserProfileInfo(xhr);//filling profile page
-                    },
-                    error : function(xhr){
-                        error(null,xhr.responseText);
-                    }
-                });
-            },*/
 
             /**
              * Encode all special characters including ~!*()'. Replace " " on "+"

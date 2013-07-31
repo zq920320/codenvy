@@ -3,32 +3,40 @@
     define(["jquery","underscore","backbone"], function($,_,Backbone){
 
         var Profile = Backbone.Model.extend({
-        	parse : function(response){
 
-        		return response;
-        	},
+            idAttribute: "", // set id = '' to use simple urlRoot without /id
+
+            parse : function(response){ // parsing server response
+
+            return response;
+            },
 
 			urlRoot : "/rest/private/profile/current",
 
-            fetch : function(options){
-			    var dfd = $.Deferred();
-			    $.when(Backbone.Model.prototype.fetch.apply(this,options))
-			        .done(_.bind(function(){
-			            dfd.resolve(this);
-			        },this))
-			        .fail(_.bind(function(){
-			            dfd.reject(this);
-			        },this));
-			    return dfd.promise();
+            fetch : function(options){ // fetch is asynchronous function
+            var dfd = $.Deferred();
+                $.when(Backbone.Model.prototype.fetch.apply(this,options))
+                    .done(_.bind(function(){
+                        dfd.resolve(this);
+                    },this))
+                    .fail(_.bind(function(){
+                        dfd.reject(this);
+                    },this));
+                return dfd.promise();
 			}
+
         });
 
-
-
         return {
+            /* Returns User object from server*/
             getUser : function(){
                 return new Profile().fetch();
             },
+            /* Save user's data to server */
+            updateUser : function(user,success,error){
+               new Profile().save(user);
+            },
+
             Profile : Profile
         };
 

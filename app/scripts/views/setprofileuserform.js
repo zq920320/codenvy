@@ -95,7 +95,6 @@ define(["jquery","underscore","views/accountformbase","models/account"], functio
             }
         });
 
-
         return {
             get : function(form){
                 if(typeof form === 'undefined'){
