@@ -2,7 +2,7 @@
 
     var _gaq = _gaq || [];
 
-    define(["jquery","json", "models/tenant","cookies"],function($,JSON,Tenant){
+    define(["jquery","json", "models/tenant","models/profile","cookies"],function($,JSON,Tenant,Profile){
 
         /*
             AccountError is used to report errors through error callback function
@@ -11,6 +11,7 @@
             new AccountError("password","Your password is too short")
 
         */
+        var user = user || {}; // User to store user's data from server
 
         var AccountError = function(fieldName, errorDescription){
             return {
@@ -44,15 +45,21 @@
 
         */
 
+        /*
 
-        function onReceiveUserProfileInfo(request)
+            Filling the Profile page
+        */
+        function onReceiveUserProfileInfo(response)
         {
-                var user = JSON.parse(request.responseText);
-                document.getElementsByName("first_name")[0].value = user.firstName || "";
-                document.getElementsByName("last_name")[0].value = user.lastName || "";
-                document.getElementsByName("phone_work")[0].value = user.phone || "";
-                document.getElementsByName("company")[0].value = user.employer || "";
-                document.getElementsByName("title")[0].value = user.jobtitle || "";
+                user = response.attributes; // store attributes
+                var userProfile = user.profile.attributes;
+                var email = user.aliases;
+                document.getElementById("account_value").innerHTML = email;
+                document.getElementsByName("first_name")[0].value = userProfile.firstName || "";
+                document.getElementsByName("last_name")[0].value = userProfile.lastName || "";
+                document.getElementsByName("phone_work")[0].value = userProfile.phone || "";
+                document.getElementsByName("company")[0].value = userProfile.employer || "";
+                document.getElementsByName("title")[0].value = userProfile.jobtitle || "";
         }
 
 
@@ -269,38 +276,22 @@
             },
             // update User`s profile in Profile page
             updateProfile : function(body,success,error){
-
-                var profileUrl = "/rest/private/profile/current";
-
-                $.ajax({
-                    url : profileUrl,
-                    type : "POST",
-                    data : body,
-                    contentType: "application/json",
-                    success : function(){
-                        success({url: "/"});
-                    },
-                    error : function(xhr){
-                        error([
-                            new AccountError(null,xhr.responseText)
-                        ]);
-                    }
+                user.profile.attributes = body; //Updating profile attributes
+                $.when(Profile.updateUser(user)).done(success).fail(function(msg){
+                    error([
+                        new  AccountError(null,msg)
+                    ]);
                 });
             },
 
             // get User`s profile in Profile page
-            getUserProfile : function(error){
-                var profileUrl = "/rest/private/profile/current";
-                $.ajax({
-                    url : profileUrl,
-                    type : "GET",
-                    contentType: "application/json",
-                    success : function(output, status, xhr){
-                        onReceiveUserProfileInfo(xhr);//filling profile page
-                    },
-                    error : function(xhr){
-                        error(null,xhr.responseText);
-                    }
+            getUserProfile : function(success,error){
+                $.when(Profile.getUser()).done(function(user){
+                   onReceiveUserProfileInfo(user);
+                }).fail(function(msg){
+                    error([
+                        new  AccountError(null,msg)
+                    ]);
                 });
             },
 

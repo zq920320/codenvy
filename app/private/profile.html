@@ -17,45 +17,49 @@
          <form class="change-password-form">
 
             <div class="field">
-               <input type="password" name="change_password" placeholder="New password" />
+              <p>New password:</p>
+               <input type="password" name="change_password"/>
             </div>
 
             <div class="field">
-               <input type="password" name="confirm_password" placeholder="Confirm password"/>
+              <p>Confirm password:</p>
+               <input type="password" name="confirm_password"/>
             </div>
 
             <div class="field">
-                  <input type="submit" class="light-button" value="Update password"/>
+                  <input type="submit" class="light-button"/>
                </div>
 
          </form>
+         <hr class="long-line">
          <div id="profileServiceErrorMessage" class="error-container"></div>
          <form class="cloud-ide-profile">
 
-            <!--
-                <%
-                    String username = request.getRemoteUser();
-                 %>-->
-
-                <input type="hidden" name="email" value="<%=username %>" placeholder="Email" disabled />
-
+                <div class="profile-email">
+                  <p><span>Your email address is currently : </span><span id="account_value"><span></p>
+                </div>
                 <div class="field">
-                  <input type="text" name="first_name" maxlength="255" placeholder="First name"/>
+                  <p>First name:</p>
+                  <input type="text" name="first_name" maxlength="255"/>
                 </div>
 
                 <div class="field">
-                  <input type="text" name="last_name" maxlength="255" placeholder="Last name"/>
+                  <p>Last name:</p>
+                  <input type="text" name="last_name" maxlength="255"/>
                 </div>
 
                 <div class="field">
-                  <input type="text" name="phone_work" maxlength="255" placeholder="Phone"/>
+                  <p>Phone:</p>
+                  <input type="text" name="phone_work" maxlength="255"/>
             </div>
 
             <div class="field">
-               <input type="text" name="company" maxlength="255" placeholder="Company" />
+              <p>Company:</p>
+               <input type="text" name="company" maxlength="255"/>
                 </div>
 
                 <div class="field">
+                  <p>Job title:</p>
                    <select type="selectbox" name="title" size="1">
                         <option value="">Please select role...</option>
 
