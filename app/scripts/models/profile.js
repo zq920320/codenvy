@@ -23,7 +23,19 @@
                         dfd.reject(this);
                     },this));
                 return dfd.promise();
-			}
+			},
+
+            save : function(options){ // save is asynchronous function
+            var dfd = $.Deferred();
+                $.when(Backbone.Model.prototype.save.apply(this,options))
+                    .done(_.bind(function(){
+                        dfd.resolve(this);
+                    },this))
+                    .fail(_.bind(function(error){
+                        dfd.reject(error.status + " ("+ error.statusText + ") " + " : " + error.responseText);
+                    },this));
+                return dfd.promise();
+            }
 
         });
 
@@ -33,8 +45,9 @@
                 return new Profile().fetch();
             },
             /* Save user's data to server */
-            updateUser : function(user){
-               new Profile().save(user);
+            updateUser : function(user,success,error){
+                var pr = new Profile(user);
+                pr.save().done(success).fail(error);
             },
 
             Profile : Profile

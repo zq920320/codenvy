@@ -277,11 +277,11 @@
             // update User`s profile in Profile page
             updateProfile : function(body,success,error){
                 user.profile.attributes = body; //Updating profile attributes
-                $.when(Profile.updateUser(user)).done(success).fail(function(msg){
+                Profile.updateUser(user,success,function(msg){
                     error([
                         new  AccountError(null,msg)
                     ]);
-                });
+                })
             },
 
             // get User`s profile in Profile page
