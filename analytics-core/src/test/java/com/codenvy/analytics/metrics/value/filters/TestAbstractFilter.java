@@ -19,13 +19,9 @@
 
 package com.codenvy.analytics.metrics.value.filters;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -33,6 +29,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -72,6 +71,16 @@ public class TestAbstractFilter {
         assertEquals(all.size(), 1);
         assertTrue(all.contains(item1));
     }
+
+    @Test
+    public void testApplySeveralFilter() throws Exception {
+        ListListStringValueData result = filter.apply(MetricFilter.FILTER_USER, "user1,user2");
+        List<ListStringValueData> all = result.getAll();
+
+        assertEquals(all.size(), 3);
+        assertTrue(all.contains(item1));
+    }
+
 
     @Test
     public void testSize() throws Exception {

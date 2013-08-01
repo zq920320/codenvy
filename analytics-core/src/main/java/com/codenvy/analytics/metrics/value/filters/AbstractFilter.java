@@ -161,7 +161,13 @@ public abstract class AbstractFilter implements Filter {
     }
 
     private boolean isAccepted(String str, String filterValue) {
-        return str.contains(filterValue);
+        for (String singleValue : filterValue.split(",")) {
+            if (str.contains(singleValue.trim())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
