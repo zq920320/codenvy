@@ -281,7 +281,7 @@
                     error([
                         new  AccountError(null,msg)
                     ]);
-                })
+                });
             },
 
             // get User`s profile in Profile page
