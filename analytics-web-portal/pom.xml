@@ -127,7 +127,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Copy static web files before executing gwt:runFor -->
+            <!-- Copy static web files before executing gwt:run -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

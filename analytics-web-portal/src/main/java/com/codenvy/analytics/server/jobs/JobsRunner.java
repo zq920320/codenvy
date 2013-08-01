@@ -22,7 +22,6 @@ package com.codenvy.analytics.server.jobs;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
-
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
@@ -34,7 +33,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,8 +40,8 @@ import java.util.Set;
 public class JobsRunner implements ServletContextListener {
 
     private static final Logger LOGGER                             = LoggerFactory.getLogger(JobsRunner.class);
-    private static final String ANALYTICS_FORCE_RUN_JOBS_CONDITION = "analytics.force.runFor.jobs.condition";
-    private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS     = "analytics.force.runFor.jobs.class";
+    private static final String ANALYTICS_FORCE_RUN_JOBS_CONDITION = "analytics.force.run.jobs.condition";
+    private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS     = "analytics.force.run.jobs.class";
     private static final String CRON_TIMETABLE                     = "0 0 1 ? * *";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
@@ -103,7 +101,7 @@ public class JobsRunner implements ServletContextListener {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Unable to force job runFor: " + e.getMessage(), e);
+            LOGGER.error("Unable to force job run: " + e.getMessage(), e);
         }
     }
 
@@ -171,7 +169,7 @@ public class JobsRunner implements ServletContextListener {
     }
 
     private void setDefaultSchedulerProperties() {
-        System.setProperty("org.quartz.threadPool.threadCount", "1"); // to sure runFor order
+        System.setProperty("org.quartz.threadPool.threadCount", "1"); // to sure run order
     }
 
     private void initializeJob(Class<? extends Job> clazz) throws SchedulerException {
