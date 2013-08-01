@@ -33,7 +33,7 @@
                 return new Profile().fetch();
             },
             /* Save user's data to server */
-            updateUser : function(user,success,error){
+            updateUser : function(user){
                new Profile().save(user);
             },
 
