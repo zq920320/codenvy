@@ -125,6 +125,11 @@ public class Utils {
         context.put(MetricParameter.TO_DATE.name(), toDate);
     }
 
+    /** Puts {@link MetricParameter#EVENT} parameter into context. */
+    public static void putEvent(Map<String, String> context, String event) {
+        context.put(MetricParameter.EVENT.name(), event);
+    }
+
     /** Puts {@link MetricParameter#FROM_DATE} parameter into context. */
     public static void putFromDate(Map<String, String> context, String fromDate) {
         context.put(MetricParameter.FROM_DATE.name(), fromDate);

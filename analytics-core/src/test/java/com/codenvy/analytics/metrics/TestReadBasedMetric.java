@@ -45,8 +45,8 @@ public class TestReadBasedMetric {
     @BeforeMethod
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user1@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user2@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
         events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);
 
@@ -54,8 +54,9 @@ public class TestReadBasedMetric {
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
+        Utils.putEvent(context, "user-code-refactor");
 
-        MetricCalculator.process(METRIC_TYPE, context);
+        DataProcessing.runFor(METRIC_TYPE, context);
     }
 
     @Test
@@ -67,23 +68,23 @@ public class TestReadBasedMetric {
     }
 
     @Test
-    public void testGetValuesWihtUserFilters() throws Exception {
+    public void testGetValuesWithUserFilters() throws Exception {
         Metric metric = MetricFactory.createMetric(METRIC_TYPE);
 
-        context.put(MetricFilter.FILTER_USER.name(), "user@gmail.com");
+        context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com");
 
         LongValueData value = (LongValueData) metric.getValue(context);
-        assertEquals(value.getAsLong(), 2);
+        assertEquals(value.getAsLong(), 1);
 
-        context.put(MetricFilter.FILTER_USER.name(), "default");
+        context.put(MetricFilter.FILTER_USER.name(), "user2@gmail.com");
 
         value = (LongValueData) metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 
-        context.put(MetricFilter.FILTER_USER.name(), "default,user@gmail.com");
+        context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com,user2@gmail.com");
 
         value = (LongValueData) metric.getValue(context);
-        assertEquals(value.getAsLong(), 3);
+        assertEquals(value.getAsLong(), 2);
 
         context.put(MetricFilter.FILTER_USER.name(), "@gmail.com");
 
@@ -130,11 +131,6 @@ public class TestReadBasedMetric {
         context.put(MetricFilter.FILTER_WS.name(), "default");
 
         value = (LongValueData) metric.getValue(context);
-        assertEquals(value.getAsLong(), 1);
-
-        context.put(MetricFilter.FILTER_WS.name(), "default,ws");
-
-        value = (LongValueData) metric.getValue(context);
-        assertEquals(value.getAsLong(), 3);
+        assertEquals(value.getAsLong(), 0);
     }
 }

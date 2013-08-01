@@ -17,9 +17,4 @@
  */
 
 IMPORT 'macros.pig';
-
-f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-f = filterByEvent(f2, 'user-code-refactor');
-
-result = countAll(f);
+result = numberOfEvents('$log', '$FROM_DATE', '$TO_DATE', '$EVENT');

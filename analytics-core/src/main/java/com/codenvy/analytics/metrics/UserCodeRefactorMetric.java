@@ -17,9 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.scripts.ScriptType;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -36,7 +38,7 @@ public class UserCodeRefactorMetric extends ReadBasedMetric {
      */
     @Override
     protected Class<? extends ValueData> getValueDataClass() {
-        return ScriptType.USER_CODE_REFACTOR.getValueDataClass();
+        return LongValueData.class;
     }
 
     /**
@@ -44,6 +46,6 @@ public class UserCodeRefactorMetric extends ReadBasedMetric {
      */
     @Override
     public Set<MetricParameter> getParams() {
-        return ScriptType.USER_CODE_REFACTOR.getParams();
+        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

@@ -49,31 +49,55 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME,
     USERS_UPDATE_PROFILE,
 
-    USER_CODE_REFACTOR {
+    NUMBER_OF_EVENTS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return LongValueData.class;
         }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.EVENT}));
+        }
     },
 
-    USER_CODE_REFACTOR_BY_USERS {
+    NUMBER_OF_EVENTS_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;
         }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.EVENT}));
+        }
     },
 
-    USER_CODE_REFACTOR_BY_WS {
+    NUMBER_OF_EVENTS_BY_WS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;
         }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.EVENT}));
+        }
     },
 
-    USER_CODE_REFACTOR_BY_DOMAINS {
+    NUMBER_OF_EVENTS_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.EVENT}));
         }
     },
 

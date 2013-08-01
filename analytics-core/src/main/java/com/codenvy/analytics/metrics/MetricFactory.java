@@ -274,6 +274,15 @@ public class MetricFactory {
             case PROJECTS_BUILT_NUMBER:
                 metric = new ProjectsBuiltNumberMetric();
                 break;
+            case BUILD_STARTED:
+                metric = new NumberOfBuildsMetric();
+                break;
+            case RUN_STARTED:
+                metric = new NumberOfRunsMetric();
+                break;
+            case DEBUG_STARTED:
+                metric = new NumberOfDebugsMetric();
+                break;
             case PROJECTS_CREATED_TYPES:
                 metric = new ProjectsCreatedTypesMetric();
                 break;

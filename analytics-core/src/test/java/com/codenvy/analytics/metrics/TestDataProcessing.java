@@ -31,12 +31,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestMetricCalculator {
+public class TestDataProcessing {
 
     private HashMap<String, String> context;
 
@@ -52,8 +53,9 @@ public class TestMetricCalculator {
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
+        Utils.putEvent(context, "user-code-refactor");
 
-        MetricCalculator.process(MetricType.USER_CODE_REFACTOR, context);
+        DataProcessing.runFor(MetricType.USER_CODE_REFACTOR, context);
     }
 
     @Test
@@ -65,11 +67,10 @@ public class TestMetricCalculator {
         assertTrue(new File(baseDir + "value").exists());
 
         assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
-        assertTrue(new File(baseDir + "users/d/e/f/ault/value").exists());
+        assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
 
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
 
         assertTrue(new File(baseDir + "ws/ws/value").exists());
-        assertTrue(new File(baseDir + "ws/d/e/f/ault/value").exists());
-    }
+   }
 }

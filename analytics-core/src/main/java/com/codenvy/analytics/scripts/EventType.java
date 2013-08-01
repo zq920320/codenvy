@@ -16,11 +16,22 @@
  * from Codenvy S.A..
  */
 
-IMPORT 'macros.pig';
+package com.codenvy.analytics.scripts;
 
-f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-f3 = filterByEvent(f2, 'user-code-refactor');
-f = extractUser(f3);
 
-result = countByField(f, 'user');
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public enum EventType {
+    USER_CODE_REFACTOR,
+    BUILD_STARTED,
+    BUILD_FINISHED,
+    RUN_STARTED,
+    RUN_FINISHED,
+    DEBUG_STARTED,
+    DEBUG_FINISHED;
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase().replace("_", "-");
+    }
+}

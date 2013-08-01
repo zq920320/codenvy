@@ -68,6 +68,57 @@ DEFINE countByField(X, fieldNameParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Calculates number of events.
+-- @return {countAll : long}
+---------------------------------------------------------------------------
+DEFINE numberOfEvents(logParam, fromDateParam, toDateParam, eventParam) RETURNS Y {
+	y1 = loadResources('$logParam');
+	y2 = filterByDate(y1, '$fromDateParam', '$toDateParam');
+	y3 = filterByEvent(y2, '$eventParam');
+	$Y = countAll(y3);
+};
+
+---------------------------------------------------------------------------
+-- Calculates number of events by user.
+-- @return {user : chararray, countAll : long}
+---------------------------------------------------------------------------
+DEFINE numberOfEventsByUsers(logParam, fromDateParam, toDateParam, eventParam) RETURNS Y {
+	y1 = loadResources('$logParam');
+	y2 = filterByDate(y1, '$fromDateParam', '$toDateParam');
+	y3 = filterByEvent(y2, '$eventParam');
+	y4 = extractUser(y3);
+	y5 = FILTER y4 BY user != 'default';
+	$Y = countByField(y5, 'user');
+};
+
+---------------------------------------------------------------------------
+-- Calculates number of events by workspace.
+-- @return {ws : chararray, countAll : long}
+---------------------------------------------------------------------------
+DEFINE numberOfEventsByWs(logParam, fromDateParam, toDateParam, eventParam) RETURNS Y {
+	y1 = loadResources('$logParam');
+	y2 = filterByDate(y1, '$fromDateParam', '$toDateParam');
+	y3 = filterByEvent(y2, '$eventParam');
+	y4 = extractWs(y3);
+	y5 = FILTER y4 BY ws != 'default';
+	$Y = countByField(y5, 'ws');
+};
+
+---------------------------------------------------------------------------
+-- Calculates number of events by workspace.
+-- @return {ws : chararray, countAll : long}
+---------------------------------------------------------------------------
+DEFINE numberOfEventsByDomains(logParam, fromDateParam, toDateParam, eventParam) RETURNS Y {
+	y1 = loadResources('$logParam');
+	y2 = filterByDate(y1, '$fromDateParam', '$toDateParam');
+	y3 = filterByEvent(y2, '$eventParam');
+	y4 = extractUser(y3);
+	y5 = FOREACH y4 GENERATE *, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
+	y6 = FILTER y5 BY domain != '';
+	$Y = countByField(y6, 'domain');
+};
+
+---------------------------------------------------------------------------
 -- Filters events by date of occurrence.
 -- @param toDateParam  - date in format 'YYYYMMDD'
 -- @interval

@@ -60,6 +60,13 @@
         <empty />
     </table>
     <table length="20">
+        <date section="Run" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <metric type="run_started" title="# Runs"/>
+        <metric type="build_started" title="# Builds"/>
+        <metric type="debug_started" title="# Debugs"/>
+        <empty />
+    </table>
+    <table length="20">
         <date section="Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
         <total types="project_type_java_jar_number,project_type_java_war_number,project_type_java_jsp_number,project_type_java_spring_number,project_type_php_number,project_type_python_number,project_type_javascript_number,project_type_ruby_number,project_type_mmp_number,project_type_nodejs_number,project_type_android_number,project_type_others_number" format="%.0f"/>
         <metric type="project_type_java_jar_number" format="%.0f" title="Java Jar"/>

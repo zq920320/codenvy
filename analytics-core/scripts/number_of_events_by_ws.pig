@@ -17,12 +17,4 @@
  */
 
 IMPORT 'macros.pig';
-
-f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-f3 = filterByEvent(f2, 'user-code-refactor');
-f4 = extractUser(f3);
-f5 = FOREACH f4 GENERATE *, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
-f = FILTER f5 BY domain != '';
-
-result = countByField(f, 'domain');
+result = numberOfEventsByWs('$log', '$FROM_DATE', '$TO_DATE', '$EVENT');

@@ -42,8 +42,8 @@ import java.util.Set;
 public class JobsRunner implements ServletContextListener {
 
     private static final Logger LOGGER                             = LoggerFactory.getLogger(JobsRunner.class);
-    private static final String ANALYTICS_FORCE_RUN_JOBS_CONDITION = "analytics.force.run.jobs.condition";
-    private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS     = "analytics.force.run.jobs.class";
+    private static final String ANALYTICS_FORCE_RUN_JOBS_CONDITION = "analytics.force.runFor.jobs.condition";
+    private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS     = "analytics.force.runFor.jobs.class";
     private static final String CRON_TIMETABLE                     = "0 0 1 ? * *";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
@@ -103,7 +103,7 @@ public class JobsRunner implements ServletContextListener {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Unable to force job run: " + e.getMessage(), e);
+            LOGGER.error("Unable to force job runFor: " + e.getMessage(), e);
         }
     }
 
@@ -171,7 +171,7 @@ public class JobsRunner implements ServletContextListener {
     }
 
     private void setDefaultSchedulerProperties() {
-        System.setProperty("org.quartz.threadPool.threadCount", "1"); // to sure run order
+        System.setProperty("org.quartz.threadPool.threadCount", "1"); // to sure runFor order
     }
 
     private void initializeJob(Class<? extends Job> clazz) throws SchedulerException {

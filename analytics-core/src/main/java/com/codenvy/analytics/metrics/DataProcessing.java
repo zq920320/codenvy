@@ -32,32 +32,31 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class MetricCalculator {
+public class DataProcessing {
 
     /**
-     * Executes all scripts related to given metric and stores results.
+     * Executes all scripts to calculated number of events by different entities and store results then.
+     *
+     * @param metricType the {@link MetricType} under which resulted {@link ValueData} will be stored
+     * @param context    the execution context
      */
-    public static void process(MetricType metricType, Map<String, String> context) throws Exception {
+    public static void runFor(MetricType metricType, Map<String, String> context) throws Exception {
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
 
-        ScriptType scriptType = ScriptType.valueOf(metricType.name());
+        ValueData result = executor.executeAndReturn(ScriptType.NUMBER_OF_EVENTS, context);
+        storeNumberOfEvents((LongValueData) result, metricType, context);
 
-        ValueData result = executor.executeAndReturn(scriptType, context);
-        storeCommonData((LongValueData) result, metricType, context);
+        result = executor.executeAndReturn(ScriptType.NUMBER_OF_EVENTS_BY_USERS, context);
+        storeNumberOfEventsByEntity((MapStringLongValueData) result, metricType, MetricParameter.ENTITY_TYPE.USERS, context);
 
-        for (MetricParameter.ENTITY_TYPE entityType : MetricParameter.ENTITY_TYPE.values()) {
-            try {
-                scriptType = ScriptType.valueOf(metricType.name() + "_BY_" + entityType.name());
-            } catch (IllegalArgumentException e) {
-                continue; // there is no script for such entity
-            }
+        result = executor.executeAndReturn(ScriptType.NUMBER_OF_EVENTS_BY_WS, context);
+        storeNumberOfEventsByEntity((MapStringLongValueData) result, metricType, MetricParameter.ENTITY_TYPE.WS, context);
 
-            result = executor.executeAndReturn(scriptType, context);
-            storeEntityData((MapStringLongValueData) result, metricType, entityType, context);
-        }
+        result = executor.executeAndReturn(ScriptType.NUMBER_OF_EVENTS_BY_DOMAINS, context);
+        storeNumberOfEventsByEntity((MapStringLongValueData) result, metricType, MetricParameter.ENTITY_TYPE.DOMAINS, context);
     }
 
-    private static void storeCommonData(LongValueData valueData, MetricType metricType, Map<String, String> context) throws IOException {
+    private static void storeNumberOfEvents(LongValueData valueData, MetricType metricType, Map<String, String> context) throws IOException {
         if (valueData.getAsLong() == 0) { // TODO let's do it in much smarter way
             return;
         }
@@ -73,7 +72,7 @@ public class MetricCalculator {
     /**
      * Stores {@link ValueData} under the directory related to given entity.
      */
-    private static void storeEntityData(MapStringLongValueData valueData, MetricType metricType, MetricParameter.ENTITY_TYPE entityType, Map<String, String> context) throws IOException {
+    private static void storeNumberOfEventsByEntity(MapStringLongValueData valueData, MetricType metricType, MetricParameter.ENTITY_TYPE entityType, Map<String, String> context) throws IOException {
         if (valueData.size() == 0) { // TODO let's do it in much smarter way
             return;
         }

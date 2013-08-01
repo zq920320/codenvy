@@ -18,6 +18,8 @@
 
 package com.codenvy.analytics.scripts.util;
 
+import com.codenvy.analytics.scripts.EventType;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -248,12 +250,13 @@ public class Event {
                                                           String type,
                                                           String feature) {
             return new Builder().withContext(user, ws, UUID.randomUUID().toString())
-                    .withParam("EVENT", "user-code-refactor")
+                    .withParam("EVENT", EventType.USER_CODE_REFACTOR.toString())
                     .withParam("WS", ws)
                     .withParam("USER", user)
                     .withParam("PROJECT", project)
                     .withParam("TYPE", type)
                     .withParam("FEATURE", feature);
+
         }
     }
 

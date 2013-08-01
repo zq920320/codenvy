@@ -15,11 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.util.Arrays;
@@ -29,24 +27,25 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersSessionsMetric extends ReadBasedMetric {
+public class NumberOfDebugsMetric extends ReadBasedMetric {
 
-    UsersSessionsMetric() {
-        super(MetricType.USER_SESSIONS);
+    NumberOfDebugsMetric() {
+        super(MetricType.DEBUG_STARTED);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                MetricParameter.FROM_DATE,
-                MetricParameter.TO_DATE,
-                MetricParameter.ALIAS}));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
-        return ListListStringValueData.class;
+        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }
