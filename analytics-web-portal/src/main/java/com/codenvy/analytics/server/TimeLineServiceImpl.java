@@ -20,8 +20,14 @@
 package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.client.TimeLineService;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -48,6 +54,10 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
             Map<String, String> context = Utils.initializeContext(timeUnit);
 
             if (!filterContext.isEmpty()) {
+                if (filterContext.containsKey(MetricFilter.FILTER_COMPANY.name())) {
+                    replaceCompanyFilter(filterContext);
+                }
+
                 context.putAll(filterContext);
                 return display.retrieveData(context);
             } else {
@@ -67,6 +77,29 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
+    }
+
+    private void replaceCompanyFilter(Map<String, String> filterContext) throws IOException {
+        String company = filterContext.get(MetricFilter.FILTER_COMPANY.name());
+
+        Map<String, String> context = Utils.newContext();
+        Utils.putToDateDefault(context);
+        Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
+        context.put(MetricParameter.COMPANY_NAME.name(), company);
+
+        StringBuilder builder = new StringBuilder();
+
+        ListStringValueData valueData = (ListStringValueData) ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.USERS_BY_COMPANY, context);
+        for (String user : valueData.getAll()) {
+            if (builder.length() != 0) {
+                builder.append(",");
+            }
+
+            builder.append(user);
+        }
+
+        filterContext.remove(MetricFilter.FILTER_COMPANY.name());
+        filterContext.put(MetricFilter.FILTER_USER.name(), builder.toString());
     }
 
     /** Calculates view for given {@link TimeUnit} and preserves data. */

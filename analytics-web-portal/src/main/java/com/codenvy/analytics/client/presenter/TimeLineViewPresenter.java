@@ -132,6 +132,7 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
                     filterContext.put(MetricFilter.FILTER_USER.name(), filterValue);
                     break;
                 case COMPANY:
+                    filterContext.put(MetricFilter.FILTER_COMPANY.name(), filterValue);
                     break;
             }
 
