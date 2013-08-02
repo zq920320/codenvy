@@ -57,13 +57,19 @@
     <table length="20">
         <date section="Code manipulations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
         <metric type="user_code_refactor" title="Refactoring"/>
+        <metric type="user_code_complete" title="Code completing"/>
         <empty />
     </table>
     <table length="20">
-        <date section="Run" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Runs" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
         <metric type="run_started" title="# Runs"/>
         <metric type="build_started" title="# Builds"/>
         <metric type="debug_started" title="# Debugs"/>
+        <empty />
+    </table>
+    <table length="20">
+        <date section="Files" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <metric type="file_manipulation" title="# Operation"/>
         <empty />
     </table>
     <table length="20">

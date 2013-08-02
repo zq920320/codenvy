@@ -26,6 +26,13 @@ import java.util.Map;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum MetricType {
+    FILE_MANIPULATION {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.FILE_MANIPULATION.toString());
+            DataProcessing.calculateForWsUser(this, context);
+        }
+    },
     TENANT_CREATED {
         @Override
         public void process(Map<String, String> context) throws Exception {
@@ -60,6 +67,13 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+            DataProcessing.calculateForWsUser(this, context);
+        }
+    },
+    USER_CODE_COMPLETE {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.USER_CODE_COMPLETE.toString());
             DataProcessing.calculateForWsUser(this, context);
         }
     },

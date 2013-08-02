@@ -37,6 +37,9 @@ public class MetricFactory {
 
         Metric metric;
         switch (metricType) {
+            case FILE_MANIPULATION:
+                metric = new FileManipulationMetric();
+                break;
             case TENANT_CREATED:
                 metric = new TenantCreatedMetric();
                 break;
@@ -111,6 +114,9 @@ public class MetricFactory {
                 break;
             case USER_CODE_REFACTOR:
                 metric = new UserCodeRefactorMetric();
+                break;
+            case USER_CODE_COMPLETE:
+                metric = new UserCodeCompleteMetric();
                 break;
             case USER_PROFILE:
                 metric = new UsersProfileMetric();

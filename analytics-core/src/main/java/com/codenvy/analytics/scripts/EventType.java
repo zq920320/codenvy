@@ -21,7 +21,9 @@ package com.codenvy.analytics.scripts;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum EventType {
+    FILE_MANIPULATION,
     USER_CODE_REFACTOR,
+    USER_CODE_COMPLETE,
     BUILD_STARTED,
     BUILD_FINISHED,
     RUN_STARTED,
