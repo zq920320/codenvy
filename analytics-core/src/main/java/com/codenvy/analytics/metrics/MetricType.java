@@ -18,15 +18,28 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.scripts.EventType;
+
+import java.util.Map;
+
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public enum MetricType {
-    WORKSPACES_CREATED_LIST,
-    WORKSPACES_CREATED_NUMBER,
-    WORKSPACES_DESTROYED_LIST,
-    WORKSPACES_DESTROYED_NUMBER,
-    TOTAL_WORKSPACES_NUMBER,
+    TENANT_CREATED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.TENANT_CREATED.toString());
+            DataProcessing.calculateForWsUser(this, context);
+        }
+    },
+    TENANT_DESTROYED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.TENANT_DESTROYED.toString());
+            DataProcessing.calculateForWs(this, context);
+        }
+    },
     ACTIVE_WORKSPACES_NUMBER,
     USERS_CREATED_LIST,
     USERS_DESTROYED_LIST,
@@ -43,7 +56,13 @@ public enum MetricType {
     USERS_ADDED_TO_WORKSPACE_LIST,
     USERS_UPDATE_PROFILE_LIST,
     USERS_COMPLETED_PROFILE,
-    USER_CODE_REFACTOR,
+    USER_CODE_REFACTOR {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+            DataProcessing.calculateForWsUser(this, context);
+        }
+    },
     USER_ACTIVITY,
     USER_SESSIONS,
     USER_PROFILE,
@@ -60,9 +79,27 @@ public enum MetricType {
     USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT,
     USERS_SSO_LOGGED_IN_USING_GITHUB_PERCENT,
     USERS_SSO_LOGGED_IN_USING_FORM_PERCENT,
-    BUILD_STARTED,
-    RUN_STARTED,
-    DEBUG_STARTED,
+    BUILD_STARTED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.BUILD_STARTED.toString());
+            DataProcessing.calculateForWsUser(this, context);
+        }
+    },
+    RUN_STARTED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.RUN_STARTED.toString());
+            DataProcessing.calculateForWsUser(this, context);
+        }
+    },
+    DEBUG_STARTED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
+            DataProcessing.calculateForWsUser(this, context);
+        }
+    },
     PRODUCT_USAGE_TIME_TOTAL,
     PRODUCT_USAGE_TIME_0_10,
     PRODUCT_USAGE_TIME_10_60,
@@ -93,8 +130,13 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME,
-    PROJECTS_DESTROYED_LIST,
-    PROJECTS_DESTROYED_NUMBER,
+    PROJECT_DESTROYED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
+            DataProcessing.calculateForWsUser(this, context);
+        }
+    },
     TOTAL_PROJECTS_NUMBER,
     ACTIVE_PROJECTS_LIST,
     ACTIVE_PROJECTS_NUMBER,
@@ -135,5 +177,10 @@ public enum MetricType {
     INVITATIONS_SENT_NUMBER,
     USERS_SHELL_LAUNCHED_LIST,
     USERS_SHELL_LAUNCHED_NUMBER,
-    INVITATIONS_ACCEPTED_PERCENT
+    INVITATIONS_ACCEPTED_PERCENT,
+    TOTAL_WORKSPACES_NUMBER;
+
+    public void process(Map<String, String> context) throws Exception {
+        return;
+    }
 }

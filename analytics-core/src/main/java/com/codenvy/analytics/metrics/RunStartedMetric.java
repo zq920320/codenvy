@@ -15,46 +15,37 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class WorkspacesCreatedNumberMetric extends CalculateBasedMetric {
+public class RunStartedMetric extends ReadBasedMetric {
 
-    private final Metric basedMetric;
-
-    WorkspacesCreatedNumberMetric() {
-        super(MetricType.WORKSPACES_CREATED_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.WORKSPACES_CREATED_LIST);
+    RunStartedMetric() {
+        super(MetricType.RUN_STARTED);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
+    protected Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
-        return new LongValueData(value.size());
+    public Set<MetricParameter> getParams() {
+        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

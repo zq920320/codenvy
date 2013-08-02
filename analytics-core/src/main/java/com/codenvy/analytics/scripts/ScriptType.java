@@ -29,11 +29,8 @@ import java.util.Set;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum ScriptType {
     JREBEL_USER_PROFILE_GATHERING,
-    WORKSPACES_CREATED,
     USERS_CREATED,
     USERS_REMOVED,
-    WORKSPACES_DESTROYED,
-    PROJECTS_DESTROYED,
     USERS_INVITATIONS,
     USERS_SHELL_LAUNCHED,
     JREBEL_USAGE,

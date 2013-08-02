@@ -37,17 +37,11 @@ public class MetricFactory {
 
         Metric metric;
         switch (metricType) {
-            case WORKSPACES_CREATED_NUMBER:
-                metric = new WorkspacesCreatedNumberMetric();
+            case TENANT_CREATED:
+                metric = new TenantCreatedMetric();
                 break;
-            case WORKSPACES_CREATED_LIST:
-                metric = new WorkspacesCreatedListMetric();
-                break;
-            case WORKSPACES_DESTROYED_NUMBER:
-                metric = new WorkspacesDestoryedNumberMetric();
-                break;
-            case WORKSPACES_DESTROYED_LIST:
-                metric = new WorkspacesDestroyedListMetric();
+            case TENANT_DESTROYED:
+                metric = new TenantDestroyedMetric();
                 break;
             case TOTAL_WORKSPACES_NUMBER:
                 metric = new TotalWorkspacesMetric();
@@ -250,11 +244,8 @@ public class MetricFactory {
             case PROJECTS_CREATED_NUMBER:
                 metric = new ProjectsCreatedNumberMetric();
                 break;
-            case PROJECTS_DESTROYED_LIST:
-                metric = new ProjectsDestroyedListMetric();
-                break;
-            case PROJECTS_DESTROYED_NUMBER:
-                metric = new ProjectsDestroyedNumberMetric();
+            case PROJECT_DESTROYED:
+                metric = new ProjectDestroyedMetric();
                 break;
             case TOTAL_PROJECTS_NUMBER:
                 metric = new TotalProjectsMetric();
@@ -275,13 +266,13 @@ public class MetricFactory {
                 metric = new ProjectsBuiltNumberMetric();
                 break;
             case BUILD_STARTED:
-                metric = new NumberOfBuildsMetric();
+                metric = new BuildStartedMetric();
                 break;
             case RUN_STARTED:
-                metric = new NumberOfRunsMetric();
+                metric = new RunStartedMetric();
                 break;
             case DEBUG_STARTED:
-                metric = new NumberOfDebugsMetric();
+                metric = new DebugStarted();
                 break;
             case PROJECTS_CREATED_TYPES:
                 metric = new ProjectsCreatedTypesMetric();

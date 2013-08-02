@@ -55,7 +55,7 @@ public class TestDataProcessing {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, "user-code-refactor");
 
-        DataProcessing.runFor(MetricType.USER_CODE_REFACTOR, context);
+        DataProcessing.calculateForWsUser(MetricType.USER_CODE_REFACTOR, context);
     }
 
     @Test

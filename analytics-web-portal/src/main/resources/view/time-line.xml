@@ -5,8 +5,8 @@
 <display>
     <table length="20">
         <date section="Workspaces" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <metric type="workspaces_created_number" title="Created"/>
-        <metric type="workspaces_destroyed_number" title="Destroyed"/>
+        <metric type="tenant_created" title="Created"/>
+        <metric type="tenant_destroyed" title="Destroyed"/>
         <metric type="total_workspaces_number" title="Total"/>
         <metric type="active_workspaces_number" title="Active"/>
         <empty />
@@ -50,7 +50,7 @@
     <table length="20">
         <date section="Projects" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
         <metric type="projects_created_number" title="Created"/>
-        <metric type="projects_destroyed_number" title="Destroyed"/>
+        <metric type="project_destroyed" title="Destroyed"/>
         <metric type="total_projects_number" title="Total"/>
         <empty />
     </table>

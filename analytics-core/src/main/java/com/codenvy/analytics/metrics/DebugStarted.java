@@ -15,40 +15,37 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
-import com.codenvy.analytics.scripts.ScriptType;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsDestroyedListMetric extends PersistableScriptBasedMetric {
+public class DebugStarted extends ReadBasedMetric {
 
-    ProjectsDestroyedListMetric() {
-        super(MetricType.PROJECTS_DESTROYED_LIST);
+    DebugStarted() {
+        super(MetricType.DEBUG_STARTED);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.PROJECTS_DESTROYED;
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected boolean isFilterSupported() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Filter createFilter(ValueData valueData) {
-        return new ProjectsFilter((ListListStringValueData)valueData);
+    public Set<MetricParameter> getParams() {
+        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

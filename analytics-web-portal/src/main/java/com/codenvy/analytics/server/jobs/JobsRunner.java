@@ -26,6 +26,7 @@ import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.listeners.JobChainingJobListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -151,48 +154,68 @@ public class JobsRunner implements ServletContextListener {
     /** Creates scheduler and adds available jobs. */
     public void initializeScheduler() {
         try {
-            setDefaultSchedulerProperties();
-
             scheduler = new StdSchedulerFactory().getScheduler();
+
+            List<JobDetail> jobDetails = new ArrayList<>(6);
+
+            addJobDetail(UsersDataJob.class, jobDetails);
+            addJobDetail(TimeLineViewJob.class, jobDetails);
+            addJobDetail(AnalysisViewJob.class, jobDetails);
+            addJobDetail(ActOnJob.class, jobDetails);
+            addJobDetail(JRebelJob.class, jobDetails);
+            addJobDetail(CheckLogsJob.class, jobDetails);
+
+            scheduleJobs(jobDetails);
+            ensureRunOrder(jobDetails);
+
             scheduler.start();
-
-            initializeJob(UsersDataJob.class);
-            initializeJob(TimeLineViewJob.class);
-            initializeJob(AnalysisViewJob.class);
-            initializeJob(ActOnJob.class);
-            initializeJob(JRebelJob.class);
-            initializeJob(CheckLogsJob.class);
-
         } catch (Exception e) {
             LOGGER.error("Scheduler was not initialized properly", e);
         }
     }
 
-    private void setDefaultSchedulerProperties() {
-        System.setProperty("org.quartz.threadPool.threadCount", "1"); // to sure run order
+    private void scheduleJobs(List<JobDetail> jobDetails) throws SchedulerException {
+        scheduler.scheduleJob(jobDetails.get(0), createTrigger());
+        LOGGER.info(jobDetails.get(0).getJobClass() + " initialized");
+
+        for (int i = 1; i < jobDetails.size(); i++) {
+            scheduler.addJob(jobDetails.get(i), true);
+            LOGGER.info(jobDetails.get(i).getJobClass() + " initialized");
+        }
     }
 
-    private void initializeJob(Class<? extends Job> clazz) throws SchedulerException {
-        try {
-            clazz.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e) {
-            return;
+    private void ensureRunOrder(List<JobDetail> jobDetails) throws SchedulerException {
+        JobChainingJobListener listener = new JobChainingJobListener("listener");
+
+        for (int i = 1; i < jobDetails.size(); i++) {
+            listener.addJobChainLink(jobDetails.get(i - 1).getKey(), jobDetails.get(i).getKey());
         }
 
-        scheduler.scheduleJob(creeteJobDetail(clazz), createTrigger());
-        LOGGER.info(clazz.getName() + " initialized");
+        scheduler.getListenerManager().addJobListener(listener);
     }
 
     private CronTrigger createTrigger() {
         return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_TIMETABLE)).build();
     }
 
-    private JobDetail creeteJobDetail(Class<? extends Job> clazz) {
-        JobDetailImpl jobDetail = new JobDetailImpl();
-        jobDetail.setKey(new JobKey(clazz.getName()));
-        jobDetail.setJobClass(clazz);
+    private void addJobDetail(Class<? extends Job> clazz, List<JobDetail> jobDetails) {
+        if (checkAvailability(clazz)) {
+            JobDetailImpl jobDetail = new JobDetailImpl();
+            jobDetail.setKey(new JobKey(clazz.getName()));
+            jobDetail.setJobClass(clazz);
 
-        return jobDetail;
+            jobDetails.add(jobDetail);
+        }
+    }
+
+    private boolean checkAvailability(Class<? extends Job> clazz) {
+        try {
+            clazz.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
+            return true;
+        }
+
+        return false;
     }
 }

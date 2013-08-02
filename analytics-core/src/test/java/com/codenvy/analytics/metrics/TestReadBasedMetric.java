@@ -56,7 +56,7 @@ public class TestReadBasedMetric {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, "user-code-refactor");
 
-        DataProcessing.runFor(METRIC_TYPE, context);
+        DataProcessing.calculateForWsUser(METRIC_TYPE, context);
     }
 
     @Test

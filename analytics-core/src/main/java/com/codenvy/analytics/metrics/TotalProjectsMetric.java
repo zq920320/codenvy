@@ -27,6 +27,6 @@ public class TotalProjectsMetric extends CumulativeMetric {
 
     TotalProjectsMetric() {
         super(MetricType.TOTAL_PROJECTS_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_NUMBER),
-              MetricFactory.createMetric(MetricType.PROJECTS_DESTROYED_NUMBER));
+              MetricFactory.createMetric(MetricType.PROJECT_DESTROYED));
     }
 }

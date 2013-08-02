@@ -15,6 +15,8 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
+
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.LongValueData;
@@ -27,25 +29,21 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class NumberOfDebugsMetric extends ReadBasedMetric {
+public class TenantDestroyedMetric extends ReadBasedMetric {
 
-    NumberOfDebugsMetric() {
-        super(MetricType.DEBUG_STARTED);
+    TenantDestroyedMetric() {
+        super(MetricType.TENANT_DESTROYED);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 }

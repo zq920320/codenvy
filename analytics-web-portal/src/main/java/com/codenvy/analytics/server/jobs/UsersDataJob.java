@@ -21,7 +21,6 @@ package com.codenvy.analytics.server.jobs;
 
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.value.*;
-import com.codenvy.analytics.scripts.EventType;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import org.apache.commons.io.FileUtils;
@@ -83,10 +82,9 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
             MetricFactory.createMetric(MetricType.PROJECTS_BUILT_NUMBER).getValue(context);
             MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_NUMBER).getValue(context);
 
-            process(context, MetricType.DEBUG_STARTED, EventType.DEBUG_STARTED.toString());
-            process(context, MetricType.BUILD_STARTED, EventType.BUILD_STARTED.toString());
-            process(context, MetricType.RUN_STARTED, EventType.RUN_STARTED.toString());
-            process(context, MetricType.USER_CODE_REFACTOR, EventType.USER_CODE_REFACTOR.toString());
+            for (MetricType metricType : MetricType.values()) {
+                metricType.process(Utils.clone(context));
+            }
         } finally {
             LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
@@ -94,7 +92,7 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
 
     private void process(Map<String, String> context, MetricType metricType, String event) throws Exception {
         Utils.putEvent(context, event);
-        DataProcessing.runFor(metricType, context);
+        DataProcessing.calculateForWsUser(metricType, context);
     }
 
     private void store(MetricType metricType, ValueData valueData, Map<String, String> context)
