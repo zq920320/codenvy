@@ -133,7 +133,7 @@ public enum MetricType {
     PROJECT_DESTROYED {
         @Override
         public void process(Map<String, String> context) throws Exception {
-            Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
+            Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
             DataProcessing.calculateForWsUser(this, context);
         }
     },
