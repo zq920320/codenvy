@@ -62,7 +62,7 @@ public class TestUsersByCompany extends BaseTest {
         events = new ArrayList<Event>();
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company", "1", "1")
                         .withDate("2010-10-03").build());
-        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company1", "1", "1")
+        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "zompany", "1", "1")
                         .withDate("2010-10-04").build());
         log = LogGenerator.generateLog(events);
 
@@ -77,6 +77,36 @@ public class TestUsersByCompany extends BaseTest {
         assertEquals(valueData.size(), 2);
         assertTrue(valueData.getAll().contains("user1@gmail.com"));
         assertTrue(valueData.getAll().contains("user2@gmail.com"));
+
+        context.put(MetricParameter.COMPANY_NAME.name(), "cOmpany");
+        valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
+
+        assertEquals(valueData.size(), 2);
+        assertTrue(valueData.getAll().contains("user1@gmail.com"));
+        assertTrue(valueData.getAll().contains("user2@gmail.com"));
+
+        context.put(MetricParameter.COMPANY_NAME.name(), "c?mpany");
+        valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
+
+        assertEquals(valueData.size(), 2);
+        assertTrue(valueData.getAll().contains("user1@gmail.com"));
+        assertTrue(valueData.getAll().contains("user2@gmail.com"));
+
+        context.put(MetricParameter.COMPANY_NAME.name(), "?ompany");
+        valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
+
+        assertEquals(valueData.size(), 3);
+        assertTrue(valueData.getAll().contains("user1@gmail.com"));
+        assertTrue(valueData.getAll().contains("user2@gmail.com"));
+        assertTrue(valueData.getAll().contains("user3@gmail.com"));
+
+        context.put(MetricParameter.COMPANY_NAME.name(), "Ompany");
+        valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
+
+        assertEquals(valueData.size(), 3);
+        assertTrue(valueData.getAll().contains("user1@gmail.com"));
+        assertTrue(valueData.getAll().contains("user2@gmail.com"));
+        assertTrue(valueData.getAll().contains("user3@gmail.com"));
 
     }
 
