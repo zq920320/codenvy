@@ -199,7 +199,7 @@ public class JobsRunner implements ServletContextListener {
     }
 
     private void addJobDetail(Class<? extends Job> clazz, List<JobDetail> jobDetails) {
-        if (checkAvailability(clazz)) {
+        if (isAccessable(clazz)) {
             JobDetailImpl jobDetail = new JobDetailImpl();
             jobDetail.setKey(new JobKey(clazz.getName()));
             jobDetail.setJobClass(clazz);
@@ -208,14 +208,14 @@ public class JobsRunner implements ServletContextListener {
         }
     }
 
-    private boolean checkAvailability(Class<? extends Job> clazz) {
+    private boolean isAccessable(Class<? extends Job> clazz) {
         try {
             clazz.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 }
