@@ -203,6 +203,7 @@ public class JobsRunner implements ServletContextListener {
             JobDetailImpl jobDetail = new JobDetailImpl();
             jobDetail.setKey(new JobKey(clazz.getName()));
             jobDetail.setJobClass(clazz);
+            jobDetail.setDurability(true);
 
             jobDetails.add(jobDetail);
         }
