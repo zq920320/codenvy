@@ -56,6 +56,7 @@ public class TestDataProcessing {
 
         DataProcessing.numberOfEventsByAll(MetricType.USER_CODE_REFACTOR, context);
         DataProcessing.setOfActiveUsers(MetricType.ACTIVE_USERS_SET, context);
+        DataProcessing.setOfActiveWs(MetricType.ACTIVE_WS_SET, context);
 
         Map<String,String> clonedContext = Utils.clone(context);
         Utils.putFromDate(clonedContext, "20101004");
@@ -63,6 +64,7 @@ public class TestDataProcessing {
 
         DataProcessing.numberOfEventsByAll(MetricType.USER_CODE_REFACTOR, clonedContext);
         DataProcessing.setOfActiveUsers(MetricType.ACTIVE_USERS_SET, clonedContext);
+        DataProcessing.setOfActiveWs(MetricType.ACTIVE_WS_SET, clonedContext);
     }
 
     @Test
@@ -77,8 +79,6 @@ public class TestDataProcessing {
         assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
 
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
-
-        assertTrue(new File(baseDir + "ws/ws/value").exists());
 
         assertFalse(new File(FSValueDataManager.RESULT_DIRECTORY + File.separator +
                 MetricType.USER_CODE_REFACTOR.name().toLowerCase() + File.separator +
@@ -98,10 +98,26 @@ public class TestDataProcessing {
 
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
 
-        assertTrue(new File(baseDir + "ws/ws/value").exists());
-
         assertFalse(new File(FSValueDataManager.RESULT_DIRECTORY + File.separator +
                 MetricType.ACTIVE_USERS_SET.name().toLowerCase() + File.separator +
+                "2010/10/04/20101004/").exists());
+   }
+
+    @Test
+    public void testCheckFilesForSetOfWs() {
+        String baseDir = FSValueDataManager.RESULT_DIRECTORY + File.separator +
+                MetricType.ACTIVE_WS_SET.name().toLowerCase() + File.separator +
+                "2010/10/03/20101003/";
+
+        assertTrue(new File(baseDir + "value").exists());
+
+        assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
+        assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
+
+        assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
+
+        assertFalse(new File(FSValueDataManager.RESULT_DIRECTORY + File.separator +
+                MetricType.ACTIVE_WS_SET.name().toLowerCase() + File.separator +
                 "2010/10/04/20101004/").exists());
    }
 }

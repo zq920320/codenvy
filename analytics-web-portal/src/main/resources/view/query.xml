@@ -7,7 +7,7 @@
         <metric type="tenant_created" title="Workspaces: Created"/>
         <metric type="tenant_destroyed" title="Workspaces: Destroyed"/>
         <metric type="total_workspaces_number" title="Workspaces: Total"/>
-        <metric type="active_workspaces_number" title="Workspaces: # Active"/>
+        <metric type="active_ws" title="Workspaces: # Active"/>
         <metric type="users_created_number" title="Users: Created"/>
         <metric type="total_users_number" title="Users: Total"/>
         <metric type="active_users" title="Users: # Active"/>

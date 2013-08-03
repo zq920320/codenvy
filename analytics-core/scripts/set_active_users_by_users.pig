@@ -23,6 +23,6 @@ f = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 
 a1 = extractUser(f);
 a2 = FOREACH a1 GENERATE user AS userFake, user;
-a = FILTER a2 BY userFake != 'default' AND user != 'default';
+a = FILTER a2 BY user != 'default' AND userFake != 'default';
 
 result = setByField(a, 'userFake', 'user');

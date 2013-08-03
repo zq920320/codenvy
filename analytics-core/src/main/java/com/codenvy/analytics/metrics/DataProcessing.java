@@ -33,30 +33,37 @@ import java.util.Map;
 public class DataProcessing {
 
     /**
-     * Executes scripts to calculate the total number of events by workspace names.
+     * Executes scripts to calculate the total number of events.
      */
-    public static void numberOfEventsByWs(MetricType metricType, Map<String, String> context) throws Exception {
-        calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS, ScriptType.NUMBER_EVENTS_BY_WS));
+    public static void numberOfEvents(MetricType metricType, Map<String, String> context) throws Exception {
+        calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS));
     }
 
     /**
-     * Executes scripts to calculate the total number of events by workspace, user and domain names.
+     * Executes scripts to calculate the total number of events by user and domain names.
      */
     public static void numberOfEventsByAll(MetricType metricType, Map<String, String> context) throws Exception {
         calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS,
-                ScriptType.NUMBER_EVENTS_BY_WS,
                 ScriptType.NUMBER_EVENTS_BY_USERS,
                 ScriptType.NUMBER_EVENTS_BY_DOMAINS));
     }
 
     /**
-     * Executes scripts to alculate the set of active users by workspace, user and domain names.
+     * Executes scripts to calculate the set of active users by user and domain names.
      */
     public static void setOfActiveUsers(MetricType metricType, Map<String, String> context) throws Exception {
         calculateAndStore(metricType, context, EnumSet.of(ScriptType.SET_ACTIVE_USERS,
                 ScriptType.SET_ACTIVE_USERS_BY_DOMAINS,
-                ScriptType.SET_ACTIVE_USERS_BY_USERS,
-                ScriptType.SET_ACTIVE_USERS_BY_WS));
+                ScriptType.SET_ACTIVE_USERS_BY_USERS));
+    }
+
+    /**
+     * Executes scripts to calculate the set of active ws by user and domain names.
+     */
+    public static void setOfActiveWs(MetricType metricType, Map<String, String> context) throws Exception {
+        calculateAndStore(metricType, context, EnumSet.of(ScriptType.SET_ACTIVE_WS,
+                ScriptType.SET_ACTIVE_WS_BY_USERS,
+                ScriptType.SET_ACTIVE_WS_BY_DOMAINS));
     }
 
     /**

@@ -78,29 +78,6 @@ public class TestNumberOfEvents extends BaseTest {
         assertEquals(items.get("user@gmail.com"), Long.valueOf(2));
     }
 
-
-    @Test
-    public void testNumberOfAllEventsByWs() throws Exception {
-        List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2010-10-01").build());
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
-
-        MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS_BY_WS, log, context);
-
-        Map<String, Long> items = mapValueData.getAll();
-        assertEquals(items.size(), 1);
-        assertFalse(items.containsKey("default"));
-        assertEquals(items.get("ws"), Long.valueOf(2));
-    }
-
-
     @Test
     public void testNumberOfAllEventsByDomains() throws Exception {
         List<Event> events = new ArrayList<>();

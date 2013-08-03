@@ -8,7 +8,7 @@
         <metric type="tenant_created" title="Created"/>
         <metric type="tenant_destroyed" title="Destroyed"/>
         <metric type="total_workspaces_number" title="Total"/>
-        <metric type="active_workspaces_number" title="Active"/>
+        <metric type="active_ws" title="Active"/>
         <empty />
     </table>
     <table length="20">

@@ -44,7 +44,7 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.TENANT_DESTROYED.toString());
-            DataProcessing.numberOfEventsByWs(this, context);
+            DataProcessing.numberOfEvents(this, context);
         }
     },
     ACTIVE_USERS_SET {
@@ -54,14 +54,19 @@ public enum MetricType {
         }
     },
     ACTIVE_USERS,
+    ACTIVE_WS_SET {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            DataProcessing.setOfActiveWs(this, context);
+        }
+    },
+    ACTIVE_WS,
 
-    ACTIVE_WORKSPACES_NUMBER,
     USERS_CREATED_LIST,
     USERS_DESTROYED_LIST,
     USERS_CREATED_NUMBER,
     USERS_DESTROYED_NUMBER,
     TOTAL_USERS_NUMBER,
-    ACTIVE_USERS_WORKAPCES_LIST,
     USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
     USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
     USERS_DEPLOYED_PROJECTS_NUMBER, // number of users, who deployed project at least once

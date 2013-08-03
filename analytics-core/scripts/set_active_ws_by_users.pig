@@ -26,4 +26,4 @@ a2 = extractWs(a1);
 a3 = FOREACH a2 GENERATE ws, user;
 a = FILTER a3 BY ws != 'default' AND user != 'default';
 
-result = setByField(a, 'ws', 'user');
+result = setByField(a, 'user', 'ws');

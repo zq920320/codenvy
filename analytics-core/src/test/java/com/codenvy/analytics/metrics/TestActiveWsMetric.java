@@ -39,41 +39,41 @@ import static org.testng.AssertJUnit.assertTrue;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestActiveUsersMetric {
+public class TestActiveWsMetric {
 
     private HashMap<String, String> context;
 
     @BeforeMethod
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user1@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user2@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user1@gmail.com", "project1", "type", "feature").withDate("2010-10-02").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user3@gmail.com", "project2", "type", "feature").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws1", "user1@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws2", "user2@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws1", "user1@gmail.com", "project1", "type", "feature").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws3", "user2@gmail.com", "project2", "type", "feature").withDate("2010-10-02").build());
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
-        MetricType.ACTIVE_USERS_SET.process(context);
+        MetricType.ACTIVE_WS_SET.process(context);
 
         Map<String,String> clonedContext = Utils.clone(context);
         Utils.putFromDate(clonedContext, "20101002");
         Utils.putToDate(clonedContext, "20101002");
-        MetricType.ACTIVE_USERS_SET.process(clonedContext);
+        MetricType.ACTIVE_WS_SET.process(clonedContext);
     }
 
     @Test
     public void testGetValues() throws Exception {
-        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
+        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 
         SetStringValueData setVD = (SetStringValueData) metric.getValue(context);
         assertEquals(setVD.size(), 2);
-        assertTrue(setVD.getAll().contains("user1@gmail.com"));
-        assertTrue(setVD.getAll().contains("user2@gmail.com"));
+        assertTrue(setVD.getAll().contains("ws1"));
+        assertTrue(setVD.getAll().contains("ws2"));
 
-        metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS);
+        metric = MetricFactory.createMetric(MetricType.ACTIVE_WS);
 
         LongValueData lVD = (LongValueData) metric.getValue(context);
         assertEquals(lVD.getAsLong(), 2);
@@ -84,15 +84,15 @@ public class TestActiveUsersMetric {
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101002");
 
-        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
+        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 
         SetStringValueData setVD = (SetStringValueData) metric.getValue(context);
         assertEquals(setVD.size(), 3);
-        assertTrue(setVD.getAll().contains("user1@gmail.com"));
-        assertTrue(setVD.getAll().contains("user2@gmail.com"));
-        assertTrue(setVD.getAll().contains("user3@gmail.com"));
+        assertTrue(setVD.getAll().contains("ws1"));
+        assertTrue(setVD.getAll().contains("ws2"));
+        assertTrue(setVD.getAll().contains("ws3"));
 
-        metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS);
+        metric = MetricFactory.createMetric(MetricType.ACTIVE_WS);
 
         LongValueData lVD = (LongValueData) metric.getValue(context);
         assertEquals(lVD.getAsLong(), 3);
@@ -102,13 +102,13 @@ public class TestActiveUsersMetric {
     public void testGetValuesWithUserFilters() throws Exception {
         context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com");
 
-        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
+        Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 
         SetStringValueData setVD = (SetStringValueData) metric.getValue(context);
         assertEquals(setVD.size(), 1);
-        assertTrue(setVD.getAll().contains("user1@gmail.com"));
+        assertTrue(setVD.getAll().contains("ws1"));
 
-        metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS);
+        metric = MetricFactory.createMetric(MetricType.ACTIVE_WS);
 
         LongValueData lVD = (LongValueData) metric.getValue(context);
         assertEquals(lVD.getAsLong(), 1);
@@ -116,28 +116,28 @@ public class TestActiveUsersMetric {
 
         context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com,user2@gmail.com");
 
-        metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
+        metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 
         setVD = (SetStringValueData) metric.getValue(context);
         assertEquals(setVD.size(), 2);
-        assertTrue(setVD.getAll().contains("user1@gmail.com"));
-        assertTrue(setVD.getAll().contains("user2@gmail.com"));
+        assertTrue(setVD.getAll().contains("ws1"));
+        assertTrue(setVD.getAll().contains("ws2"));
 
-        metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS);
+        metric = MetricFactory.createMetric(MetricType.ACTIVE_WS);
 
         lVD = (LongValueData) metric.getValue(context);
         assertEquals(lVD.getAsLong(), 2);
 
         context.put(MetricFilter.FILTER_USER.name(), "@gmail.com");
 
-        metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET);
+        metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 
         setVD = (SetStringValueData) metric.getValue(context);
         assertEquals(setVD.size(), 2);
-        assertTrue(setVD.getAll().contains("user1@gmail.com"));
-        assertTrue(setVD.getAll().contains("user2@gmail.com"));
+        assertTrue(setVD.getAll().contains("ws1"));
+        assertTrue(setVD.getAll().contains("ws2"));
 
-        metric = MetricFactory.createMetric(MetricType.ACTIVE_USERS);
+        metric = MetricFactory.createMetric(MetricType.ACTIVE_WS);
 
         lVD = (LongValueData) metric.getValue(context);
         assertEquals(lVD.getAsLong(), 2);

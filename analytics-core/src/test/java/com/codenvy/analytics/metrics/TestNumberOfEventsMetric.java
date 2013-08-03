@@ -118,19 +118,4 @@ public class TestNumberOfEventsMetric {
         value = (LongValueData) metric.getValue(context);
         assertEquals(value.getAsLong(), 3);
     }
-
-    @Test
-    public void testGetValuesWihtWsFilters() throws Exception {
-        Metric metric = MetricFactory.createMetric(METRIC_TYPE);
-
-        context.put(MetricFilter.FILTER_WS.name(), "ws");
-
-        LongValueData value = (LongValueData) metric.getValue(context);
-        assertEquals(value.getAsLong(), 2);
-
-        context.put(MetricFilter.FILTER_WS.name(), "default");
-
-        value = (LongValueData) metric.getValue(context);
-        assertEquals(value.getAsLong(), 0);
-    }
 }

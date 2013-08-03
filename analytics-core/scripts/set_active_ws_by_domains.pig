@@ -16,14 +16,14 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
 f1 = loadResources('$log');
-fR = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+f = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 
-a1 = extractUser(fR);
+a1 = extractUser(f);
 a2 = extractWs(a1);
-aR = skipDefaults(a2);
+a3 = FOREACH a2 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
+a = FILTER a3 BY ws != 'default' AND domain != '';
 
-r1 = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user));
-result = DISTINCT r1;
+result = setByField(a, 'domain', 'ws');

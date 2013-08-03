@@ -18,38 +18,33 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
-import com.codenvy.analytics.scripts.ScriptType;
+
+import java.io.IOException;
+import java.util.Map;
+
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActiveUsersWorkspacesListMetric extends PersistableScriptBasedMetric {
+public class ActiveWsNumberMetric extends CalculatedMetric {
 
-    ActiveUsersWorkspacesListMetric() {
-        super(MetricType.ACTIVE_USERS_WORKAPCES_LIST);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.ACTIVE_USERS_WORKSPACES;
+    ActiveWsNumberMetric() {
+        super(MetricType.ACTIVE_WS, MetricType.ACTIVE_WS_SET);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected boolean isFilterSupported() {
-        return true;
+    protected Class< ? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected Filter createFilter(ValueData valueData) {
-        return new UsersWorkspacesFilter((ListListStringValueData)valueData);
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        SetStringValueData valueData = (SetStringValueData) super.getValue(context);
+        return new LongValueData(valueData.size());
     }
 }

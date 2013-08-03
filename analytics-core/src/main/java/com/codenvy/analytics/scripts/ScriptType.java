@@ -58,19 +58,6 @@ public enum ScriptType {
         }
     },
 
-    SET_ACTIVE_USERS_BY_WS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringSetValueData.class;
-        }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
-        }
-    },
-
     SET_ACTIVE_USERS_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -97,6 +84,44 @@ public enum ScriptType {
         }
     },
 
+    SET_ACTIVE_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return SetStringValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        }
+    },
+
+    SET_ACTIVE_WS_BY_DOMAINS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        }
+    },
+
+    SET_ACTIVE_WS_BY_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        }
+    },
 
     NUMBER_EVENTS {
         @Override
@@ -112,19 +137,6 @@ public enum ScriptType {
     },
 
     NUMBER_EVENTS_BY_USERS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringLongValueData.class;
-        }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.EVENT}));
-        }
-    },
-
-    NUMBER_EVENTS_BY_WS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;

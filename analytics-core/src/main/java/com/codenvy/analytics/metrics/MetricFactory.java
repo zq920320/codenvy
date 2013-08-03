@@ -49,9 +49,6 @@ public class MetricFactory {
             case TOTAL_WORKSPACES_NUMBER:
                 metric = new TotalWorkspacesMetric();
                 break;
-            case ACTIVE_WORKSPACES_NUMBER:
-                metric = new ActiveWorkspacesNumberMetric();
-                break;
             case USERS_CREATED_LIST:
                 metric = new UsersCreatedListMetric();
                 break;
@@ -73,11 +70,14 @@ public class MetricFactory {
             case ACTIVE_USERS_SET:
                 metric = new ActiveUsersSetMetric();
                 break;
+            case ACTIVE_WS_SET:
+                metric = new ActiveWsSetMetric();
+                break;
             case ACTIVE_USERS:
                 metric = new ActiveUsersNumberMetric();
                 break;
-            case ACTIVE_USERS_WORKAPCES_LIST:
-                metric = new ActiveUsersWorkspacesListMetric();
+            case ACTIVE_WS:
+                metric = new ActiveWsNumberMetric();
                 break;
             case USERS_CREATED_PROJECTS_NUMBER:
                 metric = new UsersCreatedProjectsNumberMetric();

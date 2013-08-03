@@ -18,10 +18,11 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$log');
-a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
-a3 = filterByEvent(a2, '$EVENT');
-a4 = extractWs(a3);
-a = FILTER a4 BY ws != 'default';
+f1 = loadResources('$log');
+f = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 
-result = countByField(a, 'ws');
+a1 = extractWs(f);
+a2 = FOREACH a1 GENERATE ws;
+a = FILTER a2 BY ws != 'default';
+
+result = DISTINCT a;

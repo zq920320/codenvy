@@ -48,7 +48,7 @@ public class FSValueDataManager {
     /** Runtime parameter name. Contains the directory where values are stored. */
     private static final String ANALYTICS_RESULT_DIRECTORY_PROPERTY = "analytics.result.directory";
 
-    /** The value of {@value ScriptService#ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
+    /** The value of {@value #ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
     public static final String  RESULT_DIRECTORY                    = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
 
     /** The file name where value is stored. */
