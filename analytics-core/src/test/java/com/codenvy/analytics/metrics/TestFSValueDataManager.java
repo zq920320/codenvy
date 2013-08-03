@@ -17,10 +17,10 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.value.LongValueData;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -49,6 +49,7 @@ public class TestFSValueDataManager extends BaseTest {
     @Test
     public void shouldStoreValueIfFileExist() throws Exception {
         File file = FSValueDataManager.getFile(MetricType.ACTIVE_USERS, uuid);
+        file.getParentFile().mkdirs();
         file.createNewFile();
 
         assertTrue(file.exists());

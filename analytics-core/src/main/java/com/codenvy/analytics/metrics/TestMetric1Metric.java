@@ -1,4 +1,4 @@
-/*
+package com.codenvy.analytics.metrics;/*
  *
  * CODENVY CONFIDENTIAL
  * ________________
@@ -17,39 +17,21 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
-
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ScriptBasedMetric;
+import com.codenvy.analytics.scripts.ScriptType;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface ValueData {
+public class TestMetric1Metric extends ScriptBasedMetric {
 
-    /**
-     * Unions two {@link ValueData} into one single. The passed and current {@link ValueData} will not be modified.
-     */
-    ValueData union(ValueData valueData);
+    public TestMetric1Metric() {
+        super(MetricType.TEST_METRIC_1);
+    }
 
-    /**
-     * Represents {@link ValueData} as {@link String}.
-     */
-    String getAsString();
-
-    /**
-     * @return value as {@link Long}
-     */
-    long getAsLong();
-
-    /**
-     * @return value as {@link Double}
-     */
-    double getAsDouble();
-
-    /**
-     * Serialization.
-     */
-    void writeTo(ObjectOutputStream out) throws IOException;
+    @Override
+    protected ScriptType getScriptType() {
+        return ScriptType.USERS_BY_COMPANY;
+    }
 }

@@ -20,8 +20,7 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,15 +30,10 @@ import java.util.List;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class ListValueData<T> extends AbstractValueData {
 
-    private static final long serialVersionUID = 1L;
-
-    private List<T> value;
-
-    public ListValueData() {
-    }
+    private final List<T> value;
 
     public ListValueData(Collection<T> value) {
-        this.value = new ArrayList<T>(value.size());
+        this.value = new ArrayList<>(value.size());
         this.value.addAll(value);
     }
 
@@ -51,41 +45,30 @@ public abstract class ListValueData<T> extends AbstractValueData {
         return value.size();
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     protected ValueData doUnion(ValueData valueData) {
         List<T> value1 = this.value;
         List<T> value2 = ((ListValueData<T>)valueData).getAll();
 
-        List<T> newValue = new ArrayList<T>(value1.size() + value2.size());
+        List<T> newValue = new ArrayList<>(value1.size() + value2.size());
         newValue.addAll(value1);
         newValue.addAll(value2);
 
         return createInstance(newValue);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeTo(ObjectOutputStream out) throws IOException {
         out.writeInt(value.size());
         for (T item : value) {
             writeItem(out, item);
         }
     }
 
-    /** {@inheritedDoc} */
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        int size = in.readInt();
-
-        value = new ArrayList<T>(size);
-        for (int i = 0; i < size; i++) {
-            value.add(readItem(in));
-        }
-    }
-
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
@@ -142,7 +125,5 @@ public abstract class ListValueData<T> extends AbstractValueData {
 
     abstract protected ValueData createInstance(List<T> value);
 
-    abstract protected void writeItem(ObjectOutput out, T item) throws IOException;
-
-    abstract protected T readItem(ObjectInput in) throws IOException;
+    abstract protected void writeItem(ObjectOutputStream out, T item) throws IOException;
 }

@@ -20,8 +20,7 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,15 +29,10 @@ import java.util.Map.Entry;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class MapValueData<K, V> extends AbstractValueData {
 
-    private static final long serialVersionUID = 1L;
-
-    protected Map<K, V> value;
-
-    public MapValueData() {
-    }
+    protected final Map<K, V> value;
 
     public MapValueData(Map<K, V> value) {
-        this.value = new HashMap<K, V>(value.size());
+        this.value = new HashMap<>(value.size());
         this.value.putAll(value);
     }
 
@@ -77,13 +71,13 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
         return builder.toString();
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     protected ValueData doUnion(ValueData valueData) {
         MapValueData<K, V> addVD = (MapValueData<K, V>)valueData;
 
-        Map<K, V> result = new HashMap<K, V>(this.value);
+        Map<K, V> result = new HashMap<>(this.value);
 
         for (Entry<K, V> entry : addVD.value.entrySet()) {
             K key = entry.getKey();
@@ -98,9 +92,9 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
         return createInstance(result);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeTo(ObjectOutputStream out) throws IOException {
         out.writeInt(value.size());
         for (Entry<K, V> entry : value.entrySet()) {
             writeKey(out, entry.getKey());
@@ -108,18 +102,7 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
         }
     }
 
-    /** {@inheritedDoc} */
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        int size = in.readInt();
-
-        value = new HashMap<K, V>(size);
-        for (int i = 0; i < size; i++) {
-            value.put(readKey(in), readValue(in));
-        }
-    }
-
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(Object object) {
         MapValueData<?, ?> valueData = (MapValueData<?, ?>)object;
@@ -156,11 +139,7 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
 
     protected abstract ValueData createInstance(Map<K, V> value);
 
-    protected abstract void writeKey(ObjectOutput out, K key) throws IOException;
+    protected abstract void writeKey(ObjectOutputStream out, K key) throws IOException;
 
-    protected abstract void writeValue(ObjectOutput out, V value) throws IOException;
-
-    protected abstract K readKey(ObjectInput in) throws IOException;
-
-    protected abstract V readValue(ObjectInput in) throws IOException, ClassNotFoundException;
+    protected abstract void writeValue(ObjectOutputStream out, V value) throws IOException;
 }

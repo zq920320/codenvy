@@ -20,7 +20,7 @@
 package com.codenvy.analytics.server.jobs;
 
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
+import com.codenvy.analytics.metrics.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.SocketTimeoutException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
