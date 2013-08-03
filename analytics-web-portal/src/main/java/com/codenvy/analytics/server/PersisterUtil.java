@@ -19,7 +19,7 @@
 
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.metrics.FSValueDataManager;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.shared.TableData;
 
 import java.io.BufferedInputStream;

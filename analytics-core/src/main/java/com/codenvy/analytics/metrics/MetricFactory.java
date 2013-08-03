@@ -373,9 +373,6 @@ public class MetricFactory {
             case INVITATIONS_ACCEPTED_PERCENT:
                 metric = new InvitationsAcceptedPercentMetric();
                 break;
-            case TEST_METRIC_1:
-                metric = new TestMetric1Metric();
-                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

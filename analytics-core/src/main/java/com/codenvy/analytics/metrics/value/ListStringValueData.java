@@ -20,10 +20,9 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -31,35 +30,30 @@ import java.util.List;
 public class ListStringValueData extends ListValueData<String> {
 
     public static final ListStringValueData DEFAULT = new ListStringValueData(new ArrayList<String>(0));
+    private static final long serialVersionUID = 1L;
 
-    public ListStringValueData(ObjectInputStream in) throws IOException {
-        super(readFrom(in));
+    public ListStringValueData() {
     }
 
     public ListStringValueData(List<String> value) {
         super(value);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
     protected ValueData createInstance(List<String> value) {
         return new ListStringValueData(value);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
-    protected void writeItem(ObjectOutputStream out, String item) throws IOException {
+    protected void writeItem(ObjectOutput out, String item) throws IOException {
         out.writeUTF(item);
     }
 
-    private static Collection<String> readFrom(ObjectInputStream in) throws IOException {
-        int size = in.readInt();
-        List<String> result = new ArrayList<>(size);
-
-        for (int i = 0; i < size; i++) {
-            result.add(in.readUTF());
-        }
-
-        return result;
+    /** {@inheritedDoc} */
+    @Override
+    protected String readItem(ObjectInput in) throws IOException {
+        return in.readUTF();
     }
 }

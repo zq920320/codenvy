@@ -202,9 +202,7 @@ public enum MetricType {
     USERS_SHELL_LAUNCHED_LIST,
     USERS_SHELL_LAUNCHED_NUMBER,
     INVITATIONS_ACCEPTED_PERCENT,
-    TOTAL_WORKSPACES_NUMBER,
-
-    TEST_METRIC_1;
+    TOTAL_WORKSPACES_NUMBER;
 
     public void process(Map<String, String> context) throws Exception {
         return;

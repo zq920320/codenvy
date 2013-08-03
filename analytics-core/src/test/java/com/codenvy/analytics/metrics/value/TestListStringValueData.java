@@ -20,7 +20,6 @@
 package com.codenvy.analytics.metrics.value;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.FSValueDataManager;
 import com.codenvy.analytics.metrics.MetricType;
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
@@ -61,24 +60,24 @@ public class TestListStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        FSValueDataManager.store(expectedValueData, MetricType.TEST_METRIC_1, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.TEST_METRIC_1, uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
         ValueData expectedValueData = new ListStringValueData(Collections.<String> emptyList());
 
-        FSValueDataManager.store(expectedValueData, MetricType.TEST_METRIC_1, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.TEST_METRIC_1, uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyString() throws Exception {
         ValueData expectedValueData = new ListStringValueData(Arrays.asList(new String[]{""}));
 
-        FSValueDataManager.store(expectedValueData, MetricType.TEST_METRIC_1, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.TEST_METRIC_1, uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test

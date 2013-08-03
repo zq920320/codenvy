@@ -17,14 +17,23 @@
  */
 
 
-package com.codenvy.analytics.metrics;
+package com.codenvy.analytics.metrics.value;
 
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Utils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -52,17 +61,15 @@ public class FSValueDataManager {
         File file = getFile(metricType, uuid);
         validateExistance(file);
 
-        return doLoad(file, metricType);
+        return doLoad(file);
     }
 
-    private static ValueData doLoad(File file, MetricType metricType) throws IOException {
+    private static ValueData doLoad(File file) throws IOException {
         ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 
-        Class<? extends ValueData> clazz = ((AbstractMetric) MetricFactory.createMetric(metricType)).getValueDataClass();
-
         try {
-            return clazz.getConstructor(ObjectInputStream.class).newInstance(in);
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            return (ValueData)in.readObject();
+        } catch (ClassNotFoundException e) {
             throw new IOException(e);
         } finally {
             in.close();
@@ -87,7 +94,7 @@ public class FSValueDataManager {
         ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
 
         try {
-            value.writeTo(out);
+            out.writeObject(value);
         } finally {
             out.close();
         }

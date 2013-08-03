@@ -19,14 +19,13 @@
 
 package com.codenvy.analytics.metrics.value;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.Externalizable;
 
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface ValueData {
+public interface ValueData extends Externalizable {
 
     /**
      * Unions two {@link ValueData} into one single. The passed and current {@link ValueData} will not be modified.
@@ -47,9 +46,4 @@ public interface ValueData {
      * @return value as {@link Double}
      */
     double getAsDouble();
-
-    /**
-     * Serialization.
-     */
-    void writeTo(ObjectOutputStream out) throws IOException;
 }

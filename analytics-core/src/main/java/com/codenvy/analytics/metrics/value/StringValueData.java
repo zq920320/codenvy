@@ -19,27 +19,41 @@
 
 package com.codenvy.analytics.metrics.value;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class StringValueData extends AbstractValueData {
 
     public static final StringValueData DEFAULT = new StringValueData("");
+    private static final long serialVersionUID = 1L;
 
-    private final String value;
+    private String value;
+
+    public StringValueData() {
+    }
 
     public StringValueData(String value) {
         this.value = value;
-    }
-
-    public StringValueData(ObjectInputStream in) throws IOException {
-        this.value = readFrom(in);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getAsString() {
         return value;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeUTF(value);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        value = in.readUTF();
     }
 
     /** {@inheritDoc} */
@@ -52,15 +66,5 @@ public class StringValueData extends AbstractValueData {
     @Override
     protected int doHashCode() {
         return value.hashCode();
-    }
-
-    /** {@inheritedDoc} */
-    @Override
-    public void writeTo(ObjectOutputStream out) throws IOException {
-        out.writeUTF(value);
-    }
-
-    private String readFrom(ObjectInputStream in) throws IOException {
-        return in.readUTF();
     }
 }

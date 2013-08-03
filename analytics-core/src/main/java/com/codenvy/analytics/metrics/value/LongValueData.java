@@ -19,14 +19,20 @@
 
 package com.codenvy.analytics.metrics.value;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class LongValueData extends AbstractValueData {
 
     public static final LongValueData DEFAULT = new LongValueData(0);
+    private static final long serialVersionUID = 1L;
 
-    private final long value;
+    private long value;
+
+    public LongValueData() {
+    }
 
     public LongValueData(String value) {
         this.value = Long.valueOf(value);
@@ -34,10 +40,6 @@ public class LongValueData extends AbstractValueData {
 
     public LongValueData(long value) {
         this.value = value;
-    }
-
-    public LongValueData(ObjectInputStream in) throws IOException {
-        this.value = readFrom(in);
     }
 
     /** {@inheritDoc} */
@@ -78,11 +80,14 @@ public class LongValueData extends AbstractValueData {
 
     /** {@inheritedDoc} */
     @Override
-    public void writeTo(ObjectOutputStream out) throws IOException {
+    public void writeExternal(ObjectOutput out) throws IOException {
         out.writeLong(value);
+
     }
 
-    private long readFrom(ObjectInputStream in) throws IOException {
-        return in.readLong();
+    /** {@inheritedDoc} */
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        value = in.readLong();
     }
 }

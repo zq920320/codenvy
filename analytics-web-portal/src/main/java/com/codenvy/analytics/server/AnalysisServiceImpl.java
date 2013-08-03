@@ -24,7 +24,7 @@ import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.FSValueDataManager;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.vew.template.Display;

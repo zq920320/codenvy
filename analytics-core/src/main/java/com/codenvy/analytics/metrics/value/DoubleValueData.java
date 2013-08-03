@@ -19,17 +19,20 @@
 
 package com.codenvy.analytics.metrics.value;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class DoubleValueData extends AbstractValueData {
 
     public static final DoubleValueData DEFAULT = new DoubleValueData(Double.valueOf("0"));
-    private final double value;
+    private static final long serialVersionUID = 1L;
 
-    public DoubleValueData(ObjectInputStream in) throws IOException {
-        this.value = readFrom(in);
+    private double value;
+
+    public DoubleValueData() {
     }
 
     public DoubleValueData(double value) {
@@ -72,11 +75,14 @@ public class DoubleValueData extends AbstractValueData {
 
     /** {@inheritedDoc} */
     @Override
-    public void writeTo(ObjectOutputStream out) throws IOException {
+    public void writeExternal(ObjectOutput out) throws IOException {
         out.writeDouble(value);
+
     }
 
-    private double readFrom(ObjectInputStream in) throws IOException {
-        return in.readDouble();
+    /** {@inheritedDoc} */
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        value = in.readDouble();
     }
 }

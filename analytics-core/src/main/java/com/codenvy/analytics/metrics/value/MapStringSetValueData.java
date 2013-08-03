@@ -19,7 +19,9 @@
 
 package com.codenvy.analytics.metrics.value;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,9 +29,10 @@ import java.util.Map;
 public class MapStringSetValueData extends MapValueData<String, SetStringValueData> {
 
     public static final MapStringSetValueData DEFAULT = new MapStringSetValueData(new HashMap<String, SetStringValueData>(0));
+    private static final long serialVersionUID = 1L;
 
-    public MapStringSetValueData(ObjectInputStream in) throws IOException {
-        super(readFrom(in));
+    public MapStringSetValueData() {
+        super();
     }
 
     public MapStringSetValueData(Map<String, SetStringValueData> value) {
@@ -50,23 +53,24 @@ public class MapStringSetValueData extends MapValueData<String, SetStringValueDa
 
     /** {@inheritDoc} */
     @Override
-    protected void writeKey(ObjectOutputStream out, String key) throws IOException {
+    protected void writeKey(ObjectOutput out, String key) throws IOException {
         out.writeUTF(key);
     }
 
     @Override
-    protected void writeValue(ObjectOutputStream out, SetStringValueData value) throws IOException {
-        value.writeTo(out);
+    protected void writeValue(ObjectOutput out, SetStringValueData value) throws IOException {
+        out.writeObject(value);
     }
 
-    private static Map<String, SetStringValueData> readFrom(ObjectInputStream in) throws IOException {
-        int size = in.readInt();
-        Map<String, SetStringValueData> result = new HashMap<>(size);
+    /** {@inheritDoc} */
+    @Override
+    protected String readKey(ObjectInput in) throws IOException {
+        return in.readUTF();
+    }
 
-        for (int i = 0; i < size; i++) {
-            result.put(in.readUTF(), new SetStringValueData(in));
-        }
-
-        return result;
+    /** {@inheritDoc} */
+    @Override
+    protected SetStringValueData readValue(ObjectInput in) throws IOException, ClassNotFoundException {
+        return (SetStringValueData)in.readObject();
     }
 }

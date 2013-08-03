@@ -22,7 +22,7 @@ package com.codenvy.analytics.server;
 import com.codenvy.analytics.client.TimeLineService;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.FSValueDataManager;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 
 import org.testng.annotations.Test;

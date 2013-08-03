@@ -19,7 +19,9 @@
 
 package com.codenvy.analytics.metrics.value;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,9 +31,10 @@ import java.util.List;
 public class ListListStringValueData extends ListValueData<ListStringValueData> {
 
     public static final ListListStringValueData DEFAULT = new ListListStringValueData(new ArrayList<ListStringValueData>(0));
+    private static final long serialVersionUID = 1L;
 
-    public ListListStringValueData(ObjectInputStream in) throws IOException {
-        super(readFrom(in));
+    public ListListStringValueData() {
+        super();
     }
 
     public ListListStringValueData(Collection<ListStringValueData> value) {
@@ -43,20 +46,19 @@ public class ListListStringValueData extends ListValueData<ListStringValueData> 
         return new ListListStringValueData(value);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
-    protected void writeItem(ObjectOutputStream out, ListStringValueData item) throws IOException {
-        item.writeTo(out);
+    protected void writeItem(ObjectOutput out, ListStringValueData item) throws IOException {
+        out.writeObject(item);
     }
 
-    private static Collection<ListStringValueData> readFrom(ObjectInputStream in) throws IOException {
-        int size = in.readInt();
-        List<ListStringValueData> result = new ArrayList<>(size);
-
-        for (int i = 0; i < size; i++) {
-            result.add(new ListStringValueData(in));
+    /** {@inheritedDoc} */
+    @Override
+    protected ListStringValueData readItem(ObjectInput in) throws IOException {
+        try {
+            return (ListStringValueData)in.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IOException(e);
         }
-
-        return result;
     }
 }

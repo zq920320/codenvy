@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
