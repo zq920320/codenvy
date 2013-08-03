@@ -22,11 +22,13 @@ package com.codenvy.analytics.metrics.value;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.HashMap;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MapStringLongValueData extends MapValueData<String, Long> {
 
+    public static final MapStringLongValueData DEFAULT = new MapStringLongValueData(new HashMap<String, Long>(0));
     private static final long serialVersionUID = 1L;
 
     public MapStringLongValueData() {

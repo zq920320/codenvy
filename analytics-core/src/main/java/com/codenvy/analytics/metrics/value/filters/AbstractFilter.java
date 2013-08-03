@@ -54,7 +54,7 @@ public abstract class AbstractFilter implements Filter {
         try {
             return apply(getIndex(key), value);
         } catch (IllegalArgumentException e) {
-            return ListListStringValueData.EMPTY;
+            return ListListStringValueData.DEFAULT;
         }
     }
 

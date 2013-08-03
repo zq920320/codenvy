@@ -34,70 +34,62 @@ public class DataProcessing {
 
     /**
      * Executes scripts to calculate the total number of events by workspace names.
-     *
-     * @param metricType the {@link MetricType} under which resulted {@link ValueData} will be stored
-     * @param context    the execution context
      */
-    public static void calculateForWs(MetricType metricType, Map<String, String> context) throws Exception {
-        calculate(metricType, context, EnumSet.of(ScriptType.NUMBER_OF_EVENTS, ScriptType.NUMBER_OF_EVENTS_BY_WS));
+    public static void numberOfEventsByWs(MetricType metricType, Map<String, String> context) throws Exception {
+        calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS, ScriptType.NUMBER_EVENTS_BY_WS));
     }
 
     /**
      * Executes scripts to calculate the total number of events by workspace, user and domain names.
-     *
-     * @param metricType the {@link MetricType} under which resulted {@link ValueData} will be stored
-     * @param context    the execution context
      */
-    public static void calculateForWsUser(MetricType metricType, Map<String, String> context) throws Exception {
-        calculate(metricType, context, EnumSet.of(ScriptType.NUMBER_OF_EVENTS,
-                ScriptType.NUMBER_OF_EVENTS_BY_WS,
-                ScriptType.NUMBER_OF_EVENTS_BY_USERS,
-                ScriptType.NUMBER_OF_EVENTS_BY_DOMAINS));
+    public static void numberOfEventsByAll(MetricType metricType, Map<String, String> context) throws Exception {
+        calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS,
+                ScriptType.NUMBER_EVENTS_BY_WS,
+                ScriptType.NUMBER_EVENTS_BY_USERS,
+                ScriptType.NUMBER_EVENTS_BY_DOMAINS));
+    }
+
+    /**
+     * Executes scripts to alculate the set of active users by workspace, user and domain names.
+     */
+    public static void setOfActiveUsers(MetricType metricType, Map<String, String> context) throws Exception {
+        calculateAndStore(metricType, context, EnumSet.of(ScriptType.SET_ACTIVE_USERS,
+                ScriptType.SET_ACTIVE_USERS_BY_DOMAINS,
+                ScriptType.SET_ACTIVE_USERS_BY_USERS,
+                ScriptType.SET_ACTIVE_USERS_BY_WS));
     }
 
     /**
      * Executes predefined set of {@link ScriptType}.
      */
-    private static void calculate(MetricType metricType, Map<String, String> context, EnumSet<ScriptType> scripts) throws Exception {
+    private static void calculateAndStore(MetricType metricType, Map<String, String> context, EnumSet<ScriptType> scripts) throws Exception {
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
 
         for (ScriptType scriptType : scripts) {
-            switch (scriptType) {
-                case NUMBER_OF_EVENTS:
-                    ValueData result = executor.executeAndReturn(scriptType, context);
-                    storeNumberOfEvents((LongValueData) result, metricType, context);
-                    break;
+            ValueData result = executor.executeAndReturn(scriptType, context);
 
-                case NUMBER_OF_EVENTS_BY_DOMAINS:
-                case NUMBER_OF_EVENTS_BY_USERS:
-                case NUMBER_OF_EVENTS_BY_WS:
-                    result = executor.executeAndReturn(scriptType, context);
-                    storeNumberOfEventsByEntity((MapStringLongValueData) result, metricType, getEntity(scriptType), context);
-                    break;
+            if (isDefaultValue(result)) {
+                continue;
+            }
 
-                default:
-                    throw new IllegalStateException("Script " + scriptType + " is not supported");
+            String entityName = getEntity(scriptType);
+            if (entityName.isEmpty()) {
+                store(result, metricType, context);
+            } else {
+                MetricParameter.ENTITY_TYPE entityType = MetricParameter.ENTITY_TYPE.valueOf(entityName);
+                storeByEntity((MapValueData) result, metricType, entityType, context);
             }
         }
     }
 
-    /**
-     * Extracts entity out of {@link ScriptType}. The entity name is included into script name.
-     */
-    private static MetricParameter.ENTITY_TYPE getEntity(ScriptType scriptType) {
-        String scriptName = scriptType.name();
-
-        int pos = scriptName.indexOf("_BY_");
-        String entityName = scriptName.substring(pos + 4, scriptName.length());
-
-        return MetricParameter.ENTITY_TYPE.valueOf(entityName);
+    private static boolean isDefaultValue(ValueData result) throws IOException {
+        return result.equals(ValueDataFactory.createDefaultValue(result.getClass()));
     }
 
-    private static void storeNumberOfEvents(LongValueData valueData, MetricType metricType, Map<String, String> context) throws IOException {
-        if (isEmpty(valueData)) {
-            return;
-        }
-
+    /**
+     * Stores {@link ValueData} under the directory related to given metric.
+     */
+    private static void store(ValueData valueData, MetricType metricType, Map<String, String> context) throws IOException {
         LinkedHashMap<String, String> uuid = new LinkedHashMap<>(2);
 
         Utils.putFromDate(uuid, Utils.getFromDate(context));
@@ -107,50 +99,31 @@ public class DataProcessing {
     }
 
     /**
-     * Stores {@link ValueData} under the directory related to given entity.
+     * Stores {@link ValueData} under the directory related to given metric and entity.
      */
-    private static void storeNumberOfEventsByEntity(MapStringLongValueData valueData, MetricType metricType, MetricParameter.ENTITY_TYPE entityType, Map<String, String> context) throws IOException {
-        if (isEmpty(valueData)) {
-            return;
-        }
-
+    private static void storeByEntity(MapValueData<?, ?> valueData, MetricType metricType, MetricParameter.ENTITY_TYPE entityType, Map<String, String> context) throws IOException {
         LinkedHashMap<String, String> uuid = new LinkedHashMap<>(4);
 
         Utils.putFromDate(uuid, Utils.getFromDate(context));
         Utils.putToDate(uuid, Utils.getToDate(context));
-        uuid.put(MetricParameter.ENTITY.name(), entityType.name());
+        Utils.putEntity(uuid, entityType);
 
-        for (Map.Entry<String, Long> entry : valueData.getAll().entrySet()) {
-            String alias = entry.getKey();
-            Long value = entry.getValue();
+        for (Map.Entry<?, ?> entry : valueData.getAll().entrySet()) {
+            String alias = entry.getKey().toString();
+            ValueData value2store = ValueDataFactory.createValueData(entry.getValue());
 
             uuid.put(MetricParameter.ALIAS.name(), alias);
-            FSValueDataManager.store(new LongValueData(value), metricType, uuid);
+            FSValueDataManager.store(value2store, metricType, uuid);
         }
     }
 
     /**
-     * Checks if corresponding {@link ValueData} class contains data.
-     * Empty {@link ValueData} is not going to be stored. It improves performance a bit.
+     * Extracts entity out of {@link ScriptType}. The entity name is included into script name.
      */
-    private static boolean isEmpty(ValueData valueData) {
-        if (valueData instanceof LongValueData) {
-            return valueData.getAsLong() == 0;
+    private static String getEntity(ScriptType scriptType) {
+        String scriptName = scriptType.name();
 
-        } else if (valueData instanceof DoubleValueData) {
-            return valueData.getAsDouble() == 0;
-
-        } else if (valueData instanceof StringValueData) {
-            return valueData.getAsString().isEmpty();
-
-        } else if (valueData instanceof MapValueData) {
-            return ((MapValueData) valueData).size() == 0;
-
-        } else if (valueData instanceof ListValueData) {
-            return ((ListValueData) valueData).size() == 0;
-
-        } else {
-            throw new IllegalArgumentException("ValueData class is not supported" + valueData.getClass().getName());
-        }
+        int pos = scriptName.indexOf("_BY_");
+        return pos == - 1 ? "" : scriptName.substring(pos + 4, scriptName.length());
     }
 }

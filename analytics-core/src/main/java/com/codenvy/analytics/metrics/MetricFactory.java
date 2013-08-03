@@ -70,7 +70,10 @@ public class MetricFactory {
             case TOTAL_USERS_NUMBER:
                 metric = new TotalUsersMetric();
                 break;
-            case ACTIVE_USERS_NUMBER:
+            case ACTIVE_USERS_SET:
+                metric = new ActiveUsersSetMetric();
+                break;
+            case ACTIVE_USERS:
                 metric = new ActiveUsersNumberMetric();
                 break;
             case ACTIVE_USERS_WORKAPCES_LIST:
@@ -255,12 +258,6 @@ public class MetricFactory {
                 break;
             case TOTAL_PROJECTS_NUMBER:
                 metric = new TotalProjectsMetric();
-                break;
-            case ACTIVE_PROJECTS_NUMBER:
-                metric = new ActiveProjectsNumberMetric();
-                break;
-            case ACTIVE_PROJECTS_LIST:
-                metric = new ActiveProjectsListMetric();
                 break;
             case PROJECTS_CREATED_LIST:
                 metric = new ProjectsCreatedListMetric();

@@ -89,12 +89,6 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
             LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
-
-    private void process(Map<String, String> context, MetricType metricType, String event) throws Exception {
-        Utils.putEvent(context, event);
-        DataProcessing.calculateForWsUser(metricType, context);
-    }
-
     private void store(MetricType metricType, ValueData valueData, Map<String, String> context)
             throws IOException {
         if (!(valueData instanceof MapStringListListStringValueData)) {

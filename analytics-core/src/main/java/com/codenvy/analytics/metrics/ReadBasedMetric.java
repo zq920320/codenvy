@@ -149,7 +149,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * @return empty {@link ValueData}
      */
     private ValueData createEmptyValueData() throws IOException {
-        return ValueDataFactory.createEmptyValueData(getValueDataClass());
+        return ValueDataFactory.createDefaultValue(getValueDataClass());
     }
 }
 

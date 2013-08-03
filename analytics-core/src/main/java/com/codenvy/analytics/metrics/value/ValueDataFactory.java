@@ -45,14 +45,31 @@ public class ValueDataFactory {
         return (ValueData)constructor.newInstance(value);
     }
 
-    /** Instantiates empty {@link ValueData}. */
-    public static ValueData createEmptyValueData(Class<? extends ValueData> clazz) throws IOException {
-        if (clazz == ListStringValueData.class) {
-            return ListStringValueData.EMPTY;
+    /** Instantiates default {@link ValueData}. */
+    public static ValueData createDefaultValue(Class<? extends ValueData> clazz) throws IOException {
+        if (clazz == LongValueData.class) {
+            return LongValueData.DEFAULT;
+
+        } else if (clazz == DoubleValueData.class) {
+            return DoubleValueData.DEFAULT;
+
+        } else if (clazz == ListStringValueData.class) {
+            return ListStringValueData.DEFAULT;
+
+        } else if (clazz == SetStringValueData.class) {
+            return SetStringValueData.DEFAULT;
+
         } else if (clazz == ListListStringValueData.class) {
-            return ListListStringValueData.EMPTY;
-        } else if (clazz == LongValueData.class) {
-            return LongValueData.EMPTY;
+            return ListListStringValueData.DEFAULT;
+
+        } else if (clazz == MapStringLongValueData.class) {
+            return MapStringLongValueData.DEFAULT;
+
+        } else if (clazz == MapStringListListStringValueData.class) {
+            return MapStringListListStringValueData.DEFAULT;
+
+        } else if (clazz == MapStringSetValueData.class) {
+            return MapStringSetValueData.DEFAULT;
         }
 
         throw new IOException("Unknown class " + clazz.getName());
@@ -67,18 +84,65 @@ public class ValueDataFactory {
         } else if (clazz == DoubleValueData.class) {
             Tuple tuple = ensureSingleResult(iter);
             return createDoubleValueData(tuple);
+
         } else if (clazz == ListStringValueData.class) {
             return createListStringValueData(iter);
+
+        } else if (clazz == SetStringValueData.class) {
+            return createSetStringValueData(iter);
+
         } else if (clazz == ListListStringValueData.class) {
             return createListListStringValueData(iter);
+
         } else if (clazz == MapStringLongValueData.class) {
             return createMapStringLongValueData(iter);
+
         } else if (clazz == MapStringListListStringValueData.class) {
             return createMapStringListValueData(iter);
+
+        } else if (clazz == MapStringSetValueData.class) {
+            return createMapStringSetValueData(iter);
         }
 
-
         throw new IOException("Unknown class " + clazz.getName());
+    }
+
+    public static ValueData createValueData(Object value) {
+        if (value instanceof ValueData) {
+            return (ValueData) value;
+
+        } else if (value instanceof Long) {
+            return new LongValueData((Long) value);
+
+        } else if (value instanceof String) {
+            return new StringValueData((String) value);
+
+        } else if (value instanceof Double) {
+            return new DoubleValueData((Double) value);
+
+        } else {
+            throw new IllegalStateException("Unknown class" + value.getClass().getName());
+        }
+    }
+
+    private static ValueData createMapStringSetValueData(Iterator<Tuple> iter) throws IOException {
+        if (!iter.hasNext()) {
+            return new MapStringSetValueData(Collections.<String, SetStringValueData>emptyMap());
+        }
+
+        Map<String, SetStringValueData> result = new HashMap<>();
+        while (iter.hasNext()) {
+            Tuple tuple = iter.next();
+
+            validateTupleSize(tuple, 2);
+
+            String key = tuple.get(0).toString();
+            SetStringValueData value = createSetStringValueData(((DataBag) tuple.get(1)).iterator());
+
+            result.put(key, value);
+        }
+
+        return new MapStringSetValueData(result);
     }
 
     private static ValueData createMapStringListValueData(Iterator<Tuple> iter) throws IOException {
@@ -147,7 +211,7 @@ public class ValueDataFactory {
             return new ListStringValueData(Collections.<String>emptyList());
         }
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
@@ -156,6 +220,22 @@ public class ValueDataFactory {
         }
 
         return new ListStringValueData(result);
+    }
+
+    private static SetStringValueData createSetStringValueData(Iterator<Tuple> iter) throws IOException {
+        if (!iter.hasNext()) {
+            return new SetStringValueData(Collections.<String>emptyList());
+        }
+
+        Set<String> result = new HashSet<>();
+        while (iter.hasNext()) {
+            Tuple tuple = iter.next();
+
+            validateTupleSize(tuple, 1);
+            result.add(tuple.get(0).toString());
+        }
+
+        return new SetStringValueData(result);
     }
 
     private static ValueData createLongValueData(Tuple tuple) throws IOException {

@@ -53,7 +53,7 @@ public class TestNumberOfEvents extends BaseTest {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
 
-        LongValueData longValueData = (LongValueData) executeAndReturnResult(ScriptType.NUMBER_OF_EVENTS, log, context);
+        LongValueData longValueData = (LongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS, log, context);
         assertEquals(longValueData.getAsLong(), 3);
     }
 
@@ -70,7 +70,7 @@ public class TestNumberOfEvents extends BaseTest {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
 
-        MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_OF_EVENTS_BY_USERS, log, context);
+        MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS_BY_USERS, log, context);
 
         Map<String, Long> items = mapValueData.getAll();
         assertEquals(items.size(), 1);
@@ -92,7 +92,7 @@ public class TestNumberOfEvents extends BaseTest {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
 
-        MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_OF_EVENTS_BY_WS, log, context);
+        MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS_BY_WS, log, context);
 
         Map<String, Long> items = mapValueData.getAll();
         assertEquals(items.size(), 1);
@@ -114,7 +114,7 @@ public class TestNumberOfEvents extends BaseTest {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
 
-        MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_OF_EVENTS_BY_DOMAINS, log, context);
+        MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS_BY_DOMAINS, log, context);
 
         Map<String, Long> items = mapValueData.getAll();
         assertEquals(items.size(), 1);

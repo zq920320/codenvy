@@ -18,38 +18,36 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
-import com.codenvy.analytics.scripts.ScriptType;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActiveProjectsListMetric extends PersistableScriptBasedMetric {
+public class ActiveUsersSetMetric extends ReadBasedMetric {
 
-    ActiveProjectsListMetric() {
-        super(MetricType.ACTIVE_PROJECTS_LIST);
+    public ActiveUsersSetMetric() {
+        super(MetricType.ACTIVE_USERS_SET);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.ACTIVE_PROJECTS;
+    protected Class<? extends ValueData> getValueDataClass() {
+        return SetStringValueData.class;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected boolean isFilterSupported() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected ProjectsFilter createFilter(ValueData valueData) {
-        return new ProjectsFilter((ListListStringValueData)valueData);
+    public Set<MetricParameter> getParams() {
+        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

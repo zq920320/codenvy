@@ -51,7 +51,6 @@ public abstract class CumulativeMetric extends CalculateBasedMetric {
     public Set<MetricParameter> getParams() {
         Set<MetricParameter> params = addedMetric.getParams();
         params.addAll(removedMetric.getParams());
-
         params.remove(MetricParameter.FROM_DATE);
 
         return params;

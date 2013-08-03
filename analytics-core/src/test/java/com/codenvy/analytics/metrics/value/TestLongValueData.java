@@ -19,16 +19,15 @@
 
 package com.codenvy.analytics.metrics.value;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-
-import java.util.Arrays;
-
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricType;
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricType;
+import java.util.Arrays;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 
 
 /**
@@ -50,8 +49,8 @@ public class TestLongValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_PROJECTS_NUMBER, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_PROJECTS_NUMBER, uuid), expectedValueData);
+        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test

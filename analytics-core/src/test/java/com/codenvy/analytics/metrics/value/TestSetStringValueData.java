@@ -34,9 +34,9 @@ import static org.testng.Assert.assertNotEquals;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestListStringValueData extends BaseTest {
+public class TestSetStringValueData extends BaseTest {
 
-    private ValueData expectedValueData = new ListStringValueData(Arrays.asList(new String[]{"a", "b", "c"}));
+    private ValueData expectedValueData = new SetStringValueData(Arrays.asList(new String[]{"a", "b", "c"}));
 
     @Test
     public void testValueDataFromTuple() throws Exception {
@@ -50,7 +50,7 @@ public class TestListStringValueData extends BaseTest {
         tupleC.append("c");
 
         ValueData valueData =
-                              ValueDataFactory.createValueData(ListStringValueData.class, Arrays.asList(new Tuple[]{tupleA,
+                              ValueDataFactory.createValueData(SetStringValueData.class, Arrays.asList(new Tuple[]{tupleA,
                                       tupleB,
                                       tupleC})
                                                                                             .iterator());
@@ -66,7 +66,7 @@ public class TestListStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
-        ValueData expectedValueData = new ListStringValueData(Collections.<String> emptyList());
+        ValueData expectedValueData = new SetStringValueData(Collections.<String> emptyList());
 
         FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
         assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
@@ -74,7 +74,7 @@ public class TestListStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoadEmptyString() throws Exception {
-        ValueData expectedValueData = new ListStringValueData(Arrays.asList(new String[]{""}));
+        ValueData expectedValueData = new SetStringValueData(Arrays.asList(new String[]{""}));
 
         FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
         assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
@@ -82,22 +82,22 @@ public class TestListStringValueData extends BaseTest {
 
     @Test
     public void testEqualsSameOrder() throws Exception {
-        assertEquals(new ListStringValueData(Arrays.asList(new String[]{"a", "b", "c"})), expectedValueData);
+        assertEquals(new SetStringValueData(Arrays.asList(new String[]{"a", "b", "c"})), expectedValueData);
     }
 
     @Test
-    public void testNotEqualsDifferentOrder() throws Exception {
-        assertNotEquals(new ListStringValueData(Arrays.asList(new String[]{"a", "c", "b"})), expectedValueData);
+    public void testEqualsDifferentOrder() throws Exception {
+        assertEquals(new SetStringValueData(Arrays.asList(new String[]{"a", "c", "b"})), expectedValueData);
     }
 
     @Test
     public void testNotEquals() throws Exception {
-        assertNotEquals(new ListStringValueData(Arrays.asList(new String[]{"a", "b"})), expectedValueData);
+        assertNotEquals(new SetStringValueData(Arrays.asList(new String[]{"a", "b"})), expectedValueData);
     }
 
     @Test
     public void testAdd() throws Exception {
-        ValueData newValueData = new ListStringValueData(Arrays.asList(new String[]{"a", "b", "c", "a", "b", "c"}));
+        ValueData newValueData = new SetStringValueData(Arrays.asList(new String[]{"a", "b", "c"}));
         assertEquals(expectedValueData.union(expectedValueData), newValueData);
     }
 }

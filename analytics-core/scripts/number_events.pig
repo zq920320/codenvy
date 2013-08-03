@@ -17,4 +17,9 @@
  */
 
 IMPORT 'macros.pig';
-result = numberOfEventsByWs('$log', '$FROM_DATE', '$TO_DATE', '$EVENT');
+
+a1 = loadResources('$log');
+a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
+a = filterByEvent(a2, '$EVENT');
+
+result = countAll(a);

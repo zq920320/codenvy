@@ -10,7 +10,7 @@
         <metric type="active_workspaces_number" title="Workspaces: # Active"/>
         <metric type="users_created_number" title="Users: Created"/>
         <metric type="total_users_number" title="Users: Total"/>
-        <metric type="active_users_number" title="Users: # Active"/>
+        <metric type="active_users" title="Users: # Active"/>
         <metric type="invitations_sent_number" title="Users: Sent Invitations"/>
         <metric type="invitations_accepted_percent" format="%.0f%%" title="Users: Accepted Invitations"/>
         <metric type="users_sso_logged_in_types" format="%s" title="Users: Authentication Types"/>

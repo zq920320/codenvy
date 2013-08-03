@@ -26,29 +26,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class MapStringListListStringValueData extends MapValueData<String, ListListStringValueData> {
+public class MapStringSetValueData extends MapValueData<String, SetStringValueData> {
 
-    public static final MapStringListListStringValueData DEFAULT = new MapStringListListStringValueData(new HashMap<String, ListListStringValueData>(0));
+    public static final MapStringSetValueData DEFAULT = new MapStringSetValueData(new HashMap<String, SetStringValueData>(0));
     private static final long serialVersionUID = 1L;
 
-    public MapStringListListStringValueData() {
+    public MapStringSetValueData() {
         super();
     }
 
-    public MapStringListListStringValueData(Map<String, ListListStringValueData> value) {
+    public MapStringSetValueData(Map<String, SetStringValueData> value) {
         super(value);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ListListStringValueData unionValues(ListListStringValueData v1, ListListStringValueData v2) {
-        return (ListListStringValueData)v1.union(v2);
+    protected SetStringValueData unionValues(SetStringValueData v1, SetStringValueData v2) {
+        return (SetStringValueData)v1.union(v2);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ValueData createInstance(Map<String, ListListStringValueData> value) {
-        return new MapStringListListStringValueData(value);
+    protected ValueData createInstance(Map<String, SetStringValueData> value) {
+        return new MapStringSetValueData(value);
     }
 
     /** {@inheritDoc} */
@@ -58,7 +58,7 @@ public class MapStringListListStringValueData extends MapValueData<String, ListL
     }
 
     @Override
-    protected void writeValue(ObjectOutput out, ListListStringValueData value) throws IOException {
+    protected void writeValue(ObjectOutput out, SetStringValueData value) throws IOException {
         out.writeObject(value);
     }
 
@@ -70,7 +70,7 @@ public class MapStringListListStringValueData extends MapValueData<String, ListL
 
     /** {@inheritDoc} */
     @Override
-    protected ListListStringValueData readValue(ObjectInput in) throws IOException, ClassNotFoundException {
-        return (ListListStringValueData)in.readObject();
+    protected SetStringValueData readValue(ObjectInput in) throws IOException, ClassNotFoundException {
+        return (SetStringValueData)in.readObject();
     }
 }

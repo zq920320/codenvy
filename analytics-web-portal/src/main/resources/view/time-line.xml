@@ -15,7 +15,7 @@
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
         <metric type="users_created_number" title="Created"/>
         <metric type="total_users_number" title="Total"/>
-        <metric type="active_users_number" title="Active"/>
+        <metric type="active_users" title="Active"/>
         <empty />
     </table>
     <table length="20">

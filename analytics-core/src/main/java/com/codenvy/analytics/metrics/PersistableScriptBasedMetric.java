@@ -54,7 +54,7 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
         Calendar fromDate = Utils.getFromDate(context);
         Calendar toDate = Utils.getToDate(context);
 
-        ValueData total = ValueDataFactory.createEmptyValueData(getValueDataClass());
+        ValueData total = ValueDataFactory.createDefaultValue(getValueDataClass());
 
         Map<String, String> dayContext = Utils.clone(context);
         while (!fromDate.after(toDate)) {

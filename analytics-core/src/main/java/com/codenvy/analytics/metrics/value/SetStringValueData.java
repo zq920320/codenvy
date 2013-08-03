@@ -22,49 +22,39 @@ package com.codenvy.analytics.metrics.value;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class StringValueData extends AbstractValueData {
+public class SetStringValueData extends SetValueData<String> {
 
-    public static final StringValueData DEFAULT = new StringValueData("");
+    public static final SetStringValueData DEFAULT = new SetStringValueData(new ArrayList<String>(0));
     private static final long serialVersionUID = 1L;
 
-    private String value;
-
-    public StringValueData() {
+    public SetStringValueData() {
     }
 
-    public StringValueData(String value) {
-        this.value = value;
+    public SetStringValueData(Collection<String> value) {
+        super(value);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
-    public String getAsString() {
-        return value;
+    protected ValueData createInstance(Set<String> value) {
+        return new SetStringValueData(value);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(value);
+    protected void writeItem(ObjectOutput out, String item) throws IOException {
+        out.writeUTF(item);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        value = in.readUTF();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doEquals(Object object) {
-        return value.equals(object);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected int doHashCode() {
-        return value.hashCode();
+    protected String readItem(ObjectInput in) throws IOException {
+        return in.readUTF();
     }
 }

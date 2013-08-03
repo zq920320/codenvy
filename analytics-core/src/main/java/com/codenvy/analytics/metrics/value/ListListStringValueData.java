@@ -22,18 +22,16 @@ package com.codenvy.analytics.metrics.value;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ListListStringValueData extends ListValueData<ListStringValueData> {
 
+    public static final ListListStringValueData DEFAULT = new ListListStringValueData(new ArrayList<ListStringValueData>(0));
     private static final long serialVersionUID = 1L;
-
-    public static final ListListStringValueData EMPTY =
-            new ListListStringValueData(Collections.<ListStringValueData>emptyList());
 
     public ListListStringValueData() {
         super();

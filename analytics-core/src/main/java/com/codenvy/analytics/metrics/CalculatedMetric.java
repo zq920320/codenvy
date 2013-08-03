@@ -18,33 +18,37 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public abstract class CalculatedMetric extends AbstractMetric {
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ActiveUsersNumberMetric extends CalculatedMetric {
+    protected final Metric basedMetric;
 
-    ActiveUsersNumberMetric() {
-        super(MetricType.ACTIVE_USERS, MetricType.ACTIVE_USERS_SET);
+    /**
+     * {@link CalculatedMetric} constructor.
+     *
+     * @param metricType the current metric
+     * @param basedMetric the metric on which current one depends on
+     */
+    CalculatedMetric(MetricType metricType, MetricType basedMetric) {
+        super(metricType);
+        this.basedMetric = MetricFactory.createMetric(basedMetric);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
-    }
-
-    /** {@inheritDoc} */
+    /** {@inheritedDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        SetStringValueData valueData = (SetStringValueData) super.getValue(context);
-        return new LongValueData(valueData.size());
+        return basedMetric.getValue(context);
+    }
+
+    /** {@inheritedDoc} */
+    @Override
+    public Set<MetricParameter> getParams() {
+        return basedMetric.getParams();
     }
 }

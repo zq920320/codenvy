@@ -29,9 +29,8 @@ import java.util.List;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ListStringValueData extends ListValueData<String> {
 
+    public static final ListStringValueData DEFAULT = new ListStringValueData(new ArrayList<String>(0));
     private static final long serialVersionUID = 1L;
-
-    public static final ListStringValueData EMPTY = new ListStringValueData(new ArrayList<String>(0));
 
     public ListStringValueData() {
     }

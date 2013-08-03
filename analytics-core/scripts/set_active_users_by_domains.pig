@@ -17,4 +17,12 @@
  */
 
 IMPORT 'macros.pig';
-result = numberOfEvents('$log', '$FROM_DATE', '$TO_DATE', '$EVENT');
+
+f1 = loadResources('$log');
+f = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+
+a1 = extractUser(f);
+a2 = FOREACH a1 GENERATE REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, user;
+a = FILTER a2 BY user != 'default' AND domain != '';
+
+result = setByField(a, 'domain', 'user');

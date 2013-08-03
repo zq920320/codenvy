@@ -36,7 +36,7 @@ import static org.testng.AssertJUnit.assertEquals;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TestReadBasedMetric {
+public class TestNumberOfEventsMetric {
 
     public static final MetricType METRIC_TYPE = MetricType.USER_CODE_REFACTOR;
 
@@ -56,7 +56,7 @@ public class TestReadBasedMetric {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, "user-code-refactor");
 
-        DataProcessing.calculateForWsUser(METRIC_TYPE, context);
+        METRIC_TYPE.process(context);
     }
 
     @Test

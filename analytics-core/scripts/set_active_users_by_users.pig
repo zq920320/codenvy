@@ -16,15 +16,13 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
 f1 = loadResources('$log');
-fR = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+f = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 
-a1 = extractWs(fR);
-a2 = extractUser(a1);
-a3 = extractParam(a2, 'PROJECT', 'project');
-aR = extractParam(a3, 'TYPE', 'type');
+a1 = extractUser(f);
+a2 = FOREACH a1 GENERATE user AS userFake, user;
+a = FILTER a2 BY userFake != 'default' AND user != 'default';
 
-r1 = FOREACH aR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type));
-result = DISTINCT r1;
+result = setByField(a, 'userFake', 'user');

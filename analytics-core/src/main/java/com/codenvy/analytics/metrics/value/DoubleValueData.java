@@ -27,6 +27,7 @@ import java.io.ObjectOutput;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class DoubleValueData extends AbstractValueData {
 
+    public static final DoubleValueData DEFAULT = new DoubleValueData(Double.valueOf("0"));
     private static final long serialVersionUID = 1L;
 
     private double value;

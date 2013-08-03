@@ -30,23 +30,31 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.FILE_MANIPULATION.toString());
-            DataProcessing.calculateForWsUser(this, context);
+            DataProcessing.numberOfEventsByAll(this, context);
         }
     },
     TENANT_CREATED {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.TENANT_CREATED.toString());
-            DataProcessing.calculateForWsUser(this, context);
+            DataProcessing.numberOfEventsByAll(this, context);
         }
     },
     TENANT_DESTROYED {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.TENANT_DESTROYED.toString());
-            DataProcessing.calculateForWs(this, context);
+            DataProcessing.numberOfEventsByWs(this, context);
         }
     },
+    ACTIVE_USERS_SET {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            DataProcessing.setOfActiveUsers(this, context);
+        }
+    },
+    ACTIVE_USERS,
+
     ACTIVE_WORKSPACES_NUMBER,
     USERS_CREATED_LIST,
     USERS_DESTROYED_LIST,
@@ -54,7 +62,6 @@ public enum MetricType {
     USERS_DESTROYED_NUMBER,
     TOTAL_USERS_NUMBER,
     ACTIVE_USERS_WORKAPCES_LIST,
-    ACTIVE_USERS_NUMBER,
     USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
     USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
     USERS_DEPLOYED_PROJECTS_NUMBER, // number of users, who deployed project at least once
@@ -67,14 +74,14 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
-            DataProcessing.calculateForWsUser(this, context);
+            DataProcessing.numberOfEventsByAll(this, context);
         }
     },
     USER_CODE_COMPLETE {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.USER_CODE_COMPLETE.toString());
-            DataProcessing.calculateForWsUser(this, context);
+            DataProcessing.numberOfEventsByAll(this, context);
         }
     },
     USER_ACTIVITY,
@@ -97,21 +104,21 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.BUILD_STARTED.toString());
-            DataProcessing.calculateForWsUser(this, context);
+            DataProcessing.numberOfEventsByAll(this, context);
         }
     },
     RUN_STARTED {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.RUN_STARTED.toString());
-            DataProcessing.calculateForWsUser(this, context);
+            DataProcessing.numberOfEventsByAll(this, context);
         }
     },
     DEBUG_STARTED {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
-            DataProcessing.calculateForWsUser(this, context);
+            DataProcessing.numberOfEventsByAll(this, context);
         }
     },
     PRODUCT_USAGE_TIME_TOTAL,
@@ -148,12 +155,10 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
-            DataProcessing.calculateForWsUser(this, context);
+            DataProcessing.numberOfEventsByAll(this, context);
         }
     },
     TOTAL_PROJECTS_NUMBER,
-    ACTIVE_PROJECTS_LIST,
-    ACTIVE_PROJECTS_NUMBER,
     PROJECTS_CREATED_NUMBER,
     PROJECTS_CREATED_LIST,
     PROJECTS_BUILT_NUMBER,

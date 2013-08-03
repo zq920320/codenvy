@@ -34,7 +34,6 @@ public enum ScriptType {
     USERS_INVITATIONS,
     USERS_SHELL_LAUNCHED,
     JREBEL_USAGE,
-    ACTIVE_PROJECTS,
     ACTIVE_USERS_WORKSPACES,
     USERS_ADDED_TO_WS,
     PROJECTS_CREATED,
@@ -46,7 +45,60 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME,
     USERS_UPDATE_PROFILE,
 
-    NUMBER_OF_EVENTS {
+    SET_ACTIVE_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return SetStringValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        }
+    },
+
+    SET_ACTIVE_USERS_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        }
+    },
+
+    SET_ACTIVE_USERS_BY_DOMAINS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        }
+    },
+
+    SET_ACTIVE_USERS_BY_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        }
+    },
+
+
+    NUMBER_EVENTS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return LongValueData.class;
@@ -59,7 +111,7 @@ public enum ScriptType {
         }
     },
 
-    NUMBER_OF_EVENTS_BY_USERS {
+    NUMBER_EVENTS_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;
@@ -72,7 +124,7 @@ public enum ScriptType {
         }
     },
 
-    NUMBER_OF_EVENTS_BY_WS {
+    NUMBER_EVENTS_BY_WS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;
@@ -85,7 +137,7 @@ public enum ScriptType {
         }
     },
 
-    NUMBER_OF_EVENTS_BY_DOMAINS {
+    NUMBER_EVENTS_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;

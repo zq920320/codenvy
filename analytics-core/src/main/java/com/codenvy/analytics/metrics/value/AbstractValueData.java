@@ -87,5 +87,4 @@ public abstract class AbstractValueData implements ValueData {
     public double getAsDouble() {
         throw new UnsupportedOperationException();
     }
-
 }
