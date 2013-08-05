@@ -20,13 +20,11 @@
 package com.codenvy.analytics.metrics;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TotalUsersMetric extends CumulativeMetric {
 
     TotalUsersMetric() {
-        super(MetricType.TOTAL_USERS_NUMBER, MetricFactory.createMetric(MetricType.USERS_CREATED_NUMBER),
-              MetricFactory.createMetric(MetricType.USERS_DESTROYED_NUMBER));
+        super(MetricType.TOTAL_USERS, MetricFactory.createMetric(MetricType.USER_CREATED),
+              MetricFactory.createMetric(MetricType.USER_REMOVED));
     }
 }

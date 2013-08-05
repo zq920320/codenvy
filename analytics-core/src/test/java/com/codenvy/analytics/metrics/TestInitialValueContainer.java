@@ -44,11 +44,11 @@ import java.util.Map;
 public class TestInitialValueContainer extends BaseTest {
 
     private final String          content = "<metrics>" +
-                                            "  <metric type=\"TOTAL_WORKSPACES_NUMBER\">" +
+                                            "  <metric type=\"TOTAL_WORKSPACES\">" +
                                             "     <initial-value fromDate=\"20091102\" toDate=\"20091102\">1</initial-value>" +
                                             "     <initial-value fromDate=\"20091103\" toDate=\"20091103\">2</initial-value>" +
                                             "  </metric>" +
-                                            "  <metric type=\"TOTAL_USERS_NUMBER\">" +
+                                            "  <metric type=\"TOTAL_USERS\">" +
                                             "     <initial-value fromDate=\"20091104\" toDate=\"20091104\">10</initial-value>" +
                                             "  </metric>" +
                                             "</metrics>";
@@ -96,28 +96,28 @@ public class TestInitialValueContainer extends BaseTest {
 
     @Test
     public void testGetValues() throws Exception {
-        ValueData valueData = mockedContainer.getInitalValue(MetricType.TOTAL_WORKSPACES_NUMBER, context1.toString());
+        ValueData valueData = mockedContainer.getInitalValue(MetricType.TOTAL_WORKSPACES, context1.toString());
         assertEquals(valueData, new LongValueData(1L));
 
-        valueData = mockedContainer.getInitalValue(MetricType.TOTAL_WORKSPACES_NUMBER, context2.toString());
+        valueData = mockedContainer.getInitalValue(MetricType.TOTAL_WORKSPACES, context2.toString());
         assertEquals(valueData, new LongValueData(2L));
 
-        valueData = mockedContainer.getInitalValue(MetricType.TOTAL_USERS_NUMBER, context3.toString());
+        valueData = mockedContainer.getInitalValue(MetricType.TOTAL_USERS, context3.toString());
         assertEquals(valueData, new LongValueData(10L));
     }
 
     @Test
     public void testValidation() throws Exception {
-        mockedContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_WORKSPACES_NUMBER, context1);
+        mockedContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_WORKSPACES, context1);
     }
     
     @Test(expectedExceptions = InitialValueNotFoundException.class)
     public void testValidationThrowExceptionCase1() throws Exception {
-        mockedContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_USERS_NUMBER, context5);
+        mockedContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_USERS, context5);
     }
 
     @Test(expectedExceptions = InitialValueNotFoundException.class)
     public void testValidationThrowExceptionCase2() throws Exception {
-        mockedContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_WORKSPACES_NUMBER, context5);
+        mockedContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_WORKSPACES, context5);
     }
 }

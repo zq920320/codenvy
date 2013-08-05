@@ -53,7 +53,7 @@ public class TestCumulativeMetric extends BaseTest {
         doReturn(new LongValueData(5L)).when(mockedRemovedMetric).getValue(anyMap());
 
         TestedMetric testedMetric =
-                                    spy(new TestedMetric(MetricType.TOTAL_WORKSPACES_NUMBER, mockedAddedMetric,
+                                    spy(new TestedMetric(MetricType.TOTAL_WORKSPACES, mockedAddedMetric,
                                                          mockedRemovedMetric));
 
         doReturn(new LongValueData(100L)).when(testedMetric).getValue(anyMap());

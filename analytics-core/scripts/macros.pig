@@ -139,17 +139,11 @@ DEFINE extractSession(X) RETURNS Y {
 -- @return  {..., user : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractUser(X) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user1, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user2;
-  $Y = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : 'default')) AS user;
-};
-
----------------------------------------------------------------------------
--- Extract user name out of message and adds as field to tuple.
--- @return  {..., user : bytearray}
----------------------------------------------------------------------------
-DEFINE extractUserFromAliases(X) RETURNS Y {
-  x1 = FOREACH $X GENERATE FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user;
-  $Y = FOREACH x1 GENERATE FLATTEN(TOKENIZE(user, ',')) AS user;
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user1,
+			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2, 
+			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
+  x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS newUser;
+  $Y = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(newUser, ',')) AS user;
 };
 
 ---------------------------------------------------------------------------

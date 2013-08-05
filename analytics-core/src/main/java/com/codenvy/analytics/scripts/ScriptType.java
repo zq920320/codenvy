@@ -1,4 +1,4 @@
-/*
+    /*
  *
  * CODENVY CONFIDENTIAL
  * ________________
@@ -29,7 +29,6 @@ import java.util.Set;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum ScriptType {
     JREBEL_USER_PROFILE_GATHERING,
-    USERS_CREATED,
     USERS_REMOVED,
     USERS_INVITATIONS,
     USERS_SHELL_LAUNCHED,
@@ -50,24 +49,12 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return SetStringValueData.class;
         }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
-        }
     },
 
     SET_ACTIVE_USERS_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
-        }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
         }
     },
 
@@ -76,24 +63,12 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
         }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
-        }
     },
 
     SET_ACTIVE_WS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return SetStringValueData.class;
-        }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
         }
     },
 
@@ -102,24 +77,12 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
         }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
-        }
     },
 
     SET_ACTIVE_WS_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
-        }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
         }
     },
 
@@ -299,7 +262,17 @@ public enum ScriptType {
     CHECK_LOGS_1,
 
     /** Returns the list of unique events that were generated. */
-    CHECK_LOGS_2;
+    CHECK_LOGS_2,
+
+    /**
+     * Script for testing purpose.
+     */
+    TEST_EXTRACT_USER {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return ListStringValueData.class;
+        }
+    };
 
     /** @return what date type is represented in result */
     public Class<? extends ValueData> getValueDataClass() {

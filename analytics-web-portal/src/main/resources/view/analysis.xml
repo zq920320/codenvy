@@ -5,8 +5,8 @@
 <display>
     <table length="20" time-interval-rule="lifetime_decreased_monthly" csvFileName="signup_analysis.csv">
         <date section="Signup Analysis" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="MMM yyyy"/>
-        <metric type="total_users_number" title="Total Users"/>
-        <metric type="users_created_number" title="Total Accounts (Logged)"/>
+        <metric type="total_users" title="Total Users"/>
+        <metric type="user_created" title="Total Accounts (Logged)"/>
         <metric type="users_created_projects_number" title="Created Project"/>
         <metric type="users_built_projects_number" title="&amp; Built"/>
         <metric type="users_deployed_projects_number" title="&amp; Deployed"/>

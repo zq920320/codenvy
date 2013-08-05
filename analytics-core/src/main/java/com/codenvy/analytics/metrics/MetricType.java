@@ -61,12 +61,23 @@ public enum MetricType {
         }
     },
     ACTIVE_WS,
+    USER_CREATED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.USER_CREATED.toString());
+            DataProcessing.numberOfEventsByAll(this, context);
+        }
+    },
+    USER_REMOVED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.USER_REMOVED.toString());
+            DataProcessing.numberOfEventsByAll(this, context);
+        }
+    },
+    TOTAL_USERS,
+    TOTAL_WORKSPACES,
 
-    USERS_CREATED_LIST,
-    USERS_DESTROYED_LIST,
-    USERS_CREATED_NUMBER,
-    USERS_DESTROYED_NUMBER,
-    TOTAL_USERS_NUMBER,
     USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
     USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
     USERS_DEPLOYED_PROJECTS_NUMBER, // number of users, who deployed project at least once
@@ -201,8 +212,7 @@ public enum MetricType {
     INVITATIONS_SENT_NUMBER,
     USERS_SHELL_LAUNCHED_LIST,
     USERS_SHELL_LAUNCHED_NUMBER,
-    INVITATIONS_ACCEPTED_PERCENT,
-    TOTAL_WORKSPACES_NUMBER;
+    INVITATIONS_ACCEPTED_PERCENT;
 
     public void process(Map<String, String> context) throws Exception {
         return;

@@ -56,6 +56,7 @@ public class TestScriptBasedMetrics extends BaseTest {
         Utils.putFromDate(context, Calendar.getInstance());
         Utils.putToDate(context, Calendar.getInstance());
         Utils.putTimeUnit(context, TimeUnit.DAY);
+        Utils.putEvent(context, "fake");
 
         TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT_LIST));
 
@@ -71,6 +72,7 @@ public class TestScriptBasedMetrics extends BaseTest {
 
         Utils.putFromDate(context, calendar);
         Utils.putToDate(context, calendar);
+        Utils.putEvent(context, "fake");
 
         TestedMetric mockedMetric = spy(new TestedMetric(MetricType.PROJECTS_CREATED_LIST));
 
@@ -84,6 +86,7 @@ public class TestScriptBasedMetrics extends BaseTest {
 
         Utils.putFromDate(context, calendar);
         Utils.putToDate(context, calendar);
+        Utils.putEvent(context, "fake");
 
         TestedMetric mockedMetric = spy(new TestedMetric(MetricType.INVITATIONS_SENT_LIST));
 
@@ -101,8 +104,9 @@ public class TestScriptBasedMetrics extends BaseTest {
         Utils.putFromDate(context, fromDate);
         Utils.putToDate(context, toDate);
         Utils.putTimeUnit(context, TimeUnit.WEEK);
+        Utils.putEvent(context, "fake");
 
-        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.USERS_CREATED_NUMBER));
+        TestedMetric mockedMetric = spy(new TestedMetric(MetricType.USER_CREATED));
 
         assertEquals(mockedMetric.getValue(context), new LongValueData(70L));
     }
@@ -140,7 +144,7 @@ public class TestScriptBasedMetrics extends BaseTest {
 
         @Override
         protected ScriptType getScriptType() {
-            return ScriptType.USERS_CREATED;
+            return ScriptType.NUMBER_EVENTS;
         }
 
         @Override

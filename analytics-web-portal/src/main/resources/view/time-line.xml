@@ -7,14 +7,14 @@
         <date section="Workspaces" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
         <metric type="tenant_created" title="Created"/>
         <metric type="tenant_destroyed" title="Destroyed"/>
-        <metric type="total_workspaces_number" title="Total"/>
+        <metric type="total_workspaces" title="Total"/>
         <metric type="active_ws" title="Active"/>
         <empty />
     </table>
     <table length="20">
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <metric type="users_created_number" title="Created"/>
-        <metric type="total_users_number" title="Total"/>
+        <metric type="user_created" title="Created"/>
+        <metric type="total_users" title="Total"/>
         <metric type="active_users" title="Active"/>
         <empty />
     </table>

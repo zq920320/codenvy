@@ -46,25 +46,19 @@ public class MetricFactory {
             case TENANT_DESTROYED:
                 metric = new TenantDestroyedMetric();
                 break;
-            case TOTAL_WORKSPACES_NUMBER:
+            case TOTAL_WORKSPACES:
                 metric = new TotalWorkspacesMetric();
                 break;
-            case USERS_CREATED_LIST:
-                metric = new UsersCreatedListMetric();
+            case USER_REMOVED:
+                metric = new UserRemovedMetric();
                 break;
-            case USERS_DESTROYED_LIST:
-                metric = new UsersDestroyedListMetric();
-                break;
-            case USERS_CREATED_NUMBER:
-                metric = new UsersCreatedNumberMetric();
+            case USER_CREATED:
+                metric = new UserCreatedMetric();
                 break;
             case USERS_INVITATIONS_SENT_NUMBER:
                 metric = new UsersInvitationsSentNumberMetric();
                 break;
-            case USERS_DESTROYED_NUMBER:
-                metric = new UsersDestroyedNumberMetric();
-                break;
-            case TOTAL_USERS_NUMBER:
+            case TOTAL_USERS:
                 metric = new TotalUsersMetric();
                 break;
             case ACTIVE_USERS_SET:

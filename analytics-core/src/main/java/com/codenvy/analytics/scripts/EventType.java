@@ -32,7 +32,9 @@ public enum EventType {
     DEBUG_FINISHED,
     TENANT_CREATED,
     TENANT_DESTROYED,
-    PROJECT_DESTROYED;
+    PROJECT_DESTROYED,
+    USER_CREATED,
+    USER_REMOVED;
 
     /** {@inheritDoc} */
     @Override
