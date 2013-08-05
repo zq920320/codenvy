@@ -31,6 +31,7 @@ import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,19 +88,26 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
         Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
         context.put(MetricParameter.COMPANY_NAME.name(), company);
 
-        StringBuilder builder = new StringBuilder();
+        filterContext.remove(MetricFilter.FILTER_COMPANY.name());
+        ListStringValueData valueData = (ListStringValueData)ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.USERS_BY_COMPANY, context);
 
-        ListStringValueData valueData = (ListStringValueData) ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.USERS_BY_COMPANY, context);
-        for (String user : valueData.getAll()) {
-            if (builder.length() != 0) {
-                builder.append(",");
+        if (valueData.getAll().size() > 0) {
+            StringBuilder builder = new StringBuilder();
+            for (String user : valueData.getAll()) {
+                if (builder.length() != 0) {
+                    builder.append(",");
+                }
+
+                builder.append(user);
             }
-
-            builder.append(user);
+            filterContext.put(MetricFilter.FILTER_USER.name(), builder.toString());
+        } else {
+            // TODO
+            // actually this is an ugly workaround
+            // to be improved some time lat
+            filterContext.put(MetricFilter.FILTER_USER.name(), "_@@");
         }
 
-        filterContext.remove(MetricFilter.FILTER_COMPANY.name());
-        filterContext.put(MetricFilter.FILTER_USER.name(), builder.toString());
     }
 
     /** Calculates view for given {@link TimeUnit} and preserves data. */
