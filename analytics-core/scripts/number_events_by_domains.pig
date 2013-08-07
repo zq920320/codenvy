@@ -22,7 +22,8 @@ a1 = loadResources('$log');
 a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
 a3 = filterByEvent(a2, '$EVENT');
 a4 = extractUser(a3);
-a5 = FOREACH a4 GENERATE *, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
-a = FILTER a5 BY domain != '';
+a5 = FOREACH a4 GENERATE user;
+a6 = FOREACH a5 GENERATE REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
+a = FILTER a6 BY domain != '';
 
 result = countByField(a, 'domain');

@@ -16,14 +16,16 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
+
+%DEFAULT inactiveInterval '10';  -- in minutes
 
 f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-fR = filterByEvent(f2, 'user-sso-logged-in');
+fR = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 
 t1 = extractUser(fR);
-tR = extractParam(t1, 'USING', 'use');
+tR = extractWs(t1);
 
-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(user), TOTUPLE(use));
+r1 = productUsageTimeList(tR, '$inactiveInterval');
+result = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
 

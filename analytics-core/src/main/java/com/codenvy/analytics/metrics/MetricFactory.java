@@ -20,16 +20,12 @@ package com.codenvy.analytics.metrics;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricFactory {
 
     private static ConcurrentHashMap<MetricType, Metric> metrics = new ConcurrentHashMap<MetricType, Metric>();
 
-    /**
-     * Creates new metric or returns existed one.
-     */
+    /** Creates new metric or returns existed one. */
     public static Metric createMetric(MetricType metricType) {
         if (metrics.contains(metricType)) {
             return metrics.get(metricType);
@@ -88,26 +84,35 @@ public class MetricFactory {
             case USERS_ADDED_TO_WORKSPACE_LIST:
                 metric = new UsersAddedToWorkspaceListMetric();
                 break;
-            case USERS_SSO_LOGGED_IN_LIST:
-                metric = new UsersSsoLoggedInListMetric();
-                break;
-            case USERS_SSO_LOGGED_IN_TYPES:
-                metric = new UsersSsoLoggedInTypesMetric();
-                break;
             case USERS_SHELL_LAUNCHED_LIST:
                 metric = new UsersShellLaunchedListMetric();
                 break;
             case USERS_SHELL_LAUNCHED_NUMBER:
                 metric = new UsersShellLaunchedNumberMetric();
                 break;
-            case USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT:
-                metric = new UsersSsoLoggedInUsingGooglePercentMetric();
+            case USER_SSO_LOGGED_IN:
+                metric = new UserSSOLoggedInMetric();
                 break;
-            case USERS_SSO_LOGGED_IN_USING_GITHUB_PERCENT:
-                metric = new UsersSsoLoggedInUsingGithubPercentMetric();
+            case USER_LOGIN_GITHUB:
+                metric = new UserLoginGithubMetric();
                 break;
-            case USERS_SSO_LOGGED_IN_USING_FORM_PERCENT:
-                metric = new UsersSsoLoggedInUsingFormPercentMetric();
+            case USER_LOGIN_FORM:
+                metric = new UserLoginFormMetric();
+                break;
+            case USER_LOGIN_GOOGLE:
+                metric = new UserLoginGoogleMetric();
+                break;
+            case USER_LOGIN_TOTAL:
+                metric = new UserLoginTotalMetric();
+                break;
+            case USER_LOGIN_GITHUB_PERCENT:
+                metric = new UserLoginGithubPercentMetric();
+                break;
+            case USER_LOGIN_FORM_PERCENT:
+                metric = new UserLoginFormPercentMetric();
+                break;
+            case USER_LOGIN_GOOGLE_PERCENT:
+                metric = new UserLoginGooglePercentMetric();
                 break;
             case USER_CODE_REFACTOR:
                 metric = new UserCodeRefactorMetric();
@@ -380,9 +385,7 @@ public class MetricFactory {
         }
     }
 
-    /**
-     * Creates new metric or returns existed one.
-     */
+    /** Creates new metric or returns existed one. */
     public static Metric createMetric(String name) {
         MetricType metricType = MetricType.valueOf(name.toUpperCase());
         return createMetric(metricType);

@@ -20,13 +20,16 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
+import com.codenvy.analytics.scripts.EventType;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-import org.testng.annotations.BeforeTest;
+
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,61 +38,57 @@ import java.util.Map;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestDataProcessing {
 
-    @BeforeTest
-    public void setUp() throws Exception {
-        List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2010-10-03").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2010-10-03").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2010-10-03").build());
-        File log = LogGenerator.generateLog(events);
+    private final DateFormat df          = new SimpleDateFormat("yyyy-MM-dd");
+    private final String     currentDate = "2010-10-03";
+    private final String nextDate = "2010-10-04";
 
-        HashMap<String, String> context = new HashMap<>();
-        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101003");
-        Utils.putToDate(context, "20101003");
-        Utils.putEvent(context, "user-code-refactor");
+    @Test
+    public void testCheckFilesForNumberOfEvents() throws Exception {
+        MetricType metricType = MetricType.USER_CODE_REFACTOR;
 
-        DataProcessing.numberOfEventsByAll(MetricType.USER_CODE_REFACTOR, context);
-        DataProcessing.setOfActiveUsers(MetricType.ACTIVE_USERS_SET, context);
-        DataProcessing.setOfActiveWs(MetricType.ACTIVE_WS_SET, context);
+        Map<String, String> context = prepareContext(currentDate);
+        Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+        DataProcessing.numberOfEvents(metricType, context);
 
-        Map<String,String> clonedContext = Utils.clone(context);
-        Utils.putFromDate(clonedContext, "20101004");
-        Utils.putToDate(clonedContext, "20101004");
+        String baseDir = getBaseDir(metricType);
 
-        DataProcessing.numberOfEventsByAll(MetricType.USER_CODE_REFACTOR, clonedContext);
-        DataProcessing.setOfActiveUsers(MetricType.ACTIVE_USERS_SET, clonedContext);
-        DataProcessing.setOfActiveWs(MetricType.ACTIVE_WS_SET, clonedContext);
+        assertTrue(new File(baseDir).exists());
+        assertTrue(new File(baseDir + "value").exists());
+
+        assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
+        assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
+
+        assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
+        assertFalse(new File(getBaseDirNextDay(metricType)).exists());
     }
 
     @Test
-    public void testCheckFilesForNumberOfEvents() {
-        String baseDir = FSValueDataManager.RESULT_DIRECTORY + File.separator +
-                MetricType.USER_CODE_REFACTOR.name().toLowerCase() + File.separator +
-                "2010/10/03/20101003/";
+    public void testCheckFilesForSetOfUsers() throws Exception {
+        MetricType metricType = MetricType.ACTIVE_USERS_SET;
+
+        Map<String, String> context = prepareContext(currentDate);
+        DataProcessing.setOfActiveUsers(metricType, context);
+
+        String baseDir = getBaseDir(metricType);
 
         assertTrue(new File(baseDir + "value").exists());
-
         assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
         assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
-
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
-
-        assertFalse(new File(FSValueDataManager.RESULT_DIRECTORY + File.separator +
-                MetricType.USER_CODE_REFACTOR.name().toLowerCase() + File.separator +
-                "2010/10/04/20101004/").exists());
-   }
+        assertFalse(new File(getBaseDirNextDay(metricType)).exists());
+    }
 
     @Test
-    public void testCheckFilesForSetOfUsers() {
-        String baseDir = FSValueDataManager.RESULT_DIRECTORY + File.separator +
-                MetricType.ACTIVE_USERS_SET.name().toLowerCase() + File.separator +
-                "2010/10/03/20101003/";
+    public void testCheckFilesForSetOfWs() throws Exception {
+        MetricType metricType = MetricType.ACTIVE_WS_SET;
+
+        Map<String, String> context = prepareContext(currentDate);
+        DataProcessing.setOfActiveWs(metricType, context);
+
+        String baseDir = getBaseDir(metricType);
 
         assertTrue(new File(baseDir + "value").exists());
 
@@ -97,27 +96,82 @@ public class TestDataProcessing {
         assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
 
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
-
-        assertFalse(new File(FSValueDataManager.RESULT_DIRECTORY + File.separator +
-                MetricType.ACTIVE_USERS_SET.name().toLowerCase() + File.separator +
-                "2010/10/04/20101004/").exists());
-   }
+        assertFalse(new File(getBaseDirNextDay(metricType)).exists());
+    }
 
     @Test
-    public void testCheckFilesForSetOfWs() {
-        String baseDir = FSValueDataManager.RESULT_DIRECTORY + File.separator +
-                MetricType.ACTIVE_WS_SET.name().toLowerCase() + File.separator +
-                "2010/10/03/20101003/";
+    public void testCheckFilesForNumberOfEventsWithType() throws Exception {
+        MetricType metricType = MetricType.USER_SSO_LOGGED_IN;
 
-        assertTrue(new File(baseDir + "value").exists());
+        Map<String, String> context = prepareContextUserSSOLoggedInEvents(currentDate);
+        Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
+        Utils.putParam(context, "USING");
+        DataProcessing.numberOfEventsWithType(metricType, context);
 
-        assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
-        assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
+        String baseDir = getBaseDir(metricType);
 
-        assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
+        assertFalse(new File(baseDir + "value").exists());
 
-        assertFalse(new File(FSValueDataManager.RESULT_DIRECTORY + File.separator +
-                MetricType.ACTIVE_WS_SET.name().toLowerCase() + File.separator +
-                "2010/10/04/20101004/").exists());
-   }
+        assertTrue(new File(baseDir + "/google/value").exists());
+        assertTrue(new File(baseDir + "/github/value").exists());
+        assertTrue(new File(baseDir + "/jaas/value").exists());
+
+        assertTrue(new File(baseDir + "/google/users/u/s/e/r1@gmail.com/value").exists());
+        assertTrue(new File(baseDir + "/github/users/u/s/e/r1@gmail.com/value").exists());
+        assertTrue(new File(baseDir + "/google/users/u/s/e/r2@gmail.com/value").exists());
+        assertTrue(new File(baseDir + "/jaas/users/u/s/e/r3@gmail.com/value").exists());
+
+        assertTrue(new File(baseDir + "/google/domains/g/m/a/il.com/value").exists());
+        assertTrue(new File(baseDir + "/github/domains/g/m/a/il.com/value").exists());
+        assertTrue(new File(baseDir + "/jaas/domains/g/m/a/il.com/value").exists());
+        assertFalse(new File(getBaseDirNextDay(metricType)).exists());
+    }
+
+    private Map<String, String> prepareContext(String date) throws Exception {
+        List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate(date).build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate(date).build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate(date).build());
+        File log = LogGenerator.generateLog(events);
+
+        Map<String, String> context = new HashMap<>();
+        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        Utils.putFromDate(context, date.replace("-", ""));
+        Utils.putToDate(context, date.replace("-", ""));
+
+        return context;
+    }
+
+    private Map<String, String> prepareContextUserSSOLoggedInEvents(String date) throws Exception {
+        List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate(date).build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "github").withDate(date).build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google").withDate(date).build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user3@gmail.com", "jaas").withDate(date).build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate(date).build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("", "google").withDate(date).build());
+        File log = LogGenerator.generateLog(events);
+
+        Map<String, String> context = new HashMap<>();
+        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        Utils.putFromDate(context, date.replace("-", ""));
+        Utils.putToDate(context, date.replace("-", ""));
+
+        return context;
+    }
+
+    private String getBaseDir(MetricType metricType) {
+        return getBaseDir(metricType, currentDate);
+    }
+
+    private String getBaseDirNextDay(MetricType metricType) {
+        return getBaseDir(metricType, nextDate);
+    }
+
+    private String getBaseDir(MetricType metricType, String date) {
+        return FSValueDataManager.RESULT_DIRECTORY + File.separator +
+               metricType.name().toLowerCase() + File.separator +
+               date.replace("-", File.separator) + File.separator +
+               date.replace("-", "") + File.separator;
+    }
 }

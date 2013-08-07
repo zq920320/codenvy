@@ -69,7 +69,7 @@ DEFINE setByField(X, fieldName1, fieldName2) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE countAll(X) RETURNS Y {
 	x1 = GROUP $X ALL;
-	$Y = FOREACH x1 GENERATE COUNT($X.$1) AS countAll;
+	$Y = FOREACH x1 GENERATE COUNT($X.$0) AS countAll;
 };
 
 ---------------------------------------------------------------------------
@@ -78,7 +78,7 @@ DEFINE countAll(X) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE countByField(X, fieldNameParam) RETURNS Y {
 	x1 = GROUP $X BY $fieldNameParam;
-	$Y = FOREACH x1 GENERATE group AS $fieldNameParam, COUNT($X.$1) AS countAll;
+	$Y = FOREACH x1 GENERATE group AS $fieldNameParam, COUNT($X.$0) AS countAll;
 };
 
 ---------------------------------------------------------------------------

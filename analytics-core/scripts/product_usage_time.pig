@@ -16,7 +16,7 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
 %DEFAULT inactiveInterval '10';  -- in minutes
 
@@ -27,5 +27,6 @@ t1 = extractUser(fR);
 tR = extractWs(t1);
 
 r1 = productUsageTimeList(tR, '$inactiveInterval');
-result = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
+dump r1;
+--result = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
 

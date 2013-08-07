@@ -1,20 +1,20 @@
-    /*
- *
- * CODENVY CONFIDENTIAL
- * ________________
- *
- * [2012] - [2013] Codenvy, S.A.
- * All Rights Reserved.
- * NOTICE: All information contained herein is, and remains
- * the property of Codenvy S.A. and its suppliers,
- * if any. The intellectual and technical concepts contained
- * herein are proprietary to Codenvy S.A.
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Codenvy S.A..
- */
+/*
+*
+* CODENVY CONFIDENTIAL
+* ________________
+*
+* [2012] - [2013] Codenvy, S.A.
+* All Rights Reserved.
+* NOTICE: All information contained herein is, and remains
+* the property of Codenvy S.A. and its suppliers,
+* if any. The intellectual and technical concepts contained
+* herein are proprietary to Codenvy S.A.
+* and its suppliers and may be covered by U.S. and Foreign Patents,
+* patents in process, and are protected by trade secret or copyright law.
+* Dissemination of this information or reproduction of this material
+* is strictly forbidden unless prior written permission is obtained
+* from Codenvy S.A..
+*/
 
 package com.codenvy.analytics.scripts;
 
@@ -40,9 +40,23 @@ public enum ScriptType {
     PROJECTS_DEPLOYED_LOCAL,
     PROJECTS_DEPLOYED_PAAS,
     PROJECTS_BUILT,
-    USERS_SSO_LOGGED_IN,
-    PRODUCT_USAGE_TIME,
     USERS_UPDATE_PROFILE,
+
+    PRODUCT_USAGE_TIME,
+
+    PRODUCT_USAGE_TIME_BY_USERS {
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
+
+    PRODUCT_USAGE_TIME_BY_DOMAINS {
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
 
     SET_ACTIVE_USERS {
         @Override
@@ -56,6 +70,11 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
         }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
     },
 
     SET_ACTIVE_USERS_BY_USERS {
@@ -63,6 +82,12 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
         }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+
     },
 
     SET_ACTIVE_WS {
@@ -77,12 +102,22 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
         }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
     },
 
     SET_ACTIVE_WS_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
 
@@ -95,7 +130,30 @@ public enum ScriptType {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.EVENT}));
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
+        }
+    },
+
+    NUMBER_EVENTS_WITH_TYPE {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT,
+                                                        MetricParameter.PARAM}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM};
         }
     },
 
@@ -108,7 +166,56 @@ public enum ScriptType {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.EVENT}));
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
+
+    NUMBER_EVENTS_WITH_TYPE_BY_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapListLongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT,
+                                                        MetricParameter.PARAM}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        }
+    },
+
+    NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapListLongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT,
+                                                        MetricParameter.PARAM}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
         }
     },
 
@@ -121,7 +228,14 @@ public enum ScriptType {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.EVENT}));
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
 
@@ -264,9 +378,7 @@ public enum ScriptType {
     /** Returns the list of unique events that were generated. */
     CHECK_LOGS_2,
 
-    /**
-     * Script for testing purpose.
-     */
+    /** Script for testing purpose. */
     TEST_EXTRACT_USER {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -283,5 +395,11 @@ public enum ScriptType {
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+    }
+
+    /** @return  */
+    public MetricParameter[] getResultScheme() {
+        // TODO
+        return new MetricParameter[0];
     }
 }

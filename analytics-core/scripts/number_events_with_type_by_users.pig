@@ -16,16 +16,17 @@
  * from Codenvy S.A..
  */
 
+IMPORT 'macros.pig';
 
-package com.codenvy.analytics.metrics;
+a1 = loadResources('$log');
+a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
+a3 = filterByEvent(a2, '$EVENT');
+a4 = extractUser(a3);
+a5 = extractParam(a4, '$PARAM', 'param');
+a6 = FOREACH a5 GENERATE user, param;
+a = FILTER a6 BY user != 'default';
+
+b1 = GROUP a BY (param, user);
+result = FOREACH b1 GENERATE TOBAG(group.param, group.user), COUNT(a);
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class UsersSsoLoggedInUsingGooglePercentMetric extends ValueFromMapMetric {
-    UsersSsoLoggedInUsingGooglePercentMetric() {
-        super(MetricType.USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN_TYPES),
-              ValueType.PERCENT, "google", "signed");
-    }
-}

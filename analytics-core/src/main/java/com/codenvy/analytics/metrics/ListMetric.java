@@ -19,7 +19,6 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
@@ -28,25 +27,22 @@ import java.util.Map;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-abstract class PercentMetric extends AbstractMetric {
+abstract class ListMetric extends AbstractMetric {
 
-    private final Metric totalMetric;
-    private final Metric numberMetric;
+    private final Metric[] metrics;
 
-    PercentMetric(MetricType metricType, Metric totalMetric, Metric particalMetric) {
+    ListMetric(MetricType metricType, Metric[] metrics) {
         super(metricType);
-
-        this.totalMetric = totalMetric;
-        this.numberMetric = particalMetric;
+        this.metrics = metrics;
     }
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("unchecked")
     public Set<MetricParameter> getParams() {
-        Set<MetricParameter> params =
-                (Set<MetricParameter>)((HashSet<MetricParameter>)numberMetric.getParams()).clone();
-        params.addAll(totalMetric.getParams());
+        Set<MetricParameter> params = new HashSet<>();
+        for (Metric metric : metrics) {
+            params.addAll(metric.getParams());
+        }
 
         return params;
     }
@@ -54,17 +50,11 @@ abstract class PercentMetric extends AbstractMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        double total = totalMetric.getValue(context).getAsDouble();
-        double number = numberMetric.getValue(context).getAsDouble();
+        ValueData valueData = metrics[0].getValue(context);
+        for (int i = 1; i < metrics.length; i++) {
+            valueData = valueData.union(metrics[i].getValue(context));
+        }
 
-        double percent = 100D * number / total;
-
-        return new DoubleValueData(percent);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Class<? extends ValueData> getValueDataClass() {
-        return DoubleValueData.class;
+        return valueData;
     }
 }

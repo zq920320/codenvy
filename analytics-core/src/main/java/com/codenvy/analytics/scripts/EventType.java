@@ -34,7 +34,8 @@ public enum EventType {
     TENANT_DESTROYED,
     PROJECT_DESTROYED,
     USER_CREATED,
-    USER_REMOVED;
+    USER_REMOVED,
+    USER_SSO_LOGGED_IN;
 
     /** {@inheritDoc} */
     @Override

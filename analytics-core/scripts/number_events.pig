@@ -20,6 +20,7 @@ IMPORT 'macros.pig';
 
 a1 = loadResources('$log');
 a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
-a = filterByEvent(a2, '$EVENT');
+a3 = filterByEvent(a2, '$EVENT');
+a = FOREACH a3 GENERATE event;
 
 result = countAll(a);

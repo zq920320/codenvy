@@ -40,6 +40,20 @@ public enum MetricParameter {
         }
     },
 
+    PARAM {
+        @Override
+        public String getDefaultValue() {
+            return "";
+        }
+
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            if (value == null || value.isEmpty()) {
+                throw new IllegalArgumentException("PARAM parameter is null or empty");
+            }
+        }
+    },
+
     COMPANY_NAME {
         @Override
         public String getDefaultValue() {

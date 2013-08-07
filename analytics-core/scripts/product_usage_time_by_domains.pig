@@ -16,16 +16,16 @@
  * from Codenvy S.A..
  */
 
+IMPORT 'macros.pig';
 
-package com.codenvy.analytics.metrics;
+%DEFAULT inactiveInterval '10';  -- in minutes
 
+f1 = loadResources('$log');
+fR = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class UsersSsoLoggedInUsingFormPercentMetric extends ValueFromMapMetric {
-    UsersSsoLoggedInUsingFormPercentMetric() {
-        super(MetricType.USERS_SSO_LOGGED_IN_USING_FORM_PERCENT, MetricFactory.createMetric(MetricType.USERS_SSO_LOGGED_IN_TYPES), ValueType.PERCENT,
-              "jaas", "signed");
-    }
-}
+t1 = extractUser(fR);
+tR = extractWs(t1);
+
+r1 = productUsageTimeList(tR, '$inactiveInterval');
+result = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
+

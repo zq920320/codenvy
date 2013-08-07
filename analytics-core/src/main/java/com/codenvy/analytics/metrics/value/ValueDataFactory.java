@@ -70,6 +70,9 @@ public class ValueDataFactory {
 
         } else if (clazz == MapStringSetValueData.class) {
             return MapStringSetValueData.DEFAULT;
+
+        } else if (clazz == MapListLongValueData.class) {
+            return MapListLongValueData.DEFAULT;
         }
 
         throw new IOException("Unknown class " + clazz.getName());
@@ -102,6 +105,9 @@ public class ValueDataFactory {
 
         } else if (clazz == MapStringSetValueData.class) {
             return createMapStringSetValueData(iter);
+
+        } else if (clazz == MapListLongValueData.class) {
+            return createMapListLongValueData(iter);
         }
 
         throw new IOException("Unknown class " + clazz.getName());
@@ -123,6 +129,26 @@ public class ValueDataFactory {
         } else {
             throw new IllegalStateException("Unknown class" + value.getClass().getName());
         }
+    }
+
+    private static ValueData createMapListLongValueData(Iterator<Tuple> iter) throws IOException {
+        if (!iter.hasNext()) {
+            return new MapListLongValueData(Collections.<ListStringValueData, Long>emptyMap());
+        }
+
+        Map<ListStringValueData, Long> result = new HashMap<>();
+        while (iter.hasNext()) {
+            Tuple tuple = iter.next();
+
+            validateTupleSize(tuple, 2);
+
+            ListStringValueData key = createListStringValueData(((DataBag)tuple.get(0)).iterator());
+            Long value = (Long)tuple.get(1);
+
+            result.put(key, value);
+        }
+
+        return new MapListLongValueData(result);
     }
 
     private static ValueData createMapStringSetValueData(Iterator<Tuple> iter) throws IOException {
@@ -167,9 +193,7 @@ public class ValueDataFactory {
 
 
     private static ValueData createMapStringLongValueData(Iterator<Tuple> iter) throws IOException {
-        if (!iter.hasNext()) {
-            return new MapStringLongValueData(Collections.<String, Long>emptyMap());
-        }
+        if (!iter.hasNext()) return new MapStringLongValueData(Collections.<String, Long>emptyMap());
 
         Map<String, Long> result = new HashMap<String, Long>();
         while (iter.hasNext()) {
@@ -207,9 +231,7 @@ public class ValueDataFactory {
 
 
     private static ListStringValueData createListStringValueData(Iterator<Tuple> iter) throws IOException {
-        if (!iter.hasNext()) {
-            return new ListStringValueData(Collections.<String>emptyList());
-        }
+        if (!iter.hasNext()) return new ListStringValueData(Collections.<String>emptyList());
 
         List<String> result = new ArrayList<>();
         while (iter.hasNext()) {

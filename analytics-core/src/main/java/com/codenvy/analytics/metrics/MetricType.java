@@ -30,21 +30,21 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.FILE_MANIPULATION.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
+            DataProcessing.numberOfEvents(this, context);
         }
     },
     TENANT_CREATED {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.TENANT_CREATED.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
+            DataProcessing.numberOfEvents(this, context);
         }
     },
     TENANT_DESTROYED {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.TENANT_DESTROYED.toString());
-            DataProcessing.numberOfEvents(this, context);
+            DataProcessing.numberOfEventsSingleScript(this, context);
         }
     },
     ACTIVE_USERS_SET {
@@ -65,18 +65,76 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.USER_CREATED.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
+            DataProcessing.numberOfEvents(this, context);
         }
     },
     USER_REMOVED {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.USER_REMOVED.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
+            DataProcessing.numberOfEvents(this, context);
         }
     },
     TOTAL_USERS,
     TOTAL_WORKSPACES,
+    USER_SSO_LOGGED_IN {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
+            Utils.putParam(context, "USING"); // TODO 
+            DataProcessing.numberOfEventsWithType(this, context);
+        }
+    },
+    USER_LOGIN_GITHUB,
+    USER_LOGIN_GOOGLE,
+    USER_LOGIN_FORM,
+    USER_LOGIN_TOTAL,
+    USER_LOGIN_GITHUB_PERCENT,
+    USER_LOGIN_GOOGLE_PERCENT,
+    USER_LOGIN_FORM_PERCENT,
+
+    USER_CODE_REFACTOR {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+            DataProcessing.numberOfEvents(this, context);
+        }
+    },
+    USER_CODE_COMPLETE {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.USER_CODE_COMPLETE.toString());
+            DataProcessing.numberOfEvents(this, context);
+        }
+    },
+    BUILD_STARTED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.BUILD_STARTED.toString());
+            DataProcessing.numberOfEvents(this, context);
+        }
+    },
+    RUN_STARTED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.RUN_STARTED.toString());
+            DataProcessing.numberOfEvents(this, context);
+        }
+    },
+    DEBUG_STARTED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
+            DataProcessing.numberOfEvents(this, context);
+        }
+    },
+    PROJECT_DESTROYED {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
+            DataProcessing.numberOfEvents(this, context);
+        }
+    },
 
     USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
     USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
@@ -86,20 +144,6 @@ public enum MetricType {
     USERS_ADDED_TO_WORKSPACE_LIST,
     USERS_UPDATE_PROFILE_LIST,
     USERS_COMPLETED_PROFILE,
-    USER_CODE_REFACTOR {
-        @Override
-        public void process(Map<String, String> context) throws Exception {
-            Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
-        }
-    },
-    USER_CODE_COMPLETE {
-        @Override
-        public void process(Map<String, String> context) throws Exception {
-            Utils.putEvent(context, EventType.USER_CODE_COMPLETE.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
-        }
-    },
     USER_ACTIVITY,
     USER_SESSIONS,
     USER_PROFILE,
@@ -111,32 +155,6 @@ public enum MetricType {
     USERS_SEGMENT_ANALYSIS_CONDITION_1,
     USERS_SEGMENT_ANALYSIS_CONDITION_2,
     USERS_SEGMENT_ANALYSIS_CONDITION_3,
-    USERS_SSO_LOGGED_IN_TYPES,
-    USERS_SSO_LOGGED_IN_LIST,
-    USERS_SSO_LOGGED_IN_USING_GOOGLE_PERCENT,
-    USERS_SSO_LOGGED_IN_USING_GITHUB_PERCENT,
-    USERS_SSO_LOGGED_IN_USING_FORM_PERCENT,
-    BUILD_STARTED {
-        @Override
-        public void process(Map<String, String> context) throws Exception {
-            Utils.putEvent(context, EventType.BUILD_STARTED.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
-        }
-    },
-    RUN_STARTED {
-        @Override
-        public void process(Map<String, String> context) throws Exception {
-            Utils.putEvent(context, EventType.RUN_STARTED.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
-        }
-    },
-    DEBUG_STARTED {
-        @Override
-        public void process(Map<String, String> context) throws Exception {
-            Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
-        }
-    },
     PRODUCT_USAGE_TIME_TOTAL,
     PRODUCT_USAGE_TIME_0_10,
     PRODUCT_USAGE_TIME_10_60,
@@ -167,13 +185,6 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME,
-    PROJECT_DESTROYED {
-        @Override
-        public void process(Map<String, String> context) throws Exception {
-            Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
-            DataProcessing.numberOfEventsByAll(this, context);
-        }
-    },
     TOTAL_PROJECTS_NUMBER,
     PROJECTS_CREATED_NUMBER,
     PROJECTS_CREATED_LIST,

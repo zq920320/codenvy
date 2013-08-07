@@ -1,0 +1,10 @@
+IMPORT 'macros.pig';
+
+a1 = loadResources('$log');
+a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
+a3 = filterByEvent(a2, 'user-sso-logged-in');
+a4 = extractParam(a3, '$PARAM', param);
+a = FOREACH a4 GENERATE param, event;
+
+b1 = GROUP a BY param;
+result = FOREACH b1 GENERATE group, COUNT(a);

@@ -22,6 +22,7 @@ a1 = loadResources('$log');
 a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
 a3 = filterByEvent(a2, '$EVENT');
 a4 = extractUser(a3);
-a = FILTER a4 BY user != 'default';
+a5 = FOREACH a4 GENERATE user;
+a = FILTER a5 BY user != 'default';
 
 result = countByField(a, 'user');

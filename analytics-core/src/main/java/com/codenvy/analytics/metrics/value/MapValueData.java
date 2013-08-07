@@ -160,7 +160,7 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
 
     protected abstract void writeValue(ObjectOutput out, V value) throws IOException;
 
-    protected abstract K readKey(ObjectInput in) throws IOException;
+    protected abstract K readKey(ObjectInput in) throws IOException, ClassNotFoundException;
 
     protected abstract V readValue(ObjectInput in) throws IOException, ClassNotFoundException;
 }
