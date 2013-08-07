@@ -26,9 +26,9 @@
     </table>
     <table length="20">
         <date section="Authentication Type" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <metric type="users_sso_logged_in_using_google_percent" format="%.0f%%" title="Google Auth"/>
-        <metric type="users_sso_logged_in_using_github_percent" format="%.0f%%" title="Github Auth"/>
-        <metric type="users_sso_logged_in_using_form_percent" format="%.0f%%" title="Form Auth"/>
+        <metric type="user_login_google_percent" format="%.0f%%" title="Google Auth"/>
+        <metric type="user_login_github_percent" format="%.0f%%" title="Github Auth"/>
+        <metric type="user_login_form_percent" format="%.0f%%" title="Form Auth"/>
         <empty />
     </table>
     <table length="20">
