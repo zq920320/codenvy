@@ -121,6 +121,15 @@ module.exports = function( grunt ) {
 
                 {expand: true, cwd: '../app/scripts/', src: ['**'], dest: '../target/dist/stage/scripts/'},
 
+                // factory scripts
+
+                {expand: true, cwd: '../app/factory/', src: ['**'], dest: '../target/dist/stage/factory/'},
+
+
+                // factory styles
+
+                {expand: true, cwd: '../app/factory/', src : '*.css', dest: '../target/dist/stage/factory/'},
+
                 // styles
 
                 {expand: true, cwd: '../app/styles/', src : '*.css', dest: '../target/dist/stage/styles/'},
@@ -157,6 +166,24 @@ module.exports = function( grunt ) {
                     cwd: '../dist/scripts/',
                     src: ['vendor/modernizr*.js','*.amd-app.js'],
                     dest: '../target/dist/prod/scripts/'
+                },
+
+                // factory scripts
+
+                {
+                    expand: true,
+                    cwd: '../dist/factory/',
+                    src: '*.js',
+                    dest: '../target/dist/prod/factory/'
+                },
+
+                // factory styles
+
+                {
+                    expand: true,
+                    cwd: '../dist/factory/',
+                    src : '*.css',
+                    dest: '../target/dist/prod/factory/'
                 },
 
                 // styles
