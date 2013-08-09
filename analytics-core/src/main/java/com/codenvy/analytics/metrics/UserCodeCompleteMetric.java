@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UserCodeCompleteMetric extends ReadBasedMetric {
+public class UserCodeCompleteMetric extends ValueReadBasedMetric {
 
     UserCodeCompleteMetric() {
         super(MetricType.USER_CODE_COMPLETE);

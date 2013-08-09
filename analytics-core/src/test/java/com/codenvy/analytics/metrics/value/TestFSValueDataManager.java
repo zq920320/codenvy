@@ -36,23 +36,23 @@ public class TestFSValueDataManager extends BaseTest {
 
     @Test(expectedExceptions = FileNotFoundException.class)
     public void shouldThrowExceptionIfFileNotExist() throws Exception {
-        FSValueDataManager.store(new LongValueData(2), MetricType.ACTIVE_USERS, uuid);
+        FSValueDataManager.storeValue(new LongValueData(2), MetricType.ACTIVE_USERS, uuid);
 
-        File file = FSValueDataManager.getFile(MetricType.ACTIVE_USERS, uuid);
+        File file = FSValueDataManager.getValueFile(MetricType.ACTIVE_USERS, uuid);
         file.delete();
 
         assertFalse(file.exists());
 
-        FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid);
+        FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid);
     }
 
     @Test
     public void shouldStoreValueIfFileExist() throws Exception {
-        File file = FSValueDataManager.getFile(MetricType.ACTIVE_USERS, uuid);
+        File file = FSValueDataManager.getValueFile(MetricType.ACTIVE_USERS, uuid);
         file.createNewFile();
 
         assertTrue(file.exists());
 
-        FSValueDataManager.store(new LongValueData(2), MetricType.ACTIVE_USERS, uuid);
+        FSValueDataManager.storeValue(new LongValueData(2), MetricType.ACTIVE_USERS, uuid);
     }
 }

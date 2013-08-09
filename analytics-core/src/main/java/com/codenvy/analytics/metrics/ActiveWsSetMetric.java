@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActiveWsSetMetric extends ReadBasedMetric {
+public class ActiveWsSetMetric extends ValueReadBasedMetric {
 
     public ActiveWsSetMetric() {
         super(MetricType.ACTIVE_WS_SET);

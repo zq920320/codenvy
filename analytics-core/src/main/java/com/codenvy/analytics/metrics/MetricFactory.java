@@ -126,9 +126,6 @@ public class MetricFactory {
             case USER_ACTIVITY:
                 metric = new UsersActivityMetric();
                 break;
-            case USER_SESSIONS:
-                metric = new UsersSessionsMetric();
-                break;
             case USER_PROFILE_FIRSTNAME:
                 metric = new UsersProfileFirstNameMetric();
                 break;
@@ -159,20 +156,20 @@ public class MetricFactory {
             case USERS_COMPLETED_PROFILE:
                 metric = new UsersCompletedProfile();
                 break;
+            case PRODUCT_USAGE_TIME_0_10:
+                metric = new ProductUsageTime010Metric();
+                break;
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();
                 break;
-            case PRODUCT_USAGE_TIME_0_10:
-                metric = new ProductUsageTime0_10Metric();
-                break;
             case PRODUCT_USAGE_TIME_10_60:
-                metric = new ProductUsageTime10_60Metric();
+                metric = new ProductUsageTime1060Metric();
                 break;
             case PRODUCT_USAGE_TIME_60_MORE:
-                metric = new ProductUsageTime60_MoreMetric();
+                metric = new ProductUsageTime60MoreMetric();
                 break;
-            case PRODUCT_USAGE_TIME_LIST:
-                metric = new ProductUsageTimeListlMetric();
+            case PRODUCT_USAGE_TIME:
+                metric = new ProductUsageTimeMetric();
                 break;
             case PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY:
                 metric = new ProductUsageTimeTopUsersBy1DayMetric();
@@ -237,17 +234,17 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME:
                 metric = new ProductUsageTimeTopDomainsByLifeTimeMetric();
                 break;
-            case PRODUCT_USAGE_USER_SESSIONS_NUMBER:
-                metric = new ProductUsageUserSessionsNumberMetric();
+            case PRODUCT_USAGE_SESSIONS_0_10:
+                metric = new ProductUsageSessions010Metric();
                 break;
-            case PRODUCT_USAGE_USER_SESSIONS_NUMBER_0_10:
-                metric = new ProductUsageUserSessionsNumber0_10Metric();
+            case PRODUCT_USAGE_SESSIONS_10_60:
+                metric = new ProductUsageSessions1060Metric();
                 break;
-            case PRODUCT_USAGE_USER_SESSIONS_NUMBER_10_60:
-                metric = new ProductUsageUserSessionsNumber10_60Metric();
+            case PRODUCT_USAGE_SESSIONS_60_MORE:
+                metric = new ProductUsageSessions60MoreMetric();
                 break;
-            case PRODUCT_USAGE_USER_SESSIONS_NUMBER_60_MORE:
-                metric = new ProductUsageUserSessionsNumber60_MoreMetric();
+            case PRODUCT_USAGE_SESSIONS_TOTAL:
+                metric = new ProductUsageSessionsTotalMetric();
                 break;
             case PROJECTS_CREATED_NUMBER:
                 metric = new ProjectsCreatedNumberMetric();

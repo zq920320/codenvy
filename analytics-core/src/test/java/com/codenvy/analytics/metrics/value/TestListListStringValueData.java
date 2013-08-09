@@ -70,16 +70,16 @@ public class TestListListStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
         ValueData expectedValueData = new ListListStringValueData(Collections.<ListStringValueData> emptyList());
 
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test
@@ -88,8 +88,8 @@ public class TestListListStringValueData extends BaseTest {
                                       new ListListStringValueData(
                                                                   Arrays.asList(new ListStringValueData[]{}));
 
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test
@@ -99,8 +99,8 @@ public class TestListListStringValueData extends BaseTest {
                                                                   Arrays.asList(new ListStringValueData[]{new ListStringValueData(
                                                                                                                                   Arrays.asList(new String[]{""})),}));
 
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test

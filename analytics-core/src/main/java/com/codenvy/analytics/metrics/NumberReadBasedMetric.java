@@ -19,45 +19,44 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ProductUsageTimeFilter;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
+ * It is supposed to read precalculated {@link com.codenvy.analytics.metrics.value.ValueData} from storage.
+ *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProductUsageUserSessionsNumber0_10Metric extends CalculateBasedMetric {
+public abstract class NumberReadBasedMetric extends ReadBasedMetric {
 
-    private final Metric basedMetric;
+    private final MetricType basedMetric;
 
-    public ProductUsageUserSessionsNumber0_10Metric() {
-        super(MetricType.PRODUCT_USAGE_USER_SESSIONS_NUMBER_0_10);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_LIST);
+    NumberReadBasedMetric(MetricType metricType, MetricType basedMetric) {
+        super(metricType);
+        this.basedMetric = basedMetric;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
+    protected ValueData read(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
+        return FSValueDataManager.loadNumber(basedMetric, uuid);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
+    protected Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
-
-        ProductUsageTimeFilter filter = new ProductUsageTimeFilter(value);
-        return new LongValueData(filter.getNumberOfSessions(0, true, 10 * 60, false));
+    public Set<MetricParameter> getParams() {
+        return MetricFactory.createMetric(basedMetric).getParams();
     }
 }
+

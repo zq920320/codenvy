@@ -58,7 +58,6 @@ DEFINE setByField(X, fieldName1, fieldName2) RETURNS Y {
 	$Y = FOREACH x1 {
 		t1 = FOREACH $X GENERATE $fieldName2;
 		t = DISTINCT t1;
-
 		GENERATE group, t;
 	}
 };
@@ -223,7 +222,7 @@ DEFINE groupEvents(X) RETURNS Y {
   ---------------------------------------------------------------------------------------------
   -- Calculates the seconds beetwen every events (delta: long)
   ---------------------------------------------------------------------------------------------
-  x4 = FOREACH x3 GENERATE x1::ws AS ws, x1::user AS user, x1::dt AS dt, SecondsBetween(x2::dt, x1::dt) AS delta;
+  x4 = FOREACH x3 GENERATE x1::ws AS ws, x1::user AS user, x1::dt AS dt, MilliSecondsBetween(x2::dt, x1::dt) AS delta;
 
   ---------------------------------------------------------------------------------------------
   -- For every event forms the list of its 'delta'
@@ -251,15 +250,15 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
   ---------------------------------------------------------------------------------------------
   -- Marks the start and the end of every session
   ---------------------------------------------------------------------------------------------
-  k2 = FOREACH k1 GENERATE ws, user, dt, (before IS NULL ? -999999 : before) AS before, (after IS NULL ? 999999 : after) AS after;
-  k3 = FOREACH k2 GENERATE ws, user, dt, (before < -(long)$inactiveInterval*60 ? (after <= (long)$inactiveInterval*60 ? 'start'
+  k2 = FOREACH k1 GENERATE ws, user, dt, (before IS NULL ? -999999999 : before) AS before, (after IS NULL ? 999999999 : after) AS after;
+  k3 = FOREACH k2 GENERATE ws, user, dt, (before < -(long)$inactiveInterval*60*1000 ? (after <= (long)$inactiveInterval*60*1000 ? 'start'
 										          			    : 'single')
-									     : (after <= (long)$inactiveInterval*60 ? 'none'
+									     : (after <= (long)$inactiveInterval*60*1000 ? 'none'
 														    : 'end')) AS flag;
   kR = FILTER k3 BY flag == 'start' OR flag == 'end';
 
   k4 = FILTER k3 BY flag == 'single';
-  kS = FOREACH k4 GENERATE ws, user, dt, 0 AS delta;
+  kS = FOREACH k4 GENERATE ws, user, dt, ((long) $inactiveInterval*60) AS delta;
 
   ---------------------------------------------------------------------------------------------
   -- For every the start session event finds the corresponding the end session event
@@ -276,10 +275,10 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
   ---------------------------------------------------------------------------------------------
   -- The correc pair is with minimum positive time interval between them
   ---------------------------------------------------------------------------------------------
-  l5 = FOREACH l4 GENERATE l1::ws AS ws, l1::user AS user, l1::dt AS dt, SecondsBetween(l2::dt, l1::dt) AS delta;
+  l5 = FOREACH l4 GENERATE l1::ws AS ws, l1::user AS user, l1::dt AS dt, MilliSecondsBetween(l2::dt, l1::dt) AS delta;
   l6 = FILTER l5 BY delta > 0;
   l7 = GROUP l6 BY (ws, user, dt);
-  l = FOREACH l7 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MIN(l6.delta) AS delta;
+  l = FOREACH l7 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MIN(l6.delta)/1000 AS delta;
 
   $Y = UNION kS, l;
 };

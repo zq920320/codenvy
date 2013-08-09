@@ -56,4 +56,11 @@ class TitleRow extends AbstractRow {
         String names = element.getAttribute(ATTRIBUTE_NAME);
         return new TitleRow(names.split(","));
     }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Map<String, String> prevDateInterval(Map<String, String> context,
+                                                   Table.TimeIntervalRule overrideContextRule) throws IOException {
+        return context;
+    }
 }

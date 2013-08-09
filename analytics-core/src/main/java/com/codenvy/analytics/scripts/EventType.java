@@ -35,7 +35,11 @@ public enum EventType {
     PROJECT_DESTROYED,
     USER_CREATED,
     USER_REMOVED,
-    USER_SSO_LOGGED_IN;
+    USER_SSO_LOGGED_IN,
+    SESSION_STARTED,
+    SESSION_FINISHED,
+    SESSION_FACTORY_STARTED,
+    SESSION_FACTORY_FINISHED;
 
     /** {@inheritDoc} */
     @Override

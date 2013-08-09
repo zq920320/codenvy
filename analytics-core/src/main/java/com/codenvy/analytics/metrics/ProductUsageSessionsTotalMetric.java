@@ -20,33 +20,18 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class UsersSessionsMetric extends ReadBasedMetric {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class ProductUsageSessionsTotalMetric extends NumberReadBasedMetric {
 
-    UsersSessionsMetric() {
-        super(MetricType.USER_SESSIONS);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                MetricParameter.FROM_DATE,
-                MetricParameter.TO_DATE,
-                MetricParameter.ALIAS}));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
-        return ListListStringValueData.class;
+    public ProductUsageSessionsTotalMetric() {
+        super(MetricType.PRODUCT_USAGE_SESSIONS_TOTAL, MetricType.PRODUCT_USAGE_TIME);
     }
 }

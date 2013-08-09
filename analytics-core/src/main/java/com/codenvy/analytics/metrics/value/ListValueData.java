@@ -29,7 +29,7 @@ import java.util.List;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class ListValueData<T> extends AbstractValueData {
+public abstract class ListValueData<T> extends AbstractValueData implements CollectionableValueData {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,6 +47,8 @@ public abstract class ListValueData<T> extends AbstractValueData {
         return Collections.unmodifiableList(value);
     }
 
+    /** {@inheritDoc} */
+    @Override
     public int size() {
         return value.size();
     }

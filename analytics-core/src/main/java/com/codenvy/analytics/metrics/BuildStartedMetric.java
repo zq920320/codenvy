@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class BuildStartedMetric extends ReadBasedMetric {
+public class BuildStartedMetric extends ValueReadBasedMetric {
 
     BuildStartedMetric() {
         super(MetricType.BUILD_STARTED);

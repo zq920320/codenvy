@@ -69,6 +69,6 @@ public class TestActon extends BaseTest {
         assertEquals(all.size(), 3);
         assertTrue(all.contains(new ListStringValueData(Arrays.asList("user1", "1", "2", "1", "10"))));
         assertTrue(all.contains(new ListStringValueData(Arrays.asList("user2", "0", "0", "0", "5"))));
-        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user3", "0", "1", "1", "0"))));
+        assertTrue(all.contains(new ListStringValueData(Arrays.asList("user3", "0", "1", "1", "10"))));
     }
 }

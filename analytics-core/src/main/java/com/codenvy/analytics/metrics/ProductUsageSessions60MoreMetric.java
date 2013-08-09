@@ -20,30 +20,20 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ProductUsageTimeFilter;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProductUsageUserSessionsNumber60_MoreMetric extends CalculateBasedMetric {
+public class ProductUsageSessions60MoreMetric extends CalculatedMetric {
 
-    private final Metric basedMetric;
-
-    public ProductUsageUserSessionsNumber60_MoreMetric() {
-        super(MetricType.PRODUCT_USAGE_USER_SESSIONS_NUMBER_60_MORE);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_LIST);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
+    public ProductUsageSessions60MoreMetric() {
+        super(MetricType.PRODUCT_USAGE_SESSIONS_60_MORE, MetricType.PRODUCT_USAGE_TIME);
     }
 
     /** {@inheritDoc} */
@@ -53,11 +43,19 @@ public class ProductUsageUserSessionsNumber60_MoreMetric extends CalculateBasedM
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        ListListStringValueData value = (ListListStringValueData)super.getValue(context);
 
-        ProductUsageTimeFilter filter = new ProductUsageTimeFilter(value);
-        return new LongValueData(filter.getNumberOfSessions(60 * 60, false, Integer.MAX_VALUE, false));
+        long count = 0;
+
+        ProductUsageTimeMetric usageTimeMetric = (ProductUsageTimeMetric)basedMetric;
+        for (ListStringValueData item : value.getAll()) {
+            long itemTime = usageTimeMetric.getTime(item);
+            if (60 * 60 < itemTime) {
+                count++;
+            }
+        }
+
+        return new LongValueData(count);
     }
 }

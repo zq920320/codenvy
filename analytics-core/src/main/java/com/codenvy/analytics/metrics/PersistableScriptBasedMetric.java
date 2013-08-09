@@ -129,12 +129,12 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
 
     /** Stores value into the file. */
     protected void store(ValueData value, LinkedHashMap<String, String> uuid) throws IOException {
-        FSValueDataManager.store(value, metricType, uuid);
+        FSValueDataManager.storeValue(value, metricType, uuid);
     }
 
     /** Loads value from the file. */
     protected ValueData load(LinkedHashMap<String, String> uuid) throws IOException {
-        return FSValueDataManager.load(metricType, uuid);
+        return FSValueDataManager.loadValue(metricType, uuid);
     }
 
     /** @return if it is allowed to preserve calculated data. */

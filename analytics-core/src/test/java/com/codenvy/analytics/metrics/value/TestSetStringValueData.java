@@ -60,24 +60,24 @@ public class TestSetStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
         ValueData expectedValueData = new SetStringValueData(Collections.<String> emptyList());
 
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyString() throws Exception {
         ValueData expectedValueData = new SetStringValueData(Arrays.asList(new String[]{""}));
 
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test

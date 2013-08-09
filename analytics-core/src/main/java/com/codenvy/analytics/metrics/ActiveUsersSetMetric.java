@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActiveUsersSetMetric extends ReadBasedMetric {
+public class ActiveUsersSetMetric extends ValueReadBasedMetric {
 
     public ActiveUsersSetMetric() {
         super(MetricType.ACTIVE_USERS_SET);

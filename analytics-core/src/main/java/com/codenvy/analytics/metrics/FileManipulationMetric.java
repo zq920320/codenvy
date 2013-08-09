@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class FileManipulationMetric extends ReadBasedMetric {
+public class FileManipulationMetric extends ValueReadBasedMetric {
 
     FileManipulationMetric() {
         super(MetricType.FILE_MANIPULATION);

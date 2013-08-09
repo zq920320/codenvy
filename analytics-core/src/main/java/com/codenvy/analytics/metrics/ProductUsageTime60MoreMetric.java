@@ -20,30 +20,20 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.ProductUsageTimeFilter;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProductUsageUserSessionsNumber10_60Metric extends CalculateBasedMetric {
+public class ProductUsageTime60MoreMetric extends CalculatedMetric {
 
-    private final Metric basedMetric;
-
-    public ProductUsageUserSessionsNumber10_60Metric() {
-        super(MetricType.PRODUCT_USAGE_USER_SESSIONS_NUMBER_10_60);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_LIST);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
+    public ProductUsageTime60MoreMetric() {
+        super(MetricType.PRODUCT_USAGE_TIME_60_MORE, MetricType.PRODUCT_USAGE_TIME);
     }
 
     /** {@inheritDoc} */
@@ -53,11 +43,19 @@ public class ProductUsageUserSessionsNumber10_60Metric extends CalculateBasedMet
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        ListListStringValueData value = (ListListStringValueData)super.getValue(context);
 
-        ProductUsageTimeFilter filter = new ProductUsageTimeFilter(value);
-        return new LongValueData(filter.getNumberOfSessions(10 * 60, true, 60 * 60, true));
+        long time = 0;
+
+        ProductUsageTimeMetric usageTimeMetric = (ProductUsageTimeMetric)basedMetric;
+        for (ListStringValueData item : value.getAll()) {
+            long itemTime =  usageTimeMetric.getTime(item);
+            if (60 * 60 <= itemTime) {
+                time += itemTime;
+            }
+        }
+
+        return new LongValueData(time / 60);
     }
 }

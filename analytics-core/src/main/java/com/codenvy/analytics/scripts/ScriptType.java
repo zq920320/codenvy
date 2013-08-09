@@ -49,12 +49,22 @@ public enum ScriptType {
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringListListStringValueData.class;
+        }
     },
 
     PRODUCT_USAGE_TIME_BY_DOMAINS {
         @Override
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringListListStringValueData.class;
         }
     },
 
@@ -276,13 +286,6 @@ public enum ScriptType {
     },
 
     USERS_PROFILE_PREPARATION {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringListListStringValueData.class;
-        }
-    },
-
-    USERS_SESSIONS_PREPARATION {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringListListStringValueData.class;

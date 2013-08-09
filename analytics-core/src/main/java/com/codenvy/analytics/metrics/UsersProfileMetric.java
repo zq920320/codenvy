@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersProfileMetric extends ReadBasedMetric {
+public class UsersProfileMetric extends ValueReadBasedMetric {
 
     UsersProfileMetric() {
         super(MetricType.USER_PROFILE);

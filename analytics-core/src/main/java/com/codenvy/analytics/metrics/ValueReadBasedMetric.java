@@ -19,38 +19,31 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.ProductUsageTimeFilter;
-import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.metrics.value.ValueDataFactory;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
 
 /**
+ * It is supposed to read precalculated {@link ValueData} from storage.
+ *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProductUsageTimeListlMetric extends PersistableScriptBasedMetric {
+public abstract class ValueReadBasedMetric extends ReadBasedMetric {
 
-    ProductUsageTimeListlMetric() {
-        super(MetricType.PRODUCT_USAGE_TIME_LIST);
+    ValueReadBasedMetric(MetricType metricType) {
+        super(metricType);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.PRODUCT_USAGE_TIME;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean isFilterSupported() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Filter createFilter(ValueData valueData) {
-        return new ProductUsageTimeFilter((ListListStringValueData)valueData);
+    protected ValueData read(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
+        return FSValueDataManager.loadValue(metricType, uuid);
     }
 }
+

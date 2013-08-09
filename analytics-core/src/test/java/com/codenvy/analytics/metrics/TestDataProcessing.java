@@ -43,7 +43,7 @@ public class TestDataProcessing {
 
     private final DateFormat df          = new SimpleDateFormat("yyyy-MM-dd");
     private final String     currentDate = "2010-10-03";
-    private final String nextDate = "2010-10-04";
+    private final String     nextDate    = "2010-10-04";
 
     @Test
     public void testCheckFilesForNumberOfEvents() throws Exception {
@@ -75,9 +75,12 @@ public class TestDataProcessing {
         String baseDir = getBaseDir(metricType);
 
         assertTrue(new File(baseDir + "value").exists());
+        assertTrue(new File(baseDir + "number").exists());
         assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
+        assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/number").exists());
         assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
+        assertTrue(new File(baseDir + "domains/g/m/a/il.com/number").exists());
         assertFalse(new File(getBaseDirNextDay(metricType)).exists());
     }
 
@@ -93,9 +96,11 @@ public class TestDataProcessing {
         assertTrue(new File(baseDir + "value").exists());
 
         assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
+        assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/number").exists());
         assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
 
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
+        assertTrue(new File(baseDir + "domains/g/m/a/il.com/number").exists());
         assertFalse(new File(getBaseDirNextDay(metricType)).exists());
     }
 
@@ -127,11 +132,32 @@ public class TestDataProcessing {
         assertFalse(new File(getBaseDirNextDay(metricType)).exists());
     }
 
+    @Test
+    public void testProductUsageTime() throws Exception {
+        MetricType metricType = MetricType.PRODUCT_USAGE_TIME;
+
+        Map<String, String> context = prepareContextProductUsateTimeEvents(currentDate);
+        DataProcessing.productUsageTime(metricType, context);
+
+        String baseDir = getBaseDir(metricType);
+
+        assertTrue(new File(baseDir + "value").exists());
+        assertTrue(new File(baseDir + "number").exists());
+        assertTrue(new File(baseDir + "/users/u/s/e/r1@gmail.com/value").exists());
+        assertTrue(new File(baseDir + "/users/u/s/e/r1@gmail.com/number").exists());
+        assertTrue(new File(baseDir + "/domains/g/m/a/il.com/value").exists());
+        assertTrue(new File(baseDir + "/domains/g/m/a/il.com/number").exists());
+        assertFalse(new File(getBaseDirNextDay(metricType)).exists());
+    }
+
     private Map<String, String> prepareContext(String date) throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate(date).build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate(date).build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate(date).build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature")
+                        .withDate(date).build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature")
+                        .withDate(date).build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate(date)
+                        .build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
@@ -150,6 +176,23 @@ public class TestDataProcessing {
         events.add(Event.Builder.createUserSSOLoggedInEvent("user3@gmail.com", "jaas").withDate(date).build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate(date).build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("", "google").withDate(date).build());
+        File log = LogGenerator.generateLog(events);
+
+        Map<String, String> context = new HashMap<>();
+        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        Utils.putFromDate(context, date.replace("-", ""));
+        Utils.putToDate(context, date.replace("-", ""));
+
+        return context;
+    }
+
+    private Map<String, String> prepareContextProductUsateTimeEvents(String date) throws Exception {
+        List<Event> events = new ArrayList<>();
+        // session started and session finished [5m]
+        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate(date)
+                        .withTime("20:00:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate(date)
+                        .withTime("20:05:00").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();

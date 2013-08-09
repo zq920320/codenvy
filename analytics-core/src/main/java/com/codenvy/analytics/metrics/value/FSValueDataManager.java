@@ -25,40 +25,39 @@ import com.codenvy.analytics.metrics.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class FSValueDataManager {
 
     /** Logger. */
-    private static final Logger LOGGER                              = LoggerFactory.getLogger(FSValueDataManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FSValueDataManager.class);
 
     /** Runtime parameter name. Contains the directory where values are stored. */
     private static final String ANALYTICS_RESULT_DIRECTORY_PROPERTY = "analytics.result.directory";
 
     /** The value of {@value #ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
-    public static final String  RESULT_DIRECTORY                    = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
+    public static final String RESULT_DIRECTORY = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
 
     /** The file name where value is stored. */
-    private static final String FILE_NAME                           = "value";
+    private static final String FILE_NAME_VALUE = "value";
 
-    /**
-     * {@inheritDoc}
-     */
-    public static ValueData load(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
-        File file = getFile(metricType, uuid);
+    /** The file name where value is stored. */
+    private static final String FILE_NAME_NUMBER = "number";
+
+    /** {@inheritDoc} */
+    public static ValueData loadValue(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
+        File file = getValueFile(metricType, uuid);
+        validateExistance(file);
+
+        return doLoad(file);
+    }
+
+    /** {@inheritDoc} */
+    public static ValueData loadNumber(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
+        File file = getNumberFile(metricType, uuid);
         validateExistance(file);
 
         return doLoad(file);
@@ -76,11 +75,23 @@ public class FSValueDataManager {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public static void store(ValueData value, MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
-        File file = getFile(metricType, uuid);
+    /** {@inheritDoc} */
+    public static void storeValue(ValueData value, MetricType metricType, LinkedHashMap<String, String> uuid)
+            throws IOException {
+        File file = getValueFile(metricType, uuid);
+        ensureDestination(file);
+
+        doStore(value, file);
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("File " + file.getPath() + " is created");
+        }
+    }
+
+    /** {@inheritDoc} */
+    public static void storeNumber(ValueData value, MetricType metricType, LinkedHashMap<String, String> uuid)
+            throws IOException {
+        File file = getNumberFile(metricType, uuid);
         ensureDestination(file);
 
         doStore(value, file);
@@ -100,10 +111,18 @@ public class FSValueDataManager {
         }
     }
 
-    /**
-     * Returns the file to store in or load value from.
-     */
-    protected static File getFile(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
+    /** Returns the file to store in or load value from. */
+    protected static File getValueFile(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
+        return getFile(metricType, FILE_NAME_VALUE, uuid);
+    }
+
+    /** Returns the file to store in or load value from. */
+    protected static File getNumberFile(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
+        return getFile(metricType, FILE_NAME_NUMBER, uuid);
+    }
+
+    /** Returns the file to store in or load value from. */
+    protected static File getFile(MetricType metricType, String fileName, LinkedHashMap<String, String> uuid) throws IOException {
         File dir = new File(RESULT_DIRECTORY);
 
         StringBuilder builder = new StringBuilder();
@@ -127,7 +146,7 @@ public class FSValueDataManager {
             builder.append(File.separatorChar);
         }
 
-        builder.append(FILE_NAME);
+        builder.append(fileName);
         return new File(dir, builder.toString());
     }
 
@@ -153,7 +172,10 @@ public class FSValueDataManager {
         return builder.toString();
     }
 
-    /** Translate date from format yyyyMMdd into format like yyyy/MM/dd and {@link File#separatorChar} is used as delimiter. */
+    /**
+     * Translate date from format yyyyMMdd into format like yyyy/MM/dd and {@link File#separatorChar} is used as
+     * delimiter.
+     */
     private static String translateDateToRelativePath(String date) {
         StringBuilder builder = new StringBuilder();
 
@@ -168,9 +190,7 @@ public class FSValueDataManager {
         return builder.toString();
     }
 
-    /**
-     * Creates all needed sub tree and removes target file if exists.
-     */
+    /** Creates all needed sub tree and removes target file if exists. */
     private static void ensureDestination(File file) throws IOException {
         File dir = file.getParentFile();
         if (!dir.exists()) {
@@ -186,9 +206,7 @@ public class FSValueDataManager {
         }
     }
 
-    /**
-     * Checks if file exists and throws an exception otherwise.
-     */
+    /** Checks if file exists and throws an exception otherwise. */
     private static void validateExistance(File file) throws FileNotFoundException {
         if (!file.exists()) {
             throw new FileNotFoundException("File does not exist " + file.getAbsolutePath());

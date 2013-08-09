@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class DebugStarted extends ReadBasedMetric {
+public class DebugStarted extends ValueReadBasedMetric {
 
     DebugStarted() {
         super(MetricType.DEBUG_STARTED);

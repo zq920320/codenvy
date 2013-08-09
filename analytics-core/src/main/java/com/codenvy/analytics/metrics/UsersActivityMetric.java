@@ -22,7 +22,6 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersActivityMetric extends ReadBasedMetric {
+public class UsersActivityMetric extends ValueReadBasedMetric {
 
     UsersActivityMetric() {
         super(MetricType.USER_ACTIVITY);

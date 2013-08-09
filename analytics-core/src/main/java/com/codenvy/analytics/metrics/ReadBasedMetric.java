@@ -19,7 +19,6 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
@@ -28,7 +27,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * It is supposed to read precalculated {@link ValueData} from storage.
+ * It is supposed to read precalculated {@link com.codenvy.analytics.metrics.value.ValueData} from storage.
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
@@ -64,7 +63,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /**
-     * @return {@link ValueData}
+     * @return {@link com.codenvy.analytics.metrics.value.ValueData}
      */
     protected ValueData evaluate(Map<String, String> dayContext) throws IOException {
         return getFilteredValue(makeUUID(dayContext), dayContext);
@@ -135,21 +134,23 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /**
-     * @return {@link ValueData} from the storage, if data is absent then empty value will be returned
+     * @return {@link com.codenvy.analytics.metrics.value.ValueData} from the storage, if data is absent then empty value will be returned
      */
     private ValueData getDirectValue(LinkedHashMap<String, String> uuid) throws IOException {
         try {
-            return FSValueDataManager.load(metricType, uuid);
+            return read(metricType, uuid);
         } catch (FileNotFoundException e) {
             return createEmptyValueData();
         }
     }
 
     /**
-     * @return empty {@link ValueData}
+     * @return empty {@link com.codenvy.analytics.metrics.value.ValueData}
      */
     private ValueData createEmptyValueData() throws IOException {
         return ValueDataFactory.createDefaultValue(getValueDataClass());
     }
+
+    protected abstract ValueData read(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException;
 }
 

@@ -163,6 +163,38 @@ public class Event {
                                 .withParam("PROJECT", project).withParam("TYPE", type);
         }
 
+        public static Builder createSessionStartedEvent(String user, String ws, String window, String sessionId) {
+            return new Builder().withParam("EVENT", EventType.SESSION_STARTED.toString())
+                                .withParam("SESSION-ID", sessionId)
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("WINDOW", window);
+        }
+
+        public static Builder createSessionFinishedEvent(String user, String ws, String window, String sessionId) {
+            return new Builder().withParam("EVENT", EventType.SESSION_FINISHED.toString())
+                                .withParam("SESSION-ID", sessionId)
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("WINDOW", window);
+        }
+
+        public static Builder createSessionFactoryStartedEvent(String user, String ws, String window, String sessionId) {
+            return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_STARTED.toString())
+                                .withParam("SESSION-ID", sessionId)
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("WINDOW", window);
+        }
+
+        public static Builder createSessionFactoryFinishedEvent(String user, String ws, String window, String sessionId) {
+            return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_FINISHED.toString())
+                                .withParam("SESSION-ID", sessionId)
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("WINDOW", window);
+        }
+
         /** Create 'application-created' event. */
         public static Builder createApplicationCreatedEvent(String user, String ws, String session, String project,
                                                             String type,

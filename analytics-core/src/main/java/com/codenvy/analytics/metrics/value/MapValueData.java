@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class MapValueData<K, V> extends AbstractValueData {
+public abstract class MapValueData<K, V>  extends AbstractValueData implements CollectionableValueData {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,6 +47,8 @@ public abstract class MapValueData<K, V> extends AbstractValueData {
         return Collections.unmodifiableMap(value);
     }
 
+    /** {@inheritDoc} */
+    @Override
     public int size() {
         return value.size();
     }

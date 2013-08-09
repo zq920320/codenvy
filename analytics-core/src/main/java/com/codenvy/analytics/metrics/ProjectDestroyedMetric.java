@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectDestroyedMetric extends ReadBasedMetric {
+public class ProjectDestroyedMetric extends ValueReadBasedMetric {
 
     ProjectDestroyedMetric() {
         super(MetricType.PROJECT_DESTROYED);

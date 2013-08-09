@@ -22,11 +22,14 @@ package com.codenvy.analytics.metrics.value;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class SetValueData<T> extends AbstractValueData {
+public abstract class SetValueData<T> extends AbstractValueData implements CollectionableValueData {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +47,8 @@ public abstract class SetValueData<T> extends AbstractValueData {
         return Collections.unmodifiableSet(value);
     }
 
+    /** {@inheritDoc} */
+    @Override
     public int size() {
         return value.size();
     }

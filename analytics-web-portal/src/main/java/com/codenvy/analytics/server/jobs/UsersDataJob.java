@@ -73,9 +73,6 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
             ValueData result = executor.executeAndReturn(ScriptType.USERS_ACTIVITY_PREPARATION, context);
             store(MetricType.USER_ACTIVITY, result, context);
 
-            result = executor.executeAndReturn(ScriptType.USERS_SESSIONS_PREPARATION, context);
-            store(MetricType.USER_SESSIONS, result, context);
-
             result = executor.executeAndReturn(ScriptType.USERS_PROFILE_PREPARATION, context);
             store(MetricType.USER_PROFILE, result, context);
 
@@ -102,7 +99,7 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
             ListListStringValueData item = all.get(user);
 
             LinkedHashMap<String, String> uuid = makeUUID(metricType, context, user);
-            FSValueDataManager.store(item, metricType, uuid);
+            FSValueDataManager.storeValue(item, metricType, uuid);
         }
     }
 

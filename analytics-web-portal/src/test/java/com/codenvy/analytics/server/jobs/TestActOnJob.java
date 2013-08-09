@@ -80,9 +80,9 @@ public class TestActOnJob {
 
         assertEquals(content.size(), 4);
         assertTrue(content.contains("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime"));
-        assertTrue(content.contains("2,0,0,5"));
-        assertTrue(content.contains("1,2,1,10"));
-        assertTrue(content.contains("0,1,1,0"));
+        assertTrue(content.contains("2,0,0,15"));
+        assertTrue(content.contains("1,2,1,30"));
+        assertTrue(content.contains("0,1,1,20"));
     }
 
 

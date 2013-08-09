@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserSSOLoggedInMetric extends ReadBasedMetric {
+public class UserSSOLoggedInMetric extends ValueReadBasedMetric {
 
     public UserSSOLoggedInMetric() {
         super(MetricType.USER_SSO_LOGGED_IN);

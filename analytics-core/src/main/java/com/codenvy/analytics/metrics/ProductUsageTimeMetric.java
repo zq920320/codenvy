@@ -3,7 +3,8 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.util.Arrays;
@@ -11,16 +12,15 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserCreatedMetric extends ValueReadBasedMetric {
-
-    public UserCreatedMetric() {
-        super(MetricType.USER_CREATED);
+public class ProductUsageTimeMetric extends ValueReadBasedMetric {
+    public ProductUsageTimeMetric() {
+        super(MetricType.PRODUCT_USAGE_TIME);
     }
 
     /** {@inheritDoc} */
     @Override
     protected Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+        return ListListStringValueData.class;
     }
 
     /** {@inheritDoc} */
@@ -28,5 +28,9 @@ public class UserCreatedMetric extends ValueReadBasedMetric {
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+    }
+
+    public long getTime(ListStringValueData valueData) {
+        return Long.valueOf(valueData.getAll().get(3));
     }
 }

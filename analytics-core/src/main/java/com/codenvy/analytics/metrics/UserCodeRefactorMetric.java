@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UserCodeRefactorMetric extends ReadBasedMetric {
+public class UserCodeRefactorMetric extends ValueReadBasedMetric {
 
     UserCodeRefactorMetric() {
         super(MetricType.USER_CODE_REFACTOR);

@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserRemovedMetric extends ReadBasedMetric {
+public class UserRemovedMetric extends ValueReadBasedMetric {
 
     UserRemovedMetric() {
         super(MetricType.USER_REMOVED);

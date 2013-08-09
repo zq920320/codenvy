@@ -16,22 +16,20 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
 
-%DEFAULT inactiveInterval '10';  -- in minutes
+package com.codenvy.analytics.metrics.value;
 
-f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-f3 = extractUser(f2);
-f = extractWs(f3);
+import java.io.Externalizable;
 
-r1 = productUsageTimeList(f, '$inactiveInterval');
 
-r2 = GROUP r1 BY user;
-r = FOREACH r2 {
-    t = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(dt), TOTUPLE(delta));
-    GENERATE group, t;
-    }
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
+public interface CollectionableValueData {
 
-result = FOREACH r GENERATE group, t;
+    /**
+     * @return the number if entities in the collection
+     */
+    int size();
 
+}

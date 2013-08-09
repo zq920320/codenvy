@@ -45,6 +45,14 @@ public class DataProcessing {
     }
 
     /** Executes scripts to calculate the total number of events by user and domain names. */
+    public static void productUsageTime(MetricType metricType, Map<String, String> context)
+            throws Exception {
+        calculateAndStore(metricType, context, EnumSet.of(ScriptType.PRODUCT_USAGE_TIME,
+                                                          ScriptType.PRODUCT_USAGE_TIME_BY_USERS,
+                                                          ScriptType.PRODUCT_USAGE_TIME_BY_DOMAINS));
+    }
+
+    /** Executes scripts to calculate the total number of events by user and domain names. */
     public static void numberOfEvents(MetricType metricType, Map<String, String> context) throws Exception {
         calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS,
                                                           ScriptType.NUMBER_EVENTS_BY_USERS,
@@ -98,7 +106,7 @@ public class DataProcessing {
 
         MetricParameter[] resultScheme = scriptType.getResultScheme();
         if (resultScheme.length == 0) {
-            FSValueDataManager.store(valueData, metricType, uuid);
+            doStore(valueData, metricType, uuid);
 
         } else {
             MetricParameter.ENTITY_TYPE entityType = getEntity(scriptType);
@@ -111,8 +119,18 @@ public class DataProcessing {
                 updateUUID(key, resultScheme, entityType, uuid);
 
                 ValueData value2store = ValueDataFactory.createValueData(entry.getValue());
-                FSValueDataManager.store(value2store, metricType, uuid);
+                doStore(value2store, metricType, uuid);
             }
+        }
+    }
+
+    private static void doStore(ValueData valueData, MetricType metricType, LinkedHashMap<String, String> uuid)
+            throws IOException {
+        FSValueDataManager.storeValue(valueData, metricType, uuid);
+
+        if (valueData instanceof CollectionableValueData) {
+            FSValueDataManager
+                    .storeNumber(new LongValueData(((CollectionableValueData)valueData).size()), metricType, uuid);
         }
     }
 
@@ -128,7 +146,7 @@ public class DataProcessing {
                 break;
 
             default:
-                List<String> items  = ((ListStringValueData)key).getAll();
+                List<String> items = ((ListStringValueData)key).getAll();
 
                 if (items.size() != resultScheme.length) {
                     throw new IllegalStateException("Result doesn't correspond to scheme");

@@ -23,14 +23,20 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptProductUsageTime extends BaseTest {
@@ -39,7 +45,7 @@ public class TestScriptProductUsageTime extends BaseTest {
     public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
 
-        // 7 min, user1 session #1
+        // user1 session #1 [7m]
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:00:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
@@ -47,42 +53,106 @@ public class TestScriptProductUsageTime extends BaseTest {
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:07:00").build());
 
-        // 4 min, user2 session #1
+        // user2 session #1 [4m]
         events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:25:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2010-10-01")
                         .withTime("20:29:00").build());
 
-        // 7 min, user1 session #2
+        // user1 session #2 [7m]
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
-                                .withTime("21:00:00").build());
+                        .withTime("21:00:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
-                                .withTime("21:05:00").build());
+                        .withTime("21:05:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
-                                .withTime("21:07:00").build());
+                        .withTime("21:07:00").build());
 
-        // 0 min, user3 session #1
+        // user3 session #1 [10m]
         events.add(Event.Builder.createProjectBuiltEvent("user3", "ws1", "", "", "").withDate("2010-10-01")
-                                .withTime("20:25:00").build());
+                        .withTime("20:25:00").build());
+
+
+        // session started and session finished [5m]
+        events.add(Event.Builder.createSessionStartedEvent("user11", "ws1", "ide", "1").withDate("2010-10-02")
+                        .withTime("20:00:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user11", "ws1", "ide", "1").withDate("2010-10-02")
+                        .withTime("20:05:00").build());
+
+        // session started and some event after [2h]
+        events.add(Event.Builder.createSessionStartedEvent("user12", "ws1", "ide", "2").withDate("2010-10-02")
+                        .withTime("20:00:00").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user12", "ws1", "", "", "").withDate("2010-10-02")
+                        .withTime("21:00:00").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user12", "ws1", "", "", "").withDate("2010-10-02")
+                        .withTime("22:00:00").build());
+
+        // session started and some event after [1h]
+        events.add(Event.Builder.createSessionStartedEvent("user15@gmail.com", "ws1", "ide", "6").withDate("2010-10-02")
+                        .withTime("20:00:00").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user15@gmail.com", "ws1", "", "", "").withDate("2010-10-02")
+                        .withTime("21:00:00").build());
+
+        // session finished and some event before [30m]
+        events.add(Event.Builder.createProjectBuiltEvent("user13", "ws1", "", "", "").withDate("2010-10-02")
+                        .withTime("19:30:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user13", "ws1", "ide", "3").withDate("2010-10-02")
+                        .withTime("20:00:00").build());
+
+        // only session started [10m]
+        events.add(Event.Builder.createSessionStartedEvent("user14", "ws1", "ide", "4").withDate("2010-10-02")
+                        .withTime("20:00:00").build());
+
+        // only session finished [10m]
+        events.add(Event.Builder.createSessionFinishedEvent("user15@gmail.com", "ws1", "ide", "5").withDate("2010-10-02")
+                        .withTime("20:00:00").build());
 
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(MetricParameter.FROM_DATE.name(), "20101001");
         params.put(MetricParameter.TO_DATE.name(), "20101003");
 
-        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME, log, params);
+        ListListStringValueData value =
+                (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME, log, params);
         List<ListStringValueData> all = value.getAll();
 
-        ListStringValueData item1 = new ListStringValueData(Arrays.asList("ws1", "user1", "2010-10-01T20:00:00.000Z", "420"));
-        ListStringValueData item2 = new ListStringValueData(Arrays.asList("ws1", "user2", "2010-10-01T20:25:00.000Z", "240"));
-        ListStringValueData item3 = new ListStringValueData(Arrays.asList("ws1", "user1", "2010-10-01T21:00:00.000Z", "420"));
-        ListStringValueData item4 = new ListStringValueData(Arrays.asList("ws1", "user3", "2010-10-01T20:25:00.000Z", "0"));
+        assertEquals(all.size(), 10);
 
-        assertEquals(all.size(), 4);
-//        assertTrue(all.contains(item1));
-//        assertTrue(all.contains(item2));
-//        assertTrue(all.contains(item3));
-//        assertTrue(all.contains(item4));
+        MapStringListListStringValueData map =
+                (MapStringListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_BY_USERS, log,
+                                                                         params);
+
+        assertEquals(map.size(), 8);
+        assertUser(map, "user1", 2, 840);
+        assertUser(map, "user2", 1, 240);
+        assertUser(map, "user3", 1, 600);
+        assertUser(map, "user11", 1, 300);
+        assertUser(map, "user12", 1, 7200);
+        assertUser(map, "user15@gmail.com", 2, 4200);
+        assertUser(map, "user13", 1, 1800);
+        assertUser(map, "user14", 1, 600);
+
+        map =
+                (MapStringListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_BY_DOMAINS, log,
+                                                                         params);
+
+        assertEquals(map.size(), 1);
+        assertUser(map, "gmail.com", 2, 4200);
+    }
+
+    private void assertUser(MapStringListListStringValueData map, String user, int numberOfSessions,
+                            int timeInSeconds) {
+        assertTrue(map.getAll().containsKey(user));
+
+        ListListStringValueData valueData = map.getAll().get(user);
+        assertEquals(valueData.size(), numberOfSessions);
+
+        int total = 0;
+        for (ListStringValueData item : valueData.getAll()) {
+            total += Long.valueOf(item.getAll().get(3));
+        }
+
+        assertEquals(total, timeInSeconds);
     }
 }
+

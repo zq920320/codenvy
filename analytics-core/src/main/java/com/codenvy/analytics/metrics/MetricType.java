@@ -81,7 +81,7 @@ public enum MetricType {
         @Override
         public void process(Map<String, String> context) throws Exception {
             Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
-            Utils.putParam(context, "USING"); // TODO 
+            Utils.putParam(context, "USING");
             DataProcessing.numberOfEventsWithType(this, context);
         }
     },
@@ -135,6 +135,20 @@ public enum MetricType {
             DataProcessing.numberOfEvents(this, context);
         }
     },
+    PRODUCT_USAGE_TIME {
+        @Override
+        public void process(Map<String, String> context) throws Exception {
+            DataProcessing.productUsageTime(this, context);
+        }
+    },
+    PRODUCT_USAGE_TIME_0_10,
+    PRODUCT_USAGE_TIME_10_60,
+    PRODUCT_USAGE_TIME_60_MORE,
+    PRODUCT_USAGE_TIME_TOTAL,
+    PRODUCT_USAGE_SESSIONS_0_10,
+    PRODUCT_USAGE_SESSIONS_10_60,
+    PRODUCT_USAGE_SESSIONS_60_MORE,
+    PRODUCT_USAGE_SESSIONS_TOTAL,
 
     USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
     USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
@@ -145,7 +159,6 @@ public enum MetricType {
     USERS_UPDATE_PROFILE_LIST,
     USERS_COMPLETED_PROFILE,
     USER_ACTIVITY,
-    USER_SESSIONS,
     USER_PROFILE,
     USER_PROFILE_EMAIL,
     USER_PROFILE_FIRSTNAME,
@@ -155,15 +168,6 @@ public enum MetricType {
     USERS_SEGMENT_ANALYSIS_CONDITION_1,
     USERS_SEGMENT_ANALYSIS_CONDITION_2,
     USERS_SEGMENT_ANALYSIS_CONDITION_3,
-    PRODUCT_USAGE_TIME_TOTAL,
-    PRODUCT_USAGE_TIME_0_10,
-    PRODUCT_USAGE_TIME_10_60,
-    PRODUCT_USAGE_TIME_60_MORE,
-    PRODUCT_USAGE_USER_SESSIONS_NUMBER,
-    PRODUCT_USAGE_USER_SESSIONS_NUMBER_0_10,
-    PRODUCT_USAGE_USER_SESSIONS_NUMBER_10_60,
-    PRODUCT_USAGE_USER_SESSIONS_NUMBER_60_MORE,
-    PRODUCT_USAGE_TIME_LIST,
     PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY,
     PRODUCT_USAGE_TIME_TOP_USERS_BY_7DAY,
     PRODUCT_USAGE_TIME_TOP_USERS_BY_30DAY,

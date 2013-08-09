@@ -49,8 +49,8 @@ public class TestLongValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        FSValueDataManager.store(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.load(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
     }
 
     @Test
