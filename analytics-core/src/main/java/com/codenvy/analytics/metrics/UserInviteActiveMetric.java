@@ -18,38 +18,31 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.UsersWorkspacesFilter;
-import com.codenvy.analytics.scripts.ScriptType;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class InvitationsSentListMetric extends PersistableScriptBasedMetric {
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-    InvitationsSentListMetric() {
-        super(MetricType.INVITATIONS_SENT_LIST);
-    }
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UserInviteActiveMetric extends ValueReadBasedMetric {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.USERS_INVITATIONS;
+    UserInviteActiveMetric() {
+        super(MetricType.USER_INVITE_ACTIVE);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected boolean isFilterSupported() {
-        return true;
+    protected Class<? extends ValueData> getValueDataClass() {
+        return SetStringValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected Filter createFilter(ValueData valueData) {
-        return new UsersWorkspacesFilter((ListListStringValueData)valueData);
+    public Set<MetricParameter> getParams() {
+        return new LinkedHashSet<>(
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

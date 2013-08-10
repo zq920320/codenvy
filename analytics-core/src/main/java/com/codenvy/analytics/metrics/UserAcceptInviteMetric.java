@@ -16,15 +16,21 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+package com.codenvy.analytics.metrics;
 
-f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-fR = filterByEvent(f2, 'user-invite');
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
 
-t1 = extractUser(fR);
-t2 = extractWs(t1);
-tR = extractParam(t2, 'EMAIL', email);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UserAcceptInviteMetric extends CalculatedMetric {
 
-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(email));
+    UserAcceptInviteMetric() {
+        super(MetricType.USER_ACCEPT_INVITE, MetricType.USER_ADDED_TO_WORKSPACE_INVITE);
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
+    }
+}

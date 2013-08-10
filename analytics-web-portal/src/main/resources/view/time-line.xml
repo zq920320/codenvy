@@ -20,8 +20,8 @@
     </table>
     <table length="20">
         <date section="Invitations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <metric type="invitations_sent_number" title="Sent"/>
-        <metric type="invitations_accepted_percent" format="%.0f%%" title="Accepted"/>
+        <metric type="user_invite" title="Sent"/>
+        <metric type="user_accept_invite_percent" format="%.0f%%" title="Accepted"/>
         <empty />
     </table>
     <table length="20">

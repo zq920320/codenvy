@@ -56,12 +56,12 @@ public class TestActiveWsMetric {
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
-        MetricType.ACTIVE_WS_SET.process(context);
+        DataProcessing.calculateAndStore(MetricType.ACTIVE_WS_SET, context);
 
         Map<String,String> clonedContext = Utils.clone(context);
         Utils.putFromDate(clonedContext, "20101002");
         Utils.putToDate(clonedContext, "20101002");
-        MetricType.ACTIVE_WS_SET.process(clonedContext);
+        DataProcessing.calculateAndStore(MetricType.ACTIVE_WS_SET, clonedContext);
     }
 
     @Test

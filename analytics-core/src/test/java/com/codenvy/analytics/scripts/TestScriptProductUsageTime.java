@@ -78,23 +78,28 @@ public class TestScriptProductUsageTime extends BaseTest {
         events.add(Event.Builder.createSessionFinishedEvent("user11", "ws1", "ide", "1").withDate("2010-10-02")
                         .withTime("20:05:00").build());
 
+        events.add(Event.Builder.createProjectBuiltEvent("user11", "ws1", "", "", "").withDate("2010-10-02")
+                        .withTime("20:07:00").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user11", "ws1", "", "", "").withDate("2010-10-02")
+                        .withTime("20:09:00").build());
+
         // session started and some event after [2h]
         events.add(Event.Builder.createSessionStartedEvent("user12", "ws1", "ide", "2").withDate("2010-10-02")
                         .withTime("20:00:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user12", "ws1", "", "", "").withDate("2010-10-02")
-                        .withTime("21:00:00").build());
+                        .withTime("20:05:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user12", "ws1", "", "", "").withDate("2010-10-02")
-                        .withTime("22:00:00").build());
+                        .withTime("20:07:00").build());
 
         // session started and some event after [1h]
         events.add(Event.Builder.createSessionStartedEvent("user15@gmail.com", "ws1", "ide", "6").withDate("2010-10-02")
                         .withTime("20:00:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user15@gmail.com", "ws1", "", "", "").withDate("2010-10-02")
-                        .withTime("21:00:00").build());
+                        .withTime("20:05:00").build());
 
         // session finished and some event before [30m]
         events.add(Event.Builder.createProjectBuiltEvent("user13", "ws1", "", "", "").withDate("2010-10-02")
-                        .withTime("19:30:00").build());
+                        .withTime("19:55:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user13", "ws1", "ide", "3").withDate("2010-10-02")
                         .withTime("20:00:00").build());
 
@@ -103,8 +108,9 @@ public class TestScriptProductUsageTime extends BaseTest {
                         .withTime("20:00:00").build());
 
         // only session finished [10m]
-        events.add(Event.Builder.createSessionFinishedEvent("user15@gmail.com", "ws1", "ide", "5").withDate("2010-10-02")
-                        .withTime("20:00:00").build());
+        events.add(
+                Event.Builder.createSessionFinishedEvent("user15@gmail.com", "ws1", "ide", "5").withDate("2010-10-02")
+                     .withTime("21:00:00").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -116,28 +122,28 @@ public class TestScriptProductUsageTime extends BaseTest {
                 (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME, log, params);
         List<ListStringValueData> all = value.getAll();
 
-        assertEquals(all.size(), 10);
+        assertEquals(all.size(), 11);
 
         MapStringListListStringValueData map =
                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_BY_USERS, log,
                                                                          params);
 
         assertEquals(map.size(), 8);
-        assertUser(map, "user1", 2, 840);
-        assertUser(map, "user2", 1, 240);
-        assertUser(map, "user3", 1, 600);
-        assertUser(map, "user11", 1, 300);
-        assertUser(map, "user12", 1, 7200);
-        assertUser(map, "user15@gmail.com", 2, 4200);
-        assertUser(map, "user13", 1, 1800);
-        assertUser(map, "user14", 1, 600);
+        assertUser(map, "user1", 2, 14 * 60);
+        assertUser(map, "user2", 1, 4 * 60);
+        assertUser(map, "user3", 1, 10 * 60);
+        assertUser(map, "user11", 2, 7 * 60);
+        assertUser(map, "user12", 1, 7 * 60);
+        assertUser(map, "user15@gmail.com", 2, 15 * 60);
+        assertUser(map, "user13", 1, 5 * 60);
+        assertUser(map, "user14", 1, 10 * 60);
 
         map =
                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_BY_DOMAINS, log,
                                                                          params);
 
         assertEquals(map.size(), 1);
-        assertUser(map, "gmail.com", 2, 4200);
+        assertUser(map, "gmail.com", 2, 15 * 60);
     }
 
     private void assertUser(MapStringListListStringValueData map, String user, int numberOfSessions,

@@ -19,70 +19,118 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.scripts.EventType;
+import com.codenvy.analytics.scripts.ScriptType;
 
+import java.util.EnumSet;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricType {
     FILE_MANIPULATION {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.FILE_MANIPULATION.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     TENANT_CREATED {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.TENANT_CREATED.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     TENANT_DESTROYED {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.TENANT_DESTROYED.toString());
-            DataProcessing.numberOfEventsSingleScript(this, context);
         }
     },
     ACTIVE_USERS_SET {
         @Override
-        public void process(Map<String, String> context) throws Exception {
-            DataProcessing.setOfActiveUsers(this, context);
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, "*");
+        }
+
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.SET_ACTIVE_USERS,
+                              ScriptType.SET_ACTIVE_USERS_BY_DOMAINS,
+                              ScriptType.SET_ACTIVE_USERS_BY_USERS);
         }
     },
     ACTIVE_USERS,
     ACTIVE_WS_SET {
         @Override
-        public void process(Map<String, String> context) throws Exception {
-            DataProcessing.setOfActiveWs(this, context);
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, "*");
+        }
+
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.SET_ACTIVE_WS,
+                              ScriptType.SET_ACTIVE_WS_BY_USERS,
+                              ScriptType.SET_ACTIVE_WS_BY_DOMAINS);
         }
     },
     ACTIVE_WS,
     USER_CREATED {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.USER_CREATED.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     USER_REMOVED {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.USER_REMOVED.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     TOTAL_USERS,
     TOTAL_WORKSPACES,
     USER_SSO_LOGGED_IN {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS_WITH_TYPE,
+                              ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS,
+                              ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
             Utils.putParam(context, "USING");
-            DataProcessing.numberOfEventsWithType(this, context);
         }
     },
     USER_LOGIN_GITHUB,
@@ -95,50 +143,88 @@ public enum MetricType {
 
     USER_CODE_REFACTOR {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     USER_CODE_COMPLETE {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.USER_CODE_COMPLETE.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     BUILD_STARTED {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.BUILD_STARTED.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     RUN_STARTED {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.RUN_STARTED.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     DEBUG_STARTED {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     PROJECT_DESTROYED {
         @Override
-        public void process(Map<String, String> context) throws Exception {
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
             Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
-            DataProcessing.numberOfEvents(this, context);
         }
     },
     PRODUCT_USAGE_TIME {
         @Override
-        public void process(Map<String, String> context) throws Exception {
-            DataProcessing.productUsageTime(this, context);
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME,
+                              ScriptType.PRODUCT_USAGE_TIME_BY_USERS,
+                              ScriptType.PRODUCT_USAGE_TIME_BY_DOMAINS);
         }
     },
     PRODUCT_USAGE_TIME_0_10,
@@ -149,13 +235,54 @@ public enum MetricType {
     PRODUCT_USAGE_SESSIONS_10_60,
     PRODUCT_USAGE_SESSIONS_60_MORE,
     PRODUCT_USAGE_SESSIONS_TOTAL,
+    USER_INVITE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, EventType.USER_INVITE.toString());
+        }
+    },
+
+    USER_INVITE_ACTIVE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.SET_ACTIVE_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, EventType.USER_INVITE.toString());
+        }
+    },
+    USERS_SENDING_INVITE_ONCE,
+    USER_ADDED_TO_WORKSPACE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS_WITH_TYPE,
+                              ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS,
+                              ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, EventType.USER_ADDED_TO_WS.toString());
+            Utils.putParam(context, "FROM");
+        }
+    },
+    USER_ADDED_TO_WORKSPACE_INVITE,
+    USER_ACCEPT_INVITE,
+    USER_ACCEPT_INVITE_PERCENT,
 
     USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
     USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
     USERS_DEPLOYED_PROJECTS_NUMBER, // number of users, who deployed project at least once
     USERS_DEPLOYED_PAAS_PROJECTS_NUMBER, // number of users, who deployed projects locally and paas
-    USERS_INVITATIONS_SENT_NUMBER, // number of users, who sent invitation at least once
-    USERS_ADDED_TO_WORKSPACE_LIST,
     USERS_UPDATE_PROFILE_LIST,
     USERS_COMPLETED_PROFILE,
     USER_ACTIVITY,
@@ -223,13 +350,16 @@ public enum MetricType {
     PAAS_DEPLOYMENT_TYPE_LOCAL_NUMBER,
     JREBEL_USAGE_LIST,
     JREBEL_USER_PROFILE_INFO_GATHERING,
-    INVITATIONS_SENT_LIST,
-    INVITATIONS_SENT_NUMBER,
     USERS_SHELL_LAUNCHED_LIST,
-    USERS_SHELL_LAUNCHED_NUMBER,
-    INVITATIONS_ACCEPTED_PERCENT;
+    USERS_SHELL_LAUNCHED_NUMBER;
 
-    public void process(Map<String, String> context) throws Exception {
-        return;
+
+    // TODO
+    public EnumSet<ScriptType> getScripts() {
+        return EnumSet.noneOf(ScriptType.class);
+    }
+
+    // TODO
+    public void modifyContext(Map<String, String> context) {
     }
 }

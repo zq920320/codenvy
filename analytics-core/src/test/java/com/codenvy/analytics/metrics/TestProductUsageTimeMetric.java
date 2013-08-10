@@ -60,7 +60,7 @@ public class TestProductUsageTimeMetric {
         Utils.putFromDate(context, "20101009");
         Utils.putToDate(context, "20101009");
 
-        MetricType.PRODUCT_USAGE_TIME.process(context);
+        DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME, context);
     }
 
     @Test

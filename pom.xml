@@ -42,9 +42,6 @@
         <guava.version>11.0</guava.version>
         <joda-time.version>2.2</joda-time.version>
         
-        <!-- LDAP client-->
-        <ldap.client.version>0.3</ldap.client.version>
-
         <!-- Third parties -->
         <everrest.version>1.0.10</everrest.version>
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
@@ -60,6 +57,7 @@
         <quartz.version>2.1.7</quartz.version>
         <commons.lang.version>2.6</commons.lang.version>
         <commons.net.version>3.2</commons.net.version>
+        <commons.io>2.4</commons.io>
 
         <!-- Loggers -->
         <org.slf4j.version>1.6.1</org.slf4j.version>
@@ -189,6 +187,11 @@
                 <artifactId>commons-net</artifactId>
                 <version>${commons.net.version}</version>
             </dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+			    <version>${commons.io}</version>
+			</dependency>            
 
             <!-- Loggers -->
             <dependency>

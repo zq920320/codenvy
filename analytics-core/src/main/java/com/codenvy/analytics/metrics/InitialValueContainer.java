@@ -135,8 +135,8 @@ public class InitialValueContainer {
                                       InvocationTargetException,
                                       DOMException {
 
-        initialValues = new HashMap<MetricType, Map<String, ValueData>>();
-        uuids = new HashMap<String, Map<String, String>>();
+        initialValues = new HashMap<>();
+        uuids = new HashMap<>();
 
         InputStream in = readResource();
         try {

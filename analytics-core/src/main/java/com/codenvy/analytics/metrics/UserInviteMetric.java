@@ -18,42 +18,30 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class InvitationsSentNumberMetric extends CalculateBasedMetric {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UserInviteMetric extends ValueReadBasedMetric {
 
-    private final Metric basedMetric;
-
-    InvitationsSentNumberMetric() {
-        super(MetricType.INVITATIONS_SENT_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.INVITATIONS_SENT_LIST);
+    UserInviteMetric() {
+        super(MetricType.USER_INVITE);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
+    protected Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
-        return new LongValueData(value.size());
+    public Set<MetricParameter> getParams() {
+        return new LinkedHashSet<>(
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

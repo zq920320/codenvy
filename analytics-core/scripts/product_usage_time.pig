@@ -26,76 +26,28 @@ DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
     $Y = FOREACH x2 GENERATE user, ws, sId, dt;
 }
 
-----------------------------------------------
--- Usecase when there is no sesson-finished event.
--- Finds the most latest event for specific ws and user and treats it
--- as session-finished event. If such event was not find, then 10 mins is used
--- as session length
----------------------------------------------
-DEFINE calculateForNoSF(X, Z, inactiveIntervalParam) RETURNS Y {
-    x1 = JOIN $X BY (ws, user) LEFT, $Z BY (ws, user);
-    x3 = FOREACH x1 GENERATE $X::ws AS ws, $X::user AS user, $X::dt AS dt, SecondsBetween($Z::dt, $X::dt) AS delta;
-    x4 = GROUP x3 BY (ws, user, dt);
-    x5 = FOREACH x4 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MAX(x3.delta) AS delta;
-    $Y = FOREACH x5 GENERATE ws, user, dt, (delta == 0 ? (int) $inactiveIntervalParam * 60 : delta) AS delta;
-}
-
-----------------------------------------------
--- Usecase when there is no sesson-started event.
--- Finds the most earlestt event for specific ws and user and treats it
--- as session-started event. If such event was not find, then 10 mins is used
--- as session length
----------------------------------------------
-DEFINE calculateForNoSS(X, Z, inactiveIntervalParam) RETURNS Y {
-    x1 = JOIN $X BY (ws, user) LEFT, $Z BY (ws, user);
-    x3 = FOREACH x1 GENERATE $X::ws AS ws, $X::user AS user, $X::dt AS dt, SecondsBetween($X::dt, $Z::dt) AS delta;
-    x4 = GROUP x3 BY (ws, user, dt);
-    x5 = FOREACH x4 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MAX(x3.delta) AS delta;
-    $Y = FOREACH x5 GENERATE ws, user, dt, (delta == 0 ? (int) $inactiveIntervalParam * 60 : delta) AS delta;
-}
-
 t1 = loadResources('$log');
 t2 = filterByDate(t1, '$FROM_DATE', '$TO_DATE');
 t3 = extractUser(t2);
 t = extractWs(t3);
 
-SS1 = extractEventsWithSessionId(t, 'session-started');
-SF1 = extractEventsWithSessionId(t, 'session-finished');
-SS2 = extractEventsWithSessionId(t, 'session-factory-started');
-SF2 = extractEventsWithSessionId(t, 'session-factory-finished');
+SS = extractEventsWithSessionId(t, 'session-started');
+SF = extractEventsWithSessionId(t, 'session-finished');
 
-j1 = JOIN SS1 BY sId FULL, SF1 BY sId;
-j2 = JOIN SS2 BY sId FULL, SF2 BY sId;
+j1 = JOIN SS BY sId FULL, SF BY sId;
+j2 = FILTER j1 BY SS::sId IS NOT NULL AND SF::sId IS NOT NULL;
+j3 = FOREACH j2 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS ssDt, SF::dt AS sfDt;
+A = FOREACH j3 GENERATE ws, user, ssDt AS dt, SecondsBetween(sfDt, ssDt) AS delta;
 
-SPLIT j1 INTO noSS1 IF SS1::sId IS NULL, noSF1 IF SF1::sId IS NULL, SSSF1 OTHERWISE;
-SPLIT j2 INTO noSS2 IF SS2::sId IS NULL, noSF2 IF SF2::sId IS NULL, SSSF2 OTHERWISE;
+--
+-- The rest of the sessions
+--
+k1 = FOREACH t GENERATE ws, user, dt;
+k2 = JOIN k1 BY (ws, user) LEFT, j3 BY (ws, user);
+k3 = FILTER k2 BY (j3::ws IS NULL) OR MilliSecondsBetween(j3::ssDt, k1::dt) > 0 OR MilliSecondsBetween(j3::sfDt, k1::dt) < 0;
+k4 = FOREACH k3 GENERATE k1::ws AS ws, k1::user AS user, k1::dt AS dt;
+B = productUsageTimeList(k4, '$inactiveInterval');
 
-A1 = FOREACH SSSF1 GENERATE SS1::ws AS ws, SS1::user AS user, SS1::dt AS dt, SecondsBetween(SF1::dt, SS1::dt) AS delta;
-A2 = FOREACH SSSF2 GENERATE SS2::ws AS ws, SS2::user AS user, SS2::dt AS dt, SecondsBetween(SF2::dt, SS2::dt) AS delta;
-
-w1 = FOREACH noSF1 GENERATE SS1::ws AS ws, SS1::user AS user, SS1::dt AS dt;
-w2 = FOREACH noSF2 GENERATE SS2::ws AS ws, SS2::user AS user, SS2::dt AS dt;
-w3 = FOREACH noSS1 GENERATE SF1::ws AS ws, SF1::user AS user, SF1::dt AS dt;
-w4 = FOREACH noSS2 GENERATE SF2::ws AS ws, SF2::user AS user, SF2::dt AS dt;
-
-B1 = calculateForNoSF(w1, t, '$inactiveInterval');
-B2 = calculateForNoSF(w2, t, '$inactiveInterval');
-
-C1 = calculateForNoSS(w3, t, '$inactiveInterval');
-C2 = calculateForNoSS(w4, t, '$inactiveInterval');
-
---R = UNION A1, A2, B1, B2, C1, C2;
-R = UNION A1, B1, C1;
-
--- calculation using old way
-d1 = productUsageTimeList(t, '$inactiveInterval');
-
--- find user which were not taken in accout by previous calcuation
-d2 = JOIN d1 BY (ws, user) LEFT, R BY (ws, user);
-d3 = FILTER d2 BY R::ws IS NULL;
-D = FOREACH d3 GENERATE d1::ws AS ws, d1::user AS user, d1::dt AS dt, d1::delta AS delta;
-
-r = UNION R, D;
-result = FOREACH r GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
-
+R = UNION A, B;
+result = FOREACH R GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
 

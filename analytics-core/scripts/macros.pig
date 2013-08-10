@@ -104,7 +104,7 @@ DEFINE filterByDateIntervalAfter(X, toDateParam, interval) RETURNS Y {
 -- @param eventNamesParam - comma separated list of event names
 ---------------------------------------------------------------------------
 DEFINE filterByEvent(X, eventNamesParam) RETURNS Y {
-  $Y = FILTER $X BY INDEXOF('$eventNamesParam', event, 0) >= 0;
+  $Y = FILTER $X BY '$eventNamesParam' == '*' OR INDEXOF('$eventNamesParam', event, 0) >= 0;
 };
 
 ---------------------------------------------------------------------------

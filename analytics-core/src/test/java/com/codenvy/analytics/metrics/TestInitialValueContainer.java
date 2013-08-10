@@ -45,11 +45,11 @@ public class TestInitialValueContainer extends BaseTest {
 
     private final String          content = "<metrics>" +
                                             "  <metric type=\"TOTAL_WORKSPACES\">" +
-                                            "     <initial-value fromDate=\"20091102\" toDate=\"20091102\">1</initial-value>" +
-                                            "     <initial-value fromDate=\"20091103\" toDate=\"20091103\">2</initial-value>" +
+                                            "     <initial-value FROM_DATE=\"20091102\" TO_DATE=\"20091102\">1</initial-value>" +
+                                            "     <initial-value FROM_DATE=\"20091103\" TO_DATE=\"20091103\">2</initial-value>" +
                                             "  </metric>" +
                                             "  <metric type=\"TOTAL_USERS\">" +
-                                            "     <initial-value fromDate=\"20091104\" toDate=\"20091104\">10</initial-value>" +
+                                            "     <initial-value FROM_DATE=\"20091104\" TO_DATE=\"20091104\">10</initial-value>" +
                                             "  </metric>" +
                                             "</metrics>";
 

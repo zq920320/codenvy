@@ -48,10 +48,8 @@ public class TestDataProcessing {
     @Test
     public void testCheckFilesForNumberOfEvents() throws Exception {
         MetricType metricType = MetricType.USER_CODE_REFACTOR;
-
         Map<String, String> context = prepareContext(currentDate);
-        Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
-        DataProcessing.numberOfEvents(metricType, context);
+        DataProcessing.calculateAndStore(metricType, context);
 
         String baseDir = getBaseDir(metricType);
 
@@ -68,50 +66,40 @@ public class TestDataProcessing {
     @Test
     public void testCheckFilesForSetOfUsers() throws Exception {
         MetricType metricType = MetricType.ACTIVE_USERS_SET;
-
         Map<String, String> context = prepareContext(currentDate);
-        DataProcessing.setOfActiveUsers(metricType, context);
+        DataProcessing.calculateAndStore(metricType, context);
 
         String baseDir = getBaseDir(metricType);
 
         assertTrue(new File(baseDir + "value").exists());
-        assertTrue(new File(baseDir + "number").exists());
         assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
-        assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/number").exists());
         assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
-        assertTrue(new File(baseDir + "domains/g/m/a/il.com/number").exists());
         assertFalse(new File(getBaseDirNextDay(metricType)).exists());
     }
 
     @Test
     public void testCheckFilesForSetOfWs() throws Exception {
         MetricType metricType = MetricType.ACTIVE_WS_SET;
-
         Map<String, String> context = prepareContext(currentDate);
-        DataProcessing.setOfActiveWs(metricType, context);
+        DataProcessing.calculateAndStore(metricType, context);
 
         String baseDir = getBaseDir(metricType);
 
         assertTrue(new File(baseDir + "value").exists());
 
         assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/value").exists());
-        assertTrue(new File(baseDir + "users/u/s/e/r@gmail.com/number").exists());
         assertFalse(new File(baseDir + "users/d/e/f/ault/value").exists());
 
         assertTrue(new File(baseDir + "domains/g/m/a/il.com/value").exists());
-        assertTrue(new File(baseDir + "domains/g/m/a/il.com/number").exists());
         assertFalse(new File(getBaseDirNextDay(metricType)).exists());
     }
 
     @Test
     public void testCheckFilesForNumberOfEventsWithType() throws Exception {
         MetricType metricType = MetricType.USER_SSO_LOGGED_IN;
-
         Map<String, String> context = prepareContextUserSSOLoggedInEvents(currentDate);
-        Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
-        Utils.putParam(context, "USING");
-        DataProcessing.numberOfEventsWithType(metricType, context);
+        DataProcessing.calculateAndStore(metricType, context);
 
         String baseDir = getBaseDir(metricType);
 
@@ -135,9 +123,8 @@ public class TestDataProcessing {
     @Test
     public void testProductUsageTime() throws Exception {
         MetricType metricType = MetricType.PRODUCT_USAGE_TIME;
-
         Map<String, String> context = prepareContextProductUsateTimeEvents(currentDate);
-        DataProcessing.productUsageTime(metricType, context);
+        DataProcessing.calculateAndStore(metricType, context);
 
         String baseDir = getBaseDir(metricType);
 

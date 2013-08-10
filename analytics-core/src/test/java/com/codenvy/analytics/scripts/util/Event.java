@@ -179,7 +179,8 @@ public class Event {
                                 .withParam("WINDOW", window);
         }
 
-        public static Builder createSessionFactoryStartedEvent(String user, String ws, String window, String sessionId) {
+        public static Builder createSessionFactoryStartedEvent(String user, String ws, String window,
+                                                               String sessionId) {
             return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_STARTED.toString())
                                 .withParam("SESSION-ID", sessionId)
                                 .withParam("WS", ws)
@@ -187,7 +188,8 @@ public class Event {
                                 .withParam("WINDOW", window);
         }
 
-        public static Builder createSessionFactoryFinishedEvent(String user, String ws, String window, String sessionId) {
+        public static Builder createSessionFactoryFinishedEvent(String user, String ws, String window,
+                                                                String sessionId) {
             return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_FINISHED.toString())
                                 .withParam("SESSION-ID", sessionId)
                                 .withParam("WS", ws)
@@ -211,10 +213,17 @@ public class Event {
         }
 
         /** Create 'user-added-to-ws' event. */
-        public static Builder createUserAddedToWsEvent(String user, String ws, String session, String wsParam,
-                                                       String userParam, String from) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "user-added-to-ws")
-                                .withParam("WS", wsParam).withParam("USER", userParam).withParam("FROM", from);
+        public static Builder createUserAddedToWsEvent(String user,
+                                                       String ws,
+                                                       String session,
+                                                       String wsParam,
+                                                       String userParam,
+                                                       String from) {
+            return new Builder().withContext(user, ws, session)
+                                .withParam("EVENT", EventType.USER_ADDED_TO_WS.toString())
+                                .withParam("WS", wsParam)
+                                .withParam("USER", userParam)
+                                .withParam("FROM", from);
         }
 
         public static Builder createUserSSOLoggedOutEvent(String user) {
@@ -282,12 +291,12 @@ public class Event {
                                                           String type,
                                                           String feature) {
             return new Builder().withContext(user, ws, UUID.randomUUID().toString())
-                    .withParam("EVENT", EventType.USER_CODE_REFACTOR.toString())
-                    .withParam("WS", ws)
-                    .withParam("USER", user)
-                    .withParam("PROJECT", project)
-                    .withParam("TYPE", type)
-                    .withParam("FEATURE", feature);
+                                .withParam("EVENT", EventType.USER_CODE_REFACTOR.toString())
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("FEATURE", feature);
 
         }
     }

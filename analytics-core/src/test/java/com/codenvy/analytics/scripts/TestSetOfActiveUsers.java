@@ -52,6 +52,7 @@ public class TestSetOfActiveUsers extends BaseTest {
         Map<String, String> context = new HashMap<>();
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
+        Utils.putEvent(context, "*");
 
         SetStringValueData valueData = (SetStringValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS, log, context);
         assertEquals(valueData.size(), 2);
@@ -72,6 +73,7 @@ public class TestSetOfActiveUsers extends BaseTest {
         Map<String, String> context = new HashMap<>();
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
+        Utils.putEvent(context, "*");
 
         MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS_BY_DOMAINS, log, context);
 
@@ -96,6 +98,7 @@ public class TestSetOfActiveUsers extends BaseTest {
         Map<String, String> context = new HashMap<>();
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
+        Utils.putEvent(context, "*");
 
         MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS_BY_USERS, log, context);
 

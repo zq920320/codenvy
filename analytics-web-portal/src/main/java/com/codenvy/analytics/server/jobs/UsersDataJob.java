@@ -80,7 +80,7 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
             MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_NUMBER).getValue(context);
 
             for (MetricType metricType : MetricType.values()) {
-                metricType.process(Utils.clone(context));
+                DataProcessing.calculateAndStore(metricType, context);
             }
         } finally {
             LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");

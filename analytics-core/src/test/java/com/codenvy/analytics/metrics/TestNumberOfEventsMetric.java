@@ -56,7 +56,7 @@ public class TestNumberOfEventsMetric {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, "user-code-refactor");
 
-        METRIC_TYPE.process(context);
+        DataProcessing.calculateAndStore(MetricType.USER_CODE_REFACTOR, context);
     }
 
     @Test

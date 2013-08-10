@@ -34,7 +34,6 @@ public enum ScriptType {
     USERS_SHELL_LAUNCHED,
     JREBEL_USAGE,
     ACTIVE_USERS_WORKSPACES,
-    USERS_ADDED_TO_WS,
     PROJECTS_CREATED,
     PROJECTS_DEPLOYED,
     PROJECTS_DEPLOYED_LOCAL,
@@ -105,6 +104,14 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return SetStringValueData.class;
         }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
+        }
     },
 
     SET_ACTIVE_WS_BY_DOMAINS {
@@ -117,6 +124,14 @@ public enum ScriptType {
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
+        }
     },
 
     SET_ACTIVE_WS_BY_USERS {
@@ -128,6 +143,14 @@ public enum ScriptType {
         @Override
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
         }
     },
 

@@ -52,6 +52,7 @@ public class TestSetOfActiveWs extends BaseTest {
         Map<String, String> context = new HashMap<>();
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
+        Utils.putEvent(context, "*");
 
         SetStringValueData valueData = (SetStringValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS, log, context);
         assertEquals(valueData.size(), 2);
@@ -70,6 +71,7 @@ public class TestSetOfActiveWs extends BaseTest {
         Map<String, String> context = new HashMap<>();
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
+        Utils.putEvent(context, "*");
 
         MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS_BY_DOMAINS, log, context);
 
@@ -93,6 +95,7 @@ public class TestSetOfActiveWs extends BaseTest {
         Map<String, String> context = new HashMap<>();
         Utils.putFromDate(context, "20101001");
         Utils.putToDate(context, "20101001");
+        Utils.putEvent(context, "*");
 
         MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS_BY_USERS, log, context);
 

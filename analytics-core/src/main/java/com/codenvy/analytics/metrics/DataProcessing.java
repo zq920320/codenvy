@@ -23,7 +23,6 @@ import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
 import java.io.IOException;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,54 +30,12 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class DataProcessing {
 
-    /** Executes scripts to calculate the total number of events. */
-    public static void numberOfEventsSingleScript(MetricType metricType, Map<String, String> context) throws Exception {
-        calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS));
-    }
-
-    /** Executes scripts to calculate the total number of events by user and domain names. */
-    public static void numberOfEventsWithType(MetricType metricType, Map<String, String> context)
-            throws Exception {
-        calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS_WITH_TYPE,
-                                                          ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS,
-                                                          ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_USERS));
-    }
-
-    /** Executes scripts to calculate the total number of events by user and domain names. */
-    public static void productUsageTime(MetricType metricType, Map<String, String> context)
-            throws Exception {
-        calculateAndStore(metricType, context, EnumSet.of(ScriptType.PRODUCT_USAGE_TIME,
-                                                          ScriptType.PRODUCT_USAGE_TIME_BY_USERS,
-                                                          ScriptType.PRODUCT_USAGE_TIME_BY_DOMAINS));
-    }
-
-    /** Executes scripts to calculate the total number of events by user and domain names. */
-    public static void numberOfEvents(MetricType metricType, Map<String, String> context) throws Exception {
-        calculateAndStore(metricType, context, EnumSet.of(ScriptType.NUMBER_EVENTS,
-                                                          ScriptType.NUMBER_EVENTS_BY_USERS,
-                                                          ScriptType.NUMBER_EVENTS_BY_DOMAINS));
-    }
-
-    /** Executes scripts to calculate the set of active users by user and domain names. */
-    public static void setOfActiveUsers(MetricType metricType, Map<String, String> context) throws Exception {
-        calculateAndStore(metricType, context, EnumSet.of(ScriptType.SET_ACTIVE_USERS,
-                                                          ScriptType.SET_ACTIVE_USERS_BY_DOMAINS,
-                                                          ScriptType.SET_ACTIVE_USERS_BY_USERS));
-    }
-
-    /** Executes scripts to calculate the set of active ws by user and domain names. */
-    public static void setOfActiveWs(MetricType metricType, Map<String, String> context) throws Exception {
-        calculateAndStore(metricType, context, EnumSet.of(ScriptType.SET_ACTIVE_WS,
-                                                          ScriptType.SET_ACTIVE_WS_BY_USERS,
-                                                          ScriptType.SET_ACTIVE_WS_BY_DOMAINS));
-    }
-
     /** Executes predefined set of {@link ScriptType}. */
-    private static void calculateAndStore(MetricType metricType, Map<String, String> context,
-                                          EnumSet<ScriptType> scripts) throws Exception {
-        ScriptExecutor executor = ScriptExecutor.INSTANCE;
+    public static void calculateAndStore(MetricType metricType, Map<String, String> context) throws Exception {
+        metricType.modifyContext(context);
 
-        for (ScriptType scriptType : scripts) {
+        ScriptExecutor executor = ScriptExecutor.INSTANCE;
+        for (ScriptType scriptType : metricType.getScripts()) {
             ValueData result = executor.executeAndReturn(scriptType, context);
 
             if (isDefaultValue(result)) {
@@ -128,7 +85,7 @@ public class DataProcessing {
             throws IOException {
         FSValueDataManager.storeValue(valueData, metricType, uuid);
 
-        if (valueData instanceof CollectionableValueData) {
+        if (valueData instanceof ListValueData) {
             FSValueDataManager
                     .storeNumber(new LongValueData(((CollectionableValueData)valueData).size()), metricType, uuid);
         }

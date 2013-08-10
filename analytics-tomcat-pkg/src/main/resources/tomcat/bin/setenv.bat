@@ -30,9 +30,7 @@ SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.scripts.directory=%CATALINA_HOME
 SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.result.directory=%CATALINA_HOME%/data/results
 SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.metrics.initial.values=%CATALINA_HOME%/analytics-conf/initial-values.xml
 SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.acton.ftp.properties=%CATALINA_HOME%/analytics-conf/acton-ftp.properties
-REM SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Danalytics.acton.cron.scheduling="0 0 1 ? * *"
 SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Dcom.codenvy.analytics.logpath=%CATALINA_HOME%/logs
-SET ANALYTICS_OPTS=%ANALYTICS_OPTS% -Dorganization.application.server.url=
 
 
 SET QUARTZ_OPTS=-Dorg.terracotta.quartz.skipUpdateCheck=true

@@ -37,7 +37,7 @@ import java.util.List;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestUseSSOLoginMetrics {
+public class TestUserSSOLoginMetrics {
 
     private HashMap<String, String> context;
 
@@ -58,7 +58,7 @@ public class TestUseSSOLoginMetrics {
         Utils.putFromDate(context, "20101009");
         Utils.putToDate(context, "20101009");
 
-        MetricType.USER_SSO_LOGGED_IN.process(context);
+        DataProcessing.calculateAndStore(MetricType.USER_SSO_LOGGED_IN, context);
     }
 
     @Test

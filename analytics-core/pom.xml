@@ -63,12 +63,6 @@
             <artifactId>log4j</artifactId>
         </dependency>
         
-        <!-- LDAP -->
-        <dependency>
-            <groupId>com.codenvy.organization</groupId>
-            <artifactId>codenvy-organization-api-java-client</artifactId>
-        </dependency>
-
         <!-- Third parties -->
         <dependency>
             <groupId>org.testng</groupId>
@@ -86,6 +80,11 @@
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
         </dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		    <version>${commons.io}</version>
+		</dependency>            
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>

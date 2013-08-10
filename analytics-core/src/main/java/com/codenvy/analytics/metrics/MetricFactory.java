@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricFactory {
 
-    private static ConcurrentHashMap<MetricType, Metric> metrics = new ConcurrentHashMap<MetricType, Metric>();
+    private static ConcurrentHashMap<MetricType, Metric> metrics = new ConcurrentHashMap<>();
 
     /** Creates new metric or returns existed one. */
     public static Metric createMetric(MetricType metricType) {
@@ -51,7 +51,7 @@ public class MetricFactory {
             case USER_CREATED:
                 metric = new UserCreatedMetric();
                 break;
-            case USERS_INVITATIONS_SENT_NUMBER:
+            case USERS_SENDING_INVITE_ONCE:
                 metric = new UsersInvitationsSentNumberMetric();
                 break;
             case TOTAL_USERS:
@@ -81,8 +81,11 @@ public class MetricFactory {
             case USERS_DEPLOYED_PAAS_PROJECTS_NUMBER:
                 metric = new UsersDeployedPaasProjectsNumberMetric();
                 break;
-            case USERS_ADDED_TO_WORKSPACE_LIST:
-                metric = new UsersAddedToWorkspaceListMetric();
+            case USER_ADDED_TO_WORKSPACE:
+                metric = new UserAddedToWsMetric();
+                break;
+            case USER_ADDED_TO_WORKSPACE_INVITE:
+                metric = new UserAddedToWsInviteMetric();
                 break;
             case USERS_SHELL_LAUNCHED_LIST:
                 metric = new UsersShellLaunchedListMetric();
@@ -360,14 +363,17 @@ public class MetricFactory {
             case JREBEL_USER_PROFILE_INFO_GATHERING:
                 metric = new JrebelUserProfileInfoGatheringMetric();
                 break;
-            case INVITATIONS_SENT_LIST:
-                metric = new InvitationsSentListMetric();
+            case USER_INVITE:
+                metric = new UserInviteMetric();
                 break;
-            case INVITATIONS_SENT_NUMBER:
-                metric = new InvitationsSentNumberMetric();
+            case USER_INVITE_ACTIVE:
+                metric = new UserInviteActiveMetric();
                 break;
-            case INVITATIONS_ACCEPTED_PERCENT:
-                metric = new InvitationsAcceptedPercentMetric();
+            case USER_ACCEPT_INVITE:
+                metric = new UserAcceptInviteMetric();
+                break;
+            case USER_ACCEPT_INVITE_PERCENT:
+                metric = new UserAcceptInvitePercentMetric();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);

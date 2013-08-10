@@ -15,6 +15,8 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
+
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.LongValueData;
@@ -25,10 +27,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserCodeCompleteMetric extends ValueReadBasedMetric {
+public class UserAddedToWsMetric extends ValueReadBasedMetric {
 
-    UserCodeCompleteMetric() {
-        super(MetricType.USER_CODE_COMPLETE);
+    public UserAddedToWsMetric() {
+        super(MetricType.USER_ADDED_TO_WORKSPACE);
     }
 
     /** {@inheritDoc} */
@@ -41,6 +43,8 @@ public class UserCodeCompleteMetric extends ValueReadBasedMetric {
     @Override
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                    MetricParameter.TO_DATE,
+                                                    MetricParameter.PARAM}));
     }
 }

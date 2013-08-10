@@ -20,43 +20,33 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Number of users, who created at least one project.
  * 
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersInvitationsSentNumberMetric extends CalculateBasedMetric {
-
-    private final InvitationsSentListMetric basedMetric;
+public class UsersInvitationsSentNumberMetric extends CalculatedMetric {
 
     UsersInvitationsSentNumberMetric() {
-        super(MetricType.USERS_INVITATIONS_SENT_NUMBER);
-        this.basedMetric = (InvitationsSentListMetric)MetricFactory.createMetric(MetricType.INVITATIONS_SENT_LIST);
+        super(MetricType.USERS_SENDING_INVITE_ONCE, MetricType.USER_INVITE_ACTIVE);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
-    }
-
-    /** {@inheritedDoc} */
-    @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
+    protected Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        Filter filter = basedMetric.createFilter(basedMetric.getValue(context));
-        return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        SetStringValueData valueData = (SetStringValueData)super.getValue(context);
+        return new LongValueData(valueData.size());
     }
 }
