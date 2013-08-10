@@ -51,7 +51,7 @@ public class MetricFactory {
             case USER_CREATED:
                 metric = new UserCreatedMetric();
                 break;
-            case USERS_SENDING_INVITE_ONCE:
+            case USERS_SENT_INVITE_ONCE:
                 metric = new UsersInvitationsSentNumberMetric();
                 break;
             case TOTAL_USERS:
@@ -69,8 +69,8 @@ public class MetricFactory {
             case ACTIVE_WS:
                 metric = new ActiveWsNumberMetric();
                 break;
-            case USERS_CREATED_PROJECTS_NUMBER:
-                metric = new UsersCreatedProjectsNumberMetric();
+            case USERS_CREATED_PROJECT_ONCE:
+                metric = new UsersCreatedProjectOnceMetric();
                 break;
             case USERS_BUILT_PROJECTS_NUMBER:
                 metric = new UsersBuiltProjectsNumberMetric();
@@ -249,17 +249,17 @@ public class MetricFactory {
             case PRODUCT_USAGE_SESSIONS_TOTAL:
                 metric = new ProductUsageSessionsTotalMetric();
                 break;
-            case PROJECTS_CREATED_NUMBER:
-                metric = new ProjectsCreatedNumberMetric();
+            case PROJECT_CREATED_TYPES:
+                metric = new ProjectsCreatedTypesMetric();
+                break;
+            case PROJECT_CREATED:
+                metric = new ProjectsCreatedMetric();
                 break;
             case PROJECT_DESTROYED:
                 metric = new ProjectDestroyedMetric();
                 break;
-            case TOTAL_PROJECTS_NUMBER:
+            case TOTAL_PROJECTS:
                 metric = new TotalProjectsMetric();
-                break;
-            case PROJECTS_CREATED_LIST:
-                metric = new ProjectsCreatedListMetric();
                 break;
             case PROJECTS_BUILT_LIST:
                 metric = new ProjectsBuiltListMetric();
@@ -276,44 +276,41 @@ public class MetricFactory {
             case DEBUG_STARTED:
                 metric = new DebugStarted();
                 break;
-            case PROJECTS_CREATED_TYPES:
-                metric = new ProjectsCreatedTypesMetric();
+            case PROJECT_TYPE_JAR:
+                metric = new ProjectCreatedTypeJarMetric();
                 break;
-            case PROJECT_TYPE_JAVA_JAR_NUMBER:
-                metric = new ProjectCreatedTypeJavaJarNumberMetric();
+            case PROJECT_TYPE_WAR:
+                metric = new ProjectCreatedWarNumber();
                 break;
-            case PROJECT_TYPE_JAVA_WAR_NUMBER:
-                metric = new ProjectCreatedTypeJavaWarNumberMetric();
+            case PROJECT_TYPE_JSP:
+                metric = new ProjectCreatedTypeJspMetric();
                 break;
-            case PROJECT_TYPE_JAVA_JSP_NUMBER:
-                metric = new ProjectCreatedTypeJavaJspNumberMetric();
+            case PROJECT_TYPE_SPRING:
+                metric = new ProjectCreatedSpringMetric();
                 break;
-            case PROJECT_TYPE_JAVA_SPRING_NUMBER:
-                metric = new ProjectCreatedTypeJavaSpringNumberMetric();
+            case PROJECT_TYPE_PHP:
+                metric = new ProjectCreatedPhpMetric();
                 break;
-            case PROJECT_TYPE_PHP_NUMBER:
-                metric = new ProjectCreatedTypeJavaPhpNumberMetric();
+            case PROJECT_TYPE_PYTHON:
+                metric = new ProjectCreatedPythonMetric();
                 break;
-            case PROJECT_TYPE_PYTHON_NUMBER:
-                metric = new ProjectCreatedTypePythonNumberMetric();
+            case PROJECT_TYPE_JAVASCRIPT:
+                metric = new ProjectCreatedJavaScriptMetric();
                 break;
-            case PROJECT_TYPE_JAVASCRIPT_NUMBER:
-                metric = new ProjectCreatedTypeJavaScriptNumberMetric();
+            case PROJECT_TYPE_RUBY:
+                metric = new ProjectCreatedRuby();
                 break;
-            case PROJECT_TYPE_RUBY_NUMBER:
-                metric = new ProjectCreatedTypeRubyNumberMetric();
+            case PROJECT_TYPE_MMP:
+                metric = new ProjectCreatedMMPMetric();
                 break;
-            case PROJECT_TYPE_MMP_NUMBER:
-                metric = new ProjectCreatedTypeMmpNumberMetric();
+            case PROJECT_TYPE_NODEJS:
+                metric = new ProjectCreatedNodejsMetric();
                 break;
-            case PROJECT_TYPE_NODEJS_NUMBER:
-                metric = new ProjectCreatedTypeNodejsNumberMetric();
+            case PROJECT_TYPE_ANDROID:
+                metric = new ProjectCreatedAndroidMetric();
                 break;
-            case PROJECT_TYPE_ANDROID_NUMBER:
-                metric = new ProjectCreatedTypeAndroidNumberMetric();
-                break;
-            case PROJECT_TYPE_OTHERS_NUMBER:
-                metric = new ProjectCreatedTypeOthersNumberMetric();
+            case PROJECT_TYPE_OTHERS:
+                metric = new ProjectCreatedOthersMetric();
                 break;
             case PROJECTS_DEPLOYED_LIST:
                 metric = new ProjectsDeployedListMetric();
@@ -365,6 +362,9 @@ public class MetricFactory {
                 break;
             case USER_INVITE:
                 metric = new UserInviteMetric();
+                break;
+            case PROJECT_CREATED_USER_ACTIVE:
+                metric = new ProjectCreatedUserActiveMetric();
                 break;
             case USER_INVITE_ACTIVE:
                 metric = new UserInviteActiveMetric();

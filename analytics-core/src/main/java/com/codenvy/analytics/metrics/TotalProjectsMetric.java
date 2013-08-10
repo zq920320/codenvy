@@ -26,7 +26,7 @@ package com.codenvy.analytics.metrics;
 public class TotalProjectsMetric extends CumulativeMetric {
 
     TotalProjectsMetric() {
-        super(MetricType.TOTAL_PROJECTS_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_NUMBER),
+        super(MetricType.TOTAL_PROJECTS, MetricFactory.createMetric(MetricType.PROJECT_CREATED),
               MetricFactory.createMetric(MetricType.PROJECT_DESTROYED));
     }
 }

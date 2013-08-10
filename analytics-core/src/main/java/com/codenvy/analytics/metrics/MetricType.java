@@ -247,7 +247,7 @@ public enum MetricType {
             Utils.putEvent(context, EventType.USER_INVITE.toString());
         }
     },
-    USERS_SENDING_INVITE_ONCE,
+    USERS_SENT_INVITE_ONCE,
     USER_ADDED_TO_WORKSPACE {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -278,30 +278,76 @@ public enum MetricType {
             Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
         }
     },
-    TOTAL_PROJECTS_NUMBER,
-    PROJECTS_CREATED_NUMBER,
-    PROJECTS_CREATED_LIST,
-    PROJECTS_BUILT_NUMBER,
-    PROJECTS_BUILT_LIST,
-    PROJECTS_CREATED_TYPES,
-    PROJECT_TYPE_JAVA_JAR_NUMBER,
-    PROJECT_TYPE_JAVA_WAR_NUMBER,
-    PROJECT_TYPE_JAVA_JSP_NUMBER,
-    PROJECT_TYPE_JAVA_SPRING_NUMBER,
-    PROJECT_TYPE_PHP_NUMBER,
-    PROJECT_TYPE_PYTHON_NUMBER,
-    PROJECT_TYPE_JAVASCRIPT_NUMBER,
-    PROJECT_TYPE_RUBY_NUMBER,
-    PROJECT_TYPE_MMP_NUMBER,
-    PROJECT_TYPE_NODEJS_NUMBER,
-    PROJECT_TYPE_ANDROID_NUMBER,
-    PROJECT_TYPE_OTHERS_NUMBER,
+    TOTAL_PROJECTS,
+    PROJECT_CREATED {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+        }
+    },
+    PROJECT_CREATED_TYPES {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS_WITH_TYPE,
+                              ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS,
+                              ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+            Utils.putParam(context, "TYPE");
+        }
+    },
+    PROJECT_TYPE_JAR,
+    PROJECT_TYPE_WAR,
+    PROJECT_TYPE_JSP,
+    PROJECT_TYPE_SPRING,
+    PROJECT_TYPE_PHP,
+    PROJECT_TYPE_PYTHON,
+    PROJECT_TYPE_JAVASCRIPT,
+    PROJECT_TYPE_RUBY,
+    PROJECT_TYPE_MMP,
+    PROJECT_TYPE_NODEJS,
+    PROJECT_TYPE_ANDROID,
+    PROJECT_TYPE_OTHERS,
+    PROJECT_CREATED_USER_ACTIVE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.SET_ACTIVE_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+        }
+    },
+    USERS_CREATED_PROJECT_ONCE,
+
+    PAAS_DEPLOYMENT_TYPES,
+    PAAS_DEPLOYMENT_TYPE_AWS_NUMBER,
+    PAAS_DEPLOYMENT_TYPE_APPFOG_NUMBER,
+    PAAS_DEPLOYMENT_TYPE_CLOUDBEES_NUMBER,
+    PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_NUMBER,
+    PAAS_DEPLOYMENT_TYPE_GAE_NUMBER,
+    PAAS_DEPLOYMENT_TYPE_HEROKU_NUMBER,
+    PAAS_DEPLOYMENT_TYPE_OPENSHIFT_NUMBER,
+    PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER,
+    PAAS_DEPLOYMENT_TYPE_LOCAL_NUMBER,
+
     PROJECTS_DEPLOYED_LIST,
     PROJECTS_DEPLOYED_LOCAL_LIST,
     PROJECTS_DEPLOYED_PAAS_LIST,
     PROJECTS_DEPLOYED_NUMBER,
-
-    USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
+    PROJECTS_BUILT_NUMBER,
+    PROJECTS_BUILT_LIST,
     USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
     USERS_DEPLOYED_PROJECTS_NUMBER, // number of users, who deployed project at least once
     USERS_DEPLOYED_PAAS_PROJECTS_NUMBER, // number of users, who deployed projects locally and paas
@@ -338,16 +384,6 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME,
-    PAAS_DEPLOYMENT_TYPES,
-    PAAS_DEPLOYMENT_TYPE_AWS_NUMBER,
-    PAAS_DEPLOYMENT_TYPE_APPFOG_NUMBER,
-    PAAS_DEPLOYMENT_TYPE_CLOUDBEES_NUMBER,
-    PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_NUMBER,
-    PAAS_DEPLOYMENT_TYPE_GAE_NUMBER,
-    PAAS_DEPLOYMENT_TYPE_HEROKU_NUMBER,
-    PAAS_DEPLOYMENT_TYPE_OPENSHIFT_NUMBER,
-    PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER,
-    PAAS_DEPLOYMENT_TYPE_LOCAL_NUMBER,
     JREBEL_USAGE_LIST,
     JREBEL_USER_PROFILE_INFO_GATHERING,
     USERS_SHELL_LAUNCHED_LIST,

@@ -19,49 +19,35 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsCreatedNumberMetric extends CalculateBasedMetric {
+public class ProjectCreatedOthersMetric extends CalculatedMetric {
 
-    private final Metric basedMetric;
-
-    ProjectsCreatedNumberMetric() {
-        super(MetricType.PROJECTS_CREATED_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST);
+    public ProjectCreatedOthersMetric() {
+        super(MetricType.PROJECT_TYPE_OTHERS, MetricType.PROJECT_CREATED_TYPES);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Utils.putParam(context, "null");
+        ValueData value = super.getValue(context);
+
+        Utils.putParam(context, "default");
+        value = value.union(super.getValue(context));
+
+        Utils.putParam(context, "eXo");
+        return value.union(super.getValue(context));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
+    protected Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        return new LongValueData(valueData.size());
     }
 }

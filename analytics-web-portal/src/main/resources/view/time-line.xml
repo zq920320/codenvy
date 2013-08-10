@@ -49,9 +49,9 @@
     </table>
     <table length="20">
         <date section="Projects" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <metric type="projects_created_number" title="Created"/>
+        <metric type="project_created" title="Created"/>
         <metric type="project_destroyed" title="Destroyed"/>
-        <metric type="total_projects_number" title="Total"/>
+        <metric type="total_projects" title="Total"/>
         <empty />
     </table>
     <table length="20">
@@ -74,18 +74,19 @@
     </table>
     <table length="20">
         <date section="Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <total types="project_type_java_jar_number,project_type_java_war_number,project_type_java_jsp_number,project_type_java_spring_number,project_type_php_number,project_type_python_number,project_type_javascript_number,project_type_ruby_number,project_type_mmp_number,project_type_nodejs_number,project_type_android_number,project_type_others_number" format="%.0f"/>
-        <metric type="project_type_java_jar_number" format="%.0f" title="Java Jar"/>
-        <metric type="project_type_java_war_number" format="%.0f" title="Java War"/>
-        <metric type="project_type_java_jsp_number" format="%.0f" title="Java JSP"/>
-        <metric type="project_type_java_spring_number" format="%.0f" title="Java Spring"/>
-        <metric type="project_type_php_number" format="%.0f" title="PHP"/>
-        <metric type="project_type_python_number" format="%.0f" title="Python"/>
-        <metric type="project_type_javascript_number" format="%.0f" title="JavaScript"/>
-        <metric type="project_type_ruby_number" format="%.0f" title="Ruby"/>
-        <metric type="project_type_mmp_number" format="%.0f" title="Maven Multi Project"/>
-        <metric type="project_type_nodejs_number" format="%.0f" title="Node.js"/>
-        <metric type="project_type_others_number" format="%.0f" title="Others"/>
+        <total types="project_type_jar,project_type_war,project_type_jsp,project_type_spring,project_type_php,project_type_python,project_type_javascript,project_type_ruby,project_type_mmp,project_type_nodejs,project_type_android,project_type_others" format="%.0f"/>
+        <metric type="project_type_jar" format="%.0f" title="Java Jar"/>
+        <metric type="project_type_war" format="%.0f" title="Java War"/>
+        <metric type="project_type_jsp" format="%.0f" title="Java JSP"/>
+        <metric type="project_type_spring" format="%.0f" title="Java Spring"/>
+        <metric type="project_type_php" format="%.0f" title="PHP"/>
+        <metric type="project_type_python" format="%.0f" title="Python"/>
+        <metric type="project_type_javascript" format="%.0f" title="JavaScript"/>
+        <metric type="project_type_ruby" format="%.0f" title="Ruby"/>
+        <metric type="project_type_mmp" format="%.0f" title="Maven Multi Project"/>
+        <metric type="project_type_nodejs" format="%.0f" title="Node.js"/>
+        <metric type="project_type_android" format="%.0f" title="Android"/>
+        <metric type="project_type_others" format="%.0f" title="Others"/>
         <empty />
     </table>
     <table length="20">

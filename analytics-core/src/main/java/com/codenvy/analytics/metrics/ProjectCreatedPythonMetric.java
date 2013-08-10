@@ -19,14 +19,29 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeRubyNumberMetric extends AbstractProjectsCreatedMetric {
+public class ProjectCreatedPythonMetric extends CalculatedMetric {
 
-    ProjectCreatedTypeRubyNumberMetric() {
-        super(MetricType.PROJECT_TYPE_RUBY_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "Rails", ValueType.NUMBER);
+    public ProjectCreatedPythonMetric() {
+        super(MetricType.PROJECT_TYPE_PYTHON, MetricType.PROJECT_CREATED_TYPES);
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Utils.putParam(context, "Python");
+        return super.getValue(context);
+    }
+
+    @Override
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 }

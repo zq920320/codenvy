@@ -19,15 +19,29 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaJarNumberMetric extends AbstractProjectsCreatedMetric {
+public class ProjectCreatedTypeJarMetric extends CalculatedMetric {
 
-    ProjectCreatedTypeJavaJarNumberMetric() {
-        super(MetricType.PROJECT_TYPE_JAVA_JAR_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "Jar",
-              ValueType.NUMBER);
+    public ProjectCreatedTypeJarMetric() {
+        super(MetricType.PROJECT_TYPE_JAR, MetricType.PROJECT_CREATED_TYPES);
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Utils.putParam(context, "Jar");
+        return super.getValue(context);
+    }
+
+    @Override
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 }

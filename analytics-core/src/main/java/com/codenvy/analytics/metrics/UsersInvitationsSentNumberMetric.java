@@ -34,7 +34,7 @@ import java.util.Map;
 public class UsersInvitationsSentNumberMetric extends CalculatedMetric {
 
     UsersInvitationsSentNumberMetric() {
-        super(MetricType.USERS_SENDING_INVITE_ONCE, MetricType.USER_INVITE_ACTIVE);
+        super(MetricType.USERS_SENT_INVITE_ONCE, MetricType.USER_INVITE_ACTIVE);
     }
 
     /** {@inheritDoc} */

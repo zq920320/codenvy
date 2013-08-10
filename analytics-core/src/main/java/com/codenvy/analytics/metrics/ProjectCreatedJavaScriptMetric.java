@@ -19,16 +19,29 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.ValueFromMapMetric.ValueType;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedTypeJavaSpringNumberMetric extends AbstractProjectsCreatedMetric {
+public class ProjectCreatedJavaScriptMetric extends CalculatedMetric {
 
+    public ProjectCreatedJavaScriptMetric() {
+        super(MetricType.PROJECT_TYPE_JAVASCRIPT, MetricType.PROJECT_CREATED_TYPES);
+    }
 
-    ProjectCreatedTypeJavaSpringNumberMetric() {
-        super(MetricType.PROJECT_TYPE_JAVA_SPRING_NUMBER, MetricFactory.createMetric(MetricType.PROJECTS_CREATED_LIST), "Spring",
-              ValueType.NUMBER);
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Utils.putParam(context, "JavaScript");
+        return super.getValue(context);
+    }
+
+    @Override
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 }

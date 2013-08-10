@@ -19,38 +19,29 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
-import com.codenvy.analytics.scripts.ScriptType;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectsCreatedListMetric extends PersistableScriptBasedMetric {
+public class ProjectCreatedAndroidMetric extends CalculatedMetric {
 
-    ProjectsCreatedListMetric() {
-        super(MetricType.PROJECTS_CREATED_LIST);
+    public ProjectCreatedAndroidMetric() {
+        super(MetricType.PROJECT_TYPE_ANDROID, MetricType.PROJECT_CREATED_TYPES);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.PROJECTS_CREATED;
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Utils.putParam(context, "Android");
+        return super.getValue(context);
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected boolean isFilterSupported() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected Filter createFilter(ValueData valueData) {
-        return new ProjectsFilter((ListListStringValueData)valueData);
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 }
