@@ -22,6 +22,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -46,10 +47,16 @@ public class TestCumulativeMetric extends BaseTest {
 
     private final String content = "<metrics>" +
                                    "  <metric type=\"TOTAL_WORKSPACES\">" +
-                                   "     <initial-value FROM_DATE=\"20130331\" " +
-                                   "TO_DATE=\"20130331\">100</initial-value>" +
+                                   "     <initial-value FROM_DATE=\"20091102\" TO_DATE=\"20091102\">1</initial-value>" +
+                                   "     <initial-value FROM_DATE=\"20091103\" TO_DATE=\"20091103\">2</initial-value>" +
+                                   "   <initial-value FROM_DATE=\"20130331\" TO_DATE=\"20130331\">100</initial-value>" +
+                                   "  </metric>" +
+                                   "  <metric type=\"TOTAL_USERS\">" +
+                                   "    <initial-value FROM_DATE=\"20091104\" TO_DATE=\"20091104\">10</initial-value>" +
                                    "  </metric>" +
                                    "</metrics>";
+
+    private InitialValueContainer initialValueContainer;
 
     @BeforeTest
     public void setUp() throws Exception {
@@ -61,6 +68,7 @@ public class TestCumulativeMetric extends BaseTest {
         writer.close();
 
         System.setProperty(InitialValueContainer.ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY, file.getAbsolutePath());
+        initialValueContainer = InitialValueContainer.getInstance();
     }
 
     @Test
@@ -98,6 +106,50 @@ public class TestCumulativeMetric extends BaseTest {
         assertEquals(
                 FSValueDataManager.loadValue(MetricType.TOTAL_WORKSPACES, testedMetric.makeUUID(newContext)),
                 new LongValueData(105L));
+    }
+
+    @Test
+    public void testGetValues() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Utils.putToDate(context, "20091102");
+
+        ValueData valueData = initialValueContainer.getInitalValue(MetricType.TOTAL_WORKSPACES,
+                                                                   context.toString());
+        assertEquals(valueData, new LongValueData(1L));
+
+        Utils.putToDate(context, "20091103");
+        valueData = initialValueContainer.getInitalValue(MetricType.TOTAL_WORKSPACES, context.toString());
+        assertEquals(valueData, new LongValueData(2L));
+
+        Utils.putToDate(context, "20091104");
+        valueData = initialValueContainer.getInitalValue(MetricType.TOTAL_USERS, context.toString());
+        assertEquals(valueData, new LongValueData(10L));
+    }
+
+    @Test
+    public void testValidation() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Utils.putToDate(context, "20091104");
+
+
+        initialValueContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_WORKSPACES, context);
+    }
+
+    @Test(expectedExceptions = InitialValueNotFoundException.class)
+    public void testValidationThrowExceptionCase1() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Utils.putToDate(context, "20091101");
+
+        initialValueContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_USERS, context);
+    }
+
+    @Test(expectedExceptions = InitialValueNotFoundException.class)
+    public void testValidationThrowExceptionCase2() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Utils.putToDate(context, "20091101");
+
+
+        initialValueContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_WORKSPACES, context);
     }
 
     class TestedMetric extends CumulativeMetric {

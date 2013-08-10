@@ -206,19 +206,6 @@ public enum MetricType {
             Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
         }
     },
-    PROJECT_DESTROYED {
-        @Override
-        public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_EVENTS,
-                              ScriptType.NUMBER_EVENTS_BY_USERS,
-                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
-        }
-
-        @Override
-        public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
-        }
-    },
     PRODUCT_USAGE_TIME {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -278,6 +265,41 @@ public enum MetricType {
     USER_ADDED_TO_WORKSPACE_INVITE,
     USER_ACCEPT_INVITE,
     USER_ACCEPT_INVITE_PERCENT,
+    PROJECT_DESTROYED {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
+        }
+    },
+    TOTAL_PROJECTS_NUMBER,
+    PROJECTS_CREATED_NUMBER,
+    PROJECTS_CREATED_LIST,
+    PROJECTS_BUILT_NUMBER,
+    PROJECTS_BUILT_LIST,
+    PROJECTS_CREATED_TYPES,
+    PROJECT_TYPE_JAVA_JAR_NUMBER,
+    PROJECT_TYPE_JAVA_WAR_NUMBER,
+    PROJECT_TYPE_JAVA_JSP_NUMBER,
+    PROJECT_TYPE_JAVA_SPRING_NUMBER,
+    PROJECT_TYPE_PHP_NUMBER,
+    PROJECT_TYPE_PYTHON_NUMBER,
+    PROJECT_TYPE_JAVASCRIPT_NUMBER,
+    PROJECT_TYPE_RUBY_NUMBER,
+    PROJECT_TYPE_MMP_NUMBER,
+    PROJECT_TYPE_NODEJS_NUMBER,
+    PROJECT_TYPE_ANDROID_NUMBER,
+    PROJECT_TYPE_OTHERS_NUMBER,
+    PROJECTS_DEPLOYED_LIST,
+    PROJECTS_DEPLOYED_LOCAL_LIST,
+    PROJECTS_DEPLOYED_PAAS_LIST,
+    PROJECTS_DEPLOYED_NUMBER,
 
     USERS_CREATED_PROJECTS_NUMBER, // number of users, who create project at least once
     USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
@@ -316,28 +338,6 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME,
-    TOTAL_PROJECTS_NUMBER,
-    PROJECTS_CREATED_NUMBER,
-    PROJECTS_CREATED_LIST,
-    PROJECTS_BUILT_NUMBER,
-    PROJECTS_BUILT_LIST,
-    PROJECTS_CREATED_TYPES,
-    PROJECT_TYPE_JAVA_JAR_NUMBER,
-    PROJECT_TYPE_JAVA_WAR_NUMBER,
-    PROJECT_TYPE_JAVA_JSP_NUMBER,
-    PROJECT_TYPE_JAVA_SPRING_NUMBER,
-    PROJECT_TYPE_PHP_NUMBER,
-    PROJECT_TYPE_PYTHON_NUMBER,
-    PROJECT_TYPE_JAVASCRIPT_NUMBER,
-    PROJECT_TYPE_RUBY_NUMBER,
-    PROJECT_TYPE_MMP_NUMBER,
-    PROJECT_TYPE_NODEJS_NUMBER,
-    PROJECT_TYPE_ANDROID_NUMBER,
-    PROJECT_TYPE_OTHERS_NUMBER,
-    PROJECTS_DEPLOYED_LIST,
-    PROJECTS_DEPLOYED_LOCAL_LIST,
-    PROJECTS_DEPLOYED_PAAS_LIST,
-    PROJECTS_DEPLOYED_NUMBER,
     PAAS_DEPLOYMENT_TYPES,
     PAAS_DEPLOYMENT_TYPE_AWS_NUMBER,
     PAAS_DEPLOYMENT_TYPE_APPFOG_NUMBER,

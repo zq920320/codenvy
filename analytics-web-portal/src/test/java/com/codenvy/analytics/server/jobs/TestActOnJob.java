@@ -24,8 +24,6 @@ import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-import com.codenvy.organization.client.UserManager;
-import com.codenvy.organization.exception.OrganizationServiceException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -45,7 +43,7 @@ public class TestActOnJob {
     private Map<String, String> context;
 
     @BeforeMethod
-    private void setUp() throws IOException, OrganizationServiceException {
+    private void setUp() throws IOException {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
@@ -59,8 +57,6 @@ public class TestActOnJob {
         attributes.put("lastName", "Norris");
         attributes.put("phone", "00000000");
         attributes.put("employer", "Eath");
-
-        UserManager userManager = mock(UserManager.class);
 
         context = Utils.newContext();
         context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
