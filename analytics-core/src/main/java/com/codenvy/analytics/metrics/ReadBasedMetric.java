@@ -37,9 +37,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         super(metricType);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         Calendar fromDate = Utils.getFromDate(context);
@@ -62,15 +60,16 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return total;
     }
 
-    /**
-     * @return {@link com.codenvy.analytics.metrics.value.ValueData}
-     */
+    /** @return {@link com.codenvy.analytics.metrics.value.ValueData} */
     protected ValueData evaluate(Map<String, String> dayContext) throws IOException {
         return getFilteredValue(makeUUID(dayContext), dayContext);
     }
 
-    private ValueData getFilteredValue(LinkedHashMap<String, String> uuid, Map<String, String> dayContext) throws IOException {
+    private ValueData getFilteredValue(LinkedHashMap<String, String> uuid, Map<String, String> dayContext)
+            throws IOException {
+
         List<MetricFilter> availableFilters = getAvailableFilters(dayContext);
+
         if (availableFilters.isEmpty()) {
             return getDirectValue(uuid);
         } else if (availableFilters.size() > 1) {
@@ -95,9 +94,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return valueData;
     }
 
-    /**
-     * @return all available filters from context
-     */
+    /** @return all available filters from context */
     private List<MetricFilter> getAvailableFilters(Map<String, String> dayContext) {
         List<MetricFilter> filters = new ArrayList<>(3);
 
@@ -134,7 +131,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /**
-     * @return {@link com.codenvy.analytics.metrics.value.ValueData} from the storage, if data is absent then empty value will be returned
+     * @return {@link com.codenvy.analytics.metrics.value.ValueData} from the storage, if data is absent then empty
+     *         value will be returned
      */
     private ValueData getDirectValue(LinkedHashMap<String, String> uuid) throws IOException {
         try {
@@ -144,9 +142,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
     }
 
-    /**
-     * @return empty {@link com.codenvy.analytics.metrics.value.ValueData}
-     */
+    /** @return empty {@link com.codenvy.analytics.metrics.value.ValueData} */
     private ValueData createEmptyValueData() throws IOException {
         return ValueDataFactory.createDefaultValue(getValueDataClass());
     }

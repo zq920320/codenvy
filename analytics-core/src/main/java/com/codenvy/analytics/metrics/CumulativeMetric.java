@@ -18,13 +18,11 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,14 +58,6 @@ public abstract class CumulativeMetric extends AbstractMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws InitialValueNotFoundException, IOException {
-        if (isFirstDayOfMonth(context)) {
-            try {
-                return tryLoad(context);
-            } catch (FileNotFoundException e) {
-                // it's OK, let's calculate data then
-            }
-        }
-
         context = Utils.clone(context);
         Utils.putFromDate(context, Utils.getToDate(context));
         Utils.putTimeUnit(context, TimeUnit.DAY);
@@ -75,7 +65,13 @@ public abstract class CumulativeMetric extends AbstractMetric {
         validateExistenceInitialValueBefore(context);
 
         try {
-            return iValueContainer.getInitalValue(metricType, makeUUID(context).toString());
+            ValueData initalValue = iValueContainer.getInitalValue(metricType, makeUUID(context).toString());
+
+            if (isFilterExists(context)) {
+                return ValueDataFactory.createDefaultValue(getValueDataClass());
+            } else {
+                return initalValue;
+            }
         } catch (InitialValueNotFoundException e) {
             // ignoring, may be next time lucky
         }
@@ -89,23 +85,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
         LongValueData cumulativeValue = new LongValueData(
                 previousEntities.getAsLong() + addedEntities.getAsLong() - removedEntities.getAsLong());
 
-        if (isFirstDayOfMonth(context)) {
-            store(cumulativeValue, context);
-        }
-
         return cumulativeValue;
-    }
-
-    private void store(LongValueData cumulativeValue, Map<String, String> context) throws IOException {
-        FSValueDataManager.storeValue(cumulativeValue, metricType, makeUUID(context));
-    }
-
-    private boolean isFirstDayOfMonth(Map<String, String> context) throws IOException {
-        return Utils.getToDate(context).get(Calendar.DAY_OF_MONTH) == 1;
-    }
-
-    private LongValueData tryLoad(Map<String, String> context) throws IOException {
-        return (LongValueData)FSValueDataManager.loadValue(metricType, makeUUID(context));
     }
 
     protected void validateExistenceInitialValueBefore(Map<String, String> context)

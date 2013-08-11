@@ -24,6 +24,8 @@ import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
 import org.apache.commons.io.FileUtils;
 import org.quartz.Job;
@@ -65,27 +67,25 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
         long start = System.currentTimeMillis();
 
         try {
-//            prepareDir("PROFILES");
-//
-//            ScriptExecutor executor = ScriptExecutor.INSTANCE;
-//            Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
-//
-//            executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
-//
-//            ValueData result = executor.executeAndReturn(ScriptType.USERS_ACTIVITY_PREPARATION, context);
-//            store(MetricType.USER_ACTIVITY, result, context);
-//
-//            result = executor.executeAndReturn(ScriptType.USERS_PROFILE_PREPARATION, context);
-//            store(MetricType.USER_PROFILE, result, context);
-//
-//            MetricFactory.createMetric(MetricType.PROJECTS_BUILT_NUMBER).getValue(context);
-//            MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_NUMBER).getValue(context);
-//
-//            for (MetricType metricType : MetricType.values()) {
-//                DataProcessing.calculateAndStore(metricType, context);
-//            }
-            DataProcessing.calculateAndStore(MetricType.PROJECT_DEPLOYED_TYPES, context);
-            // TODO
+            prepareDir("PROFILES");
+
+            ScriptExecutor executor = ScriptExecutor.INSTANCE;
+            Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
+
+            executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
+
+            ValueData result = executor.executeAndReturn(ScriptType.USERS_ACTIVITY_PREPARATION, context);
+            store(MetricType.USER_ACTIVITY, result, context);
+
+            result = executor.executeAndReturn(ScriptType.USERS_PROFILE_PREPARATION, context);
+            store(MetricType.USER_PROFILE, result, context);
+
+            MetricFactory.createMetric(MetricType.PROJECTS_BUILT_NUMBER).getValue(context);
+            MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_NUMBER).getValue(context);
+
+            for (MetricType metricType : MetricType.values()) {
+                DataProcessing.calculateAndStore(metricType, context);
+            }
         } finally {
             LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

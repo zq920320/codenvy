@@ -59,6 +59,18 @@ public abstract class AbstractMetric implements Metric {
         return keys;
     }
 
+    /** @return true if context contains filter parameter and false otherwise */
+    protected boolean isFilterExists(Map<String, String> context) {
+        for (MetricFilter filterKey : MetricFilter.values()) {
+            if (context.containsKey(filterKey.name())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
     /** @return what data type is represented in result */
     protected abstract Class<? extends ValueData> getValueDataClass();
 }
