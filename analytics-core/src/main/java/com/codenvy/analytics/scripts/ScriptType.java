@@ -35,7 +35,43 @@ public enum ScriptType {
     JREBEL_USAGE,
     ACTIVE_USERS_WORKSPACES,
     PROJECTS_CREATED,
-    PROJECTS_DEPLOYED,
+    PROJECT_DEPLOYED {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM};
+        }
+    },
+
+    PROJECT_DEPLOYED_BY_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapListLongValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        }
+    },
+
+    PROJECT_DEPLOYED_BY_DOMAINS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapListLongValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        }
+    },
+
+
     PROJECTS_DEPLOYED_LOCAL,
     PROJECTS_DEPLOYED_PAAS,
     PROJECTS_BUILT,

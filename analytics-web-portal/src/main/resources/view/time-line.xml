@@ -91,16 +91,16 @@
     </table>
     <table length="20">
         <date section="Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <total types="paas_deployment_type_aws_number,paas_deployment_type_appfog_number,paas_deployment_type_cloudbees_number,paas_deployment_type_cloudfoundry_number,paas_deployment_type_gae_number,paas_deployment_type_heroku_number,paas_deployment_type_openshift_number,paas_deployment_type_tier3_number,paas_deployment_type_local_number" format="%.0f"/>
-        <metric type="paas_deployment_type_aws_number" format="%.0f" title="AWS"/>
-        <metric type="paas_deployment_type_appfog_number" format="%.0f" title="AppFog"/>
-        <metric type="paas_deployment_type_cloudbees_number" format="%.0f" title="CloudBees"/>
-        <metric type="paas_deployment_type_cloudfoundry_number" format="%.0f" title="CloudFoundry"/>
-        <metric type="paas_deployment_type_gae_number" format="%.0f" title="GAE"/>
-        <metric type="paas_deployment_type_heroku_number" format="%.0f" title="Heroku"/>
-        <metric type="paas_deployment_type_openshift_number" format="%.0f" title="OpenShift"/>
-        <metric type="paas_deployment_type_tier3_number" format="%.0f" title="Tier3"/>
-        <metric type="paas_deployment_type_local_number" format="%.0f" title="Local"/>
+        <total types="project_paas_aws,project_paas_appfog,project_paas_cloudbees,project_paas_cloudfoundry,project_paas_gae,project_paas_heroku,project_paas_openshift,project_paas_tier3,project_paas_local" format="%.0f"/>
+        <metric type="project_paas_aws" format="%.0f" title="AWS"/>
+        <metric type="project_paas_appfog" format="%.0f" title="AppFog"/>
+        <metric type="project_paas_cloudbees" format="%.0f" title="CloudBees"/>
+        <metric type="project_paas_cloudfoundry" format="%.0f" title="CloudFoundry"/>
+        <metric type="project_paas_gae" format="%.0f" title="GAE"/>
+        <metric type="project_paas_heroku" format="%.0f" title="Heroku"/>
+        <metric type="project_paas_openshift" format="%.0f" title="OpenShift"/>
+        <metric type="project_paas_tier3" format="%.0f" title="Tier3"/>
+        <metric type="project_paas_local" format="%.0f" title="Local"/>
         <empty />
     </table>
 </display>

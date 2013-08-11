@@ -330,6 +330,23 @@ public enum MetricType {
         }
     },
     USERS_CREATED_PROJECT_ONCE,
+    PROJECT_DEPLOYED_TYPES {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.PROJECT_DEPLOYED,
+                              ScriptType.PROJECT_DEPLOYED_BY_DOMAINS,
+                              ScriptType.PROJECT_DEPLOYED_BY_USERS);
+        }
+    },
+    PROJECT_PAAS_AWS,
+    PROJECT_PAAS_APPFOG,
+    PROJECT_PAAS_CLOUDBEES,
+    PROJECT_PAAS_CLOUDFOUNDRY,
+    PROJECT_PAAS_GAE,
+    PROJECT_PAAS_HEROKU,
+    PROJECT_PAAS_OPENSHIFT,
+    PROJECT_PAAS_TIER3,
+    PROJECT_PAAS_LOCAL,
 
     PAAS_DEPLOYMENT_TYPES,
     PAAS_DEPLOYMENT_TYPE_AWS_NUMBER,
@@ -395,7 +412,7 @@ public enum MetricType {
         return EnumSet.noneOf(ScriptType.class);
     }
 
-    // TODO
+    /** Should be overridden if there is necessity to pass additional parameters into context. */
     public void modifyContext(Map<String, String> context) {
     }
 }

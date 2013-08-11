@@ -16,16 +16,20 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.analytics.metrics;
+IMPORT 'macros.pig';
 
+f1 = loadResources('$log');
+f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+f = filterByEvent(f2, 'project-deployed,application-created');
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class PaasDeploymentTypeOpenShiftNumberMetric extends ValueFromMapMetric {
+t1 = extractWs(f);
+t2 = extractUser(t1);
+t3 = extractParam(t2, 'TYPE', 'type');
+t4 = extractParam(t3, 'PROJECT', 'project');
+t = extractParam(t4, 'PAAS', 'paas');
 
-    PaasDeploymentTypeOpenShiftNumberMetric() {
-        super(MetricType.PAAS_DEPLOYMENT_TYPE_OPENSHIFT_NUMBER, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES), ValueType.NUMBER,
-              "OpenShift");
-    }
-}
+r1 = FOREACH t GENERATE ws, user, project, type, paas;
+r2 = DISTINCT r1;
+r3 = GROUP r2 BY paas;
+result = FOREACH r3 GENERATE group, COUNT(r2);
+

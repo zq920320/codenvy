@@ -16,16 +16,20 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.analytics.metrics;
+IMPORT 'macros.pig';
 
+f1 = loadResources('$log');
+f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+f = filterByEvent(f2, 'project-deployed,application-created');
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class PaasDeploymentTypeCloudFoundryNumberMetric extends ValueFromMapMetric {
+t1 = extractWs(f);
+t2 = extractUser(t1);
+t3 = extractParam(t2, 'TYPE', 'type');
+t4 = extractParam(t3, 'PROJECT', 'project');
+t = extractParam(t4, 'PAAS', 'paas');
 
-    PaasDeploymentTypeCloudFoundryNumberMetric() {
-        super(MetricType.PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_NUMBER, MetricFactory.createMetric(MetricType.PAAS_DEPLOYMENT_TYPES),
-              ValueType.NUMBER, "CloudFoundry");
-    }
-}
+r1 = FOREACH t GENERATE ws, user, project, type, paas;
+r2 = DISTINCT r1;
+r3 = GROUP r2 BY (user, paas);
+result = FOREACH r3 GENERATE TOBAG(group.paas, group.user), COUNT(r2);
+

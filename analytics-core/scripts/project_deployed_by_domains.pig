@@ -16,17 +16,22 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
 f1 = loadResources('$log');
 f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-fR = filterByEvent(f2, 'project-deployed,application-created');
+f = filterByEvent(f2, 'project-deployed,application-created');
 
-t1 = extractWs(fR);
+t1 = extractWs(f);
 t2 = extractUser(t1);
 t3 = extractParam(t2, 'TYPE', 'type');
 t4 = extractParam(t3, 'PROJECT', 'project');
-tR = extractParam(t4, 'PAAS', 'paas');
+t5 = extractParam(t4, 'PAAS', 'paas');
+t6 = FOREACH t5 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, project, type, paas;
+t = FILTER t6 BY domain != '';
 
-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type), TOTUPLE(paas));
+r1 = FOREACH t GENERATE ws, domain, project, type, paas;
+r2 = DISTINCT r1;
+r3 = GROUP r2 BY (domain, paas);
+result = FOREACH r3 GENERATE TOBAG(group.paas, group.domain), COUNT(r2);
 

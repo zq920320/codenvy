@@ -8,7 +8,7 @@
         <metric type="total_users" title="Total Users"/>
         <metric type="user_created" title="Total Accounts (Logged)"/>
         <metric type="users_created_projects_once" title="Created Project"/>
-        <metric type="users_built_projects_number" title="&amp; Built"/>
+        <metric type="users_built_project_number" title="&amp; Built"/>
         <metric type="users_deployed_projects_number" title="&amp; Deployed"/>
         <metric type="users_deployed_paas_projects_number" title="&amp; Deployed to PAAS"/>
         <metric type="users_sent_invite_once" title="Sent Invites"/>

@@ -16,39 +16,32 @@
  * from Codenvy S.A..
  */
 
-
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
-import com.codenvy.analytics.metrics.value.filters.ProjectsFilter;
-import com.codenvy.analytics.scripts.ScriptType;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ProjectsDeployedListMetric extends PersistableScriptBasedMetric {
+import java.io.IOException;
+import java.util.Map;
 
-    ProjectsDeployedListMetric() {
-        super(MetricType.PROJECTS_DEPLOYED_LIST);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class ProjectPaasCloudbeesMetric extends CalculatedMetric {
+
+    ProjectPaasCloudbeesMetric() {
+        super(MetricType.PROJECT_PAAS_CLOUDBEES, MetricType.PROJECT_DEPLOYED_TYPES);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.PROJECT_DEPLOYED;
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Utils.putParam(context, "CloudBees");
+        return super.getValue(context);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected Filter createFilter(ValueData valueData) {
-        return new ProjectsFilter((ListListStringValueData)valueData);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean isFilterSupported() {
-        return true;
+    protected Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 }

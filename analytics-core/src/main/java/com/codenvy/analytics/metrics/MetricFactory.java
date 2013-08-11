@@ -324,36 +324,68 @@ public class MetricFactory {
             case PROJECTS_DEPLOYED_NUMBER:
                 metric = new ProjectsDeployedNumberMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPES:
-                metric = new PaasDeploymentTypesMetric();
+
+            case PROJECT_DEPLOYED_TYPES:
+                metric = new ProjectDeployedTypesMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_AWS_NUMBER:
-                metric = new PaasDeploymentTypeAwsNumberMetric();
+            case PROJECT_PAAS_APPFOG:
+                metric = new ProjectPaasAppfogMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_APPFOG_NUMBER:
-                metric = new PaasDeploymentTypeAppFogNumberMetric();
+            case PROJECT_PAAS_AWS:
+                metric = new ProjectPaasAwsMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_NUMBER:
-                metric = new PaasDeploymentTypeCloudFoundryNumberMetric();
+            case PROJECT_PAAS_CLOUDBEES:
+                metric = new ProjectPaasCloudbeesMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_CLOUDBEES_NUMBER:
-                metric = new PaasDeploymentTypeCloudBeesNumberMetric();
+            case PROJECT_PAAS_CLOUDFOUNDRY:
+                metric = new ProjectPaasCloudfoundryMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_GAE_NUMBER:
-                metric = new PaasDeploymentTypeGaeNumberMetric();
+            case PROJECT_PAAS_GAE:
+                metric = new ProjectPaasGaeMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_HEROKU_NUMBER:
-                metric = new PaasDeploymentTypeHerokuNumberMetric();
+            case PROJECT_PAAS_HEROKU:
+                metric = new ProjectPaasHerokuMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_LOCAL_NUMBER:
-                metric = new PaasDeploymentTypeLocalNumberMetric();
+            case PROJECT_PAAS_OPENSHIFT:
+                metric = new ProjectPaasOpenshiftMetric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_OPENSHIFT_NUMBER:
-                metric = new PaasDeploymentTypeOpenShiftNumberMetric();
+            case PROJECT_PAAS_TIER3:
+                metric = new ProjectPaasTier3Metric();
                 break;
-            case PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER:
-                metric = new PaasDeploymentTypeTier3NumberMetric();
+            case PROJECT_PAAS_LOCAL:
+                metric = new ProjectPaasLocalMetric();
                 break;
+
+//            case PAAS_DEPLOYMENT_TYPES:
+//                metric = new PaasDeploymentTypesMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_AWS_NUMBER:
+//                metric = new PaasDeploymentTypeAwsNumberMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_APPFOG_NUMBER:
+//                metric = new PaasDeploymentTypeAppFogNumberMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_NUMBER:
+//                metric = new PaasDeploymentTypeCloudFoundryNumberMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_CLOUDBEES_NUMBER:
+//                metric = new PaasDeploymentTypeCloudBeesNumberMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_GAE_NUMBER:
+//                metric = new PaasDeploymentTypeGaeNumberMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_HEROKU_NUMBER:
+//                metric = new PaasDeploymentTypeHerokuNumberMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_LOCAL_NUMBER:
+//                metric = new PaasDeploymentTypeLocalNumberMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_OPENSHIFT_NUMBER:
+//                metric = new PaasDeploymentTypeOpenShiftNumberMetric();
+//                break;
+//            case PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER:
+//                metric = new PaasDeploymentTypeTier3NumberMetric();
+//                break;
             case JREBEL_USAGE_LIST:
                 metric = new JRebelUsageListMetric();
                 break;
