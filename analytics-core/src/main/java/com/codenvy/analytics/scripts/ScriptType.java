@@ -28,12 +28,25 @@ import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum ScriptType {
+    NUMBER_ACTIVE_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.LOAD_DIR,
+                                                        MetricParameter.STORE_DIR,
+                                                        MetricParameter.EVENT}));
+        }
+    },
+
     JREBEL_USER_PROFILE_GATHERING,
-    USERS_REMOVED,
-    USERS_INVITATIONS,
-    USERS_SHELL_LAUNCHED,
-    JREBEL_USAGE,
-    ACTIVE_USERS_WORKSPACES,
+
     PROJECTS_CREATED,
     PROJECT_DEPLOYED {
         @Override
@@ -71,10 +84,6 @@ public enum ScriptType {
         }
     },
 
-
-    PROJECTS_DEPLOYED_LOCAL,
-    PROJECTS_DEPLOYED_PAAS,
-    PROJECTS_BUILT,
     USERS_UPDATE_PROFILE,
 
     PRODUCT_USAGE_TIME,
@@ -102,7 +111,6 @@ public enum ScriptType {
             return MapStringListListStringValueData.class;
         }
     },
-
     SET_ACTIVE_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {

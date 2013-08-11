@@ -18,37 +18,49 @@
 
 package com.codenvy.analytics.scripts;
 
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestUsersShellLaunched extends BaseTest {
+public class TestScriptCheckLogs extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
-        List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createShellLaunchedEvent("user", "ws", "session").withDate("2010-10-01").build());
+        List<Event> events = new ArrayList<>();
+
+        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "null")
+                        .withDate("2010-10-01").build());
+        events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project2", "type1", "")
+                        .withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("", "", "", "project3", "type1")
+                        .withDate("2010-10-01").build());
+
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
         params.put(MetricParameter.FROM_DATE.name(), "20101001");
         params.put(MetricParameter.TO_DATE.name(), "20101001");
 
-        ListListStringValueData value = (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_SHELL_LAUNCHED, log, params);
+        ListListStringValueData value =
+                (ListListStringValueData)executeAndReturnResult(ScriptType.CHECK_LOGS_1, log, params);
+        assertEquals(value.size(), 3);
 
-        assertEquals(value.size(), 1L);
-        assertTrue(value.getAll().contains(new ListStringValueData(Arrays.asList("ws", "user"))));
+        value =
+                (ListListStringValueData)executeAndReturnResult(ScriptType.CHECK_LOGS_2, log, params);
+        assertEquals(value.size(), 25);
+
     }
 }

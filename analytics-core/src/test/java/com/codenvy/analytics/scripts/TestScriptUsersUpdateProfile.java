@@ -18,13 +18,10 @@
 
 package com.codenvy.analytics.scripts;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -32,33 +29,35 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestUsersActivityPreparation extends BaseTest {
+public class TestScriptUsersUpdateProfile extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "session", "project1", "type1")
-                                .withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "session", "project1", "type1")
-                                .withDate("2010-10-01").build());
-
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "1", "1")
+                        .withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "1", "1")
+                        .withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f2", "l2", "company", "1", "")
+                        .withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("use43@gmail.com", "f2", "l2", "company", "1", "null")
+                        .withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.name(), "20101001");
-        params.put(MetricParameter.TO_DATE.name(), "20101001");
+        Map<String, String> context = Utils.newContext();
+        context.put(MetricParameter.RESULT_DIR.name(), BASE_DIR);
+        context.put(MetricParameter.FROM_DATE.name(), "20101001");
+        context.put(MetricParameter.TO_DATE.name(), "20101001");
 
-        MapStringListListStringValueData value = (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_ACTIVITY_PREPARATION, log, params);
+        ListListStringValueData valueData =
+                (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_UPDATE_PROFILE, log, context);
 
-        Map<String, ListListStringValueData> all = value.getAll();
-        assertEquals(all.size(), 1);
-        assertTrue(all.containsKey("user1"));
-
-        assertEquals(all.get("user1").getAll().size(), 2);
+        assertEquals(valueData.size(), 2);
     }
 }

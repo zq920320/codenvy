@@ -25,6 +25,7 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.pig.ExecType;
 import org.apache.pig.PigServer;
@@ -43,57 +44,58 @@ import java.util.regex.Pattern;
 
 /**
  * The Pig-latin script executor.
- * 
+ *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public class PigScriptExecutor implements ScriptExecutor {
 
     /** Logger. */
-    private static final Logger LOGGER                               = LoggerFactory.getLogger(PigScriptExecutor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PigScriptExecutor.class);
 
     /** Runtime parameter name. Contains the directory where script are located. */
     private static final String ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY = "analytics.scripts.directory";
 
     /** Runtime parameter name. Contains the directory where logs are located. */
-    public static final String  ANALYTICS_LOGS_DIRECTORY_PROPERTY    = "analytics.logs.directory";
+    public static final String ANALYTICS_LOGS_DIRECTORY_PROPERTY = "analytics.logs.directory";
 
     /** The value of {@value #ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY} runtime parameter. */
-    public static final String  SCRIPTS_DIRECTORY                    = System.getProperty(ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY);
+    public static final String SCRIPTS_DIRECTORY = System.getProperty(ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY);
 
     /** The value of {@value #ANALYTICS_LOGS_DIRECTORY_PROPERTY} runtime parameter. */
-    public static final String  LOGS_DIRECTORY                       = System.getProperty(ANALYTICS_LOGS_DIRECTORY_PROPERTY);
+    public static final String LOGS_DIRECTORY = System.getProperty(ANALYTICS_LOGS_DIRECTORY_PROPERTY);
 
     /**
-     * Parameter name in Pig script contains the resources are needed to be inspected. Can be either the name of single resource (file or
+     * Parameter name in Pig script contains the resources are needed to be inspected. Can be either the name of single
+     * resource (file or
      * directory) or the list of comma separated resources. Wildcard characters are supported.
      */
-    public static final String  LOG                                  = "log";
+    public static final String LOG = "log";
 
     /** Pig relation containing execution result. */
-    private final String        FINAL_RELATION                       = "result";
+    private final String FINAL_RELATION = "result";
 
     /** Script execution mode. */
-    private final ExecType      execType;
+    private final ExecType execType;
 
     public PigScriptExecutor() {
         execType = ExecType.LOCAL;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public ValueData executeAndReturn(ScriptType scriptType, Map<String, String> context) throws IOException {
         context = Utils.clone(context);
         validateParameters(scriptType, context);
 
         if (!isExecutionAllowed(context)) {
-            return ValueDataFactory.createValueData(scriptType.getValueDataClass(), Collections.<Tuple> emptyList().iterator());
+            return ValueDataFactory
+                    .createValueData(scriptType.getValueDataClass(), Collections.<Tuple>emptyList().iterator());
         }
 
         String path = getInspectedPaths(context);
         if (path.isEmpty()) {
-            return ValueDataFactory.createValueData(scriptType.getValueDataClass(), Collections.<Tuple> emptyList().iterator());
+            return ValueDataFactory
+                    .createValueData(scriptType.getValueDataClass(), Collections.<Tuple>emptyList().iterator());
         }
 
         InputStream scriptContent = readScriptContent(scriptType);
@@ -103,7 +105,8 @@ public class PigScriptExecutor implements ScriptExecutor {
             PigServer server = new PigServer(execType);
             try {
                 server.registerScript(scriptContent, context);
-                return ValueDataFactory.createValueData(scriptType.getValueDataClass(), server.openIterator(FINAL_RELATION));
+                return ValueDataFactory
+                        .createValueData(scriptType.getValueDataClass(), server.openIterator(FINAL_RELATION));
             } finally {
                 server.shutdown();
             }
@@ -154,9 +157,7 @@ public class PigScriptExecutor implements ScriptExecutor {
         return currentDate.after(toDate);
     }
 
-    /**
-     * Checks if all parameters that are needed to script execution have been added to context;
-     */
+    /** Checks if all parameters that are needed to script execution have been added to context; */
     private void validateParameters(ScriptType scriptType, Map<String, String> context) throws IOException {
         for (MetricParameter param : scriptType.getParams()) {
             if (!context.containsKey(param.name())) {
@@ -173,9 +174,10 @@ public class PigScriptExecutor implements ScriptExecutor {
 
     /**
      * Selects sub directories with data to inspect based on given date parameters.
-     * 
+     *
      * @return comma separated list of directories
-     * @throws IOException if any exception is occurred
+     * @throws IOException
+     *         if any exception is occurred
      */
     private String getInspectedPaths(Map<String, String> context) throws IOException {
         String path = context.get(LOG);
@@ -186,8 +188,15 @@ public class PigScriptExecutor implements ScriptExecutor {
 
                 if (Utils.containsFromDateParam(context) && Utils.containsToDateParam(context)) {
                     path =
-                           LogLocationOptimizer.generatePaths(LOGS_DIRECTORY, Utils.getFromDateParam(context),
-                                                              Utils.getToDateParam(context));
+                            LogLocationOptimizer.generatePaths(LOGS_DIRECTORY,
+                                                               Utils.getFromDateParam(context),
+                                                               Utils.getToDateParam(context));
+                } else if (Utils.containsToDateParam(context)) {
+                    path =
+                            LogLocationOptimizer
+                                    .generatePaths(LOGS_DIRECTORY,
+                                                   MetricParameter.FROM_DATE.getDefaultValue(),
+                                                   Utils.getToDateParam(context));
                 }
             } catch (IllegalStateException e) {
                 throw new IOException(e);
@@ -242,9 +251,7 @@ public class PigScriptExecutor implements ScriptExecutor {
         return new ByteArrayInputStream(builder.toString().getBytes("UTF-8"));
     }
 
-    /**
-     * Extracts relative path to pig script out of IMPORT command.
-     */
+    /** Extracts relative path to pig script out of IMPORT command. */
     private File extractRelativePath(final String regex, String scriptContnent, Matcher matcher) throws IOException {
         String importCommand = scriptContnent.substring(matcher.start(), matcher.end());
         String importFileName = importCommand.replaceAll(regex, "$1");

@@ -41,6 +41,14 @@ public class FSValueDataManager {
     /** The value of {@value #ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
     public static final String RESULT_DIRECTORY = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
 
+    /** The directory where Pig scripts can store data in. */
+    public static final String SCRIPT_STORE_DIRECTORY =
+            RESULT_DIRECTORY + File.separator + "scripts_data" + File.separator + "store";
+
+    /** The directory where Pig scripts can load data from. */
+    public static final String SCRIPT_LOAD_DIRECTORY =
+            RESULT_DIRECTORY + File.separator + "scripts_data" + File.separator + "load";
+
     /** The file name where value is stored. */
     private static final String FILE_NAME_VALUE = "value";
 
@@ -122,7 +130,8 @@ public class FSValueDataManager {
     }
 
     /** Returns the file to store in or load value from. */
-    protected static File getFile(MetricType metricType, String fileName, LinkedHashMap<String, String> uuid) throws IOException {
+    protected static File getFile(MetricType metricType, String fileName, LinkedHashMap<String, String> uuid)
+            throws IOException {
         File dir = new File(RESULT_DIRECTORY);
 
         StringBuilder builder = new StringBuilder();

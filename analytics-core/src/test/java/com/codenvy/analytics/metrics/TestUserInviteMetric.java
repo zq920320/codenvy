@@ -91,10 +91,6 @@ public class TestUserInviteMetric {
         LongValueData vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 3);
 
-        metric = MetricFactory.createMetric(MetricType.USERS_SENT_INVITE_ONCE);
-        vd = (LongValueData)metric.getValue(context);
-        assertEquals(vd.getAsLong(), 2);
-
         metric = MetricFactory.createMetric(MetricType.USER_INVITE_ACTIVE);
         SetStringValueData setVD = (SetStringValueData)metric.getValue(context);
         assertEquals(setVD.size(), 2);
@@ -118,10 +114,6 @@ public class TestUserInviteMetric {
         Metric metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         LongValueData vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 6);
-
-        metric = MetricFactory.createMetric(MetricType.USERS_SENT_INVITE_ONCE);
-        vd = (LongValueData)metric.getValue(context);
-        assertEquals(vd.getAsLong(), 3);
 
         metric = MetricFactory.createMetric(MetricType.USER_INVITE_ACTIVE);
         SetStringValueData setVD = (SetStringValueData)metric.getValue(context);

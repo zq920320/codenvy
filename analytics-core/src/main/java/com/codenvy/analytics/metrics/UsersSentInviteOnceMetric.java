@@ -16,16 +16,17 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
 
-f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-fR = filterByEvent(f2, 'project-built,application-created,project-deployed');
+package com.codenvy.analytics.metrics;
 
-t1 = extractWs(fR);
-t2 = extractUser(t1);
-t3 = extractParam(t2, 'TYPE', 'type');
-tR = extractParam(t3, 'PROJECT', 'project');
+/**
+ * Number of users, who created at least one project.
+ *
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
+public class UsersSentInviteOnceMetric extends ToDateValueReadBasedMetric {
 
-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type));
-
+    UsersSentInviteOnceMetric() {
+        super(MetricType.USERS_SENT_INVITE_ONCE);
+    }
+}

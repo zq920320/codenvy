@@ -21,6 +21,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.scripts.EventType;
 import com.codenvy.analytics.scripts.ScriptType;
 
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -235,7 +236,6 @@ public enum MetricType {
             Utils.putEvent(context, EventType.USER_INVITE.toString());
         }
     },
-
     USER_INVITE_ACTIVE {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -247,7 +247,21 @@ public enum MetricType {
             Utils.putEvent(context, EventType.USER_INVITE.toString());
         }
     },
-    USERS_SENT_INVITE_ONCE,
+    USERS_SENT_INVITE_ONCE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_ACTIVE_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putLoadDir(context, this);
+            Utils.putStoredDir(context, this);
+            Utils.putEvent(context, EventType.USER_INVITE.toString());
+        }
+    },
+    USER_ACCEPT_INVITE,
+    USER_ACCEPT_INVITE_PERCENT,
     USER_ADDED_TO_WORKSPACE {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -263,8 +277,6 @@ public enum MetricType {
         }
     },
     USER_ADDED_TO_WORKSPACE_INVITE,
-    USER_ACCEPT_INVITE,
-    USER_ACCEPT_INVITE_PERCENT,
     PROJECT_DESTROYED {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -329,7 +341,19 @@ public enum MetricType {
             Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
         }
     },
-    USERS_CREATED_PROJECT_ONCE,
+    USERS_CREATED_PROJECT_ONCE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_ACTIVE_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putLoadDir(context, this);
+            Utils.putStoredDir(context, this);
+            Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+        }
+    },
     PROJECT_DEPLOYED_TYPES {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -347,16 +371,69 @@ public enum MetricType {
     PROJECT_PAAS_OPENSHIFT,
     PROJECT_PAAS_TIER3,
     PROJECT_PAAS_LOCAL,
+    USERS_SHELL_LAUNCHED_ONCE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_ACTIVE_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putLoadDir(context, this);
+            Utils.putStoredDir(context, this);
+            Utils.putEvent(context, EventType.SHELL_LAUNCHED.toString());
+        }
+    },
+    USERS_BUILT_ONCE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_ACTIVE_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putLoadDir(context, this);
+            Utils.putStoredDir(context, this);
+            Utils.putEvent(context, EventType.PROJECT_BUILT.toString() + "," +
+                                    EventType.PROJECT_DEPLOYED.toString() + "," +
+                                    EventType.APPLICATION_CREATED.toString());
+        }
+    },
+    USERS_DEPLOYED_ONCE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_ACTIVE_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putLoadDir(context, this);
+            Utils.putStoredDir(context, this);
+            Utils.putEvent(context, EventType.PROJECT_DEPLOYED.toString() + "," +
+                                    EventType.APPLICATION_CREATED.toString());
+        }
+    },
+    USERS_DEPLOYED_PAAS_ONCE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_ACTIVE_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putLoadDir(context, this);
+            Utils.putStoredDir(context, this);
+            Utils.putEvent(context, EventType.APPLICATION_CREATED.toString());
+        }
+    },
+
 
     PROJECTS_DEPLOYED_LIST,
     PROJECTS_DEPLOYED_LOCAL_LIST,
     PROJECTS_DEPLOYED_PAAS_LIST,
+    PROJECTS_BUILT_LIST,
     PROJECTS_DEPLOYED_NUMBER,
     PROJECTS_BUILT_NUMBER,
-    PROJECTS_BUILT_LIST,
-    USERS_BUILT_PROJECTS_NUMBER, // number of users, who built project at least once
-    USERS_DEPLOYED_PROJECTS_NUMBER, // number of users, who deployed project at least once
-    USERS_DEPLOYED_PAAS_PROJECTS_NUMBER, // number of users, who deployed projects locally and paas
     USERS_UPDATE_PROFILE_LIST,
     USERS_COMPLETED_PROFILE,
     USER_ACTIVITY,
@@ -390,18 +467,16 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME,
-    JREBEL_USAGE_LIST,
-    JREBEL_USER_PROFILE_INFO_GATHERING,
-    USERS_SHELL_LAUNCHED_LIST,
-    USERS_SHELL_LAUNCHED_NUMBER;
+    JREBEL_USER_PROFILE_INFO_GATHERING;
 
 
-    // TODO
+    /** @return set of scripts that are responsible for calculation value of the metric */
     public EnumSet<ScriptType> getScripts() {
         return EnumSet.noneOf(ScriptType.class);
     }
 
     /** Should be overridden if there is necessity to pass additional parameters into context. */
-    public void modifyContext(Map<String, String> context) {
+    public void modifyContext(Map<String, String> context) throws IOException {
+        // do nothing by default
     }
 }

@@ -32,6 +32,9 @@ public class DataProcessing {
 
     /** Executes predefined set of {@link ScriptType}. */
     public static void calculateAndStore(MetricType metricType, Map<String, String> context) throws Exception {
+        Utils.prepareDirectories(metricType);
+
+        context = Utils.clone(context);
         metricType.modifyContext(context);
 
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
@@ -58,8 +61,12 @@ public class DataProcessing {
 
         LinkedHashMap<String, String> uuid = new LinkedHashMap<>(4);
 
-        Utils.putFromDate(uuid, Utils.getFromDate(context));
-        Utils.putToDate(uuid, Utils.getToDate(context));
+        if (Utils.containsFromDateParam(context)) {
+            Utils.putFromDate(uuid, Utils.getFromDate(context));
+        }
+        if (Utils.containsToDateParam(context)) {
+            Utils.putToDate(uuid, Utils.getToDate(context));
+        }
 
         MetricParameter[] resultScheme = scriptType.getResultScheme();
         if (resultScheme.length == 0) {

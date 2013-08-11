@@ -26,6 +26,7 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
+    // TODO
     EVENT {
         @Override
         public String getDefaultValue() {
@@ -162,6 +163,34 @@ public enum MetricParameter {
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
             if (value == null) {
                 throw new IllegalArgumentException("RESULT_DIR parameter is null");
+            }
+        }
+    },
+
+    LOAD_DIR {
+        @Override
+        public String getDefaultValue() {
+            return null;
+        }
+
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            if (value == null) {
+                throw new IllegalArgumentException("LOAD_DIR parameter is null");
+            }
+        }
+    },
+
+    STORE_DIR {
+        @Override
+        public String getDefaultValue() {
+            return null;
+        }
+
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            if (value == null) {
+                throw new IllegalArgumentException("STORE_DIR parameter is null");
             }
         }
     },

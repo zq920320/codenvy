@@ -41,7 +41,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestProfileUsageTimeTopCompanies extends BaseTest {
+public class TestScriptProfileUsageTimeTopCompanies extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {

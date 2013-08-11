@@ -25,6 +25,7 @@ import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -38,7 +39,7 @@ import static org.testng.AssertJUnit.assertFalse;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestNumberOfEvents extends BaseTest {
+public class TestScriptNumberOfEvents extends BaseTest {
 
     @Test
     public void testNumberOfAllEvents() throws Exception {

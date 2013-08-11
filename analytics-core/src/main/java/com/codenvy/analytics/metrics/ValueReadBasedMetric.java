@@ -21,11 +21,9 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
 
 /**
  * It is supposed to read precalculated {@link ValueData} from storage.
@@ -38,9 +36,7 @@ public abstract class ValueReadBasedMetric extends ReadBasedMetric {
         super(metricType);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected ValueData read(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
         return FSValueDataManager.loadValue(metricType, uuid);

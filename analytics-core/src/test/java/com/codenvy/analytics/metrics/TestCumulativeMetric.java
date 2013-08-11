@@ -20,7 +20,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
@@ -102,10 +101,6 @@ public class TestCumulativeMetric extends BaseTest {
 
         Map<String, String> newContext = Utils.newContext();
         Utils.putToDate(newContext, "20130401");
-
-        assertEquals(
-                FSValueDataManager.loadValue(MetricType.TOTAL_WORKSPACES, testedMetric.makeUUID(newContext)),
-                new LongValueData(105L));
     }
 
     @Test

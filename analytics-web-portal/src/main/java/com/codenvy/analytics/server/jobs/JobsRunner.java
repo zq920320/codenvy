@@ -22,6 +22,7 @@ package com.codenvy.analytics.server.jobs;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
+
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
@@ -33,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -96,10 +96,6 @@ public class JobsRunner implements ServletContextListener {
                         case FORCE_RUN_CONDITION_ALLTIME:
                             executeAllTime(job);
                             break;
-
-                        default:
-                            executeSpecificDay(job, forceRunCondition);
-                            break;
                     }
                 }
             }
@@ -121,20 +117,6 @@ public class JobsRunner implements ServletContextListener {
             } while (!Utils.getToDateParam(context).equals(MetricParameter.TO_DATE.getDefaultValue()));
 
             executeLastDay(job);
-        }
-    }
-
-    private void executeSpecificDay(Job job, String forceRunCondition) throws Exception {
-        if (job instanceof ForceableJobRunByContext) {
-            SimpleDateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
-            df.parse(forceRunCondition);
-
-            Map<String, String> context = Utils.newContext();
-            context.put(MetricParameter.FROM_DATE.name(), forceRunCondition);
-            context.put(MetricParameter.TO_DATE.name(), forceRunCondition);
-            context.put(MetricParameter.TIME_UNIT.name(), TimeUnit.DAY.name());
-
-            ((ForceableJobRunByContext)job).forceRun(context);
         }
     }
 

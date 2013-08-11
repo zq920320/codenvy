@@ -25,6 +25,7 @@ import com.codenvy.analytics.metrics.value.MapStringSetValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -38,10 +39,10 @@ import static org.testng.AssertJUnit.assertTrue;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestSetOfActiveWs extends BaseTest {
+public class TestScriptSetOfActiveUsers extends BaseTest {
 
     @Test
-    public void testSetOfActiveWs() throws Exception {
+    public void testSetOfActiveUsers() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2010-10-01").build());
@@ -54,17 +55,19 @@ public class TestSetOfActiveWs extends BaseTest {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, "*");
 
-        SetStringValueData valueData = (SetStringValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS, log, context);
+        SetStringValueData valueData = (SetStringValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS, log, context);
         assertEquals(valueData.size(), 2);
-        assertTrue(valueData.getAll().contains("ws1"));
-        assertTrue(valueData.getAll().contains("ws2"));
+        assertTrue(valueData.getAll().contains("user1@gmail.com"));
+        assertTrue(valueData.getAll().contains("user2@gmail.com"));
     }
 
     @Test
-    public void testSetOfActiveWsByDomains() throws Exception {
+    public void testSetOfActiveUsersByDomains() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project2", "type").withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws2", "session", "project3", "type").withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);
 
@@ -73,19 +76,20 @@ public class TestSetOfActiveWs extends BaseTest {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, "*");
 
-        MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS_BY_DOMAINS, log, context);
+        MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS_BY_DOMAINS, log, context);
 
         assertEquals(valueData.size(), 1);
         assertTrue(valueData.getAll().containsKey("gmail.com"));
 
         SetStringValueData setValueData = valueData.getAll().get("gmail.com");
-        assertEquals(setValueData.size(), 2);
-        assertTrue(setValueData.getAll().contains("ws1"));
-        assertTrue(setValueData.getAll().contains("ws2"));
+        assertEquals(setValueData.size(), 3);
+        assertTrue(setValueData.getAll().contains("user1@gmail.com"));
+        assertTrue(setValueData.getAll().contains("user2@gmail.com"));
+        assertTrue(setValueData.getAll().contains("user3@gmail.com"));
     }
 
     @Test
-    public void testSetOfActiveWsByUsers() throws Exception {
+    public void testSetOfActiveUsersByUsers() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2010-10-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2010-10-01").build());
@@ -97,7 +101,7 @@ public class TestSetOfActiveWs extends BaseTest {
         Utils.putToDate(context, "20101001");
         Utils.putEvent(context, "*");
 
-        MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS_BY_USERS, log, context);
+        MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS_BY_USERS, log, context);
 
         assertEquals(valueData.size(), 2);
         assertTrue(valueData.getAll().containsKey("user1@gmail.com"));
@@ -105,10 +109,10 @@ public class TestSetOfActiveWs extends BaseTest {
 
         SetStringValueData setValueData = valueData.getAll().get("user1@gmail.com");
         assertEquals(setValueData.size(), 1);
-        assertTrue(setValueData.getAll().contains("ws1"));
+        assertTrue(setValueData.getAll().contains("user1@gmail.com"));
 
         setValueData = valueData.getAll().get("user2@gmail.com");
         assertEquals(setValueData.size(), 1);
-        assertTrue(setValueData.getAll().contains("ws2"));
+        assertTrue(setValueData.getAll().contains("user2@gmail.com"));
     }
 }

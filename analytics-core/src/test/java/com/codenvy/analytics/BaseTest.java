@@ -64,11 +64,11 @@ public class BaseTest {
         scriptExecutor.execute(type, executionParams);
     }
 
-    protected void putToDate(Map<String, String> params, String toDate) {
-        params.put(MetricParameter.TO_DATE.name(), toDate);
-    }
+    protected void prepareDir(String name) throws IOException {
+        File dir = new File(name);
+        dir.mkdirs();
 
-    protected void putFromDate(Map<String, String> params, String toDate) {
-        params.put(MetricParameter.FROM_DATE.name(), toDate);
+        File file = new File(dir, "tmp");
+        file.createNewFile();
     }
 }

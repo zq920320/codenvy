@@ -42,8 +42,17 @@ public class MetricFactory {
             case TENANT_DESTROYED:
                 metric = new TenantDestroyedMetric();
                 break;
-            case TOTAL_WORKSPACES:
-                metric = new TotalWorkspacesMetric();
+            case ACTIVE_USERS_SET:
+                metric = new ActiveUsersSetMetric();
+                break;
+            case ACTIVE_USERS:
+                metric = new ActiveUsersNumberMetric();
+                break;
+            case ACTIVE_WS_SET:
+                metric = new ActiveWsSetMetric();
+                break;
+            case ACTIVE_WS:
+                metric = new ActiveWsNumberMetric();
                 break;
             case USER_REMOVED:
                 metric = new UserRemovedMetric();
@@ -51,47 +60,11 @@ public class MetricFactory {
             case USER_CREATED:
                 metric = new UserCreatedMetric();
                 break;
-            case USERS_SENT_INVITE_ONCE:
-                metric = new UsersInvitationsSentNumberMetric();
-                break;
             case TOTAL_USERS:
                 metric = new TotalUsersMetric();
                 break;
-            case ACTIVE_USERS_SET:
-                metric = new ActiveUsersSetMetric();
-                break;
-            case ACTIVE_WS_SET:
-                metric = new ActiveWsSetMetric();
-                break;
-            case ACTIVE_USERS:
-                metric = new ActiveUsersNumberMetric();
-                break;
-            case ACTIVE_WS:
-                metric = new ActiveWsNumberMetric();
-                break;
-            case USERS_CREATED_PROJECT_ONCE:
-                metric = new UsersCreatedProjectOnceMetric();
-                break;
-            case USERS_BUILT_PROJECTS_NUMBER:
-                metric = new UsersBuiltProjectsNumberMetric();
-                break;
-            case USERS_DEPLOYED_PROJECTS_NUMBER:
-                metric = new UsersDeployedProjectsNumberMetric();
-                break;
-            case USERS_DEPLOYED_PAAS_PROJECTS_NUMBER:
-                metric = new UsersDeployedPaasProjectsNumberMetric();
-                break;
-            case USER_ADDED_TO_WORKSPACE:
-                metric = new UserAddedToWsMetric();
-                break;
-            case USER_ADDED_TO_WORKSPACE_INVITE:
-                metric = new UserAddedToWsInviteMetric();
-                break;
-            case USERS_SHELL_LAUNCHED_LIST:
-                metric = new UsersShellLaunchedListMetric();
-                break;
-            case USERS_SHELL_LAUNCHED_NUMBER:
-                metric = new UsersShellLaunchedNumberMetric();
+            case TOTAL_WORKSPACES:
+                metric = new TotalWorkspacesMetric();
                 break;
             case USER_SSO_LOGGED_IN:
                 metric = new UserSSOLoggedInMetric();
@@ -123,6 +96,164 @@ public class MetricFactory {
             case USER_CODE_COMPLETE:
                 metric = new UserCodeCompleteMetric();
                 break;
+            case BUILD_STARTED:
+                metric = new BuildStartedMetric();
+                break;
+            case RUN_STARTED:
+                metric = new RunStartedMetric();
+                break;
+            case DEBUG_STARTED:
+                metric = new DebugStarted();
+                break;
+            case PRODUCT_USAGE_TIME_0_10:
+                metric = new ProductUsageTime010Metric();
+                break;
+            case PRODUCT_USAGE_TIME_TOTAL:
+                metric = new ProductUsageTimeTotalMetric();
+                break;
+            case PRODUCT_USAGE_TIME_10_60:
+                metric = new ProductUsageTime1060Metric();
+                break;
+            case PRODUCT_USAGE_TIME_60_MORE:
+                metric = new ProductUsageTime60MoreMetric();
+                break;
+            case PRODUCT_USAGE_TIME:
+                metric = new ProductUsageTimeMetric();
+                break;
+            case PRODUCT_USAGE_SESSIONS_0_10:
+                metric = new ProductUsageSessions010Metric();
+                break;
+            case PRODUCT_USAGE_SESSIONS_10_60:
+                metric = new ProductUsageSessions1060Metric();
+                break;
+            case PRODUCT_USAGE_SESSIONS_60_MORE:
+                metric = new ProductUsageSessions60MoreMetric();
+                break;
+            case PRODUCT_USAGE_SESSIONS_TOTAL:
+                metric = new ProductUsageSessionsTotalMetric();
+                break;
+            case USER_INVITE:
+                metric = new UserInviteMetric();
+                break;
+            case USER_INVITE_ACTIVE:
+                metric = new UserInviteActiveMetric();
+                break;
+            case USER_ACCEPT_INVITE:
+                metric = new UserAcceptInviteMetric();
+                break;
+            case USER_ACCEPT_INVITE_PERCENT:
+                metric = new UserAcceptInvitePercentMetric();
+                break;
+            case USERS_SENT_INVITE_ONCE:
+                metric = new UsersSentInviteOnceMetric();
+                break;
+            case USER_ADDED_TO_WORKSPACE:
+                metric = new UserAddedToWsMetric();
+                break;
+            case USER_ADDED_TO_WORKSPACE_INVITE:
+                metric = new UserAddedToWsInviteMetric();
+                break;
+            case PROJECT_CREATED:
+                metric = new ProjectsCreatedMetric();
+                break;
+            case PROJECT_DESTROYED:
+                metric = new ProjectDestroyedMetric();
+                break;
+            case TOTAL_PROJECTS:
+                metric = new TotalProjectsMetric();
+                break;
+            case PROJECT_CREATED_TYPES:
+                metric = new ProjectsCreatedTypesMetric();
+                break;
+            case PROJECT_TYPE_JAR:
+                metric = new ProjectCreatedTypeJarMetric();
+                break;
+            case PROJECT_TYPE_WAR:
+                metric = new ProjectCreatedWarNumber();
+                break;
+            case PROJECT_TYPE_JSP:
+                metric = new ProjectCreatedTypeJspMetric();
+                break;
+            case PROJECT_TYPE_SPRING:
+                metric = new ProjectCreatedSpringMetric();
+                break;
+            case PROJECT_TYPE_PHP:
+                metric = new ProjectCreatedPhpMetric();
+                break;
+            case PROJECT_TYPE_PYTHON:
+                metric = new ProjectCreatedPythonMetric();
+                break;
+            case PROJECT_TYPE_JAVASCRIPT:
+                metric = new ProjectCreatedJavaScriptMetric();
+                break;
+            case PROJECT_TYPE_RUBY:
+                metric = new ProjectCreatedRuby();
+                break;
+            case PROJECT_TYPE_MMP:
+                metric = new ProjectCreatedMMPMetric();
+                break;
+            case PROJECT_TYPE_NODEJS:
+                metric = new ProjectCreatedNodejsMetric();
+                break;
+            case PROJECT_TYPE_ANDROID:
+                metric = new ProjectCreatedAndroidMetric();
+                break;
+            case PROJECT_TYPE_OTHERS:
+                metric = new ProjectCreatedOthersMetric();
+                break;
+            case USERS_CREATED_PROJECT_ONCE:
+                metric = new UsersCreatedProjectOnceMetric();
+                break;
+            case PROJECT_DEPLOYED_TYPES:
+                metric = new ProjectDeployedTypesMetric();
+                break;
+            case PROJECT_PAAS_APPFOG:
+                metric = new ProjectPaasAppfogMetric();
+                break;
+            case PROJECT_PAAS_AWS:
+                metric = new ProjectPaasAwsMetric();
+                break;
+            case PROJECT_PAAS_CLOUDBEES:
+                metric = new ProjectPaasCloudbeesMetric();
+                break;
+            case PROJECT_PAAS_CLOUDFOUNDRY:
+                metric = new ProjectPaasCloudfoundryMetric();
+                break;
+            case PROJECT_PAAS_GAE:
+                metric = new ProjectPaasGaeMetric();
+                break;
+            case PROJECT_PAAS_HEROKU:
+                metric = new ProjectPaasHerokuMetric();
+                break;
+            case PROJECT_PAAS_OPENSHIFT:
+                metric = new ProjectPaasOpenshiftMetric();
+                break;
+            case PROJECT_PAAS_TIER3:
+                metric = new ProjectPaasTier3Metric();
+                break;
+            case PROJECT_PAAS_LOCAL:
+                metric = new ProjectPaasLocalMetric();
+                break;
+            case USERS_SHELL_LAUNCHED_ONCE:
+                metric = new UsersShellLaunchedOnceMetric();
+                break;
+            case USERS_BUILT_ONCE:
+                metric = new UsersBuiltOnceMetric();
+                break;
+            case USERS_DEPLOYED_ONCE:
+                metric = new UsersDeployedOnceMetric();
+                break;
+            case USERS_DEPLOYED_PAAS_ONCE:
+                metric = new UsersDeployedPaasOnceMetric();
+                break;
+            // TODO
+
+
+
+
+
+
+
             case USER_PROFILE:
                 metric = new UsersProfileMetric();
                 break;
@@ -158,21 +289,6 @@ public class MetricFactory {
                 break;
             case USERS_COMPLETED_PROFILE:
                 metric = new UsersCompletedProfile();
-                break;
-            case PRODUCT_USAGE_TIME_0_10:
-                metric = new ProductUsageTime010Metric();
-                break;
-            case PRODUCT_USAGE_TIME_TOTAL:
-                metric = new ProductUsageTimeTotalMetric();
-                break;
-            case PRODUCT_USAGE_TIME_10_60:
-                metric = new ProductUsageTime1060Metric();
-                break;
-            case PRODUCT_USAGE_TIME_60_MORE:
-                metric = new ProductUsageTime60MoreMetric();
-                break;
-            case PRODUCT_USAGE_TIME:
-                metric = new ProductUsageTimeMetric();
                 break;
             case PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY:
                 metric = new ProductUsageTimeTopUsersBy1DayMetric();
@@ -237,123 +353,17 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME:
                 metric = new ProductUsageTimeTopDomainsByLifeTimeMetric();
                 break;
-            case PRODUCT_USAGE_SESSIONS_0_10:
-                metric = new ProductUsageSessions010Metric();
-                break;
-            case PRODUCT_USAGE_SESSIONS_10_60:
-                metric = new ProductUsageSessions1060Metric();
-                break;
-            case PRODUCT_USAGE_SESSIONS_60_MORE:
-                metric = new ProductUsageSessions60MoreMetric();
-                break;
-            case PRODUCT_USAGE_SESSIONS_TOTAL:
-                metric = new ProductUsageSessionsTotalMetric();
-                break;
-            case PROJECT_CREATED_TYPES:
-                metric = new ProjectsCreatedTypesMetric();
-                break;
-            case PROJECT_CREATED:
-                metric = new ProjectsCreatedMetric();
-                break;
-            case PROJECT_DESTROYED:
-                metric = new ProjectDestroyedMetric();
-                break;
-            case TOTAL_PROJECTS:
-                metric = new TotalProjectsMetric();
-                break;
-            case PROJECTS_BUILT_LIST:
-                metric = new ProjectsBuiltListMetric();
-                break;
+
             case PROJECTS_BUILT_NUMBER:
                 metric = new ProjectsBuiltNumberMetric();
                 break;
-            case BUILD_STARTED:
-                metric = new BuildStartedMetric();
-                break;
-            case RUN_STARTED:
-                metric = new RunStartedMetric();
-                break;
-            case DEBUG_STARTED:
-                metric = new DebugStarted();
-                break;
-            case PROJECT_TYPE_JAR:
-                metric = new ProjectCreatedTypeJarMetric();
-                break;
-            case PROJECT_TYPE_WAR:
-                metric = new ProjectCreatedWarNumber();
-                break;
-            case PROJECT_TYPE_JSP:
-                metric = new ProjectCreatedTypeJspMetric();
-                break;
-            case PROJECT_TYPE_SPRING:
-                metric = new ProjectCreatedSpringMetric();
-                break;
-            case PROJECT_TYPE_PHP:
-                metric = new ProjectCreatedPhpMetric();
-                break;
-            case PROJECT_TYPE_PYTHON:
-                metric = new ProjectCreatedPythonMetric();
-                break;
-            case PROJECT_TYPE_JAVASCRIPT:
-                metric = new ProjectCreatedJavaScriptMetric();
-                break;
-            case PROJECT_TYPE_RUBY:
-                metric = new ProjectCreatedRuby();
-                break;
-            case PROJECT_TYPE_MMP:
-                metric = new ProjectCreatedMMPMetric();
-                break;
-            case PROJECT_TYPE_NODEJS:
-                metric = new ProjectCreatedNodejsMetric();
-                break;
-            case PROJECT_TYPE_ANDROID:
-                metric = new ProjectCreatedAndroidMetric();
-                break;
-            case PROJECT_TYPE_OTHERS:
-                metric = new ProjectCreatedOthersMetric();
-                break;
+
+
             case PROJECTS_DEPLOYED_LIST:
                 metric = new ProjectsDeployedListMetric();
                 break;
-            case PROJECTS_DEPLOYED_LOCAL_LIST:
-                metric = new ProjectsDeployedLocalListMetric();
-                break;
-            case PROJECTS_DEPLOYED_PAAS_LIST:
-                metric = new ProjectsDeployedPaasListMetric();
-                break;
             case PROJECTS_DEPLOYED_NUMBER:
                 metric = new ProjectsDeployedNumberMetric();
-                break;
-
-            case PROJECT_DEPLOYED_TYPES:
-                metric = new ProjectDeployedTypesMetric();
-                break;
-            case PROJECT_PAAS_APPFOG:
-                metric = new ProjectPaasAppfogMetric();
-                break;
-            case PROJECT_PAAS_AWS:
-                metric = new ProjectPaasAwsMetric();
-                break;
-            case PROJECT_PAAS_CLOUDBEES:
-                metric = new ProjectPaasCloudbeesMetric();
-                break;
-            case PROJECT_PAAS_CLOUDFOUNDRY:
-                metric = new ProjectPaasCloudfoundryMetric();
-                break;
-            case PROJECT_PAAS_GAE:
-                metric = new ProjectPaasGaeMetric();
-                break;
-            case PROJECT_PAAS_HEROKU:
-                metric = new ProjectPaasHerokuMetric();
-                break;
-            case PROJECT_PAAS_OPENSHIFT:
-                metric = new ProjectPaasOpenshiftMetric();
-                break;
-            case PROJECT_PAAS_TIER3:
-                metric = new ProjectPaasTier3Metric();
-                break;
-            case PROJECT_PAAS_LOCAL:
-                metric = new ProjectPaasLocalMetric();
                 break;
 
 //            case PAAS_DEPLOYMENT_TYPES:
@@ -386,26 +396,11 @@ public class MetricFactory {
 //            case PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER:
 //                metric = new PaasDeploymentTypeTier3NumberMetric();
 //                break;
-            case JREBEL_USAGE_LIST:
-                metric = new JRebelUsageListMetric();
-                break;
             case JREBEL_USER_PROFILE_INFO_GATHERING:
                 metric = new JrebelUserProfileInfoGatheringMetric();
                 break;
-            case USER_INVITE:
-                metric = new UserInviteMetric();
-                break;
             case PROJECT_CREATED_USER_ACTIVE:
                 metric = new ProjectCreatedUserActiveMetric();
-                break;
-            case USER_INVITE_ACTIVE:
-                metric = new UserInviteActiveMetric();
-                break;
-            case USER_ACCEPT_INVITE:
-                metric = new UserAcceptInviteMetric();
-                break;
-            case USER_ACCEPT_INVITE_PERCENT:
-                metric = new UserAcceptInvitePercentMetric();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);

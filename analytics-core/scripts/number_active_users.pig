@@ -16,17 +16,20 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
 f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-fR = filterByEvent(f2, 'application-created');
+f2 = filterByEvent(f1, '$EVENT');
+f = filterByDate(f2, '$FROM_DATE', '$TO_DATE');
 
-t1 = extractWs(fR);
-t2 = extractUser(t1);
-t3 = extractParam(t2, 'TYPE', 'type');
-t4 = extractParam(t3, 'PROJECT', 'project');
-tR = extractParam(t4, 'PAAS', 'paas');
+a1 = extractUser(f);
+a = FOREACH a1 GENERATE user;
 
-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(project), TOTUPLE(type), TOTUPLE(paas));
+b = LOAD '$LOAD_DIR' USING PigStorage() AS (user : bytearray);
 
+c1 = UNION a, b;
+c = DISTINCT c1;
+
+STORE c INTO '$STORE_DIR' USING PigStorage();
+
+result = countAll(c);

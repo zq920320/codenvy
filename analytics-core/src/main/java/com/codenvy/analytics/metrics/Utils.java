@@ -19,6 +19,10 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
+
+import org.apache.commons.io.FileUtils;
+
 import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -80,6 +84,7 @@ public class Utils {
     public static String getFromDateParam(Map<String, String> context) {
         return context.get(MetricParameter.FROM_DATE.name());
     }
+
     /** Extracts {@link MetricParameter#TIME_UNIT} parameter value from context. */
     public static String getTimeUnitParam(Map<String, String> context) {
         return context.get(MetricParameter.TIME_UNIT.name());
@@ -155,6 +160,53 @@ public class Utils {
         context.put(MetricParameter.RESULT_DIR.name(), resultDir);
     }
 
+    /** Puts {@link MetricParameter#LOAD_DIR} parameter into context. */
+    public static void putLoadDir(Map<String, String> context, String dir) {
+        context.put(MetricParameter.LOAD_DIR.name(), dir);
+    }
+
+    /** Puts {@link MetricParameter#LOAD_DIR} parameter into context. */
+    public static void putLoadDir(Map<String, String> context, MetricType metricType) {
+        String loadDir = getLoadDir(metricType);
+        context.put(MetricParameter.LOAD_DIR.name(), loadDir);
+    }
+
+    private static String getLoadDir(MetricType metricType) {
+        return FSValueDataManager.SCRIPT_LOAD_DIRECTORY + File.separator + metricType.name();
+    }
+
+    /** Puts {@link MetricParameter#STORE_DIR} parameter into context. */
+    public static void putStoredDir(Map<String, String> context, MetricType metricType) {
+        String storeDir = getStoreDir(metricType);
+        context.put(MetricParameter.STORE_DIR.name(), storeDir);
+    }
+
+    private static String getStoreDir(MetricType metricType) {
+        return FSValueDataManager.SCRIPT_STORE_DIRECTORY + File.separator + metricType.name();
+    }
+
+    /** Prepares load and store directories for Pig script execution. */
+    public static void prepareDirectories(MetricType metricType) throws IOException {
+        File loadDir = new File(getLoadDir(metricType));
+        File storeDir = new File(getStoreDir(metricType));
+
+        if (storeDir.exists()) {
+            if (loadDir.exists()) {
+                FileUtils.deleteDirectory(loadDir);
+            }
+            FileUtils.moveDirectory(storeDir, loadDir);
+        } else {
+            if (!loadDir.exists()) {
+                loadDir.mkdirs();
+                File.createTempFile("tmp", "data", loadDir);
+            }
+        }
+    }
+
+    /** Puts {@link MetricParameter#STORE_DIR} parameter into context. */
+    public static void putStoreDir(Map<String, String> context, String dir) {
+        context.put(MetricParameter.STORE_DIR.name(), dir);
+    }
 
     /** @return true if entry's key is {@link MetricParameter#TO_DATE} */
     public static boolean isToDateParam(Entry<String, String> entry) {

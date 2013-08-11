@@ -37,7 +37,7 @@ import static org.testng.AssertJUnit.assertTrue;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestNumberOfEventsWithType extends BaseTest {
+public class TestScriptNumberOfEventsWithType extends BaseTest {
 
     @Test
     public void testNumberOfAllEvents() throws Exception {

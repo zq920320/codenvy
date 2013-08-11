@@ -10,19 +10,17 @@
 	<metric type="user_profile_lastname" title="Last name" format="%s"/>
 	<metric type="user_profile_company" title="Company" format="%s"/>
 	<empty />
-	<empty />
-	<empty />
     </table>
 
     <table length="2">
         <title name="Statistics" />
-	<metric type="invitations_sent_number" title="Invitations sent"/>
+	<metric type="user_invite" title="Invitations sent"/>
 	<metric type="product_usage_time_total" title="Total time spent (mins)" format="%,.0f"/>
 	<metric type="product_usage_sessions_total" title="Coding sessions" format="%,.0f"/>
-	<metric type="projects_created_number" title="Projects created"/>
-        <metric type="project_destroyed" title="Projects destroyed"/>
-	<metric type="projects_built_number" title="Projects built"/>
-	<metric type="projects_deployed_number" title="Projects deploy"/>
+	<metric type="project_created" title="Projects created"/>
+    <metric type="project_destroyed" title="Projects destroyed"/>
+	<!--metric type="projects_built_number" title="Projects built"/>
+	<metric type="projects_deployed_number" title="Projects deploy"/-->
     </table>
 
     <table length="2" widget="tab_panel" tabId="1" tabName="Recent Activity" sortable="true" defaultSortColumn="Date">

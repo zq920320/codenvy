@@ -19,9 +19,6 @@
 package com.codenvy.analytics.scripts;
 
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPE;
@@ -40,8 +37,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestProductUsageTimeTopDomains extends BaseTest {
+public class TestScriptProductUsageTimeTopDomains extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {

@@ -18,8 +18,6 @@
 
 package com.codenvy.analytics.scripts;
 
-import static org.testng.Assert.assertEquals;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
@@ -34,8 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.testng.Assert.assertEquals;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestUsersProfilePreparation extends BaseTest {
+public class TestScriptUsersProfilePreparation extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
