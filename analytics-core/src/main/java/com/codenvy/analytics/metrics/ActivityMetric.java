@@ -19,41 +19,42 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectsDeployedNumberMetric extends CalculateBasedMetric {
+public class ActivityMetric extends ValueReadBasedMetric {
 
-    private final Metric basedMetric;
-
-    ProjectsDeployedNumberMetric() {
-        super(MetricType.PROJECTS_DEPLOYED_NUMBER);
-        this.basedMetric = MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_LIST);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
+    ActivityMetric() {
+        super(MetricType.ACTIVITY);
     }
 
     /** {@inheritDoc} */
     @Override
     protected Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+        return ListStringValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData valueData = (ListListStringValueData)basedMetric.getValue(context);
-        return new LongValueData(valueData.size());
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        ListStringValueData valueData = (ListStringValueData)super.getValue(context);
+        List<String> result = new ArrayList<>(valueData.size());
+
+        for (String item : valueData.getAll()) {
+            result.add(MessageTransformer.transform(item));
+        }
+
+        return new ListStringValueData(result);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<MetricParameter> getParams() {
+        return new LinkedHashSet<>(
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 }

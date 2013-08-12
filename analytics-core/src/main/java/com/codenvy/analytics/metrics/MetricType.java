@@ -426,17 +426,45 @@ public enum MetricType {
             Utils.putEvent(context, EventType.APPLICATION_CREATED.toString());
         }
     },
+    USER_BUILT {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putEvent(context, EventType.PROJECT_BUILT.toString() + "," +
+                                    EventType.PROJECT_DEPLOYED.toString() + "," +
+                                    EventType.APPLICATION_CREATED.toString());
+        }
+    },
+    USER_DEPLOY {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS,
+                              ScriptType.NUMBER_EVENTS_BY_USERS,
+                              ScriptType.NUMBER_EVENTS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putEvent(context, EventType.PROJECT_DEPLOYED.toString() + "," +
+                                    EventType.APPLICATION_CREATED.toString());
+        }
+    },
+    ACTIVITY {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.ACTIVITY_BY_USERS);
+        }
+    },
 
 
-    PROJECTS_DEPLOYED_LIST,
-    PROJECTS_DEPLOYED_LOCAL_LIST,
-    PROJECTS_DEPLOYED_PAAS_LIST,
-    PROJECTS_BUILT_LIST,
-    PROJECTS_DEPLOYED_NUMBER,
-    PROJECTS_BUILT_NUMBER,
     USERS_UPDATE_PROFILE_LIST,
     USERS_COMPLETED_PROFILE,
-    USER_ACTIVITY,
     USER_PROFILE,
     USER_PROFILE_EMAIL,
     USER_PROFILE_FIRSTNAME,

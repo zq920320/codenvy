@@ -30,13 +30,15 @@ public class MessageTransformer {
      * @param rawMessage the raw message from the log
      * @return message in user readable form
      */
-    public static List<String> transform(String rawMessage) {
+    public static String transform(String rawMessage) {
         String dt = extractDateTime(rawMessage);
         String user = extractUser(rawMessage);
         String ws = extractWs(rawMessage);
         String message = extractMessage(rawMessage);
 
         StringBuilder builder = new StringBuilder();
+        builder.append(dt);
+        builder.append(" ");
         builder.append(message);
 
         if (!ws.isEmpty() && !message.contains("WS#")) {
@@ -51,11 +53,7 @@ public class MessageTransformer {
             builder.append("#");
         }
 
-        List<String> result = new ArrayList<String>(2);
-        result.add(dt);
-        result.add(builder.toString());
-
-        return result;
+        return builder.toString();
     }
 
     private static String extractMessage(String rawMessage) {

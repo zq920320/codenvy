@@ -22,6 +22,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
+import com.codenvy.analytics.metrics.value.MapStringListValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -37,7 +38,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptUsersActivityPreparation extends BaseTest {
+public class TestScriptActivity extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
@@ -53,12 +54,11 @@ public class TestScriptUsersActivityPreparation extends BaseTest {
         params.put(MetricParameter.FROM_DATE.name(), "20101001");
         params.put(MetricParameter.TO_DATE.name(), "20101001");
 
-        MapStringListListStringValueData value = (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_ACTIVITY_PREPARATION, log, params);
+        MapStringListValueData value =
+                (MapStringListValueData)executeAndReturnResult(ScriptType.ACTIVITY_BY_USERS, log, params);
 
-        Map<String, ListListStringValueData> all = value.getAll();
-        assertEquals(all.size(), 1);
-        assertTrue(all.containsKey("user1"));
-
-        assertEquals(all.get("user1").getAll().size(), 2);
+        assertEquals(value.size(), 1);
+        assertTrue(value.getAll().containsKey("user1"));
+        assertEquals(value.getAll().get("user1").size(), 2);
     }
 }

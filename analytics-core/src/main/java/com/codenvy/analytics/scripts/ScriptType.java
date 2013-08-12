@@ -359,10 +359,15 @@ public enum ScriptType {
         }
     },
 
-    USERS_ACTIVITY_PREPARATION {
+    ACTIVITY_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return MapStringListListStringValueData.class;
+            return MapStringListValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
 

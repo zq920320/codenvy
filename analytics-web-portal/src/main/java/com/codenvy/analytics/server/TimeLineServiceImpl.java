@@ -107,7 +107,6 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
             // to be improved some time lat
             filterContext.put(MetricFilter.FILTER_USER.name(), "_@@");
         }
-
     }
 
     /** Calculates view for given {@link TimeUnit} and preserves data. */

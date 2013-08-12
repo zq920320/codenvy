@@ -25,7 +25,7 @@ f = FOREACH f3 GENERATE user, message;
 
 r1 = GROUP f BY user;
 r = FOREACH r1 {
-    t = FOREACH f GENERATE TOTUPLE(TOTUPLE(message));
+    t = FOREACH f GENERATE message;
     GENERATE group, t;
     }
 

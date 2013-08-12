@@ -246,6 +246,15 @@ public class MetricFactory {
             case USERS_DEPLOYED_PAAS_ONCE:
                 metric = new UsersDeployedPaasOnceMetric();
                 break;
+            case USER_BUILT:
+                metric = new UserBuiltMetric();
+                break;
+            case USER_DEPLOY:
+                metric = new UserDeployMetric();
+                break;
+            case ACTIVITY:
+                metric = new ActivityMetric();
+                break;
             // TODO
 
 
@@ -256,9 +265,6 @@ public class MetricFactory {
 
             case USER_PROFILE:
                 metric = new UsersProfileMetric();
-                break;
-            case USER_ACTIVITY:
-                metric = new UsersActivityMetric();
                 break;
             case USER_PROFILE_FIRSTNAME:
                 metric = new UsersProfileFirstNameMetric();
@@ -353,49 +359,6 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME:
                 metric = new ProductUsageTimeTopDomainsByLifeTimeMetric();
                 break;
-
-            case PROJECTS_BUILT_NUMBER:
-                metric = new ProjectsBuiltNumberMetric();
-                break;
-
-
-            case PROJECTS_DEPLOYED_LIST:
-                metric = new ProjectsDeployedListMetric();
-                break;
-            case PROJECTS_DEPLOYED_NUMBER:
-                metric = new ProjectsDeployedNumberMetric();
-                break;
-
-//            case PAAS_DEPLOYMENT_TYPES:
-//                metric = new PaasDeploymentTypesMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_AWS_NUMBER:
-//                metric = new PaasDeploymentTypeAwsNumberMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_APPFOG_NUMBER:
-//                metric = new PaasDeploymentTypeAppFogNumberMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_CLOUDFOUNDRY_NUMBER:
-//                metric = new PaasDeploymentTypeCloudFoundryNumberMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_CLOUDBEES_NUMBER:
-//                metric = new PaasDeploymentTypeCloudBeesNumberMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_GAE_NUMBER:
-//                metric = new PaasDeploymentTypeGaeNumberMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_HEROKU_NUMBER:
-//                metric = new PaasDeploymentTypeHerokuNumberMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_LOCAL_NUMBER:
-//                metric = new PaasDeploymentTypeLocalNumberMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_OPENSHIFT_NUMBER:
-//                metric = new PaasDeploymentTypeOpenShiftNumberMetric();
-//                break;
-//            case PAAS_DEPLOYMENT_TYPE_TIER3_NUMBER:
-//                metric = new PaasDeploymentTypeTier3NumberMetric();
-//                break;
             case JREBEL_USER_PROFILE_INFO_GATHERING:
                 metric = new JrebelUserProfileInfoGatheringMetric();
                 break;

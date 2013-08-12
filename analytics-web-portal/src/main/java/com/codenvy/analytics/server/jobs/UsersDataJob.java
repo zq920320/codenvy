@@ -74,14 +74,8 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
 
             executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
 
-            ValueData result = executor.executeAndReturn(ScriptType.USERS_ACTIVITY_PREPARATION, context);
-            store(MetricType.USER_ACTIVITY, result, context);
-
-            result = executor.executeAndReturn(ScriptType.USERS_PROFILE_PREPARATION, context);
+            ValueData result = executor.executeAndReturn(ScriptType.USERS_PROFILE_PREPARATION, context);
             store(MetricType.USER_PROFILE, result, context);
-
-            MetricFactory.createMetric(MetricType.PROJECTS_BUILT_NUMBER).getValue(context);
-            MetricFactory.createMetric(MetricType.PROJECTS_DEPLOYED_NUMBER).getValue(context);
 
             for (MetricType metricType : MetricType.values()) {
                 DataProcessing.calculateAndStore(metricType, context);

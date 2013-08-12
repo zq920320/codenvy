@@ -18,9 +18,9 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.filters.Filter;
 
 import java.io.IOException;
 import java.util.Map;
@@ -39,10 +39,8 @@ public class UsersCompletedProfile extends CalculateBasedMetric {
     /** {@inheritDoc} */
     @Override
     protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ValueData value = basedMetric.getValue(context);
-        Filter filter = basedMetric.createFilter(value);
-
-        return new LongValueData(filter.getAvailable(MetricFilter.FILTER_USER).size());
+        ListListStringValueData value = (ListListStringValueData)basedMetric.getValue(context);
+        return new LongValueData(value.size());
     }
 
     /** {@inheritDoc} */

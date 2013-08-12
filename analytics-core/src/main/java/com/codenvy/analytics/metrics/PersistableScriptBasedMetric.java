@@ -22,7 +22,6 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
-import com.codenvy.analytics.metrics.value.filters.Filter;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -45,7 +44,7 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
         super(metricType);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     public ValueData getValue(Map<String, String> context) throws IOException {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Calculation " + getType() + " with context " + context.toString());
@@ -68,7 +67,7 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
             fromDate.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        return doFilter(total, context);
+        return total;
     }
 
 
@@ -93,38 +92,6 @@ abstract public class PersistableScriptBasedMetric extends ScriptBasedMetric {
         } finally {
             release(executionKey);
         }
-    }
-
-    /**
-     * Filtering data result depending on execution context.
-     */
-    protected ValueData doFilter(ValueData valueData, Map<String, String> context) {
-        if (isFilterSupported()) {
-            for (MetricFilter filterKey : MetricFilter.values()) {
-                String filterValue = context.get(filterKey.name());
-
-                if (filterValue != null) {
-                    Filter filter = createFilter(valueData);
-                    valueData = filter.apply(filterKey, filterValue);
-                }
-            }
-        }
-
-        return valueData;
-    }
-
-    /**
-     * @return {@link Filter} over {@link ValueData}
-     */
-    protected Filter createFilter(ValueData valueData) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @return true if metric supports filtering otherwise return false
-     */
-    protected boolean isFilterSupported() {
-        return false;
     }
 
     /** Stores value into the file. */

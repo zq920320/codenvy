@@ -3,14 +3,14 @@
     Copyright (C) 2013 Codenvy.
 -->
 <display>
-    <table length="2">
+    <!--table length="2">
         <title name="Profile" />
 	<metric type="user_profile_email" title="E-mail" format="%s"/>
 	<metric type="user_profile_firstname" title="First name" format="%s"/>
 	<metric type="user_profile_lastname" title="Last name" format="%s"/>
 	<metric type="user_profile_company" title="Company" format="%s"/>
 	<empty />
-    </table>
+    </table-->
 
     <table length="2">
         <title name="Statistics" />
@@ -19,17 +19,17 @@
 	<metric type="product_usage_sessions_total" title="Coding sessions" format="%,.0f"/>
 	<metric type="project_created" title="Projects created"/>
     <metric type="project_destroyed" title="Projects destroyed"/>
-	<!--metric type="projects_built_number" title="Projects built"/>
-	<metric type="projects_deployed_number" title="Projects deploy"/-->
+	<metric type="user_built" title="Projects built"/>
+	<metric type="user_deploy" title="Projects deploy"/>
     </table>
 
-    <table length="2" widget="tab_panel" tabId="1" tabName="Recent Activity" sortable="true" defaultSortColumn="Date">
-        <title name="Date,Event"/>
-	<list type="user_activity" format="%s"/>
+    <table length="1" widget="tab_panel" tabId="1" tabName="Recent Activity" sortable="true" defaultSortColumn="Event">
+        <title name="Event"/>
+	    <list type="activity" format="%s"/>
     </table>
     <table length="4" widget="tab_panel" tabId="1" tabName="Sessions" sortable="true" defaultSortColumn="Session started">
         <title name="Workspace,User,Session started,Duration (sec.)"/>
-	<list type="product_usage_time" format="%s"/>
+	    <list type="product_usage_time" format="%s"/>
     </table>
 </display>
 

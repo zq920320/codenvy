@@ -90,7 +90,10 @@ public abstract class AbstractRow implements Row {
         RowData row = new RowData();
 
         row.add(doRetrieve(context, 0)); // TODO title
-        row.add(doRetrieve(context, 1)); // TODO first day
+
+        if (columnsCount > 1) {
+            row.add(doRetrieve(context, 1)); // TODO first day
+        }
 
         for (int i = 2; i < columnsCount; i++) {
             context = prevDateInterval(context, overrideContextRule); // TODO prev day
