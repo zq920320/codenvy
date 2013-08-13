@@ -28,8 +28,8 @@
 
             return response;
             },
-            
-			urlRoot : "/rest/private/organization/users",
+
+			urlRoot : "/rest/private/profile/current",
 
             fetch : function(options){ // fetch is asynchronous function
             var dfd = $.Deferred();
