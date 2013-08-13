@@ -37,7 +37,7 @@
         });
 
         var Tenants = Backbone.Collection.extend({
-            url : "/rest/private/profile/tenants",
+            url : "/rest/private/organization/workspaces",
             model : Tenant,
             parse : function(response){
                 return _.map(_.filter(response, function(r){
