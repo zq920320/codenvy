@@ -20,12 +20,7 @@
 package com.codenvy.analytics.client.presenter;
 
 import com.codenvy.analytics.client.GWTLoader;
-import com.codenvy.analytics.client.event.AnalysisViewEvent;
-import com.codenvy.analytics.client.event.ProjectViewEvent;
-import com.codenvy.analytics.client.event.QueryViewEvent;
-import com.codenvy.analytics.client.event.TimelineViewEvent;
-import com.codenvy.analytics.client.event.UserViewEvent;
-import com.codenvy.analytics.client.event.WorkspaceViewEvent;
+import com.codenvy.analytics.client.event.*;
 import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -33,7 +28,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,15 +50,9 @@ public abstract class MainViewPresenter implements Presenter {
 
         HasClickHandlers getProjectViewButton();
 
-        HasClickHandlers getQueryViewButton();
-
         HasClickHandlers getAnalysisViewButton();
 
-        HorizontalPanel getHeaderPanel();
-
         VerticalPanel getSubHeaderPanel();
-
-        VerticalPanel getMainPanel();
 
         GWTLoader getGWTLoader();
 
@@ -109,12 +97,6 @@ public abstract class MainViewPresenter implements Presenter {
         display.getProjectViewButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 eventBus.fireEvent(new ProjectViewEvent());
-            }
-        });
-
-        display.getQueryViewButton().addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                eventBus.fireEvent(new QueryViewEvent());
             }
         });
 

@@ -34,21 +34,10 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -62,7 +51,6 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
     private final Button          workspaceViewButton;
     private final Button          userViewButton;
     private final Button          projectViewButton;
-    private final Button          queryViewButton;
 
     private final FlexTable       contentTable   = new FlexTable();
 
@@ -76,7 +64,6 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         workspaceViewButton = new Button("Workspace");
         userViewButton = new Button("User");
         projectViewButton = new Button("Project");
-        queryViewButton = new Button("Query");
 
         HorizontalPanel hp = new HorizontalPanel();
         hp.add(timelineViewButton);
@@ -84,7 +71,6 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
         hp.add(workspaceViewButton);
         hp.add(userViewButton);
         hp.add(projectViewButton);
-        hp.add(queryViewButton);
         hp.getElement().setAttribute("align", "center");
 
         mainPanel.setWidth("100%");
@@ -141,24 +127,6 @@ public abstract class MainView extends Composite implements MainViewPresenter.Di
     @Override
     public HasClickHandlers getAnalysisViewButton() {
         return analysisButton;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Button getQueryViewButton() {
-        return queryViewButton;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public VerticalPanel getMainPanel() {
-        return mainPanel;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public HorizontalPanel getHeaderPanel() {
-        return headerPanel;
     }
 
     /** {@inheritDoc} */
