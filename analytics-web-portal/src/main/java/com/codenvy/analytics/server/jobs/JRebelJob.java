@@ -34,12 +34,7 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
@@ -96,7 +91,7 @@ public class JRebelJob implements Job, ForceableJobRunByContext {
     }
 
     private StringBuilder getUsersProfile(Map<String, String> context) throws IOException {
-        Metric metric = MetricFactory.createMetric(MetricType.JREBEL_USER_PROFILE_INFO_GATHERING);
+        Metric metric = MetricFactory.createMetric(MetricType.JREBEL_USER_PROFILE_INFO);
         ListListStringValueData value = (ListListStringValueData)metric.getValue(context);
 
         StringBuilder builder = new StringBuilder();
