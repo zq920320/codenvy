@@ -261,6 +261,9 @@ public class MetricFactory {
             case FACTORY_CREATED:
                 metric = new FactoryCreatedMetric();
                 break;
+            case FACTORY_URL_ACCEPTED:
+                metric = new FactoryUrlAcceptedMetric();
+                break;
             case TEMPORARY_WORKSPACE_CREATED:
                 metric = new TemporaryWorkspaceCreatedMetric();
                 break;

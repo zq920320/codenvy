@@ -41,6 +41,20 @@ public enum MetricParameter {
         }
     },
 
+    FIELD {
+        @Override
+        public String getDefaultValue() {
+            return "";
+        }
+
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            if (value == null || value.isEmpty()) {
+                throw new IllegalArgumentException("FIELD parameter is null or empty");
+            }
+        }
+    },
+
     PARAM {
         @Override
         public String getDefaultValue() {
@@ -238,6 +252,7 @@ public enum MetricParameter {
         WS,
         DOMAINS,
         USERS,
-        COMPANIES
+        COMPANIES,
+        URL
     }
 }

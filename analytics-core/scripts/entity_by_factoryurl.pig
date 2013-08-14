@@ -16,23 +16,9 @@
  * from Codenvy S.A..
  */
 
+IMPORT 'macros.pig';
 
-package com.codenvy.analytics.client;
+l = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : bytearray, user : bytearray, project : bytearray, type : bytearray, repoUrl : bytearray, factoryUrl : bytearray);
 
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.shared.TableData;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-
-import java.util.List;
-import java.util.Map;
-
-/** The client side stub for the RPC service. */
-@RemoteServiceRelativePath("TimeLine")
-public interface FactoryUrlTimeLineService extends RemoteService {
-
-    /**
-     * Retrieves data from server.
-     */
-    List<TableData> getData(TimeUnit timeUnit, Map<String, String> filterContext);
-}
+r1 = FILTER l BY $FIELD == '$PARAM';
+result = FOREACH r1 GENERATE factoryUrl;

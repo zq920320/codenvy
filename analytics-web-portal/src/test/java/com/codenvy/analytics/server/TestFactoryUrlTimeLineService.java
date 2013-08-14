@@ -19,10 +19,7 @@
 
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.metrics.DataProcessing;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -56,6 +53,7 @@ public class TestFactoryUrlTimeLineService {
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_BUILT, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_DEPLOY, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_RUN, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
 
         FactoryUrlTimeLineServiceImpl service = new FactoryUrlTimeLineServiceImpl();
         List<TableData> data = service.getData(TimeUnit.LIFETIME, context);
@@ -109,6 +107,76 @@ public class TestFactoryUrlTimeLineService {
         assertEquals(data.get(0).get(22).get(1), "275");
     }
 
+    @Test
+    public void testRunWithFilters() throws Exception {
+        Map<String, String> context = Utils.initializeContext(TimeUnit.LIFETIME);
+        context.put(PigScriptExecutor.LOG, preapreLogs().getAbsolutePath());
+        Utils.putToDate(context, "20130210");
+        Utils.putFromDate(context, "20130210");
+
+        DataProcessing.calculateAndStore(MetricType.FACTORY_CREATED, context);
+        DataProcessing.calculateAndStore(MetricType.TEMPORARY_WORKSPACE_CREATED, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_TYPES, context);
+        DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME_FACTORY, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_PROJECT_IMPORTED, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_BUILT, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_DEPLOY, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_RUN, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
+
+        FactoryUrlTimeLineServiceImpl service = new FactoryUrlTimeLineServiceImpl();
+
+        context.put(MetricFilter.FILTER_WS.name(), "tmp-1");
+        List<TableData> data = service.getData(TimeUnit.LIFETIME, context);
+
+        assertEquals(data.get(0).get(1).get(0), "Factories created");
+        assertEquals(data.get(0).get(1).get(1), "1");
+
+        assertEquals(data.get(0).get(3).get(0), "Workspaces created");
+        assertEquals(data.get(0).get(3).get(1), "9");
+
+        assertEquals(data.get(0).get(5).get(0), "Factory Sessions");
+        assertEquals(data.get(0).get(5).get(1), "10");
+
+        assertEquals(data.get(0).get(6).get(0), "Anonymous Sessions");
+        assertEquals(data.get(0).get(6).get(1), "6");
+
+        assertEquals(data.get(0).get(7).get(0), "Authenticated Sessions");
+        assertEquals(data.get(0).get(7).get(1), "4");
+
+        assertEquals(data.get(0).get(9).get(0), "Factory Sessions");
+        assertEquals(data.get(0).get(9).get(1), "10");
+
+        assertEquals(data.get(0).get(10).get(0), "Abandoned Sessions");
+        assertEquals(data.get(0).get(10).get(1), "8");
+
+        assertEquals(data.get(0).get(11).get(0), "Converted Sessions");
+        assertEquals(data.get(0).get(11).get(1), "2");
+
+        assertEquals(data.get(0).get(13).get(0), "Factory Sessions");
+        assertEquals(data.get(0).get(13).get(1), "10");
+
+        assertEquals(data.get(0).get(14).get(0), "% Built");
+        assertEquals(data.get(0).get(14).get(1), "20%");
+
+        assertEquals(data.get(0).get(15).get(0), "% Run");
+        assertEquals(data.get(0).get(15).get(1), "");
+
+        assertEquals(data.get(0).get(16).get(0), "% Deployed");
+        assertEquals(data.get(0).get(16).get(1), "10%");
+
+        assertEquals(data.get(0).get(18).get(0), "Factory Sessions");
+        assertEquals(data.get(0).get(18).get(1), "10");
+
+        assertEquals(data.get(0).get(19).get(0), "< 10 Mins");
+        assertEquals(data.get(0).get(19).get(1), "1");
+
+        assertEquals(data.get(0).get(20).get(0), "> 10 Mins");
+        assertEquals(data.get(0).get(20).get(1), "9");
+
+        assertEquals(data.get(0).get(22).get(0), "Product Usage Mins");
+        assertEquals(data.get(0).get(22).get(1), "275");
+    }
 
     private File preapreLogs() throws IOException {
         List<Event> events = new ArrayList<>();
@@ -118,11 +186,11 @@ public class TestFactoryUrlTimeLineService {
                         .withDate("2013-02-10").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user3", "project1", "type1", "repo1", "factory1")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user4", "project1", "type1", "repo1", "factory1")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user4", "project1", "type1", "repo1", "factory2")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user5", "project1", "type1", "repo1", "factory1")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user5", "project1", "type1", "repo1", "factory2")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user6", "project1", "type1", "repo1", "factory1")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user6", "project1", "type1", "repo1", "factory2")
                         .withDate("2013-02-10").build());
 
         events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user").withDate("2013-02-10").build());

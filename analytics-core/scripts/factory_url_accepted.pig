@@ -16,17 +16,22 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.analytics.metrics;
+IMPORT 'macros.pig';
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public enum MetricFilter {
-    FILTER_WS,
-    FILTER_USER,
-    FILTER_PROJECT_NAME,
-    FILTER_PROJECT_TYPE,
-    FILTER_COMPANY,
-    FILTER_REPO_URL,
-    FILTER_FACTORY_URL
-}
+a1 = loadResources('$log');
+a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
+a3 = filterByEvent(a2, 'factory-url-accepted');
+a4 = extractWs(a3);
+a5 = extractParam(a4, 'REFERRER', 'referrerUrl');
+a6 = extractParam(a5, 'FACTORY-URL', 'factoryUrl');
+
+a = FOREACH a6 GENERATE ws, referrerUrl, factoryUrl;
+b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : bytearray, referrerUrl : bytearray, factoryUrl : bytearray);
+
+c1 = UNION a, b;
+c = DISTINCT c1;
+
+STORE c INTO '$STORE_DIR' USING PigStorage();
+
+
+result = countAll(a);

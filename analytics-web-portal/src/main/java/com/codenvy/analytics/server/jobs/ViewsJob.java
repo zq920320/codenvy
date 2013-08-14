@@ -19,8 +19,6 @@
 
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.server.FactoryUrlTimeLineServiceImpl;
 import com.codenvy.analytics.server.TimeLineServiceImpl;
 
@@ -29,8 +27,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ViewsJob implements Job, ForceableRunOnceJob {
@@ -58,42 +54,10 @@ public class ViewsJob implements Job, ForceableRunOnceJob {
         long start = System.currentTimeMillis();
 
         try {
-            calculateTimeLineData();
-            calculateFactoryTimeLineData();
+            new TimeLineServiceImpl().update();
+            new FactoryUrlTimeLineServiceImpl().update();
         } finally {
             LOGGER.info("ViewsJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
-    }
-
-    private void calculateFactoryTimeLineData() throws Exception {
-        FactoryUrlTimeLineServiceImpl service = new FactoryUrlTimeLineServiceImpl();
-
-        Map<String, String> context = Utils.initializeContext(TimeUnit.DAY);
-        service.calculateAndSave(context);
-
-        context = Utils.initializeContext(TimeUnit.WEEK);
-        service.calculateAndSave(context);
-
-        context = Utils.initializeContext(TimeUnit.MONTH);
-        service.calculateAndSave(context);
-
-        context = Utils.initializeContext(TimeUnit.LIFETIME);
-        service.calculateAndSave(context);
-    }
-
-    private void calculateTimeLineData() throws Exception {
-        TimeLineServiceImpl service = new TimeLineServiceImpl();
-
-        Map<String, String> context = Utils.initializeContext(TimeUnit.DAY);
-        service.calculateAndSave(context);
-
-        context = Utils.initializeContext(TimeUnit.WEEK);
-        service.calculateAndSave(context);
-
-        context = Utils.initializeContext(TimeUnit.MONTH);
-        service.calculateAndSave(context);
-
-        context = Utils.initializeContext(TimeUnit.LIFETIME);
-        service.calculateAndSave(context);
     }
 }

@@ -284,6 +284,26 @@ public enum ScriptType {
         }
     },
 
+    NUMBER_EVENTS_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
+
     NUMBER_EVENTS_WITH_TYPE_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -474,6 +494,22 @@ public enum ScriptType {
         }
     },
 
+    ENTITY_BY_FACTORYURL {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.LOAD_DIR,
+                    MetricParameter.PARAM,
+                    MetricParameter.FIELD,
+                    MetricParameter.TO_DATE}));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return ListStringValueData.class;
+        }
+    },
+
     /**
      * Is responsible to find invalid messages like with empty or null value parameters, without user or workspace
      * data.
@@ -491,7 +527,23 @@ public enum ScriptType {
         }
     },
 
-    NUMBER_FACTORY_CREATED {
+    FACTORY_CREATED {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.LOAD_DIR,
+                                                        MetricParameter.STORE_DIR}));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+    },
+
+    FACTORY_URL_ACCEPTED {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(

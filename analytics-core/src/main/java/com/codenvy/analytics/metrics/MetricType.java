@@ -256,7 +256,7 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             Utils.putLoadDir(context, this);
-            Utils.putStoredDir(context, this);
+            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.USER_INVITE.toString());
         }
     },
@@ -350,7 +350,7 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             Utils.putLoadDir(context, this);
-            Utils.putStoredDir(context, this);
+            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
         }
     },
@@ -380,7 +380,7 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             Utils.putLoadDir(context, this);
-            Utils.putStoredDir(context, this);
+            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.SHELL_LAUNCHED.toString());
         }
     },
@@ -393,7 +393,7 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             Utils.putLoadDir(context, this);
-            Utils.putStoredDir(context, this);
+            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.PROJECT_BUILT.toString() + "," +
                                     EventType.PROJECT_DEPLOYED.toString() + "," +
                                     EventType.APPLICATION_CREATED.toString());
@@ -408,7 +408,7 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             Utils.putLoadDir(context, this);
-            Utils.putStoredDir(context, this);
+            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.PROJECT_DEPLOYED.toString() + "," +
                                     EventType.APPLICATION_CREATED.toString());
         }
@@ -422,7 +422,7 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             Utils.putLoadDir(context, this);
-            Utils.putStoredDir(context, this);
+            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.APPLICATION_CREATED.toString());
         }
     },
@@ -464,14 +464,27 @@ public enum MetricType {
     FACTORY_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_FACTORY_CREATED);
+            return EnumSet.of(ScriptType.FACTORY_CREATED);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             Utils.putLoadDir(context, this);
-            Utils.putStoredDir(context, this);
+            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.FACTORY_CREATED.toString());
+        }
+    },
+    FACTORY_URL_ACCEPTED {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.FACTORY_URL_ACCEPTED);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putLoadDir(context, this);
+            Utils.putStoreDir(context, this);
+            Utils.putEvent(context, EventType.FACTORY_URL_ACCEPTED.toString());
         }
     },
     TEMPORARY_WORKSPACE_CREATED {

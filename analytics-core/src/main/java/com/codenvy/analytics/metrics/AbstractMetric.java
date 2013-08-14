@@ -33,7 +33,7 @@ public abstract class AbstractMetric implements Metric {
         this.metricType = metricType;
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     public MetricType getType() {
         return metricType;

@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.server;
 
+import com.codenvy.analytics.client.TimeLineService;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.server.vew.template.Display;
@@ -34,7 +35,7 @@ import java.util.Map;
 
 /** The server side implementation of the RPC service. */
 @SuppressWarnings("serial")
-public class TimeLineServiceImpl extends AbstractService {
+public class TimeLineServiceImpl extends AbstractService implements TimeLineService {
 
     private static final Logger  LOGGER           = LoggerFactory.getLogger(TimeLineServiceImpl.class);
     private static final Display DISPLAY          = Display.initialize("view/time-line.xml");
@@ -47,7 +48,7 @@ public class TimeLineServiceImpl extends AbstractService {
             Map<String, String> context = Utils.initializeContext(timeUnit);
             context.putAll(filterContext);
 
-            return super.getData(context);
+            return super.getData(DISPLAY, context);
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
@@ -56,8 +57,22 @@ public class TimeLineServiceImpl extends AbstractService {
 
     /** {@inheritDoc} */
     @Override
-    protected Display getDisplay() {
-        return DISPLAY;
+    public void update() {
+        try {
+            Map<String, String> context = Utils.initializeContext(TimeUnit.DAY);
+            calculateAndSave(DISPLAY, context);
+
+            context = Utils.initializeContext(TimeUnit.WEEK);
+            calculateAndSave(DISPLAY, context);
+
+            context = Utils.initializeContext(TimeUnit.MONTH);
+            calculateAndSave(DISPLAY, context);
+
+            context = Utils.initializeContext(TimeUnit.LIFETIME);
+            calculateAndSave(DISPLAY, context);
+        } catch (Throwable e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     /** {@inheritDoc} */

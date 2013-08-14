@@ -48,11 +48,6 @@
       <servlet-class>com.codenvy.analytics.server.TimeLineServiceImpl</servlet-class>
     </servlet>
 
-    <servlet>
-      <servlet-name>FactoryUrlTimeLineServlet</servlet-name>
-      <servlet-class>com.codenvy.analytics.server.FactoryUrlTimeLineServiceImpl</servlet-class>
-    </servlet>
-
     <servlet-mapping>
       <servlet-name>AnalysisServlet</servlet-name>
       <url-pattern>/AnalyticsApplication/Analysis</url-pattern>
@@ -68,11 +63,7 @@
       <url-pattern>/AnalyticsApplication/TimeLine</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-      <servlet-name>FactoryUrlTimeLineServlet</servlet-name>
-      <url-pattern>/AnalyticsApplication/FactoryUrlTimeLine</url-pattern>
-    </servlet-mapping>
-    
+
     <servlet-mapping>
       <servlet-name>queryServlet</servlet-name>
       <url-pattern>/AnalyticsApplication/query</url-pattern>

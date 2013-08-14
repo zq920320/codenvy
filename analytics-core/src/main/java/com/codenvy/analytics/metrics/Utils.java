@@ -176,7 +176,7 @@ public class Utils {
     }
 
     /** Puts {@link MetricParameter#STORE_DIR} parameter into context. */
-    public static void putStoredDir(Map<String, String> context, MetricType metricType) {
+    public static void putStoreDir(Map<String, String> context, MetricType metricType) {
         String storeDir = getStoreDir(metricType);
         context.put(MetricParameter.STORE_DIR.name(), storeDir);
     }
@@ -201,11 +201,6 @@ public class Utils {
                 File.createTempFile("tmp", "data", loadDir);
             }
         }
-    }
-
-    /** Puts {@link MetricParameter#STORE_DIR} parameter into context. */
-    public static void putStoreDir(Map<String, String> context, String dir) {
-        context.put(MetricParameter.STORE_DIR.name(), dir);
     }
 
     /** @return true if entry's key is {@link MetricParameter#TO_DATE} */

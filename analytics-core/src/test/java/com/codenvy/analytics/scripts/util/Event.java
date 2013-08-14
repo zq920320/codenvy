@@ -283,9 +283,11 @@ public class Event {
         }
 
         public static Builder createFactoryUrlAcceptedEvent(String tempWs,
-                                                            String factoryUrl) {
+                                                            String factoryUrl,
+                                                            String referrerUrl) {
             return new Builder().withParam("EVENT", EventType.FACTORY_URL_ACCEPTED.toString())
                                 .withParam("WS", tempWs)
+                                .withParam("REFERRER-URL", referrerUrl)
                                 .withParam("FACTORY-URL", factoryUrl);
         }
     }

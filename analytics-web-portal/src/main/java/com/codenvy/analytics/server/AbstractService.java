@@ -19,7 +19,6 @@
 
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.client.FactoryUrlTimeLineService;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
@@ -38,9 +37,9 @@ import java.util.Set;
 
 /** The server side implementation of the RPC service. */
 @SuppressWarnings("serial")
-public abstract class AbstractService extends RemoteServiceServlet implements FactoryUrlTimeLineService {
+public abstract class AbstractService extends RemoteServiceServlet {
 
-    public List<TableData> getData(Map<String, String> context) throws Exception {
+    public List<TableData> getData(Display display, Map<String, String> context) throws Exception {
         Set<MetricFilter> filters = Utils.getAvailableFilters(context);
 
         if (filters.isEmpty()) {
@@ -50,18 +49,18 @@ public abstract class AbstractService extends RemoteServiceServlet implements Fa
                 // let's calculate then
             }
 
-            return calculateAndSave(context);
+            return calculateAndSave(display, context);
         } else {
             if (filters.contains(MetricFilter.FILTER_COMPANY)) {
                 replaceCompanyFilter(context);
             }
 
-            return getDisplay().retrieveData(context);
+            return display.retrieveData(context);
         }
     }
 
-    public List<TableData> calculateAndSave(Map<String, String> context) throws Exception {
-        List<TableData> data = getDisplay().retrieveData(context);
+    public List<TableData> calculateAndSave(Display display, Map<String, String> context) throws Exception {
+        List<TableData> data = display.retrieveData(context);
         PersisterUtil.saveTablesToCsvFile(data, getCsvFileName(context));
         PersisterUtil.saveTablesToBinFile(data, getBinFileName(context));
 
@@ -85,11 +84,11 @@ public abstract class AbstractService extends RemoteServiceServlet implements Fa
             }
             context.put(MetricFilter.FILTER_USER.name(), builder.toString());
         } else {
-            putUnexistedUserEmail(context);
+            putUnExistedUserEmail(context);
         }
     }
 
-    private void putUnexistedUserEmail(Map<String, String> context) {
+    private void putUnExistedUserEmail(Map<String, String> context) {
         context.put(MetricFilter.FILTER_USER.name(), "_@@");
     }
 
@@ -105,7 +104,7 @@ public abstract class AbstractService extends RemoteServiceServlet implements Fa
         return valueData.getAll();
     }
 
-    protected abstract Display getDisplay();
+    public abstract void update();
 
     protected abstract String getBinFileName(Map<String, String> context);
 

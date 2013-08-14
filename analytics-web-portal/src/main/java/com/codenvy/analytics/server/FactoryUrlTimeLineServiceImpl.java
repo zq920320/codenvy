@@ -40,14 +40,12 @@ public class FactoryUrlTimeLineServiceImpl extends AbstractService {
     private static final Display DISPLAY          = Display.initialize("view/factory-url-time-line.xml");
     private static final String  FILE_NAME_PREFIX = "factory-url-timeline";
 
-    /** {@inheritDoc} */
-    @Override
     public List<TableData> getData(TimeUnit timeUnit, Map<String, String> filterContext) {
         try {
             Map<String, String> context = Utils.initializeContext(timeUnit);
             context.putAll(filterContext);
 
-            return super.getData(context);
+            return super.getData(DISPLAY, context);
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
@@ -56,8 +54,22 @@ public class FactoryUrlTimeLineServiceImpl extends AbstractService {
 
     /** {@inheritDoc} */
     @Override
-    protected Display getDisplay() {
-        return DISPLAY;
+    public void update() {
+        try {
+            Map<String, String> context = Utils.initializeContext(TimeUnit.DAY);
+            calculateAndSave(DISPLAY, context);
+
+            context = Utils.initializeContext(TimeUnit.WEEK);
+            calculateAndSave(DISPLAY, context);
+
+            context = Utils.initializeContext(TimeUnit.MONTH);
+            calculateAndSave(DISPLAY, context);
+
+            context = Utils.initializeContext(TimeUnit.LIFETIME);
+            calculateAndSave(DISPLAY, context);
+        } catch (Throwable e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     /** {@inheritDoc} */

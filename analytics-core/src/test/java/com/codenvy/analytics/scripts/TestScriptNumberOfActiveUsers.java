@@ -47,7 +47,7 @@ public class TestScriptNumberOfActiveUsers extends BaseTest {
         FileUtils.deleteDirectory(new File(FSValueDataManager.SCRIPT_LOAD_DIRECTORY));
         FileUtils.deleteDirectory(new File(FSValueDataManager.SCRIPT_STORE_DIRECTORY));
 
-        Utils.prepareDirectories(MetricType.USERS_CREATED_PROJECT_ONCE);
+        Utils.prepareDirectories(MetricType.USERS_CREATED_PROJECT_ONCE); // TODO remove
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type")
@@ -64,7 +64,7 @@ public class TestScriptNumberOfActiveUsers extends BaseTest {
         Utils.putToDate(context, "20101001");
         Utils.putFromDate(context, "20101001");
         Utils.putLoadDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
-        Utils.putStoredDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
+        Utils.putStoreDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
         Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
         LongValueData valueData = (LongValueData)executeAndReturnResult(ScriptType.NUMBER_ACTIVE_USERS, log, context);
 
@@ -76,7 +76,7 @@ public class TestScriptNumberOfActiveUsers extends BaseTest {
         Utils.putToDate(context, "20101002");
         Utils.putFromDate(context, "20101002");
         Utils.putLoadDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
-        Utils.putStoredDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
+        Utils.putStoreDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
         Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
         valueData = (LongValueData)executeAndReturnResult(ScriptType.NUMBER_ACTIVE_USERS, log, context);
 
