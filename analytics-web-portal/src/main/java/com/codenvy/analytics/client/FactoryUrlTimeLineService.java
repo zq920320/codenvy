@@ -16,13 +16,23 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
 
-f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-fR = filterByEvent(f2, 'user-removed');
+package com.codenvy.analytics.client;
 
-tR = extractUser(fR);
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.shared.TableData;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(user));
+import java.util.List;
+import java.util.Map;
 
+/** The client side stub for the RPC service. */
+@RemoteServiceRelativePath("TimeLine")
+public interface FactoryUrlTimeLineService extends RemoteService {
+
+    /**
+     * Retrieves data from server.
+     */
+    List<TableData> getData(TimeUnit timeUnit, Map<String, String> filterContext);
+}

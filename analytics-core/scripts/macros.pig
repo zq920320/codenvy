@@ -356,3 +356,9 @@ DEFINE calculateCondition(X, conditionParam, toDateParam, s) RETURNS Y {
     z = FOREACH s GENERATE COUNT(z1.$1), COUNT(z7.$1), COUNT(z30.$1), COUNT(z60.$1), COUNT(z90.$1), COUNT(z365.$1);
     $Y = fixNumbers(z);
 };
+
+DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
+    x1 = filterByEvent($X, '$eventParam');
+    x2 = extractParam(x1, 'SESSION-ID', sId);
+    $Y = FOREACH x2 GENERATE user, ws, sId, dt;
+};

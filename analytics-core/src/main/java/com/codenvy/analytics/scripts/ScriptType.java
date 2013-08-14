@@ -44,6 +44,34 @@ public enum ScriptType {
                                                         MetricParameter.EVENT}));
         }
     },
+    NUMBER_TEMPORARY_WORKSPACE_CREATED {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE}));
+        }
+    },
+    NUMBER_FACTORY_SESSIONS_AND_EVENT {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
+        }
+    },
+
 
     JREBEL_USER_PROFILE_GATHERING,
 
@@ -87,6 +115,7 @@ public enum ScriptType {
     USERS_UPDATE_PROFILE,
 
     PRODUCT_USAGE_TIME,
+    PRODUCT_USAGE_TIME_FACTORY,
 
     PRODUCT_USAGE_TIME_BY_USERS {
         @Override
@@ -197,6 +226,7 @@ public enum ScriptType {
                                                         MetricParameter.EVENT}));
         }
     },
+
 
     NUMBER_EVENTS {
         @Override
@@ -434,7 +464,7 @@ public enum ScriptType {
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR,
-                    MetricParameter.COMPANY_NAME,
+                    MetricParameter.PARAM,
                     MetricParameter.TO_DATE}));
         }
 

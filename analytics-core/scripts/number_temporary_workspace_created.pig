@@ -16,14 +16,13 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
-f1 = loadResources('$log');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-fR = filterByEvent(f2, 'shell-launched');
+a1 = loadResources('$log');
+a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
+a3 = filterByEvent(a2, 'tenant-created');
+a4 = extractWs(a3);
+a5 = FILTER a4 BY INDEXOF(ws, 'tmp-', 0) == 0;
+a = FOREACH a5 GENERATE event;
 
-t1 = extractUser(fR);
-tR = extractWs(t1);
-
-result = FOREACH tR GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user));
-
+result = countAll(a);

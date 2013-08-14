@@ -68,28 +68,28 @@ public class TestScriptUsersByCompany extends BaseTest {
 
         runUsersProfileLogPreparationScript(log, context, 0);
 
-        context.put(MetricParameter.COMPANY_NAME.name(), "company");
+        context.put(MetricParameter.PARAM.name(), "company");
         ListStringValueData valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
 
         assertEquals(valueData.size(), 2);
         assertTrue(valueData.getAll().contains("user1@gmail.com"));
         assertTrue(valueData.getAll().contains("user2@gmail.com"));
 
-        context.put(MetricParameter.COMPANY_NAME.name(), "cOmpany");
+        context.put(MetricParameter.PARAM.name(), "cOmpany");
         valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
 
         assertEquals(valueData.size(), 2);
         assertTrue(valueData.getAll().contains("user1@gmail.com"));
         assertTrue(valueData.getAll().contains("user2@gmail.com"));
 
-        context.put(MetricParameter.COMPANY_NAME.name(), "c?mpany");
+        context.put(MetricParameter.PARAM.name(), "c?mpany");
         valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
 
         assertEquals(valueData.size(), 2);
         assertTrue(valueData.getAll().contains("user1@gmail.com"));
         assertTrue(valueData.getAll().contains("user2@gmail.com"));
 
-        context.put(MetricParameter.COMPANY_NAME.name(), "?ompany");
+        context.put(MetricParameter.PARAM.name(), "?ompany");
         valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
 
         assertEquals(valueData.size(), 3);
@@ -97,7 +97,7 @@ public class TestScriptUsersByCompany extends BaseTest {
         assertTrue(valueData.getAll().contains("user2@gmail.com"));
         assertTrue(valueData.getAll().contains("user3@gmail.com"));
 
-        context.put(MetricParameter.COMPANY_NAME.name(), "Ompany");
+        context.put(MetricParameter.PARAM.name(), "Ompany");
         valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
 
         assertEquals(valueData.size(), 3);

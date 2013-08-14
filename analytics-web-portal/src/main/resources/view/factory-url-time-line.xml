@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (C) 2013 Codenvy.
+-->
+<display>
+    <table length="20">
+        <date section="Factory Analysis" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <metric type="factory_created" title="Factories created"/>
+        <empty />
+        <metric type="temporary_workspace_created" title="Workspaces created"/>
+        <empty />
+        <metric type="factory_sessions" title="Factory Sessions"/>
+        <metric type="factory_sessions_anon" title="Anonymous Sessions"/>
+        <metric type="factory_sessions_auth" title="Authenticated Sessions"/>
+        <empty />
+        <metric type="factory_sessions" title="Factory Sessions"/>
+        <metric type="factory_sessions_aban" title="Abandoned Sessions"/>
+        <metric type="factory_sessions_conv" title="Converted Sessions"/>
+        <empty />
+        <metric type="factory_sessions" title="Factory Sessions"/>
+        <metric type="factory_sessions_and_built_percent" format="%.0f%%" title="% Built"/>
+        <metric type="factory_sessions_and_run_percent" format="%.0f%%" title="% Run"/>
+        <metric type="factory_sessions_and_deploy_percent" format="%.0f%%" title="% Deployed"/>
+        <empty />
+        <metric type="factory_sessions" title="Factory Sessions"/>
+        <metric type="product_usage_factory_sessions_0_10" title="&#0060; 10 Mins"/>
+        <metric type="product_usage_factory_sessions_10_more" title="&#0062; 10 Mins"/>
+        <empty />
+        <metric type="product_usage_time_factory_total" title="Product Usage Mins"/>
+    </table>
+</display>
+

@@ -467,4 +467,17 @@ public class Utils {
     public static void putToDateDefault(Map<String, String> context) {
         context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
     }
+
+    /** @return all available filters from context */
+    public static Set<MetricFilter> getAvailableFilters(Map<String, String> dayContext) {
+        Set<MetricFilter> filters = new HashSet<>(3);
+
+        for (MetricFilter filterKey : MetricFilter.values()) {
+            if (dayContext.containsKey(filterKey.name())) {
+                filters.add(filterKey);
+            }
+        }
+
+        return filters;
+    }
 }

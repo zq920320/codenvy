@@ -20,6 +20,6 @@ IMPORT 'macros.pig';
 
 l = LOAD '$RESULT_DIR/PROFILES' USING PigStorage() AS (user : chararray, firstName: chararray, lastName: chararray, company: chararray, phone : chararray, job : chararray);
 
-r1 = FOREACH l GENERATE *, REGEX_EXTRACT(UPPER(company), CONCAT(CONCAT('(', REPLACE(UPPER('$COMPANY_NAME'), '\\?', '.')), ')'), 1) AS rexp;
+r1 = FOREACH l GENERATE *, REGEX_EXTRACT(UPPER(company), CONCAT(CONCAT('(', REPLACE(UPPER('$PARAM'), '\\?', '.')), ')'), 1) AS rexp;
 r2 = FILTER r1 BY rexp IS NOT NULL;
 result = FOREACH r2 GENERATE user;

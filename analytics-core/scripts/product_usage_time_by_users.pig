@@ -20,12 +20,6 @@ IMPORT 'macros.pig';
 
 %DEFAULT inactiveInterval '10';  -- in minutes
 
-DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
-    x1 = filterByEvent($X, '$eventParam');
-    x2 = extractParam(x1, 'SESSION-ID', sId);
-    $Y = FOREACH x2 GENERATE user, ws, sId, dt;
-}
-
 t1 = loadResources('$log');
 t2 = filterByDate(t1, '$FROM_DATE', '$TO_DATE');
 t3 = extractUser(t2);

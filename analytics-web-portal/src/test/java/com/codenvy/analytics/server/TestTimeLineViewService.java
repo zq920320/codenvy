@@ -42,7 +42,7 @@ public class TestTimeLineViewService {
         Map<String, String> filters = new HashMap<String, String>();
         filters.put(MetricFilter.FILTER_USER.name(), "gmail.com");
 
-        TimeLineService service = new TimeLineServiceImpl();
+        TimeLineServiceImpl service = new TimeLineServiceImpl();
         service.getData(TimeUnit.DAY, filters);
     }
 }

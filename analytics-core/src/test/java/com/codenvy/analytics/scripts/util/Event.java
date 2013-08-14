@@ -92,7 +92,7 @@ public class Event {
 
     /** Helps to generate events. Uses Builder pattern. */
     public static class Builder {
-        private Map<String, String> params = new LinkedHashMap<String, String>();
+        private Map<String, String> params = new LinkedHashMap<>();
 
         private EventContext context = new EventContext();
 
@@ -129,33 +129,6 @@ public class Event {
             return new Builder().withParam("EVENT", "tenant-created").withParam("WS", ws).withParam("USER", user);
         }
 
-        /** Create 'user-created' event. */
-        public static Builder createUserCreatedEvent(String userId, String aliases) {
-            return new Builder().withParam("EVENT", "user-created").withParam("USER-ID", userId)
-                                .withParam("ALIASES", "[" + aliases + "]");
-        }
-
-        public static Builder createUserRemovedEvent(String user) {
-            return new Builder().withParam("EVENT", "user-removed").withParam("USER", user);
-        }
-
-        /** Create 'tenant-destroyed' event. */
-        public static Builder createTenantDestroyedEvent(String ws) {
-            return new Builder().withParam("EVENT", "tenant-destroyed").withParam("WS", ws);
-        }
-
-        /** Create 'tenant-stopped' event. */
-        public static Builder createTenantStoppedEvent(String ws) {
-            return new Builder().withParam("EVENT", "tenant-stopped").withParam("WS", ws);
-        }
-
-        /** Create 'project-destroyed' event. */
-        public static Builder createProjectDestroyedEvent(String user, String ws, String session, String project,
-                                                          String type) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "project-destroyed")
-                                .withParam("PROJECT", project).withParam("TYPE", type);
-        }
-
         /** Create 'project-built' event. */
         public static Builder createProjectBuiltEvent(String user, String ws, String session, String project,
                                                       String type) {
@@ -173,24 +146,6 @@ public class Event {
 
         public static Builder createSessionFinishedEvent(String user, String ws, String window, String sessionId) {
             return new Builder().withParam("EVENT", EventType.SESSION_FINISHED.toString())
-                                .withParam("SESSION-ID", sessionId)
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("WINDOW", window);
-        }
-
-        public static Builder createSessionFactoryStartedEvent(String user, String ws, String window,
-                                                               String sessionId) {
-            return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_STARTED.toString())
-                                .withParam("SESSION-ID", sessionId)
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("WINDOW", window);
-        }
-
-        public static Builder createSessionFactoryFinishedEvent(String user, String ws, String window,
-                                                                String sessionId) {
-            return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_FINISHED.toString())
                                 .withParam("SESSION-ID", sessionId)
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
@@ -226,10 +181,6 @@ public class Event {
                                 .withParam("FROM", from);
         }
 
-        public static Builder createUserSSOLoggedOutEvent(String user) {
-            return new Builder().withParam("EVENT", "user-sso-logged-out").withParam("USER", user);
-        }
-
         public static Builder createUserSSOLoggedInEvent(String user, String using) {
             return new Builder().withParam("EVENT", "user-sso-logged-in").withParam("USING", using)
                                 .withParam("USER", user);
@@ -238,17 +189,6 @@ public class Event {
         public static Builder createUserInviteEvent(String user, String ws, String session, String email) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "user-invite")
                                 .withParam("EMAIL", email);
-        }
-
-        public static Builder createShellLaunchedEvent(String user, String ws, String session) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "shell-launched");
-        }
-
-        public static Builder createJRebelUsageEvent(String user, String ws, String session, String project,
-                                                     String type, boolean jrebel) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "jrebel-usage")
-                                .withParam("PROJECT", project).withParam("TYPE", type)
-                                .withParam("JREBEL", String.valueOf(jrebel));
         }
 
         public static Builder createProjectCreatedEvent(String user, String ws, String session, String project,
@@ -298,6 +238,55 @@ public class Event {
                                 .withParam("TYPE", type)
                                 .withParam("FEATURE", feature);
 
+        }
+
+        public static Builder createFactoryCreatedEvent(String ws,
+                                                        String user,
+                                                        String project,
+                                                        String type,
+                                                        String repoUrl,
+                                                        String factoryUrl) {
+            return new Builder().withContext(user, ws, UUID.randomUUID().toString())
+                                .withParam("EVENT", EventType.FACTORY_CREATED.toString())
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type)
+                                .withParam("REPO-URL", repoUrl)
+                                .withParam("FACTORY-URL", factoryUrl);
+
+        }
+
+        public static Builder createSessionFactoryStartedEvent(String sessionId,
+                                                               String tempWs,
+                                                               String tempUser,
+                                                               String auth,
+                                                               String browserType,
+                                                               String browserVer) {
+            return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_STARTED.toString())
+                                .withParam("SESSION-ID", sessionId)
+                                .withParam("WS", tempWs)
+                                .withParam("USER", tempUser)
+                                .withParam("AUTHENTICATED", auth)
+                                .withParam("BROWSER-TYPE", browserType)
+                                .withParam("BROWSER-VER", browserVer);
+
+        }
+
+        public static Builder createSessionFactoryStoppedEvent(String sessionId,
+                                                               String tempWs,
+                                                               String tempUser) {
+            return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_STOPPED.toString())
+                                .withParam("SESSION-ID", sessionId)
+                                .withParam("WS", tempWs)
+                                .withParam("USER", tempUser);
+        }
+
+        public static Builder createFactoryUrlAcceptedEvent(String tempWs,
+                                                            String factoryUrl) {
+            return new Builder().withParam("EVENT", EventType.FACTORY_URL_ACCEPTED.toString())
+                                .withParam("WS", tempWs)
+                                .withParam("FACTORY-URL", factoryUrl);
         }
     }
 

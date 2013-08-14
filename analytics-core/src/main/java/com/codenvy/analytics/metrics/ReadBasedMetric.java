@@ -68,7 +68,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     private ValueData getFilteredValue(LinkedHashMap<String, String> uuid, Map<String, String> dayContext)
             throws IOException {
 
-        List<MetricFilter> availableFilters = getAvailableFilters(dayContext);
+        Set<MetricFilter> availableFilters = Utils.getAvailableFilters(dayContext);
 
         if (availableFilters.isEmpty()) {
             return getDirectValue(uuid);
@@ -92,19 +92,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
 
         return valueData;
-    }
-
-    /** @return all available filters from context */
-    private List<MetricFilter> getAvailableFilters(Map<String, String> dayContext) {
-        List<MetricFilter> filters = new ArrayList<>(3);
-
-        for (MetricFilter filterKey : MetricFilter.values()) {
-            if (dayContext.containsKey(filterKey.name())) {
-                filters.add(filterKey);
-            }
-        }
-
-        return filters;
     }
 
     private void putFilterValue(MetricFilter filterKey, String filterValue, LinkedHashMap<String, String> uuid) {

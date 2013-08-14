@@ -28,9 +28,9 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedRuby extends CalculatedMetric {
+public class ProjectCreatedRubyMetric extends CalculatedMetric {
 
-    public ProjectCreatedRuby() {
+    public ProjectCreatedRubyMetric() {
         super(MetricType.PROJECT_TYPE_RUBY, MetricType.PROJECT_CREATED_TYPES);
     }
 

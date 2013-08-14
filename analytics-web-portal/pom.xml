@@ -176,6 +176,14 @@
                             <name>analytics.result.directory</name>
                             <value>${project.build.directory}</value>
                         </property>
+                        <property>
+                            <name>analytics.csv.reports.directory</name>
+                            <value>${project.build.directory}</value>
+                        </property>
+                        <property>
+                            <name>analytics.csv.reports.backup.directory</name>
+                            <value>${project.build.directory}</value>
+                        </property>
                     </systemProperties>
                 </configuration>
             </plugin>

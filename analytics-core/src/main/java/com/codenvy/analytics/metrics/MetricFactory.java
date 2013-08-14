@@ -187,7 +187,7 @@ public class MetricFactory {
                 metric = new ProjectCreatedJavaScriptMetric();
                 break;
             case PROJECT_TYPE_RUBY:
-                metric = new ProjectCreatedRuby();
+                metric = new ProjectCreatedRubyMetric();
                 break;
             case PROJECT_TYPE_MMP:
                 metric = new ProjectCreatedMMPMetric();
@@ -255,6 +255,64 @@ public class MetricFactory {
             case ACTIVITY:
                 metric = new ActivityMetric();
                 break;
+            case FACTORY_CREATED:
+                metric = new FactoryCreatedMetric();
+                break;
+            case TEMPORARY_WORKSPACE_CREATED:
+                metric = new TemporaryWorkspaceCreatedMetric();
+                break;
+            case FACTORY_SESSIONS_TYPES:
+                metric = new FactorySessionsTypesMetric();
+                break;
+            case FACTORY_SESSIONS_AUTH:
+                metric = new FactorySessionsAuthMetric();
+                break;
+            case FACTORY_SESSIONS_ANON:
+                metric = new FactorySessionsAnonMetric();
+                break;
+            case FACTORY_SESSIONS:
+                metric = new FactorySessionsMetric();
+                break;
+            case PRODUCT_USAGE_TIME_FACTORY:
+                metric = new ProductUsageTimeFactoryMetric();
+                break;
+            case PRODUCT_USAGE_TIME_FACTORY_TOTAL:
+                metric = new ProductUsageTimeFactoryTotalMetric();
+                break;
+            case PRODUCT_USAGE_FACTORY_SESSIONS_0_10:
+                metric = new ProductUsageFactorySessions010Metric();
+                break;
+            case PRODUCT_USAGE_FACTORY_SESSIONS_10_MORE:
+                metric = new ProductUsageFactorySessions10MoreMetric();
+                break;
+            case FACTORY_PROJECT_IMPORTED:
+                metric = new FactoryProjectImportedMetric();
+                break;
+            case FACTORY_SESSIONS_ABAN:
+                metric = new FactorySessionsAbanMetric();
+                break;
+            case FACTORY_SESSIONS_CONV:
+                metric = new FactorySessionsConvMetric();
+                break;
+            case  FACTORY_SESSIONS_AND_BUILT:
+                metric = new FactorySessionsAndBuiltMetric();
+                break;
+            case  FACTORY_SESSIONS_AND_RUN:
+                metric = new FactorySessionsAndRunMetric();
+                break;
+            case  FACTORY_SESSIONS_AND_DEPLOY:
+                metric = new FactorySessionsAndDeployMetric();
+                break;
+            case  FACTORY_SESSIONS_AND_RUN_PERCENT:
+                metric = new FactorySessionsAndRunPercentMetric();
+                break;
+            case  FACTORY_SESSIONS_AND_BUILT_PERCENT:
+                metric = new FactorySessionsAndBuiltPercentMetric();
+                break;
+            case  FACTORY_SESSIONS_AND_DEPLOY_PERCENT:
+                metric = new FactorySessionsAndDeployPercentMetric();
+                break;
+
             // TODO
 
 

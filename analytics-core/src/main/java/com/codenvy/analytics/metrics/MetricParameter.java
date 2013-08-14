@@ -55,20 +55,6 @@ public enum MetricParameter {
         }
     },
 
-    COMPANY_NAME {
-        @Override
-        public String getDefaultValue() {
-            return "";
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null || value.isEmpty()) {
-                throw new IllegalArgumentException("COMPANY_PARAMETER parameter is null or empty");
-            }
-        }
-    },
-
     ALIAS {
         @Override
         public String getDefaultValue() {

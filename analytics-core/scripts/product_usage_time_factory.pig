@@ -25,23 +25,16 @@ t2 = filterByDate(t1, '$FROM_DATE', '$TO_DATE');
 t3 = extractUser(t2);
 t = extractWs(t3);
 
-SS = extractEventsWithSessionId(t, 'session-started');
-SF = extractEventsWithSessionId(t, 'session-finished');
+SS = extractEventsWithSessionId(t, 'session-factory-started');
+SF = extractEventsWithSessionId(t, 'session-factory-stopped');
 
-j1 = JOIN SS BY sId FULL, SF BY sId;
-j2 = FILTER j1 BY SS::sId IS NOT NULL AND SF::sId IS NOT NULL;
-j3 = FOREACH j2 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS ssDt, SF::dt AS sfDt;
-A = FOREACH j3 GENERATE ws, user, ssDt AS dt, SecondsBetween(sfDt, ssDt) AS delta;
+j = JOIN SS BY sId FULL, SF BY sId;
+SPLIT j INTO noSS IF SS::sId IS NULL, noSF IF SF::sId IS NULL, SSSF OTHERWISE;
 
---
--- The rest of the sessions
---
-k1 = FOREACH t GENERATE ws, user, dt;
-k2 = JOIN k1 BY (ws, user) LEFT, j3 BY (ws, user);
-k3 = FILTER k2 BY (j3::ws IS NULL) OR MilliSecondsBetween(j3::ssDt, k1::dt) > 0 OR MilliSecondsBetween(j3::sfDt, k1::dt) < 0;
-k4 = FOREACH k3 GENERATE k1::ws AS ws, k1::user AS user, k1::dt AS dt;
-B = productUsageTimeList(k4, '$inactiveInterval');
+A = FOREACH SSSF GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
+B = FOREACH noSS GENERATE SF::ws AS ws, SF::user AS user, SF::dt AS dt, 60 * (long) $inactiveInterval AS delta;
+C = FOREACH noSF GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, 60 * (long) $inactiveInterval AS delta;
 
-R = UNION A, B;
+R = UNION A, B, C;
 result = FOREACH R GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
 

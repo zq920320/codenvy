@@ -34,11 +34,11 @@ import java.util.Map;
 
 /** The server side implementation of the RPC service. */
 @SuppressWarnings("serial")
-public class TimeLineServiceImpl extends AbstractService {
+public class FactoryUrlTimeLineServiceImpl extends AbstractService {
 
-    private static final Logger  LOGGER           = LoggerFactory.getLogger(TimeLineServiceImpl.class);
-    private static final Display DISPLAY          = Display.initialize("view/time-line.xml");
-    private static final String  FILE_NAME_PREFIX = "timeline";
+    private static final Logger  LOGGER           = LoggerFactory.getLogger(FactoryUrlTimeLineServiceImpl.class);
+    private static final Display DISPLAY          = Display.initialize("view/factory-url-time-line.xml");
+    private static final String  FILE_NAME_PREFIX = "factory-url-timeline";
 
     /** {@inheritDoc} */
     @Override

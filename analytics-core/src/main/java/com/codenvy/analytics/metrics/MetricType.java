@@ -461,6 +461,100 @@ public enum MetricType {
             return EnumSet.of(ScriptType.ACTIVITY_BY_USERS);
         }
     },
+    FACTORY_CREATED {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putEvent(context, EventType.FACTORY_CREATED.toString());
+        }
+    },
+    TEMPORARY_WORKSPACE_CREATED {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_TEMPORARY_WORKSPACE_CREATED);
+        }
+    },
+    FACTORY_SESSIONS_TYPES {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS_WITH_TYPE);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putParam(context, "AUTHENTICATED");
+            Utils.putEvent(context, EventType.SESSION_FACTORY_STARTED.toString());
+        }
+    },
+    FACTORY_SESSIONS_AUTH,
+    FACTORY_SESSIONS_ANON,
+    FACTORY_SESSIONS,
+    PRODUCT_USAGE_TIME_FACTORY {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_FACTORY);
+        }
+    },
+    PRODUCT_USAGE_TIME_FACTORY_TOTAL,
+    PRODUCT_USAGE_FACTORY_SESSIONS_0_10,
+    PRODUCT_USAGE_FACTORY_SESSIONS_10_MORE,
+    FACTORY_PROJECT_IMPORTED {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_EVENTS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putEvent(context, EventType.FACTORY_PROJECT_IMPORTED.toString());
+        }
+    },
+    FACTORY_SESSIONS_CONV,
+    FACTORY_SESSIONS_ABAN,
+    FACTORY_SESSIONS_AND_BUILT {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_FACTORY_SESSIONS_AND_EVENT);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putEvent(context, EventType.PROJECT_BUILT.toString() + "," +
+                                    EventType.BUILD_STARTED.toString() + "," +
+                                    EventType.PROJECT_DEPLOYED.toString() + "," +
+                                    EventType.APPLICATION_CREATED.toString());
+        }
+    },
+    FACTORY_SESSIONS_AND_RUN {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_FACTORY_SESSIONS_AND_EVENT);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putEvent(context, EventType.RUN_STARTED.toString());
+        }
+    },
+    FACTORY_SESSIONS_AND_DEPLOY {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_FACTORY_SESSIONS_AND_EVENT);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putEvent(context, EventType.PROJECT_DEPLOYED.toString() + "," +
+                                    EventType.APPLICATION_CREATED.toString());
+        }
+    },
+    FACTORY_SESSIONS_AND_BUILT_PERCENT,
+    FACTORY_SESSIONS_AND_RUN_PERCENT,
+    FACTORY_SESSIONS_AND_DEPLOY_PERCENT,
 
 
     USERS_UPDATE_PROFILE_LIST,
