@@ -464,11 +464,13 @@ public enum MetricType {
     FACTORY_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_EVENTS);
+            return EnumSet.of(ScriptType.NUMBER_FACTORY_CREATED);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            Utils.putLoadDir(context, this);
+            Utils.putStoredDir(context, this);
             Utils.putEvent(context, EventType.FACTORY_CREATED.toString());
         }
     },

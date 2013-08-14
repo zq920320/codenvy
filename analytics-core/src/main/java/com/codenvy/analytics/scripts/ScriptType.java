@@ -489,6 +489,22 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return ListStringValueData.class;
         }
+    },
+
+    NUMBER_FACTORY_CREATED {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.LOAD_DIR,
+                                                        MetricParameter.STORE_DIR}));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
     };
 
     /** @return what date type is represented in result */
