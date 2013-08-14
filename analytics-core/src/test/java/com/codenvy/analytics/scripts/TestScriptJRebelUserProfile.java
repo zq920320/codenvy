@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptJRebelUserProfileGahtering extends BaseTest {
+public class TestScriptJRebelUserProfile extends BaseTest {
 
     @Test
     public void testEventFound() throws Exception {
@@ -54,7 +54,7 @@ public class TestScriptJRebelUserProfileGahtering extends BaseTest {
         context.put(MetricParameter.TO_DATE.name(), "20101001");
 
         ListListStringValueData valueData =
-                                            (ListListStringValueData)executeAndReturnResult(ScriptType.JREBEL_USER_PROFILE_GATHERING, log,
+                                            (ListListStringValueData)executeAndReturnResult(ScriptType.JREBEL_USER_PROFILE_INFO, log,
                                                                                             context);
         List<ListStringValueData> all = valueData.getAll();
 

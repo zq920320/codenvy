@@ -165,6 +165,9 @@ public class MetricFactory {
             case PROJECT_CREATED_TYPES:
                 metric = new ProjectsCreatedTypesMetric();
                 break;
+            case PROJECT_CREATED_USER_ACTIVE:
+                metric = new ProjectCreatedUserActiveMetric();
+                break;
             case PROJECT_TYPE_JAR:
                 metric = new ProjectCreatedTypeJarMetric();
                 break;
@@ -312,9 +315,10 @@ public class MetricFactory {
             case  FACTORY_SESSIONS_AND_DEPLOY_PERCENT:
                 metric = new FactorySessionsAndDeployPercentMetric();
                 break;
-
+            case JREBEL_USER_PROFILE_INFO:
+                metric = new JrebelUserProfileInfoMetric();
+                break;
             // TODO
-
 
 
 
@@ -416,12 +420,6 @@ public class MetricFactory {
                 break;
             case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME:
                 metric = new ProductUsageTimeTopDomainsByLifeTimeMetric();
-                break;
-            case JREBEL_USER_PROFILE_INFO_GATHERING:
-                metric = new JrebelUserProfileInfoGatheringMetric();
-                break;
-            case PROJECT_CREATED_USER_ACTIVE:
-                metric = new ProjectCreatedUserActiveMetric();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);

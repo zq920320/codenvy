@@ -73,7 +73,7 @@ public enum ScriptType {
     },
 
 
-    JREBEL_USER_PROFILE_GATHERING,
+    JREBEL_USER_PROFILE_INFO,
 
     PROJECTS_CREATED,
     PROJECT_DEPLOYED {
