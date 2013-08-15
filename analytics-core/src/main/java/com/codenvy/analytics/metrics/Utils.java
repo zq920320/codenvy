@@ -213,6 +213,12 @@ public class Utils {
         return entry.getKey().equals(MetricParameter.ALIAS.name());
     }
 
+    /** @return true if entry's key is {@link MetricParameter#ALIAS} */
+    public static boolean isUrl(Entry<String, String> entry) {
+        return entry.getKey().equals(MetricParameter.URL.name());
+    }
+
+
     /** @return true if entry's key is {@link MetricParameter#FROM_DATE} */
     public static boolean isFromDateParam(Entry<String, String> entry) {
         return entry.getKey().equals(MetricParameter.FROM_DATE.name());
@@ -474,5 +480,13 @@ public class Utils {
         }
 
         return filters;
+    }
+
+    public static String removeBracket(String value) {
+        int beginIndex = value.startsWith("[") ? 1 : 0;
+        int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
+
+        return value.substring(beginIndex, endIndex);
+
     }
 }

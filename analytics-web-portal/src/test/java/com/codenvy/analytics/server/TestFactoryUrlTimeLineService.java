@@ -25,6 +25,7 @@ import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 import com.codenvy.analytics.shared.TableData;
 
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -38,8 +39,8 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestFactoryUrlTimeLineService {
 
-    @Test
-    public void testRun() throws Exception {
+    @BeforeTest
+    public void setUp() throws Exception {
         Map<String, String> context = Utils.initializeContext(TimeUnit.LIFETIME);
         context.put(PigScriptExecutor.LOG, preapreLogs().getAbsolutePath());
         Utils.putToDate(context, "20130210");
@@ -54,144 +55,142 @@ public class TestFactoryUrlTimeLineService {
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_DEPLOY, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_RUN, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
+    }
 
+    @Test
+    public void testRun() throws Exception {
         FactoryUrlTimeLineServiceImpl service = new FactoryUrlTimeLineServiceImpl();
-        List<TableData> data = service.getData(TimeUnit.LIFETIME, context);
+        List<TableData> data = service.getData(TimeUnit.LIFETIME, Utils.newContext());
 
         assertEquals(data.get(0).get(1).get(0), "Factories created");
         assertEquals(data.get(0).get(1).get(1), "6");
 
-        assertEquals(data.get(0).get(3).get(0), "Workspaces created");
-        assertEquals(data.get(0).get(3).get(1), "9");
+        assertEquals(data.get(1).get(0).get(0), "Workspaces created");
+        assertEquals(data.get(1).get(0).get(1), "9");
 
-        assertEquals(data.get(0).get(5).get(0), "Factory Sessions");
-        assertEquals(data.get(0).get(5).get(1), "10");
+        assertEquals(data.get(1).get(2).get(0), "Factory Sessions");
+        assertEquals(data.get(1).get(2).get(1), "10");
 
-        assertEquals(data.get(0).get(6).get(0), "Anonymous Sessions");
-        assertEquals(data.get(0).get(6).get(1), "6");
+        assertEquals(data.get(1).get(3).get(0), "Anonymous Sessions");
+        assertEquals(data.get(1).get(3).get(1), "6");
 
-        assertEquals(data.get(0).get(7).get(0), "Authenticated Sessions");
-        assertEquals(data.get(0).get(7).get(1), "4");
+        assertEquals(data.get(1).get(4).get(0), "Authenticated Sessions");
+        assertEquals(data.get(1).get(4).get(1), "4");
 
-        assertEquals(data.get(0).get(9).get(0), "Factory Sessions");
-        assertEquals(data.get(0).get(9).get(1), "10");
+        assertEquals(data.get(1).get(6).get(0), "Factory Sessions");
+        assertEquals(data.get(1).get(6).get(1), "10");
 
-        assertEquals(data.get(0).get(10).get(0), "Abandoned Sessions");
-        assertEquals(data.get(0).get(10).get(1), "8");
+        assertEquals(data.get(1).get(7).get(0), "Abandoned Sessions");
+        assertEquals(data.get(1).get(7).get(1), "8");
 
-        assertEquals(data.get(0).get(11).get(0), "Converted Sessions");
-        assertEquals(data.get(0).get(11).get(1), "2");
+        assertEquals(data.get(1).get(8).get(0), "Converted Sessions");
+        assertEquals(data.get(1).get(8).get(1), "2");
 
-        assertEquals(data.get(0).get(13).get(0), "Factory Sessions");
-        assertEquals(data.get(0).get(13).get(1), "10");
+        assertEquals(data.get(1).get(10).get(0), "Factory Sessions");
+        assertEquals(data.get(1).get(10).get(1), "10");
 
-        assertEquals(data.get(0).get(14).get(0), "% Built");
-        assertEquals(data.get(0).get(14).get(1), "20%");
+        assertEquals(data.get(1).get(11).get(0), "% Built");
+        assertEquals(data.get(1).get(11).get(1), "20%");
 
-        assertEquals(data.get(0).get(15).get(0), "% Run");
-        assertEquals(data.get(0).get(15).get(1), "");
+        assertEquals(data.get(1).get(12).get(0), "% Run");
+        assertEquals(data.get(1).get(12).get(1), "");
 
-        assertEquals(data.get(0).get(16).get(0), "% Deployed");
-        assertEquals(data.get(0).get(16).get(1), "10%");
+        assertEquals(data.get(1).get(13).get(0), "% Deployed");
+        assertEquals(data.get(1).get(13).get(1), "10%");
 
-        assertEquals(data.get(0).get(18).get(0), "Factory Sessions");
-        assertEquals(data.get(0).get(18).get(1), "10");
+        assertEquals(data.get(1).get(15).get(0), "Factory Sessions");
+        assertEquals(data.get(1).get(15).get(1), "10");
 
-        assertEquals(data.get(0).get(19).get(0), "< 10 Mins");
-        assertEquals(data.get(0).get(19).get(1), "1");
+        assertEquals(data.get(1).get(16).get(0), "< 10 Mins");
+        assertEquals(data.get(1).get(16).get(1), "1");
 
-        assertEquals(data.get(0).get(20).get(0), "> 10 Mins");
-        assertEquals(data.get(0).get(20).get(1), "9");
+        assertEquals(data.get(1).get(17).get(0), "> 10 Mins");
+        assertEquals(data.get(1).get(17).get(1), "9");
 
-        assertEquals(data.get(0).get(22).get(0), "Product Usage Mins");
-        assertEquals(data.get(0).get(22).get(1), "275");
+        assertEquals(data.get(1).get(19).get(0), "Product Usage Mins");
+        assertEquals(data.get(1).get(19).get(1), "275");
     }
 
     @Test
     public void testRunWithFilters() throws Exception {
-        Map<String, String> context = Utils.initializeContext(TimeUnit.LIFETIME);
-        context.put(PigScriptExecutor.LOG, preapreLogs().getAbsolutePath());
-        Utils.putToDate(context, "20130210");
-        Utils.putFromDate(context, "20130210");
-
-        DataProcessing.calculateAndStore(MetricType.FACTORY_CREATED, context);
-        DataProcessing.calculateAndStore(MetricType.TEMPORARY_WORKSPACE_CREATED, context);
-        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_TYPES, context);
-        DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME_FACTORY, context);
-        DataProcessing.calculateAndStore(MetricType.FACTORY_PROJECT_IMPORTED, context);
-        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_BUILT, context);
-        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_DEPLOY, context);
-        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_RUN, context);
-        DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
-
         FactoryUrlTimeLineServiceImpl service = new FactoryUrlTimeLineServiceImpl();
 
-        context.put(MetricFilter.FILTER_WS.name(), "tmp-1");
-        List<TableData> data = service.getData(TimeUnit.LIFETIME, context);
+        Map<String, String> filter = Utils.newContext();
+        filter.put(MetricFilter.FILTER_WS.name(), "ws1");
+        List<TableData> data = service.getData(TimeUnit.LIFETIME, filter);
 
         assertEquals(data.get(0).get(1).get(0), "Factories created");
-        assertEquals(data.get(0).get(1).get(1), "1");
+        assertEquals(data.get(0).get(1).get(1), "2");
 
-        assertEquals(data.get(0).get(3).get(0), "Workspaces created");
-        assertEquals(data.get(0).get(3).get(1), "9");
+        assertEquals(data.get(1).get(0).get(0), "Workspaces created");
+        assertEquals(data.get(1).get(0).get(1), "4");
 
-        assertEquals(data.get(0).get(5).get(0), "Factory Sessions");
-        assertEquals(data.get(0).get(5).get(1), "10");
+        assertEquals(data.get(1).get(2).get(0), "Factory Sessions");
+        assertEquals(data.get(1).get(2).get(1), "10");
 
-        assertEquals(data.get(0).get(6).get(0), "Anonymous Sessions");
-        assertEquals(data.get(0).get(6).get(1), "6");
+        assertEquals(data.get(1).get(3).get(0), "Anonymous Sessions");
+        assertEquals(data.get(1).get(3).get(1), "6");
 
-        assertEquals(data.get(0).get(7).get(0), "Authenticated Sessions");
-        assertEquals(data.get(0).get(7).get(1), "4");
+        assertEquals(data.get(1).get(4).get(0), "Authenticated Sessions");
+        assertEquals(data.get(1).get(4).get(1), "4");
 
-        assertEquals(data.get(0).get(9).get(0), "Factory Sessions");
-        assertEquals(data.get(0).get(9).get(1), "10");
+        assertEquals(data.get(1).get(6).get(0), "Factory Sessions");
+        assertEquals(data.get(1).get(6).get(1), "10");
 
-        assertEquals(data.get(0).get(10).get(0), "Abandoned Sessions");
-        assertEquals(data.get(0).get(10).get(1), "8");
+        assertEquals(data.get(1).get(7).get(0), "Abandoned Sessions");
+        assertEquals(data.get(1).get(7).get(1), "8");
 
-        assertEquals(data.get(0).get(11).get(0), "Converted Sessions");
-        assertEquals(data.get(0).get(11).get(1), "2");
+        assertEquals(data.get(1).get(8).get(0), "Converted Sessions");
+        assertEquals(data.get(1).get(8).get(1), "2");
 
-        assertEquals(data.get(0).get(13).get(0), "Factory Sessions");
-        assertEquals(data.get(0).get(13).get(1), "10");
+        assertEquals(data.get(1).get(10).get(0), "Factory Sessions");
+        assertEquals(data.get(1).get(10).get(1), "10");
 
-        assertEquals(data.get(0).get(14).get(0), "% Built");
-        assertEquals(data.get(0).get(14).get(1), "20%");
+        assertEquals(data.get(1).get(11).get(0), "% Built");
+        assertEquals(data.get(1).get(11).get(1), "20%");
 
-        assertEquals(data.get(0).get(15).get(0), "% Run");
-        assertEquals(data.get(0).get(15).get(1), "");
+        assertEquals(data.get(1).get(12).get(0), "% Run");
+        assertEquals(data.get(1).get(12).get(1), "");
 
-        assertEquals(data.get(0).get(16).get(0), "% Deployed");
-        assertEquals(data.get(0).get(16).get(1), "10%");
+        assertEquals(data.get(1).get(13).get(0), "% Deployed");
+        assertEquals(data.get(1).get(13).get(1), "10%");
 
-        assertEquals(data.get(0).get(18).get(0), "Factory Sessions");
-        assertEquals(data.get(0).get(18).get(1), "10");
+        assertEquals(data.get(1).get(15).get(0), "Factory Sessions");
+        assertEquals(data.get(1).get(15).get(1), "10");
 
-        assertEquals(data.get(0).get(19).get(0), "< 10 Mins");
-        assertEquals(data.get(0).get(19).get(1), "1");
+        assertEquals(data.get(1).get(16).get(0), "< 10 Mins");
+        assertEquals(data.get(1).get(16).get(1), "1");
 
-        assertEquals(data.get(0).get(20).get(0), "> 10 Mins");
-        assertEquals(data.get(0).get(20).get(1), "9");
+        assertEquals(data.get(1).get(17).get(0), "> 10 Mins");
+        assertEquals(data.get(1).get(17).get(1), "9");
 
-        assertEquals(data.get(0).get(22).get(0), "Product Usage Mins");
-        assertEquals(data.get(0).get(22).get(1), "275");
+        assertEquals(data.get(1).get(19).get(0), "Product Usage Mins");
+        assertEquals(data.get(1).get(19).get(1), "275");
     }
 
     private File preapreLogs() throws IOException {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "project1", "type1", "repo1", "factory1")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user2", "project1", "type1", "repo1", "factory1")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user2", "project1", "type1", "repo1", "factory2")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user3", "project1", "type1", "repo1", "factory1")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws2", "user3", "project1", "type1", "repo1", "factory3")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user4", "project1", "type1", "repo1", "factory2")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws3", "user4", "project1", "type1", "repo1", "factory4")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user5", "project1", "type1", "repo1", "factory2")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws4", "user5", "project1", "type1", "repo1", "factory5")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user6", "project1", "type1", "repo1", "factory2")
+        events.add(Event.Builder.createFactoryCreatedEvent("ws5", "user6", "project1", "type1", "repo1", "factory6")
                         .withDate("2013-02-10").build());
+
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factory1", "ref1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factory1", "ref1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factory2", "ref1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factory2", "ref1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-5", "factory3", "ref1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-7", "factory4", "ref1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-8", "factory5", "ref1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-9", "factory6", "ref1").withDate("2013-02-10").build());
 
         events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user").withDate("2013-02-10").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user").withDate("2013-02-10").build());
@@ -200,7 +199,8 @@ public class TestFactoryUrlTimeLineService {
         events.add(Event.Builder.createTenantCreatedEvent("tmp-5", "user").withDate("2013-02-10").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-6", "user").withDate("2013-02-10").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-7", "user").withDate("2013-02-10").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-8", "user").withDate("2013-02-10").build());
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-8", "user")
+                        .withDate("2013-02-10").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-9", "user").withDate("2013-02-10").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType", "brVer")

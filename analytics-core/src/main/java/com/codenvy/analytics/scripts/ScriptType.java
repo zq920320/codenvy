@@ -44,7 +44,7 @@ public enum ScriptType {
                                                         MetricParameter.EVENT}));
         }
     },
-    NUMBER_TEMPORARY_WORKSPACE_CREATED {
+    TEMPORARY_WORKSPACE_CREATED {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return LongValueData.class;
@@ -55,6 +55,24 @@ public enum ScriptType {
             return new LinkedHashSet<>(
                     Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
                                                         MetricParameter.TO_DATE}));
+        }
+    },
+    TEMPORARY_WORKSPACE_CREATED_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
     NUMBER_FACTORY_SESSIONS_AND_EVENT {
@@ -324,6 +342,26 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
         }
     },
+    NUMBER_EVENTS_WITH_TYPE_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapListLongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT,
+                                                        MetricParameter.PARAM}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        }
+    },
 
     NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS {
         @Override
@@ -494,7 +532,7 @@ public enum ScriptType {
         }
     },
 
-    ENTITY_BY_FACTORYURL {
+    FACTORY_URL_BY_ENTITY {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
@@ -507,6 +545,31 @@ public enum ScriptType {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return ListStringValueData.class;
+        }
+
+        @Override
+        public boolean isLogRequired() {
+            return false;
+        }
+    },
+
+    TEMP_WS_BY_FACTORY_URL {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
+                    MetricParameter.LOAD_DIR,
+                    MetricParameter.PARAM,
+                    MetricParameter.TO_DATE}));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return ListStringValueData.class;
+        }
+
+        @Override
+        public boolean isLogRequired() {
+            return false;
         }
     },
 
@@ -542,6 +605,24 @@ public enum ScriptType {
             return LongValueData.class;
         }
     },
+    FACTORY_CREATED_BY_URL {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE}));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.URL};
+        }
+    },
 
     FACTORY_URL_ACCEPTED {
         @Override
@@ -575,4 +656,10 @@ public enum ScriptType {
         // TODO
         return new MetricParameter[0];
     }
+
+    public boolean isLogRequired() { // TODO
+        return true;
+    }
+
+    // TODO toDATE ?
 }

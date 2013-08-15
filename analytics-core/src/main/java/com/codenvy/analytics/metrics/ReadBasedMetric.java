@@ -96,6 +96,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     private void putFilterValue(MetricFilter filterKey, String filterValue, LinkedHashMap<String, String> uuid) {
         switch (filterKey) {
+            case FILTER_FACTORY_URL:
+                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.URL.name());
+                uuid.put(MetricParameter.URL.name(), filterValue);
+                break;
+
             case FILTER_WS:
                 uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.WS.name());
                 uuid.put(MetricParameter.ALIAS.name(), filterValue);

@@ -19,7 +19,6 @@
 package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.DataProcessing;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
@@ -68,14 +67,12 @@ public class TestScriptEntityByFactoryUrl extends BaseTest {
         Utils.putLoadDir(context, MetricType.FACTORY_CREATED);
         Utils.putStoreDir(context, MetricType.FACTORY_CREATED);
 
-        DataProcessing.calculateAndStore(MetricType.FACTORY_CREATED, context);
-
         context.put(MetricParameter.FIELD.name(), "ws");
         context.put(MetricParameter.PARAM.name(), "ws1");
 
         Utils.prepareDirectories(MetricType.FACTORY_CREATED);
         ListStringValueData valueData =
-                (ListStringValueData)executeAndReturnResult(ScriptType.ENTITY_BY_FACTORYURL, log, context);
+                (ListStringValueData)executeAndReturnResult(ScriptType.FACTORY_URL_BY_ENTITY, log, context);
 
         assertEquals(valueData.size(), 1);
         assertTrue(valueData.getAll().contains("factoryUrl1"));

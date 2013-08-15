@@ -18,7 +18,11 @@
 
 IMPORT 'macros.pig';
 
-l = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : bytearray, user : bytearray, project : bytearray, type : bytearray, repoUrl : bytearray, factoryUrl : bytearray);
+a1 = loadResources('$log');
+a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
+a3 = filterByEvent(a2, 'tenant-created');
+a4 = extractWs(a3);
+a5 = FILTER a4 BY INDEXOF(ws, 'tmp-', 0) == 0;
+a = FOREACH a5 GENERATE ws;
 
-r1 = FILTER l BY $FIELD == '$PARAM';
-result = FOREACH r1 GENERATE factoryUrl;
+result = countByField(a, 'ws');

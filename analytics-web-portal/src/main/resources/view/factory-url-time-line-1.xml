@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (C) 2013 Codenvy.
+-->
+<display>
+    <table length="20">
+        <date section="Factory Analysis" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <metric type="factory_created" title="Factories created"/>
+        <empty />
+    </table>
+</display>
+

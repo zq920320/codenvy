@@ -464,7 +464,7 @@ public enum MetricType {
     FACTORY_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.FACTORY_CREATED);
+            return EnumSet.of(ScriptType.FACTORY_CREATED, ScriptType.FACTORY_CREATED_BY_URL);
         }
 
         @Override
@@ -490,7 +490,7 @@ public enum MetricType {
     TEMPORARY_WORKSPACE_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_TEMPORARY_WORKSPACE_CREATED);
+            return EnumSet.of(ScriptType.TEMPORARY_WORKSPACE_CREATED, ScriptType.TEMPORARY_WORKSPACE_CREATED_BY_WS);
         }
     },
     FACTORY_SESSIONS_TYPES {

@@ -4,9 +4,6 @@
 -->
 <display>
     <table length="20">
-        <date section="Factory Analysis" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <metric type="factory_created" title="Factories created"/>
-        <empty />
         <metric type="temporary_workspace_created" title="Workspaces created"/>
         <empty />
         <metric type="factory_sessions" title="Factory Sessions"/>

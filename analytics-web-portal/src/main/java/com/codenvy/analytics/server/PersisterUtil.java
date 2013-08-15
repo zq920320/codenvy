@@ -22,17 +22,7 @@ package com.codenvy.analytics.server;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.shared.TableData;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -40,10 +30,13 @@ import java.util.List;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class PersisterUtil {
 
+    public static final String CSV_EXT      = ".csv";
+    public static final String BIN_EXT      = ".bin";
     public static final String CHARSET_NAME = "utf-8";
 
     public static void saveTablesToBinFile(Object value, String fileName) throws IOException {
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(getFile(fileName))));
+        ObjectOutputStream out =
+                new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(getFile(fileName))));
 
         try {
             out.writeObject(value);
@@ -83,9 +76,12 @@ public class PersisterUtil {
         writeTableToFile(tableData, System.getProperty("analytics.csv.reports.backup.directory"), fileName);
     }
 
-    private static void writeTableToFile(TableData tableData, String parentDirectoryName, String fileName) throws IOException {
+    private static void writeTableToFile(TableData tableData, String parentDirectoryName, String fileName)
+            throws IOException {
         Writer writer =
-                new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getCsvFile(parentDirectoryName, fileName)), CHARSET_NAME));
+                new BufferedWriter(
+                        new OutputStreamWriter(new FileOutputStream(getCsvFile(parentDirectoryName, fileName)),
+                                               CHARSET_NAME));
         try {
             writer.write(tableData.getCsv());
             writer.append('\n');
@@ -96,13 +92,15 @@ public class PersisterUtil {
         }
     }
 
-    private static void writeTablesToFile(List<TableData> tables, String parentDirectoryName, String fileName) throws IOException {
+    private static void writeTablesToFile(List<TableData> tables, String parentDirectoryName, String fileName)
+            throws IOException {
         Writer writer =
-                new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getCsvFile(parentDirectoryName, fileName)), CHARSET_NAME));
+                new BufferedWriter(
+                        new OutputStreamWriter(new FileOutputStream(getCsvFile(parentDirectoryName, fileName)),
+                                               CHARSET_NAME));
         try {
             for (TableData tableData : tables) {
                 writer.write(tableData.getCsv());
-                writer.append('\n');
             }
         } finally {
             if (writer != null) {

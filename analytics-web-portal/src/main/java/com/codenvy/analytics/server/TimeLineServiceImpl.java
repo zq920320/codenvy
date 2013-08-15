@@ -20,14 +20,22 @@
 package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.client.TimeLineService;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,58 +43,102 @@ import java.util.Map;
 
 /** The server side implementation of the RPC service. */
 @SuppressWarnings("serial")
-public class TimeLineServiceImpl extends AbstractService implements TimeLineService {
+public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLineService {
 
     private static final Logger  LOGGER           = LoggerFactory.getLogger(TimeLineServiceImpl.class);
     private static final Display DISPLAY          = Display.initialize("view/time-line.xml");
     private static final String  FILE_NAME_PREFIX = "timeline";
 
-    /** {@inheritDoc} */
-    @Override
-    public List<TableData> getData(TimeUnit timeUnit, Map<String, String> filterContext) {
+    public List<TableData> getData(TimeUnit timeUnit, Map<String, String> filter) {
         try {
             Map<String, String> context = Utils.initializeContext(timeUnit);
-            context.putAll(filterContext);
 
-            return super.getData(DISPLAY, context);
+            if (filter.isEmpty()) {
+                try {
+                    return PersisterUtil.loadTablesFromBinFile(getFileName(context) + PersisterUtil.BIN_EXT);
+                } catch (FileNotFoundException e) {
+                    // let's calculate then
+                }
+
+                return calculateAndSave(context);
+            } else {
+                context.putAll(filter);
+                return doFilter(context);
+            }
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
+    private List<TableData> doFilter(Map<String, String> context) throws Exception {
+        if (context.containsKey(MetricFilter.FILTER_COMPANY.name())) {
+            replaceCompanyFilter(context);
+        }
+
+        return DISPLAY.retrieveData(context);
+    }
+
+    /** Updates time-line fully. */
     public void update() {
         try {
-            Map<String, String> context = Utils.initializeContext(TimeUnit.DAY);
-            calculateAndSave(DISPLAY, context);
-
-            context = Utils.initializeContext(TimeUnit.WEEK);
-            calculateAndSave(DISPLAY, context);
-
-            context = Utils.initializeContext(TimeUnit.MONTH);
-            calculateAndSave(DISPLAY, context);
-
-            context = Utils.initializeContext(TimeUnit.LIFETIME);
-            calculateAndSave(DISPLAY, context);
+            calculateAndSave(Utils.initializeContext(TimeUnit.DAY));
+            calculateAndSave(Utils.initializeContext(TimeUnit.WEEK));
+            calculateAndSave(Utils.initializeContext(TimeUnit.MONTH));
+            calculateAndSave(Utils.initializeContext(TimeUnit.LIFETIME));
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected String getBinFileName(Map<String, String> context) {
-        TimeUnit timeUnit = Utils.getTimeUnit(context);
-        return FILE_NAME_PREFIX + "_" + timeUnit.name() + ".bin";
+    private List<TableData> calculateAndSave(Map<String, String> context) throws Exception {
+        List<TableData> data = DISPLAY.retrieveData(context);
+        PersisterUtil.saveTablesToCsvFile(data, getFileName(context) + PersisterUtil.CSV_EXT);
+        PersisterUtil.saveTablesToBinFile(data, getFileName(context) + PersisterUtil.BIN_EXT);
 
+        return data;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected String getCsvFileName(Map<String, String> context) {
+    private void replaceCompanyFilter(Map<String, String> context) throws IOException {
+        String company = context.get(MetricFilter.FILTER_COMPANY.name());
+        List<String> users = getUsersByCompany(company);
+
+        context.remove(MetricFilter.FILTER_COMPANY.name());
+
+        if (!users.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            for (String user : users) {
+                if (builder.length() != 0) {
+                    builder.append(",");
+                }
+
+                builder.append(user);
+            }
+            context.put(MetricFilter.FILTER_USER.name(), builder.toString());
+        } else {
+            putUnExistedUserEmail(context);
+        }
+    }
+
+    private void putUnExistedUserEmail(Map<String, String> context) {
+        context.put(MetricFilter.FILTER_USER.name(), "_@@");
+    }
+
+    private List<String> getUsersByCompany(String company) throws IOException {
+        Map<String, String> context = Utils.newContext();
+        Utils.putToDateDefault(context);
+        Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
+        Utils.putParam(context, company);
+
+        ListStringValueData valueData =
+                (ListStringValueData)ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.USERS_BY_COMPANY, context);
+
+        return valueData.getAll();
+    }
+
+    /** @return corresponding file name */
+    private String getFileName(Map<String, String> context) {
         TimeUnit timeUnit = Utils.getTimeUnit(context);
-        return FILE_NAME_PREFIX + "_" + timeUnit.name() + ".csv";
+        return FILE_NAME_PREFIX + "_" + timeUnit.name();
     }
 }

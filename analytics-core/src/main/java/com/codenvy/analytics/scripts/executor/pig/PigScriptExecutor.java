@@ -93,13 +93,12 @@ public class PigScriptExecutor implements ScriptExecutor {
         }
 
         String path = getInspectedPaths(context);
-        if (path.isEmpty()) {
+        if (path.isEmpty() && scriptType.isLogRequired()) {
             return ValueDataFactory
                     .createValueData(scriptType.getValueDataClass(), Collections.<Tuple>emptyList().iterator());
         }
 
-        InputStream scriptContent = readScriptContent(scriptType);
-        try {
+        try (InputStream scriptContent = readScriptContent(scriptType)) {
             LOGGER.info("Script execution " + scriptType + " is started with data located: " + path);
 
             PigServer server = new PigServer(execType);
@@ -112,7 +111,7 @@ public class PigScriptExecutor implements ScriptExecutor {
             }
         } finally {
             LOGGER.info("Execution " + scriptType + " is finished");
-            scriptContent.close();
+
         }
     }
 
@@ -127,12 +126,11 @@ public class PigScriptExecutor implements ScriptExecutor {
         }
 
         String path = getInspectedPaths(context);
-        if (path.isEmpty()) {
+        if (path.isEmpty() && scriptType.isLogRequired()) {
             return;
         }
 
-        InputStream scriptContent = readScriptContent(scriptType);
-        try {
+        try (InputStream scriptContent = readScriptContent(scriptType)) {
             LOGGER.info("Script execution " + scriptType + " is started with data located: " + path);
 
             Properties properties = new Properties();
@@ -145,7 +143,7 @@ public class PigScriptExecutor implements ScriptExecutor {
             }
         } finally {
             LOGGER.info("Execution " + scriptType + " is finished");
-            scriptContent.close();
+
         }
     }
 
@@ -198,16 +196,15 @@ public class PigScriptExecutor implements ScriptExecutor {
                                                    MetricParameter.FROM_DATE.getDefaultValue(),
                                                    Utils.getToDateParam(context));
                 }
-            } catch (IllegalStateException e) {
-                throw new IOException(e);
-            } catch (ParseException e) {
+            } catch (IllegalStateException | ParseException e) {
                 throw new IOException(e);
             }
         }
 
-        path = path.replace("\\", "/"); // hack for windows (stupid OS)
+        if (!path.isEmpty()) {
+            context.put(LOG, path);
+        }
 
-        context.put(LOG, path);
         return path;
     }
 
@@ -218,11 +215,8 @@ public class PigScriptExecutor implements ScriptExecutor {
             throw new IOException("Resource " + scriptFile.getAbsolutePath() + " not found");
         }
 
-        InputStream scriptContent = new BufferedInputStream(new FileInputStream(scriptFile));
-        try {
+        try (InputStream scriptContent = new BufferedInputStream(new FileInputStream(scriptFile))) {
             return readAndFixImport(scriptContent);
-        } finally {
-            scriptContent.close();
         }
     }
 
@@ -233,27 +227,27 @@ public class PigScriptExecutor implements ScriptExecutor {
         final StringBuilder builder = new StringBuilder();
 
         Pattern importPattern = Pattern.compile(regex);
-        String scriptContnent = getStreamContentAsString(is);
+        String scriptContent = getStreamContentAsString(is);
 
-        Matcher matcher = importPattern.matcher(scriptContnent);
+        Matcher matcher = importPattern.matcher(scriptContent);
         while (matcher.find()) {
-            File importFile = extractRelativePath(regex, scriptContnent, matcher);
+            File importFile = extractRelativePath(regex, scriptContent, matcher);
 
-            builder.append(scriptContnent.substring(lastPos, matcher.start()));
+            builder.append(scriptContent.substring(lastPos, matcher.start()));
             builder.append("IMPORT '");
             builder.append(importFile.getAbsolutePath().replace("\\", "/"));
             builder.append("';");
 
             lastPos = matcher.end();
         }
-        builder.append(scriptContnent.substring(lastPos));
+        builder.append(scriptContent.substring(lastPos));
 
         return new ByteArrayInputStream(builder.toString().getBytes("UTF-8"));
     }
 
     /** Extracts relative path to pig script out of IMPORT command. */
-    private File extractRelativePath(final String regex, String scriptContnent, Matcher matcher) throws IOException {
-        String importCommand = scriptContnent.substring(matcher.start(), matcher.end());
+    private File extractRelativePath(final String regex, String scriptContent, Matcher matcher) throws IOException {
+        String importCommand = scriptContent.substring(matcher.start(), matcher.end());
         String importFileName = importCommand.replaceAll(regex, "$1");
 
         File importFile = new File(SCRIPTS_DIRECTORY, importFileName);
@@ -278,11 +272,7 @@ public class PigScriptExecutor implements ScriptExecutor {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignore) {
-                    if (LOGGER.isTraceEnabled()) {
-                        LOGGER.trace("An exception occurred: " + ignore.getMessage());
-                    }
-                } catch (RuntimeException ignore) {
+                } catch (IOException | RuntimeException ignore) {
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("An exception occurred: " + ignore.getMessage());
                     }

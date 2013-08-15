@@ -52,7 +52,7 @@ public class TestScriptNumberTemporaryWorkspaceCreated extends BaseTest {
         Utils.putToDate(context, "20101001");
 
         LongValueData longValueData =
-                (LongValueData)executeAndReturnResult(ScriptType.NUMBER_TEMPORARY_WORKSPACE_CREATED, log, context);
+                (LongValueData)executeAndReturnResult(ScriptType.TEMPORARY_WORKSPACE_CREATED, log, context);
         assertEquals(longValueData.getAsLong(), 2);
     }
 }

@@ -47,6 +47,8 @@ public class DataProcessing {
 
             store(result, metricType, scriptType, context);
         }
+
+        Utils.prepareDirectories(metricType);
     }
 
     private static boolean isDefaultValue(ValueData result) throws IOException {
@@ -103,7 +105,7 @@ public class DataProcessing {
                                    Map<String, String> uuid) {
         switch (resultScheme.length) {
             case 1:
-                if (resultScheme[0] == MetricParameter.ALIAS) {
+                if (resultScheme[0] == MetricParameter.ALIAS || resultScheme[0] == MetricParameter.URL) { // TODO
                     Utils.putEntity(uuid, entityType);
                 }
                 uuid.put(resultScheme[0].name(), key.toString());
@@ -117,7 +119,7 @@ public class DataProcessing {
                 }
 
                 for (int i = 0; i < items.size(); i++) {
-                    if (resultScheme[i] == MetricParameter.ALIAS) {
+                    if (resultScheme[i] == MetricParameter.ALIAS || resultScheme[i] == MetricParameter.URL) {
                         Utils.putEntity(uuid, entityType);
                     }
 

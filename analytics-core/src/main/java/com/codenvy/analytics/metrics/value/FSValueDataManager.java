@@ -147,6 +147,8 @@ public class FSValueDataManager {
                 element = translateDateToRelativePath(entry.getValue());
             } else if (Utils.isAlias(entry)) {
                 element = translateAliasToRelativePath(entry.getValue());
+            } else if (Utils.isUrl(entry)) {
+                element = translateAliasToRelativePath(Integer.valueOf(entry.getValue().hashCode()).toString());
             } else {
                 element = entry.getValue().toLowerCase();
             }
