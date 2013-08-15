@@ -75,7 +75,7 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-    NUMBER_FACTORY_SESSIONS_AND_EVENT {
+    FACTORY_SESSIONS_AND_EVENT {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return LongValueData.class;
@@ -89,7 +89,25 @@ public enum ScriptType {
                                                         MetricParameter.EVENT}));
         }
     },
+    FACTORY_SESSIONS_AND_EVENT_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
 
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.EVENT}));
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
 
     JREBEL_USER_PROFILE_INFO,
 
@@ -134,6 +152,17 @@ public enum ScriptType {
 
     PRODUCT_USAGE_TIME,
     PRODUCT_USAGE_TIME_FACTORY,
+    PRODUCT_USAGE_TIME_FACTORY_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringListListStringValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
 
     PRODUCT_USAGE_TIME_BY_USERS {
         @Override

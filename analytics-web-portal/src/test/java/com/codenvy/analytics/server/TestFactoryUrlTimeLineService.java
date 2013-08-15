@@ -126,46 +126,46 @@ public class TestFactoryUrlTimeLineService {
         assertEquals(data.get(1).get(0).get(1), "4");
 
         assertEquals(data.get(1).get(2).get(0), "Factory Sessions");
-        assertEquals(data.get(1).get(2).get(1), "10");
+        assertEquals(data.get(1).get(2).get(1), "4");
 
         assertEquals(data.get(1).get(3).get(0), "Anonymous Sessions");
-        assertEquals(data.get(1).get(3).get(1), "6");
+        assertEquals(data.get(1).get(3).get(1), "");
 
         assertEquals(data.get(1).get(4).get(0), "Authenticated Sessions");
         assertEquals(data.get(1).get(4).get(1), "4");
 
         assertEquals(data.get(1).get(6).get(0), "Factory Sessions");
-        assertEquals(data.get(1).get(6).get(1), "10");
+        assertEquals(data.get(1).get(6).get(1), "4");
 
         assertEquals(data.get(1).get(7).get(0), "Abandoned Sessions");
-        assertEquals(data.get(1).get(7).get(1), "8");
+        assertEquals(data.get(1).get(7).get(1), "2");
 
         assertEquals(data.get(1).get(8).get(0), "Converted Sessions");
         assertEquals(data.get(1).get(8).get(1), "2");
 
         assertEquals(data.get(1).get(10).get(0), "Factory Sessions");
-        assertEquals(data.get(1).get(10).get(1), "10");
+        assertEquals(data.get(1).get(10).get(1), "4");
 
         assertEquals(data.get(1).get(11).get(0), "% Built");
-        assertEquals(data.get(1).get(11).get(1), "20%");
+        assertEquals(data.get(1).get(11).get(1), "50%");
 
         assertEquals(data.get(1).get(12).get(0), "% Run");
         assertEquals(data.get(1).get(12).get(1), "");
 
         assertEquals(data.get(1).get(13).get(0), "% Deployed");
-        assertEquals(data.get(1).get(13).get(1), "10%");
+        assertEquals(data.get(1).get(13).get(1), "25%");
 
         assertEquals(data.get(1).get(15).get(0), "Factory Sessions");
-        assertEquals(data.get(1).get(15).get(1), "10");
+        assertEquals(data.get(1).get(15).get(1), "4");
 
         assertEquals(data.get(1).get(16).get(0), "< 10 Mins");
         assertEquals(data.get(1).get(16).get(1), "1");
 
         assertEquals(data.get(1).get(17).get(0), "> 10 Mins");
-        assertEquals(data.get(1).get(17).get(1), "9");
+        assertEquals(data.get(1).get(17).get(1), "3");
 
         assertEquals(data.get(1).get(19).get(0), "Product Usage Mins");
-        assertEquals(data.get(1).get(19).get(1), "275");
+        assertEquals(data.get(1).get(19).get(1), "50");
     }
 
     private File preapreLogs() throws IOException {
@@ -183,14 +183,22 @@ public class TestFactoryUrlTimeLineService {
         events.add(Event.Builder.createFactoryCreatedEvent("ws5", "user6", "project1", "type1", "repo1", "factory6")
                         .withDate("2013-02-10").build());
 
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factory1", "ref1").withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factory1", "ref1").withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factory2", "ref1").withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factory2", "ref1").withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-5", "factory3", "ref1").withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-7", "factory4", "ref1").withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-8", "factory5", "ref1").withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-9", "factory6", "ref1").withDate("2013-02-10").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factory1", "ref1").withDate("2013-02-10")
+                        .build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factory1", "ref1").withDate("2013-02-10")
+                        .build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factory2", "ref1").withDate("2013-02-10")
+                        .build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factory2", "ref1").withDate("2013-02-10")
+                        .build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-5", "factory3", "ref1").withDate("2013-02-10")
+                        .build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-7", "factory4", "ref1").withDate("2013-02-10")
+                        .build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-8", "factory5", "ref1").withDate("2013-02-10")
+                        .build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-9", "factory6", "ref1").withDate("2013-02-10")
+                        .build());
 
         events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user").withDate("2013-02-10").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user").withDate("2013-02-10").build());
@@ -199,8 +207,7 @@ public class TestFactoryUrlTimeLineService {
         events.add(Event.Builder.createTenantCreatedEvent("tmp-5", "user").withDate("2013-02-10").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-6", "user").withDate("2013-02-10").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-7", "user").withDate("2013-02-10").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-8", "user")
-                        .withDate("2013-02-10").build());
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-8", "user").withDate("2013-02-10").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-9", "user").withDate("2013-02-10").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType", "brVer")
@@ -221,8 +228,9 @@ public class TestFactoryUrlTimeLineService {
                         .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createSessionFactoryStartedEvent("id9", "tmp-9", "user9", "false", "brType", "brVer")
                         .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id10", "tmp-10", "user10", "false", "brType", "brVer")
-                        .withDate("2013-02-10").withTime("10:00:00").build());
+        events.add(
+                Event.Builder.createSessionFactoryStartedEvent("id10", "tmp-10", "user10", "false", "brType", "brVer")
+                     .withDate("2013-02-10").withTime("10:00:00").build());
 
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1")
                         .withDate("2013-02-10").withTime("10:05:00").build());
@@ -246,14 +254,13 @@ public class TestFactoryUrlTimeLineService {
                         .withDate("2013-02-10").withTime("10:50:00").build());
 
         events.add(Event.Builder.createProjectBuiltEvent("user1", "tmp-1", "", "project", "type")
-                       .withDate("2013-02-10").withTime("10:01:00").build());
+                        .withDate("2013-02-10").withTime("10:01:00").build());
         events.add(Event.Builder.createProjectDeployedEvent("user3", "tmp-3", "", "project", "type", "paas")
                         .withDate("2013-02-10").withTime("10:14:00").build());
 
-
-        events.add(Event.Builder.createFactoryProjectImportedEvent("id1", "tmp-1", "project1", "type1")
+        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1", "project1", "type1")
                         .withDate("2013-02-10").build());
-        events.add(Event.Builder.createFactoryProjectImportedEvent("id2", "tmp-2", "project2", "type2")
+        events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-2", "user2", "project2", "type2")
                         .withDate("2013-02-10").build());
 
         return LogGenerator.generateLog(events);

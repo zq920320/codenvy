@@ -496,7 +496,7 @@ public enum MetricType {
     FACTORY_SESSIONS_TYPES {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_EVENTS_WITH_TYPE);
+            return EnumSet.of(ScriptType.NUMBER_EVENTS_WITH_TYPE, ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_WS);
         }
 
         @Override
@@ -511,7 +511,7 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_FACTORY {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_FACTORY);
+            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_FACTORY, ScriptType.PRODUCT_USAGE_TIME_FACTORY_BY_WS);
         }
     },
     PRODUCT_USAGE_TIME_FACTORY_TOTAL,
@@ -520,7 +520,7 @@ public enum MetricType {
     FACTORY_PROJECT_IMPORTED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_EVENTS);
+            return EnumSet.of(ScriptType.NUMBER_EVENTS, ScriptType.NUMBER_EVENTS_BY_WS);
         }
 
         @Override
@@ -533,7 +533,7 @@ public enum MetricType {
     FACTORY_SESSIONS_AND_BUILT {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_FACTORY_SESSIONS_AND_EVENT);
+            return EnumSet.of(ScriptType.FACTORY_SESSIONS_AND_EVENT, ScriptType.FACTORY_SESSIONS_AND_EVENT_BY_WS);
         }
 
         @Override
@@ -547,7 +547,7 @@ public enum MetricType {
     FACTORY_SESSIONS_AND_RUN {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_FACTORY_SESSIONS_AND_EVENT);
+            return EnumSet.of(ScriptType.FACTORY_SESSIONS_AND_EVENT, ScriptType.FACTORY_SESSIONS_AND_EVENT_BY_WS);
         }
 
         @Override
@@ -558,7 +558,7 @@ public enum MetricType {
     FACTORY_SESSIONS_AND_DEPLOY {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_FACTORY_SESSIONS_AND_EVENT);
+            return EnumSet.of(ScriptType.FACTORY_SESSIONS_AND_EVENT, ScriptType.FACTORY_SESSIONS_AND_EVENT_BY_WS);
         }
 
         @Override

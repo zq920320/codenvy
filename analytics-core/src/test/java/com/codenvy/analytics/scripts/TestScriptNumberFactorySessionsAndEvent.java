@@ -102,7 +102,7 @@ public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
 
 
         LongValueData valueData =
-                (LongValueData)executeAndReturnResult(ScriptType.NUMBER_FACTORY_SESSIONS_AND_EVENT, log, params);
+                (LongValueData)executeAndReturnResult(ScriptType.FACTORY_SESSIONS_AND_EVENT, log, params);
         assertEquals(valueData.getAsLong(), 5);
     }
 }
