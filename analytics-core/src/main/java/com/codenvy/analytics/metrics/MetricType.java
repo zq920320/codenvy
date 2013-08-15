@@ -214,6 +214,10 @@ public enum MetricType {
                               ScriptType.PRODUCT_USAGE_TIME_BY_USERS,
                               ScriptType.PRODUCT_USAGE_TIME_BY_DOMAINS);
         }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+        }
     },
     PRODUCT_USAGE_TIME_0_10,
     PRODUCT_USAGE_TIME_10_60,

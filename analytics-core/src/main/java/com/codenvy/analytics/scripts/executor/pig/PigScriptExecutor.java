@@ -81,6 +81,8 @@ public class PigScriptExecutor implements ScriptExecutor {
         execType = ExecType.LOCAL;
     }
 
+    // TODO validation from=to
+
     /** {@inheritDoc} */
     @Override
     public ValueData executeAndReturn(ScriptType scriptType, Map<String, String> context) throws IOException {

@@ -174,6 +174,15 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringListListStringValueData.class;
         }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.LOAD_DIR,
+                                                        MetricParameter.STORE_DIR}));
+        }
     },
 
     PRODUCT_USAGE_TIME_BY_DOMAINS {
@@ -690,5 +699,5 @@ public enum ScriptType {
         return true;
     }
 
-    // TODO toDATE ?
+    // TODO toDATE mandatory?
 }
