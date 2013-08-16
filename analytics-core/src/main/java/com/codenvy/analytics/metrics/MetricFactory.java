@@ -330,6 +330,45 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY:
                 metric = new ProductUsageTimeTopUsers1DayMetric();
                 break;
+            case PRODUCT_USAGE_TIME_TOP_USERS_BY_7DAY:
+                metric = new ProductUsageTimeTopUsers7DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_USERS_BY_30DAY:
+                metric = new ProductUsageTimeTopUsers30DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_USERS_BY_60DAY:
+                metric = new ProductUsageTimeTopUsers60DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_USERS_BY_90DAY:
+                metric = new ProductUsageTimeTopUsers90DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_USERS_BY_365DAY:
+                metric = new ProductUsageTimeTopUsers365DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_USERS_BY_LIFETIME:
+                metric = new ProductUsageTimeTopUsersLifeTimeDayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_1DAY:
+                metric = new ProductUsageTimeTopDomains1DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_7DAY:
+                metric = new ProductUsageTimeTopDomains7DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_30DAY:
+                metric = new ProductUsageTimeTopDomains30DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_60DAY:
+                metric = new ProductUsageTimeTopDomains60DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY:
+                metric = new ProductUsageTimeTopDomains90DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY:
+                metric = new ProductUsageTimeTopDomains365DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME:
+                metric = new ProductUsageTimeTopDomainsLifeTimeDayMetric();
+                break;
             // TODO
 
 

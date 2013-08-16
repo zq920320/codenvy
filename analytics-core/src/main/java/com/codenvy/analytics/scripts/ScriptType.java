@@ -153,13 +153,13 @@ public enum ScriptType {
     PRODUCT_USAGE_TIME_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return MapStringListValueData.class;
+            return MapStringFixedLongListValueData.class;
         }
     },
     PRODUCT_USAGE_TIME_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return MapStringListValueData.class;
+            return MapStringFixedLongListValueData.class;
         }
     },
 

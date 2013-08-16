@@ -74,9 +74,16 @@ public class ValueDataFactory {
         } else if (clazz == MapStringListValueData.class) {
             return MapStringListValueData.DEFAULT;
 
+        } else if (clazz == MapStringFixedLongListValueData.class) {
+            return MapStringFixedLongListValueData.DEFAULT;
+
         } else if (clazz == MapListLongValueData.class) {
             return MapListLongValueData.DEFAULT;
         }
+        else if (clazz == FixedListLongValueData.class) {
+            return FixedListLongValueData.DEFAULT;
+        }
+
 
         throw new IOException("Unknown class " + clazz.getName());
     }
@@ -93,6 +100,9 @@ public class ValueDataFactory {
 
         } else if (clazz == ListStringValueData.class) {
             return createListStringValueData(iter);
+
+        } else if (clazz == FixedListLongValueData.class) {
+            return createFixedListLongValueData(iter);
 
         } else if (clazz == SetStringValueData.class) {
             return createSetStringValueData(iter);
@@ -111,6 +121,10 @@ public class ValueDataFactory {
 
         } else if (clazz == MapStringListValueData.class) {
             return createMapStringListValueData(iter);
+
+        } else if (clazz == MapStringFixedLongListValueData.class) {
+            return createMapStringFixedLongListValueData(iter);
+
 
         } else if (clazz == MapListLongValueData.class) {
             return createMapListLongValueData(iter);
@@ -177,6 +191,26 @@ public class ValueDataFactory {
         return new MapStringListValueData(result);
     }
 
+    private static ValueData createMapStringFixedLongListValueData(Iterator<Tuple> iter) throws IOException {
+        if (!iter.hasNext()) {
+            return new MapStringFixedLongListValueData(Collections.<String, FixedListLongValueData>emptyMap());
+        }
+
+        Map<String, FixedListLongValueData> result = new HashMap<>();
+        while (iter.hasNext()) {
+            Tuple tuple = iter.next();
+
+            validateTupleSize(tuple, 2);
+
+            String key = tuple.get(0).toString();
+            FixedListLongValueData value = createFixedListLongValueData(((DataBag)tuple.get(1)).iterator());
+
+            result.put(key, value);
+        }
+
+        return new MapStringFixedLongListValueData(result);
+    }
+
     private static ValueData createMapStringSetValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) {
             return new MapStringSetValueData(Collections.<String, SetStringValueData>emptyMap());
@@ -202,7 +236,7 @@ public class ValueDataFactory {
             return new MapStringListListStringValueData(Collections.<String, ListListStringValueData>emptyMap());
         }
 
-        Map<String, ListListStringValueData> result = new HashMap<String, ListListStringValueData>();
+        Map<String, ListListStringValueData> result = new HashMap<>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
@@ -221,7 +255,7 @@ public class ValueDataFactory {
     private static ValueData createMapStringLongValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) return new MapStringLongValueData(Collections.<String, Long>emptyMap());
 
-        Map<String, Long> result = new HashMap<String, Long>();
+        Map<String, Long> result = new HashMap<>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
@@ -242,7 +276,7 @@ public class ValueDataFactory {
             return new ListListStringValueData(Collections.<ListStringValueData>emptyList());
         }
 
-        List<ListStringValueData> result = new ArrayList<ListStringValueData>();
+        List<ListStringValueData> result = new ArrayList<>();
         while (iter.hasNext()) {
             Tuple tuple = iter.next();
 
@@ -255,6 +289,19 @@ public class ValueDataFactory {
         return new ListListStringValueData(result);
     }
 
+    private static FixedListLongValueData createFixedListLongValueData(Iterator<Tuple> iter) throws IOException {
+        if (!iter.hasNext()) return new FixedListLongValueData(Collections.<Long>emptyList());
+
+        List<Long> result = new ArrayList<>();
+        while (iter.hasNext()) {
+            Tuple tuple = iter.next();
+
+            validateTupleSize(tuple, 1);
+            result.add((Long)tuple.get(0));
+        }
+
+        return new FixedListLongValueData(result);
+    }
 
     private static ListStringValueData createListStringValueData(Iterator<Tuple> iter) throws IOException {
         if (!iter.hasNext()) return new ListStringValueData(Collections.<String>emptyList());

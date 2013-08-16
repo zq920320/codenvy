@@ -44,4 +44,4 @@ B = productUsageTimeList(k4, '$inactiveInterval');
 
 R1 = UNION A, B;
 R2 = GROUP R1 BY user;
-result = FOREACH R2 GENERATE group, TOBAG(SUM(R1.delta), COUNT(R1.delta));
+result = FOREACH R2 GENERATE group, TOBAG(SUM(R1.delta) / 60, COUNT(R1.delta));

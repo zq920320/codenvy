@@ -3,7 +3,7 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.MapStringListValueData;
+import com.codenvy.analytics.metrics.value.MapStringFixedLongListValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.util.Arrays;
@@ -14,13 +14,13 @@ import java.util.Set;
 public class ProductUsageTimeDomainsMetric extends ValueReadBasedMetric {
 
     public ProductUsageTimeDomainsMetric() {
-        super(MetricType.PRODUCT_USAGE_TIME_USERS);
+        super(MetricType.PRODUCT_USAGE_TIME_DOMAINS);
     }
 
     /** {@inheritDoc} */
     @Override
     protected Class<? extends ValueData> getValueDataClass() {
-        return MapStringListValueData.class;
+        return MapStringFixedLongListValueData.class;
     }
 
     /** {@inheritDoc} */

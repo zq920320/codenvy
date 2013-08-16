@@ -47,4 +47,4 @@ d2 = FOREACH d1 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, dt, de
 R1 = FILTER d2 BY domain != '';
 
 R2 = GROUP R1 BY domain;
-result = FOREACH R2 GENERATE group, TOBAG(SUM(R1.delta), COUNT(R1.delta));
+result = FOREACH R2 GENERATE group, TOBAG(SUM(R1.delta) / 60, COUNT(R1.delta));
