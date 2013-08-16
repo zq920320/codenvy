@@ -41,8 +41,8 @@ nav {
 
         @include respond-to(tablet-desktop) {
             @include image_link_separator;
-            padding-left: 20px;
-            margin-left: 20px;
+            padding-left: 17px;
+            margin-left: 17px;
         }
 
         @include respond-to(mobile){
