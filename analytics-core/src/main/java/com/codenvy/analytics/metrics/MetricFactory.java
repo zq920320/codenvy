@@ -117,8 +117,8 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_60_MORE:
                 metric = new ProductUsageTime60MoreMetric();
                 break;
-            case PRODUCT_USAGE_TIME:
-                metric = new ProductUsageTimeMetric();
+            case PRODUCT_USAGE_SESSIONS:
+                metric = new ProductUsageSessionsMetric();
                 break;
             case PRODUCT_USAGE_SESSIONS_0_10:
                 metric = new ProductUsageSessions010Metric();
@@ -300,32 +300,37 @@ public class MetricFactory {
             case FACTORY_SESSIONS_CONV:
                 metric = new FactorySessionsConvMetric();
                 break;
-            case  FACTORY_SESSIONS_AND_BUILT:
+            case FACTORY_SESSIONS_AND_BUILT:
                 metric = new FactorySessionsAndBuiltMetric();
                 break;
-            case  FACTORY_SESSIONS_AND_RUN:
+            case FACTORY_SESSIONS_AND_RUN:
                 metric = new FactorySessionsAndRunMetric();
                 break;
-            case  FACTORY_SESSIONS_AND_DEPLOY:
+            case FACTORY_SESSIONS_AND_DEPLOY:
                 metric = new FactorySessionsAndDeployMetric();
                 break;
-            case  FACTORY_SESSIONS_AND_RUN_PERCENT:
+            case FACTORY_SESSIONS_AND_RUN_PERCENT:
                 metric = new FactorySessionsAndRunPercentMetric();
                 break;
-            case  FACTORY_SESSIONS_AND_BUILT_PERCENT:
+            case FACTORY_SESSIONS_AND_BUILT_PERCENT:
                 metric = new FactorySessionsAndBuiltPercentMetric();
                 break;
-            case  FACTORY_SESSIONS_AND_DEPLOY_PERCENT:
+            case FACTORY_SESSIONS_AND_DEPLOY_PERCENT:
                 metric = new FactorySessionsAndDeployPercentMetric();
                 break;
             case JREBEL_USER_PROFILE_INFO:
                 metric = new JrebelUserProfileInfoMetric();
                 break;
+            case PRODUCT_USAGE_TIME_USERS:
+                metric = new ProductUsageTimeUsersMetric();
+                break;
+            case PRODUCT_USAGE_TIME_DOMAINS:
+                metric = new ProductUsageTimeDomainsMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY:
+                metric = new ProductUsageTimeTopUsers1DayMetric();
+                break;
             // TODO
-
-
-
-
 
 
             case USER_PROFILE:
@@ -346,83 +351,21 @@ public class MetricFactory {
             case USER_PROFILE_PHONE:
                 metric = new UsersProfilePhoneMetric();
                 break;
-            case USERS_SEGMENT_ANALYSIS_CONDITION_1:
-                metric = new UsersSegmentAnalysisCondition1();
-                break;
-            case USERS_SEGMENT_ANALYSIS_CONDITION_2:
-                metric = new UsersSegmentAnalysisCondition2();
-                break;
-            case USERS_SEGMENT_ANALYSIS_CONDITION_3:
-                metric = new UsersSegmentAnalysisCondition3();
-                break;
+//            case USERS_SEGMENT_ANALYSIS_CONDITION_1:
+//                metric = new UsersSegmentAnalysisCondition1();
+//                break;
+//            case USERS_SEGMENT_ANALYSIS_CONDITION_2:
+//                metric = new UsersSegmentAnalysisCondition2();
+//                break;
+//            case USERS_SEGMENT_ANALYSIS_CONDITION_3:
+//                metric = new UsersSegmentAnalysisCondition3();
+//                break;
+            //. TODO
             case USERS_UPDATE_PROFILE_LIST:
                 metric = new UsersUpdateProfileList();
                 break;
             case USERS_COMPLETED_PROFILE:
                 metric = new UsersCompletedProfile();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY:
-                metric = new ProductUsageTimeTopUsersBy1DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_USERS_BY_7DAY:
-                metric = new ProductUsageTimeTopUsersBy7DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_USERS_BY_30DAY:
-                metric = new ProductUsageTimeTopUsersBy30DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_USERS_BY_60DAY:
-                metric = new ProductUsageTimeTopUsersBy60DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_USERS_BY_90DAY:
-                metric = new ProductUsageTimeTopUsersBy90DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_USERS_BY_365DAY:
-                metric = new ProductUsageTimeTopUsersBy365DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_USERS_BY_LIFETIME:
-                metric = new ProductUsageTimeTopUsersByLifeTimeMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY:
-                metric = new ProductUsageTimeTopCompaniesBy1DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_7DAY:
-                metric = new ProductUsageTimeTopCompaniesBy7DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_30DAY:
-                metric = new ProductUsageTimeTopCompaniesBy30DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_60DAY:
-                metric = new ProductUsageTimeTopCompaniesBy60DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_90DAY:
-                metric = new ProductUsageTimeTopCompaniesBy90DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_365DAY:
-                metric = new ProductUsageTimeTopCompaniesBy365DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME:
-                metric = new ProductUsageTimeTopCompaniesByLifeTimeMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_1DAY:
-                metric = new ProductUsageTimeTopDomainsBy1DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_7DAY:
-                metric = new ProductUsageTimeTopDomainsBy7DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_30DAY:
-                metric = new ProductUsageTimeTopDomainsBy30DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_60DAY:
-                metric = new ProductUsageTimeTopDomainsBy60DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY:
-                metric = new ProductUsageTimeTopDomainsBy90DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY:
-                metric = new ProductUsageTimeTopDomainsBy365DayMetric();
-                break;
-            case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME:
-                metric = new ProductUsageTimeTopDomainsByLifeTimeMetric();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);

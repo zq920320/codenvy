@@ -167,8 +167,7 @@ public class Utils {
 
     /** Puts {@link MetricParameter#LOAD_DIR} parameter into context. */
     public static void putLoadDir(Map<String, String> context, MetricType metricType) {
-        String loadDir = getLoadDir(metricType);
-        context.put(MetricParameter.LOAD_DIR.name(), loadDir);
+        context.put(MetricParameter.LOAD_DIR.name(), getLoadDir(metricType));
     }
 
     private static String getLoadDir(MetricType metricType) {
@@ -177,8 +176,7 @@ public class Utils {
 
     /** Puts {@link MetricParameter#STORE_DIR} parameter into context. */
     public static void putStoreDir(Map<String, String> context, MetricType metricType) {
-        String storeDir = getStoreDir(metricType);
-        context.put(MetricParameter.STORE_DIR.name(), storeDir);
+        context.put(MetricParameter.STORE_DIR.name(), getStoreDir(metricType));
     }
 
     private static String getStoreDir(MetricType metricType) {
@@ -190,6 +188,11 @@ public class Utils {
         File loadDir = new File(getLoadDir(metricType));
         File storeDir = new File(getStoreDir(metricType));
 
+        prepareCumulativeDirectories(loadDir, storeDir);
+    }
+
+    /** Prepares load and store directories for Pig script execution. */
+    public static void prepareCumulativeDirectories(File loadDir, File storeDir) throws IOException {
         if (storeDir.exists()) {
             if (loadDir.exists()) {
                 FileUtils.deleteDirectory(loadDir);
@@ -237,14 +240,6 @@ public class Utils {
     /** @return true if context contains {@link MetricParameter#TIME_UNIT} */
     public static boolean containsTimeUnitParam(Map<String, String> context) {
         return getTimeUnitParam(context) != null;
-    }
-
-    /** Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT} */
-    public static void initDateInterval(Date date, Map<String, String> context) throws IOException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        initDateInterval(calendar, context);
     }
 
     /** Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT} */
@@ -303,7 +298,7 @@ public class Utils {
 
     /** Shift date interval forward depending on {@link TimeUnit}. Should also be placed in context. */
     public static Map<String, String> nextDateInterval(Map<String, String> context) throws IOException {
-        Map<String, String> resultContext = new HashMap<String, String>(context);
+        Map<String, String> resultContext = new HashMap<>(context);
 
         Calendar fromDate = getFromDate(context);
         Calendar toDate = getToDate(context);

@@ -20,7 +20,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -60,12 +59,12 @@ public class TestProductUsageTimeMetric {
         Utils.putFromDate(context, "20101009");
         Utils.putToDate(context, "20101009");
 
-        DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME, context);
+        DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_SESSIONS, context);
     }
 
     @Test
     public void testGetValues() throws Exception {
-        Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME);
+        Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         ListListStringValueData value = (ListListStringValueData)metric.getValue(context);
 
         assertEquals(value.size(), 2);
@@ -77,7 +76,7 @@ public class TestProductUsageTimeMetric {
     public void testGetValuesWithUserFilters() throws Exception {
         context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com");
 
-        Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME);
+        Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         ListListStringValueData value = (ListListStringValueData)metric.getValue(context);
 
         assertEquals(value.size(), 1);
@@ -88,7 +87,7 @@ public class TestProductUsageTimeMetric {
     public void testGetValuesWithDomainsFilters() throws Exception {
         context.put(MetricFilter.FILTER_USER.name(), "@gmail.com");
 
-        Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME);
+        Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         ListListStringValueData value = (ListListStringValueData)metric.getValue(context);
 
         assertEquals(value.size(), 2);

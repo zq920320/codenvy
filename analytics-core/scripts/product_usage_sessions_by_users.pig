@@ -44,12 +44,6 @@ B = productUsageTimeList(k4, '$inactiveInterval');
 
 R1 = UNION A, B;
 R2 = GROUP R1 BY user;
-
-L1 = FOREACH R2 GENERATE group AS user, SUM(R1.delta) AS delta;
-L2 = LOAD '$LOAD_DIR' USING PigStorage() AS (user : chararray, delta : long);
-L = UNION L1, L2;
-STORE L INTO '$STORE_DIR' USING PigStorage();
-
 result = FOREACH R2 {
     R3 = FOREACH R1 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
     GENERATE group, R3;

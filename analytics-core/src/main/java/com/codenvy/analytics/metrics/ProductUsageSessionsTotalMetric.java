@@ -19,19 +19,10 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProductUsageSessionsTotalMetric extends NumberReadBasedMetric {
 
     public ProductUsageSessionsTotalMetric() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS_TOTAL, MetricType.PRODUCT_USAGE_TIME);
+        super(MetricType.PRODUCT_USAGE_SESSIONS_TOTAL, MetricType.PRODUCT_USAGE_SESSIONS);
     }
 }

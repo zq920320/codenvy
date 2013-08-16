@@ -207,16 +207,12 @@ public enum MetricType {
             Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
         }
     },
-    PRODUCT_USAGE_TIME {
+    PRODUCT_USAGE_SESSIONS {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME,
-                              ScriptType.PRODUCT_USAGE_TIME_BY_USERS,
-                              ScriptType.PRODUCT_USAGE_TIME_BY_DOMAINS);
-        }
-
-        @Override
-        public void modifyContext(Map<String, String> context) {
+            return EnumSet.of(ScriptType.PRODUCT_USAGE_SESSIONS,
+                              ScriptType.PRODUCT_USAGE_SESSIONS_BY_USERS,
+                              ScriptType.PRODUCT_USAGE_SESSIONS_BY_DOMAINS);
         }
     },
     PRODUCT_USAGE_TIME_0_10,
@@ -515,7 +511,8 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_FACTORY {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_FACTORY, ScriptType.PRODUCT_USAGE_TIME_FACTORY_BY_WS);
+            return EnumSet
+                    .of(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY, ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS);
         }
     },
     PRODUCT_USAGE_TIME_FACTORY_TOTAL,
@@ -580,6 +577,20 @@ public enum MetricType {
             return EnumSet.of(ScriptType.JREBEL_USER_PROFILE_INFO);
         }
     },
+    PRODUCT_USAGE_TIME_USERS {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_USERS);
+        }
+    },
+    PRODUCT_USAGE_TIME_DOMAINS {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_DOMAINS);
+        }
+    },
+
+    PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY,
 
 
     USERS_UPDATE_PROFILE_LIST,
@@ -593,28 +604,29 @@ public enum MetricType {
 
     USERS_SEGMENT_ANALYSIS_CONDITION_1,
     USERS_SEGMENT_ANALYSIS_CONDITION_2,
-    USERS_SEGMENT_ANALYSIS_CONDITION_3,
-    PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY,
-    PRODUCT_USAGE_TIME_TOP_USERS_BY_7DAY,
-    PRODUCT_USAGE_TIME_TOP_USERS_BY_30DAY,
-    PRODUCT_USAGE_TIME_TOP_USERS_BY_60DAY,
-    PRODUCT_USAGE_TIME_TOP_USERS_BY_90DAY,
-    PRODUCT_USAGE_TIME_TOP_USERS_BY_365DAY,
-    PRODUCT_USAGE_TIME_TOP_USERS_BY_LIFETIME,
-    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY,
-    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_7DAY,
-    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_30DAY,
-    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_60DAY,
-    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_90DAY,
-    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_365DAY,
-    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME,
-    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_1DAY,
-    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_7DAY,
-    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_30DAY,
-    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_60DAY,
-    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY,
-    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY,
-    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME;
+    USERS_SEGMENT_ANALYSIS_CONDITION_3;
+
+//    PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY,
+//    PRODUCT_USAGE_TIME_TOP_USERS_BY_7DAY,
+//    PRODUCT_USAGE_TIME_TOP_USERS_BY_30DAY,
+//    PRODUCT_USAGE_TIME_TOP_USERS_BY_60DAY,
+//    PRODUCT_USAGE_TIME_TOP_USERS_BY_90DAY,
+//    PRODUCT_USAGE_TIME_TOP_USERS_BY_365DAY,
+//    PRODUCT_USAGE_TIME_TOP_USERS_BY_LIFETIME,
+//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY,
+//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_7DAY,
+//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_30DAY,
+//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_60DAY,
+//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_90DAY,
+//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_365DAY,
+//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME,
+//    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_1DAY,
+//    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_7DAY,
+//    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_30DAY,
+//    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_60DAY,
+//    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY,
+//    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY,
+//    PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME;
 
 
     /** @return set of scripts that are responsible for calculation value of the metric */
@@ -626,4 +638,6 @@ public enum MetricType {
     public void modifyContext(Map<String, String> context) throws IOException {
         // do nothing by default
     }
+
+
 }

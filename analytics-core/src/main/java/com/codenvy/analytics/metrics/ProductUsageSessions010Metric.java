@@ -26,7 +26,6 @@ import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
@@ -34,7 +33,7 @@ import java.util.Set;
 public class ProductUsageSessions010Metric extends CalculatedMetric {
 
     public ProductUsageSessions010Metric() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS_0_10, MetricType.PRODUCT_USAGE_TIME);
+        super(MetricType.PRODUCT_USAGE_SESSIONS_0_10, MetricType.PRODUCT_USAGE_SESSIONS);
     }
 
     /** {@inheritDoc} */
@@ -49,7 +48,7 @@ public class ProductUsageSessions010Metric extends CalculatedMetric {
 
         long count = 0;
 
-        ProductUsageTimeMetric usageTimeMetric = (ProductUsageTimeMetric)basedMetric;
+        ProductUsageSessionsMetric usageTimeMetric = (ProductUsageSessionsMetric)basedMetric;
         for (ListStringValueData item : value.getAll()) {
             long itemTime = usageTimeMetric.getTime(item);
             if (0 <= itemTime && itemTime < 10 * 60) {

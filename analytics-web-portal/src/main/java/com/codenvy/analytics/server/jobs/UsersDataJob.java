@@ -24,8 +24,6 @@ import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
 import org.apache.commons.io.FileUtils;
 import org.quartz.Job;
@@ -67,78 +65,14 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
         long start = System.currentTimeMillis();
 
         try {
-            prepareDir("PROFILES");
-
-            ScriptExecutor executor = ScriptExecutor.INSTANCE;
-            Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY);
-
-            executor.execute(ScriptType.USERS_PROFILE_LOG_PREPARATION, context);
-
-            ValueData result = executor.executeAndReturn(ScriptType.USERS_PROFILE_PREPARATION, context);
-            store(MetricType.USER_PROFILE, result, context);
-
-            for (MetricType metricType : MetricType.values()) {
-                DataProcessing.calculateAndStore(metricType, context);
-            }
+//            for (MetricType metricType : MetricType.values()) {
+//                DataProcessing.calculateAndStore(metricType, context);
+//            }
+            DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME_USERS, context);
+            DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME_DOMAINS, context);
+            // TODO
         } finally {
             LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
-        }
-    }
-
-    private void store(MetricType metricType, ValueData valueData, Map<String, String> context)
-            throws IOException {
-        if (!(valueData instanceof MapStringListListStringValueData)) {
-            throw new IOException("MapStringListListStringValueData class is expected");
-        }
-
-        MapStringListListStringValueData mapVD = (MapStringListListStringValueData)valueData;
-        Map<String, ListListStringValueData> all = mapVD.getAll();
-
-        for (String user : all.keySet()) {
-            ListListStringValueData item = all.get(user);
-
-            LinkedHashMap<String, String> uuid = makeUUID(metricType, context, user);
-            FSValueDataManager.storeValue(item, metricType, uuid);
-        }
-    }
-
-    private LinkedHashMap<String, String> makeUUID(MetricType metricType, Map<String, String> executeContext,
-                                                   String user) throws IOException {
-        LinkedHashMap<String, String> uuid = new LinkedHashMap<>(3);
-
-        Metric metric = MetricFactory.createMetric(metricType);
-        for (MetricParameter param : metric.getParams()) {
-            switch (param) {
-                case FROM_DATE:
-                    Utils.putFromDate(uuid, Utils.getFromDate(executeContext));
-                    break;
-                case TO_DATE:
-                    Utils.putToDate(uuid, Utils.getToDate(executeContext));
-                    break;
-                case ALIAS:
-                    uuid.put(MetricParameter.ALIAS.name(), user);
-                    break;
-                default:
-                    throw new IllegalStateException("Metric parameter " + param + " is not supported");
-            }
-        }
-
-        return uuid;
-    }
-
-    private void prepareDir(String directory) throws IOException {
-        File srcDir = new File(FSValueDataManager.RESULT_DIRECTORY, directory);
-        File destDir = new File(FSValueDataManager.RESULT_DIRECTORY, "PREV_" + directory);
-
-        if (destDir.exists()) {
-            FileUtils.deleteDirectory(destDir);
-        }
-
-        if (srcDir.exists()) {
-            FileUtils.moveDirectory(srcDir, destDir);
-        } else {
-            destDir.mkdirs();
-            File.createTempFile("prefix", "suffix", destDir);
         }
     }
 }

@@ -26,7 +26,8 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
-    // TODO
+    // TODO review
+    // TODO putincontext
     EVENT {
         @Override
         public String getDefaultValue() {

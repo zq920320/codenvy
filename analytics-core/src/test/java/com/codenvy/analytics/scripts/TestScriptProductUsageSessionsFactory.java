@@ -37,7 +37,7 @@ import java.util.Map;
 import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestScriptProductUsageTimeFactory extends BaseTest {
+public class TestScriptProductUsageSessionsFactory extends BaseTest {
 
     @Test
     public void testEventFound() throws Exception {
@@ -60,7 +60,7 @@ public class TestScriptProductUsageTimeFactory extends BaseTest {
         params.put(MetricParameter.TO_DATE.name(), "20130210");
 
         ListListStringValueData value =
-                (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_FACTORY, log, params);
+                (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY, log, params);
         List<ListStringValueData> all = value.getAll();
 
         assertEquals(all.size(), 3);

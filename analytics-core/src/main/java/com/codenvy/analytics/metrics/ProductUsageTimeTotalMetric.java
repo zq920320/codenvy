@@ -31,7 +31,7 @@ import java.util.Map;
 public class ProductUsageTimeTotalMetric extends CalculatedMetric {
 
     public ProductUsageTimeTotalMetric() {
-        super(MetricType.PRODUCT_USAGE_TIME_TOTAL, MetricType.PRODUCT_USAGE_TIME);
+        super(MetricType.PRODUCT_USAGE_TIME_TOTAL, MetricType.PRODUCT_USAGE_SESSIONS);
     }
 
     /** {@inheritDoc} */
@@ -47,7 +47,7 @@ public class ProductUsageTimeTotalMetric extends CalculatedMetric {
 
         long time = 0;
 
-        ProductUsageTimeMetric usageTimeMetric = (ProductUsageTimeMetric)basedMetric;
+        ProductUsageSessionsMetric usageTimeMetric = (ProductUsageSessionsMetric)basedMetric;
         for (ListStringValueData item : value.getAll()) {
             time += usageTimeMetric.getTime(item);
         }

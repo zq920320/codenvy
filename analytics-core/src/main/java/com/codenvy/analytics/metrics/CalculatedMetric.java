@@ -27,6 +27,7 @@ import java.util.Set;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class CalculatedMetric extends AbstractMetric {
 
+    public static final int TOP = 100;
     protected final Metric basedMetric;
 
     /**

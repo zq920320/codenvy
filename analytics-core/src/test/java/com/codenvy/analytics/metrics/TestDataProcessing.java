@@ -20,7 +20,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
-import com.codenvy.analytics.scripts.EventType;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -122,7 +121,7 @@ public class TestDataProcessing {
 
     @Test
     public void testProductUsageTime() throws Exception {
-        MetricType metricType = MetricType.PRODUCT_USAGE_TIME;
+        MetricType metricType = MetricType.PRODUCT_USAGE_SESSIONS;
         Map<String, String> context = prepareContextProductUsateTimeEvents(currentDate);
         DataProcessing.calculateAndStore(metricType, context);
 

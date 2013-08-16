@@ -150,9 +150,22 @@ public enum ScriptType {
 
     USERS_UPDATE_PROFILE,
 
-    PRODUCT_USAGE_TIME,
-    PRODUCT_USAGE_TIME_FACTORY,
-    PRODUCT_USAGE_TIME_FACTORY_BY_WS {
+    PRODUCT_USAGE_TIME_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringListValueData.class;
+        }
+    },
+    PRODUCT_USAGE_TIME_DOMAINS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringListValueData.class;
+        }
+    },
+
+    PRODUCT_USAGE_SESSIONS,
+    PRODUCT_USAGE_SESSIONS_FACTORY,
+    PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringListListStringValueData.class;
@@ -164,7 +177,7 @@ public enum ScriptType {
         }
     },
 
-    PRODUCT_USAGE_TIME_BY_USERS {
+    PRODUCT_USAGE_SESSIONS_BY_USERS {
         @Override
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.ALIAS};
@@ -179,13 +192,11 @@ public enum ScriptType {
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(
                     Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                        MetricParameter.TO_DATE,
-                                                        MetricParameter.LOAD_DIR,
-                                                        MetricParameter.STORE_DIR}));
+                                                        MetricParameter.TO_DATE}));
         }
     },
 
-    PRODUCT_USAGE_TIME_BY_DOMAINS {
+    PRODUCT_USAGE_SESSIONS_BY_DOMAINS {
         @Override
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.ALIAS};
@@ -503,54 +514,6 @@ public enum ScriptType {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.RESULT_DIR,
                     MetricParameter.FROM_DATE,
-                    MetricParameter.TO_DATE}));
-        }
-    },
-
-    PRODUCT_USAGE_TIME_LOG_PREPARATION {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR}));
-        }
-    },
-
-    PRODUCT_USAGE_TIME_TOP {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.INTERVAL,
-                    MetricParameter.TO_DATE}));
-        }
-    },
-
-    PRODUCT_USAGE_TIME_COMPANIES {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.INTERVAL,
-                    MetricParameter.TO_DATE}));
-        }
-    },
-
-    PRODUCT_USAGE_TIME_USERS {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.INTERVAL,
-                    MetricParameter.TO_DATE}));
-        }
-    },
-
-    PRODUCT_USAGE_TIME_DOMAINS {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.INTERVAL,
                     MetricParameter.TO_DATE}));
         }
     },

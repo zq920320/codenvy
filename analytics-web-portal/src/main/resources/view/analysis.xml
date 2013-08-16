@@ -13,24 +13,24 @@
         <metric type="users_deployed_paas_once" title="&amp; Deployed to PAAS"/>
         <metric type="users_sent_invite_once" title="Sent Invites"/>
         <metric type="users_shell_launched_once" title="Shell launched"/>
-        <metric type="users_completed_profile" title="Have Complete Profile"/>
+        <!--metric type="users_completed_profile" title="Have Complete Profile"/-->
         <empty/>
     </table>
 
-    <table length="7" csvFileName="users_analysis.csv">
+    <!--table length="7" csvFileName="users_analysis.csv">
         <title name="Condition, 1 Day,7 Days,30 Days,60 Days,90 Days,365 Days"/>
         <list type="users_segment_analysis_condition_1" title="Visits &#0060;5 Or Lifetime &#0060;120"/>
         <list type="users_segment_analysis_condition_2" title="Visits &#0062;=5 And Lifetime &#0062;=120 And Lifetime &#0060;300"/>
         <list type="users_segment_analysis_condition_3" title="Visits &#0062;5 And Lifetime &#0062;=300"/>
         <empty/>
-    </table>
+    </table-->
 
     <table csvFileName="product_usage_time_top_users_by_1day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 1 Day" sortable="true"
            defaultSortColumn="1 Day">
         <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_1day"/>
     </table>
-    <table csvFileName="product_usage_time_top_users_by_7day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 7 Days"
+    <!--table csvFileName="product_usage_time_top_users_by_7day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 7 Days"
            sortable="true" defaultSortColumn="7 Days">
         <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_7day"/>
@@ -131,6 +131,6 @@
            sortable="true" defaultSortColumn="Lifetime">
         <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_lifetime"/>
-    </table>
+    </table-->
 </display>
 
