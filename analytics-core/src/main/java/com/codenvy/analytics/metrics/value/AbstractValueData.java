@@ -22,8 +22,6 @@ package com.codenvy.analytics.metrics.value;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractValueData implements ValueData {
 
-    private static final long serialVersionUID = 1L;
-
     private Integer hash;
 
     /** {@inheritDoc} */
@@ -37,20 +35,10 @@ public abstract class AbstractValueData implements ValueData {
         return doUnion(valueData);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return getAsString();
-    }
-
-    /**
-     * Combines two value data into one single instance.
-     *
-     * @param valueData
-     * @return new unmodifiable {@link ValueData}
-     */
-    protected ValueData doUnion(ValueData valueData) {
-        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
@@ -58,23 +46,6 @@ public abstract class AbstractValueData implements ValueData {
     public boolean equals(Object object) {
         return getClass() == object.getClass() && doEquals(object);
     }
-
-    /** @see #equals(Object) */
-    protected abstract boolean doEquals(Object object);
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        if (hash == null) {
-            hash = doHashCode();
-        }
-
-        return hash;
-    }
-
-    /** @see #hashCode() */
-    abstract protected int doHashCode();
-
 
     /** {@inheritDoc} */
     @Override
@@ -87,4 +58,24 @@ public abstract class AbstractValueData implements ValueData {
     public double getAsDouble() {
         throw new UnsupportedOperationException();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        if (hash == null) {
+            hash = doHashCode();
+        }
+
+        return hash;
+    }
+
+    /** @see #equals(Object) */
+    abstract protected boolean doEquals(Object object);
+
+    /** @see #hashCode() */
+    abstract protected int doHashCode();
+
+    /** Combines two value data into one new single instance */
+    abstract protected ValueData doUnion(ValueData valueData);
+
 }

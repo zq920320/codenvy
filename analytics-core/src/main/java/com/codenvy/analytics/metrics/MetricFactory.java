@@ -402,7 +402,6 @@ public class MetricFactory {
             case USERS_SEGMENT_ANALYSIS_CONDITION_3:
                 metric = new UsersSegmentAnalysisCondition3();
                 break;
-            // TODO
 
 
             case USER_PROFILE:
@@ -423,12 +422,12 @@ public class MetricFactory {
             case USER_PROFILE_PHONE:
                 metric = new UsersProfilePhoneMetric();
                 break;
-            case USERS_UPDATE_PROFILE_LIST:
-                metric = new UsersUpdateProfileList();
-                break;
-            case USERS_COMPLETED_PROFILE:
-                metric = new UsersCompletedProfile();
-                break;
+//            case USERS_UPDATE_PROFILE_LIST:
+//                metric = new UsersUpdateProfileList();
+//                break;
+//            case USERS_COMPLETED_PROFILE:
+//                metric = new UsersCompletedProfile();
+//                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

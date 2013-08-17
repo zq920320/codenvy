@@ -95,7 +95,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 }

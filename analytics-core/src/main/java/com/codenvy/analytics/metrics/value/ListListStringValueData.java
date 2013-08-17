@@ -20,8 +20,8 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,35 +30,38 @@ import java.util.List;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ListListStringValueData extends ListValueData<ListStringValueData> {
 
-    public static final ListListStringValueData DEFAULT = new ListListStringValueData(new ArrayList<ListStringValueData>(0));
-    private static final long serialVersionUID = 1L;
+    public static final ListListStringValueData DEFAULT =
+            new ListListStringValueData(new ArrayList<ListStringValueData>(0));
 
-    public ListListStringValueData() {
-        super();
+    public ListListStringValueData(ObjectInputStream in) throws IOException {
+        super(readFrom(in));
     }
 
     public ListListStringValueData(Collection<ListStringValueData> value) {
         super(value);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected ValueData createInstance(List<ListStringValueData> value) {
         return new ListListStringValueData(value);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
-    protected void writeItem(ObjectOutput out, ListStringValueData item) throws IOException {
-        out.writeObject(item);
+    protected void writeItem(ObjectOutputStream out, ListStringValueData item) throws IOException {
+        item.writeTo(out);
     }
 
-    /** {@inheritedDoc} */
-    @Override
-    protected ListStringValueData readItem(ObjectInput in) throws IOException {
-        try {
-            return (ListStringValueData)in.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new IOException(e);
+    /** Deserialization */
+    private static Collection<ListStringValueData> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
+
+        List<ListStringValueData> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(new ListStringValueData(in));
         }
+
+        return list;
     }
 }

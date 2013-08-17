@@ -38,9 +38,6 @@ public abstract class CalculateBasedMetric extends AbstractMetric {
 
     /** {@inheritedDoc} */
     public ValueData getValue(Map<String, String> context) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Calculation " + getType() + " with context " + context.toString());
-        }
         return evaluate(context);
     }
 

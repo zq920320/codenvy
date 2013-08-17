@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.metrics.value;
 
+import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -64,7 +66,7 @@ public class FSValueDataManager {
         File file = getValueFile(metricType, uuid);
         validateExistence(file);
 
-        return doLoad(file);
+        return doLoad(file, metricType);
     }
 
     /** {@inheritDoc} */
@@ -72,14 +74,16 @@ public class FSValueDataManager {
         File file = getNumberFile(metricType, uuid);
         validateExistence(file);
 
-        return doLoad(file);
+        return doLoad(file, metricType);
     }
 
-    private static ValueData doLoad(File file) throws IOException {
-
+    private static ValueData doLoad(File file, MetricType metricType) throws IOException {
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            return (ValueData)in.readObject();
-        } catch (ClassNotFoundException e) {
+
+            Class<? extends ValueData> clazz = MetricFactory.createMetric(metricType).getValueDataClass();
+            return clazz.getConstructor(ObjectInputStream.class).newInstance(in);
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                e) {
             throw new IOException(e);
         }
     }
@@ -112,7 +116,7 @@ public class FSValueDataManager {
 
     private static void doStore(ValueData value, File file) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
-            out.writeObject(value);
+            value.writeTo(out);
         }
     }
 

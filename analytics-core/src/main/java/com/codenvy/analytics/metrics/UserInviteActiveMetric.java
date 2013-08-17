@@ -18,7 +18,6 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
@@ -35,7 +34,7 @@ public class UserInviteActiveMetric extends ValueReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return SetStringValueData.class;
     }
 

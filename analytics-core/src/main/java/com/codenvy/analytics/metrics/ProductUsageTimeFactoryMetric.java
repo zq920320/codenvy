@@ -36,7 +36,7 @@ public class ProductUsageTimeFactoryMetric extends ValueReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return ListListStringValueData.class;
     }
 

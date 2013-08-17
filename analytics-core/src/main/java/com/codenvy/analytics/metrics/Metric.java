@@ -19,32 +19,27 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import javax.tools.FileObject;
-
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface Metric {
+
     /**
      * Returns value metric for given context.
-     * 
-     * @param context the metric context, the same as used in {@link PigScriptExecutor} for script execution and in {@link FileObject} for
-     *            object instantiation
-     * @throws IOException if any errors are occurred
+     *
+     * @param context
+     *         execution context
+     * @throws IOException
+     *         if any errors are occurred
      */
-    public ValueData getValue(Map<String, String> context) throws IOException;
+    ValueData getValue(Map<String, String> context) throws IOException;
 
-    /**
-     * @return the {@link MetricType} associated with
-     */
-    public MetricType getType();
+    /** @return what data type is represented in result */
+    Class<? extends ValueData> getValueDataClass();
 
     /** @return list of mandatory parameters that have to be passed to the script */
-    public abstract Set<MetricParameter> getParams();
+    Set<MetricParameter> getParams();
 }

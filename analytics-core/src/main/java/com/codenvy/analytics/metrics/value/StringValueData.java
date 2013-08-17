@@ -20,18 +20,18 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class StringValueData extends AbstractValueData {
 
     public static final StringValueData DEFAULT = new StringValueData("");
-    private static final long serialVersionUID = 1L;
 
-    private String value;
+    private final String value;
 
-    public StringValueData() {
+    public StringValueData(ObjectInputStream in) throws IOException{
+        value = readFrom(in);
     }
 
     public StringValueData(String value) {
@@ -46,14 +46,8 @@ public class StringValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeTo(ObjectOutputStream out) throws IOException {
         out.writeUTF(value);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        value = in.readUTF();
     }
 
     /** {@inheritDoc} */
@@ -66,5 +60,16 @@ public class StringValueData extends AbstractValueData {
     @Override
     protected int doHashCode() {
         return value.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected ValueData doUnion(ValueData valueData) {
+        return new StringValueData(value + valueData.getAsString());
+    }
+
+    /** Deserialization. */
+    private String readFrom(ObjectInputStream in) throws IOException {
+        return in.readUTF();
     }
 }

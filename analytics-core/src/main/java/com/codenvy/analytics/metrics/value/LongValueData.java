@@ -20,22 +20,18 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class LongValueData extends AbstractValueData {
 
     public static final LongValueData DEFAULT = new LongValueData(0);
-    private static final long serialVersionUID = 1L;
 
-    private long value;
+    private final long value;
 
-    public LongValueData() {
-    }
-
-    public LongValueData(String value) {
-        this.value = Long.valueOf(value);
+    public LongValueData(ObjectInputStream in) throws IOException {
+        value = readFrom(in);
     }
 
     public LongValueData(long value) {
@@ -68,6 +64,12 @@ public class LongValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
+    public void writeTo(ObjectOutputStream out) throws IOException {
+        out.writeLong(value);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected boolean doEquals(Object object) {
         return value == ((LongValueData)object).value;
     }
@@ -78,16 +80,8 @@ public class LongValueData extends AbstractValueData {
         return (int)value;
     }
 
-    /** {@inheritedDoc} */
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeLong(value);
-
-    }
-
-    /** {@inheritedDoc} */
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        value = in.readLong();
+    /** Deserialization. */
+    private long readFrom(ObjectInputStream in) throws IOException {
+        return in.readLong();
     }
 }

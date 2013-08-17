@@ -8,7 +8,6 @@ import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UserLoginGithubMetric extends CalculatedMetric {
@@ -24,7 +23,7 @@ public class UserLoginGithubMetric extends CalculatedMetric {
     }
 
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 }

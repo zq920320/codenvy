@@ -20,26 +20,22 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class DoubleValueData extends AbstractValueData {
 
     public static final DoubleValueData DEFAULT = new DoubleValueData(Double.valueOf("0"));
-    private static final long serialVersionUID = 1L;
 
-    private double value;
+    private final double value;
 
-    public DoubleValueData() {
+    public DoubleValueData(ObjectInputStream in) throws IOException {
+        value = readFrom(in);
     }
 
     public DoubleValueData(double value) {
-        this.value = value;
-    }
-
-    public DoubleValueData(long value) {
         this.value = value;
     }
 
@@ -63,6 +59,12 @@ public class DoubleValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
+    public void writeTo(ObjectOutputStream out) throws IOException {
+        out.writeDouble(value);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected boolean doEquals(Object object) {
         return value == ((DoubleValueData)object).value;
     }
@@ -73,16 +75,8 @@ public class DoubleValueData extends AbstractValueData {
         return (int)value;
     }
 
-    /** {@inheritedDoc} */
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeDouble(value);
-
-    }
-
-    /** {@inheritedDoc} */
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        value = in.readDouble();
+    /** Deserialization. */
+    private double readFrom(ObjectInputStream in) throws IOException {
+        return in.readDouble();
     }
 }

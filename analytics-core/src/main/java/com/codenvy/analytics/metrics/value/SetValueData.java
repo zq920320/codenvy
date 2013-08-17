@@ -20,8 +20,7 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -31,15 +30,10 @@ import java.util.Set;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class SetValueData<T> extends AbstractValueData implements CollectionableValueData {
 
-    private static final long serialVersionUID = 1L;
-
     private Set<T> value;
 
-    public SetValueData() {
-    }
-
     public SetValueData(Collection<T> value) {
-        this.value = new HashSet<T>(value.size());
+        this.value = new HashSet<>(value.size());
         this.value.addAll(value);
     }
 
@@ -53,41 +47,30 @@ public abstract class SetValueData<T> extends AbstractValueData implements Colle
         return value.size();
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     protected ValueData doUnion(ValueData valueData) {
         Set<T> value1 = this.value;
         Set<T> value2 = ((SetValueData<T>)valueData).getAll();
 
-        Set<T> newValue = new HashSet<>();
+        Set<T> newValue = new HashSet<>(value1.size());
         newValue.addAll(value1);
         newValue.addAll(value2);
 
         return createInstance(newValue);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
+    public void writeTo(ObjectOutputStream out) throws IOException {
         out.writeInt(value.size());
         for (T item : value) {
             writeItem(out, item);
         }
     }
 
-    /** {@inheritedDoc} */
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        int size = in.readInt();
-
-        value = new HashSet<>(size);
-        for (int i = 0; i < size; i++) {
-            value.add(readItem(in));
-        }
-    }
-
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
@@ -115,12 +98,7 @@ public abstract class SetValueData<T> extends AbstractValueData implements Colle
     @Override
     protected boolean doEquals(Object object) {
         SetValueData<?> valueData = (SetValueData<?>)object;
-
-        if (this.value.size() != valueData.value.size()) {
-            return false;
-        }
-
-        return this.value.containsAll(valueData.value);
+        return this.value.size() == valueData.value.size() && this.value.containsAll(valueData.value);
     }
 
 
@@ -138,7 +116,5 @@ public abstract class SetValueData<T> extends AbstractValueData implements Colle
 
     abstract protected ValueData createInstance(Set<T> value);
 
-    abstract protected void writeItem(ObjectOutput out, T item) throws IOException;
-
-    abstract protected T readItem(ObjectInput in) throws IOException;
+    abstract protected void writeItem(ObjectOutputStream out, T item) throws IOException;
 }

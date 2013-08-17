@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersDataJob implements Job, ForceableJobRunByContext {
+public class DailyDataProcessor implements Job, ForceableJobRunByContext {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UsersDataJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DailyDataProcessor.class);
 
     /** {@inheritDoc} */
     @Override
@@ -56,16 +56,15 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
     }
 
     private void run(Map<String, String> context) throws Exception {
-        LOGGER.info("UsersDataJob is started " + context.toString());
+        LOGGER.info("DailyDataProcessor is started " + context.toString());
         long start = System.currentTimeMillis();
 
         try {
-//            for (MetricType metricType : MetricType.values()) {
-//                DataProcessing.calculateAndStore(metricType, context);
-//            }
-            DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME_COMPANIES, context);
+            for (MetricType metricType : MetricType.values()) {
+                DataProcessing.calculateAndStore(metricType, context);
+            }
         } finally {
-            LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            LOGGER.info("DailyDataProcessor is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 }

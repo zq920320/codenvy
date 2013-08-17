@@ -21,6 +21,7 @@ package com.codenvy.analytics.metrics.value;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricType;
+
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
 
@@ -49,8 +50,8 @@ public class TestDoubleValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.USER_LOGIN_FORM_PERCENT, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.USER_LOGIN_FORM_PERCENT, uuid), expectedValueData);
     }
 
     @Test

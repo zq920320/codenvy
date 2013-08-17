@@ -20,8 +20,8 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,10 +29,9 @@ import java.util.Map;
 public class MapStringSetValueData extends MapValueData<String, SetStringValueData> {
 
     public static final MapStringSetValueData DEFAULT = new MapStringSetValueData(new HashMap<String, SetStringValueData>(0));
-    private static final long serialVersionUID = 1L;
 
-    public MapStringSetValueData() {
-        super();
+    public MapStringSetValueData(ObjectInputStream in) throws IOException {
+        super(readFrom(in));
     }
 
     public MapStringSetValueData(Map<String, SetStringValueData> value) {
@@ -53,24 +52,25 @@ public class MapStringSetValueData extends MapValueData<String, SetStringValueDa
 
     /** {@inheritDoc} */
     @Override
-    protected void writeKey(ObjectOutput out, String key) throws IOException {
+    protected void writeKey(ObjectOutputStream out, String key) throws IOException {
         out.writeUTF(key);
     }
 
-    @Override
-    protected void writeValue(ObjectOutput out, SetStringValueData value) throws IOException {
-        out.writeObject(value);
-    }
-
     /** {@inheritDoc} */
     @Override
-    protected String readKey(ObjectInput in) throws IOException {
-        return in.readUTF();
+    protected void writeValue(ObjectOutputStream out, SetStringValueData value) throws IOException {
+        value.writeTo(out);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected SetStringValueData readValue(ObjectInput in) throws IOException, ClassNotFoundException {
-        return (SetStringValueData)in.readObject();
+    /** Deserialization. */
+    private static Map<String, SetStringValueData> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
+
+        Map<String, SetStringValueData> result = new HashMap<>(count);
+        for (int i = 0; i < count; i++) {
+            result.put(in.readUTF(), new SetStringValueData(in));
+        }
+
+        return result;
     }
 }

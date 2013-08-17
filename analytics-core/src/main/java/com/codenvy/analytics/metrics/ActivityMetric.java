@@ -34,7 +34,7 @@ public class ActivityMetric extends ValueReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return ListStringValueData.class;
     }
 

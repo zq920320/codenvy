@@ -32,16 +32,11 @@ import java.util.List;
  */
 public abstract class FixedListValueData<T> extends ListValueData<T> {
 
-    private static final long serialVersionUID = 1L;
-
-    public FixedListValueData() {
-    }
-
     public FixedListValueData(Collection<T> value) {
         super(value);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     protected ValueData doUnion(ValueData valueData) {
@@ -49,10 +44,10 @@ public abstract class FixedListValueData<T> extends ListValueData<T> {
         List<T> value2 = ((FixedListValueData<T>)valueData).getAll();
 
         if (value1.size() != value2.size()) {
-            throw new IllegalStateException("The size of the lists is different");
+            throw new IllegalStateException("The sizes of the lists are different");
         }
 
-        List<T> newValue = new ArrayList<T>(value1.size());
+        List<T> newValue = new ArrayList<>(value1.size());
         for (int i = 0; i < value1.size(); i++) {
             newValue.add(unionItems(value1.get(i), value2.get(i)));
         }

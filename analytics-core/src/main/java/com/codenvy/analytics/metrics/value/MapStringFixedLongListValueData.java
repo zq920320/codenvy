@@ -20,8 +20,8 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +30,9 @@ public class MapStringFixedLongListValueData extends MapValueData<String, FixedL
 
     public static final  MapStringFixedLongListValueData DEFAULT          =
             new MapStringFixedLongListValueData(new HashMap<String, FixedListLongValueData>(0));
-    private static final long                            serialVersionUID = 1L;
 
-    public MapStringFixedLongListValueData() {
-        super();
+    public MapStringFixedLongListValueData(ObjectInputStream in) throws IOException {
+        super(readFrom(in));
     }
 
     public MapStringFixedLongListValueData(Map<String, FixedListLongValueData> value) {
@@ -54,24 +53,25 @@ public class MapStringFixedLongListValueData extends MapValueData<String, FixedL
 
     /** {@inheritDoc} */
     @Override
-    protected void writeKey(ObjectOutput out, String key) throws IOException {
+    protected void writeKey(ObjectOutputStream out, String key) throws IOException {
         out.writeUTF(key);
     }
 
-    @Override
-    protected void writeValue(ObjectOutput out, FixedListLongValueData value) throws IOException {
-        out.writeObject(value);
-    }
-
     /** {@inheritDoc} */
     @Override
-    protected String readKey(ObjectInput in) throws IOException {
-        return in.readUTF();
+    protected void writeValue(ObjectOutputStream out, FixedListLongValueData value) throws IOException {
+        value.writeTo(out);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected FixedListLongValueData readValue(ObjectInput in) throws IOException, ClassNotFoundException {
-        return (FixedListLongValueData)in.readObject();
+    /** Deserialization. */
+    private static Map<String, FixedListLongValueData> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
+
+        Map<String, FixedListLongValueData> result = new HashMap<>(count);
+        for (int i = 0; i < count; i++) {
+            result.put(in.readUTF(), new FixedListLongValueData(in));
+        }
+
+        return result;
     }
 }

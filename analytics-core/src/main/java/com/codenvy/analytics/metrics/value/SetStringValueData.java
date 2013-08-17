@@ -20,10 +20,11 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -31,9 +32,9 @@ import java.util.Set;
 public class SetStringValueData extends SetValueData<String> {
 
     public static final SetStringValueData DEFAULT = new SetStringValueData(new ArrayList<String>(0));
-    private static final long serialVersionUID = 1L;
 
-    public SetStringValueData() {
+    public SetStringValueData(ObjectInputStream in) throws IOException {
+        super(readFrom(in));
     }
 
     public SetStringValueData(Collection<String> value) {
@@ -48,13 +49,19 @@ public class SetStringValueData extends SetValueData<String> {
 
     /** {@inheritedDoc} */
     @Override
-    protected void writeItem(ObjectOutput out, String item) throws IOException {
+    protected void writeItem(ObjectOutputStream out, String item) throws IOException {
         out.writeUTF(item);
     }
 
-    /** {@inheritedDoc} */
-    @Override
-    protected String readItem(ObjectInput in) throws IOException {
-        return in.readUTF();
+    /** Deserialization */
+    private static Collection<String> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
+
+        Set<String> result = new HashSet<>(count);
+        for (int i = 0; i < count; i++) {
+            result.add(in.readUTF());
+        }
+
+        return result;
     }
 }

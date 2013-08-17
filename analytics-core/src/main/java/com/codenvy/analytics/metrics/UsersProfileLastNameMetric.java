@@ -54,7 +54,7 @@ public class UsersProfileLastNameMetric extends CalculateBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Class< ? extends ValueData> getValueDataClass() {
+    public Class< ? extends ValueData> getValueDataClass() {
         return StringValueData.class;
     }
 }

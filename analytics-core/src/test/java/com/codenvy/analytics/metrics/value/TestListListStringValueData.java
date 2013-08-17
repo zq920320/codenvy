@@ -21,6 +21,7 @@ package com.codenvy.analytics.metrics.value;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricType;
+
 import org.apache.pig.data.Tuple;
 import org.testng.annotations.Test;
 
@@ -70,16 +71,16 @@ public class TestListListStringValueData extends BaseTest {
 
     @Test
     public void testStoreLoad() throws Exception {
-        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.PRODUCT_USAGE_SESSIONS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.PRODUCT_USAGE_SESSIONS, uuid), expectedValueData);
     }
 
     @Test
     public void testStoreLoadEmptyValueData() throws Exception {
         ValueData expectedValueData = new ListListStringValueData(Collections.<ListStringValueData> emptyList());
 
-        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.PRODUCT_USAGE_SESSIONS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.PRODUCT_USAGE_SESSIONS, uuid), expectedValueData);
     }
 
     @Test
@@ -88,8 +89,8 @@ public class TestListListStringValueData extends BaseTest {
                                       new ListListStringValueData(
                                                                   Arrays.asList(new ListStringValueData[]{}));
 
-        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.PRODUCT_USAGE_SESSIONS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.PRODUCT_USAGE_SESSIONS, uuid), expectedValueData);
     }
 
     @Test
@@ -99,8 +100,8 @@ public class TestListListStringValueData extends BaseTest {
                                                                   Arrays.asList(new ListStringValueData[]{new ListStringValueData(
                                                                                                                                   Arrays.asList(new String[]{""})),}));
 
-        FSValueDataManager.storeValue(expectedValueData, MetricType.ACTIVE_USERS, uuid);
-        assertEquals(FSValueDataManager.loadValue(MetricType.ACTIVE_USERS, uuid), expectedValueData);
+        FSValueDataManager.storeValue(expectedValueData, MetricType.PRODUCT_USAGE_SESSIONS, uuid);
+        assertEquals(FSValueDataManager.loadValue(MetricType.PRODUCT_USAGE_SESSIONS, uuid), expectedValueData);
     }
 
     @Test

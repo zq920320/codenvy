@@ -39,7 +39,7 @@ public class ActiveUsersSetMetric extends ValueReadBasedMetric {
      * {@inheritDoc}
      */
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return SetStringValueData.class;
     }
 

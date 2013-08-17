@@ -44,7 +44,7 @@ public class ProjectCreatedWarNumber extends CalculatedMetric {
     }
 
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 }

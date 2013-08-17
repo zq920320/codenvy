@@ -140,8 +140,8 @@ public class JobsRunner implements ServletContextListener {
 
             List<JobDetail> jobDetails = new ArrayList<>(6);
 
-            addJobDetail(UsersDataJob.class, jobDetails);
-            addJobDetail(ViewsJob.class, jobDetails);
+            addJobDetail(DailyDataProcessor.class, jobDetails);
+            addJobDetail(ViewJob.class, jobDetails);
             addJobDetail(ActOnJob.class, jobDetails);
             addJobDetail(JRebelJob.class, jobDetails);
             addJobDetail(CheckLogsJob.class, jobDetails);

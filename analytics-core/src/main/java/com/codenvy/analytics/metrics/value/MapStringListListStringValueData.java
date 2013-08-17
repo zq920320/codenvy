@@ -20,19 +20,19 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MapStringListListStringValueData extends MapValueData<String, ListListStringValueData> {
 
-    public static final MapStringListListStringValueData DEFAULT = new MapStringListListStringValueData(new HashMap<String, ListListStringValueData>(0));
-    private static final long serialVersionUID = 1L;
+    public static final  MapStringListListStringValueData DEFAULT          =
+            new MapStringListListStringValueData(new HashMap<String, ListListStringValueData>(0));
 
-    public MapStringListListStringValueData() {
-        super();
+    public MapStringListListStringValueData(ObjectInputStream in) throws IOException {
+        super(readFrom(in));
     }
 
     public MapStringListListStringValueData(Map<String, ListListStringValueData> value) {
@@ -53,24 +53,25 @@ public class MapStringListListStringValueData extends MapValueData<String, ListL
 
     /** {@inheritDoc} */
     @Override
-    protected void writeKey(ObjectOutput out, String key) throws IOException {
+    protected void writeKey(ObjectOutputStream out, String key) throws IOException {
         out.writeUTF(key);
     }
 
-    @Override
-    protected void writeValue(ObjectOutput out, ListListStringValueData value) throws IOException {
-        out.writeObject(value);
-    }
-
     /** {@inheritDoc} */
     @Override
-    protected String readKey(ObjectInput in) throws IOException {
-        return in.readUTF();
+    protected void writeValue(ObjectOutputStream out, ListListStringValueData value) throws IOException {
+        value.writeTo(out);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected ListListStringValueData readValue(ObjectInput in) throws IOException, ClassNotFoundException {
-        return (ListListStringValueData)in.readObject();
+    /** Deserialization. */
+    private static Map<String, ListListStringValueData> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
+
+        Map<String, ListListStringValueData> result = new HashMap<>(count);
+        for (int i = 0; i < count; i++) {
+            result.put(in.readUTF(), new ListListStringValueData(in));
+        }
+
+        return result;
     }
 }

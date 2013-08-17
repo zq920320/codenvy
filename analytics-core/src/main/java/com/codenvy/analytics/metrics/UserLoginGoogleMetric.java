@@ -23,7 +23,7 @@ public class UserLoginGoogleMetric extends CalculatedMetric {
     }
 
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 }

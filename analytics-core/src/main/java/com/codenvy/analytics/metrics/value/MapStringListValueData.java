@@ -20,8 +20,8 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +30,9 @@ public class MapStringListValueData extends MapValueData<String, ListStringValue
 
     public static final  MapStringListValueData DEFAULT          =
             new MapStringListValueData(new HashMap<String, ListStringValueData>(0));
-    private static final long                   serialVersionUID = 1L;
 
-    public MapStringListValueData() {
-        super();
+    public MapStringListValueData(ObjectInputStream in) throws IOException {
+        super(readFrom(in));
     }
 
     public MapStringListValueData(Map<String, ListStringValueData> value) {
@@ -54,24 +53,24 @@ public class MapStringListValueData extends MapValueData<String, ListStringValue
 
     /** {@inheritDoc} */
     @Override
-    protected void writeKey(ObjectOutput out, String key) throws IOException {
+    protected void writeKey(ObjectOutputStream out, String key) throws IOException {
         out.writeUTF(key);
     }
 
     @Override
-    protected void writeValue(ObjectOutput out, ListStringValueData value) throws IOException {
-        out.writeObject(value);
+    protected void writeValue(ObjectOutputStream out, ListStringValueData value) throws IOException {
+        value.writeTo(out);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected String readKey(ObjectInput in) throws IOException {
-        return in.readUTF();
-    }
+    /** Deserialization. */
+    private static Map<String, ListStringValueData> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
 
-    /** {@inheritDoc} */
-    @Override
-    protected ListStringValueData readValue(ObjectInput in) throws IOException, ClassNotFoundException {
-        return (ListStringValueData)in.readObject();
+        Map<String, ListStringValueData> result = new HashMap<>(count);
+        for (int i = 0; i < count; i++) {
+            result.put(in.readUTF(), new ListStringValueData(in));
+        }
+
+        return result;
     }
 }

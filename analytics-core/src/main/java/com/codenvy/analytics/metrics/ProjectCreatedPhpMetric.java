@@ -41,7 +41,7 @@ public class ProjectCreatedPhpMetric extends CalculatedMetric {
     }
 
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 }

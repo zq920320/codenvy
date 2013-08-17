@@ -20,21 +20,21 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class FixedListLongValueData extends FixedListValueData<Long> {
 
-    public static final  FixedListLongValueData DEFAULT          = new FixedListLongValueData(new ArrayList<Long>(0));
-    private static final long                   serialVersionUID = 1L;
+    public static final FixedListLongValueData DEFAULT = new FixedListLongValueData(new ArrayList<Long>(0));
 
-    public FixedListLongValueData() {
+    public FixedListLongValueData(ObjectInputStream in) throws IOException {
+        super(readFrom(in));
     }
-
 
     public FixedListLongValueData(List<Long> value) {
         super(value);
@@ -54,13 +54,20 @@ public class FixedListLongValueData extends FixedListValueData<Long> {
 
     /** {@inheritDoc} */
     @Override
-    protected void writeItem(ObjectOutput out, Long item) throws IOException {
+    protected void writeItem(ObjectOutputStream out, Long item) throws IOException {
         out.writeLong(item);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected Long readItem(ObjectInput in) throws IOException {
-        return in.readLong();
+    /** Deserialization */
+    private static Collection<Long> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
+
+        List<Long> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(in.readLong());
+        }
+
+        return list;
     }
+
 }

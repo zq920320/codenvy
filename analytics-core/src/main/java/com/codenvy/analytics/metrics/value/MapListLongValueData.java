@@ -20,8 +20,8 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +30,9 @@ public class MapListLongValueData extends MapValueData<ListStringValueData, Long
 
     public static final  MapListLongValueData DEFAULT          =
             new MapListLongValueData(new HashMap<ListStringValueData, Long>(0));
-    private static final long                 serialVersionUID = 1L;
 
-    public MapListLongValueData() {
-        super();
+    public MapListLongValueData(ObjectInputStream in) throws IOException{
+        super(readFrom(in));
     }
 
     public MapListLongValueData(Map<ListStringValueData, Long> value) {
@@ -54,24 +53,25 @@ public class MapListLongValueData extends MapValueData<ListStringValueData, Long
 
     /** {@inheritDoc} */
     @Override
-    protected void writeKey(ObjectOutput out, ListStringValueData key) throws IOException {
-        out.writeObject(key);
+    protected void writeKey(ObjectOutputStream out, ListStringValueData key) throws IOException {
+        key.writeTo(out);
     }
 
+    /** {@inheritDoc} */
     @Override
-    protected void writeValue(ObjectOutput out, Long value) throws IOException {
+    protected void writeValue(ObjectOutputStream out, Long value) throws IOException {
         out.writeLong(value);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected ListStringValueData readKey(ObjectInput in) throws IOException, ClassNotFoundException {
-        return (ListStringValueData)in.readObject();
-    }
+    /** Deserialization. */
+    private static Map<ListStringValueData, Long> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
 
-    /** {@inheritDoc} */
-    @Override
-    protected Long readValue(ObjectInput in) throws IOException, ClassNotFoundException {
-        return in.readLong();
+        Map<ListStringValueData, Long> result = new HashMap<>(count);
+        for (int i = 0; i < count; i++) {
+            result.put(new ListStringValueData(in), in.readLong());
+        }
+
+        return result;
     }
 }

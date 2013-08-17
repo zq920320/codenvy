@@ -18,8 +18,6 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ValueData;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,12 +29,6 @@ public abstract class AbstractMetric implements Metric {
 
     AbstractMetric(MetricType metricType) {
         this.metricType = metricType;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public MetricType getType() {
-        return metricType;
     }
 
     /** Preparation unique sequences to identify stored value. */
@@ -69,8 +61,4 @@ public abstract class AbstractMetric implements Metric {
 
         return false;
     }
-
-
-    /** @return what data type is represented in result */
-    protected abstract Class<? extends ValueData> getValueDataClass();
 }

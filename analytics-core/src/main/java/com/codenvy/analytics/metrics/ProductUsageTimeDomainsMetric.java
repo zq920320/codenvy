@@ -19,7 +19,7 @@ public class ProductUsageTimeDomainsMetric extends ValueReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return MapStringFixedLongListValueData.class;
     }
 

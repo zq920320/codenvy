@@ -25,25 +25,10 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ValueDataFactory {
-
-
-    /** Instantiates {@link ValueData} from raw string. */
-    public static ValueData createValueData(Class<?> clazz, String value) throws NoSuchMethodException,
-                                                                                 SecurityException,
-                                                                                 InstantiationException,
-                                                                                 IllegalAccessException,
-                                                                                 IllegalArgumentException,
-                                                                                 InvocationTargetException {
-
-        Constructor<?> constructor = clazz.getConstructor(String.class);
-        return (ValueData)constructor.newInstance(value);
-    }
 
     /** Instantiates default {@link ValueData}. */
     public static ValueData createDefaultValue(Class<? extends ValueData> clazz) throws IOException {
@@ -79,8 +64,7 @@ public class ValueDataFactory {
 
         } else if (clazz == MapListLongValueData.class) {
             return MapListLongValueData.DEFAULT;
-        }
-        else if (clazz == FixedListLongValueData.class) {
+        } else if (clazz == FixedListLongValueData.class) {
             return FixedListLongValueData.DEFAULT;
         }
 

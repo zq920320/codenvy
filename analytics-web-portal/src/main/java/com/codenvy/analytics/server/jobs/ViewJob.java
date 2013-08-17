@@ -30,9 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ViewsJob implements Job, ForceableRunOnceJob {
+public class ViewJob implements Job, ForceableRunOnceJob {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ViewsJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ViewJob.class);
 
     /** {@inheritDoc} */
     @Override
@@ -51,7 +51,7 @@ public class ViewsJob implements Job, ForceableRunOnceJob {
     }
 
     private void run() throws Exception {
-        LOGGER.info("ViewsJob is started");
+        LOGGER.info("ViewJob is started");
         long start = System.currentTimeMillis();
 
         try {
@@ -59,7 +59,7 @@ public class ViewsJob implements Job, ForceableRunOnceJob {
             new FactoryUrlTimeLineServiceImpl().update();
             new AnalysisServiceImpl().update();
         } finally {
-            LOGGER.info("ViewsJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            LOGGER.info("ViewJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 }

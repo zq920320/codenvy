@@ -19,7 +19,7 @@ public class UserCreatedMetric extends ValueReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected Class<? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 

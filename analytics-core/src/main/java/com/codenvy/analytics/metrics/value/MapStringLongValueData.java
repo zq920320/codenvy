@@ -20,8 +20,8 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,49 +29,48 @@ import java.util.Map;
 public class MapStringLongValueData extends MapValueData<String, Long> {
 
     public static final MapStringLongValueData DEFAULT = new MapStringLongValueData(new HashMap<String, Long>(0));
-    private static final long serialVersionUID = 1L;
 
-    public MapStringLongValueData() {
-        super();
+    public MapStringLongValueData(ObjectInputStream in) throws IOException {
+        super(readFrom(in));
     }
 
     public MapStringLongValueData(Map<String, Long> value) {
         super(value);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     protected Long unionValues(Long v1, Long v2) {
         return v1 + v2;
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
     protected ValueData createInstance(Map<String, Long> value) {
         return new MapStringLongValueData(value);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
-    protected void writeKey(ObjectOutput out, String key) throws IOException {
+    protected void writeKey(ObjectOutputStream out, String key) throws IOException {
         out.writeUTF(key);
     }
 
-    /** {@inheritedDoc} */
+    /** {@inheritDoc} */
     @Override
-    protected void writeValue(ObjectOutput out, Long value) throws IOException {
+    protected void writeValue(ObjectOutputStream out, Long value) throws IOException {
         out.writeLong(value);
     }
 
-    /** {@inheritedDoc} */
-    @Override
-    protected String readKey(ObjectInput in) throws IOException {
-        return in.readUTF();
-    }
+    /** Deserialization. */
+    private static Map<String, Long> readFrom(ObjectInputStream in) throws IOException {
+        int count = in.readInt();
 
-    /** {@inheritedDoc} */
-    @Override
-    protected Long readValue(ObjectInput in) throws IOException {
-        return in.readLong();
+        Map<String, Long> result = new HashMap<>(count);
+        for (int i = 0; i < count; i++) {
+            result.put(in.readUTF(), in.readLong());
+        }
+
+        return result;
     }
 }
