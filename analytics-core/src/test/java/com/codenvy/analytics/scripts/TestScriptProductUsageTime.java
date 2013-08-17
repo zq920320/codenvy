@@ -21,10 +21,8 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListValueData;
+import com.codenvy.analytics.metrics.value.FixedListLongValueData;
+import com.codenvy.analytics.metrics.value.MapStringFixedLongListValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -34,7 +32,6 @@ import java.io.File;
 import java.util.*;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptProductUsageTime extends BaseTest {
@@ -72,12 +69,12 @@ public class TestScriptProductUsageTime extends BaseTest {
         params.put(MetricParameter.FROM_DATE.name(), "20101001");
         params.put(MetricParameter.TO_DATE.name(), "20101001");
 
-        MapStringListValueData value =
-                (MapStringListValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, params);
-        Map<String, ListStringValueData> all = value.getAll();
+        MapStringFixedLongListValueData value =
+                (MapStringFixedLongListValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, params);
+        Map<String, FixedListLongValueData> all = value.getAll();
         assertEquals(all.size(), 2);
-        assertEquals(all.get("user1"), new ListStringValueData(Arrays.asList("840", "2")));
-        assertEquals(all.get("user2"), new ListStringValueData(Arrays.asList("240", "1")));
+        assertEquals(all.get("user1"), new FixedListLongValueData(Arrays.asList(14L, 2L)));
+        assertEquals(all.get("user2"), new FixedListLongValueData(Arrays.asList(4L, 1L)));
     }
 
 

@@ -47,25 +47,25 @@ public class TestScriptUsersByCompany extends BaseTest {
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "1", "1")
                         .withDate("2010-10-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "1", "1")
-                        .withDate("2010-10-02").build());
+                        .withDate("2010-10-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.FROM_DATE.name(), "20101001");
-        context.put(MetricParameter.TO_DATE.name(), "20101002");
+        context.put(MetricParameter.TO_DATE.name(), "20101001");
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
 
         DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company", "1", "1")
-                        .withDate("2010-10-03").build());
+                        .withDate("2010-10-02").build());
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "zompany", "1", "1")
-                        .withDate("2010-10-04").build());
+                        .withDate("2010-10-02").build());
         log = LogGenerator.generateLog(events);
 
-        context.put(MetricParameter.FROM_DATE.name(), "20101003");
-        context.put(MetricParameter.TO_DATE.name(), "20101004");
+        context.put(MetricParameter.FROM_DATE.name(), "20101002");
+        context.put(MetricParameter.TO_DATE.name(), "20101002");
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
 
         DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);

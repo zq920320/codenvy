@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.metrics.value;
 
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
 
@@ -41,15 +42,16 @@ public class FSValueDataManager {
     /** The value of {@value #ANALYTICS_RESULT_DIRECTORY_PROPERTY} runtime parameter. */
     public static final String RESULT_DIRECTORY = System.getProperty(ANALYTICS_RESULT_DIRECTORY_PROPERTY);
 
-    // TODO scripts_data
+    /** The root directory for scripts data. */
+    private static final String SCRIPTS_DATA = "scripts_data";
 
     /** The directory where Pig scripts can store data in. */
     public static final String SCRIPT_STORE_DIRECTORY =
-            RESULT_DIRECTORY + File.separator + "scripts_data" + File.separator + "store";
+            RESULT_DIRECTORY + File.separator + SCRIPTS_DATA + File.separator + "store";
 
     /** The directory where Pig scripts can load data from. */
     public static final String SCRIPT_LOAD_DIRECTORY =
-            RESULT_DIRECTORY + File.separator + "scripts_data" + File.separator + "load";
+            RESULT_DIRECTORY + File.separator + SCRIPTS_DATA + File.separator + "load";
 
     /** The file name where value is stored. */
     private static final String FILE_NAME_VALUE = "value";
@@ -60,7 +62,7 @@ public class FSValueDataManager {
     /** {@inheritDoc} */
     public static ValueData loadValue(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
         File file = getValueFile(metricType, uuid);
-        validateExistance(file);
+        validateExistence(file);
 
         return doLoad(file);
     }
@@ -68,20 +70,17 @@ public class FSValueDataManager {
     /** {@inheritDoc} */
     public static ValueData loadNumber(MetricType metricType, LinkedHashMap<String, String> uuid) throws IOException {
         File file = getNumberFile(metricType, uuid);
-        validateExistance(file);
+        validateExistence(file);
 
         return doLoad(file);
     }
 
     private static ValueData doLoad(File file) throws IOException {
-        ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 
-        try {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             return (ValueData)in.readObject();
         } catch (ClassNotFoundException e) {
             throw new IOException(e);
-        } finally {
-            in.close();
         }
     }
 
@@ -112,12 +111,8 @@ public class FSValueDataManager {
     }
 
     private static void doStore(ValueData value, File file) throws IOException {
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-
-        try {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
             out.writeObject(value);
-        } finally {
-            out.close();
         }
     }
 
@@ -136,16 +131,15 @@ public class FSValueDataManager {
             throws IOException {
         File dir = new File(RESULT_DIRECTORY);
 
+        validateDateParams(uuid);
+
         StringBuilder builder = new StringBuilder();
         builder.append(metricType.toString().toLowerCase());
         builder.append(File.separatorChar);
 
         for (Entry<String, String> entry : uuid.entrySet()) {
             String element;
-
-            if (Utils.isFromDateParam(entry)) {
-                element = translateDateToRelativePath(entry.getValue());
-            } else if (Utils.isToDateParam(entry) && !Utils.containsFromDateParam(uuid)) {
+            if (Utils.isToDateParam(entry)) {
                 element = translateDateToRelativePath(entry.getValue());
             } else if (Utils.isAlias(entry)) {
                 element = translateAliasToRelativePath(entry.getValue());
@@ -161,6 +155,22 @@ public class FSValueDataManager {
 
         builder.append(fileName);
         return new File(dir, builder.toString());
+    }
+
+    /**
+     * Makes sure that {@link com.codenvy.analytics.metrics.MetricParameter#TO_DATE} and {@link
+     * com.codenvy.analytics.metrics.MetricParameter#FROM_DATE} are the same, otherwise {@link IllegalStateException}
+     * will be thrown. It condition is satisfied, then it allows to avoid creation subdirectory with name like {@link
+     * com.codenvy.analytics.metrics.MetricParameter#FROM_DATE}
+     */
+    private static void validateDateParams(LinkedHashMap<String, String> uuid) throws IllegalStateException {
+        if (Utils.containsFromDateParam(uuid) && Utils.containsToDateParam(uuid) &&
+            !Utils.getToDateParam(uuid).equals(Utils.getFromDateParam(uuid))) {
+
+            throw new IllegalStateException("The date params are different");
+        }
+
+        uuid.remove(MetricParameter.FROM_DATE.name());
     }
 
     /** Translates user's alias to relative path */
@@ -186,7 +196,7 @@ public class FSValueDataManager {
     }
 
     /**
-     * Translate date from format yyyyMMdd into format like yyyy/MM/dd and {@link File#separatorChar} is used as
+     * Translate date from format yyyyMMdd into format like yyyy/MMdd and {@link File#separatorChar} is used as
      * delimiter.
      */
     private static String translateDateToRelativePath(String date) {
@@ -194,11 +204,7 @@ public class FSValueDataManager {
 
         builder.append(date.substring(0, 4));
         builder.append(File.separatorChar);
-
-        builder.append(date.substring(4, 6));
-        builder.append(File.separatorChar);
-
-        builder.append(date.substring(6, 8));
+        builder.append(date.substring(4, 8));
 
         return builder.toString();
     }
@@ -220,7 +226,7 @@ public class FSValueDataManager {
     }
 
     /** Checks if file exists and throws an exception otherwise. */
-    private static void validateExistance(File file) throws FileNotFoundException {
+    private static void validateExistence(File file) throws FileNotFoundException {
         if (!file.exists()) {
             throw new FileNotFoundException("File does not exist " + file.getAbsolutePath());
         }

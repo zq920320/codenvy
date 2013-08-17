@@ -423,8 +423,6 @@ public class MetricFactory {
             case USER_PROFILE_PHONE:
                 metric = new UsersProfilePhoneMetric();
                 break;
-
-            //. TODO
             case USERS_UPDATE_PROFILE_LIST:
                 metric = new UsersUpdateProfileList();
                 break;
