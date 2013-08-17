@@ -16,7 +16,7 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
 f1 = loadResources('$log');
 f = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
@@ -28,7 +28,6 @@ a5 = extractParam(a4, 'LASTNAME', 'lastName');
 a6 = extractParam(a5, 'COMPANY', 'company');
 a7 = extractParam(a6, 'PHONE', 'phone');
 a8 = extractParam(a7, 'JOBTITLE', 'job');
-
 a9 = FOREACH a8 GENERATE user, firstName, lastName, company, phone, job, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
 a = FOREACH a9 GENERATE user, (firstName == 'null' OR firstName IS NULL ? '' : firstName) AS firstName,
 			    (lastName == 'null' OR lastName IS NULL ? '' : lastName) AS lastName,
@@ -37,11 +36,15 @@ a = FOREACH a9 GENERATE user, (firstName == 'null' OR firstName IS NULL ? '' : f
 			    (job == 'null' OR job IS NULL ? '' : job) AS job,
 			    delta;
 
-b1 = LOAD '$RESULT_DIR/PREV_PROFILES' USING PigStorage() AS (user : chararray, firstName: chararray, lastName: chararray, company: chararray, phone : chararray, job : chararray);
+b1 = LOAD '$LOAD_DIR' USING PigStorage() AS (user : chararray, firstName: chararray, lastName: chararray, company: chararray, phone : chararray, job : chararray);
 b = FOREACH b1 GENERATE *, 0 AS delta;
 
 c = UNION a, b;
 d = lastUserProfileUpdate(c);
 
-STORE d INTO '$RESULT_DIR/PROFILES' USING PigStorage();
+STORE d INTO '$STORE_DIR' USING PigStorage();
+
+r1 = FOREACH a GENERATE user;
+r2 = DISTINCT r1;
+result = countAll(r2);
 

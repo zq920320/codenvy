@@ -27,6 +27,12 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricType {
+    USER_UPDATE_PROFILE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.USER_UPDATE_PROFILE);
+        }
+    },
     FILE_MANIPULATION {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -255,8 +261,6 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putLoadDir(context, this);
-            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.USER_INVITE.toString());
         }
     },
@@ -349,8 +353,6 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putLoadDir(context, this);
-            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
         }
     },
@@ -379,8 +381,6 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putLoadDir(context, this);
-            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.SHELL_LAUNCHED.toString());
         }
     },
@@ -392,8 +392,6 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putLoadDir(context, this);
-            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.PROJECT_BUILT.toString() + "," +
                                     EventType.PROJECT_DEPLOYED.toString() + "," +
                                     EventType.APPLICATION_CREATED.toString());
@@ -407,8 +405,6 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putLoadDir(context, this);
-            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.PROJECT_DEPLOYED.toString() + "," +
                                     EventType.APPLICATION_CREATED.toString());
         }
@@ -421,8 +417,6 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putLoadDir(context, this);
-            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.APPLICATION_CREATED.toString());
         }
     },
@@ -469,8 +463,6 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putLoadDir(context, this);
-            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.FACTORY_CREATED.toString());
         }
     },
@@ -482,8 +474,6 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putLoadDir(context, this);
-            Utils.putStoreDir(context, this);
             Utils.putEvent(context, EventType.FACTORY_URL_ACCEPTED.toString());
         }
     },
@@ -603,6 +593,28 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_90DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_365DAY,
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME,
+    PRODUCT_USAGE_TIME_COMPANIES {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_COMPANIES);
+        }
+
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            Utils.putLoadDir(context, MetricType.USER_UPDATE_PROFILE);
+        }
+    },
+    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY,
+    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_7DAY,
+    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_30DAY,
+    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_60DAY,
+    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_90DAY,
+    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_365DAY,
+    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME,
+    USERS_SEGMENT_ANALYSIS_CONDITION_1,
+    USERS_SEGMENT_ANALYSIS_CONDITION_2,
+    USERS_SEGMENT_ANALYSIS_CONDITION_3,
 
     USERS_UPDATE_PROFILE_LIST,
     USERS_COMPLETED_PROFILE,
@@ -611,20 +623,7 @@ public enum MetricType {
     USER_PROFILE_FIRSTNAME,
     USER_PROFILE_LASTNAME,
     USER_PROFILE_COMPANY,
-    USER_PROFILE_PHONE,
-
-    USERS_SEGMENT_ANALYSIS_CONDITION_1,
-    USERS_SEGMENT_ANALYSIS_CONDITION_2,
-    USERS_SEGMENT_ANALYSIS_CONDITION_3;
-
-
-//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY,
-//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_7DAY,
-//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_30DAY,
-//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_60DAY,
-//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_90DAY,
-//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_365DAY,
-//    PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME,
+    USER_PROFILE_PHONE;
 
 
     /** @return set of scripts that are responsible for calculation value of the metric */

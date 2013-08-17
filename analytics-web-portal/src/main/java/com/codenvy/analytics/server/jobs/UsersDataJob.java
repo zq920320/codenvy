@@ -19,22 +19,17 @@
 
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.DataProcessing;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.Utils;
 
-import org.apache.commons.io.FileUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -68,9 +63,7 @@ public class UsersDataJob implements Job, ForceableJobRunByContext {
 //            for (MetricType metricType : MetricType.values()) {
 //                DataProcessing.calculateAndStore(metricType, context);
 //            }
-            DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME_USERS, context);
-            DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME_DOMAINS, context);
-            // TODO
+            DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_TIME_COMPANIES, context);
         } finally {
             LOGGER.info("UsersDataJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

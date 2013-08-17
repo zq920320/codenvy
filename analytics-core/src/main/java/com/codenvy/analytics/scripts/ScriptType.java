@@ -162,6 +162,20 @@ public enum ScriptType {
             return MapStringFixedLongListValueData.class;
         }
     },
+    PRODUCT_USAGE_TIME_COMPANIES {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringFixedLongListValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.LOAD_DIR}));
+        }
+    },
 
     PRODUCT_USAGE_SESSIONS,
     PRODUCT_USAGE_SESSIONS_FACTORY,
@@ -508,13 +522,19 @@ public enum ScriptType {
         }
     },
 
-    USERS_PROFILE_LOG_PREPARATION {
+    USER_UPDATE_PROFILE {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
                     MetricParameter.FROM_DATE,
-                    MetricParameter.TO_DATE}));
+                    MetricParameter.TO_DATE,
+                    MetricParameter.LOAD_DIR,
+                    MetricParameter.STORE_DIR}));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
         }
     },
 
@@ -522,7 +542,7 @@ public enum ScriptType {
         @Override
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
+                    MetricParameter.LOAD_DIR,
                     MetricParameter.PARAM,
                     MetricParameter.TO_DATE}));
         }

@@ -18,12 +18,14 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.metrics.value.FixedListLongValueData;
 
 /**
+ * Visits >=5 And Lifetime >=120 And Lifetime <300
+ *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class UsersSegmentAnalysisCondition2 extends  ScriptBasedMetric {
+public class UsersSegmentAnalysisCondition2 extends AbstractUsersSegmentAnalysis {
 
     public UsersSegmentAnalysisCondition2() {
         super(MetricType.USERS_SEGMENT_ANALYSIS_CONDITION_2);
@@ -31,7 +33,7 @@ public class UsersSegmentAnalysisCondition2 extends  ScriptBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    protected ScriptType getScriptType() {
-        return ScriptType.USERS_SEGMENT_ANALYSIS_2;
+    protected boolean isAccepted(FixedListLongValueData valueData) {
+        return getSessionsNumber(valueData) >= 5 && getUsageTime(valueData) >= 120 && getUsageTime(valueData) < 300;
     }
 }

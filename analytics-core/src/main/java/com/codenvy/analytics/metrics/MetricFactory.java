@@ -327,6 +327,9 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_DOMAINS:
                 metric = new ProductUsageTimeDomainsMetric();
                 break;
+            case PRODUCT_USAGE_TIME_COMPANIES:
+                metric = new ProductUsageTimeCompaniesMetric();
+                break;
             case PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY:
                 metric = new ProductUsageTimeTopUsers1DayMetric();
                 break;
@@ -369,6 +372,36 @@ public class MetricFactory {
             case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME:
                 metric = new ProductUsageTimeTopDomainsLifeTimeDayMetric();
                 break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY:
+                metric = new ProductUsageTimeTopCompanies1DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_7DAY:
+                metric = new ProductUsageTimeTopCompanies7DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_30DAY:
+                metric = new ProductUsageTimeTopCompanies30DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_60DAY:
+                metric = new ProductUsageTimeTopCompanies60DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_90DAY:
+                metric = new ProductUsageTimeTopCompanies90DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_365DAY:
+                metric = new ProductUsageTimeTopCompanies365DayMetric();
+                break;
+            case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME:
+                metric = new ProductUsageTimeTopCompaniesLifeTimeDayMetric();
+                break;
+            case USERS_SEGMENT_ANALYSIS_CONDITION_1:
+                metric = new UsersSegmentAnalysisCondition1();
+                break;
+            case USERS_SEGMENT_ANALYSIS_CONDITION_2:
+                metric = new UsersSegmentAnalysisCondition2();
+                break;
+            case USERS_SEGMENT_ANALYSIS_CONDITION_3:
+                metric = new UsersSegmentAnalysisCondition3();
+                break;
             // TODO
 
 
@@ -390,15 +423,7 @@ public class MetricFactory {
             case USER_PROFILE_PHONE:
                 metric = new UsersProfilePhoneMetric();
                 break;
-//            case USERS_SEGMENT_ANALYSIS_CONDITION_1:
-//                metric = new UsersSegmentAnalysisCondition1();
-//                break;
-//            case USERS_SEGMENT_ANALYSIS_CONDITION_2:
-//                metric = new UsersSegmentAnalysisCondition2();
-//                break;
-//            case USERS_SEGMENT_ANALYSIS_CONDITION_3:
-//                metric = new UsersSegmentAnalysisCondition3();
-//                break;
+
             //. TODO
             case USERS_UPDATE_PROFILE_LIST:
                 metric = new UsersUpdateProfileList();

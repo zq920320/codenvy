@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.server.jobs;
 
+import com.codenvy.analytics.server.AnalysisServiceImpl;
 import com.codenvy.analytics.server.FactoryUrlTimeLineServiceImpl;
 import com.codenvy.analytics.server.TimeLineServiceImpl;
 
@@ -56,6 +57,7 @@ public class ViewsJob implements Job, ForceableRunOnceJob {
         try {
             new TimeLineServiceImpl().update();
             new FactoryUrlTimeLineServiceImpl().update();
+            new AnalysisServiceImpl().update();
         } finally {
             LOGGER.info("ViewsJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

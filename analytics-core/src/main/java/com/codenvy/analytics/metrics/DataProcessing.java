@@ -32,10 +32,11 @@ public class DataProcessing {
 
     /** Executes predefined set of {@link ScriptType}. */
     public static void calculateAndStore(MetricType metricType, Map<String, String> context) throws Exception {
-        Utils.prepareDirectories(metricType);
-
         context = Utils.clone(context);
         metricType.modifyContext(context);
+
+        putLoadStoreDirectoriesIntoContext(metricType, context);
+        Utils.prepareDirectories(metricType); // TODO rename
 
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
         for (ScriptType scriptType : metricType.getScripts()) {
@@ -49,6 +50,22 @@ public class DataProcessing {
         }
 
         Utils.prepareDirectories(metricType);
+    }
+
+    private static void putLoadStoreDirectoriesIntoContext(MetricType metricType, Map<String, String> context) {
+        for (ScriptType scriptType : metricType.getScripts()) {
+            if (!context.containsKey(MetricParameter.STORE_DIR.name()) &&
+                scriptType.getParams().contains(MetricParameter.STORE_DIR)) {
+
+                Utils.putStoreDir(context, metricType);
+            }
+
+            if (!context.containsKey(MetricParameter.LOAD_DIR.name()) &&
+                scriptType.getParams().contains(MetricParameter.LOAD_DIR)) {
+
+                Utils.putLoadDir(context, metricType);
+            }
+        }
     }
 
     private static boolean isDefaultValue(ValueData result) throws IOException {

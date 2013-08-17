@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (C) 2013 Codenvy.
+
+         CODENVY CONFIDENTIAL
+         ________________
+
+         [2012] - [2013] Codenvy, S.A.
+         All Rights Reserved.
+         NOTICE: All information contained herein is, and remains
+         the property of Codenvy S.A. and its suppliers,
+         if any. The intellectual and technical concepts contained
+         herein are proprietary to Codenvy S.A.
+         and its suppliers and may be covered by U.S. and Foreign Patents,
+         patents in process, and are protected by trade secret or copyright law.
+         Dissemination of this information or reproduction of this material
+         is strictly forbidden unless prior written permission is obtained
+         from Codenvy S.A..
 -->
 <display>
     <table length="20" time-interval-rule="lifetime_decreased_monthly" csvFileName="signup_analysis.csv">
@@ -17,13 +31,13 @@
         <empty/>
     </table>
 
-    <!--table length="7" csvFileName="users_analysis.csv">
+    <table length="7" csvFileName="users_analysis.csv">
         <title name="Condition, 1 Day,7 Days,30 Days,60 Days,90 Days,365 Days"/>
         <list type="users_segment_analysis_condition_1" title="Visits &#0060;5 Or Lifetime &#0060;120"/>
         <list type="users_segment_analysis_condition_2" title="Visits &#0062;=5 And Lifetime &#0062;=120 And Lifetime &#0060;300"/>
         <list type="users_segment_analysis_condition_3" title="Visits &#0062;5 And Lifetime &#0062;=300"/>
         <empty/>
-    </table-->
+    </table>
 
     <table csvFileName="product_usage_time_top_users_by_1day.csv" length="9" widget="tab_panel" tabId="1" tabName="By 1 Day" sortable="true"
            defaultSortColumn="1 Day">
@@ -60,7 +74,6 @@
         <title name="Email Address,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_users_by_lifetime"/>
     </table>
-
     <table csvFileName="product_usage_time_top_domains_by_1day.csv" length="9" widget="tab_panel" tabId="2" tabName="By 1 Day"
            sortable="true" defaultSortColumn="1 Day">
         <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
@@ -96,8 +109,7 @@
         <title name="Domain,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_domains_by_lifetime"/>
     </table>
-
-    <!--table csvFileName="product_usage_time_top_companies_by_1day.csv" length="9" widget="tab_panel" tabId="3" tabName="By 1 Day"
+    <table csvFileName="product_usage_time_top_companies_by_1day.csv" length="9" widget="tab_panel" tabId="3" tabName="By 1 Day"
            sortable="true" defaultSortColumn="1 Day">
         <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_1day"/>
@@ -131,6 +143,6 @@
            sortable="true" defaultSortColumn="Lifetime">
         <title name="Company,# of Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,365 Days,Lifetime"/>
         <list type="product_usage_time_top_companies_by_lifetime"/>
-    </table-->
+    </table>
 </display>
 
