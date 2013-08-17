@@ -42,17 +42,17 @@ public class TestScriptCheckLogs extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project1", "type1", "null")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "session", "project2", "type1", "")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("", "", "", "project3", "type1")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.name(), "20101001");
-        params.put(MetricParameter.TO_DATE.name(), "20101001");
+        params.put(MetricParameter.FROM_DATE.name(), "20130101");
+        params.put(MetricParameter.TO_DATE.name(), "20130101");
 
         ListListStringValueData value =
                 (ListListStringValueData)executeAndReturnResult(ScriptType.CHECK_LOGS_1, log, params);

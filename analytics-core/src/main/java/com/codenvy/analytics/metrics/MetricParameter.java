@@ -26,77 +26,11 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
-    // TODO review
-    // TODO putincontext
-    EVENT {
-        @Override
-        public String getDefaultValue() {
-            return "";
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null || value.isEmpty()) {
-                throw new IllegalArgumentException("EVENT parameter is null or empty");
-            }
-        }
-    },
-
-    URL {
-        @Override
-        public String getDefaultValue() {
-            return "";
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null || value.isEmpty()) {
-                throw new IllegalArgumentException("URL parameter is null or empty");
-            }
-        }
-    },
-
-    FIELD {
-        @Override
-        public String getDefaultValue() {
-            return "";
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null || value.isEmpty()) {
-                throw new IllegalArgumentException("FIELD parameter is null or empty");
-            }
-        }
-    },
-
-    PARAM {
-        @Override
-        public String getDefaultValue() {
-            return "";
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null || value.isEmpty()) {
-                throw new IllegalArgumentException("PARAM parameter is null or empty");
-            }
-        }
-    },
-
-    ALIAS {
-        @Override
-        public String getDefaultValue() {
-            return "";
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null || value.isEmpty()) {
-                throw new IllegalArgumentException("ALIAS parameter is null or empty");
-            }
-        }
-    },
+    EVENT,
+    URL,
+    FIELD,
+    PARAM,
+    ALIAS,
 
     TIME_UNIT {
         @Override
@@ -124,9 +58,9 @@ public enum MetricParameter {
 
                 if (fromDate.before(minDate)) {
                     throw new IllegalArgumentException("The illegal FROM_DATE parameter value '"
-                                                       + Utils.formatDate(fromDate, PARAM_DATE_FORMAT)
+                                                       + Utils.formatDate(fromDate)
                                                        + "' The lowest allowed date is '"
-                                                       + Utils.formatDate(minDate, PARAM_DATE_FORMAT)
+                                                       + Utils.formatDate(minDate)
                                                        + "'");
                 }
             } catch (IOException e) {
@@ -137,11 +71,6 @@ public enum MetricParameter {
     },
 
     ENTITY {
-        @Override
-        public String getDefaultValue() {
-            return null;
-        }
-
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
             for (ENTITY_TYPE eType : ENTITY_TYPE.values()) {
@@ -154,61 +83,16 @@ public enum MetricParameter {
         }
     },
 
-    INTERVAL {
+    RESULT_DIR { // TODO remove
+
         @Override
         public String getDefaultValue() {
             return null;
         }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null) {
-                throw new IllegalArgumentException("INTERVAL parameter is null");
-            }
-        }
     },
 
-    RESULT_DIR {
-        @Override
-        public String getDefaultValue() {
-            return null;
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null) {
-                throw new IllegalArgumentException("RESULT_DIR parameter is null");
-            }
-        }
-    },
-
-    LOAD_DIR {
-        @Override
-        public String getDefaultValue() {
-            return null;
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null) {
-                throw new IllegalArgumentException("LOAD_DIR parameter is null");
-            }
-        }
-    },
-
-    STORE_DIR {
-        @Override
-        public String getDefaultValue() {
-            return null;
-        }
-
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            if (value == null) {
-                throw new IllegalArgumentException("STORE_DIR parameter is null");
-            }
-        }
-    },
+    LOAD_DIR,
+    STORE_DIR,
 
     TO_DATE {
         @Override
@@ -228,20 +112,20 @@ public enum MetricParameter {
 
                 if (toDate.after(maxDate)) {
                     throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
-                                                       + Utils.formatDate(toDate, PARAM_DATE_FORMAT)
+                                                       + Utils.formatDate(toDate)
                                                        + "' The higest allowed date is '"
-                                                       + Utils.formatDate(maxDate, PARAM_DATE_FORMAT)
+                                                       + Utils.formatDate(maxDate)
                                                        + "'");
 
                 }
 
-                if (Utils.containsFromDateParam(context)) {
+                if (MetricParameter.FROM_DATE.exists(context)) {
                     Calendar fromDate = Utils.getFromDate(context);
                     if (fromDate.after(toDate)) {
                         throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
-                                                           + Utils.formatDate(toDate, PARAM_DATE_FORMAT)
+                                                           + Utils.formatDate(toDate)
                                                            + "'. Should be higher than fromDate parameter value: '"
-                                                           + Utils.formatDate(fromDate, PARAM_DATE_FORMAT)
+                                                           + Utils.formatDate(fromDate)
                                                            + "'");
                     }
                 }
@@ -253,11 +137,42 @@ public enum MetricParameter {
         }
     };
 
+    /** Puts value into execution context */
+    public void put(Map<String, String> context, String value) {
+        context.put(this.name(), value);
+    }
+
+    /** Puts default value into execution context */
+    public void putDefaultValue(Map<String, String> context) {
+        context.put(this.name(), getDefaultValue());
+    }
+
+    /** Gets value from execution context */
+    public String get(Map<String, String> context) {
+        return context.get(this.name());
+    }
+
+    /** @return true if context contains given parameter */
+    public boolean exists(Map<String, String> context) {
+        return context.get(this.name()) != null;
+    }
+
+    /** @return true if name is the name of current parameter */
+    public boolean isParam(String name) {
+        return this.name().equals(name);
+    }
+
     /** @return the default value for given parameter. */
-    public abstract String getDefaultValue();
+    public String getDefaultValue() {
+        return "";
+    }
 
     /** Validates the value of parameter. Throws {@link IllegalArgumentException} if something wrong. */
-    public abstract void validate(String value, Map<String, String> context) throws IllegalStateException;
+    public void validate(String value, Map<String, String> context) throws IllegalStateException {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException(this.name() + " parameter is null or empty");
+        }
+    }
 
     /** The date format is used in scripts. */
     public static final String PARAM_DATE_FORMAT = "yyyyMMdd";

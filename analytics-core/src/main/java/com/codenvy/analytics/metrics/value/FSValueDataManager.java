@@ -22,7 +22,6 @@ package com.codenvy.analytics.metrics.value;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,11 +142,11 @@ public class FSValueDataManager {
 
         for (Entry<String, String> entry : uuid.entrySet()) {
             String element;
-            if (Utils.isToDateParam(entry)) {
+            if (MetricParameter.TO_DATE.isParam(entry.getKey())) {
                 element = translateDateToRelativePath(entry.getValue());
-            } else if (Utils.isAlias(entry)) {
+            } else if (MetricParameter.ALIAS.isParam(entry.getKey())) {
                 element = translateAliasToRelativePath(entry.getValue());
-            } else if (Utils.isUrl(entry)) {
+            } else if (MetricParameter.URL.isParam(entry.getKey())) {
                 element = translateAliasToRelativePath(Integer.valueOf(entry.getValue().hashCode()).toString());
             } else {
                 element = entry.getValue().toLowerCase();
@@ -168,8 +167,8 @@ public class FSValueDataManager {
      * com.codenvy.analytics.metrics.MetricParameter#FROM_DATE}
      */
     private static void validateDateParams(LinkedHashMap<String, String> uuid) throws IllegalStateException {
-        if (Utils.containsFromDateParam(uuid) && Utils.containsToDateParam(uuid) &&
-            !Utils.getToDateParam(uuid).equals(Utils.getFromDateParam(uuid))) {
+        if (MetricParameter.TO_DATE.exists(uuid) && MetricParameter.FROM_DATE.exists(uuid) &&
+            !MetricParameter.TO_DATE.get(uuid).equals(MetricParameter.FROM_DATE.get(uuid))) {
 
             throw new IllegalStateException("The date params are different");
         }

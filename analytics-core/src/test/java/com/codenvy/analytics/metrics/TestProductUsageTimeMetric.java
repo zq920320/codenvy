@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsageTimeMetric {
@@ -44,20 +43,20 @@ public class TestProductUsageTimeMetric {
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
         // session started and session finished [5m]
-        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2010-10-09")
+        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-01-09")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2010-10-09")
+        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-01-09")
                         .withTime("20:05:00").build());
-        events.add(Event.Builder.createSessionStartedEvent("user2@gmail.com", "ws1", "ide", "2").withDate("2010-10-09")
+        events.add(Event.Builder.createSessionStartedEvent("user2@gmail.com", "ws1", "ide", "2").withDate("2013-01-09")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user2@gmail.com", "ws1", "ide", "2").withDate("2010-10-09")
+        events.add(Event.Builder.createSessionFinishedEvent("user2@gmail.com", "ws1", "ide", "2").withDate("2013-01-09")
                         .withTime("20:05:00").build());
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101009");
-        Utils.putToDate(context, "20101009");
+        MetricParameter.FROM_DATE.put(context, "20130109");
+        MetricParameter.TO_DATE.put(context, "20130109");
 
         DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_SESSIONS, context);
     }

@@ -41,19 +41,19 @@ public class TestScriptUsersUpdateProfile extends BaseTest {
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "1", "1")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "1", "1")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f2", "l2", "company", "1", "")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createUserUpdateProfile("use43@gmail.com", "f2", "l2", "company", "1", "null")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.RESULT_DIR.name(), BASE_DIR);
-        context.put(MetricParameter.FROM_DATE.name(), "20101001");
-        context.put(MetricParameter.TO_DATE.name(), "20101001");
+        context.put(MetricParameter.FROM_DATE.name(), "20130101");
+        context.put(MetricParameter.TO_DATE.name(), "20130101");
 
         ListListStringValueData valueData =
                 (ListListStringValueData)executeAndReturnResult(ScriptType.USERS_UPDATE_PROFILE, log, context);

@@ -33,10 +33,11 @@ public class DataProcessing {
     /** Executes predefined set of {@link ScriptType}. */
     public static void calculateAndStore(MetricType metricType, Map<String, String> context) throws Exception {
         context = Utils.clone(context);
-        metricType.modifyContext(context);
 
         putLoadStoreDirectoriesIntoContext(metricType, context);
-        Utils.prepareDirectories(metricType); // TODO rename
+        metricType.modifyContext(context);
+
+        Utils.initLoadStoreDirectories(context);
 
         ScriptExecutor executor = ScriptExecutor.INSTANCE;
         for (ScriptType scriptType : metricType.getScripts()) {
@@ -49,21 +50,21 @@ public class DataProcessing {
             store(result, metricType, scriptType, context);
         }
 
-        Utils.prepareDirectories(metricType);
+        Utils.initLoadStoreDirectories(context);
     }
 
+    /**
+     * If script requires {@link MetricParameter#LOAD_DIR} or {@link MetricParameter#STORE_DIR} then corresponding
+     * parameters will be put into context automatically depending on {@link MetricType}
+     */
     private static void putLoadStoreDirectoriesIntoContext(MetricType metricType, Map<String, String> context) {
         for (ScriptType scriptType : metricType.getScripts()) {
-            if (!context.containsKey(MetricParameter.STORE_DIR.name()) &&
-                scriptType.getParams().contains(MetricParameter.STORE_DIR)) {
-
-                Utils.putStoreDir(context, metricType);
+            if (scriptType.getParams().contains(MetricParameter.STORE_DIR)) {
+                MetricParameter.STORE_DIR.put(context, Utils.getStoreDirFor(metricType));
             }
 
-            if (!context.containsKey(MetricParameter.LOAD_DIR.name()) &&
-                scriptType.getParams().contains(MetricParameter.LOAD_DIR)) {
-
-                Utils.putLoadDir(context, metricType);
+            if (scriptType.getParams().contains(MetricParameter.LOAD_DIR)) {
+                MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(metricType));
             }
         }
     }
@@ -80,10 +81,10 @@ public class DataProcessing {
 
         LinkedHashMap<String, String> uuid = new LinkedHashMap<>(4);
 
-        if (Utils.containsFromDateParam(context)) {
+        if (MetricParameter.FROM_DATE.exists(context)) {
             Utils.putFromDate(uuid, Utils.getFromDate(context));
         }
-        if (Utils.containsToDateParam(context)) {
+        if (MetricParameter.TO_DATE.exists(context)) {
             Utils.putToDate(uuid, Utils.getToDate(context));
         }
 
@@ -123,7 +124,7 @@ public class DataProcessing {
         switch (resultScheme.length) {
             case 1:
                 if (resultScheme[0] == MetricParameter.ALIAS || resultScheme[0] == MetricParameter.URL) { // TODO
-                    Utils.putEntity(uuid, entityType);
+                    MetricParameter.ENTITY.put(uuid, entityType.name());
                 }
                 uuid.put(resultScheme[0].name(), key.toString());
                 break;
@@ -137,7 +138,7 @@ public class DataProcessing {
 
                 for (int i = 0; i < items.size(); i++) {
                     if (resultScheme[i] == MetricParameter.ALIAS || resultScheme[i] == MetricParameter.URL) {
-                        Utils.putEntity(uuid, entityType);
+                        MetricParameter.ENTITY.put(uuid, entityType.name());
                     }
 
                     uuid.put(resultScheme[i].name(), items.get(i));

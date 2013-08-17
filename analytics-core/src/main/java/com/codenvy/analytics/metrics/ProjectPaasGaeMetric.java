@@ -35,7 +35,7 @@ public class ProjectPaasGaeMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "GAE");
+        MetricParameter.PARAM.put(context, "GAE");
         return super.getValue(context);
     }
 

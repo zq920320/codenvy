@@ -36,7 +36,7 @@ public class ProjectCreatedAndroidMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "Android");
+        MetricParameter.PARAM.put(context, "Android");
         return super.getValue(context);
     }
 

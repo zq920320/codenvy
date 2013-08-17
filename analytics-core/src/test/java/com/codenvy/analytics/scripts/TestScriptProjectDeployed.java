@@ -43,21 +43,21 @@ public class TestScriptProjectDeployed extends BaseTest {
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type1", "paas1")
-                                .withDate("2010-10-01").build());
+                                .withDate("2013-01-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user1@gmail.com", "ws2", "session", "project2", "type1", "paas3")
-                                .withDate("2010-10-01").build());
+                                .withDate("2013-01-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws3", "session", "project3", "type2", "paas3")
-                                .withDate("2010-10-01").build());
+                                .withDate("2013-01-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws3", "session", "project4", "type2", "paas3")
-                                .withDate("2010-10-01").build());
+                                .withDate("2013-01-01").build());
         events.add(Event.Builder.createProjectDeployedEvent("user3@mail.ru", "ws4", "session", "project4", "type2", "local")
-                                .withDate("2010-10-01").build());
+                                .withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.name(), "20101001");
-        context.put(MetricParameter.TO_DATE.name(), "20101001");
+        context.put(MetricParameter.FROM_DATE.name(), "20130101");
+        context.put(MetricParameter.TO_DATE.name(), "20130101");
 
         MapValueData value =
                 (MapValueData)executeAndReturnResult(ScriptType.PROJECT_DEPLOYED, log, context);

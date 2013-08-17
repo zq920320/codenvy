@@ -26,7 +26,6 @@ import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -45,18 +44,18 @@ public class TestUserSSOLoginMetrics {
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(
-                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate("2010-10-09").build());
+                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate("2013-01-09").build());
         events.add(
-                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "github").withDate("2010-10-09").build());
+                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "github").withDate("2013-01-09").build());
         events.add(
-                Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google").withDate("2010-10-09").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user3@gmail.com", "jaas").withDate("2010-10-09").build());
+                Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google").withDate("2013-01-09").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user3@gmail.com", "jaas").withDate("2013-01-09").build());
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101009");
-        Utils.putToDate(context, "20101009");
+        MetricParameter.TO_DATE.put(context, "20130109");
+        MetricParameter.FROM_DATE.put(context, "20130109");
 
         DataProcessing.calculateAndStore(MetricType.USER_SSO_LOGGED_IN, context);
     }
@@ -65,15 +64,15 @@ public class TestUserSSOLoginMetrics {
     public void testGetValues() throws Exception {
         Metric metric = MetricFactory.createMetric(MetricType.USER_SSO_LOGGED_IN);
 
-        Utils.putParam(context, "google");
+        MetricParameter.PARAM.put(context, "google");
         LongValueData value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 2);
 
-        Utils.putParam(context, "github");
+        MetricParameter.PARAM.put(context, "github");
         value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 
-        Utils.putParam(context, "jaas");
+        MetricParameter.PARAM.put(context, "jaas");
         value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 
@@ -114,15 +113,15 @@ public class TestUserSSOLoginMetrics {
         Metric metric = MetricFactory.createMetric(MetricType.USER_SSO_LOGGED_IN);
         context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com");
 
-        Utils.putParam(context, "google");
+        MetricParameter.PARAM.put(context, "google");
         LongValueData value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 
-        Utils.putParam(context, "github");
+        MetricParameter.PARAM.put(context, "github");
         value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 
-        Utils.putParam(context, "jaas");
+        MetricParameter.PARAM.put(context, "jaas");
         value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 0);
 
@@ -163,15 +162,15 @@ public class TestUserSSOLoginMetrics {
         Metric metric = MetricFactory.createMetric(MetricType.USER_SSO_LOGGED_IN);
         context.put(MetricFilter.FILTER_USER.name(), "@gmail.com");
 
-        Utils.putParam(context, "google");
+        MetricParameter.PARAM.put(context, "google");
         LongValueData value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 2);
 
-        Utils.putParam(context, "github");
+        MetricParameter.PARAM.put(context, "github");
         value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 
-        Utils.putParam(context, "jaas");
+        MetricParameter.PARAM.put(context, "jaas");
         value = (LongValueData)metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 

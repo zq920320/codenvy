@@ -30,7 +30,10 @@ import com.codenvy.analytics.scripts.util.LogGenerator;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
@@ -43,76 +46,76 @@ public class TestScriptProductUsageSessions extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         // user1 session #1 [7m]
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:05:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:07:00").build());
 
         // user2 session #1 [4m]
-        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:29:00").build());
 
         // user1 session #2 [7m]
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("21:00:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("21:05:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("21:07:00").build());
 
         // user3 session #1 [10m]
-        events.add(Event.Builder.createProjectBuiltEvent("user3", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user3", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:25:00").build());
 
         // session started and session finished [5m]
-        events.add(Event.Builder.createSessionStartedEvent("user11", "ws1", "ide", "1").withDate("2010-10-01")
+        events.add(Event.Builder.createSessionStartedEvent("user11", "ws1", "ide", "1").withDate("2013-01-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user11", "ws1", "ide", "1").withDate("2010-10-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user11", "ws1", "ide", "1").withDate("2013-01-01")
                         .withTime("20:05:00").build());
 
-        events.add(Event.Builder.createProjectBuiltEvent("user11", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user11", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:07:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user11", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user11", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:09:00").build());
 
         // session started and some event after [2h]
-        events.add(Event.Builder.createSessionStartedEvent("user12", "ws1", "ide", "2").withDate("2010-10-01")
+        events.add(Event.Builder.createSessionStartedEvent("user12", "ws1", "ide", "2").withDate("2013-01-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user12", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user12", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:05:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user12", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user12", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:07:00").build());
 
         // session started and some event after [1h]
-        events.add(Event.Builder.createSessionStartedEvent("user15@gmail.com", "ws1", "ide", "6").withDate("2010-10-01")
+        events.add(Event.Builder.createSessionStartedEvent("user15@gmail.com", "ws1", "ide", "6").withDate("2013-01-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user15@gmail.com", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user15@gmail.com", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:05:00").build());
 
         // session finished and some event before [30m]
-        events.add(Event.Builder.createProjectBuiltEvent("user13", "ws1", "", "", "").withDate("2010-10-01")
+        events.add(Event.Builder.createProjectBuiltEvent("user13", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("19:55:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user13", "ws1", "ide", "3").withDate("2010-10-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user13", "ws1", "ide", "3").withDate("2013-01-01")
                         .withTime("20:00:00").build());
 
         // only session started [10m]
-        events.add(Event.Builder.createSessionStartedEvent("user14", "ws1", "ide", "4").withDate("2010-10-01")
+        events.add(Event.Builder.createSessionStartedEvent("user14", "ws1", "ide", "4").withDate("2013-01-01")
                         .withTime("20:00:00").build());
 
         // only session finished [10m]
         events.add(
-                Event.Builder.createSessionFinishedEvent("user15@gmail.com", "ws1", "ide", "5").withDate("2010-10-01")
+                Event.Builder.createSessionFinishedEvent("user15@gmail.com", "ws1", "ide", "5").withDate("2013-01-01")
                      .withTime("21:00:00").build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<>();
-        params.put(MetricParameter.FROM_DATE.name(), "20101001");
-        params.put(MetricParameter.TO_DATE.name(), "20101001");
+        params.put(MetricParameter.FROM_DATE.name(), "20130101");
+        params.put(MetricParameter.TO_DATE.name(), "20130101");
 
         ListListStringValueData value =
                 (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_SESSIONS, log, params);

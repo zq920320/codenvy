@@ -20,10 +20,7 @@
 package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.client.TimeLineService;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
@@ -126,9 +123,9 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
 
     private List<String> getUsersByCompany(String company) throws IOException {
         Map<String, String> context = Utils.newContext();
-        Utils.putLoadDir(context, MetricType.USER_UPDATE_PROFILE);
-        Utils.putToDateDefault(context);
-        Utils.putParam(context, company);
+        MetricParameter.PARAM.put(context, company);
+        MetricParameter.TO_DATE.putDefaultValue(context);
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE));
 
         ListStringValueData valueData =
                 (ListStringValueData)ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.USERS_BY_COMPANY, context);

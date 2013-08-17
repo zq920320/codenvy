@@ -18,9 +18,6 @@
 
 package com.codenvy.analytics.scripts;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.Utils;
@@ -37,21 +34,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptJRebelUserProfile extends BaseTest {
 
     @Test
     public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createJRebelUserProfileInfo("user1", "ws1", "userId1", "first1", "last1", "phone1").withDate("2010-10-01")
+        events.add(Event.Builder.createJRebelUserProfileInfo("user1", "ws1", "userId1", "first1", "last1", "phone1").withDate("2013-01-01")
                                 .build());
-        events.add(Event.Builder.createJRebelUserProfileInfo("user2", "ws2", "userId2", "", "last2", "phone2").withDate("2010-10-01")
+        events.add(Event.Builder.createJRebelUserProfileInfo("user2", "ws2", "userId2", "", "last2", "phone2").withDate("2013-01-01")
                                 .build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.name(), "20101001");
-        context.put(MetricParameter.TO_DATE.name(), "20101001");
+        context.put(MetricParameter.FROM_DATE.name(), "20130101");
+        context.put(MetricParameter.TO_DATE.name(), "20130101");
 
         ListListStringValueData valueData =
                                             (ListListStringValueData)executeAndReturnResult(ScriptType.JREBEL_USER_PROFILE_INFO, log,

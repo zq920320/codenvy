@@ -59,8 +59,8 @@ public abstract class CumulativeMetric extends AbstractMetric {
     @Override
     public ValueData getValue(Map<String, String> context) throws InitialValueNotFoundException, IOException {
         context = Utils.clone(context);
-        Utils.putFromDate(context, Utils.getToDate(context));
-        Utils.putTimeUnit(context, TimeUnit.DAY);
+        MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.get(context));
+        MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
 
         validateExistenceInitialValueBefore(context);
 

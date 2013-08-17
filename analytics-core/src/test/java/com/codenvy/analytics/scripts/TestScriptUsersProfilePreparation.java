@@ -40,18 +40,20 @@ public class TestScriptUsersProfilePreparation extends BaseTest {
     @Test
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f1", "l1", "company", "", "").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "", "").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f1", "l1", "company", "", "")
+                        .withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "", "")
+                        .withDate("2013-01-01").withTime("20:00:00").build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.name(), "20101001");
-        params.put(MetricParameter.TO_DATE.name(), "20101002");
+        params.put(MetricParameter.FROM_DATE.name(), "20130101");
+        params.put(MetricParameter.TO_DATE.name(), "20130101");
 
         MapStringListListStringValueData value =
-                                                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_PROFILE_PREPARATION,
-                                                                                                          log, params);
+                (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_PROFILE_PREPARATION,
+                                                                         log, params);
 
         assertEquals(value.size(), 1L);
     }

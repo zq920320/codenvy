@@ -45,33 +45,33 @@ public class TestScriptUsersByCompany extends BaseTest {
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "1", "1")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "1", "1")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.name(), "20101001");
-        context.put(MetricParameter.TO_DATE.name(), "20101001");
+        context.put(MetricParameter.FROM_DATE.name(), "20130101");
+        context.put(MetricParameter.TO_DATE.name(), "20130101");
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
 
         DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company", "1", "1")
-                        .withDate("2010-10-02").build());
+                        .withDate("2013-01-02").build());
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "zompany", "1", "1")
-                        .withDate("2010-10-02").build());
+                        .withDate("2013-01-02").build());
         log = LogGenerator.generateLog(events);
 
-        context.put(MetricParameter.FROM_DATE.name(), "20101002");
-        context.put(MetricParameter.TO_DATE.name(), "20101002");
+        context.put(MetricParameter.FROM_DATE.name(), "20130102");
+        context.put(MetricParameter.TO_DATE.name(), "20130102");
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
 
         DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);
 
         context.put(MetricParameter.PARAM.name(), "company");
-        Utils.putLoadDir(context, MetricType.USER_UPDATE_PROFILE);
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE));
         ListStringValueData valueData = (ListStringValueData) executeAndReturnResult(ScriptType.USERS_BY_COMPANY, log, context);
 
         assertEquals(valueData.size(), 2);

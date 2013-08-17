@@ -41,8 +41,8 @@ import static org.testng.Assert.assertTrue;
 public class TestDataProcessing {
 
     private final DateFormat df          = new SimpleDateFormat("yyyy-MM-dd");
-    private final String     currentDate = "2010-10-03";
-    private final String     nextDate    = "2010-10-04";
+    private final String     currentDate = "2013-01-03";
+    private final String     nextDate    = "2013-01-04";
 
     @Test
     public void testCheckFilesForNumberOfEvents() throws Exception {
@@ -148,8 +148,8 @@ public class TestDataProcessing {
 
         Map<String, String> context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, date.replace("-", ""));
-        Utils.putToDate(context, date.replace("-", ""));
+        MetricParameter.FROM_DATE.put(context, date.replace("-", ""));
+        MetricParameter.TO_DATE.put(context, date.replace("-", ""));
 
         return context;
     }
@@ -166,8 +166,8 @@ public class TestDataProcessing {
 
         Map<String, String> context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, date.replace("-", ""));
-        Utils.putToDate(context, date.replace("-", ""));
+        MetricParameter.FROM_DATE.put(context, date.replace("-", ""));
+        MetricParameter.TO_DATE.put(context, date.replace("-", ""));
 
         return context;
     }
@@ -183,8 +183,8 @@ public class TestDataProcessing {
 
         Map<String, String> context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, date.replace("-", ""));
-        Utils.putToDate(context, date.replace("-", ""));
+        MetricParameter.FROM_DATE.put(context, date.replace("-", ""));
+        MetricParameter.TO_DATE.put(context, date.replace("-", ""));
 
         return context;
     }

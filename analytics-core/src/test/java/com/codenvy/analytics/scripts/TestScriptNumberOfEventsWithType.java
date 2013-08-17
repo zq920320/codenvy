@@ -20,7 +20,7 @@ package com.codenvy.analytics.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.MapListLongValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
@@ -42,19 +42,20 @@ public class TestScriptNumberOfEventsWithType extends BaseTest {
     @Test
     public void testNumberOfAllEvents() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "github").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user3", "jaas").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "github").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user3", "jaas").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2013-01-01").withTime(
+                "20:00:00").build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101002");
-        Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
-        Utils.putParam(context, "USING");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.USER_SSO_LOGGED_IN.toString());
+        MetricParameter.PARAM.put(context, "USING");
 
         MapStringLongValueData valueData =
                 (MapStringLongValueData)executeAndReturnResult(ScriptType.NUMBER_EVENTS_WITH_TYPE, log, context);
@@ -72,19 +73,21 @@ public class TestScriptNumberOfEventsWithType extends BaseTest {
     @Test
     public void testNumberOfAllEventsByUser() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "github").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user3", "jaas").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1", "github").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user3", "jaas").withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createUserSSOLoggedInEvent("user1", "google").withDate("2013-01-01").withTime("20:00:00")
+                     .build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101002");
-        Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
-        Utils.putParam(context, "USING");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.USER_SSO_LOGGED_IN.toString());
+        MetricParameter.PARAM.put(context, "USING");
 
         MapListLongValueData valueData =
                 (MapListLongValueData)executeAndReturnResult(ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_USERS, log, context);
@@ -110,22 +113,23 @@ public class TestScriptNumberOfEventsWithType extends BaseTest {
     public void testNumberOfAllEventsByDomain() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(
-                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate("2010-10-01").build());
+                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate("2013-01-01").build());
         events.add(
-                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "github").withDate("2010-10-01").build());
+                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "github").withDate("2013-01-01").build());
         events.add(
-                Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent("user3@gmail.com", "jaas").withDate("2010-10-01").build());
+                Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user3@gmail.com", "jaas").withDate("2013-01-01").build());
         events.add(
-                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate("2010-10-02").build());
+                Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google").withDate("2013-01-01").withTime(
+                        "20:00:00").build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101002");
-        Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
-        Utils.putParam(context, "USING");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.USER_SSO_LOGGED_IN.toString());
+        MetricParameter.PARAM.put(context, "USING");
 
         MapListLongValueData valueData =
                 (MapListLongValueData)executeAndReturnResult(ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS, log,

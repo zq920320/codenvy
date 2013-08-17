@@ -40,7 +40,8 @@ abstract class PercentMetric extends AbstractMetric {
         this.numberMetric = particalMetric;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * */
     @Override
     @SuppressWarnings("unchecked")
     public Set<MetricParameter> getParams() {

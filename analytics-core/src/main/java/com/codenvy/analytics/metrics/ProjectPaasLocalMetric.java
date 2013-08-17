@@ -35,7 +35,7 @@ public class ProjectPaasLocalMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "LOCAL");
+        MetricParameter.PARAM.put(context, "LOCAL");
         return super.getValue(context);
     }
 

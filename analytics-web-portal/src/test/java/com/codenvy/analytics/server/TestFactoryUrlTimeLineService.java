@@ -43,8 +43,8 @@ public class TestFactoryUrlTimeLineService {
     public void setUp() throws Exception {
         Map<String, String> context = Utils.initializeContext(TimeUnit.LIFETIME);
         context.put(PigScriptExecutor.LOG, preapreLogs().getAbsolutePath());
-        Utils.putToDate(context, "20130210");
-        Utils.putFromDate(context, "20130210");
+        MetricParameter.TO_DATE.put(context, "20130210");
+        MetricParameter.FROM_DATE.put(context, "20130210");
 
         DataProcessing.calculateAndStore(MetricType.FACTORY_CREATED, context);
         DataProcessing.calculateAndStore(MetricType.TEMPORARY_WORKSPACE_CREATED, context);

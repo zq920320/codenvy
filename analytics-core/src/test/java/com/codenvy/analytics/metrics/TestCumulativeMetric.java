@@ -100,23 +100,23 @@ public class TestCumulativeMetric extends BaseTest {
         assertEquals(testedMetric.getValue(contextCurrentDate), new LongValueData(110L));
 
         Map<String, String> newContext = Utils.newContext();
-        Utils.putToDate(newContext, "20130401");
+        MetricParameter.TO_DATE.put(newContext, "20130401");
     }
 
     @Test
     public void testGetValues() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Utils.putToDate(context, "20091102");
+        MetricParameter.TO_DATE.put(context, "20091102");
 
         ValueData valueData = initialValueContainer.getInitalValue(MetricType.TOTAL_WORKSPACES,
                                                                    context.toString());
         assertEquals(valueData, new LongValueData(1L));
 
-        Utils.putToDate(context, "20091103");
+        MetricParameter.TO_DATE.put(context, "20091103");
         valueData = initialValueContainer.getInitalValue(MetricType.TOTAL_WORKSPACES, context.toString());
         assertEquals(valueData, new LongValueData(2L));
 
-        Utils.putToDate(context, "20091104");
+        MetricParameter.TO_DATE.put(context, "20091104");
         valueData = initialValueContainer.getInitalValue(MetricType.TOTAL_USERS, context.toString());
         assertEquals(valueData, new LongValueData(10L));
     }
@@ -124,7 +124,7 @@ public class TestCumulativeMetric extends BaseTest {
     @Test
     public void testValidation() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Utils.putToDate(context, "20091104");
+        MetricParameter.TO_DATE.put(context, "20091104");
 
 
         initialValueContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_WORKSPACES, context);
@@ -133,7 +133,7 @@ public class TestCumulativeMetric extends BaseTest {
     @Test(expectedExceptions = InitialValueNotFoundException.class)
     public void testValidationThrowExceptionCase1() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Utils.putToDate(context, "20091101");
+        MetricParameter.TO_DATE.put(context, "20091101");
 
         initialValueContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_USERS, context);
     }
@@ -141,7 +141,7 @@ public class TestCumulativeMetric extends BaseTest {
     @Test(expectedExceptions = InitialValueNotFoundException.class)
     public void testValidationThrowExceptionCase2() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Utils.putToDate(context, "20091101");
+        MetricParameter.TO_DATE.put(context, "20091101");
 
 
         initialValueContainer.validateExistenceInitialValueBefore(MetricType.TOTAL_WORKSPACES, context);

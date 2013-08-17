@@ -43,7 +43,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.FILE_MANIPULATION.toString());
+            MetricParameter.EVENT.put(context, EventType.FILE_MANIPULATION.toString());
         }
     },
     TENANT_CREATED {
@@ -56,7 +56,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.TENANT_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.TENANT_CREATED.toString());
         }
     },
     TENANT_DESTROYED {
@@ -67,13 +67,13 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.TENANT_DESTROYED.toString());
+            MetricParameter.EVENT.put(context, EventType.TENANT_DESTROYED.toString());
         }
     },
     ACTIVE_USERS_SET {
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, "*");
+            MetricParameter.EVENT.put(context, "*");
         }
 
         @Override
@@ -87,7 +87,7 @@ public enum MetricType {
     ACTIVE_WS_SET {
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, "*");
+            MetricParameter.EVENT.put(context, "*");
         }
 
         @Override
@@ -108,7 +108,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.USER_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.USER_CREATED.toString());
         }
     },
     USER_REMOVED {
@@ -121,7 +121,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.USER_REMOVED.toString());
+            MetricParameter.EVENT.put(context, EventType.USER_REMOVED.toString());
         }
     },
     TOTAL_USERS,
@@ -136,8 +136,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.USER_SSO_LOGGED_IN.toString());
-            Utils.putParam(context, "USING");
+            MetricParameter.EVENT.put(context, EventType.USER_SSO_LOGGED_IN.toString());
+            MetricParameter.PARAM.put(context, "USING");
         }
     },
     USER_LOGIN_GITHUB,
@@ -158,7 +158,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+            MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
         }
     },
     USER_CODE_COMPLETE {
@@ -171,7 +171,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.USER_CODE_COMPLETE.toString());
+            MetricParameter.EVENT.put(context, EventType.USER_CODE_COMPLETE.toString());
         }
     },
     BUILD_STARTED {
@@ -184,7 +184,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.BUILD_STARTED.toString());
+            MetricParameter.EVENT.put(context, EventType.BUILD_STARTED.toString());
         }
     },
     RUN_STARTED {
@@ -197,7 +197,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.RUN_STARTED.toString());
+            MetricParameter.EVENT.put(context, EventType.RUN_STARTED.toString());
         }
     },
     DEBUG_STARTED {
@@ -210,7 +210,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.DEBUG_STARTED.toString());
+            MetricParameter.EVENT.put(context, EventType.DEBUG_STARTED.toString());
         }
     },
     PRODUCT_USAGE_SESSIONS {
@@ -239,7 +239,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.USER_INVITE.toString());
+            MetricParameter.EVENT.put(context, EventType.USER_INVITE.toString());
         }
     },
     USER_INVITE_ACTIVE {
@@ -250,7 +250,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.USER_INVITE.toString());
+            MetricParameter.EVENT.put(context, EventType.USER_INVITE.toString());
         }
     },
     USERS_SENT_INVITE_ONCE {
@@ -261,7 +261,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.USER_INVITE.toString());
+            MetricParameter.EVENT.put(context, EventType.USER_INVITE.toString());
         }
     },
     USER_ACCEPT_INVITE,
@@ -276,8 +276,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.USER_ADDED_TO_WS.toString());
-            Utils.putParam(context, "FROM");
+            MetricParameter.EVENT.put(context, EventType.USER_ADDED_TO_WS.toString());
+            MetricParameter.PARAM.put(context, "FROM");
         }
     },
     USER_ADDED_TO_WORKSPACE_INVITE,
@@ -291,7 +291,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.PROJECT_DESTROYED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_DESTROYED.toString());
         }
     },
     TOTAL_PROJECTS,
@@ -305,7 +305,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
         }
     },
     PROJECT_CREATED_TYPES {
@@ -318,8 +318,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
-            Utils.putParam(context, "TYPE");
+            MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
+            MetricParameter.PARAM.put(context, "TYPE");
         }
     },
     PROJECT_TYPE_JAR,
@@ -342,7 +342,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
         }
     },
     USERS_CREATED_PROJECT_ONCE {
@@ -353,7 +353,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
         }
     },
     PROJECT_DEPLOYED_TYPES {
@@ -381,7 +381,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.SHELL_LAUNCHED.toString());
+            MetricParameter.EVENT.put(context, EventType.SHELL_LAUNCHED.toString());
         }
     },
     USERS_BUILT_ONCE {
@@ -392,9 +392,9 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.PROJECT_BUILT.toString() + "," +
-                                    EventType.PROJECT_DEPLOYED.toString() + "," +
-                                    EventType.APPLICATION_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_BUILT.toString() + "," +
+                                               EventType.PROJECT_DEPLOYED.toString() + "," +
+                                               EventType.APPLICATION_CREATED.toString());
         }
     },
     USERS_DEPLOYED_ONCE {
@@ -405,8 +405,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.PROJECT_DEPLOYED.toString() + "," +
-                                    EventType.APPLICATION_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_DEPLOYED.toString() + "," +
+                                               EventType.APPLICATION_CREATED.toString());
         }
     },
     USERS_DEPLOYED_PAAS_ONCE {
@@ -417,7 +417,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.APPLICATION_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.APPLICATION_CREATED.toString());
         }
     },
     USER_BUILT {
@@ -430,9 +430,9 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.PROJECT_BUILT.toString() + "," +
-                                    EventType.PROJECT_DEPLOYED.toString() + "," +
-                                    EventType.APPLICATION_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_BUILT.toString() + "," +
+                                               EventType.PROJECT_DEPLOYED.toString() + "," +
+                                               EventType.APPLICATION_CREATED.toString());
         }
     },
     USER_DEPLOY {
@@ -445,8 +445,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.PROJECT_DEPLOYED.toString() + "," +
-                                    EventType.APPLICATION_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_DEPLOYED.toString() + "," +
+                                               EventType.APPLICATION_CREATED.toString());
         }
     },
     ACTIVITY {
@@ -463,7 +463,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.FACTORY_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.FACTORY_CREATED.toString());
         }
     },
     FACTORY_URL_ACCEPTED {
@@ -474,7 +474,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.FACTORY_URL_ACCEPTED.toString());
+            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
         }
     },
     TEMPORARY_WORKSPACE_CREATED {
@@ -491,8 +491,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putParam(context, "AUTHENTICATED");
-            Utils.putEvent(context, EventType.SESSION_FACTORY_STARTED.toString());
+            MetricParameter.EVENT.put(context, EventType.SESSION_FACTORY_STARTED.toString());
+            MetricParameter.PARAM.put(context, "AUTHENTICATED");
         }
     },
     FACTORY_SESSIONS_AUTH,
@@ -516,7 +516,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.FACTORY_PROJECT_IMPORTED.toString());
+            MetricParameter.EVENT.put(context, EventType.FACTORY_PROJECT_IMPORTED.toString());
         }
     },
     FACTORY_SESSIONS_CONV,
@@ -529,10 +529,10 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.PROJECT_BUILT.toString() + "," +
-                                    EventType.BUILD_STARTED.toString() + "," +
-                                    EventType.PROJECT_DEPLOYED.toString() + "," +
-                                    EventType.APPLICATION_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_BUILT.toString() + "," +
+                                               EventType.BUILD_STARTED.toString() + "," +
+                                               EventType.PROJECT_DEPLOYED.toString() + "," +
+                                               EventType.APPLICATION_CREATED.toString());
         }
     },
     FACTORY_SESSIONS_AND_RUN {
@@ -543,7 +543,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.RUN_STARTED.toString());
+            MetricParameter.EVENT.put(context, EventType.RUN_STARTED.toString());
         }
     },
     FACTORY_SESSIONS_AND_DEPLOY {
@@ -554,8 +554,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            Utils.putEvent(context, EventType.PROJECT_DEPLOYED.toString() + "," +
-                                    EventType.APPLICATION_CREATED.toString());
+            MetricParameter.EVENT.put(context, EventType.PROJECT_DEPLOYED.toString() + "," +
+                                               EventType.APPLICATION_CREATED.toString());
         }
     },
     FACTORY_SESSIONS_AND_BUILT_PERCENT,
@@ -602,7 +602,7 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) {
-            Utils.putLoadDir(context, MetricType.USER_UPDATE_PROFILE);
+            MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE));
         }
     },
     PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY,
@@ -631,10 +631,11 @@ public enum MetricType {
         return EnumSet.noneOf(ScriptType.class);
     }
 
-    /** Should be overridden if there is necessity to pass additional parameters into context. */
+    /**
+     * Should be overridden if there is necessity to pass additional parameters into context or
+     * override default values.
+     */
     public void modifyContext(Map<String, String> context) throws IOException {
         // do nothing by default
     }
-
-
 }

@@ -20,9 +20,11 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.scripts.EventType;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -45,16 +47,17 @@ public class TestNumberOfEventsMetric {
     @BeforeMethod
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<Event>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user1@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user2@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user1@gmail.com", "project1", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user2@gmail.com", "project2", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, "user-code-refactor");
+
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
 
         DataProcessing.calculateAndStore(MetricType.USER_CODE_REFACTOR, context);
     }
@@ -106,14 +109,15 @@ public class TestNumberOfEventsMetric {
     public void testGetValuesAnotherPeriodFilters() throws Exception {
         Metric metric = MetricFactory.createMetric(METRIC_TYPE);
 
-        Utils.putFromDate(context, "20101002");
-        Utils.putToDate(context, "20101002");
+        MetricParameter.FROM_DATE.put(context, "20130102");
+        MetricParameter.TO_DATE.put(context, "20130102");
+
 
         LongValueData value = (LongValueData) metric.getValue(context);
         assertEquals(value.getAsLong(), 0);
 
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101002");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130102");
 
         value = (LongValueData) metric.getValue(context);
         assertEquals(value.getAsLong(), 3);

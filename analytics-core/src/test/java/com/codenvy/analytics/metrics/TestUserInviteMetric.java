@@ -46,24 +46,24 @@ public class TestUserInviteMetric {
     @BeforeMethod
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "", "a@dot.com").withDate("2010-10-01")
+        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "", "a@dot.com").withDate("2013-01-01")
                         .build());
-        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "", "b@dot.com").withDate("2010-10-01")
+        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "", "b@dot.com").withDate("2013-01-01")
                         .build());
-        events.add(Event.Builder.createUserInviteEvent("user2@gmail.com", "ws1", "", "c@dot.com").withDate("2010-10-01")
+        events.add(Event.Builder.createUserInviteEvent("user2@gmail.com", "ws1", "", "c@dot.com").withDate("2013-01-01")
                         .build());
-        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "", "d@dot.com").withDate("2010-10-02")
+        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws1", "", "d@dot.com").withDate("2013-01-02")
                         .build());
-        events.add(Event.Builder.createUserInviteEvent("user3@gmail.com", "ws1", "", "e@dot.com").withDate("2010-10-02")
+        events.add(Event.Builder.createUserInviteEvent("user3@gmail.com", "ws1", "", "e@dot.com").withDate("2013-01-02")
                         .build());
-        events.add(Event.Builder.createUserInviteEvent("user3@gmail.com", "ws1", "", "f@dot.com").withDate("2010-10-02")
+        events.add(Event.Builder.createUserInviteEvent("user3@gmail.com", "ws1", "", "f@dot.com").withDate("2013-01-02")
                         .build());
         events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "ws1", "", "ws1", "user5@gmail.com", "invite")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user6@gmail.com", "ws1", "", "ws1", "user6@gmail.com", "invite")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user7@gmail.com", "ws1", "", "ws1", "user7@gmail.com", "invite")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
 
 
 
@@ -71,15 +71,15 @@ public class TestUserInviteMetric {
 
         context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
         DataProcessing.calculateAndStore(MetricType.USER_INVITE, context);
         DataProcessing.calculateAndStore(MetricType.USER_INVITE_ACTIVE, context);
         DataProcessing.calculateAndStore(MetricType.USER_ADDED_TO_WORKSPACE, context);
 
         Map<String, String> clonedContext = Utils.clone(context);
-        Utils.putFromDate(clonedContext, "20101002");
-        Utils.putToDate(clonedContext, "20101002");
+        MetricParameter.FROM_DATE.put(clonedContext, "20130102");
+        MetricParameter.TO_DATE.put(clonedContext, "20130102");
         DataProcessing.calculateAndStore(MetricType.USER_INVITE, clonedContext);
         DataProcessing.calculateAndStore(MetricType.USER_INVITE_ACTIVE, clonedContext);
         DataProcessing.calculateAndStore(MetricType.USER_ADDED_TO_WORKSPACE, clonedContext);
@@ -108,8 +108,8 @@ public class TestUserInviteMetric {
 
     @Test
     public void testGetValuesAnotherPeriod() throws Exception {
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101002");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130102");
 
         Metric metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         LongValueData vd = (LongValueData)metric.getValue(context);

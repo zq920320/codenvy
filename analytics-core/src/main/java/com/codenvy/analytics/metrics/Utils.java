@@ -27,8 +27,10 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -39,8 +41,7 @@ public class Utils {
 
     /**
      * Parse date represented by give string using {@link MetricParameter#PARAM_DATE_FORMAT} format. Wraps {@link
-     * ParseException} into
-     * {@link IOException}.
+     * ParseException} into {@link IOException}.
      *
      * @throws IOException
      *         if exception is occurred
@@ -58,188 +59,67 @@ public class Utils {
         }
     }
 
-    /** Formats date. */
-    public static String formatDate(Calendar calendar, String format) {
-        DateFormat df = new SimpleDateFormat(format);
-        return df.format(calendar.getTime());
-    }
-
     /** Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}. */
-    public static String formatDate(Calendar calendar) {
-        return formatDate(calendar.getTime());
-    }
-
-    /** Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}. */
-    public static String formatDate(Date date) {
+    public static String formatDate(Calendar date) {
         DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
-        return df.format(date);
+        return df.format(date.getTime());
     }
 
     /** Extracts {@link MetricParameter#TIME_UNIT} parameter value from context. */
     public static TimeUnit getTimeUnit(Map<String, String> context) {
-        return TimeUnit.valueOf(context.get(MetricParameter.TIME_UNIT.name()));
-    }
-
-    /** Extracts {@link MetricParameter#FROM_DATE} parameter value from context. */
-    public static String getFromDateParam(Map<String, String> context) {
-        return context.get(MetricParameter.FROM_DATE.name());
-    }
-
-    /** Extracts {@link MetricParameter#TIME_UNIT} parameter value from context. */
-    public static String getTimeUnitParam(Map<String, String> context) {
-        return context.get(MetricParameter.TIME_UNIT.name());
-    }
-
-    /** Extracts {@link MetricParameter#TO_DATE} parameter value from context. */
-    public static String getToDateParam(Map<String, String> context) {
-        return context.get(MetricParameter.TO_DATE.name());
+        return TimeUnit.valueOf(MetricParameter.TIME_UNIT.get(context));
     }
 
     /** @return fromDate value */
     public static Calendar getFromDate(Map<String, String> context) throws IOException {
-        return parseDate(context.get(MetricParameter.FROM_DATE.name()));
+        return parseDate(MetricParameter.FROM_DATE.get(context));
     }
 
     /** @return toDate value */
     public static Calendar getToDate(Map<String, String> context) throws IOException {
-        return parseDate(context.get(MetricParameter.TO_DATE.name()));
+        return parseDate(MetricParameter.TO_DATE.get(context));
     }
 
     /** Puts {@link MetricParameter#FROM_DATE} parameter into context. */
     public static void putFromDate(Map<String, String> context, Calendar fromDate) {
-        context.put(MetricParameter.FROM_DATE.name(), formatDate(fromDate));
+        MetricParameter.FROM_DATE.put(context, formatDate(fromDate));
     }
 
     /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
     public static void putToDate(Map<String, String> context, Calendar toDate) {
-        context.put(MetricParameter.TO_DATE.name(), formatDate(toDate));
+        MetricParameter.TO_DATE.put(context, formatDate(toDate));
     }
 
-    /** Puts {@link MetricParameter#EVENT} parameter into context. */
-    public static void putEntity(Map<String, String> context, MetricParameter.ENTITY_TYPE entityType) {
-        context.put(MetricParameter.EVENT.name(), entityType.name());
-    }
-
-    /** Puts {@link MetricParameter#FROM_DATE} parameter into context. */
-    public static void putFromDate(Map<String, String> context, Date fromDate) {
-        context.put(MetricParameter.FROM_DATE.name(), formatDate(fromDate));
-    }
-
-    /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
-    public static void putToDate(Map<String, String> context, Date toDate) {
-        context.put(MetricParameter.TO_DATE.name(), formatDate(toDate));
-    }
-
-    /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
-    public static void putToDate(Map<String, String> context, String toDate) {
-        context.put(MetricParameter.TO_DATE.name(), toDate);
-    }
-
-    /** Puts {@link MetricParameter#EVENT} parameter into context. */
-    public static void putEvent(Map<String, String> context, String event) {
-        context.put(MetricParameter.EVENT.name(), event);
-    }
-
-    /** Puts {@link MetricParameter#PARAM} parameter into context. */
-    public static void putParam(Map<String, String> context, String param) {
-        context.put(MetricParameter.PARAM.name(), param);
-    }
-
-    /** Puts {@link MetricParameter#FROM_DATE} parameter into context. */
-    public static void putFromDate(Map<String, String> context, String fromDate) {
-        context.put(MetricParameter.FROM_DATE.name(), fromDate);
-    }
-
-    /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
-    public static void putTimeUnit(Map<String, String> context, TimeUnit timeUnit) {
-        context.put(MetricParameter.TIME_UNIT.name(), timeUnit.toString());
-    }
-
-    /** Puts {@link MetricParameter#RESULT_DIR} parameter into context. */
-    public static void putResultDir(Map<String, String> context, String resultDir) {
-        context.put(MetricParameter.RESULT_DIR.name(), resultDir);
-    }
-
-    /** Puts {@link MetricParameter#LOAD_DIR} parameter into context. */
-    public static void putLoadDir(Map<String, String> context, String dir) {
-        context.put(MetricParameter.LOAD_DIR.name(), dir);
-    }
-
-    /** Puts {@link MetricParameter#LOAD_DIR} parameter into context. */
-    public static void putLoadDir(Map<String, String> context, MetricType metricType) {
-        context.put(MetricParameter.LOAD_DIR.name(), getLoadDir(metricType));
-    }
-
-    private static String getLoadDir(MetricType metricType) {
+    public static String getLoadDirFor(MetricType metricType) {
         return FSValueDataManager.SCRIPT_LOAD_DIRECTORY + File.separator + metricType.name();
     }
 
-    /** Puts {@link MetricParameter#STORE_DIR} parameter into context. */
-    public static void putStoreDir(Map<String, String> context, MetricType metricType) {
-        context.put(MetricParameter.STORE_DIR.name(), getStoreDir(metricType));
-    }
-
-    private static String getStoreDir(MetricType metricType) {
+    public static String getStoreDirFor(MetricType metricType) {
         return FSValueDataManager.SCRIPT_STORE_DIRECTORY + File.separator + metricType.name();
     }
 
-    /** Prepares load and store directories for Pig script execution. */
-    public static void prepareDirectories(MetricType metricType) throws IOException {
-        File loadDir = new File(getLoadDir(metricType));
-        File storeDir = new File(getStoreDir(metricType));
+    /** Prepares load and store directories for Pig script execution */
+    public static void initLoadStoreDirectories(Map<String, String> context) throws IOException {
+        if (MetricParameter.LOAD_DIR.exists(context) && MetricParameter.STORE_DIR.exists(context)) {
 
-        prepareCumulativeDirectories(loadDir, storeDir);
-    }
+            File loadDir = new File(MetricParameter.LOAD_DIR.get(context));
+            File storeDir = new File(MetricParameter.STORE_DIR.get(context));
 
-    /** Prepares load and store directories for Pig script execution. */
-    public static void prepareCumulativeDirectories(File loadDir, File storeDir) throws IOException {
-        if (storeDir.exists()) {
-            if (loadDir.exists()) {
-                FileUtils.deleteDirectory(loadDir);
-            }
-            FileUtils.moveDirectory(storeDir, loadDir);
-        } else {
-            if (!loadDir.exists()) {
-                loadDir.mkdirs();
-                File.createTempFile("tmp", "data", loadDir);
+            if (storeDir.exists()) {
+                if (loadDir.exists()) {
+                    FileUtils.deleteDirectory(loadDir);
+                }
+                FileUtils.moveDirectory(storeDir, loadDir);
+            } else {
+                if (!loadDir.exists()) {
+                    if (!loadDir.mkdirs()) {
+                        throw new IOException("Can't create directory tree " + loadDir.getAbsolutePath());
+                    }
+
+                    File.createTempFile("tmp", "data", loadDir);
+                }
             }
         }
-    }
-
-    /** @return true if entry's key is {@link MetricParameter#TO_DATE} */
-    public static boolean isToDateParam(Entry<String, String> entry) {
-        return entry.getKey().equals(MetricParameter.TO_DATE.name());
-    }
-
-    /** @return true if entry's key is {@link MetricParameter#ALIAS} */
-    public static boolean isAlias(Entry<String, String> entry) {
-        return entry.getKey().equals(MetricParameter.ALIAS.name());
-    }
-
-    /** @return true if entry's key is {@link MetricParameter#ALIAS} */
-    public static boolean isUrl(Entry<String, String> entry) {
-        return entry.getKey().equals(MetricParameter.URL.name());
-    }
-
-
-    /** @return true if entry's key is {@link MetricParameter#FROM_DATE} */
-    public static boolean isFromDateParam(Entry<String, String> entry) {
-        return entry.getKey().equals(MetricParameter.FROM_DATE.name());
-    }
-
-    /** @return true if context contains {@link MetricParameter#TO_DATE} */
-    public static boolean containsToDateParam(Map<String, String> context) {
-        return getToDateParam(context) != null;
-    }
-
-    /** @return true if context contains {@link MetricParameter#FROM_DATE} */
-    public static boolean containsFromDateParam(Map<String, String> context) {
-        return getFromDateParam(context) != null;
-    }
-
-    /** @return true if context contains {@link MetricParameter#TIME_UNIT} */
-    public static boolean containsTimeUnitParam(Map<String, String> context) {
-        return getTimeUnitParam(context) != null;
     }
 
     /** Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT} */
@@ -263,8 +143,8 @@ public class Utils {
     }
 
     private static void initByLifeTime(Map<String, String> context) {
-        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
-        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
+        MetricParameter.FROM_DATE.putDefaultValue(context);
+        MetricParameter.TO_DATE.putDefaultValue(context);
     }
 
     private static void initByWeek(Calendar date, Map<String, String> context) {
@@ -306,13 +186,13 @@ public class Utils {
 
         switch (timeUnit) {
             case DAY:
-                nextDay(fromDate, toDate, resultContext);
+                nextDay(toDate, resultContext);
                 break;
             case WEEK:
                 nextWeek(fromDate, toDate, resultContext);
                 break;
             case MONTH:
-                nextMonth(fromDate, toDate, resultContext);
+                nextMonth(toDate, resultContext);
                 break;
             case LIFETIME:
                 break;
@@ -331,13 +211,13 @@ public class Utils {
 
         switch (timeUnit) {
             case DAY:
-                prevDay(fromDate, toDate, resultContext);
+                prevDay(toDate, resultContext);
                 break;
             case WEEK:
                 prevWeek(fromDate, toDate, resultContext);
                 break;
             case MONTH:
-                prevMonth(fromDate, toDate, resultContext);
+                prevMonth(fromDate, resultContext);
                 break;
             case LIFETIME:
                 break;
@@ -354,8 +234,8 @@ public class Utils {
         putToDate(context, toDate);
     }
 
-    private static void prevMonth(Calendar fromDate, Calendar toDate, Map<String, String> context) {
-        toDate = (Calendar)fromDate.clone();
+    private static void prevMonth(Calendar fromDate, Map<String, String> context) {
+        Calendar toDate = (Calendar)fromDate.clone();
         toDate.add(Calendar.DAY_OF_MONTH, -1);
 
         fromDate = (Calendar)toDate.clone();
@@ -365,15 +245,15 @@ public class Utils {
         putToDate(context, toDate);
     }
 
-    private static void prevDay(Calendar fromDate, Calendar toDate, Map<String, String> context) {
+    private static void prevDay(Calendar toDate, Map<String, String> context) {
         toDate.add(Calendar.DAY_OF_MONTH, -1);
 
         putFromDate(context, toDate);
         putToDate(context, toDate);
     }
 
-    private static void nextMonth(Calendar fromDate, Calendar toDate, Map<String, String> context) {
-        fromDate = (Calendar)toDate.clone();
+    private static void nextMonth(Calendar toDate, Map<String, String> context) {
+        Calendar fromDate = (Calendar)toDate.clone();
         fromDate.add(Calendar.DAY_OF_MONTH, 1);
 
         toDate.add(Calendar.MONTH, 1);
@@ -390,7 +270,7 @@ public class Utils {
         putToDate(context, toDate);
     }
 
-    private static void nextDay(Calendar fromDate, Calendar toDate, Map<String, String> context) throws IOException {
+    private static void nextDay(Calendar toDate, Map<String, String> context) throws IOException {
         toDate.add(Calendar.DAY_OF_MONTH, 1);
 
         putFromDate(context, toDate);
@@ -402,38 +282,21 @@ public class Utils {
 
         Map<String, String> context = newContext();
 
-        putTimeUnit(context, timeUnit);
+        MetricParameter.TIME_UNIT.put(context, timeUnit.name());
         initDateInterval(cal, context);
 
-        return timeUnit == TimeUnit.DAY ? context = Utils.prevDateInterval(context) : context;
+        return timeUnit == TimeUnit.DAY ? Utils.prevDateInterval(context) : context;
     }
 
     public static Map<String, String> clone(Map<String, String> context) {
-        Map<String, String> result = new HashMap<String, String>(context.size());
+        Map<String, String> result = new HashMap<>(context.size());
         result.putAll(context);
 
         return result;
     }
 
     public static Map<String, String> newContext() {
-        return new HashMap<String, String>();
-    }
-
-    /** Validates context. Throws {@link IllegalArgumentException} if something wrong. */
-    public static void validate(Map<String, String> context, Metric metric) throws IllegalArgumentException {
-        for (MetricParameter parameter : metric.getParams()) {
-            String name = parameter.name();
-
-            if (!context.containsKey(name)) {
-                throw new IllegalArgumentException("Parameter " + name + " was not set.");
-            }
-
-            parameter.validate(context.get(name), context);
-        }
-    }
-
-    public static String getResultDir(Map<String, String> context) {
-        return context.get(MetricParameter.RESULT_DIR.name());
+        return new HashMap<>();
     }
 
     public static Properties readProperties(String resource) throws IOException {
@@ -446,42 +309,10 @@ public class Utils {
         return properties;
     }
 
-    /**
-     * Puts the default value of {@link MetricParameter#FROM_DATE} parameter into the context.
-     *
-     * @param context
-     */
-    public static void putFromDateDefault(Map<String, String> context) {
-        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
-    }
-
-    /**
-     * Puts the default value of {@link MetricParameter#TO_DATE} parameter into the context.
-     *
-     * @param context
-     */
-    public static void putToDateDefault(Map<String, String> context) {
-        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
-    }
-
-    /** @return all available filters from context */
-    public static Set<MetricFilter> getAvailableFilters(Map<String, String> dayContext) {
-        Set<MetricFilter> filters = new HashSet<>(3);
-
-        for (MetricFilter filterKey : MetricFilter.values()) {
-            if (dayContext.containsKey(filterKey.name())) {
-                filters.add(filterKey);
-            }
-        }
-
-        return filters;
-    }
-
     public static String removeBracket(String value) {
         int beginIndex = value.startsWith("[") ? 1 : 0;
         int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
 
         return value.substring(beginIndex, endIndex);
-
     }
 }

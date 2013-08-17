@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.server.vew.template;
 
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.shared.RowData;
@@ -50,7 +51,7 @@ public class Table {
         int columnsCount = getColumnsCount();
 
         // Timeline usecase with TimeUnit.LIFETIME
-        if (Utils.containsTimeUnitParam(context) && Utils.getTimeUnit(context) == TimeUnit.LIFETIME &&
+        if (MetricParameter.TIME_UNIT.exists(context) && Utils.getTimeUnit(context) == TimeUnit.LIFETIME &&
             timeIntervalRule == TimeIntervalRule.NONE) {
             columnsCount = 2;
         }
@@ -74,9 +75,9 @@ public class Table {
                 Calendar toDate = Calendar.getInstance();
                 toDate.set(Calendar.DAY_OF_MONTH, toDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-                Utils.putTimeUnit(context, TimeUnit.LIFETIME);
+                MetricParameter.TIME_UNIT.put(context, TimeUnit.LIFETIME.name());
+                MetricParameter.FROM_DATE.putDefaultValue(context);
                 Utils.putToDate(context, toDate);
-                Utils.putFromDateDefault(context);
 
                 return context;
 

@@ -20,7 +20,7 @@ package com.codenvy.analytics.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.MapStringLongValueData;
 import com.codenvy.analytics.scripts.util.Event;
@@ -44,15 +44,15 @@ public class TestScriptNumberOfEvents extends BaseTest {
     @Test
     public void testNumberOfAllEvents() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
 
         LongValueData longValueData = (LongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS, log, context);
         assertEquals(longValueData.getAsLong(), 3);
@@ -61,15 +61,16 @@ public class TestScriptNumberOfEvents extends BaseTest {
     @Test
     public void testNumberOfAllEventsByUser() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
+
 
         MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS_BY_USERS, log, context);
 
@@ -82,15 +83,16 @@ public class TestScriptNumberOfEvents extends BaseTest {
     @Test
     public void testNumberOfAllEventsByWs() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
+
 
         MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS_BY_WS, log, context);
 
@@ -103,15 +105,16 @@ public class TestScriptNumberOfEvents extends BaseTest {
     @Test
     public void testNumberOfAllEventsByDomains() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2010-10-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project1", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws", "user@gmail.com", "project2", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("", "", "project2", "type", "feature").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, EventType.USER_CODE_REFACTOR.toString());
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
+
 
         MapStringLongValueData mapValueData = (MapStringLongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS_BY_DOMAINS, log, context);
 

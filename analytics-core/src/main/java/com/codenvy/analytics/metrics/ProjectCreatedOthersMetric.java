@@ -36,13 +36,13 @@ public class ProjectCreatedOthersMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "null");
+        MetricParameter.PARAM.put(context, "null");
         ValueData value = super.getValue(context);
 
-        Utils.putParam(context, "default");
+        MetricParameter.PARAM.put(context, "default");
         value = value.union(super.getValue(context));
 
-        Utils.putParam(context, "eXo");
+        MetricParameter.PARAM.put(context, "eXo");
         return value.union(super.getValue(context));
     }
 

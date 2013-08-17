@@ -40,20 +40,20 @@ public class TestNumberOfActiveUsersMetric {
     public void testGetValues() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project2", "type")
-                        .withDate("2010-10-02").build());
+                        .withDate("2013-01-02").build());
         events.add(Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws3", "session", "project1", "type")
-                        .withDate("2010-10-03").build());
+                        .withDate("2013-01-03").build());
         File log = LogGenerator.generateLog(events);
 
 
         Map<String, String> context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
 
         DataProcessing.calculateAndStore(MetricType.USERS_CREATED_PROJECT_ONCE, context);
         Metric metric = MetricFactory.createMetric(MetricType.USERS_CREATED_PROJECT_ONCE);
@@ -62,8 +62,8 @@ public class TestNumberOfActiveUsersMetric {
 
         context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101002");
-        Utils.putToDate(context, "20101002");
+        MetricParameter.FROM_DATE.put(context, "20130102");
+        MetricParameter.TO_DATE.put(context, "20130102");
 
         DataProcessing.calculateAndStore(MetricType.USERS_CREATED_PROJECT_ONCE, context);
         metric = MetricFactory.createMetric(MetricType.USERS_CREATED_PROJECT_ONCE);
@@ -72,8 +72,8 @@ public class TestNumberOfActiveUsersMetric {
 
         context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101003");
-        Utils.putToDate(context, "20101003");
+        MetricParameter.FROM_DATE.put(context, "20130103");
+        MetricParameter.TO_DATE.put(context, "20130103");
 
         DataProcessing.calculateAndStore(MetricType.USERS_CREATED_PROJECT_ONCE, context);
         metric = MetricFactory.createMetric(MetricType.USERS_CREATED_PROJECT_ONCE);

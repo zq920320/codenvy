@@ -36,7 +36,7 @@ public class ProjectCreatedPhpMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "PHP");
+        MetricParameter.PARAM.put(context, "PHP");
         return super.getValue(context);
     }
 

@@ -20,7 +20,7 @@ package com.codenvy.analytics.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -42,14 +42,14 @@ public class TestScriptNumberTemporaryWorkspaceCreated extends BaseTest {
     @Test
     public void testNumberOfEvents() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1").withDate("2010-10-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user2").withDate("2010-10-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("dev-monit", "user2").withDate("2010-10-01").build());
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1").withDate("2013-01-01").build());
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user2").withDate("2013-01-01").build());
+        events.add(Event.Builder.createTenantCreatedEvent("dev-monit", "user2").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
 
         LongValueData longValueData =
                 (LongValueData)executeAndReturnResult(ScriptType.TEMPORARY_WORKSPACE_CREATED, log, context);

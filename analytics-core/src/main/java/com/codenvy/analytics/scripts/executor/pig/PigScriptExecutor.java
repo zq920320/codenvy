@@ -38,7 +38,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,8 +80,6 @@ public class PigScriptExecutor implements ScriptExecutor {
         execType = ExecType.LOCAL;
     }
 
-    // TODO validation from=to
-
     /** {@inheritDoc} */
     @Override
     public ValueData executeAndReturn(ScriptType scriptType, Map<String, String> context) throws IOException {
@@ -117,38 +114,6 @@ public class PigScriptExecutor implements ScriptExecutor {
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
-        context = Utils.clone(context);
-        validateParameters(scriptType, context);
-
-        if (!isExecutionAllowed(context)) {
-            return;
-        }
-
-        String path = getInspectedPaths(context);
-        if (path.isEmpty() && scriptType.isLogRequired()) {
-            return;
-        }
-
-        try (InputStream scriptContent = readScriptContent(scriptType)) {
-            LOGGER.info("Script execution " + scriptType + " is started with data located: " + path);
-
-            Properties properties = new Properties();
-
-            PigServer server = new PigServer(execType, properties);
-            try {
-                server.registerScript(scriptContent, context);
-            } finally {
-                server.shutdown();
-            }
-        } finally {
-            LOGGER.info("Execution " + scriptType + " is finished");
-
-        }
-    }
-
     /** @return if it is allowed to execute query. */
     protected boolean isExecutionAllowed(Map<String, String> context) throws IOException {
         Calendar toDate = Utils.getToDate(context);
@@ -160,12 +125,19 @@ public class PigScriptExecutor implements ScriptExecutor {
     /** Checks if all parameters that are needed to script execution have been added to context; */
     private void validateParameters(ScriptType scriptType, Map<String, String> context) throws IOException {
         for (MetricParameter param : scriptType.getParams()) {
-            if (!context.containsKey(param.name())) {
+            if (!param.exists(context)) {
                 throw new IOException("Key field " + param + " is absent in execution context");
             }
+
+            param.validate(param.get(context), context);
+        }
+
+        if (MetricParameter.TO_DATE.exists(context) && MetricParameter.FROM_DATE.exists(context) &&
+            !MetricParameter.TO_DATE.get(context).equals(MetricParameter.FROM_DATE.get(context))) {
+
+            throw new IllegalStateException("The date params are different");
         }
     }
-
 
     /** @return the script file name */
     private String getScriptFileName(ScriptType scriptType) {
@@ -186,17 +158,17 @@ public class PigScriptExecutor implements ScriptExecutor {
             try {
                 path = LOGS_DIRECTORY;
 
-                if (Utils.containsFromDateParam(context) && Utils.containsToDateParam(context)) {
+                if (MetricParameter.FROM_DATE.exists(context) && MetricParameter.TO_DATE.exists(context)) {
                     path =
                             LogLocationOptimizer.generatePaths(LOGS_DIRECTORY,
-                                                               Utils.getFromDateParam(context),
-                                                               Utils.getToDateParam(context));
-                } else if (Utils.containsToDateParam(context)) {
+                                                               MetricParameter.FROM_DATE.get(context),
+                                                               MetricParameter.TO_DATE.get(context));
+                } else if (MetricParameter.TO_DATE.exists(context)) {
                     path =
                             LogLocationOptimizer
                                     .generatePaths(LOGS_DIRECTORY,
                                                    MetricParameter.FROM_DATE.getDefaultValue(),
-                                                   Utils.getToDateParam(context));
+                                                   MetricParameter.TO_DATE.get(context));
                 }
             } catch (IllegalStateException | ParseException e) {
                 throw new IOException(e);

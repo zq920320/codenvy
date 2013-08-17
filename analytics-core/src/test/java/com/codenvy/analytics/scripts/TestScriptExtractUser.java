@@ -42,16 +42,16 @@ public class TestScriptExtractUser extends BaseTest {
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "user1").withDate("2010-10-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "[user2,user3]").withDate("2010-10-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "user4").withDate("2010-10-01").build());
-        events.add(new Event.Builder().withParam("EVENT" ,"fake").withDate("2010-10-01").build());
+        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "user1").withDate("2013-01-01").build());
+        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "[user2,user3]").withDate("2013-01-01").build());
+        events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "user4").withDate("2013-01-01").build());
+        events.add(new Event.Builder().withParam("EVENT" ,"fake").withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        context.put(MetricParameter.FROM_DATE.name(), "20101001");
-        context.put(MetricParameter.TO_DATE.name(), "20101001");
+        context.put(MetricParameter.FROM_DATE.name(), "2013-01-01");
+        context.put(MetricParameter.TO_DATE.name(), "2013-01-01");
 
         ListStringValueData valueData =
                 (ListStringValueData)executeAndReturnResult(ScriptType.TEST_EXTRACT_USER, log, context);

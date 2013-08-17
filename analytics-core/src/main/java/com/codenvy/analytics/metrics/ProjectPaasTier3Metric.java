@@ -35,7 +35,7 @@ public class ProjectPaasTier3Metric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "Tier3 Web Fabric");
+        MetricParameter.PARAM.put(context, "Tier3 Web Fabric");
         return super.getValue(context);
     }
 

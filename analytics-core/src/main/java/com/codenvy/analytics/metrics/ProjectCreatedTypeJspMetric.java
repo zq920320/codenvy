@@ -36,7 +36,7 @@ public class ProjectCreatedTypeJspMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "Servlet/JSP");
+        MetricParameter.PARAM.put(context, "Servlet/JSP");
         return super.getValue(context);
     }
 

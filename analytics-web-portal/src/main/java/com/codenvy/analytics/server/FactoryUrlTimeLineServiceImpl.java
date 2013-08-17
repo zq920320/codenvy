@@ -103,9 +103,9 @@ public class FactoryUrlTimeLineServiceImpl {
     private List<String> getTempWs(List<String> factoryUrls) throws IOException {
         Map<String, String> context = Utils.newContext();
 
-        Utils.putLoadDir(context, MetricType.FACTORY_URL_ACCEPTED);
-        Utils.putToDateDefault(context);
-        context.put(MetricParameter.PARAM.name(), factoryUrls.toString());
+        MetricParameter.TO_DATE.putDefaultValue(context);
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
+        MetricParameter.PARAM.put(context, factoryUrls.toString());
 
         ListStringValueData valueData =
                 (ListStringValueData)ScriptExecutor.INSTANCE
@@ -116,10 +116,10 @@ public class FactoryUrlTimeLineServiceImpl {
     private List<String> getFactoryUrls(String field, String param) throws IOException {
         Map<String, String> context = Utils.newContext();
 
-        Utils.putLoadDir(context, MetricType.FACTORY_CREATED);
-        Utils.putToDateDefault(context);
-        context.put(MetricParameter.FIELD.name(), field);
-        context.put(MetricParameter.PARAM.name(), param);
+        MetricParameter.TO_DATE.putDefaultValue(context);
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_CREATED));
+        MetricParameter.FIELD.put(context, field);
+        MetricParameter.PARAM.put(context, param);
 
         ListStringValueData valueData =
                 (ListStringValueData)ScriptExecutor.INSTANCE

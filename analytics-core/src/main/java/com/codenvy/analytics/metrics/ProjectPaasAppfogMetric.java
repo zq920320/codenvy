@@ -35,7 +35,7 @@ public class ProjectPaasAppfogMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "Appfog");
+        MetricParameter.PARAM.put(context, "Appfog");
         return super.getValue(context);
     }
 

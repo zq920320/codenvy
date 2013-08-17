@@ -46,28 +46,28 @@ public class TestScriptEntityByFactoryUrl extends BaseTest {
         List<Event> events = new ArrayList<>();
         events.add(
                 Event.Builder.createFactoryCreatedEvent("ws1", "user1", "project1", "type1", "repoUrl1", "factoryUrl1")
-                     .withDate("2010-10-01").build());
+                     .withDate("2013-01-01").build());
         events.add(
                 Event.Builder.createFactoryCreatedEvent("ws2", "user1", "project2", "type1", "repoUrl1", "factoryUrl1")
-                     .withDate("2010-10-01").build());
+                     .withDate("2013-01-01").build());
         events.add(
                 Event.Builder.createFactoryCreatedEvent("ws3", "user2", "project3", "type1", "repoUrl1", "factoryUrl2")
-                     .withDate("2010-10-01").build());
+                     .withDate("2013-01-01").build());
         events.add(
                 Event.Builder.createFactoryCreatedEvent("ws4", "user2", "project4", "type2", "repoUrl1", "factoryUrl2")
-                     .withDate("2010-10-01").build());
+                     .withDate("2013-01-01").build());
         events.add(
                 Event.Builder.createFactoryCreatedEvent("ws5", "user2", "project5", "type2", "repoUrl3", "factoryUrl3")
-                     .withDate("2010-10-01").build());
+                     .withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.name(), "20101001");
-        context.put(MetricParameter.TO_DATE.name(), "20101001");
+        context.put(MetricParameter.FROM_DATE.name(), "20130101");
+        context.put(MetricParameter.TO_DATE.name(), "20130101");
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putLoadDir(context, MetricType.FACTORY_CREATED);
-        Utils.putStoreDir(context, MetricType.FACTORY_CREATED);
 
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_CREATED));
+        MetricParameter.STORE_DIR.put(context, Utils.getStoreDirFor(MetricType.FACTORY_CREATED));
 
         DataProcessing.calculateAndStore(MetricType.FACTORY_CREATED, context);
 

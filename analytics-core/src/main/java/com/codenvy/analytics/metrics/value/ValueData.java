@@ -33,10 +33,10 @@ public interface ValueData {
     String getAsString();
 
     /** @return value as {@link Long} */
-    long getAsLong(); // TODO remove
+    long getAsLong();
 
     /** @return value as {@link Double} */
-    double getAsDouble(); // TODO remove
+    double getAsDouble();
 
     /** Serialization. */
     void writeTo(ObjectOutputStream out) throws IOException;

@@ -19,15 +19,11 @@
 
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-
 import com.codenvy.analytics.server.service.MailService;
+
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -75,7 +71,7 @@ public class JRebelJob implements Job, ForceableJobRunByContext {
 
         try {
             StringBuilder usersProfile = getUsersProfile(context);
-            String date = Utils.getToDateParam(context);
+            String date = MetricParameter.TO_DATE.get(context);
 
             sendMail(usersProfile, date);
         } finally {

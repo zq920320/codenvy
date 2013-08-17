@@ -107,14 +107,14 @@ public class JobsRunner implements ServletContextListener {
     private void executeAllTime(Job job) throws Exception {
         if (job instanceof ForceableJobRunByContext) {
             Map<String, String> context = Utils.newContext();
-            context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
-            context.put(MetricParameter.TO_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
-            context.put(MetricParameter.TIME_UNIT.name(), TimeUnit.DAY.name());
+            MetricParameter.FROM_DATE.putDefaultValue(context);
+            MetricParameter.TO_DATE.putDefaultValue(context);
+            MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
 
             do {
                 ((ForceableJobRunByContext)job).forceRun(context);
                 context = Utils.nextDateInterval(context);
-            } while (!Utils.getToDateParam(context).equals(MetricParameter.TO_DATE.getDefaultValue()));
+            } while (!MetricParameter.TO_DATE.get(context).equals(MetricParameter.TO_DATE.getDefaultValue()));
 
             executeLastDay(job);
         }

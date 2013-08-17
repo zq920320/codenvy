@@ -32,10 +32,10 @@ public abstract class ToDateValueReadBasedMetric extends ReadBasedMetric {
         Calendar toDate = Utils.getToDate(context);
 
         if (toDate.after(lastDay)) {
-            Utils.putFromDate(context, MetricParameter.TO_DATE.getDefaultValue());
-            Utils.putToDate(context, MetricParameter.TO_DATE.getDefaultValue());
+            MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.getDefaultValue());
+            MetricParameter.TO_DATE.putDefaultValue(context);
         } else {
-            Utils.putFromDate(context, Utils.getToDateParam(context));
+            MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.get(context));
         }
 
         return super.getValue(context);

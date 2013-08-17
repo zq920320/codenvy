@@ -476,33 +476,6 @@ public enum ScriptType {
         }
     },
 
-    USERS_SEGMENT_ANALYSIS_1 {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.TO_DATE}));
-        }
-    },
-
-    USERS_SEGMENT_ANALYSIS_2 {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.TO_DATE}));
-        }
-    },
-
-    USERS_SEGMENT_ANALYSIS_3 {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.TO_DATE}));
-        }
-    },
-
     USERS_PROFILE_PREPARATION {
         @Override
         public Class<? extends ValueData> getValueDataClass() {

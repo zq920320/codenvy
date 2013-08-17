@@ -49,7 +49,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         while (!fromDate.after(toDate)) {
             Utils.putFromDate(dayContext, fromDate);
             Utils.putToDate(dayContext, fromDate);
-            Utils.putTimeUnit(dayContext, TimeUnit.DAY);
+            MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
 
             ValueData dayValue = evaluate(dayContext);
             total = total.union(dayValue);
@@ -68,7 +68,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     private ValueData getFilteredValue(LinkedHashMap<String, String> uuid, Map<String, String> dayContext)
             throws IOException {
 
-        Set<MetricFilter> availableFilters = Utils.getAvailableFilters(dayContext);
+        Set<MetricFilter> availableFilters = getAvailableFilters(dayContext);
 
         if (availableFilters.isEmpty()) {
             return getDirectValue(uuid);
@@ -132,6 +132,19 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         } catch (FileNotFoundException e) {
             return createEmptyValueData();
         }
+    }
+
+    /** @return all available filters from context */
+    private static Set<MetricFilter> getAvailableFilters(Map<String, String> dayContext) {
+        Set<MetricFilter> filters = new HashSet<>(3);
+
+        for (MetricFilter filterKey : MetricFilter.values()) {
+            if (dayContext.containsKey(filterKey.name())) {
+                filters.add(filterKey);
+            }
+        }
+
+        return filters;
     }
 
     /** @return empty {@link com.codenvy.analytics.metrics.value.ValueData} */

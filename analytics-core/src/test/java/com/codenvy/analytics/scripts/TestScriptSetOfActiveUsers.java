@@ -20,7 +20,7 @@ package com.codenvy.analytics.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.MapStringSetValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
@@ -44,16 +44,16 @@ public class TestScriptSetOfActiveUsers extends BaseTest {
     @Test
     public void testSetOfActiveUsers() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project2", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project2", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, "*");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, "*");
 
         SetStringValueData valueData = (SetStringValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS, log, context);
         assertEquals(valueData.size(), 2);
@@ -64,17 +64,17 @@ public class TestScriptSetOfActiveUsers extends BaseTest {
     @Test
     public void testSetOfActiveUsersByDomains() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project2", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws2", "session", "project3", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project2", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3@gmail.com", "ws2", "session", "project3", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, "*");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, "*");
 
         MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS_BY_DOMAINS, log, context);
 
@@ -91,15 +91,15 @@ public class TestScriptSetOfActiveUsers extends BaseTest {
     @Test
     public void testSetOfActiveUsersByUsers() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2010-10-01").build());
-        events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2010-10-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
-        Utils.putEvent(context, "*");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, "*");
 
         MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_USERS_BY_USERS, log, context);
 

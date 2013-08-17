@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.server.jobs;
 
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
@@ -33,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
@@ -73,7 +73,7 @@ public class CheckLogsJob implements Job, ForceableJobRunByContext {
         long start = System.currentTimeMillis();
 
         try {
-            String date = Utils.getToDateParam(context);
+            String date = MetricParameter.TO_DATE.get(context) ;
 
             ValueData valueData = ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.CHECK_LOGS_1, context);
             valueData = valueData.union(ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.CHECK_LOGS_2, context));

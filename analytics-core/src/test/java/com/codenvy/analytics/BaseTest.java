@@ -57,18 +57,4 @@ public class BaseTest {
 
         return scriptExecutor.executeAndReturn(type, executionParams);
     }
-
-    protected void execute(ScriptType type, File log, Map<String, String> executionParams) throws IOException {
-        executionParams.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        PigScriptExecutor scriptExecutor = new PigScriptExecutor();
-        scriptExecutor.execute(type, executionParams);
-    }
-
-    protected void prepareDir(String name) throws IOException {
-        File dir = new File(name);
-        dir.mkdirs();
-
-        File file = new File(dir, "tmp");
-        file.createNewFile();
-    }
 }

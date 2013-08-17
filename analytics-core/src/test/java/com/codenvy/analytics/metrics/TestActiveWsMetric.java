@@ -24,6 +24,7 @@ import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -46,21 +47,21 @@ public class TestActiveWsMetric {
     @BeforeMethod
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws1", "user1@gmail.com", "project1", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws2", "user2@gmail.com", "project2", "type", "feature").withDate("2010-10-01").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws1", "user1@gmail.com", "project1", "type", "feature").withDate("2010-10-02").build());
-        events.add(Event.Builder.createUserCodeRefactorEvent("ws3", "user2@gmail.com", "project2", "type", "feature").withDate("2010-10-02").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws1", "user1@gmail.com", "project1", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws2", "user2@gmail.com", "project2", "type", "feature").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws1", "user1@gmail.com", "project1", "type", "feature").withDate("2013-01-02").build());
+        events.add(Event.Builder.createUserCodeRefactorEvent("ws3", "user2@gmail.com", "project2", "type", "feature").withDate("2013-01-02").build());
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
         context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101001");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
         DataProcessing.calculateAndStore(MetricType.ACTIVE_WS_SET, context);
 
         Map<String,String> clonedContext = Utils.clone(context);
-        Utils.putFromDate(clonedContext, "20101002");
-        Utils.putToDate(clonedContext, "20101002");
+        MetricParameter.FROM_DATE.put(clonedContext, "20130102");
+        MetricParameter.TO_DATE.put(clonedContext, "20130102");
         DataProcessing.calculateAndStore(MetricType.ACTIVE_WS_SET, clonedContext);
     }
 
@@ -81,8 +82,8 @@ public class TestActiveWsMetric {
 
     @Test
     public void testGetValuesAnotherPeriod() throws Exception {
-        Utils.putFromDate(context, "20101001");
-        Utils.putToDate(context, "20101002");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130102");
 
         Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 

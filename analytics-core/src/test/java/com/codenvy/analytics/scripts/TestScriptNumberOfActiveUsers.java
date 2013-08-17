@@ -20,6 +20,7 @@ package com.codenvy.analytics.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
@@ -47,37 +48,38 @@ public class TestScriptNumberOfActiveUsers extends BaseTest {
         FileUtils.deleteDirectory(new File(FSValueDataManager.SCRIPT_LOAD_DIRECTORY));
         FileUtils.deleteDirectory(new File(FSValueDataManager.SCRIPT_STORE_DIRECTORY));
 
-        Utils.prepareDirectories(MetricType.USERS_CREATED_PROJECT_ONCE); // TODO remove
+        Map<String, String> context = new HashMap<>();
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USERS_CREATED_PROJECT_ONCE));
+        MetricParameter.STORE_DIR.put(context, Utils.getStoreDirFor(MetricType.USERS_CREATED_PROJECT_ONCE));
+
+        Utils.initLoadStoreDirectories(context);
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project1", "type")
-                        .withDate("2010-10-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user2@gmail.com", "ws2", "session", "project2", "type")
-                        .withDate("2010-10-02").build());
-        events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2010-10-02")
+                        .withDate("2013-01-02").build());
+        events.add(Event.Builder.createProjectCreatedEvent("", "", "session", "project1", "type").withDate("2013-01-02")
                         .build());
         File log = LogGenerator.generateLog(events);
 
-        Map<String, String> context = new HashMap<>();
-        Utils.putToDate(context, "20101001");
-        Utils.putFromDate(context, "20101001");
-        Utils.putLoadDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
-        Utils.putStoreDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
-        Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
         LongValueData valueData = (LongValueData)executeAndReturnResult(ScriptType.NUMBER_ACTIVE_USERS, log, context);
 
         assertEquals(valueData.getAsLong(), 2);
 
-        Utils.prepareDirectories(MetricType.USERS_CREATED_PROJECT_ONCE);
+        Utils.initLoadStoreDirectories(context);
 
         context = new HashMap<>();
-        Utils.putToDate(context, "20101002");
-        Utils.putFromDate(context, "20101002");
-        Utils.putLoadDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
-        Utils.putStoreDir(context, MetricType.USERS_CREATED_PROJECT_ONCE);
-        Utils.putEvent(context, EventType.PROJECT_CREATED.toString());
+        MetricParameter.FROM_DATE.put(context, "20130102");
+        MetricParameter.TO_DATE.put(context, "20130102");
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USERS_CREATED_PROJECT_ONCE));
+        MetricParameter.STORE_DIR.put(context, Utils.getStoreDirFor(MetricType.USERS_CREATED_PROJECT_ONCE));
+        MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
         valueData = (LongValueData)executeAndReturnResult(ScriptType.NUMBER_ACTIVE_USERS, log, context);
 
         assertEquals(valueData.getAsLong(), 3);

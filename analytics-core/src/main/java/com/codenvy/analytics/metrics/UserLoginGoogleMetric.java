@@ -18,7 +18,7 @@ public class UserLoginGoogleMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Utils.putParam(context, "google");
+        MetricParameter.PARAM.put(context, "google");
         return super.getValue(context);
     }
 

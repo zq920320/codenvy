@@ -43,13 +43,6 @@ DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
--- Removes events where user and was are both 'default'
----------------------------------------------------------------------------
-DEFINE skipDefaults(X) RETURNS Y {
-  $Y = FILTER $X BY user != 'default' AND ws != 'default';
-};
-
----------------------------------------------------------------------------
 -- Returns the unique sequence for every field
 -- @return {fieldName1 : chararray, {(fieldName2 : chararray)}}
 ---------------------------------------------------------------------------
@@ -81,25 +74,6 @@ DEFINE countByField(X, fieldNameParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
--- Filters events by date of occurrence.
--- @param toDateParam  - date in format 'YYYYMMDD'
--- @interval
----------------------------------------------------------------------------
-DEFINE filterByDateInterval(X, toDateParam, interval) RETURNS Y {
-  $Y = FILTER $X BY MilliSecondsBetween(AddDuration(SubtractDuration(ToDate('$toDateParam', 'yyyyMMdd'), '$interval'), 'P1D'), dt) <= 0 AND
-                    MilliSecondsBetween(AddDuration(ToDate('$toDateParam', 'yyyyMMdd'), 'P1D'), dt) > 0;
-};
-
----------------------------------------------------------------------------
--- Filters events by date of occurrence.
--- @param toDateParam  - date in format 'YYYYMMDD'
--- @interval
----------------------------------------------------------------------------
-DEFINE filterByDateIntervalAfter(X, toDateParam, interval) RETURNS Y {
-  $Y = FILTER $X BY MilliSecondsBetween(AddDuration(SubtractDuration(ToDate('$toDateParam', 'yyyyMMdd'), '$interval'), 'P1D'), dt) > 0;
-};
-
----------------------------------------------------------------------------
 -- Filters events by names. Keeps only events from passed list.
 -- @param eventNamesParam - comma separated list of event names
 ---------------------------------------------------------------------------
@@ -125,15 +99,6 @@ DEFINE extractWs(X) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
--- Extract sessin id out of message and adds as field to tuple.
--- @return  {..., session : bytearray}
----------------------------------------------------------------------------
-DEFINE extractSession(X) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[.*\\]\\[(.*)\\] - .*')) AS session;
-  $Y = FILTER x1 BY session != '';
-};
-
----------------------------------------------------------------------------
 -- Extract user name out of message and adds as field to tuple.
 -- @return  {..., user : bytearray}
 ---------------------------------------------------------------------------
@@ -155,38 +120,6 @@ DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
   $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramFieldNameParam;
 };
 
----------------------------------------------------------------------------
--- Calculates the difference between two relation.
--- The relations should be preprocessed using 'prepareSet'.
--- @return {{(bytearray)}}
----------------------------------------------------------------------------
-DEFINE differSets(A, B) RETURNS Y {
-  w1 = JOIN $A BY $0 LEFT, $B BY $0;
-  w2 = FILTER w1 BY $1 IS NULL;
-  $Y = FOREACH w2 GENERATE $0;
-};
-
----------------------------------------------------------------------------
--- Calculates the intersection between two relation.
--- The relations should be preprocessed using 'prepareSet'.
--- @return {{(bytearray)}}
----------------------------------------------------------------------------
-DEFINE intersectSets(A, B) RETURNS Y {
-  w1 = JOIN $A BY $0, $B BY $0;
-  w2 = FOREACH w1 GENERATE $0;
-  w3 = GROUP w2 ALL;
-  $Y = FOREACH w3 GENERATE $1 AS list;
-};
-
----------------------------------------------------------------------------
--- Generates a relation with a single field whose values are unique.
--- @param fieldNameParam - the field name to process
--- @return {$fieldNameParam : chararray}
----------------------------------------------------------------------------
-DEFINE prepareSet(X, fieldNameParam) RETURNS Y {
-  w1 = FOREACH $X GENERATE $fieldNameParam;
-  $Y = DISTINCT w1;
-};
 
 ---------------------------------------------------------------------------
 -- Finds last updates user profile
@@ -213,7 +146,7 @@ DEFINE lastUserProfileUpdate(X) RETURNS Y {
 --          intervals: {(ws: bytearray,user: bytearray,dt: datetime,delta: long)}}
 ---------------------------------------------------------------------------------------------
 DEFINE groupEvents(X) RETURNS Y {
-  x0 = skipDefaults($X);
+  x0 = FILTER $X BY user != 'default' AND ws != 'default';
   x1 = FOREACH x0 GENERATE ws, user, dt;
   x2 = FOREACH x0 GENERATE ws, user, dt;
 
@@ -273,7 +206,7 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
   l4 = FILTER l3 BY l1::flag == 'start' AND l2::flag == 'end';
 
   ---------------------------------------------------------------------------------------------
-  -- The correc pair is with minimum positive time interval between them
+  -- The correct pair is with minimum positive time interval between them
   ---------------------------------------------------------------------------------------------
   l5 = FOREACH l4 GENERATE l1::ws AS ws, l1::user AS user, l1::dt AS dt, MilliSecondsBetween(l2::dt, l1::dt) AS delta;
   l6 = FILTER l5 BY delta > 0;
@@ -284,79 +217,9 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------------------------
--- Counts number of users sessions and its length
--- @param X - {..., user : bytearray, delta : long}
--- @return {user: bytearray,count: long, time: long}
+-- Extracts session id
+-- @return {user : bytearray, ws: bytearray, sId: bytearray, dt: datetime}
 ---------------------------------------------------------------------------------------------
-DEFINE usersByTimeSpent(X) RETURNS Y {
-  w1 = GROUP $X BY user;
-  $Y = FOREACH w1 GENERATE FLATTEN(group) AS user, COUNT($X.delta) AS count, SUM($X.delta) AS time;
-};
-
----------------------------------------------------------------------------------------------
--- Counts number of users sessions and its length
--- @param X - {..., user : bytearray, count : long, delta : long}
--- @return {user: bytearray,count: long, time: long}
----------------------------------------------------------------------------------------------
-DEFINE domainsByTimeSpent(X) RETURNS Y {
-  w1 = FOREACH $X GENERATE REGEX_EXTRACT(user, '.*@(.*)', 1) AS user, count, delta;
-  w2 = GROUP w1 BY user;
-  $Y = FOREACH w2 GENERATE FLATTEN(group) AS user, SUM(w1.count) AS count, SUM(w1.delta) AS time;
-};
-
-
----------------------------------------------------------------------------------------------
--- Counts number of users sessions and its length
--- @param X - {..., user : bytearray, count : long, delta : long}
--- @return {user: bytearray,count: long, time: long}
----------------------------------------------------------------------------------------------
-DEFINE companiesByTimeSpent(X, resultDirParam) RETURNS Y {
-  w1 = LOAD '$resultDirParam/PROFILES' USING PigStorage() AS (user: chararray, firstName: chararray, lastName: chararray, company: chararray);
-  w2 = JOIN $X BY user LEFT, w1 BY user;
-  w3 = FILTER w2 BY w1::company IS NOT NULL;
-  w4 = FOREACH w3 GENERATE w1::company AS user, $X::count AS count, $X::delta AS delta;
-
-  w5 = GROUP w4 BY user;
-  $Y = FOREACH w5 GENERATE FLATTEN(group) AS user, SUM(w4.count) AS count, SUM(w4.delta) AS time;
-};
-
-
----------------------------------------------------------------------------------------------
---                             USERS SEGMENT ANALYSIS                                      --
----------------------------------------------------------------------------------------------
-
---------------------------------------------------------------------
--- Caculates the group of records which satisfy given condition and
--- timeframe
---------------------------------------------------------------------
-DEFINE calculateConditionAndDate(X, condition, toDateParam, interval) RETURNS Y {
-    w1 = filterByDateIntervalAfter($X, '$toDateParam', '$interval');
-    w2 = usersByTimeSpent(w1);
-    w3 = FILTER w2 BY $condition;
-    $Y = GROUP w3 ALL;
-};
-
---------------------------------------------------------------------
--- Replaces NULL with 0 
---------------------------------------------------------------------
-DEFINE fixNumbers(X) RETURNS Y {
-    $Y = FOREACH $X GENERATE ($0 IS NULL ? 0 : $0), ($1 IS NULL ? 0 : $1), ($2 IS NULL ? 0 : $2), ($3 IS NULL ? 0 : $3), ($4 IS NULL ? 0 : $4), ($5 IS NULL ? 0 : $5);
-};
-
---------------------------------------------------------------------
--- Caculates the group of records which satisfy given condition
---------------------------------------------------------------------
-DEFINE calculateCondition(X, conditionParam, toDateParam, s) RETURNS Y {
-    z1 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P1D');
-    z7 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P7D');
-    z30 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P30D');
-    z60 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P60D');
-    z90 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P90D');
-    z365 = calculateConditionAndDate($X, '$conditionParam', '$toDateParam', 'P365D');
-    z = FOREACH s GENERATE COUNT(z1.$1), COUNT(z7.$1), COUNT(z30.$1), COUNT(z60.$1), COUNT(z90.$1), COUNT(z365.$1);
-    $Y = fixNumbers(z);
-};
-
 DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
     x1 = filterByEvent($X, '$eventParam');
     x2 = extractParam(x1, 'SESSION-ID', sId);
