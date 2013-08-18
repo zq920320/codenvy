@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CheckLogsJob implements Job, ForceableJobRunByContext {
+public class CheckLogsJob implements Job, ForceableRunJob {
 
     private static final Logger LOGGER                        = LoggerFactory.getLogger(CheckLogsJob.class);
     private static final String CHECKLOGS_PROPERTIES_RESOURCE =

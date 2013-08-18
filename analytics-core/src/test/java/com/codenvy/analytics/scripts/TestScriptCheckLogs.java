@@ -58,9 +58,6 @@ public class TestScriptCheckLogs extends BaseTest {
                 (ListListStringValueData)executeAndReturnResult(ScriptType.CHECK_LOGS_1, log, params);
         assertEquals(value.size(), 3);
 
-        value =
-                (ListListStringValueData)executeAndReturnResult(ScriptType.CHECK_LOGS_2, log, params);
-        assertEquals(value.size(), 25);
-
+        executeAndReturnResult(ScriptType.CHECK_LOGS_2, log, params);
     }
 }

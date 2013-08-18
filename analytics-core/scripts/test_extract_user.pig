@@ -18,6 +18,6 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$log');
+a1 = loadResources('$LOG');
 a2 = extractUser(a1);
 result = FOREACH a2 GENERATE user;

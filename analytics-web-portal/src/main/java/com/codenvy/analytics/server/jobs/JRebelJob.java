@@ -37,7 +37,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class JRebelJob implements Job, ForceableJobRunByContext {
+public class JRebelJob implements Job, ForceableRunJob {
 
     private static final Logger LOGGER                     = LoggerFactory.getLogger(JRebelJob.class);
     private static final String JREBEL_PROPERTIES_RESOURCE = System.getProperty("analytics.job.jrebel.properties");

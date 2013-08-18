@@ -20,7 +20,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -147,7 +146,7 @@ public class TestDataProcessing {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
         MetricParameter.FROM_DATE.put(context, date.replace("-", ""));
         MetricParameter.TO_DATE.put(context, date.replace("-", ""));
 
@@ -165,7 +164,7 @@ public class TestDataProcessing {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
         MetricParameter.FROM_DATE.put(context, date.replace("-", ""));
         MetricParameter.TO_DATE.put(context, date.replace("-", ""));
 
@@ -182,7 +181,7 @@ public class TestDataProcessing {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> context = new HashMap<>();
-        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
         MetricParameter.FROM_DATE.put(context, date.replace("-", ""));
         MetricParameter.TO_DATE.put(context, date.replace("-", ""));
 

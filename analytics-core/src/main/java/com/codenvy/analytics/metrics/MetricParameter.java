@@ -31,6 +31,7 @@ public enum MetricParameter {
     FIELD,
     PARAM,
     ALIAS,
+    LOG,
     LOAD_DIR,
     STORE_DIR,
 

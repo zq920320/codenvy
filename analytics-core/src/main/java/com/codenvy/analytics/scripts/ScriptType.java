@@ -507,8 +507,7 @@ public enum ScriptType {
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.LOAD_DIR,
-                    MetricParameter.PARAM,
-                    MetricParameter.TO_DATE}));
+                    MetricParameter.PARAM}));
         }
 
         @Override
@@ -523,8 +522,7 @@ public enum ScriptType {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.LOAD_DIR,
                     MetricParameter.PARAM,
-                    MetricParameter.FIELD,
-                    MetricParameter.TO_DATE}));
+                    MetricParameter.FIELD}));
         }
 
         @Override
@@ -543,8 +541,7 @@ public enum ScriptType {
         public Set<MetricParameter> getParams() {
             return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
                     MetricParameter.LOAD_DIR,
-                    MetricParameter.PARAM,
-                    MetricParameter.TO_DATE}));
+                    MetricParameter.PARAM}));
         }
 
         @Override
@@ -642,9 +639,8 @@ public enum ScriptType {
         return new MetricParameter[0];
     }
 
-    public boolean isLogRequired() { // TODO
+    /** @return true if script requires {@link MetricParameter#LOG} to be  executed. */
+    public boolean isLogRequired() {
         return true;
     }
-
-    // TODO toDATE mandatory?
 }

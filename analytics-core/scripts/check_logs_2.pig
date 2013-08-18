@@ -32,7 +32,7 @@ DEFINE checkEventAndParam(X, S, eventParam, paramName, paramValue) RETURNS Y {
     $Y = FOREACH $S GENERATE CONCAT(CONCAT(CONCAT(CONCAT('$eventParam', ':'), '$paramName'), ':'), '$paramValue') AS event,  (COUNT(w4.$1) > 0 ? 'generated' : NULL) AS status;
 };
 
-l1 = loadResources('$log');
+l1 = loadResources('$LOG');
 lR = filterByDate(l1, '$FROM_DATE', '$TO_DATE');
 
 s1 = GROUP lR ALL;
@@ -60,8 +60,29 @@ r16 = checkEvent(lR, s, 'user-created');
 r17 = checkEvent(lR, s, 'user-removed');
 
 r18 = checkEvent(lR, s, 'shell-launched');
+r19 = checkEvent(lR, s, 'user-code-refactor');
+r20 = checkEvent(lR, s, 'user-code-complete');
+r21 = checkEvent(lR, s, 'file-manipulation');
 
-a1 = UNION r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18;
+r22 = checkEvent(lR, s, 'build-started');
+r23 = checkEvent(lR, s, 'build-finished');
+r24 = checkEvent(lR, s, 'run-started');
+r25 = checkEvent(lR, s, 'run-finished');
+r26 = checkEvent(lR, s, 'debug-started');
+r27 = checkEvent(lR, s, 'debug-finished');
+
+r28 = checkEvent(lR, s, 'session-started');
+r29 = checkEvent(lR, s, 'session-finished');
+
+r30 = checkEvent(lR, s, 'factory-url-accepted');
+r31 = checkEvent(lR, s, 'user-changed-name');
+r32 = checkEvent(lR, s, 'factory-created');
+r33 = checkEvent(lR, s, 'session-factory-started');
+r34 = checkEvent(lR, s, 'session-factory-stopped');
+r35 = checkEvent(lR, s, 'factory-project-imported');
+
+a1 = UNION r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21,
+            r22, r23, r24, r25, r26, r27, r28, r29, r30, r31, r32, r33, r34, r35;
 a2 = FILTER a1 BY status IS NULL;
 a = FOREACH a2 GENERATE event;
 

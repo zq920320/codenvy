@@ -24,7 +24,6 @@ import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -53,7 +52,7 @@ public class TestScriptUsersByCompany extends BaseTest {
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.FROM_DATE.name(), "20130101");
         context.put(MetricParameter.TO_DATE.name(), "20130101");
-        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
 
         DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);
 
@@ -66,7 +65,7 @@ public class TestScriptUsersByCompany extends BaseTest {
 
         context.put(MetricParameter.FROM_DATE.name(), "20130102");
         context.put(MetricParameter.TO_DATE.name(), "20130102");
-        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
 
         DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);
 

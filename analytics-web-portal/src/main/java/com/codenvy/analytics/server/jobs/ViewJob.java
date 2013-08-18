@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ViewJob implements Job, ForceableRunOnceJob {
+public class ViewJob implements Job {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ViewJob.class);
 
@@ -43,11 +43,6 @@ public class ViewJob implements Job, ForceableRunOnceJob {
             LOGGER.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
-    }
-
-    /** {@inheritDoc} */
-    public void forceRun() throws Exception {
-        run();
     }
 
     private void run() throws Exception {

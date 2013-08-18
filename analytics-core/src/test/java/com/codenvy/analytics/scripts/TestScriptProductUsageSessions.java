@@ -111,6 +111,8 @@ public class TestScriptProductUsageSessions extends BaseTest {
                 Event.Builder.createSessionFinishedEvent("user15@gmail.com", "ws1", "ide", "5").withDate("2013-01-01")
                      .withTime("21:00:00").build());
 
+
+
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<>();

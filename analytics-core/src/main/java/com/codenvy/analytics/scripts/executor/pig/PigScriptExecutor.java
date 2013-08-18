@@ -26,17 +26,13 @@ import com.codenvy.analytics.metrics.value.ValueDataFactory;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.pig.ExecType;
 import org.apache.pig.PigServer;
-import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,13 +59,6 @@ public class PigScriptExecutor implements ScriptExecutor {
     /** The value of {@value #ANALYTICS_LOGS_DIRECTORY_PROPERTY} runtime parameter. */
     public static final String LOGS_DIRECTORY = System.getProperty(ANALYTICS_LOGS_DIRECTORY_PROPERTY);
 
-    /**
-     * Parameter name in Pig script contains the resources are needed to be inspected. Can be either the name of single
-     * resource (file or
-     * directory) or the list of comma separated resources. Wildcard characters are supported.
-     */
-    public static final String LOG = "log";
-
     /** Pig relation containing execution result. */
     private final String FINAL_RELATION = "result";
 
@@ -86,15 +75,15 @@ public class PigScriptExecutor implements ScriptExecutor {
         context = Utils.clone(context);
         validateParameters(scriptType, context);
 
-        if (!isExecutionAllowed(context)) {
-            return ValueDataFactory
-                    .createValueData(scriptType.getValueDataClass(), Collections.<Tuple>emptyList().iterator());
-        }
+        String path;
+        if (scriptType.isLogRequired()) {
+            path = MetricParameter.LOG.exists(context) ? MetricParameter.LOG.get(context) : getOptimizedPaths(context);
 
-        String path = getInspectedPaths(context);
-        if (path.isEmpty() && scriptType.isLogRequired()) {
-            return ValueDataFactory
-                    .createValueData(scriptType.getValueDataClass(), Collections.<Tuple>emptyList().iterator());
+            if (path.isEmpty()) {
+                return ValueDataFactory.createDefaultValue(scriptType.getValueDataClass());
+            }
+        } else {
+            path = MetricParameter.LOAD_DIR.get(context);
         }
 
         try (InputStream scriptContent = readScriptContent(scriptType)) {
@@ -114,14 +103,6 @@ public class PigScriptExecutor implements ScriptExecutor {
         }
     }
 
-    /** @return if it is allowed to execute query. */
-    protected boolean isExecutionAllowed(Map<String, String> context) throws IOException {
-        Calendar toDate = Utils.getToDate(context);
-        Calendar currentDate = DateUtils.truncate(Calendar.getInstance(), Calendar.DAY_OF_MONTH);
-
-        return currentDate.after(toDate);
-    }
-
     /** Checks if all parameters that are needed to script execution have been added to context; */
     private void validateParameters(ScriptType scriptType, Map<String, String> context) throws IOException {
         for (MetricParameter param : scriptType.getParams()) {
@@ -132,10 +113,16 @@ public class PigScriptExecutor implements ScriptExecutor {
             param.validate(param.get(context), context);
         }
 
-        if (MetricParameter.TO_DATE.exists(context) && MetricParameter.FROM_DATE.exists(context) &&
-            !MetricParameter.TO_DATE.get(context).equals(MetricParameter.FROM_DATE.get(context))) {
-
-            throw new IllegalStateException("The date params are different");
+        if (MetricParameter.LOG.exists(context)) {
+            // Log is set explicitly [test cases perhaps]
+        } else if (MetricParameter.LOAD_DIR.exists(context)) {
+            // load directory is set
+        } else {
+            if (!MetricParameter.TO_DATE.exists(context) || !MetricParameter.FROM_DATE.exists(context)) {
+                throw new IllegalStateException("Date parameters are absent in context");
+            } else if (!MetricParameter.TO_DATE.get(context).equals(MetricParameter.FROM_DATE.get(context))) {
+                throw new IllegalStateException("The date params are different");
+            }
         }
     }
 
@@ -151,35 +138,16 @@ public class PigScriptExecutor implements ScriptExecutor {
      * @throws IOException
      *         if any exception is occurred
      */
-    private String getInspectedPaths(Map<String, String> context) throws IOException {
-        String path = context.get(LOG);
-
-        if (path == null) {
-            try {
-                path = LOGS_DIRECTORY;
-
-                if (MetricParameter.FROM_DATE.exists(context) && MetricParameter.TO_DATE.exists(context)) {
-                    path =
-                            LogLocationOptimizer.generatePaths(LOGS_DIRECTORY,
-                                                               MetricParameter.FROM_DATE.get(context),
-                                                               MetricParameter.TO_DATE.get(context));
-                } else if (MetricParameter.TO_DATE.exists(context)) {
-                    path =
-                            LogLocationOptimizer
-                                    .generatePaths(LOGS_DIRECTORY,
-                                                   MetricParameter.FROM_DATE.getDefaultValue(),
-                                                   MetricParameter.TO_DATE.get(context));
-                }
-            } catch (IllegalStateException | ParseException e) {
-                throw new IOException(e);
-            }
+    private String getOptimizedPaths(Map<String, String> context) throws IOException {
+        try {
+            String path = LogLocationOptimizer.generatePaths(LOGS_DIRECTORY,
+                                                             MetricParameter.FROM_DATE.get(context),
+                                                             MetricParameter.TO_DATE.get(context));
+            MetricParameter.LOG.put(context, path);
+            return path;
+        } catch (ParseException e) {
+            throw new IOException(e);
         }
-
-        if (!path.isEmpty()) {
-            context.put(LOG, path);
-        }
-
-        return path;
     }
 
     /** Reads script from file. */
@@ -260,5 +228,4 @@ public class PigScriptExecutor implements ScriptExecutor {
         byte[] bytes = getStreamContentAsBytes(is);
         return new String(bytes, "UTF-8");
     }
-
 }

@@ -24,7 +24,6 @@ import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -64,7 +63,7 @@ public class TestScriptEntityByFactoryUrl extends BaseTest {
         Map<String, String> context = Utils.newContext();
         context.put(MetricParameter.FROM_DATE.name(), "20130101");
         context.put(MetricParameter.TO_DATE.name(), "20130101");
-        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
 
         MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_CREATED));
         MetricParameter.STORE_DIR.put(context, Utils.getStoreDirFor(MetricType.FACTORY_CREATED));

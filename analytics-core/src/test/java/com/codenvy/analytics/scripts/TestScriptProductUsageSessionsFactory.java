@@ -43,9 +43,9 @@ public class TestScriptProductUsageSessionsFactory extends BaseTest {
     public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user", "true", "brType", "brVer")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user", "true", "brType")
                         .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user", "true", "brType", "brVer")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user", "true", "brType")
                         .withDate("2013-02-10").withTime("10:00:00").build());
 
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user")

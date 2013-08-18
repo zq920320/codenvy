@@ -42,7 +42,7 @@ public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
     public void testEventFound() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType", "brVer")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
                         .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user1", "tmp-1", "", "project", "type")
                         .withDate("2013-02-10").withTime("10:01:00").build());
@@ -51,27 +51,27 @@ public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1")
                         .withDate("2013-02-10").withTime("10:05:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user2", "true", "brType", "brVer")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user2", "true", "brType")
                         .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user2")
                         .withDate("2013-02-10").withTime("11:05:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id22", "tmp-22", "user22", "true", "brType", "brVer")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id22", "tmp-22", "user22", "true", "brType")
                         .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id22", "tmp-22", "user22")
                         .withDate("2013-02-10").withTime("11:05:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id33", "tmp-33", "user33", "true", "brType", "brVer")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id33", "tmp-33", "user33", "true", "brType")
                         .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id33", "tmp-33", "user33")
                         .withDate("2013-02-10").withTime("11:05:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "user3", "true", "brType", "brVer")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "user3", "true", "brType")
                         .withDate("2013-02-10").withTime("12:00:00").build());
         events.add(Event.Builder.createProjectDeployedEvent("user3", "tmp-3", "", "project", "type", "paas")
                         .withDate("2013-02-10").withTime("12:02:00").build());
 
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id4", "tmp-4", "user4", "true", "brType", "brVer")
+        events.add(Event.Builder.createSessionFactoryStartedEvent("id4", "tmp-4", "user4", "true", "brType")
                         .withDate("2013-02-10").withTime("13:00:00").build());
 
         events.add(Event.Builder.createApplicationCreatedEvent("user5", "tmp-5", "", "project", "type", "paas")

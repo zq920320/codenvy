@@ -18,7 +18,7 @@
 
  IMPORT 'macros.pig';
 
-f1 = loadResources('$log');
+f1 = loadResources('$LOG');
 f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 fR = filterByEvent(f2, 'jrebel-user-profile-info');
 

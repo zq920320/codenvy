@@ -20,7 +20,6 @@
 package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 import com.codenvy.analytics.shared.TableData;
@@ -42,7 +41,7 @@ public class TestFactoryUrlTimeLineService {
     @BeforeTest
     public void setUp() throws Exception {
         Map<String, String> context = Utils.initializeContext(TimeUnit.LIFETIME);
-        context.put(PigScriptExecutor.LOG, preapreLogs().getAbsolutePath());
+        MetricParameter.LOG.put(context, preapreLogs().getAbsolutePath());
         MetricParameter.TO_DATE.put(context, "20130210");
         MetricParameter.FROM_DATE.put(context, "20130210");
 

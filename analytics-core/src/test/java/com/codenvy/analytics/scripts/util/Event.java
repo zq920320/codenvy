@@ -261,15 +261,13 @@ public class Event {
                                                                String tempWs,
                                                                String tempUser,
                                                                String auth,
-                                                               String browserType,
-                                                               String browserVer) {
+                                                               String userAgent) {
             return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_STARTED.toString())
                                 .withParam("SESSION-ID", sessionId)
                                 .withParam("WS", tempWs)
                                 .withParam("USER", tempUser)
                                 .withParam("AUTHENTICATED", auth)
-                                .withParam("BROWSER-TYPE", browserType)
-                                .withParam("BROWSER-VER", browserVer);
+                                .withParam("USER-AGENT", userAgent);
 
         }
 

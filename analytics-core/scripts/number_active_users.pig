@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$log');
+f1 = loadResources('$LOG');
 f2 = filterByEvent(f1, '$EVENT');
 f = filterByDate(f2, '$FROM_DATE', '$TO_DATE');
 

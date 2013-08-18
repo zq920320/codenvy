@@ -20,7 +20,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -54,7 +53,7 @@ public class TestProductUsageTimeMetric {
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
-        context.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
         MetricParameter.FROM_DATE.put(context, "20130109");
         MetricParameter.TO_DATE.put(context, "20130109");
 

@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActOnJob implements Job, ForceableRunOnceJob {
+public class ActOnJob implements Job {
     public static final String FILE_NAME = "ideuserupdate.csv";
 
     private static final String FTP_PASSWORD_PARAM    = "ftp_password";
@@ -257,11 +257,5 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
     private void writeHeaders(BufferedWriter out) throws IOException {
         out.write("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime");
         out.newLine();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void forceRun() throws Exception {
-        run();
     }
 }

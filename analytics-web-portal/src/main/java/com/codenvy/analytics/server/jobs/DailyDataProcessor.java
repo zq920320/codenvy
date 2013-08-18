@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class DailyDataProcessor implements Job, ForceableJobRunByContext {
+public class DailyDataProcessor implements Job, ForceableRunJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DailyDataProcessor.class);
 

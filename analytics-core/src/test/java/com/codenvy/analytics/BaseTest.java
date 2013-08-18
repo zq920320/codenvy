@@ -52,7 +52,7 @@ public class BaseTest {
 
     protected ValueData executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
                                                                                                            throws IOException {
-        executionParams.put(PigScriptExecutor.LOG, log.getAbsolutePath());
+        MetricParameter.LOG.put(executionParams, log.getAbsolutePath());
         PigScriptExecutor scriptExecutor = new PigScriptExecutor();
 
         return scriptExecutor.executeAndReturn(type, executionParams);

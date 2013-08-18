@@ -23,7 +23,6 @@ import com.codenvy.analytics.metrics.DataProcessing;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -50,7 +49,7 @@ public class TestActOnJob {
         context = Utils.newContext();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
-        context.put(PigScriptExecutor.LOG, file.getAbsolutePath());
+        MetricParameter.LOG.put(context, file.getAbsolutePath());
 
         DataProcessing.calculateAndStore(MetricType.ACTIVE_USERS_SET, context);
         DataProcessing.calculateAndStore(MetricType.PROJECT_CREATED, context);

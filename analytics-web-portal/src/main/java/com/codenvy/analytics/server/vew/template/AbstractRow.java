@@ -89,18 +89,19 @@ public abstract class AbstractRow implements Row {
                                       Table.TimeIntervalRule overrideContextRule) throws Exception {
         RowData row = new RowData();
 
-        row.add(doRetrieve(context, 0)); // TODO title
+        addTitle(context, row);
 
-        if (columnsCount > 1) {
-            row.add(doRetrieve(context, 1)); // TODO first day
-        }
-
+        row.add(doRetrieve(context, 1));
         for (int i = 2; i < columnsCount; i++) {
-            context = prevDateInterval(context, overrideContextRule); // TODO prev day
+            context = prevDateInterval(context, overrideContextRule);
             row.add(doRetrieve(context, i));
         }
 
         return new ArrayList<>(Arrays.asList(row));
+    }
+
+    private void addTitle(Map<String, String> context, RowData row) throws IOException {
+        row.add(doRetrieve(context, 0));
     }
 
     protected abstract String doRetrieve(Map<String, String> context, int columnNumber) throws IOException;

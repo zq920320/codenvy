@@ -34,10 +34,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.Calendar;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class JobsRunner implements ServletContextListener {
@@ -48,7 +46,7 @@ public class JobsRunner implements ServletContextListener {
     private static final String CRON_TIMETABLE                     = "0 0 14 ? * *"; // TODO
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
-    private static final String FORCE_RUN_CONDITION_ONCE    = "ONCE";
+    private static final String FORCE_RUN_CONDITION_RERUN   = "RERUN";
     private static final String FORCE_RUN_CONDITION_LASTDAY = "LASTDAY";
 
     private Scheduler scheduler;
@@ -89,12 +87,16 @@ public class JobsRunner implements ServletContextListener {
                             executeLastDay(job);
                             break;
 
-                        case FORCE_RUN_CONDITION_ONCE:
-                            executeOnce(job);
-                            break;
-
                         case FORCE_RUN_CONDITION_ALLTIME:
                             executeAllTime(job);
+                            break;
+
+                        case FORCE_RUN_CONDITION_RERUN:
+                            job.execute(null);
+                            break;
+
+                        default:
+                            executeSpecificPeriod(job, forceRunCondition);
                             break;
                     }
                 }
@@ -104,32 +106,48 @@ public class JobsRunner implements ServletContextListener {
         }
     }
 
+    private void executeSpecificPeriod(Job job, String forceRunCondition) throws Exception {
+        if (job instanceof ForceableRunJob) {
+            if (forceRunCondition.contains(",")) {
+                String[] dates = forceRunCondition.split(",");
+                execute(job, dates[0], dates[1]);
+            } else {
+                execute(job, forceRunCondition, forceRunCondition);
+            }
+        }
+    }
+
     private void executeAllTime(Job job) throws Exception {
-        if (job instanceof ForceableJobRunByContext) {
+        if (job instanceof ForceableRunJob) {
+            execute(job, MetricParameter.FROM_DATE.getDefaultValue(), MetricParameter.TO_DATE.getDefaultValue());
+        }
+    }
+
+    private void execute(Job job, String fromDateParam, String toDateParam) throws Exception {
+        if (job instanceof ForceableRunJob) {
             Map<String, String> context = Utils.newContext();
-            MetricParameter.FROM_DATE.putDefaultValue(context);
-            MetricParameter.TO_DATE.put(context, MetricParameter.FROM_DATE.getDefaultValue());
+
+            Calendar fromDate = Utils.parseDate(fromDateParam);
+            Calendar toDate = Utils.parseDate(toDateParam);
+
+            if (fromDate.after(toDate)) {
+                throw new IllegalStateException("FROM_DATE parameter is bigger than TO_DATE parameter");
+            }
+
+            Utils.putFromDate(context, fromDate);
+            Utils.putToDate(context, toDate);
             MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
 
             do {
-                ((ForceableJobRunByContext)job).forceRun(context);
+                ((ForceableRunJob)job).forceRun(context);
                 context = Utils.nextDateInterval(context);
-            } while (!MetricParameter.TO_DATE.get(context).equals(MetricParameter.TO_DATE.getDefaultValue()));
-
-            executeLastDay(job);
+            } while (!fromDate.after(toDate));
         }
     }
 
     private void executeLastDay(Job job) throws Exception {
-        if (job instanceof ForceableJobRunByContext) {
-            Map<String, String> context = Utils.initializeContext(TimeUnit.DAY);
-            ((ForceableJobRunByContext)job).forceRun(context);
-        }
-    }
-
-    private void executeOnce(Job job) throws Exception {
-        if (job instanceof ForceableRunOnceJob) {
-            ((ForceableRunOnceJob)job).forceRun();
+        if (job instanceof ForceableRunJob) {
+            execute(job, MetricParameter.TO_DATE.getDefaultValue(), MetricParameter.TO_DATE.getDefaultValue());
         }
     }
 

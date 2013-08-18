@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$log');
+f1 = loadResources('$LOG');
 f = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 
 a1 = extractUser(f);

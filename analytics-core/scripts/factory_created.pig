@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$log');
+a1 = loadResources('$LOG');
 a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
 a3 = filterByEvent(a2, 'factory-created');
 a4 = extractWs(a3);
