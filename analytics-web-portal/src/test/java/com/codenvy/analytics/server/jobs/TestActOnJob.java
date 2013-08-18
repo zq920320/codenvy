@@ -19,7 +19,9 @@
 
 package com.codenvy.analytics.server.jobs;
 
+import com.codenvy.analytics.metrics.DataProcessing;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 import com.codenvy.analytics.scripts.util.Event;
@@ -29,10 +31,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestActOnJob {
@@ -41,25 +44,19 @@ public class TestActOnJob {
     private Map<String, String> context;
 
     @BeforeMethod
-    private void setUp() throws IOException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
-
-        String date = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
-        File file = prepareLog(date);
-
-        System.setProperty(PigScriptExecutor.ANALYTICS_LOGS_DIRECTORY_PROPERTY, file.getParent());
-
-        Map<String, String> attributes = new HashMap<String, String>();
-        attributes.put("firstName", "Chuck");
-        attributes.put("lastName", "Norris");
-        attributes.put("phone", "00000000");
-        attributes.put("employer", "Eath");
+    private void setUp() throws Exception {
+        File file = prepareLog();
 
         context = Utils.newContext();
-        context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
-        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
         context.put(PigScriptExecutor.LOG, file.getAbsolutePath());
+
+        DataProcessing.calculateAndStore(MetricType.ACTIVE_USERS_SET, context);
+        DataProcessing.calculateAndStore(MetricType.PROJECT_CREATED, context);
+        DataProcessing.calculateAndStore(MetricType.USER_BUILT, context);
+        DataProcessing.calculateAndStore(MetricType.USER_DEPLOY, context);
+        DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_SESSIONS, context);
 
         job = spy(new ActOnJob(null));
         doNothing().when(job).writeUserProfileAttributes(any(BufferedWriter.class), any(String.class));
@@ -67,21 +64,20 @@ public class TestActOnJob {
 
     @Test
     public void testPrepareFile() throws Exception {
-//        File jobFile = job.prepareFile(context);
-//        assertEquals(jobFile.getName(), ActOnJob.FILE_NAME);
-//
-//        Set<String> content = read(jobFile);
+        File jobFile = job.prepareFile(context);
+        assertEquals(jobFile.getName(), ActOnJob.FILE_NAME);
 
-//        assertEquals(content.size(), 4);
-//        assertTrue(content.contains("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime"));
-//        assertTrue(content.contains("2,0,0,15"));
-//        assertTrue(content.contains("1,2,1,30"));
-//        assertTrue(content.contains("0,1,1,20"));
+        Set<String> content = read(jobFile);
+
+        assertEquals(content.size(), 4);
+        assertTrue(content.contains("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime"));
+        assertTrue(content.contains("2,0,0,15"));
+        assertTrue(content.contains("1,2,1,30"));
+        assertTrue(content.contains("0,1,1,20"));
     }
 
-
     private Set<String> read(File jobFile) throws IOException {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
 
         BufferedReader reader = new BufferedReader(new FileReader(jobFile));
         try {
@@ -96,38 +92,38 @@ public class TestActOnJob {
         return result;
     }
 
-    private File prepareLog(String date) throws IOException {
-        List<Event> events = new ArrayList<Event>();
+    private File prepareLog() throws IOException {
+        List<Event> events = new ArrayList<>();
 
         // active users [user1, user2, user3]
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withTime("09:00:00").withDate(date).build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withTime("09:00:00").withDate(date).build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withTime("09:00:00").withDate(date).build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withTime("09:00:00").withDate("2013-01-01")
+                        .build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withTime("09:00:00").withDate("2013-01-01")
+                        .build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withTime("09:00:00").withDate("2013-01-01")
+                        .build());
 
         // projects created
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate(date)
-                        .withTime("10:00:00")
-                        .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate(date)
-                        .withTime("10:05:00")
-                        .build());
-        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate(date)
-                        .withTime("10:00:00")
-                        .build());
+        events.add(
+                Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate("2013-01-01")
+                     .withTime("10:00:00").build());
+        events.add(
+                Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate("2013-01-01")
+                     .withTime("10:05:00").build());
+        events.add(
+                Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate("2013-01-01")
+                     .withTime("10:00:00").build());
 
         // projects built
         events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withTime("10:06:00")
-                        .withDate(date)
-                        .build());
+                        .withDate("2013-01-01").build());
 
 
         // projects deployed
         events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
-                        .withTime("10:10:00")
-                        .withDate(date).build());
+                        .withTime("10:10:00").withDate("2013-01-01").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2")
-                        .withTime("10:00:00")
-                        .withDate(date).build());
+                        .withTime("10:00:00").withDate("2013-01-01").build());
 
         return LogGenerator.generateLog(events);
     }

@@ -29,7 +29,7 @@ a9 = extractParam(a8, 'REPO-URL', 'repoUrl');
 a10 = extractParam(a9, 'FACTORY-URL', 'factoryUrl');
 
 a = FOREACH a10 GENERATE ws, user, project, type, repoUrl, factoryUrl;
-b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : bytearray, user : bytearray, project : bytearray, type : bytearray, repoUrl : bytearray, factoryUrl : bytearray);
+b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, user : chararray, project : chararray, type : chararray, repoUrl : chararray, factoryUrl : chararray);
 
 c1 = UNION a, b;
 c = DISTINCT c1;

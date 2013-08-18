@@ -25,7 +25,7 @@ f = filterByDate(f2, '$FROM_DATE', '$TO_DATE');
 a1 = extractUser(f);
 a = FOREACH a1 GENERATE user;
 
-b = LOAD '$LOAD_DIR' USING PigStorage() AS (user : bytearray);
+b = LOAD '$LOAD_DIR' USING PigStorage() AS (user : chararray);
 
 c1 = UNION a, b;
 c = DISTINCT c1;

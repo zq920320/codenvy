@@ -31,6 +31,8 @@ public enum MetricParameter {
     FIELD,
     PARAM,
     ALIAS,
+    LOAD_DIR,
+    STORE_DIR,
 
     TIME_UNIT {
         @Override
@@ -47,7 +49,7 @@ public enum MetricParameter {
     FROM_DATE {
         @Override
         public String getDefaultValue() {
-            return "20120101";
+            return "20120201";
         }
 
         @Override
@@ -82,18 +84,6 @@ public enum MetricParameter {
             throw new IllegalArgumentException("The illegal ENTITY parameter value " + value);
         }
     },
-
-    RESULT_DIR { // TODO remove
-
-        @Override
-        public String getDefaultValue() {
-            return null;
-        }
-    },
-
-    LOAD_DIR,
-    STORE_DIR,
-
     TO_DATE {
         @Override
         public String getDefaultValue() {

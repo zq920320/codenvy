@@ -18,6 +18,8 @@
 
 package com.codenvy.analytics.metrics;
 
+import java.util.Map;
+
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
@@ -28,5 +30,15 @@ public enum MetricFilter {
     FILTER_PROJECT_TYPE,
     FILTER_COMPANY,
     FILTER_REPO_URL,
-    FILTER_FACTORY_URL
+    FILTER_FACTORY_URL;
+
+    /** Puts value into execution context */
+    public void put(Map<String, String> context, String value) {
+        context.put(this.name(), value);
+    }
+
+    /** Gets value from execution context */
+    public String get(Map<String, String> context) {
+        return context.get(this.name());
+    }
 }

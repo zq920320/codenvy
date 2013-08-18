@@ -39,9 +39,7 @@ public abstract class AbstractMetric implements Metric {
             String paramKey = param.name();
             String paramValue = context.get(paramKey);
 
-            if (paramKey.equals(MetricParameter.RESULT_DIR.name())) {
-                continue;
-            } else if (paramValue == null) {
+            if (paramValue == null) {
                 throw new IOException("There is no parameter " + paramKey + " in context");
             }
 

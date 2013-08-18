@@ -45,7 +45,7 @@ public class JobsRunner implements ServletContextListener {
     private static final Logger LOGGER                             = LoggerFactory.getLogger(JobsRunner.class);
     private static final String ANALYTICS_FORCE_RUN_JOBS_CONDITION = "analytics.force.run.jobs.condition";
     private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS     = "analytics.force.run.jobs.class";
-    private static final String CRON_TIMETABLE                     = "0 0 1 ? * *";
+    private static final String CRON_TIMETABLE                     = "0 0 14 ? * *"; // TODO
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
     private static final String FORCE_RUN_CONDITION_ONCE    = "ONCE";
@@ -108,7 +108,7 @@ public class JobsRunner implements ServletContextListener {
         if (job instanceof ForceableJobRunByContext) {
             Map<String, String> context = Utils.newContext();
             MetricParameter.FROM_DATE.putDefaultValue(context);
-            MetricParameter.TO_DATE.putDefaultValue(context);
+            MetricParameter.TO_DATE.put(context, MetricParameter.FROM_DATE.getDefaultValue());
             MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
 
             do {
@@ -142,9 +142,9 @@ public class JobsRunner implements ServletContextListener {
 
             addJobDetail(DailyDataProcessor.class, jobDetails);
             addJobDetail(ViewJob.class, jobDetails);
-            addJobDetail(ActOnJob.class, jobDetails);
-            addJobDetail(JRebelJob.class, jobDetails);
-            addJobDetail(CheckLogsJob.class, jobDetails);
+//            addJobDetail(ActOnJob.class, jobDetails); TODO
+//            addJobDetail(JRebelJob.class, jobDetails);
+//            addJobDetail(CheckLogsJob.class, jobDetails);
 
             scheduleJobs(jobDetails);
             ensureRunOrder(jobDetails);

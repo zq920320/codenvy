@@ -18,8 +18,7 @@
 
 IMPORT 'macros.pig';
 
-l = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : bytearray, user : bytearray, project : bytearray, type : bytearray, repoUrl : bytearray, factoryUrl : bytearray);
-
-r1 = FILTER l BY $FIELD == '$PARAM';
+l = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, user : chararray, project : chararray, type : chararray, repoUrl : chararray, factoryUrl : chararray);
+r1 = FILTER l BY INDEXOF('$PARAM', $FIELD, 0) >= 0;
 r2 = FOREACH r1 GENERATE factoryUrl;
 result = DISTINCT r2;

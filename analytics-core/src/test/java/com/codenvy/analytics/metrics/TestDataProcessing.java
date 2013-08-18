@@ -200,6 +200,6 @@ public class TestDataProcessing {
     private String getBaseDir(MetricType metricType, String date) {
         return FSValueDataManager.RESULT_DIRECTORY + File.separator +
                metricType.name().toLowerCase() + File.separator +
-               date.replaceFirst("-", File.separator).replace("-", "") + File.separator;
+               date.replace("-", File.separator) + File.separator;
     }
 }

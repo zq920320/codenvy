@@ -62,27 +62,27 @@ public class UsersProfileMetric extends ValueReadBasedMetric {
         return ListListStringValueData.class;
     }
 
-    protected String getEmail(ListListStringValueData data) {
+    public String getEmail(ListListStringValueData data) {
         return getItem(data, 0);
     }
 
-    protected String getFirstName(ListListStringValueData data) {
+    public String getFirstName(ListListStringValueData data) {
         return getItem(data, 1);
     }
 
-    protected String getLastName(ListListStringValueData data) {
+    public String getLastName(ListListStringValueData data) {
         return getItem(data, 2);
     }
 
-    protected String getCompany(ListListStringValueData data) {
+    public String getCompany(ListListStringValueData data) {
         return getItem(data, 3);
     }
 
-    protected String getPhone(ListListStringValueData data) {
+    public String getPhone(ListListStringValueData data) {
         return getItem(data, 4);
     }
 
-    protected String getJob(ListListStringValueData data) {
+    public String getJob(ListListStringValueData data) {
         return getItem(data, 5);
     }
 

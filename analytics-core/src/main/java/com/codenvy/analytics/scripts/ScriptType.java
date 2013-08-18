@@ -467,15 +467,6 @@ public enum ScriptType {
         }
     },
 
-    ACTON {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.RESULT_DIR,
-                    MetricParameter.TO_DATE}));
-        }
-    },
-
     USERS_PROFILE_PREPARATION {
         @Override
         public Class<? extends ValueData> getValueDataClass() {

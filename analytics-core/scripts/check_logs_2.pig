@@ -16,7 +16,7 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
 DEFINE checkEvent(X, S, eventParam) RETURNS Y {
     x1 = filterByEvent($X, '$eventParam');

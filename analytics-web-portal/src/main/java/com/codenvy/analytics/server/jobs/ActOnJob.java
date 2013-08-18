@@ -20,9 +20,8 @@
 package com.codenvy.analytics.server.jobs;
 
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.server.service.MailService;
 
@@ -36,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.SocketTimeoutException;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -168,94 +166,80 @@ public class ActOnJob implements Job, ForceableRunOnceJob {
     }
 
     protected File prepareFile(Map<String, String> context) throws IOException {
-        MetricParameter.RESULT_DIR.put(context, FSValueDataManager.RESULT_DIRECTORY);
-
         File file = new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
+
+        SetStringValueData users =
+                (SetStringValueData)MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET).getValue(context);
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeaders(out);
 
-            ListListStringValueData valueData = (ListListStringValueData)runScript(context);
-            for (ListStringValueData item : valueData.getAll()) {
-                String user = item.getAll().get(0);
-
+            for (String user : users.getAll()) {
                 try {
                     writeUserProfileAttributes(out, user);
                 } catch (Exception e) {
-                    LOGGER.warn("There is no information about " + user);
+                    LOGGER.warn(user + " is absent. May be it was removed.");
                     continue;
                 }
 
-                writeMetricsValues(out, item);
+                writeMetricsValues(out, user);
             }
         }
 
         return file;
     }
 
-    private ValueData runScript(Map<String, String> context) throws IOException {
-//        File srcDir = new File(Utils.getResultDir(context), "ACTON");
-//        File destDir = new File(Utils.getResultDir(context), "PREV_ACTON");
-//
-//        if (destDir.exists()) {
-//            FileUtils.deleteDirectory(destDir);
-//        }
-//
-//        if (srcDir.exists()) {
-//            FileUtils.moveDirectory(srcDir, destDir);
-//        } else {
-//            destDir.mkdirs();
-//            File.createTempFile("prefix", "suffix", destDir);
-//        }
-//
-//        return ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.ACTON, context);
-        // TODO
-        return  null;
-    }
-
+    /** Initialize context for whole period. */
     protected Map<String, String> initializeContext() throws IOException {
         Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());
-//        Utils.putResultDir(context, FSValueDataManager.RESULT_DIRECTORY); TODO
+        MetricParameter.FROM_DATE.putDefaultValue(context);
+        MetricParameter.TO_DATE.putDefaultValue(context);
 
         return context;
     }
 
-    private void writeMetricsValues(BufferedWriter out, ListStringValueData item) throws IOException {
-        List<String> all = item.getAll();
-        for (int i = 1; i < all.size(); i++) { // skip email
-            out.write(all.get(i));
+    private void writeMetricsValues(BufferedWriter out, String user) throws IOException {
+        Map<String, String> context = initializeContext();
+        MetricFilter.FILTER_USER.put(context, user);
 
-            if (i < all.size() - 1) {
-                out.write(",");
-            }
-        }
+        ValueData value = MetricFactory.createMetric(MetricType.PROJECT_CREATED).getValue(context);
+        out.write(value.toString());
+        out.write(",");
+
+        value = MetricFactory.createMetric(MetricType.USER_BUILT).getValue(context);
+        out.write(value.toString());
+        out.write(",");
+
+        value = MetricFactory.createMetric(MetricType.USER_DEPLOY).getValue(context);
+        out.write(value.toString());
+        out.write(",");
+
+        value = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_TOTAL).getValue(context);
+        out.write(value.toString());
 
         out.newLine();
     }
 
     protected void writeUserProfileAttributes(BufferedWriter out, String user) throws IOException {
-        Map<String, String> context = Utils.newContext();
-        context.put(MetricParameter.ALIAS.name(), user);
+        Map<String, String> context = initializeContext();
+        MetricParameter.ALIAS.put(context, user);
 
-        Metric metric = MetricFactory.createMetric(MetricType.USER_PROFILE_EMAIL);
-        writeString(out, metric.getValue(context).getAsString());
+        UsersProfileMetric metric = (UsersProfileMetric)MetricFactory.createMetric(MetricType.USER_PROFILE);
+        ListListStringValueData profile = (ListListStringValueData)metric.getValue(context);
+
+        writeString(out, metric.getEmail(profile));
         out.write(",");
 
-        metric = MetricFactory.createMetric(MetricType.USER_PROFILE_FIRSTNAME);
-        writeString(out, metric.getValue(context).getAsString());
+        writeString(out, metric.getFirstName(profile));
         out.write(",");
 
-        metric = MetricFactory.createMetric(MetricType.USER_PROFILE_LASTNAME);
-        writeString(out, metric.getValue(context).getAsString());
+        writeString(out, metric.getLastName(profile));
         out.write(",");
 
-        metric = MetricFactory.createMetric(MetricType.USER_PROFILE_PHONE);
-        writeString(out, metric.getValue(context).getAsString());
+        writeString(out, metric.getPhone(profile));
         out.write(",");
 
-        metric = MetricFactory.createMetric(MetricType.USER_PROFILE_COMPANY);
-        writeString(out, metric.getValue(context).getAsString());
+        writeString(out, metric.getCompany(profile));
         out.write(",");
     }
 

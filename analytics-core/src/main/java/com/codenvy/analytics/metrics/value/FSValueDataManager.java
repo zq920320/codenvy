@@ -199,7 +199,7 @@ public class FSValueDataManager {
     }
 
     /**
-     * Translate date from format yyyyMMdd into format like yyyy/MMdd and {@link File#separatorChar} is used as
+     * Translate date from format yyyyMMdd into format like yyyy/MM/dd and {@link File#separatorChar} is used as
      * delimiter.
      */
     private static String translateDateToRelativePath(String date) {
@@ -207,7 +207,9 @@ public class FSValueDataManager {
 
         builder.append(date.substring(0, 4));
         builder.append(File.separatorChar);
-        builder.append(date.substring(4, 8));
+        builder.append(date.substring(4, 6));
+        builder.append(File.separatorChar);
+        builder.append(date.substring(6, 8));
 
         return builder.toString();
     }

@@ -26,7 +26,7 @@ a5 = extractParam(a4, 'REFERRER', 'referrerUrl');
 a6 = extractParam(a5, 'FACTORY-URL', 'factoryUrl');
 
 a = FOREACH a6 GENERATE ws, referrerUrl, factoryUrl;
-b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : bytearray, referrerUrl : bytearray, factoryUrl : bytearray);
+b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, referrerUrl : chararray, factoryUrl : chararray);
 
 c1 = UNION a, b;
 c = DISTINCT c1;
