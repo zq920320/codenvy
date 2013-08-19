@@ -135,13 +135,13 @@ public class JobsRunner implements ServletContextListener {
             }
 
             Utils.putFromDate(context, fromDate);
-            Utils.putToDate(context, toDate);
+            Utils.putToDate(context, fromDate);
             MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
 
             do {
                 ((ForceableRunJob)job).forceRun(context);
                 context = Utils.nextDateInterval(context);
-            } while (!fromDate.after(toDate));
+            } while (!Utils.getFromDate(context).after(toDate));
         }
     }
 
