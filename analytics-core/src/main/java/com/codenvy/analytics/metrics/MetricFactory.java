@@ -249,11 +249,11 @@ public class MetricFactory {
             case USERS_DEPLOYED_PAAS_ONCE:
                 metric = new UsersDeployedPaasOnceMetric();
                 break;
-            case USER_BUILT:
-                metric = new UserBuiltMetric();
+            case PROJECT_BUILT:
+                metric = new ProjectBuiltMetric();
                 break;
-            case USER_DEPLOY:
-                metric = new UserDeployMetric();
+            case PROJECT_DEPLOYED:
+                metric = new ProjectDeployedMetric();
                 break;
             case ACTIVITY:
                 metric = new ActivityMetric();

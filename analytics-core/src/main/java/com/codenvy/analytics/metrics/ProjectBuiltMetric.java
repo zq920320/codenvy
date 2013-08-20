@@ -11,10 +11,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserBuiltMetric extends ValueReadBasedMetric {
+public class ProjectBuiltMetric extends ValueReadBasedMetric {
 
-    UserBuiltMetric() {
-        super(MetricType.USER_BUILT);
+    ProjectBuiltMetric() {
+        super(MetricType.PROJECT_BUILT);
     }
 
     /** {@inheritDoc} */

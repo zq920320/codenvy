@@ -206,11 +206,11 @@ public class ActOnJob implements Job {
         out.write(value.toString());
         out.write(",");
 
-        value = MetricFactory.createMetric(MetricType.USER_BUILT).getValue(context);
+        value = MetricFactory.createMetric(MetricType.PROJECT_BUILT).getValue(context);
         out.write(value.toString());
         out.write(",");
 
-        value = MetricFactory.createMetric(MetricType.USER_DEPLOY).getValue(context);
+        value = MetricFactory.createMetric(MetricType.PROJECT_DEPLOYED).getValue(context);
         out.write(value.toString());
         out.write(",");
 

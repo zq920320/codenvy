@@ -53,8 +53,8 @@ public class TestActOnJob {
 
         DataProcessing.calculateAndStore(MetricType.ACTIVE_USERS_SET, context);
         DataProcessing.calculateAndStore(MetricType.PROJECT_CREATED, context);
-        DataProcessing.calculateAndStore(MetricType.USER_BUILT, context);
-        DataProcessing.calculateAndStore(MetricType.USER_DEPLOY, context);
+        DataProcessing.calculateAndStore(MetricType.PROJECT_BUILT, context);
+        DataProcessing.calculateAndStore(MetricType.PROJECT_DEPLOYED, context);
         DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_SESSIONS, context);
 
         job = spy(new ActOnJob(null));

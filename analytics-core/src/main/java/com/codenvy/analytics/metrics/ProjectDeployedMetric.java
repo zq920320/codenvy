@@ -11,10 +11,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserDeployMetric extends ValueReadBasedMetric {
+public class ProjectDeployedMetric extends ValueReadBasedMetric {
 
-    UserDeployMetric() {
-        super(MetricType.USER_DEPLOY);
+    ProjectDeployedMetric() {
+        super(MetricType.PROJECT_DEPLOYED);
     }
 
     /** {@inheritDoc} */

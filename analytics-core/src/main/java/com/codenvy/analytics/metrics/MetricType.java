@@ -420,7 +420,7 @@ public enum MetricType {
             MetricParameter.EVENT.put(context, EventType.APPLICATION_CREATED.toString());
         }
     },
-    USER_BUILT {
+    PROJECT_BUILT {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.NUMBER_EVENTS,
@@ -435,7 +435,7 @@ public enum MetricType {
                                                EventType.APPLICATION_CREATED.toString());
         }
     },
-    USER_DEPLOY {
+    PROJECT_DEPLOYED {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.NUMBER_EVENTS,

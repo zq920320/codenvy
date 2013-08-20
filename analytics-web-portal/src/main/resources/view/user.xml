@@ -33,8 +33,8 @@
 	<metric type="product_usage_sessions_total" title="Coding sessions" format="%,.0f"/>
 	<metric type="project_created" title="Projects created"/>
     <metric type="project_destroyed" title="Projects destroyed"/>
-	<metric type="user_built" title="Projects built"/>
-	<metric type="user_deploy" title="Projects deploy"/>
+	<metric type="project_built" title="Projects built"/>
+	<metric type="project_deployed" title="Projects deployed"/>
     </table>
 
     <table length="1" widget="tab_panel" tabId="1" tabName="Recent Activity" sortable="true" defaultSortColumn="Event">
@@ -43,7 +43,7 @@
     </table>
     <table length="4" widget="tab_panel" tabId="1" tabName="Sessions" sortable="true" defaultSortColumn="Session started">
         <title name="Workspace,User,Session started,Duration (sec.)"/>
-	    <list type="product_usage_time" format="%s"/>
+	    <list type="product_usage_sessions" format="%s"/>
     </table>
 </display>
 

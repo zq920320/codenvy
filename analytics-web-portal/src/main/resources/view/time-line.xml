@@ -77,7 +77,7 @@
     <table length="20">
         <date section="Runs" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
         <metric type="run_started" title="# Runs"/>
-        <metric type="build_started" title="# Builds"/>
+        <metric type="project_built" title="# Builds"/>
         <metric type="debug_started" title="# Debugs"/>
         <empty />
     </table>
