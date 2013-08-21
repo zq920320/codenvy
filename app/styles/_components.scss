@@ -902,6 +902,41 @@ a.blue-link{
     display: none;
 }
 
+
+/*
+
+    Home Page Factories
+
+ */
+
+.factory-icon {
+    
+    margin: 0 18px 0 0;
+    width: 87px;
+    height: 87px;
+    float:left;
+}
+
+
+.factory-icon-right {
+    margin: 0;
+    width: 87px;
+    height: 87px;
+    float:left;
+
+}
+
+.factory-icons-row {
+    border-bottom: 2px solid #e2e3e5;
+    padding: 15px 0 40px 0;
+    margin-bottom:30px;
+}
+
+.factories-header {
+    
+    margin: 25px 0;
+}
+
 /*
     Create Account
 */
