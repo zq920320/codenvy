@@ -18,7 +18,11 @@
 
 IMPORT 'macros.pig';
 
-l = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, referrerUrl : chararray, factoryUrl : chararray);
-r1 = FILTER l BY INDEXOF('$PARAM', factoryUrl, 0) >= 0;
-r2 = FOREACH r1 GENERATE ws;
+f1 = loadResources('$LOG');
+f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+f = filterByEvent(f2, 'factory-url-accepted');
+
+r1 = extractParam(f, 'FACTORY-URL', 'url');
+r2 = FOREACH r1 GENERATE url;
+
 result = DISTINCT r2;

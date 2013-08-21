@@ -262,7 +262,7 @@ public class MetricFactory {
                 metric = new FactoryCreatedMetric();
                 break;
             case FACTORY_URL_ACCEPTED:
-                metric = new FactoryUrlAcceptedMetric();
+                metric = new FactoryUrlAccepted();
                 break;
             case TEMPORARY_WORKSPACE_CREATED:
                 metric = new TemporaryWorkspaceCreatedMetric();
@@ -276,14 +276,26 @@ public class MetricFactory {
             case FACTORY_SESSIONS_ANON:
                 metric = new FactorySessionsAnonMetric();
                 break;
+            case FACTORY_SESSIONS_AUTH_PERCENT:
+                metric = new FactorySessionsAuthPercentMetric();
+                break;
+            case FACTORY_SESSIONS_ANON_PERCENT:
+                metric = new FactorySessionsAnonPercentMetric();
+                break;
             case FACTORY_SESSIONS:
                 metric = new FactorySessionsMetric();
                 break;
+            case FACTORY_SESSION_FIRST:
+                metric = new FactorySessionFirstMetric();
+                break;
+            case FACTORY_SESSION_LAST:
+                metric = new FactorySessionsLastMetric();
+                break;
+            case PRODUCT_USAGE_SESSIONS_FACTORY:
+                metric = new ProductUsageSessionsFactoryMetric();
+                break;
             case PRODUCT_USAGE_TIME_FACTORY:
                 metric = new ProductUsageTimeFactoryMetric();
-                break;
-            case PRODUCT_USAGE_TIME_FACTORY_TOTAL:
-                metric = new ProductUsageTimeFactoryTotalMetric();
                 break;
             case PRODUCT_USAGE_FACTORY_SESSIONS_0_10:
                 metric = new ProductUsageFactorySessions010Metric();
@@ -297,8 +309,14 @@ public class MetricFactory {
             case FACTORY_SESSIONS_ABAN:
                 metric = new FactorySessionsAbanMetric();
                 break;
+            case FACTORY_SESSIONS_ABAN_PERCENT:
+                metric = new FactorySessionsAbanPercentMetric();
+                break;
             case FACTORY_SESSIONS_CONV:
                 metric = new FactorySessionsConvMetric();
+                break;
+            case FACTORY_SESSIONS_CONV_PERCENT:
+                metric = new FactorySessionsConvPercentMetric();
                 break;
             case FACTORY_SESSIONS_AND_BUILT:
                 metric = new FactorySessionsAndBuiltMetric();
@@ -370,7 +388,7 @@ public class MetricFactory {
                 metric = new ProductUsageTimeTopDomains365DayMetric();
                 break;
             case PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_LIFETIME:
-                metric = new ProductUsageTimeTopDomainsLifeTimeDayMetric();
+                metric = new ProductUsageTimeTopDomainsLifeTimeMetric();
                 break;
             case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY:
                 metric = new ProductUsageTimeTopCompanies1DayMetric();
@@ -391,7 +409,7 @@ public class MetricFactory {
                 metric = new ProductUsageTimeTopCompanies365DayMetric();
                 break;
             case PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME:
-                metric = new ProductUsageTimeTopCompaniesLifeTimeDayMetric();
+                metric = new ProductUsageTimeTopCompaniesLifeTimeMetric();
                 break;
             case USERS_SEGMENT_ANALYSIS_CONDITION_1:
                 metric = new UsersSegmentAnalysisCondition1();
@@ -401,6 +419,30 @@ public class MetricFactory {
                 break;
             case USERS_SEGMENT_ANALYSIS_CONDITION_3:
                 metric = new UsersSegmentAnalysisCondition3();
+                break;
+            case FACTORY_URL_TOP_FACTORIES_BY_1DAY:
+                metric = new FactoryUrlTopFactories1DayMetric();
+                break;
+            case FACTORY_URL_TOP_FACTORIES_BY_7DAY:
+                metric = new FactoryUrlTopFactories7DayMetric();
+                break;
+            case FACTORY_URL_TOP_FACTORIES_BY_30DAY:
+                metric = new FactoryUrlTopFactories30DayMetric();
+                break;
+            case FACTORY_URL_TOP_FACTORIES_BY_60DAY:
+                metric = new FactoryUrlTopFactories60DayMetric();
+                break;
+            case FACTORY_URL_TOP_FACTORIES_BY_90DAY:
+                metric = new FactoryUrlTopFactories90DayMetric();
+                break;
+            case FACTORY_URL_TOP_FACTORIES_BY_365DAY:
+                metric = new FactoryUrlTopFactories365DayMetric();
+                break;
+            case FACTORY_URL_TOP_FACTORIES_BY_LIFETIME:
+                metric = new FactoryUrlTopFactoriesLifeTimeMetric();
+                break;
+            case ACTIVE_FACTORY_SET:
+                metric = new ActiveFactorySetMetric();
                 break;
 
 

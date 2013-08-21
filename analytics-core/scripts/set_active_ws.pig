@@ -19,7 +19,8 @@
 IMPORT 'macros.pig';
 
 f1 = loadResources('$LOG');
-f = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+f = filterByEvent(f2, '$EVENT');
 
 a1 = extractWs(f);
 a2 = FOREACH a1 GENERATE ws;

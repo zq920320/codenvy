@@ -65,7 +65,7 @@ public class FSValueDataManager {
         File file = getValueFile(metricType, uuid);
         validateExistence(file);
 
-        return doLoad(file, metricType);
+        return doLoad(file, MetricFactory.createMetric(metricType).getValueDataClass());
     }
 
     /** {@inheritDoc} */
@@ -73,13 +73,11 @@ public class FSValueDataManager {
         File file = getNumberFile(metricType, uuid);
         validateExistence(file);
 
-        return doLoad(file, metricType);
+        return doLoad(file, LongValueData.class);
     }
 
-    private static ValueData doLoad(File file, MetricType metricType) throws IOException {
+    private static ValueData doLoad(File file, Class<? extends  ValueData> clazz) throws IOException {
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-
-            Class<? extends ValueData> clazz = MetricFactory.createMetric(metricType).getValueDataClass();
             return clazz.getConstructor(ObjectInputStream.class).newInstance(in);
         } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException
                 e) {

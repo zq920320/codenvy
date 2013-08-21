@@ -1,6 +1,6 @@
 /*
 *
-* CODENVY CONFIDENTIAL
+ CODENVY CONFIDENTIAL
 * ________________
 *
 * [2012] - [2013] Codenvy, S.A.
@@ -108,9 +108,7 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-
     JREBEL_USER_PROFILE_INFO,
-
     PROJECTS_CREATED,
     PROJECT_DEPLOYED {
         @Override
@@ -123,7 +121,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.PARAM};
         }
     },
-
     PROJECT_DEPLOYED_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -135,7 +132,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
         }
     },
-
     PROJECT_DEPLOYED_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -147,9 +143,7 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
         }
     },
-
     USERS_UPDATE_PROFILE,
-
     PRODUCT_USAGE_TIME_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -176,7 +170,6 @@ public enum ScriptType {
                                                         MetricParameter.LOAD_DIR}));
         }
     },
-
     PRODUCT_USAGE_SESSIONS,
     PRODUCT_USAGE_SESSIONS_FACTORY,
     PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS {
@@ -190,7 +183,23 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
+    PRODUCT_USAGE_TIME_FACTORY {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+    },
+    PRODUCT_USAGE_TIME_FACTORY_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
 
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
     PRODUCT_USAGE_SESSIONS_BY_USERS {
         @Override
         public MetricParameter[] getResultScheme() {
@@ -209,7 +218,6 @@ public enum ScriptType {
                                                         MetricParameter.TO_DATE}));
         }
     },
-
     PRODUCT_USAGE_SESSIONS_BY_DOMAINS {
         @Override
         public MetricParameter[] getResultScheme() {
@@ -227,7 +235,6 @@ public enum ScriptType {
             return SetStringValueData.class;
         }
     },
-
     SET_ACTIVE_USERS_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -239,7 +246,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-
     SET_ACTIVE_USERS_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -252,7 +258,6 @@ public enum ScriptType {
         }
 
     },
-
     SET_ACTIVE_WS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -267,7 +272,6 @@ public enum ScriptType {
                                                         MetricParameter.EVENT}));
         }
     },
-
     SET_ACTIVE_WS_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -287,7 +291,6 @@ public enum ScriptType {
                                                         MetricParameter.EVENT}));
         }
     },
-
     SET_ACTIVE_WS_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -307,8 +310,26 @@ public enum ScriptType {
                                                         MetricParameter.EVENT}));
         }
     },
+    SET_ACTIVE_WS_BY_URL {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
 
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.URL};
+        }
 
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE,
+                                                        MetricParameter.PARAM,
+                                                        MetricParameter.EVENT}));
+        }
+    },
     NUMBER_EVENTS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -323,7 +344,6 @@ public enum ScriptType {
                                                         MetricParameter.EVENT}));
         }
     },
-
     NUMBER_EVENTS_WITH_TYPE {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -344,7 +364,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.PARAM};
         }
     },
-
     NUMBER_EVENTS_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -364,7 +383,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-
     NUMBER_EVENTS_BY_WS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -384,7 +402,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-
     NUMBER_EVENTS_WITH_TYPE_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -425,7 +442,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
         }
     },
-
     NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -446,7 +462,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
         }
     },
-
     NUMBER_EVENTS_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -466,14 +481,12 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-
     USERS_PROFILE_PREPARATION {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringListListStringValueData.class;
         }
     },
-
     ACTIVITY_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -485,7 +498,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-
     USER_UPDATE_PROFILE {
         @Override
         public Set<MetricParameter> getParams() {
@@ -501,7 +513,6 @@ public enum ScriptType {
             return LongValueData.class;
         }
     },
-
     USERS_BY_COMPANY {
         @Override
         public Set<MetricParameter> getParams() {
@@ -515,7 +526,6 @@ public enum ScriptType {
             return ListStringValueData.class;
         }
     },
-
     FACTORY_URL_BY_ENTITY {
         @Override
         public Set<MetricParameter> getParams() {
@@ -523,25 +533,6 @@ public enum ScriptType {
                     MetricParameter.LOAD_DIR,
                     MetricParameter.PARAM,
                     MetricParameter.FIELD}));
-        }
-
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListStringValueData.class;
-        }
-
-        @Override
-        public boolean isLogRequired() {
-            return false;
-        }
-    },
-
-    TEMP_WS_BY_FACTORY_URL {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.LOAD_DIR,
-                    MetricParameter.PARAM}));
         }
 
         @Override
@@ -571,7 +562,6 @@ public enum ScriptType {
             return ListStringValueData.class;
         }
     },
-
     FACTORY_CREATED {
         @Override
         public Set<MetricParameter> getParams() {
@@ -585,6 +575,19 @@ public enum ScriptType {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return LongValueData.class;
+        }
+    },
+    SET_ACTIVE_FACTORY {
+        @Override
+        public Set<MetricParameter> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                        MetricParameter.TO_DATE}));
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return SetStringValueData.class;
         }
     },
     FACTORY_CREATED_BY_URL {
@@ -603,22 +606,6 @@ public enum ScriptType {
         @Override
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.URL};
-        }
-    },
-
-    FACTORY_URL_ACCEPTED {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(
-                    Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                        MetricParameter.TO_DATE,
-                                                        MetricParameter.LOAD_DIR,
-                                                        MetricParameter.STORE_DIR}));
-        }
-
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
         }
     };
 

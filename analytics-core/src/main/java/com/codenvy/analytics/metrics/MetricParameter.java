@@ -173,7 +173,6 @@ public enum MetricParameter {
         WS,
         DOMAINS,
         USERS,
-        COMPANIES,
         URL
     }
 }

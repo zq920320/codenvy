@@ -19,9 +19,9 @@
 
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.server.AnalysisServiceImpl;
-import com.codenvy.analytics.server.FactoryUrlTimeLineServiceImpl;
-import com.codenvy.analytics.server.TimeLineServiceImpl;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.server.*;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -51,8 +51,16 @@ public class ViewJob implements Job {
 
         try {
             new TimeLineServiceImpl().update();
-            new FactoryUrlTimeLineServiceImpl().update();
             new AnalysisServiceImpl().update();
+
+            AbstractService service = new FactoryUrlTimeLineServiceImpl();
+            service.update(Utils.initializeContext(TimeUnit.DAY));
+            service.update(Utils.initializeContext(TimeUnit.WEEK));
+            service.update(Utils.initializeContext(TimeUnit.MONTH));
+            service.update(Utils.initializeContext(TimeUnit.LIFETIME));
+
+            service = new FactoryUrlTopFactoriesServiceImpl();
+            service.update(Utils.newContext());
         } finally {
             LOGGER.info("ViewJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

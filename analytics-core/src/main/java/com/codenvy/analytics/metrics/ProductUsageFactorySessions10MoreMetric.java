@@ -33,7 +33,7 @@ import java.util.Map;
 public class ProductUsageFactorySessions10MoreMetric extends CalculatedMetric {
 
     public ProductUsageFactorySessions10MoreMetric() {
-        super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_0_10, MetricType.PRODUCT_USAGE_TIME_FACTORY);
+        super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_0_10, MetricType.PRODUCT_USAGE_SESSIONS_FACTORY);
     }
 
     /** {@inheritDoc} */
@@ -48,7 +48,7 @@ public class ProductUsageFactorySessions10MoreMetric extends CalculatedMetric {
 
         long count = 0;
 
-        ProductUsageTimeFactoryMetric usageTimeMetric = (ProductUsageTimeFactoryMetric)basedMetric;
+        ProductUsageSessionsFactoryMetric usageTimeMetric = (ProductUsageSessionsFactoryMetric)basedMetric;
         for (ListStringValueData item : value.getAll()) {
             long itemTime = usageTimeMetric.getTime(item);
             if (10 * 60 <= itemTime) {

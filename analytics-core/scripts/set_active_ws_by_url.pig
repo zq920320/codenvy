@@ -18,20 +18,13 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$LOG');
-a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
-a3 = filterByEvent(a2, 'factory-url-accepted');
-a4 = extractWs(a3);
-a5 = extractParam(a4, 'REFERRER', 'referrerUrl');
-a6 = extractParam(a5, 'FACTORY-URL', 'factoryUrl');
+f1 = loadResources('$LOG');
+f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
+f = filterByEvent(f2, '$EVENT');
 
-a = FOREACH a6 GENERATE ws, referrerUrl, factoryUrl;
-b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, referrerUrl : chararray, factoryUrl : chararray);
+a1 = extractWs(f);
+a2 = extractParam(a1, '$PARAM', url);
+a3 = FOREACH a2 GENERATE ws, url;
+a = FILTER a3 BY ws != 'default';
 
-c1 = UNION a, b;
-c = DISTINCT c1;
-
-STORE c INTO '$STORE_DIR' USING PigStorage();
-
-
-result = countAll(a);
+result = setByField(a, 'url', 'ws');

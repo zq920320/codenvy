@@ -15,9 +15,12 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
+
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.util.Arrays;
@@ -25,22 +28,27 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserCodeRefactorMetric extends ValueReadBasedMetric {
+public class ProductUsageSessionsFactoryMetric extends ValueReadBasedMetric {
 
-    UserCodeRefactorMetric() {
-        super(MetricType.USER_CODE_REFACTOR);
+    public ProductUsageSessionsFactoryMetric() {
+        super(MetricType.PRODUCT_USAGE_SESSIONS_FACTORY);
     }
 
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+        return ListListStringValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                    MetricParameter.TO_DATE}));
+    }
+
+    public long getTime(ListStringValueData valueData) {
+        return Long.valueOf(valueData.getAll().get(3));
     }
 }

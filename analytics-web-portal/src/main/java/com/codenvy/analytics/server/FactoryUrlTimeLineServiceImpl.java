@@ -21,52 +21,38 @@ package com.codenvy.analytics.server;
 
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactoryUrlTimeLineServiceImpl {
+public class FactoryUrlTimeLineServiceImpl extends AbstractService {
 
-    private static final Logger    LOGGER           = LoggerFactory.getLogger(FactoryUrlTimeLineServiceImpl.class);
     private static final String    FILE_NAME_PREFIX = "factory-url-timeline";
     private static final Display[] DISPLAYS         =
             new Display[]{Display.initialize("view/factory-url-time-line-1.xml"),
                           Display.initialize("view/factory-url-time-line-2.xml")};
 
-
     public List<TableData> getData(TimeUnit timeUnit, Map<String, String> filter) {
         try {
             Map<String, String> context = Utils.initializeContext(timeUnit);
+            context.putAll(filter);
 
-            if (filter.isEmpty()) {
-                try {
-                    return PersisterUtil.loadTablesFromBinFile(getFileName(context) + PersisterUtil.BIN_EXT);
-                } catch (FileNotFoundException e) {
-                    // let's calculate then
-                }
-
-                return calculateAndSave(context);
-            } else {
-                context.putAll(filter);
-                return doFilter(context);
-            }
+            return super.getData(context, !filter.isEmpty());
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
     }
 
-    private List<TableData> doFilter(Map<String, String> context) throws Exception {
+    @Override
+    protected List<TableData> doFilter(Map<String, String> context) throws Exception {
         List<String> factoryUrls = new ArrayList<>();
         if (context.containsKey(MetricFilter.FILTER_WS.name())) {
             factoryUrls = getFactoryUrls("ws", context.get(MetricFilter.FILTER_WS.name()));
@@ -88,7 +74,7 @@ public class FactoryUrlTimeLineServiceImpl {
             factoryUrls = getFactoryUrls("type", context.get(MetricFilter.FILTER_PROJECT_TYPE.name()));
             context.remove(MetricFilter.FILTER_PROJECT_TYPE.name());
         }
-        List<String> tempWs = getTempWs(factoryUrls);
+        Set<String> tempWs = getTempWs(factoryUrls, context);
 
         context.put(MetricFilter.FILTER_FACTORY_URL.name(), Utils.removeBracket(factoryUrls.toString()));
         List<TableData> data = DISPLAYS[0].retrieveData(context);
@@ -100,17 +86,15 @@ public class FactoryUrlTimeLineServiceImpl {
         return data;
     }
 
-    private List<String> getTempWs(List<String> factoryUrls) throws IOException {
-        Map<String, String> context = Utils.newContext();
+    private Set<String> getTempWs(List<String> factoryUrls, Map<String, String> context) throws IOException {
+        Metric metric = MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED);
 
-        MetricParameter.TO_DATE.putDefaultValue(context);
-        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
-        MetricParameter.PARAM.put(context, factoryUrls.toString());
+        Map<String, String> clonedContext = Utils.clone(context);
+        MetricFilter.FILTER_FACTORY_URL.put(clonedContext, Utils.removeBracket(factoryUrls.toString()));
 
-        ListStringValueData valueData =
-                (ListStringValueData)ScriptExecutor.INSTANCE
-                                                   .executeAndReturn(ScriptType.TEMP_WS_BY_FACTORY_URL, context);
-        return valueData.getAll();
+        SetStringValueData value = (SetStringValueData)metric.getValue(clonedContext);
+
+        return value.getAll();
     }
 
     private List<String> getFactoryUrls(String field, String param) throws IOException {
@@ -128,33 +112,16 @@ public class FactoryUrlTimeLineServiceImpl {
         return valueData.getAll();
     }
 
-    private List<TableData> calculateAndSave(Map<String, String> context) throws Exception {
-        List<TableData> data = new ArrayList<>();
-        for (Display display : DISPLAYS) {
-            data.addAll(display.retrieveData(context));
-        }
-
-        PersisterUtil.saveTablesToCsvFile(data, getFileName(context) + PersisterUtil.CSV_EXT);
-        PersisterUtil.saveTablesToBinFile(data, getFileName(context) + PersisterUtil.BIN_EXT);
-
-        return data;
-    }
-
-    /** Updates time-line fully. */
-    public void update() {
-        try {
-            calculateAndSave(Utils.initializeContext(TimeUnit.DAY));
-            calculateAndSave(Utils.initializeContext(TimeUnit.WEEK));
-            calculateAndSave(Utils.initializeContext(TimeUnit.MONTH));
-            calculateAndSave(Utils.initializeContext(TimeUnit.LIFETIME));
-        } catch (Throwable e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
-    /** @return corresponding file name */
-    private String getFileName(Map<String, String> context) {
+    /** {@inheritDoc} */
+    @Override
+    protected String getFileName(Map<String, String> context) {
         TimeUnit timeUnit = Utils.getTimeUnit(context);
         return FILE_NAME_PREFIX + "_" + timeUnit.name();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Display[] getDisplays() {
+        return DISPLAYS;
     }
 }

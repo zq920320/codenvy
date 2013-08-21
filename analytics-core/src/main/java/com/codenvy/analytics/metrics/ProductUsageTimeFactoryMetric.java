@@ -1,54 +1,38 @@
 /*
- *
- * CODENVY CONFIDENTIAL
- * ________________
- *
- * [2012] - [2013] Codenvy, S.A.
- * All Rights Reserved.
- * NOTICE: All information contained herein is, and remains
- * the property of Codenvy S.A. and its suppliers,
- * if any. The intellectual and technical concepts contained
- * herein are proprietary to Codenvy S.A.
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Codenvy S.A..
+ * Copyright (C) 2013 Codenvy.
  */
-
-
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProductUsageTimeFactoryMetric extends ValueReadBasedMetric {
-
+public class ProductUsageTimeFactoryMetric extends CalculatedMetric {
     public ProductUsageTimeFactoryMetric() {
-        super(MetricType.PRODUCT_USAGE_TIME_FACTORY);
+        super(MetricType.PRODUCT_USAGE_TIME_FACTORY, MetricType.PRODUCT_USAGE_SESSIONS_FACTORY);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        ListListStringValueData valueData = (ListListStringValueData)super.getValue(context);
+
+        long total = 0;
+        for (ListStringValueData item : valueData.getAll()) {
+            total += Long.valueOf(item.getAll().get(3));
+        }
+
+        return new LongValueData(total / 60);
     }
 
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return ListListStringValueData.class;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                    MetricParameter.TO_DATE}));
-    }
-
-    public long getTime(ListStringValueData valueData) {
-        return Long.valueOf(valueData.getAll().get(3));
+        return LongValueData.class;
     }
 }

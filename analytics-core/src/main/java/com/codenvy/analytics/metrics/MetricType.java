@@ -466,15 +466,22 @@ public enum MetricType {
             MetricParameter.EVENT.put(context, EventType.FACTORY_CREATED.toString());
         }
     },
+    ACTIVE_FACTORY_SET {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.SET_ACTIVE_FACTORY);
+        }
+    },
     FACTORY_URL_ACCEPTED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.FACTORY_URL_ACCEPTED);
+            return EnumSet.of(ScriptType.SET_ACTIVE_WS, ScriptType.SET_ACTIVE_WS_BY_URL);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
+            MetricParameter.PARAM.put(context, "FACTORY-URL");
         }
     },
     TEMPORARY_WORKSPACE_CREATED {
@@ -496,16 +503,26 @@ public enum MetricType {
         }
     },
     FACTORY_SESSIONS_AUTH,
+    FACTORY_SESSIONS_AUTH_PERCENT,
     FACTORY_SESSIONS_ANON,
+    FACTORY_SESSIONS_ANON_PERCENT,
     FACTORY_SESSIONS,
-    PRODUCT_USAGE_TIME_FACTORY {
+    FACTORY_SESSION_FIRST,
+    FACTORY_SESSION_LAST,
+    PRODUCT_USAGE_SESSIONS_FACTORY {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet
                     .of(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY, ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS);
         }
     },
-    PRODUCT_USAGE_TIME_FACTORY_TOTAL,
+    PRODUCT_USAGE_TIME_FACTORY {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet
+                    .of(ScriptType.PRODUCT_USAGE_TIME_FACTORY, ScriptType.PRODUCT_USAGE_TIME_FACTORY_BY_WS);
+        }
+    },
     PRODUCT_USAGE_FACTORY_SESSIONS_0_10,
     PRODUCT_USAGE_FACTORY_SESSIONS_10_MORE,
     FACTORY_PROJECT_IMPORTED {
@@ -520,7 +537,9 @@ public enum MetricType {
         }
     },
     FACTORY_SESSIONS_CONV,
+    FACTORY_SESSIONS_CONV_PERCENT,
     FACTORY_SESSIONS_ABAN,
+    FACTORY_SESSIONS_ABAN_PERCENT,
     FACTORY_SESSIONS_AND_BUILT {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -561,6 +580,13 @@ public enum MetricType {
     FACTORY_SESSIONS_AND_BUILT_PERCENT,
     FACTORY_SESSIONS_AND_RUN_PERCENT,
     FACTORY_SESSIONS_AND_DEPLOY_PERCENT,
+    FACTORY_URL_TOP_FACTORIES_BY_1DAY,
+    FACTORY_URL_TOP_FACTORIES_BY_7DAY,
+    FACTORY_URL_TOP_FACTORIES_BY_30DAY,
+    FACTORY_URL_TOP_FACTORIES_BY_60DAY,
+    FACTORY_URL_TOP_FACTORIES_BY_90DAY,
+    FACTORY_URL_TOP_FACTORIES_BY_365DAY,
+    FACTORY_URL_TOP_FACTORIES_BY_LIFETIME,
     JREBEL_USER_PROFILE_INFO {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -638,4 +664,7 @@ public enum MetricType {
     public void modifyContext(Map<String, String> context) throws IOException {
         // do nothing by default
     }
+
+    // TODO getDescription
+    // TODO isInternal
 }

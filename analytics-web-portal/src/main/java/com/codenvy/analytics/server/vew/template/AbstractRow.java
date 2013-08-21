@@ -91,7 +91,10 @@ public abstract class AbstractRow implements Row {
 
         addTitle(context, row);
 
-        row.add(doRetrieve(context, 1));
+        if (columnsCount > 1) {
+            row.add(doRetrieve(context, 1)); // TODO
+        }
+
         for (int i = 2; i < columnsCount; i++) {
             context = prevDateInterval(context, overrideContextRule);
             row.add(doRetrieve(context, i));
