@@ -21,8 +21,7 @@ IMPORT 'macros.pig';
 a1 = loadResources('$LOG');
 a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
 a3 = filterByEvent(a2, 'tenant-created');
-a4 = extractWs(a3);
-a5 = FILTER a4 BY INDEXOF(ws, 'tmp-', 0) == 0;
-a = FOREACH a5 GENERATE ws;
+a4 = extractTmpWs(a3);
+a = FOREACH a4 GENERATE ws;
 
 result = countByField(a, 'ws');

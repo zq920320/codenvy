@@ -72,15 +72,25 @@ public class TestScriptProductUsageSessions extends BaseTest {
                         .withTime("20:25:00").build());
 
         // session started and session finished [5m]
-        events.add(Event.Builder.createSessionStartedEvent("user11", "ws1", "ide", "1").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1").withDate("2013-01-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user11", "ws1", "ide", "1").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1").withDate("2013-01-01")
                         .withTime("20:05:00").build());
 
         events.add(Event.Builder.createProjectBuiltEvent("user11", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:07:00").build());
         events.add(Event.Builder.createProjectBuiltEvent("user11", "ws1", "", "", "").withDate("2013-01-01")
                         .withTime("20:09:00").build());
+
+        events.add(Event.Builder.createProjectBuiltEvent("user11", "tmp-ws1", "", "", "").withDate("2013-01-01")
+                        .withTime("20:09:00").build());
+        events.add(Event.Builder.createProjectBuiltEvent("user11", "tmp-ws1", "", "", "").withDate("2013-01-01")
+                        .withTime("20:11:00").build());
+
+        events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "tmp-ws1", "ide", "1").withDate("2013-01-01")
+                        .withTime("20:13:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "tmp-ws1", "ide", "1").withDate("2013-01-01")
+                        .withTime("20:15:00").build());
 
         // session started and some event after [2h]
         events.add(Event.Builder.createSessionStartedEvent("user12", "ws1", "ide", "2").withDate("2013-01-01")
@@ -129,11 +139,12 @@ public class TestScriptProductUsageSessions extends BaseTest {
                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_SESSIONS_BY_USERS, log,
                                                                          params);
 
-        assertEquals(map.size(), 8);
+        assertEquals(map.size(), 9);
         assertUser(map, "user1", 2, 14 * 60);
         assertUser(map, "user2", 1, 4 * 60);
         assertUser(map, "user3", 1, 10 * 60);
-        assertUser(map, "user11", 2, 7 * 60);
+        assertUser(map, "user11", 1, 2 * 60);
+        assertUser(map, "ANONYMOUSUSER_user11", 1, 5 * 60);
         assertUser(map, "user12", 1, 7 * 60);
         assertUser(map, "user15@gmail.com", 2, 15 * 60);
         assertUser(map, "user13", 1, 5 * 60);

@@ -22,8 +22,8 @@ IMPORT 'macros.pig';
 
 t1 = loadResources('$LOG');
 t2 = filterByDate(t1, '$FROM_DATE', '$TO_DATE');
-t3 = extractUser(t2);
-t = extractWs(t3);
+t3 = extractAnonAndNotAnonUser(t2);
+t = extractTmpWs(t3);
 
 SS = extractEventsWithSessionId(t, 'session-factory-started');
 SF = extractEventsWithSessionId(t, 'session-factory-stopped');

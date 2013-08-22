@@ -22,7 +22,7 @@ IMPORT 'macros.pig';
 
 t1 = loadResources('$LOG');
 t2 = filterByDate(t1, '$FROM_DATE', '$TO_DATE');
-t3 = extractUser(t2);
+t3 = extractAnonAndNotAnonUser(t2);
 t = extractWs(t3);
 
 SS = extractEventsWithSessionId(t, 'session-factory-started');
