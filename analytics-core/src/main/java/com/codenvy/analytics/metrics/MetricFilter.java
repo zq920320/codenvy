@@ -20,25 +20,72 @@ package com.codenvy.analytics.metrics;
 
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricFilter {
-    FILTER_WS,
-    FILTER_USER,
-    FILTER_PROJECT_NAME,
-    FILTER_PROJECT_TYPE,
-    FILTER_COMPANY,
-    FILTER_REPO_URL,
-    FILTER_FACTORY_URL;
+    WS {
+        @Override
+        public String getScriptField() {
+            return "ws";
+        }
+    },
+    USER {
+        @Override
+        public String getScriptField() {
+            return "user";
+        }
+    },
+    PROJECT_NAME {
+        @Override
+        public String getScriptField() {
+            return "project";
+        }
+    },
+    PROJECT_TYPE {
+        @Override
+        public String getScriptField() {
+            return "type";
+        }
+    },
+    COMPANY {
+        @Override
+        public String getScriptField() {
+            return "company";
+        }
+    },
+    REPO_URL {
+        @Override
+        public String getScriptField() {
+            return "repoUrl";
+        }
+    },
+    FACTORY_URL {
+        @Override
+        public String getScriptField() {
+            return "factoryUrl";
+        }
+    };
+
+    /** @return true if context contains given parameter */
+    public boolean exists(Map<String, String> context) {
+        return context.get(this.name()) != null;
+    }
 
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {
         context.put(this.name(), value);
     }
 
+    /** Removes filter from context */
+    public void remove(Map<String, String> context) {
+        context.remove(this.name());
+    }
+
     /** Gets value from execution context */
     public String get(Map<String, String> context) {
         return context.get(this.name());
     }
+
+    /** @return the corresponding field name in the Pig scripts */
+    public abstract String getScriptField();
+
 }

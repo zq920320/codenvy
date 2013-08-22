@@ -28,7 +28,10 @@ import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -41,46 +44,28 @@ public class FactoryUrlTimeLineServiceImpl extends AbstractService {
 
     public List<TableData> getData(TimeUnit timeUnit, Map<String, String> filter) {
         try {
-            Map<String, String> context = Utils.initializeContext(timeUnit);
-            context.putAll(filter);
-
-            return super.getData(context, !filter.isEmpty());
+            return super.getData(Utils.initializeContext(timeUnit), filter);
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected List<TableData> doFilter(Map<String, String> context) throws Exception {
-        List<String> factoryUrls = new ArrayList<>();
-        if (context.containsKey(MetricFilter.FILTER_WS.name())) {
-            factoryUrls = getFactoryUrls("ws", context.get(MetricFilter.FILTER_WS.name()));
-            context.remove(MetricFilter.FILTER_WS.name());
+        MetricFilter metricFilter = Utils.getAvailableFilters(context).iterator().next();
 
-        } else if (context.containsKey(MetricFilter.FILTER_USER.name())) {
-            factoryUrls = getFactoryUrls("user", context.get(MetricFilter.FILTER_USER.name()));
-            context.remove(MetricFilter.FILTER_USER.name());
+        List<String> factoryUrls = getFactoryUrls(metricFilter.getScriptField(), context.get(metricFilter.name()));
+        metricFilter.remove(context);
 
-        } else if (context.containsKey(MetricFilter.FILTER_REPO_URL.name())) {
-            factoryUrls = getFactoryUrls("repoUrl", context.get(MetricFilter.FILTER_REPO_URL.name()));
-            context.remove(MetricFilter.FILTER_REPO_URL.name());
-
-        } else if (context.containsKey(MetricFilter.FILTER_FACTORY_URL.name())) {
-            factoryUrls = Arrays.asList(context.get(MetricFilter.FILTER_FACTORY_URL.name()).split(","));
-            context.remove(MetricFilter.FILTER_FACTORY_URL.name());
-
-        } else if (context.containsKey(MetricFilter.FILTER_PROJECT_TYPE.name())) {
-            factoryUrls = getFactoryUrls("type", context.get(MetricFilter.FILTER_PROJECT_TYPE.name()));
-            context.remove(MetricFilter.FILTER_PROJECT_TYPE.name());
-        }
         Set<String> tempWs = getTempWs(factoryUrls, context);
 
-        context.put(MetricFilter.FILTER_FACTORY_URL.name(), Utils.removeBracket(factoryUrls.toString()));
+        MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrls.toString()));
         List<TableData> data = DISPLAYS[0].retrieveData(context);
+        MetricFilter.FACTORY_URL.remove(context);
 
-        context.remove(MetricFilter.FILTER_FACTORY_URL.name());
-        context.put(MetricFilter.FILTER_WS.name(), Utils.removeBracket(tempWs.toString()));
+        MetricFilter.WS.put(context, Utils.removeBracket(tempWs.toString()));
         data.addAll(DISPLAYS[1].retrieveData(context));
 
         return data;
@@ -90,7 +75,7 @@ public class FactoryUrlTimeLineServiceImpl extends AbstractService {
         Metric metric = MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED);
 
         Map<String, String> clonedContext = Utils.clone(context);
-        MetricFilter.FILTER_FACTORY_URL.put(clonedContext, Utils.removeBracket(factoryUrls.toString()));
+        MetricFilter.FACTORY_URL.put(clonedContext, Utils.removeBracket(factoryUrls.toString()));
 
         SetStringValueData value = (SetStringValueData)metric.getValue(clonedContext);
 
@@ -100,7 +85,6 @@ public class FactoryUrlTimeLineServiceImpl extends AbstractService {
     private List<String> getFactoryUrls(String field, String param) throws IOException {
         Map<String, String> context = Utils.newContext();
 
-        MetricParameter.TO_DATE.putDefaultValue(context);
         MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_CREATED));
         MetricParameter.FIELD.put(context, field);
         MetricParameter.PARAM.put(context, param);

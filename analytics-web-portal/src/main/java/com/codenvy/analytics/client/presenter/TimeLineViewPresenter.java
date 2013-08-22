@@ -21,7 +21,6 @@ package com.codenvy.analytics.client.presenter;
 
 import com.codenvy.analytics.client.TimeLineServiceAsync;
 import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.shared.TableData;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -122,17 +121,17 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
 
             switch (searchCategory) {
                 case EMAIL:
-                    filterContext.put(MetricFilter.FILTER_USER.name(), filterValue);
+                    filterContext.put(MetricFilter.USER.name(), filterValue);
                     break;
                 case DOMAIN:
                     if (!filterValue.startsWith("@")) {
                         filterValue = "@" + filterValue;
                     }
 
-                    filterContext.put(MetricFilter.FILTER_USER.name(), filterValue);
+                    filterContext.put(MetricFilter.USER.name(), filterValue);
                     break;
                 case COMPANY:
-                    filterContext.put(MetricFilter.FILTER_COMPANY.name(), filterValue);
+                    filterContext.put(MetricFilter.COMPANY.name(), filterValue);
                     break;
             }
 

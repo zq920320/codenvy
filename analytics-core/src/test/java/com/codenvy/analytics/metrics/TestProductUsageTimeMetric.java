@@ -72,7 +72,7 @@ public class TestProductUsageTimeMetric {
 
     @Test
     public void testGetValuesWithUserFilters() throws Exception {
-        context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com");
+        context.put(MetricFilter.USER.name(), "user1@gmail.com");
 
         Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         ListListStringValueData value = (ListListStringValueData)metric.getValue(context);
@@ -83,7 +83,7 @@ public class TestProductUsageTimeMetric {
 
     @Test
     public void testGetValuesWithDomainsFilters() throws Exception {
-        context.put(MetricFilter.FILTER_USER.name(), "@gmail.com");
+        context.put(MetricFilter.USER.name(), "@gmail.com");
 
         Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_SESSIONS);
         ListListStringValueData value = (ListListStringValueData)metric.getValue(context);

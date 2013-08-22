@@ -37,10 +37,8 @@ public abstract class AbstractService {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractService.class);
 
-    public List<TableData> getData(Map<String, String> context, boolean filter) throws Exception {
-        if (filter) {
-            return doFilter(context);
-        } else {
+    public List<TableData> getData(Map<String, String> context, Map<String, String> filter) throws Exception {
+        if (filter.isEmpty()) {
             try {
                 return PersisterUtil.loadTablesFromBinFile(getFileName(context) + PersisterUtil.BIN_EXT);
             } catch (FileNotFoundException e) {
@@ -48,6 +46,13 @@ public abstract class AbstractService {
             }
 
             return update(context);
+        } else {
+            if (filter.size() > 1) {
+                throw new IllegalStateException("Filter size > 1");
+            }
+
+            context.putAll(filter);
+            return doFilter(context);
         }
     }
 
@@ -87,5 +92,7 @@ public abstract class AbstractService {
     /** @return all available displays */
     protected abstract Display[] getDisplays();
 
+    /** @return filtered excerpt. */
     protected abstract List<TableData> doFilter(Map<String, String> context) throws Exception;
+
 }

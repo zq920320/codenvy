@@ -22,14 +22,22 @@ public abstract class AbstractTopFactoriesMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
+        Collection<String> activeFactories;
+        if (MetricFilter.FACTORY_URL.exists(context)) {
+            activeFactories = new HashSet<>();
+            for (String str : MetricFilter.FACTORY_URL.get(context).split(",")) {
+                activeFactories.add(str.trim());
+            }
+        } else {
+            activeFactories = ((SetStringValueData)super.getValue(context)).getAll();
+        }
+
         context = initializeContext(period);
 
         Map<String, Long> factoryByTime = new HashMap<>();
         Map<String, Set<String>> factoryByWs = new HashMap<>();
 
-        SetStringValueData activeFactories = (SetStringValueData)super.getValue(context);
-
-        for (String factoryUrl : activeFactories.getAll()) {
+        for (String factoryUrl : activeFactories) {
             Set<String> activeWs = getCreatedTemporaryWs(context, factoryUrl);
             Long usageTime = getUsageTime(context, activeWs);
 
@@ -50,7 +58,7 @@ public abstract class AbstractTopFactoriesMetric extends CalculatedMetric {
         for (int i = 0; i < Math.min(TOP, top.size()); i++) {
             String factoryUrl = top.get(i).getKey();
 
-            MetricFilter.FILTER_WS.put(context, Utils.removeBracket(factoryByWs.get(factoryUrl).toString()));
+            MetricFilter.WS.put(context, Utils.removeBracket(factoryByWs.get(factoryUrl).toString()));
 
             List<String> item = new ArrayList<>(13);
 
@@ -77,7 +85,7 @@ public abstract class AbstractTopFactoriesMetric extends CalculatedMetric {
             Map<String, String> fullContext = Utils.newContext();
             MetricParameter.FROM_DATE.putDefaultValue(fullContext);
             MetricParameter.TO_DATE.putDefaultValue(fullContext);
-            MetricFilter.FILTER_WS.put(fullContext, MetricFilter.FILTER_WS.get(context));
+            MetricFilter.WS.put(fullContext, MetricFilter.WS.get(context));
 
             ListStringValueData value =
                     (ListStringValueData)MetricFactory.createMetric(MetricType.FACTORY_SESSION_FIRST)
@@ -99,7 +107,7 @@ public abstract class AbstractTopFactoriesMetric extends CalculatedMetric {
         Metric metric = MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED);
 
         Map<String, String> clonedContext = Utils.clone(context);
-        MetricFilter.FILTER_FACTORY_URL.put(clonedContext, factoryUrl);
+        MetricFilter.FACTORY_URL.put(clonedContext, factoryUrl);
 
         SetStringValueData value = (SetStringValueData)metric.getValue(clonedContext);
 
@@ -111,7 +119,7 @@ public abstract class AbstractTopFactoriesMetric extends CalculatedMetric {
         Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_FACTORY);
 
         Map<String, String> clonedContext = Utils.clone(context);
-        MetricFilter.FILTER_WS.put(clonedContext, Utils.removeBracket(activeWs.toString()));
+        MetricFilter.WS.put(clonedContext, Utils.removeBracket(activeWs.toString()));
 
         LongValueData value = (LongValueData)metric.getValue(clonedContext);
 

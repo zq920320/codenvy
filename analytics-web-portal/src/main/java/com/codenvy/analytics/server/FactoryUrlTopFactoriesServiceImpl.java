@@ -19,13 +19,20 @@
 
 package com.codenvy.analytics.server;
 
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +47,42 @@ public class FactoryUrlTopFactoriesServiceImpl extends AbstractService {
 
     public List<TableData> getData(Map<String, String> filter) {
         try {
-            return super.getData(filter, !filter.isEmpty());
+            Map<String, String> context = Utils.newContext();
+            MetricParameter.FROM_DATE.putDefaultValue(context);
+            MetricParameter.TO_DATE.putDefaultValue(context);
+
+            return super.getData(context, filter);
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected List<TableData> doFilter(Map<String, String> context) throws Exception {
+        MetricFilter metricFilter = Utils.getAvailableFilters(context).iterator().next();
+
+        List<String> factoryUrls = getFactoryUrls(metricFilter.getScriptField(), context.get(metricFilter.name()));
+        metricFilter.remove(context);
+
+        MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrls.toString()));
+        return DISPLAY.retrieveData(context);
+    }
+
+
+    private List<String> getFactoryUrls(String field, String param) throws IOException {
+        Map<String, String> context = Utils.newContext();
+
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_CREATED));
+        MetricParameter.FIELD.put(context, field);
+        MetricParameter.PARAM.put(context, param);
+
+        ListStringValueData valueData =
+                (ListStringValueData)ScriptExecutor.INSTANCE
+                                                   .executeAndReturn(ScriptType.FACTORY_URL_BY_ENTITY, context);
+
+        return valueData.getAll();
     }
 
     /** {@inheritDoc} */
@@ -57,10 +95,5 @@ public class FactoryUrlTopFactoriesServiceImpl extends AbstractService {
     @Override
     protected Display[] getDisplays() {
         return new Display[]{DISPLAY};
-    }
-
-    @Override
-    protected List<TableData> doFilter(Map<String, String> context) throws Exception {
-        return null;
     }
 }

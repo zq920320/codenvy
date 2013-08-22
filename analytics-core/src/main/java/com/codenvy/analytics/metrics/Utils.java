@@ -27,10 +27,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -314,5 +311,18 @@ public class Utils {
         int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
 
         return value.substring(beginIndex, endIndex);
+    }
+
+    /** @return all available filters from context */
+    public static Set<MetricFilter> getAvailableFilters(Map<String, String> dayContext) {
+        Set<MetricFilter> filters = new HashSet<>(3);
+
+        for (MetricFilter filterKey : MetricFilter.values()) {
+            if (dayContext.containsKey(filterKey.name())) {
+                filters.add(filterKey);
+            }
+        }
+
+        return filters;
     }
 }

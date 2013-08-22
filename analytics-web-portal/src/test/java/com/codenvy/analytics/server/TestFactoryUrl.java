@@ -130,7 +130,7 @@ public class TestFactoryUrl {
         FactoryUrlTimeLineServiceImpl service = new FactoryUrlTimeLineServiceImpl();
 
         Map<String, String> filter = Utils.newContext();
-        filter.put(MetricFilter.FILTER_WS.name(), "ws1");
+        MetricFilter.WS.put(filter, "ws1");
         List<TableData> data = service.getData(TimeUnit.LIFETIME, filter);
 
         assertEquals(data.get(0).get(1).get(0), "Factories created");
@@ -188,6 +188,7 @@ public class TestFactoryUrl {
         List<TableData> data = service.getData(Utils.newContext());
 
         assertEquals(data.size(), 7);
+        assertEquals(data.get(0).size(), 7);
 
         assertEquals(data.get(0).get(0).size(), 13);
         assertEquals(data.get(0).get(1).size(), 13);
@@ -303,6 +304,161 @@ public class TestFactoryUrl {
             assertTrue(data.get(i).get(6).get(12).contains("11:00:00") && data.get(i).get(6).get(12).contains(date));
         }
     }
+
+    @Test
+    public void testTopFactoriesWithWsFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.WS.put(context, "ws1,ws2");
+
+        FactoryUrlTopFactoriesServiceImpl service = new FactoryUrlTopFactoriesServiceImpl();
+        List<TableData> data = service.getData(context);
+
+        assertEquals(data.size(), 7);
+        assertEquals(data.get(0).size(), 4);
+
+        assertEquals(data.get(0).get(0).size(), 13);
+        assertEquals(data.get(0).get(1).size(), 13);
+        assertEquals(data.get(0).get(2).size(), 13);
+        assertEquals(data.get(0).get(3).size(), 13);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(data.get(i).get(0).get(0), "Factory");
+            assertEquals(data.get(i).get(1).get(0), "factory2");
+            assertEquals(data.get(i).get(2).get(0), "factory3");
+            assertEquals(data.get(i).get(3).get(0), "factory1");
+
+            assertEquals(data.get(i).get(0).get(1), "Workspace Creations");
+            assertEquals(data.get(i).get(1).get(1), "2");
+            assertEquals(data.get(i).get(2).get(1), "1");
+            assertEquals(data.get(i).get(3).get(1), "2");
+
+            assertEquals(data.get(i).get(0).get(2), "Sessions");
+            assertEquals(data.get(i).get(1).get(2), "2");
+            assertEquals(data.get(i).get(2).get(2), "1");
+            assertEquals(data.get(i).get(3).get(2), "2");
+
+            assertEquals(data.get(i).get(0).get(3), "% Anon");
+            assertEquals(data.get(i).get(1).get(3), "0.0");
+            assertEquals(data.get(i).get(2).get(3), "100.0");
+            assertEquals(data.get(i).get(3).get(3), "0.0");
+
+            assertEquals(data.get(i).get(0).get(4), "% Auth");
+            assertEquals(data.get(i).get(1).get(4), "100.0");
+            assertEquals(data.get(i).get(2).get(4), "0.0");
+            assertEquals(data.get(i).get(3).get(4), "100.0");
+
+            assertEquals(data.get(i).get(0).get(5), "% Abandon");
+            assertEquals(data.get(i).get(1).get(5), "100.0");
+            assertEquals(data.get(i).get(2).get(5), "100.0");
+            assertEquals(data.get(i).get(3).get(5), "0.0");
+
+            assertEquals(data.get(i).get(0).get(6), "% Convert");
+            assertEquals(data.get(i).get(1).get(6), "0.0");
+            assertEquals(data.get(i).get(2).get(6), "0.0");
+            assertEquals(data.get(i).get(3).get(6), "100.0");
+
+            assertEquals(data.get(i).get(0).get(7), "% Build");
+            assertEquals(data.get(i).get(1).get(7), "50.0");
+            assertEquals(data.get(i).get(2).get(7), "0.0");
+            assertEquals(data.get(i).get(3).get(7), "50.0");
+
+            assertEquals(data.get(i).get(0).get(8), "% Run");
+            assertEquals(data.get(i).get(1).get(8), "0.0");
+            assertEquals(data.get(i).get(2).get(8), "0.0");
+            assertEquals(data.get(i).get(3).get(8), "0.0");
+
+            assertEquals(data.get(i).get(0).get(9), "% Deployed");
+            assertEquals(data.get(i).get(1).get(9), "50.0");
+            assertEquals(data.get(i).get(2).get(9), "0.0");
+            assertEquals(data.get(i).get(3).get(9), "0.0");
+
+            assertEquals(data.get(i).get(0).get(10), "Mins");
+            assertEquals(data.get(i).get(1).get(10), "36");
+            assertEquals(data.get(i).get(2).get(10), "25");
+            assertEquals(data.get(i).get(3).get(10), "15");
+
+            assertEquals(data.get(i).get(0).get(11), "First Session");
+            assertTrue(data.get(i).get(1).get(11).contains("12:00:00") && data.get(i).get(1).get(11).contains(date));
+            assertTrue(data.get(i).get(2).get(11).contains("14:00:00") && data.get(i).get(2).get(11).contains(date));
+            assertTrue(data.get(i).get(3).get(11).contains("10:00:00") && data.get(i).get(3).get(11).contains(date));
+
+            assertEquals(data.get(i).get(0).get(12), "Last Session");
+            assertTrue(data.get(i).get(1).get(12).contains("13:00:00") && data.get(i).get(1).get(12).contains(date));
+            assertTrue(data.get(i).get(2).get(12).contains("14:00:00") && data.get(i).get(2).get(12).contains(date));
+            assertTrue(data.get(i).get(3).get(12).contains("11:00:00") && data.get(i).get(3).get(12).contains(date));
+        }
+    }
+
+    @Test
+    public void testTopFactoriesWithFactoryFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.FACTORY_URL.put(context, "factory2,factory3");
+
+        FactoryUrlTopFactoriesServiceImpl service = new FactoryUrlTopFactoriesServiceImpl();
+        List<TableData> data = service.getData(context);
+
+        assertEquals(data.size(), 7);
+        assertEquals(data.get(0).size(), 3);
+
+        assertEquals(data.get(0).get(0).size(), 13);
+        assertEquals(data.get(0).get(1).size(), 13);
+        assertEquals(data.get(0).get(2).size(), 13);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(data.get(i).get(0).get(0), "Factory");
+            assertEquals(data.get(i).get(1).get(0), "factory2");
+            assertEquals(data.get(i).get(2).get(0), "factory3");
+
+            assertEquals(data.get(i).get(0).get(1), "Workspace Creations");
+            assertEquals(data.get(i).get(1).get(1), "2");
+            assertEquals(data.get(i).get(2).get(1), "1");
+
+            assertEquals(data.get(i).get(0).get(2), "Sessions");
+            assertEquals(data.get(i).get(1).get(2), "2");
+            assertEquals(data.get(i).get(2).get(2), "1");
+
+            assertEquals(data.get(i).get(0).get(3), "% Anon");
+            assertEquals(data.get(i).get(1).get(3), "0.0");
+            assertEquals(data.get(i).get(2).get(3), "100.0");
+
+            assertEquals(data.get(i).get(0).get(4), "% Auth");
+            assertEquals(data.get(i).get(1).get(4), "100.0");
+            assertEquals(data.get(i).get(2).get(4), "0.0");
+
+            assertEquals(data.get(i).get(0).get(5), "% Abandon");
+            assertEquals(data.get(i).get(1).get(5), "100.0");
+            assertEquals(data.get(i).get(2).get(5), "100.0");
+
+            assertEquals(data.get(i).get(0).get(6), "% Convert");
+            assertEquals(data.get(i).get(1).get(6), "0.0");
+            assertEquals(data.get(i).get(2).get(6), "0.0");
+
+            assertEquals(data.get(i).get(0).get(7), "% Build");
+            assertEquals(data.get(i).get(1).get(7), "50.0");
+            assertEquals(data.get(i).get(2).get(7), "0.0");
+
+            assertEquals(data.get(i).get(0).get(8), "% Run");
+            assertEquals(data.get(i).get(1).get(8), "0.0");
+            assertEquals(data.get(i).get(2).get(8), "0.0");
+
+            assertEquals(data.get(i).get(0).get(9), "% Deployed");
+            assertEquals(data.get(i).get(1).get(9), "50.0");
+            assertEquals(data.get(i).get(2).get(9), "0.0");
+
+            assertEquals(data.get(i).get(0).get(10), "Mins");
+            assertEquals(data.get(i).get(1).get(10), "36");
+            assertEquals(data.get(i).get(2).get(10), "25");
+
+            assertEquals(data.get(i).get(0).get(11), "First Session");
+            assertTrue(data.get(i).get(1).get(11).contains("12:00:00") && data.get(i).get(1).get(11).contains(date));
+            assertTrue(data.get(i).get(2).get(11).contains("14:00:00") && data.get(i).get(2).get(11).contains(date));
+
+            assertEquals(data.get(i).get(0).get(12), "Last Session");
+            assertTrue(data.get(i).get(1).get(12).contains("13:00:00") && data.get(i).get(1).get(12).contains(date));
+            assertTrue(data.get(i).get(2).get(12).contains("14:00:00") && data.get(i).get(2).get(12).contains(date));
+        }
+    }
+
 
     private File prepareLogs() throws IOException {
         List<Event> events = new ArrayList<>();

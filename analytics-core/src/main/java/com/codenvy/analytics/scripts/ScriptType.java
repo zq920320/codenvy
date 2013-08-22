@@ -525,6 +525,11 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return ListStringValueData.class;
         }
+
+        @Override
+        public boolean isLogRequired() {
+            return false;
+        }
     },
     FACTORY_URL_BY_ENTITY {
         @Override

@@ -178,8 +178,7 @@ public class ActOnJob implements Job {
                 try {
                     writeUserProfileAttributes(out, user);
                 } catch (Exception e) {
-                    LOGGER.warn(user + " is absent. May be it was removed.");
-                    continue;
+                    continue; // TODO
                 }
 
                 writeMetricsValues(out, user);
@@ -200,7 +199,7 @@ public class ActOnJob implements Job {
 
     private void writeMetricsValues(BufferedWriter out, String user) throws IOException {
         Map<String, String> context = initializeContext();
-        MetricFilter.FILTER_USER.put(context, user);
+        MetricFilter.USER.put(context, user);
 
         ValueData value = MetricFactory.createMetric(MetricType.PROJECT_CREATED).getValue(context);
         out.write(value.toString());

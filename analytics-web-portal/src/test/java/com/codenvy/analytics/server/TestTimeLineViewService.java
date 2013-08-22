@@ -19,7 +19,6 @@
 
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.client.TimeLineService;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
@@ -40,7 +39,7 @@ public class TestTimeLineViewService {
         System.setProperty(PigScriptExecutor.ANALYTICS_LOGS_DIRECTORY_PROPERTY, FSValueDataManager.RESULT_DIRECTORY);
         
         Map<String, String> filters = new HashMap<String, String>();
-        filters.put(MetricFilter.FILTER_USER.name(), "gmail.com");
+        filters.put(MetricFilter.USER.name(), "gmail.com");
 
         TimeLineServiceImpl service = new TimeLineServiceImpl();
         service.getData(TimeUnit.DAY, filters);

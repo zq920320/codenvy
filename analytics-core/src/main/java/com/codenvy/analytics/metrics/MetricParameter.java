@@ -155,7 +155,7 @@ public enum MetricParameter {
 
     /** @return the default value for given parameter. */
     public String getDefaultValue() {
-        return "";
+        throw new UnsupportedOperationException("Method is not supported");
     }
 
     /** Validates the value of parameter. Throws {@link IllegalArgumentException} if something wrong. */

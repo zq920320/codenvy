@@ -132,7 +132,7 @@ public class TestUserInviteMetric {
 
     @Test
     public void testGetValuesWithUserFilters() throws Exception {
-        context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com");
+        context.put(MetricFilter.USER.name(), "user1@gmail.com");
         Metric metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         LongValueData vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 2);
@@ -145,7 +145,7 @@ public class TestUserInviteMetric {
         DoubleValueData dVD = (DoubleValueData)metric.getValue(context);
         assertEquals(dVD.getAsDouble(), 0.);
 
-        context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com,user2@gmail.com");
+        context.put(MetricFilter.USER.name(), "user1@gmail.com,user2@gmail.com");
         metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 3);
@@ -158,7 +158,7 @@ public class TestUserInviteMetric {
         dVD = (DoubleValueData)metric.getValue(context);
         assertEquals(dVD.getAsDouble(), 0.);
 
-        context.put(MetricFilter.FILTER_USER.name(), "@gmail.com");
+        context.put(MetricFilter.USER.name(), "@gmail.com");
         metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 3);
@@ -172,7 +172,7 @@ public class TestUserInviteMetric {
         assertEquals(dVD.getAsDouble(), 100.);
 
 
-        context.put(MetricFilter.FILTER_USER.name(), "user5@gmail.com,user6@gmail.com");
+        context.put(MetricFilter.USER.name(), "user5@gmail.com,user6@gmail.com");
 
         metric = MetricFactory.createMetric(MetricType.USER_ACCEPT_INVITE);
         vd = (LongValueData)metric.getValue(context);

@@ -68,7 +68,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     private ValueData getFilteredValue(LinkedHashMap<String, String> uuid, Map<String, String> dayContext)
             throws IOException {
 
-        Set<MetricFilter> availableFilters = getAvailableFilters(dayContext);
+        Set<MetricFilter> availableFilters = Utils.getAvailableFilters(dayContext);
 
         if (availableFilters.isEmpty()) {
             return getDirectValue(uuid);
@@ -96,17 +96,17 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     private void putFilterValue(MetricFilter filterKey, String filterValue, LinkedHashMap<String, String> uuid) {
         switch (filterKey) {
-            case FILTER_FACTORY_URL:
+            case FACTORY_URL:
                 uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.URL.name());
                 uuid.put(MetricParameter.URL.name(), filterValue);
                 break;
 
-            case FILTER_WS:
+            case WS:
                 uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.WS.name());
                 uuid.put(MetricParameter.ALIAS.name(), filterValue);
                 break;
 
-            case FILTER_USER:
+            case USER:
                 if (filterValue.startsWith("@")) {
                     uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.DOMAINS.name());
                     uuid.put(MetricParameter.ALIAS.name(), filterValue.substring(1));
@@ -132,19 +132,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         } catch (FileNotFoundException e) {
             return createEmptyValueData();
         }
-    }
-
-    /** @return all available filters from context */
-    private static Set<MetricFilter> getAvailableFilters(Map<String, String> dayContext) {
-        Set<MetricFilter> filters = new HashSet<>(3);
-
-        for (MetricFilter filterKey : MetricFilter.values()) {
-            if (dayContext.containsKey(filterKey.name())) {
-                filters.add(filterKey);
-            }
-        }
-
-        return filters;
     }
 
     /** @return empty {@link com.codenvy.analytics.metrics.value.ValueData} */

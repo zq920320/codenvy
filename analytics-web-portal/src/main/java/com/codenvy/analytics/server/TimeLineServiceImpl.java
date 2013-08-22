@@ -69,7 +69,7 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
     }
 
     private List<TableData> doFilter(Map<String, String> context) throws Exception {
-        if (context.containsKey(MetricFilter.FILTER_COMPANY.name())) {
+        if (context.containsKey(MetricFilter.COMPANY.name())) {
             replaceCompanyFilter(context);
         }
 
@@ -97,10 +97,10 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
     }
 
     private void replaceCompanyFilter(Map<String, String> context) throws IOException {
-        String company = context.get(MetricFilter.FILTER_COMPANY.name());
+        String company = context.get(MetricFilter.COMPANY.name());
         List<String> users = getUsersByCompany(company);
 
-        context.remove(MetricFilter.FILTER_COMPANY.name());
+        context.remove(MetricFilter.COMPANY.name());
 
         if (!users.isEmpty()) {
             StringBuilder builder = new StringBuilder();
@@ -111,20 +111,19 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
 
                 builder.append(user);
             }
-            context.put(MetricFilter.FILTER_USER.name(), builder.toString());
+            context.put(MetricFilter.USER.name(), builder.toString());
         } else {
             putUnExistedUserEmail(context);
         }
     }
 
     private void putUnExistedUserEmail(Map<String, String> context) {
-        context.put(MetricFilter.FILTER_USER.name(), "_@@");
+        context.put(MetricFilter.USER.name(), "_@@");
     }
 
     private List<String> getUsersByCompany(String company) throws IOException {
         Map<String, String> context = Utils.newContext();
         MetricParameter.PARAM.put(context, company);
-        MetricParameter.TO_DATE.putDefaultValue(context);
         MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE));
 
         ListStringValueData valueData =

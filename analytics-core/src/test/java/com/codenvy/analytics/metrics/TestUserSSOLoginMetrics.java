@@ -110,7 +110,7 @@ public class TestUserSSOLoginMetrics {
     @Test
     public void testGetValuesWithUserFilters() throws Exception {
         Metric metric = MetricFactory.createMetric(MetricType.USER_SSO_LOGGED_IN);
-        context.put(MetricFilter.FILTER_USER.name(), "user1@gmail.com");
+        context.put(MetricFilter.USER.name(), "user1@gmail.com");
 
         MetricParameter.PARAM.put(context, "google");
         LongValueData value = (LongValueData)metric.getValue(context);
@@ -159,7 +159,7 @@ public class TestUserSSOLoginMetrics {
     @Test
     public void testGetValuesWithDomainsFilters() throws Exception {
         Metric metric = MetricFactory.createMetric(MetricType.USER_SSO_LOGGED_IN);
-        context.put(MetricFilter.FILTER_USER.name(), "@gmail.com");
+        context.put(MetricFilter.USER.name(), "@gmail.com");
 
         MetricParameter.PARAM.put(context, "google");
         LongValueData value = (LongValueData)metric.getValue(context);
