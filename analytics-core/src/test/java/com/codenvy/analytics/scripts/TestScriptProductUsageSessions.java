@@ -128,6 +128,9 @@ public class TestScriptProductUsageSessions extends BaseTest {
         Map<String, String> params = new HashMap<>();
         params.put(MetricParameter.FROM_DATE.name(), "20130101");
         params.put(MetricParameter.TO_DATE.name(), "20130101");
+        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.PERSISTENT.name());
+
 
         ListListStringValueData value =
                 (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_SESSIONS, log, params);

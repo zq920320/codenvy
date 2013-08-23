@@ -32,6 +32,12 @@ public enum MetricType {
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.USER_UPDATE_PROFILE);
         }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+        }
     },
     FILE_MANIPULATION {
         @Override
@@ -44,6 +50,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.FILE_MANIPULATION.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     TENANT_CREATED {
@@ -57,6 +65,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.TENANT_CREATED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     TENANT_DESTROYED {
@@ -68,12 +78,16 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.TENANT_DESTROYED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     ACTIVE_USERS_SET {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, "*");
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
 
         @Override
@@ -88,6 +102,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, "*");
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
 
         @Override
@@ -109,6 +125,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.USER_CREATED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     USER_REMOVED {
@@ -122,6 +140,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.USER_REMOVED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     TOTAL_USERS,
@@ -138,6 +158,8 @@ public enum MetricType {
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.USER_SSO_LOGGED_IN.toString());
             MetricParameter.PARAM.put(context, "USING");
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     USER_LOGIN_GITHUB,
@@ -159,6 +181,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     USER_CODE_COMPLETE {
@@ -172,6 +196,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.USER_CODE_COMPLETE.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     BUILD_STARTED {
@@ -185,6 +211,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.BUILD_STARTED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     RUN_STARTED {
@@ -198,6 +226,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.RUN_STARTED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     DEBUG_STARTED {
@@ -211,6 +241,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.DEBUG_STARTED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     PRODUCT_USAGE_SESSIONS {
@@ -219,6 +251,12 @@ public enum MetricType {
             return EnumSet.of(ScriptType.PRODUCT_USAGE_SESSIONS,
                               ScriptType.PRODUCT_USAGE_SESSIONS_BY_USERS,
                               ScriptType.PRODUCT_USAGE_SESSIONS_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     PRODUCT_USAGE_TIME_0_10,
@@ -240,17 +278,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.USER_INVITE.toString());
-        }
-    },
-    USER_INVITE_ACTIVE {
-        @Override
-        public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE_USERS);
-        }
-
-        @Override
-        public void modifyContext(Map<String, String> context) {
-            MetricParameter.EVENT.put(context, EventType.USER_INVITE.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     USERS_SENT_INVITE_ONCE {
@@ -262,6 +291,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.EVENT.put(context, EventType.USER_INVITE.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     USER_ACCEPT_INVITE,
@@ -278,6 +309,8 @@ public enum MetricType {
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.USER_ADDED_TO_WS.toString());
             MetricParameter.PARAM.put(context, "FROM");
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     USER_ADDED_TO_WORKSPACE_INVITE,
@@ -292,6 +325,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.PROJECT_DESTROYED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     TOTAL_PROJECTS,
@@ -306,6 +341,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     PROJECT_CREATED_TYPES {
@@ -320,6 +357,8 @@ public enum MetricType {
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
             MetricParameter.PARAM.put(context, "TYPE");
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     PROJECT_TYPE_JAR,
@@ -334,17 +373,6 @@ public enum MetricType {
     PROJECT_TYPE_NODEJS,
     PROJECT_TYPE_ANDROID,
     PROJECT_TYPE_OTHERS,
-    PROJECT_CREATED_USER_ACTIVE {
-        @Override
-        public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE_USERS);
-        }
-
-        @Override
-        public void modifyContext(Map<String, String> context) {
-            MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
-        }
-    },
     USERS_CREATED_PROJECT_ONCE {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -354,6 +382,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     PROJECT_DEPLOYED_TYPES {
@@ -362,6 +392,12 @@ public enum MetricType {
             return EnumSet.of(ScriptType.PROJECT_DEPLOYED,
                               ScriptType.PROJECT_DEPLOYED_BY_DOMAINS,
                               ScriptType.PROJECT_DEPLOYED_BY_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
     PROJECT_PAAS_AWS,
@@ -381,6 +417,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
             MetricParameter.EVENT.put(context, EventType.SHELL_LAUNCHED.toString());
         }
     },
@@ -392,6 +430,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
             MetricParameter.EVENT.put(context, EventType.PROJECT_BUILT.toString() + "," +
                                                EventType.PROJECT_DEPLOYED.toString() + "," +
                                                EventType.APPLICATION_CREATED.toString());
@@ -405,6 +445,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
             MetricParameter.EVENT.put(context, EventType.PROJECT_DEPLOYED.toString() + "," +
                                                EventType.APPLICATION_CREATED.toString());
         }
@@ -417,6 +459,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
             MetricParameter.EVENT.put(context, EventType.APPLICATION_CREATED.toString());
         }
     },
@@ -430,6 +474,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
             MetricParameter.EVENT.put(context, EventType.PROJECT_BUILT.toString() + "," +
                                                EventType.PROJECT_DEPLOYED.toString() + "," +
                                                EventType.APPLICATION_CREATED.toString());
@@ -445,6 +491,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
             MetricParameter.EVENT.put(context, EventType.PROJECT_DEPLOYED.toString() + "," +
                                                EventType.APPLICATION_CREATED.toString());
         }
@@ -453,6 +501,12 @@ public enum MetricType {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.ACTIVITY_BY_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     FACTORY_CREATED {
@@ -464,12 +518,20 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.EVENT.put(context, EventType.FACTORY_CREATED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     ACTIVE_FACTORY_SET {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.SET_ACTIVE_FACTORY);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }
     },
     FACTORY_URL_ACCEPTED {
@@ -482,12 +544,21 @@ public enum MetricType {
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
             MetricParameter.PARAM.put(context, "FACTORY-URL");
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }
     },
     TEMPORARY_WORKSPACE_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.TEMPORARY_WORKSPACE_CREATED, ScriptType.TEMPORARY_WORKSPACE_CREATED_BY_WS);
+            return EnumSet.of(ScriptType.NUMBER_EVENTS, ScriptType.NUMBER_EVENTS_BY_WS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.EVENT.put(context, EventType.TENANT_CREATED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }
     },
     FACTORY_SESSIONS_TYPES {
@@ -500,6 +571,8 @@ public enum MetricType {
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.EVENT.put(context, EventType.SESSION_FACTORY_STARTED.toString());
             MetricParameter.PARAM.put(context, "AUTHENTICATED");
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }
     },
     FACTORY_SESSIONS_AUTH,
@@ -515,12 +588,24 @@ public enum MetricType {
             return EnumSet
                     .of(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY, ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS);
         }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
+        }
     },
     PRODUCT_USAGE_TIME_FACTORY {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet
                     .of(ScriptType.PRODUCT_USAGE_TIME_FACTORY, ScriptType.PRODUCT_USAGE_TIME_FACTORY_BY_WS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }
     },
     PRODUCT_USAGE_FACTORY_SESSIONS_0_10,
@@ -534,6 +619,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.EVENT.put(context, EventType.FACTORY_PROJECT_IMPORTED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }
     },
     FACTORY_SESSIONS_CONV,
@@ -548,6 +635,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
             MetricParameter.EVENT.put(context, EventType.PROJECT_BUILT.toString() + "," +
                                                EventType.BUILD_STARTED.toString() + "," +
                                                EventType.PROJECT_DEPLOYED.toString() + "," +
@@ -562,6 +651,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
             MetricParameter.EVENT.put(context, EventType.RUN_STARTED.toString());
         }
     },
@@ -573,6 +664,8 @@ public enum MetricType {
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
             MetricParameter.EVENT.put(context, EventType.PROJECT_DEPLOYED.toString() + "," +
                                                EventType.APPLICATION_CREATED.toString());
         }
@@ -592,11 +685,23 @@ public enum MetricType {
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.JREBEL_USER_PROFILE_INFO);
         }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+        }
     },
     PRODUCT_USAGE_TIME_USERS {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_USERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     PRODUCT_USAGE_TIME_TOP_USERS_BY_1DAY,
@@ -610,6 +715,12 @@ public enum MetricType {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.PRODUCT_USAGE_TIME_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_1DAY,
@@ -629,6 +740,8 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE));
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_1DAY,
@@ -652,7 +765,10 @@ public enum MetricType {
     USER_PROFILE_PHONE;
 
 
-    /** @return set of scripts that are responsible for calculation value of the metric */
+    /**
+     * @return set of scripts that are responsible for calculation value of the metric. If it returns nothing
+     *         then value of the metric is based on value of another metric
+     */
     public EnumSet<ScriptType> getScripts() {
         return EnumSet.noneOf(ScriptType.class);
     }
@@ -664,7 +780,5 @@ public enum MetricType {
     public void modifyContext(Map<String, String> context) throws IOException {
         // do nothing by default
     }
-
-    // TODO getDescription
-    // TODO isInternal
 }
+

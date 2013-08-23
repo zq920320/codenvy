@@ -67,6 +67,8 @@ public class TestScriptNumberOfActiveUsers extends BaseTest {
 
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
         LongValueData valueData = (LongValueData)executeAndReturnResult(ScriptType.NUMBER_ACTIVE_USERS, log, context);
 
@@ -77,6 +79,8 @@ public class TestScriptNumberOfActiveUsers extends BaseTest {
         context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130102");
         MetricParameter.TO_DATE.put(context, "20130102");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USERS_CREATED_PROJECT_ONCE));
         MetricParameter.STORE_DIR.put(context, Utils.getStoreDirFor(MetricType.USERS_CREATED_PROJECT_ONCE));
         MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());

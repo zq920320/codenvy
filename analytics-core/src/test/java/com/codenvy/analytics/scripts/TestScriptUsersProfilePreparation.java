@@ -50,6 +50,8 @@ public class TestScriptUsersProfilePreparation extends BaseTest {
         Map<String, String> params = new HashMap<String, String>();
         params.put(MetricParameter.FROM_DATE.name(), "20130101");
         params.put(MetricParameter.TO_DATE.name(), "20130101");
+        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.REGISTERED.name());
+        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.ANY.name());
 
         MapStringListListStringValueData value =
                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.USERS_PROFILE_PREPARATION,

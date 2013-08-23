@@ -18,12 +18,11 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$LOG');
+f1 = loadResources('$LOG', '$USER', '$WS');
 f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 f = filterByEvent(f2, '$EVENT');
 
-a1 = extractUser(f);
-a2 = FOREACH a1 GENERATE user;
+a2 = FOREACH f GENERATE user;
 a = FILTER a2 BY user != 'default';
 
 result = DISTINCT a;

@@ -21,6 +21,8 @@ package com.codenvy.analytics.scripts;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum EventType {
+    // TODO it will be nice to have the set of all available parameters
+
     FILE_MANIPULATION,
     USER_CODE_REFACTOR,
     USER_CODE_COMPLETE,

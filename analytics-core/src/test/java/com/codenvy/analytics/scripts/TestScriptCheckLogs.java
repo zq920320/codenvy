@@ -51,8 +51,10 @@ public class TestScriptCheckLogs extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.name(), "20130101");
-        params.put(MetricParameter.TO_DATE.name(), "20130101");
+        MetricParameter.FROM_DATE.put(params, "20130101");
+        MetricParameter.TO_DATE.put(params, "20130101");
+        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.ANY.name());
 
         ListListStringValueData value =
                 (ListListStringValueData)executeAndReturnResult(ScriptType.CHECK_LOGS_1, log, params);

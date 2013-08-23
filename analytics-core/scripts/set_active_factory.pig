@@ -18,7 +18,7 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$LOG');
+f1 = loadResources('$LOG', '$USER', '$WS');
 f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 f = filterByEvent(f2, 'factory-url-accepted');
 

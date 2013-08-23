@@ -99,6 +99,8 @@ public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
         params.put(MetricParameter.EVENT.name(), EventType.PROJECT_BUILT.toString() + "," +
                                                  EventType.APPLICATION_CREATED.toString() + "," +
                                                  EventType.PROJECT_DEPLOYED.toString());
+        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.TEMPORARY.name());
 
 
         LongValueData valueData =

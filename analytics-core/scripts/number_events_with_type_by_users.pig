@@ -18,11 +18,10 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$LOG');
+a1 = loadResources('$LOG', '$USER', '$WS');
 a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
 a3 = filterByEvent(a2, '$EVENT');
-a4 = extractUser(a3);
-a5 = extractParam(a4, '$PARAM', 'param');
+a5 = extractParam(a3, '$PARAM', 'param');
 a6 = FOREACH a5 GENERATE user, param;
 a = FILTER a6 BY user != 'default';
 

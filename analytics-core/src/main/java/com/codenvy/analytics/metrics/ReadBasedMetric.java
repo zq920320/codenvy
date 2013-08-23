@@ -97,21 +97,21 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     private void putFilterValue(MetricFilter filterKey, String filterValue, LinkedHashMap<String, String> uuid) {
         switch (filterKey) {
             case FACTORY_URL:
-                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.URL.name());
+                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.URL.name());
                 uuid.put(MetricParameter.URL.name(), filterValue);
                 break;
 
             case WS:
-                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.WS.name());
+                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.WS.name());
                 uuid.put(MetricParameter.ALIAS.name(), filterValue);
                 break;
 
             case USER:
                 if (filterValue.startsWith("@")) {
-                    uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.DOMAINS.name());
+                    uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.DOMAINS.name());
                     uuid.put(MetricParameter.ALIAS.name(), filterValue.substring(1));
                 } else {
-                    uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPE.USERS.name());
+                    uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.USERS.name());
                     uuid.put(MetricParameter.ALIAS.name(), filterValue);
                 }
 

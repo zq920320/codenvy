@@ -18,13 +18,11 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$LOG');
+f1 = loadResources('$LOG', '$USER', '$WS');
 f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
 f = filterByEvent(f2, 'project-deployed,application-created');
 
-t1 = extractWs(f);
-t2 = extractUser(t1);
-t3 = extractParam(t2, 'TYPE', 'type');
+t3 = extractParam(f, 'TYPE', 'type');
 t4 = extractParam(t3, 'PROJECT', 'project');
 t5 = extractParam(t4, 'PAAS', 'paas');
 t6 = FOREACH t5 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, project, type, paas;

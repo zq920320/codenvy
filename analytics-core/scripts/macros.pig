@@ -18,18 +18,20 @@
 
 ---------------------------------------------------------------------------
 -- Loads resources.
--- @return {ip : bytearray, dt : datetime,  event : bytearray, message : chararray} 
+-- @return {ip : bytearray, dt : datetime,  event : bytearray, message : chararray, user : bytearray, ws : bytearray} 
 -- In details:
 --   field 'date' contains date in format 'YYYYMMDD'
 --   field 'time' contains seconds from midnight
 ---------------------------------------------------------------------------
-DEFINE loadResources(resourceParam) RETURNS Y {
+DEFINE loadResources(resourceParam, userType, wsType) RETURNS Y {
   l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
   l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*EVENT\\#([^\\#]*)\\#.*') 
                           AS pattern, message;
   l3 = FILTER l2 BY pattern.$2 != '';
   l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$2 AS event, message;
-  $Y = DISTINCT l4;
+  l5 = DISTINCT l4;
+  l6 = extractUser(l5, '$userType');
+  $Y = extractWs(l6, '$wsType');
 };
 
 ---------------------------------------------------------------------------
@@ -93,57 +95,27 @@ DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
 -- Extract workspace name out of message and adds as field to tuple.
 -- @return  {..., ws : bytearray}
 ---------------------------------------------------------------------------
-DEFINE extractWs(X) RETURNS Y {
+DEFINE extractWs(X, wsType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws1, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws2;
   x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws;
-  $Y = FILTER x2 BY INDEXOF(UPPER(ws), 'TMP-', 0) < 0;
-
-};
-
----------------------------------------------------------------------------
--- Extract temporary workspace name out of message and adds as field to tuple.
--- @return  {..., ws : bytearray}
----------------------------------------------------------------------------
-DEFINE extractTmpWs(X) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws1, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws2;
-  x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws;
-  $Y = FILTER x2 BY INDEXOF(UPPER(ws), 'TMP-', 0) >= 0;
+  $Y = FILTER x2 BY '$wsType' == 'ANY' OR 
+		    ('$wsType' == 'TEMPORARY' AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0) OR 
+		    ('$wsType' == 'PERSISTENT' AND INDEXOF(UPPER(ws), 'TMP-', 0) < 0);
 };
 
 ---------------------------------------------------------------------------
 -- Extract user name out of message and adds as field to tuple.
 -- @return  {..., user : bytearray}
 ---------------------------------------------------------------------------
-DEFINE extractUser(X) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user1,
-			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2, 
-			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
-  x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS newUser;
-  x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(newUser, ',')) AS user;
-  $Y = FILTER x3 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
-};
-
----------------------------------------------------------------------------
--- Extract anonymous user name out of message and adds as field to tuple.
--- @return  {..., user : bytearray}
----------------------------------------------------------------------------
-DEFINE extractAnonUser(X) RETURNS Y {
+DEFINE extractUser(X, userType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user1,
 			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2,
 			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
   x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS newUser;
   x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(newUser, ',')) AS user;
-  $Y = FILTER x3 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) >= 0;
-};
-
----------------------------------------------------------------------------
--- Extract both anonymous and not anonymous user name out of message and adds as field to tuple.
--- @return  {..., user : bytearray}
----------------------------------------------------------------------------
-DEFINE extractAnonAndNotAnonUser(X) RETURNS Y {
-    A = extractUser($X);
-    B = extractAnonUser($X);
-    $Y = UNION A, B;
+  $Y = FILTER x3 BY '$userType' == 'ANY' OR
+		    ('$userType' == 'ANTONYMOUS' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0) OR
+		    ('$userType' == 'REGISTERED' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0);
 };
 
 ---------------------------------------------------------------------------

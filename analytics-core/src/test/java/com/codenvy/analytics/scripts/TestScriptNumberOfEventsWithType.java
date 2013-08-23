@@ -56,6 +56,9 @@ public class TestScriptNumberOfEventsWithType extends BaseTest {
         MetricParameter.TO_DATE.put(context, "20130101");
         MetricParameter.EVENT.put(context, EventType.USER_SSO_LOGGED_IN.toString());
         MetricParameter.PARAM.put(context, "USING");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+
 
         MapStringLongValueData valueData =
                 (MapStringLongValueData)executeAndReturnResult(ScriptType.NUMBER_EVENTS_WITH_TYPE, log, context);
@@ -88,6 +91,8 @@ public class TestScriptNumberOfEventsWithType extends BaseTest {
         MetricParameter.TO_DATE.put(context, "20130101");
         MetricParameter.EVENT.put(context, EventType.USER_SSO_LOGGED_IN.toString());
         MetricParameter.PARAM.put(context, "USING");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
 
         MapListLongValueData valueData =
                 (MapListLongValueData)executeAndReturnResult(ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_USERS, log, context);
@@ -130,6 +135,8 @@ public class TestScriptNumberOfEventsWithType extends BaseTest {
         MetricParameter.TO_DATE.put(context, "20130101");
         MetricParameter.EVENT.put(context, EventType.USER_SSO_LOGGED_IN.toString());
         MetricParameter.PARAM.put(context, "USING");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
 
         MapListLongValueData valueData =
                 (MapListLongValueData)executeAndReturnResult(ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS, log,

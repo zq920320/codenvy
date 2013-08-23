@@ -34,7 +34,18 @@ public enum MetricParameter {
     LOG,
     LOAD_DIR,
     STORE_DIR,
-
+    USER {
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            USER_TYPES.valueOf(value);
+        }
+    },
+    WS {
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            WS_TYPES.valueOf(value);
+        }
+    },
     TIME_UNIT {
         @Override
         public String getDefaultValue() {
@@ -76,13 +87,7 @@ public enum MetricParameter {
     ENTITY {
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            for (ENTITY_TYPE eType : ENTITY_TYPE.values()) {
-                if (eType.name().equals(value)) {
-                    return;
-                }
-            }
-
-            throw new IllegalArgumentException("The illegal ENTITY parameter value " + value);
+            ENTITY_TYPES.valueOf(value);
         }
     },
     TO_DATE {
@@ -169,10 +174,18 @@ public enum MetricParameter {
     public static final String PARAM_DATE_FORMAT = "yyyyMMdd";
 
     /** Enumeration for {@link MetricParameter#ENTITY} */
-    public enum ENTITY_TYPE {
+    public enum ENTITY_TYPES {
         WS,
         DOMAINS,
         USERS,
         URL
+    }
+
+    public enum WS_TYPES {
+        ANY, PERSISTENT, TEMPORARY
+    }
+
+    public enum USER_TYPES {
+        ANY, REGISTERED, ANTONYMOUS
     }
 }

@@ -18,12 +18,11 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$LOG');
+f1 = loadResources('$LOG', '$USER', '$WS');
 f2 = filterByEvent(f1, '$EVENT');
 f = filterByDate(f2, '$FROM_DATE', '$TO_DATE');
 
-a1 = extractUser(f);
-a = FOREACH a1 GENERATE user;
+a = FOREACH f GENERATE user;
 
 b = LOAD '$LOAD_DIR' USING PigStorage() AS (user : chararray);
 

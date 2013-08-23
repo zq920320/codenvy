@@ -52,6 +52,8 @@ public class TestScriptNumberOfEvents extends BaseTest {
         Map<String, String> context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
 
         LongValueData longValueData = (LongValueData) executeAndReturnResult(ScriptType.NUMBER_EVENTS, log, context);
@@ -69,6 +71,8 @@ public class TestScriptNumberOfEvents extends BaseTest {
         Map<String, String> context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
 
 
@@ -91,6 +95,8 @@ public class TestScriptNumberOfEvents extends BaseTest {
         Map<String, String> context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
 
 
@@ -113,6 +119,8 @@ public class TestScriptNumberOfEvents extends BaseTest {
         Map<String, String> context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         MetricParameter.EVENT.put(context, EventType.USER_CODE_REFACTOR.toString());
 
 

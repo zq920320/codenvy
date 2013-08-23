@@ -53,6 +53,8 @@ public class TestScriptSetOfActiveWs extends BaseTest {
         Map<String, String> context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         MetricParameter.EVENT.put(context, "*");
 
         SetStringValueData valueData = (SetStringValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS, log, context);
@@ -72,6 +74,8 @@ public class TestScriptSetOfActiveWs extends BaseTest {
         Map<String, String> context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         MetricParameter.EVENT.put(context, "*");
 
         MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS_BY_DOMAINS, log, context);
@@ -96,6 +100,8 @@ public class TestScriptSetOfActiveWs extends BaseTest {
         Map<String, String> context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         MetricParameter.EVENT.put(context, "*");
 
         MapStringSetValueData valueData = (MapStringSetValueData) executeAndReturnResult(ScriptType.SET_ACTIVE_WS_BY_USERS, log, context);

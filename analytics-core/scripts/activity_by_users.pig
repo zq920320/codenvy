@@ -16,12 +16,11 @@
  * from Codenvy S.A..
  */
 
- IMPORT 'macros.pig';
+IMPORT 'macros.pig';
 
-f1 = loadResources('$LOG');
+f1 = loadResources('$LOG', '$USER', '$WS');
 f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-f3 = extractUser(f2);
-f = FOREACH f3 GENERATE user, message;
+f = FOREACH f2 GENERATE user, message;
 
 r1 = GROUP f BY user;
 r = FOREACH r1 {

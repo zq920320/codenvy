@@ -73,14 +73,12 @@ public class TestUserInviteMetric {
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
         DataProcessing.calculateAndStore(MetricType.USER_INVITE, context);
-        DataProcessing.calculateAndStore(MetricType.USER_INVITE_ACTIVE, context);
         DataProcessing.calculateAndStore(MetricType.USER_ADDED_TO_WORKSPACE, context);
 
         Map<String, String> clonedContext = Utils.clone(context);
         MetricParameter.FROM_DATE.put(clonedContext, "20130102");
         MetricParameter.TO_DATE.put(clonedContext, "20130102");
         DataProcessing.calculateAndStore(MetricType.USER_INVITE, clonedContext);
-        DataProcessing.calculateAndStore(MetricType.USER_INVITE_ACTIVE, clonedContext);
         DataProcessing.calculateAndStore(MetricType.USER_ADDED_TO_WORKSPACE, clonedContext);
     }
 
@@ -89,12 +87,6 @@ public class TestUserInviteMetric {
         Metric metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         LongValueData vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 3);
-
-        metric = MetricFactory.createMetric(MetricType.USER_INVITE_ACTIVE);
-        SetStringValueData setVD = (SetStringValueData)metric.getValue(context);
-        assertEquals(setVD.size(), 2);
-        assertTrue(setVD.getAll().contains("user1@gmail.com"));
-        assertTrue(setVD.getAll().contains("user2@gmail.com"));
 
         metric = MetricFactory.createMetric(MetricType.USER_ACCEPT_INVITE);
         vd = (LongValueData)metric.getValue(context);
@@ -113,13 +105,6 @@ public class TestUserInviteMetric {
         Metric metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         LongValueData vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 6);
-
-        metric = MetricFactory.createMetric(MetricType.USER_INVITE_ACTIVE);
-        SetStringValueData setVD = (SetStringValueData)metric.getValue(context);
-        assertEquals(setVD.size(), 3);
-        assertTrue(setVD.getAll().contains("user1@gmail.com"));
-        assertTrue(setVD.getAll().contains("user2@gmail.com"));
-        assertTrue(setVD.getAll().contains("user3@gmail.com"));
 
         metric = MetricFactory.createMetric(MetricType.USER_ACCEPT_INVITE);
         vd = (LongValueData)metric.getValue(context);

@@ -32,7 +32,7 @@ DEFINE checkEventAndParam(X, S, eventParam, paramName, paramValue) RETURNS Y {
     $Y = FOREACH $S GENERATE CONCAT(CONCAT(CONCAT(CONCAT('$eventParam', ':'), '$paramName'), ':'), '$paramValue') AS event,  (COUNT(w4.$1) > 0 ? 'generated' : NULL) AS status;
 };
 
-l1 = loadResources('$LOG');
+l1 = loadResources('$LOG', '$USER', '$WS');
 lR = filterByDate(l1, '$FROM_DATE', '$TO_DATE');
 
 s1 = GROUP lR ALL;

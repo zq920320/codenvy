@@ -135,9 +135,6 @@ public class MetricFactory {
             case USER_INVITE:
                 metric = new UserInviteMetric();
                 break;
-            case USER_INVITE_ACTIVE:
-                metric = new UserInviteActiveMetric();
-                break;
             case USER_ACCEPT_INVITE:
                 metric = new UserAcceptInviteMetric();
                 break;
@@ -164,9 +161,6 @@ public class MetricFactory {
                 break;
             case PROJECT_CREATED_TYPES:
                 metric = new ProjectsCreatedTypesMetric();
-                break;
-            case PROJECT_CREATED_USER_ACTIVE:
-                metric = new ProjectCreatedUserActiveMetric();
                 break;
             case PROJECT_TYPE_JAR:
                 metric = new ProjectCreatedTypeJarMetric();

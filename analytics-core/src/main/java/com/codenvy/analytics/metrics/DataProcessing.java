@@ -93,7 +93,7 @@ public class DataProcessing {
             doStore(valueData, metricType, uuid);
 
         } else {
-            MetricParameter.ENTITY_TYPE entityType = getEntity(scriptType);
+            MetricParameter.ENTITY_TYPES entityType = getEntity(scriptType);
 
             Map<?, ?> items = ((MapValueData)valueData).getAll();
 
@@ -119,7 +119,7 @@ public class DataProcessing {
     }
 
     private static void updateUUID(Object key, MetricParameter[] resultScheme,
-                                   MetricParameter.ENTITY_TYPE entityType,
+                                   MetricParameter.ENTITY_TYPES entityType,
                                    Map<String, String> uuid) {
         switch (resultScheme.length) {
             case 1:
@@ -149,14 +149,14 @@ public class DataProcessing {
     /**
      * Extracts entity out of {@link ScriptType}.
      *
-     * @return {@link MetricParameter.ENTITY_TYPE} or null
+     * @return {@link com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPES} or null
      */
-    private static MetricParameter.ENTITY_TYPE getEntity(ScriptType scriptType) {
+    private static MetricParameter.ENTITY_TYPES getEntity(ScriptType scriptType) {
         String scriptName = scriptType.name();
 
         int pos = scriptName.indexOf("_BY_");
         String entityName = scriptName.substring(pos + 4, scriptName.length());
 
-        return pos == -1 ? null : MetricParameter.ENTITY_TYPE.valueOf(entityName);
+        return pos == -1 ? null : MetricParameter.ENTITY_TYPES.valueOf(entityName);
     }
 }

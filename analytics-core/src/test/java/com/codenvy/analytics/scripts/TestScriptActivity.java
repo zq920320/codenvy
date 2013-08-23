@@ -42,15 +42,17 @@ public class TestScriptActivity extends BaseTest {
     public void testExecute() throws Exception {
         List<Event> events = new ArrayList<Event>();
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "session", "project1", "type1")
-                                .withDate("2013-01-01").build());
+                        .withDate("2013-01-01").build());
         events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "session", "project1", "type1")
-                                .withDate("2013-01-01").build());
+                        .withDate("2013-01-01").build());
 
         File log = LogGenerator.generateLog(events);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put(MetricParameter.FROM_DATE.name(), "20130101");
-        params.put(MetricParameter.TO_DATE.name(), "20130101");
+        MetricParameter.FROM_DATE.put(params, "20130101");
+        MetricParameter.TO_DATE.put(params, "20130101");
+        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.ANY.name());
 
         MapStringListValueData value =
                 (MapStringListValueData)executeAndReturnResult(ScriptType.ACTIVITY_BY_USERS, log, params);

@@ -26,7 +26,7 @@ DEFINE keepOneInstance(X) RETURNS Y {
     }
 };
 
-l1 = loadResources('$LOG');
+l1 = loadResources('$LOG', '$USER', '$WS');
 lR = filterByDate(l1, '$FROM_DATE', '$TO_DATE');
 
 a1 = FILTER lR BY INDEXOF(message, '#null#', 0) >= 0;
