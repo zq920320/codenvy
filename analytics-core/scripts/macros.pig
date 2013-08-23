@@ -199,7 +199,7 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
   kR = FILTER k3 BY flag == 'start' OR flag == 'end';
 
   k4 = FILTER k3 BY flag == 'single';
-  kS = FOREACH k4 GENERATE ws, user, dt, ((long) $inactiveInterval*60) AS delta;
+  kS = FOREACH k4 GENERATE ws, user, dt, 0 AS delta;
 
   ---------------------------------------------------------------------------------------------
   -- For every the start session event finds the corresponding the end session event

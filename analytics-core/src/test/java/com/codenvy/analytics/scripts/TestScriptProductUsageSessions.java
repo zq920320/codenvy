@@ -145,20 +145,20 @@ public class TestScriptProductUsageSessions extends BaseTest {
         assertEquals(map.size(), 9);
         assertUser(map, "user1", 2, 14 * 60);
         assertUser(map, "user2", 1, 4 * 60);
-        assertUser(map, "user3", 1, 10 * 60);
+        assertUser(map, "user3", 1, 0);
         assertUser(map, "user11", 1, 2 * 60);
         assertUser(map, "ANONYMOUSUSER_user11", 1, 5 * 60);
         assertUser(map, "user12", 1, 7 * 60);
-        assertUser(map, "user15@gmail.com", 2, 15 * 60);
+        assertUser(map, "user15@gmail.com", 2, 5 * 60);
         assertUser(map, "user13", 1, 5 * 60);
-        assertUser(map, "user14", 1, 10 * 60);
+        assertUser(map, "user14", 1, 0);
 
         map =
                 (MapStringListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_SESSIONS_BY_DOMAINS, log,
                                                                          params);
 
         assertEquals(map.size(), 1);
-        assertUser(map, "gmail.com", 2, 15 * 60);
+        assertUser(map, "gmail.com", 2, 5 * 60);
     }
 
 

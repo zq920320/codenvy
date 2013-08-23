@@ -30,7 +30,7 @@ j = JOIN SS BY sId FULL, SF BY sId;
 SPLIT j INTO noSS IF SS::sId IS NULL, noSF IF SF::sId IS NULL, SSSF OTHERWISE;
 
 A = FOREACH SSSF GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
-B = FOREACH noSS GENERATE SF::ws AS ws, SF::user AS user, SF::dt AS dt, 60 * (long) $inactiveInterval AS delta;
+B = FOREACH noSS GENERATE SF::ws AS ws, SF::user AS user, SubtractDuration(SF::dt, 'PT10M') AS dt, 60 * (long) $inactiveInterval AS delta;
 C = FOREACH noSF GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, 60 * (long) $inactiveInterval AS delta;
 
 R = UNION A, B, C;
