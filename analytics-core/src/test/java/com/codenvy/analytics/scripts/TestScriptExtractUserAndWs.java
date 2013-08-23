@@ -60,8 +60,8 @@ public class TestScriptExtractUserAndWs extends BaseTest {
         log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
-        MetricParameter.FROM_DATE.put(context, "2013-01-01");
-        MetricParameter.TO_DATE.put(context, "2013-01-01");
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
     }
 
     @Test

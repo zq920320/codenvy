@@ -18,9 +18,8 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$LOG', '$USER', '$WS');
-a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
-a3 = filterByEvent(a2, 'factory-created');
+a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+a3 = filterByEvent(a1, 'factory-created');
 a = extractParam(a3, 'FACTORY-URL', 'factoryUrl');
 
 result = countByField(a, 'factoryUrl');

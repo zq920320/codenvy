@@ -18,9 +18,8 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$LOG', '$USER', '$WS');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-f = filterByEvent(f2, '$EVENT');
+f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+f = filterByEvent(f1, '$EVENT');
 
 a2 = FOREACH f GENERATE user AS userFake, user;
 a = FILTER a2 BY user != 'default' AND userFake != 'default';

@@ -18,12 +18,11 @@
 
  IMPORT 'macros.pig';
 
-l = loadResources('$LOG', '$USER', '$WS');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = filterByEvent(l, 'user-update-profile');
-a2 = filterByDate(a1, '$FROM_DATE', '$TO_DATE');
 
-a4 = extractParam(a2, 'FIRSTNAME', 'firstName');
+a4 = extractParam(a1, 'FIRSTNAME', 'firstName');
 a5 = extractParam(a4, 'LASTNAME', 'lastName');
 a6 = extractParam(a5, 'COMPANY', 'company');
 a7 = extractParam(a6, 'PHONE', 'phone');

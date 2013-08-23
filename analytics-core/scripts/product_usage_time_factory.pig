@@ -20,8 +20,7 @@ IMPORT 'macros.pig';
 
 %DEFAULT inactiveInterval '10';  -- in minutes
 
-t1 = loadResources('$LOG', '$USER', '$WS');
-t = filterByDate(t1, '$FROM_DATE', '$TO_DATE');
+t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 SS = extractEventsWithSessionId(t, 'session-factory-started');
 SF = extractEventsWithSessionId(t, 'session-factory-stopped');

@@ -18,9 +18,8 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$LOG', '$USER', '$WS');
-f2 = filterByDate(f1, '$FROM_DATE', '$TO_DATE');
-f = FOREACH f2 GENERATE user, message;
+f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+f = FOREACH f1 GENERATE user, message;
 
 r1 = GROUP f BY user;
 r = FOREACH r1 {

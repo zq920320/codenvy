@@ -23,15 +23,17 @@
 --   field 'date' contains date in format 'YYYYMMDD'
 --   field 'time' contains seconds from midnight
 ---------------------------------------------------------------------------
-DEFINE loadResources(resourceParam, userType, wsType) RETURNS Y {
+DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
   l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*EVENT\\#([^\\#]*)\\#.*') 
                           AS pattern, message;
   l3 = FILTER l2 BY pattern.$2 != '';
   l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$2 AS event, message;
   l5 = DISTINCT l4;
-  l6 = extractUser(l5, '$userType');
-  $Y = extractWs(l6, '$wsType');
+
+  l6 = filterByDate(l5, '$from', '$to');
+  l7 = extractUser(l6, '$userType');
+  $Y = extractWs(l7, '$wsType');
 };
 
 ---------------------------------------------------------------------------
