@@ -19,74 +19,60 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class UsersProfileMetric extends ValueReadBasedMetric {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UserUpdateProfileMetric extends ValueReadBasedMetric {
 
-    UsersProfileMetric() {
-        super(MetricType.USER_PROFILE);
+    UserUpdateProfileMetric() {
+        super(MetricType.USER_UPDATE_PROFILE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         return evaluate(context);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<MetricParameter>(Arrays.asList(new MetricParameter[]{
-                MetricParameter.ALIAS}));
+        return new LinkedHashSet<>();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return ListListStringValueData.class;
+        return ListStringValueData.class;
     }
 
-    public String getEmail(ListListStringValueData data) {
+    public String getEmail(ListStringValueData data) {
         return getItem(data, 0);
     }
 
-    public String getFirstName(ListListStringValueData data) {
+    public String getFirstName(ListStringValueData data) {
         return getItem(data, 1);
     }
 
-    public String getLastName(ListListStringValueData data) {
+    public String getLastName(ListStringValueData data) {
         return getItem(data, 2);
     }
 
-    public String getCompany(ListListStringValueData data) {
+    public String getCompany(ListStringValueData data) {
         return getItem(data, 3);
     }
 
-    public String getPhone(ListListStringValueData data) {
+    public String getPhone(ListStringValueData data) {
         return getItem(data, 4);
     }
 
-    public String getJob(ListListStringValueData data) {
-        return getItem(data, 5);
-    }
-
-    private String getItem(ListListStringValueData data, int index) {
-        return data.getAll().get(0).getAll().get(index);
+    private String getItem(ListStringValueData data, int index) {
+        return data.getAll().get(index);
     }
 }

@@ -81,10 +81,12 @@ public class DataProcessing {
 
         LinkedHashMap<String, String> uuid = new LinkedHashMap<>(4);
 
-        if (MetricParameter.FROM_DATE.exists(context)) {
+        Metric metric = MetricFactory.createMetric(metricType);
+
+        if (metric.getParams().contains(MetricParameter.FROM_DATE)) {
             Utils.putFromDate(uuid, Utils.getFromDate(context));
         }
-        if (MetricParameter.TO_DATE.exists(context)) {
+        if (metric.getParams().contains(MetricParameter.TO_DATE)) {
             Utils.putToDate(uuid, Utils.getToDate(context));
         }
 

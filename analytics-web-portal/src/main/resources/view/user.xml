@@ -17,14 +17,15 @@
          from Codenvy S.A..
 -->
 <display>
-    <!--table length="2">
+    <table length="2">
         <title name="Profile" />
-	<metric type="user_profile_email" title="E-mail" format="%s"/>
-	<metric type="user_profile_firstname" title="First name" format="%s"/>
-	<metric type="user_profile_lastname" title="Last name" format="%s"/>
-	<metric type="user_profile_company" title="Company" format="%s"/>
-	<empty />
-    </table-->
+	    <metric type="user_profile_email" title="E-mail" format="%s"/>
+	    <metric type="user_profile_firstname" title="First name" format="%s"/>
+	    <metric type="user_profile_lastname" title="Last name" format="%s"/>
+	    <metric type="user_profile_company" title="Company" format="%s"/>
+	    <metric type="user_profile_phone" title="Phone" format="%s"/>
+	    <empty />
+    </table>
 
     <table length="2">
         <title name="Statistics" />

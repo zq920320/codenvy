@@ -60,9 +60,11 @@ public class DailyDataProcessor implements Job, ForceableRunJob {
         long start = System.currentTimeMillis();
 
         try {
-            for (MetricType metricType : MetricType.values()) {
-                DataProcessing.calculateAndStore(metricType, context);
-            }
+//            for (MetricType metricType : MetricType.values()) {
+//                DataProcessing.calculateAndStore(metricType, context);
+//            }
+            DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);
+            DataProcessing.calculateAndStore(MetricType.USERS_COMPLETED_PROFILE, context);
         } finally {
             LOGGER.info("DailyDataProcessor is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

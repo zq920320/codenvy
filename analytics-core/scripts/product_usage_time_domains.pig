@@ -26,22 +26,10 @@ SS = extractEventsWithSessionId(t, 'session-started');
 SF = extractEventsWithSessionId(t, 'session-finished');
 
 j1 = JOIN SS BY sId FULL, SF BY sId;
-j2 = FILTER j1 BY SS::sId IS NOT NULL AND SF::sId IS NOT NULL;
-j3 = FOREACH j2 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS ssDt, SF::dt AS sfDt;
-A = FOREACH j3 GENERATE ws, user, ssDt AS dt, SecondsBetween(sfDt, ssDt) AS delta;
+j2 = removeEmptyField(j1, 'SS::sId');
+j3 = removeEmptyField(j2, 'SF::sId');
+j4 = FOREACH j3 GENERATE SS::ws AS  ws, REGEX_EXTRACT(SS::user, '.*@(.*)', 1) AS domain, SS::sId AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
+j = removeEmptyField(j4, 'domain');
 
---
--- The rest of the sessions
---
-k1 = FOREACH t GENERATE ws, user, dt;
-k2 = JOIN k1 BY (ws, user) LEFT, j3 BY (ws, user);
-k3 = FILTER k2 BY (j3::ws IS NULL) OR MilliSecondsBetween(j3::ssDt, k1::dt) > 0 OR MilliSecondsBetween(j3::sfDt, k1::dt) < 0;
-k4 = FOREACH k3 GENERATE k1::ws AS ws, k1::user AS user, k1::dt AS dt;
-B = productUsageTimeList(k4, '$inactiveInterval');
-
-d1 = UNION A, B;
-d2 = FOREACH d1 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, dt, delta;
-R1 = FILTER d2 BY domain != '';
-
-R2 = GROUP R1 BY domain;
-result = FOREACH R2 GENERATE group, TOBAG(SUM(R1.delta) / 60, COUNT(R1.delta));
+r = GROUP j BY domain;
+result = FOREACH r GENERATE group, TOBAG(SUM(R1.delta) / 60, COUNT(R1.delta));

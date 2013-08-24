@@ -30,13 +30,29 @@ public enum MetricType {
     USER_UPDATE_PROFILE {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.USER_UPDATE_PROFILE);
+            return EnumSet.of(ScriptType.UPDATE_PROFILE_BY_USERS);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+        }
+    },
+    USER_PROFILE_EMAIL,
+    USER_PROFILE_FIRSTNAME,
+    USER_PROFILE_LASTNAME,
+    USER_PROFILE_COMPANY,
+    USER_PROFILE_PHONE,
+    USERS_COMPLETED_PROFILE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.USERS_COMPLETED_PROFILE);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE));
         }
     },
     FILE_MANIPULATION {
@@ -756,16 +772,7 @@ public enum MetricType {
     PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_LIFETIME,
     USERS_SEGMENT_ANALYSIS_CONDITION_1,
     USERS_SEGMENT_ANALYSIS_CONDITION_2,
-    USERS_SEGMENT_ANALYSIS_CONDITION_3,
-
-    USERS_UPDATE_PROFILE_LIST,
-    USERS_COMPLETED_PROFILE,
-    USER_PROFILE,
-    USER_PROFILE_EMAIL,
-    USER_PROFILE_FIRSTNAME,
-    USER_PROFILE_LASTNAME,
-    USER_PROFILE_COMPANY,
-    USER_PROFILE_PHONE;
+    USERS_SEGMENT_ANALYSIS_CONDITION_3;
 
 
     /**

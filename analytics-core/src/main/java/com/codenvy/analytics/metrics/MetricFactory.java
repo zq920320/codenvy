@@ -438,10 +438,8 @@ public class MetricFactory {
             case ACTIVE_FACTORY_SET:
                 metric = new ActiveFactorySetMetric();
                 break;
-
-
-            case USER_PROFILE:
-                metric = new UsersProfileMetric();
+            case USER_UPDATE_PROFILE:
+                metric = new UserUpdateProfileMetric();
                 break;
             case USER_PROFILE_FIRSTNAME:
                 metric = new UsersProfileFirstNameMetric();
@@ -458,12 +456,9 @@ public class MetricFactory {
             case USER_PROFILE_PHONE:
                 metric = new UsersProfilePhoneMetric();
                 break;
-//            case USERS_UPDATE_PROFILE_LIST:
-//                metric = new UsersUpdateProfileList();
-//                break;
-//            case USERS_COMPLETED_PROFILE:
-//                metric = new UsersCompletedProfile();
-//                break;
+            case USERS_COMPLETED_PROFILE:
+                metric = new UsersCompletedProfileMetric();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

@@ -18,42 +18,30 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class UsersProfilePhoneMetric extends CalculateBasedMetric {
-
-    private final UsersProfileMetric basedMetric;
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UsersProfilePhoneMetric extends CalculatedMetric {
 
     UsersProfilePhoneMetric() {
-        super(MetricType.USER_PROFILE_PHONE);
-        this.basedMetric = (UsersProfileMetric)MetricFactory.createMetric(MetricType.USER_PROFILE);
+        super(MetricType.USER_PROFILE_PHONE, MetricType.USER_UPDATE_PROFILE);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
-        return basedMetric.getParams();
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        ListStringValueData valueData = (ListStringValueData)super.getValue(context);
+        return new StringValueData(((UserUpdateProfileMetric)basedMetric).getPhone(valueData));
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ValueData evaluate(Map<String, String> context) throws IOException {
-        ListListStringValueData valueData = (ListListStringValueData) basedMetric.getValue(context);
-        return new StringValueData(basedMetric.getPhone(valueData));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class< ? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return StringValueData.class;
     }
 }

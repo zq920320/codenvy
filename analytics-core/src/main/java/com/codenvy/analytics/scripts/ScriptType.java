@@ -23,11 +23,25 @@ import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.*;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum ScriptType {
+    USERS_COMPLETED_PROFILE {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = new HashSet<>();
+            params.add(MetricParameter.LOAD_DIR);
+            return params;
+        }
+    },
     NUMBER_ACTIVE_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -111,12 +125,6 @@ public enum ScriptType {
         @Override
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
-        }
-    },
-    USERS_UPDATE_PROFILE {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
         }
     },
     PRODUCT_USAGE_TIME_USERS {
@@ -438,12 +446,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-    USERS_PROFILE_PREPARATION {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringListListStringValueData.class;
-        }
-    },
     ACTIVITY_BY_USERS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -455,7 +457,7 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-    USER_UPDATE_PROFILE {
+    UPDATE_PROFILE_BY_USERS {
         @Override
         public Set<MetricParameter> getParams() {
             Set<MetricParameter> params = super.getParams();
@@ -466,7 +468,12 @@ public enum ScriptType {
 
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return MapStringListValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
     USERS_BY_COMPANY {

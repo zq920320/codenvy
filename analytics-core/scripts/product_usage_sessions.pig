@@ -18,27 +18,15 @@
 
 IMPORT 'macros.pig';
 
-%DEFAULT inactiveInterval '10';  -- in minutes
-
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 SS = extractEventsWithSessionId(t, 'session-started');
 SF = extractEventsWithSessionId(t, 'session-finished');
 
 j1 = JOIN SS BY sId FULL, SF BY sId;
-j2 = FILTER j1 BY SS::sId IS NOT NULL AND SF::sId IS NOT NULL;
-j3 = FOREACH j2 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS ssDt, SF::dt AS sfDt;
-A = FOREACH j3 GENERATE ws, user, ssDt AS dt, SecondsBetween(sfDt, ssDt) AS delta;
+j2 = removeEmptyField(j1, 'SS::sId');
+j3 = removeEmptyField(j2, 'SF::sId');
+j = FOREACH j3 GENERATE SS::ws, SS::user, SS::sId AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
 
---
--- The rest of the sessions
---
-k1 = FOREACH t GENERATE ws, user, dt;
-k2 = JOIN k1 BY (ws, user) LEFT, j3 BY (ws, user);
-k3 = FILTER k2 BY (j3::ws IS NULL) OR MilliSecondsBetween(j3::ssDt, k1::dt) > 0 OR MilliSecondsBetween(j3::sfDt, k1::dt) < 0;
-k4 = FOREACH k3 GENERATE k1::ws AS ws, k1::user AS user, k1::dt AS dt;
-B = productUsageTimeList(k4, '$inactiveInterval');
-
-R = UNION A, B;
-result = FOREACH R GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
+result = FOREACH j GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
 

@@ -20,7 +20,7 @@
 package com.codenvy.analytics.server.jobs;
 
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.server.service.MailService;
@@ -223,8 +223,9 @@ public class ActOnJob implements Job {
         Map<String, String> context = initializeContext();
         MetricParameter.ALIAS.put(context, user);
 
-        UsersProfileMetric metric = (UsersProfileMetric)MetricFactory.createMetric(MetricType.USER_PROFILE);
-        ListListStringValueData profile = (ListListStringValueData)metric.getValue(context);
+        UserUpdateProfileMetric metric =
+                (UserUpdateProfileMetric)MetricFactory.createMetric(MetricType.USER_UPDATE_PROFILE);
+        ListStringValueData profile = (ListStringValueData)metric.getValue(context);
 
         writeString(out, metric.getEmail(profile));
         out.write(",");
