@@ -40,27 +40,21 @@ public class TestScriptProductUsageTime extends BaseTest {
     public void testExecuteScript() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        // user1 session #1 [7m]
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
+
+        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
+                        .withTime("19:00:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
+                        .withTime("19:06:00").build());
+
+        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "2").withDate("2013-01-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "2").withDate("2013-01-01")
                         .withTime("20:05:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
-                        .withTime("20:07:00").build());
 
-        // user2 session #1 [4m]
-        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2013-01-01")
-                        .withTime("20:25:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "", "").withDate("2013-01-01")
-                        .withTime("20:29:00").build());
-
-        // user1 session #2 [7m]
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
-                        .withTime("21:00:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
-                        .withTime("21:05:00").build());
-        events.add(Event.Builder.createProjectBuiltEvent("user1", "ws1", "", "", "").withDate("2013-01-01")
-                        .withTime("21:07:00").build());
+        events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "3").withDate("2013-01-01")
+                        .withTime("20:00:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "3").withDate("2013-01-01")
+                        .withTime("20:05:00").build());
 
 
         File log = LogGenerator.generateLog(events);
@@ -76,8 +70,8 @@ public class TestScriptProductUsageTime extends BaseTest {
                 (MapStringFixedLongListValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_TIME_USERS, log, params);
         Map<String, FixedListLongValueData> all = value.getAll();
         assertEquals(all.size(), 2);
-        assertEquals(all.get("user1"), new FixedListLongValueData(Arrays.asList(14L, 2L)));
-        assertEquals(all.get("user2"), new FixedListLongValueData(Arrays.asList(4L, 1L)));
+        assertEquals(all.get("user1"), new FixedListLongValueData(Arrays.asList(11L, 2L)));
+        assertEquals(all.get("user2"), new FixedListLongValueData(Arrays.asList(5L, 1L)));
     }
 
 

@@ -129,6 +129,21 @@ public class Event {
             return new Event(date, time, context, params);
         }
 
+        public static Builder createUserUpdateProfile(String user,
+                                                      String firstName,
+                                                      String lastName,
+                                                      String company,
+                                                      String phone,
+                                                      String jobTitle) {
+            return new Builder().withParam("USER", user)
+                                .withParam("EVENT", "user-update-profile")
+                                .withParam("FIRSTNAME", firstName)
+                                .withParam("LASTNAME", lastName)
+                                .withParam("COMPANY", company)
+                                .withParam("PHONE", phone)
+                                .withParam("JOBTITLE", jobTitle);
+        }
+
         /** Create 'tenant-created' event. */
         public static Builder createTenantCreatedEvent(String ws, String user) {
             return new Builder().withParam("EVENT", "tenant-created").withParam("WS", ws).withParam("USER", user);
@@ -160,6 +175,22 @@ public class Event {
                                                             String paas) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "application-created")
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
+        }
+
+        public static Builder createSessionStartedEvent(String user, String ws, String window, String sessionId) {
+            return new Builder().withParam("EVENT", EventType.SESSION_STARTED.toString())
+                                .withParam("SESSION-ID", sessionId)
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("WINDOW", window);
+        }
+
+        public static Builder createSessionFinishedEvent(String user, String ws, String window, String sessionId) {
+            return new Builder().withParam("EVENT", EventType.SESSION_FINISHED.toString())
+                                .withParam("SESSION-ID", sessionId)
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("WINDOW", window);
         }
 
         public static Builder createProjectCreatedEvent(String user, String ws, String session, String project,

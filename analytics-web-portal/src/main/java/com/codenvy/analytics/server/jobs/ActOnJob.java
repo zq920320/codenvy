@@ -221,7 +221,7 @@ public class ActOnJob implements Job {
 
     protected void writeUserProfileAttributes(BufferedWriter out, String user) throws IOException {
         Map<String, String> context = initializeContext();
-        MetricParameter.ALIAS.put(context, user);
+        MetricFilter.USER.put(context, user);
 
         UserUpdateProfileMetric metric =
                 (UserUpdateProfileMetric)MetricFactory.createMetric(MetricType.USER_UPDATE_PROFILE);

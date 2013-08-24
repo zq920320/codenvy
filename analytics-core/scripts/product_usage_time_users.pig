@@ -32,4 +32,4 @@ j4 = FOREACH j3 GENERATE SS::ws AS ws, SS::user, SS::sId AS dt, SecondsBetween(S
 j = removeEmptyField(j4, 'user');
 
 r = GROUP j BY user;
-result = FOREACH r GENERATE group, TOBAG(SUM(R1.delta) / 60, COUNT(R1.delta));
+result = FOREACH r GENERATE group, TOBAG(SUM(j.delta) / 60, COUNT(j.delta));
