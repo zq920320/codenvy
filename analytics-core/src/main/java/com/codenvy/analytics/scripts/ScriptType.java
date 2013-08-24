@@ -206,36 +206,7 @@ public enum ScriptType {
             return MapStringListListStringValueData.class;
         }
     },
-    SET_ACTIVE_USERS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
-        }
-    },
-    SET_ACTIVE_USERS_BY_DOMAINS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringSetValueData.class;
-        }
-
-        @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
-        }
-    },
-    SET_ACTIVE_USERS_BY_USERS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringSetValueData.class;
-        }
-
-        @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
-        }
-
-    },
-    SET_ACTIVE_WS {
+    SET_ACTIVE {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return SetStringValueData.class;
@@ -244,6 +215,64 @@ public enum ScriptType {
         @Override
         public Set<MetricParameter> getParams() {
             Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.FIELD);
+            params.add(MetricParameter.EVENT);
+            return params;
+        }
+    },
+    SET_ACTIVE_BY_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.FIELD);
+            params.add(MetricParameter.EVENT);
+            return params;
+        }
+    },
+    SET_ACTIVE_BY_DOMAINS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.FIELD);
+            params.add(MetricParameter.EVENT);
+            return params;
+        }
+    },
+    SET_ACTIVE_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.FIELD);
             params.add(MetricParameter.EVENT);
             return params;
         }
@@ -257,42 +286,6 @@ public enum ScriptType {
         @Override
         public MetricParameter[] getResultScheme() {
             return new MetricParameter[]{MetricParameter.URL};
-        }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
-            return params;
-        }
-    },
-    SET_ACTIVE_WS_BY_DOMAINS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringSetValueData.class;
-        }
-
-        @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
-        }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
-            return params;
-        }
-    },
-    SET_ACTIVE_WS_BY_USERS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringSetValueData.class;
-        }
-
-        @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
         }
 
         @Override

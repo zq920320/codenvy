@@ -21,7 +21,8 @@ IMPORT 'macros.pig';
 f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 f = filterByEvent(f1, '$EVENT');
 
-a2 = FOREACH f GENERATE ws;
-a = FILTER a2 BY ws != 'default';
+c1 = FOREACH f GENERATE $FIELD AS targetField, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
+c2 = removeEmptyField(c1, 'targetField');
+c = removeEmptyField(c2, 'domain');
 
-result = DISTINCT a;
+result = setByField(c, 'domain', 'targetField');

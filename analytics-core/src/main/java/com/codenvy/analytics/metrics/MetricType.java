@@ -86,15 +86,16 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, "*");
+            MetricParameter.FIELD.put(context, "user");
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
 
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE_USERS,
-                              ScriptType.SET_ACTIVE_USERS_BY_DOMAINS,
-                              ScriptType.SET_ACTIVE_USERS_BY_USERS);
+            return EnumSet.of(ScriptType.SET_ACTIVE,
+                              ScriptType.SET_ACTIVE_BY_DOMAINS,
+                              ScriptType.SET_ACTIVE_BY_USERS);
         }
     },
     ACTIVE_USERS,
@@ -102,15 +103,16 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, "*");
+            MetricParameter.FIELD.put(context, "ws");
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
 
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE_WS,
-                              ScriptType.SET_ACTIVE_WS_BY_USERS,
-                              ScriptType.SET_ACTIVE_WS_BY_DOMAINS);
+            return EnumSet.of(ScriptType.SET_ACTIVE,
+                              ScriptType.SET_ACTIVE_BY_USERS,
+                              ScriptType.SET_ACTIVE_BY_DOMAINS);
         }
     },
     ACTIVE_WS,
@@ -537,13 +539,14 @@ public enum MetricType {
     FACTORY_URL_ACCEPTED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE_WS, ScriptType.SET_ACTIVE_WS_BY_URL);
+            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.SET_ACTIVE_WS_BY_URL);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
+            MetricParameter.FIELD.put(context, "ws");
             MetricParameter.PARAM.put(context, "FACTORY-URL");
+            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }

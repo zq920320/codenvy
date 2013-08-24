@@ -37,6 +37,13 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Removes tuples with empty fields
+---------------------------------------------------------------------------
+DEFINE removeEmptyField(X, fieldParam) RETURNS Y {
+  $Y = FILTER $X BY $fieldParam != '' AND $fieldParam != 'default' AND $fieldParam != 'null' AND $fieldParam IS NOT NULL;
+};
+
+---------------------------------------------------------------------------
 -- Filters events by date of occurrence.
 -- @param fromDateParam - date in format 'YYYYMMDD'
 -- @param toDateParam  - date in format 'YYYYMMDD'

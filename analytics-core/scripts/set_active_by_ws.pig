@@ -21,7 +21,8 @@ IMPORT 'macros.pig';
 f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 f = filterByEvent(f1, '$EVENT');
 
-a2 = FOREACH f GENERATE user AS userFake, user;
-a = FILTER a2 BY user != 'default' AND userFake != 'default';
+c1 = FOREACH f GENERATE $FIELD AS targetField, ws;
+c2 = removeEmptyField(c1, 'targetField');
+c = removeEmptyField(c2, 'ws');
 
-result = setByField(a, 'userFake', 'user');
+result = setByField(c, 'ws', 'targetField');
