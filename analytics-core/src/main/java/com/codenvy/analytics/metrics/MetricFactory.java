@@ -459,6 +459,27 @@ public class MetricFactory {
             case USERS_COMPLETED_PROFILE:
                 metric = new UsersCompletedProfileMetric();
                 break;
+            case FACTORY_URL_TOP_SESSIONS_BY_1DAY:
+                metric = new FactoryUrlTopSessions1DayMetric();
+                break;
+            case FACTORY_URL_TOP_SESSIONS_BY_7DAY:
+                metric = new FactoryUrlTopSessions7DayMetric();
+                break;
+            case FACTORY_URL_TOP_SESSIONS_BY_30DAY:
+                metric = new FactoryUrlTopSessions30DayMetric();
+                break;
+            case FACTORY_URL_TOP_SESSIONS_BY_60DAY:
+                metric = new FactoryUrlTopSessions60DayMetric();
+                break;
+            case FACTORY_URL_TOP_SESSIONS_BY_90DAY:
+                metric = new FactoryUrlTopSessions90DayMetric();
+                break;
+            case FACTORY_URL_TOP_SESSIONS_BY_365DAY:
+                metric = new FactoryUrlTopSessions365DayMetric();
+                break;
+            case FACTORY_URL_TOP_SESSIONS_BY_LIFETIME:
+                metric = new FactoryUrlTopSessionsLifeTimeMetric();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

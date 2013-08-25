@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+         CODENVY CONFIDENTIAL
+         ________________
+
+         [2012] - [2013] Codenvy, S.A.
+         All Rights Reserved.
+         NOTICE: All information contained herein is, and remains
+         the property of Codenvy S.A. and its suppliers,
+         if any. The intellectual and technical concepts contained
+         herein are proprietary to Codenvy S.A.
+         and its suppliers and may be covered by U.S. and Foreign Patents,
+         patents in process, and are protected by trade secret or copyright law.
+         Dissemination of this information or reproduction of this material
+         is strictly forbidden unless prior written permission is obtained
+         from Codenvy S.A..
+-->
+<display>
+    <table csvFileName="factory_url_top_sessions_by_1day.csv" length="13" widget="tab_panel" tabId="1" tabName="By 1 Day" sortable="true"
+           defaultSortColumn="1 Day">
+        <title name="Mins,Factory Url,Referrer,Authenticated,Converted"/>
+        <list type="factory_url_top_sessions_by_1day"/>
+    </table>
+    <table csvFileName="factory_url_top_sessions_by_7day.csv" length="13" widget="tab_panel" tabId="1" tabName="By 7 Days"
+           sortable="true" defaultSortColumn="7 Days">
+        <title name="Mins,Factory Url,Referrer,Authenticated,Converted"/>
+        <list type="factory_url_top_sessions_by_7day"/>
+    </table>
+    <table csvFileName="factory_url_top_sessions_by_30day.csv" length="13" widget="tab_panel" tabId="1" tabName="By 30 Days"
+           sortable="true" defaultSortColumn="30 Days">
+        <title name="Mins,Factory Url,Referrer,Authenticated,Converted"/>
+        <list type="factory_url_top_sessions_by_30day"/>
+    </table>
+    <table csvFileName="factory_url_top_sessions_by_60day.csv" length="13" widget="tab_panel" tabId="1" tabName="By 60 Days"
+           sortable="true" defaultSortColumn="60 Days">
+        <title name="Mins,Factory Url,Referrer,Authenticated,Converted"/>
+        <list type="factory_url_top_sessions_by_60day"/>
+    </table>
+    <table csvFileName="factory_url_top_sessions_by_90day.csv" length="13" widget="tab_panel" tabId="1" tabName="By 90 Days"
+           sortable="true" defaultSortColumn="90 Days">
+        <title name="Mins,Factory Url,Referrer,Authenticated,Converted"/>
+        <list type="factory_url_top_sessions_by_90day"/>
+    </table>
+    <table csvFileName="factory_url_top_sessions_by_365day.csv" length="13" widget="tab_panel" tabId="1" tabName="By 365 Days"
+           sortable="true" defaultSortColumn="365 Days">
+        <title name="Mins,Factory Url,Referrer,Authenticated,Converted"/>
+        <list type="factory_url_top_sessions_by_365day"/>
+    </table>
+    <table csvFileName="factory_url_top_sessions_by_lifetime.csv" length="13" widget="tab_panel" tabId="1" tabName="By Lifetime"
+           sortable="true" defaultSortColumn="Lifetime">
+        <title name="Mins,Factory Url,Referrer,Authenticated,Converted"/>
+        <list type="factory_url_top_sessions_by_lifetime"/>
+    </table>
+</display>
+
