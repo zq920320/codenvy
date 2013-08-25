@@ -285,7 +285,7 @@ public enum ScriptType {
             return params;
         }
     },
-    SET_ACTIVE_WS_BY_URL {
+    SET_ACTIVE_BY_URL {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
@@ -299,6 +299,7 @@ public enum ScriptType {
         @Override
         public Set<MetricParameter> getParams() {
             Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.FIELD);
             params.add(MetricParameter.EVENT);
             return params;
         }
@@ -547,12 +548,6 @@ public enum ScriptType {
             return LongValueData.class;
         }
     },
-    SET_ACTIVE_FACTORY {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return SetStringValueData.class;
-        }
-    },
     FACTORY_CREATED_BY_URL {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -593,7 +588,7 @@ public enum ScriptType {
     }
 
     /** @return true if script requires {@link MetricParameter#LOG} to be  executed. */
-    public boolean isLogRequired() { // TODO remove in future
+    public boolean isLogRequired() {
         return true;
     }
 

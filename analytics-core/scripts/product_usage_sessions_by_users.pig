@@ -22,14 +22,8 @@ IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-SS = extractEventsWithSessionId(t, 'session-started');
-SF = extractEventsWithSessionId(t, 'session-finished');
-
-j1 = JOIN SS BY sId FULL, SF BY sId;
-j2 = removeEmptyField(j1, 'SS::sId');
-j3 = removeEmptyField(j2, 'SF::sId');
-j4 = FOREACH j3 GENERATE SS::ws AS ws, SS::user AS user, SS::sId AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
-j = removeEmptyField(j4, 'user');
+j1 = joinEventsWithSameId(t, 'session-started', 'session-finished');
+j = removeEmptyField(j1, 'user');
 
 r1 = GROUP j BY user;
 result = FOREACH r1 {

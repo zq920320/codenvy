@@ -22,14 +22,9 @@ IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-SS = extractEventsWithSessionId(t, 'session-started');
-SF = extractEventsWithSessionId(t, 'session-finished');
-
-j1 = JOIN SS BY sId FULL, SF BY sId;
-j2 = removeEmptyField(j1, 'SS::sId');
-j3 = removeEmptyField(j2, 'SF::sId');
-j4 = FOREACH j3 GENERATE SS::ws AS  ws, REGEX_EXTRACT(SS::user, '.*@(.*)', 1) AS domain, SS::sId AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
-j = removeEmptyField(j4, 'domain');
+j1 = joinEventsWithSameId(t, 'session-started', 'session-finished');
+j2 = FOREACH j1 GENERATE ws AS  ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, dt, delta;
+j = removeEmptyField(j2, 'domain');
 
 r = GROUP j BY domain;
-result = FOREACH r GENERATE group, TOBAG(SUM(R1.delta) / 60, COUNT(R1.delta));
+result = FOREACH r GENERATE group, TOBAG(SUM(j.delta) / 60, COUNT(j.delta));

@@ -19,7 +19,10 @@
 IMPORT 'macros.pig';
 
 f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = filterByEvent(f1, '$EVENT');
+f2 = filterByEvent(f1, '$EVENT');
+
+-- extracts additional parameters
+f = extractParam(f2, 'FACTORY-URL', 'url');
 
 c1 = FOREACH f GENERATE $FIELD AS targetField;
 c = removeEmptyField(c1, 'targetField');

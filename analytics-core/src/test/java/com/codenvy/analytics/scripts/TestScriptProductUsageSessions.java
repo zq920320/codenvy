@@ -54,6 +54,9 @@ public class TestScriptProductUsageSessions extends BaseTest {
                         .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
                         .withTime("20:05:00").build());
+        // by mistake
+        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
+                        .withTime("20:15:00").build());
 
         // should be ignored because of temporary workspace
         events.add(Event.Builder.createSessionStartedEvent("user@gmail.com", "tmp-1", "ide", "3").withDate("2013-01-01")

@@ -50,8 +50,8 @@ public class TestScriptProductUsageSessionsFactory extends BaseTest {
 
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user")
                         .withDate("2013-02-10").withTime("10:05:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmp-2", "user")
-                        .withDate("2013-02-10").withTime("10:05:00").build());
+        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user")
+                        .withDate("2013-02-10").withTime("10:10:00").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -66,14 +66,14 @@ public class TestScriptProductUsageSessionsFactory extends BaseTest {
                 (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY, log, params);
         List<ListStringValueData> all = value.getAll();
 
-        assertEquals(all.size(), 3);
+        assertEquals(all.size(), 1);
 
         long total = 0;
         for (ListStringValueData item : all) {
             total += Long.valueOf(item.getAll().get(3));
         }
 
-        assertEquals(total, (5 + 10 + 10) * 60);
+        assertEquals(total, 5 * 60);
     }
 }
 

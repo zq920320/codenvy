@@ -543,11 +543,13 @@ public enum MetricType {
     ACTIVE_FACTORY_SET {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE_FACTORY);
+            return EnumSet.of(ScriptType.SET_ACTIVE);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.FIELD.put(context, "url");
+            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }
@@ -555,13 +557,12 @@ public enum MetricType {
     FACTORY_URL_ACCEPTED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.SET_ACTIVE_WS_BY_URL);
+            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.SET_ACTIVE_BY_URL);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.FIELD.put(context, "ws");
-            MetricParameter.PARAM.put(context, "FACTORY-URL");
             MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());

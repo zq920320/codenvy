@@ -21,18 +21,8 @@ IMPORT 'macros.pig';
 %DEFAULT inactiveInterval '10';  -- in minutes
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+j = joinEventsWithSameId(t, 'session-factory-started', 'session-factory-stopped');
 
-SS = extractEventsWithSessionId(t, 'session-factory-started');
-SF = extractEventsWithSessionId(t, 'session-factory-stopped');
-
-j = JOIN SS BY sId FULL, SF BY sId;
-SPLIT j INTO noSS IF SS::sId IS NULL, noSF IF SF::sId IS NULL, SSSF OTHERWISE;
-
-A = FOREACH SSSF GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
-B = FOREACH noSS GENERATE SF::ws AS ws, SF::user AS user, SubtractDuration(SF::dt, 'PT10M') AS dt, 60 * (long) $inactiveInterval AS delta;
-C = FOREACH noSF GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, 60 * (long) $inactiveInterval AS delta;
-
-R1 = UNION A, B, C;
-R2 = GROUP R1 ALL;
-result = FOREACH R2 GENERATE SUM(R1.delta);
+r1 = GROUP j ALL;
+result = FOREACH r1 GENERATE SUM(j.delta);
 

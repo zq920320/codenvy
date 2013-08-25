@@ -177,8 +177,9 @@ public class ActOnJob implements Job {
             for (String user : users.getAll()) {
                 try {
                     writeUserProfileAttributes(out, user);
-                } catch (Exception e) {
-                    continue; // TODO
+                } catch (FileNotFoundException e) {
+                    LOGGER.warn(e.getMessage());
+                    continue;
                 }
 
                 writeMetricsValues(out, user);
@@ -226,6 +227,10 @@ public class ActOnJob implements Job {
         UserUpdateProfileMetric metric =
                 (UserUpdateProfileMetric)MetricFactory.createMetric(MetricType.USER_UPDATE_PROFILE);
         ListStringValueData profile = (ListStringValueData)metric.getValue(context);
+
+        if (profile.size() == 0) {
+            throw new FileNotFoundException("User profile not found " + user);
+        }
 
         writeString(out, metric.getEmail(profile));
         out.write(",");

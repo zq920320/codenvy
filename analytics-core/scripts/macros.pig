@@ -146,3 +146,25 @@ DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
     x2 = extractParam(x1, 'SESSION-ID', sId);
     $Y = FOREACH x2 GENERATE user, ws, sId, dt;
 };
+
+---------------------------------------------------------------------------------------------
+-- Joins events with same id
+-- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
+---------------------------------------------------------------------------------------------
+DEFINE joinEventsWithSameId(X, startEvent, finishEvent) RETURNS Y {
+    SS = extractEventsWithSessionId($X, '$startEvent');
+
+    -- because of issue, we can have several session-finished events with same id
+    SF1 = extractEventsWithSessionId($X, '$finishEvent');
+    SF2 = FOREACH SF1 GENERATE ws, user, sId, dt, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
+    SF3 = GROUP SF2 BY (ws, user, sId);
+    SF4 = FOREACH SF3 GENERATE FLATTEN(group), MIN(SF2.delta) AS minDt, FLATTEN(SF2);
+    SF5 = FILTER SF4 BY delta == minDt;
+    SF = FOREACH SF5 GENERATE group::ws AS ws, group::user AS user, group::sId AS sId, SF2::dt AS dt;
+
+    x1 = JOIN SS BY sId FULL, SF BY sId;
+    x2 = removeEmptyField(x1, 'SS::sId');
+    x3 = removeEmptyField(x2, 'SF::sId');
+
+    $Y = FOREACH x3 GENERATE SS::ws, SS::user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
+};

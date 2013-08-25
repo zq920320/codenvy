@@ -76,7 +76,7 @@ public class FSValueDataManager {
         return doLoad(file, LongValueData.class);
     }
 
-    private static ValueData doLoad(File file, Class<? extends  ValueData> clazz) throws IOException {
+    private static ValueData doLoad(File file, Class<? extends ValueData> clazz) throws IOException {
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             return clazz.getConstructor(ObjectInputStream.class).newInstance(in);
         } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException
@@ -145,7 +145,7 @@ public class FSValueDataManager {
             } else if (MetricParameter.ALIAS.isParam(entry.getKey())) {
                 element = translateAliasToRelativePath(entry.getValue());
             } else if (MetricParameter.URL.isParam(entry.getKey())) {
-                element = translateAliasToRelativePath(Integer.valueOf(entry.getValue().hashCode()).toString());
+                element = translateAliasToRelativePath("" + entry.getValue().hashCode());
             } else {
                 element = entry.getValue().toLowerCase();
             }
@@ -172,6 +172,20 @@ public class FSValueDataManager {
         }
 
         uuid.remove(MetricParameter.FROM_DATE.name());
+    }
+
+    /** Translates user's alias to relative path */
+    private static String translateUrlToRelativePath(String url) {
+        char[] chars = url.toCharArray();
+
+        for (int i = 0; i < chars.length; i++) {
+            if (!Character.isDigit(chars[i]) && !Character.isLetter(chars[i])) {
+                chars[i] = '_';
+            }
+        }
+
+        String str = new String(chars);
+        return str.hashCode() + "-" + str;
     }
 
     /** Translates user's alias to relative path */
