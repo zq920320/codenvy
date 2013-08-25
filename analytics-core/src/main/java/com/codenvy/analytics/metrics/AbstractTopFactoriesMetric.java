@@ -22,17 +22,18 @@ public abstract class AbstractTopFactoriesMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
+        String factoryUrls = MetricFilter.FACTORY_URL.get(context);
+        context = initializeContext(period);
+
         Collection<String> activeFactories;
-        if (MetricFilter.FACTORY_URL.exists(context)) {
+        if (factoryUrls != null) {
             activeFactories = new HashSet<>();
-            for (String str : MetricFilter.FACTORY_URL.get(context).split(",")) {
+            for (String str : factoryUrls.split(",")) {
                 activeFactories.add(str.trim());
             }
         } else {
             activeFactories = ((SetStringValueData)super.getValue(context)).getAll();
         }
-
-        context = initializeContext(period);
 
         Map<String, Long> factoryByTime = new HashMap<>();
         Map<String, Set<String>> factoryByWs = new HashMap<>();

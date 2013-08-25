@@ -61,6 +61,9 @@ public class ViewJob implements Job {
 
             service = new FactoryUrlTopFactoriesServiceImpl();
             service.update(Utils.newContext());
+
+//            service = new FactoryUrlTopSessionsServiceImpl();
+//            service.update(Utils.newContext()); TODO
         } finally {
             LOGGER.info("ViewJob is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
