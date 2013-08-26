@@ -548,7 +548,7 @@ public class TestFactoryUrl {
         events.add(Event.Builder.createProjectBuiltEvent("user1", "tmp-1", "", "project", "type")
                         .withDate(date).withTime("10:01:00").build());
         events.add(Event.Builder.createProjectDeployedEvent("user3", "tmp-3", "", "project", "type", "paas")
-                        .withDate(date).withTime("10:14:00").build());
+                        .withDate(date).withTime("12:14:00").build());
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1", "project1", "type1")
                         .withDate(date).build());

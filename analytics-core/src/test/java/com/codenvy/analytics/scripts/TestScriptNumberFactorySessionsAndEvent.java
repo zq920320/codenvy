@@ -79,7 +79,6 @@ public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id5", "tmp-5", "user5")
                         .withDate("2013-02-10").withTime("14:00:00").build());
 
-
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id6", "tmp-6", "user6")
                         .withDate("2013-02-10").withTime("15:00:00").build());
 
@@ -105,7 +104,7 @@ public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
 
         LongValueData valueData =
                 (LongValueData)executeAndReturnResult(ScriptType.FACTORY_SESSIONS_AND_EVENT, log, params);
-        assertEquals(valueData.getAsLong(), 5);
+        assertEquals(valueData.getAsLong(), 1);
     }
 }
 
