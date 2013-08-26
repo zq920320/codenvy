@@ -55,6 +55,8 @@ public class CheckLogsJob implements Job, ForceableRunJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
             Map<String, String> executionContext = Utils.initializeContext(TimeUnit.DAY);
+            MetricParameter.USER.put(executionContext, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(executionContext, MetricParameter.WS_TYPES.ANY.name());
             run(executionContext);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
