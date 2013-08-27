@@ -76,10 +76,10 @@ public class TestFactoryUrl {
         FactoryUrlTimeLineServiceImpl service = new FactoryUrlTimeLineServiceImpl();
         List<TableData> data = service.getData(TimeUnit.LIFETIME, Utils.newContext());
 
-        assertEquals(data.get(0).get(1).get(0), "Factories created");
+        assertEquals(data.get(0).get(1).get(0), "Factories Created");
         assertEquals(data.get(0).get(1).get(1), "6");
 
-        assertEquals(data.get(1).get(0).get(0), "Workspaces created");
+        assertEquals(data.get(1).get(0).get(0), "Workspaces Created");
         assertEquals(data.get(1).get(0).get(1), "9");
 
         assertEquals(data.get(1).get(2).get(0), "Factory Sessions");
@@ -133,10 +133,10 @@ public class TestFactoryUrl {
         MetricFilter.WS.put(filter, "ws1");
         List<TableData> data = service.getData(TimeUnit.LIFETIME, filter);
 
-        assertEquals(data.get(0).get(1).get(0), "Factories created");
+        assertEquals(data.get(0).get(1).get(0), "Factories Created");
         assertEquals(data.get(0).get(1).get(1), "2");
 
-        assertEquals(data.get(1).get(0).get(0), "Workspaces created");
+        assertEquals(data.get(1).get(0).get(0), "Workspaces Created");
         assertEquals(data.get(1).get(0).get(1), "4");
 
         assertEquals(data.get(1).get(2).get(0), "Factory Sessions");
