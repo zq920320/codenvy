@@ -32,11 +32,12 @@ a1 = FILTER lR BY INDEXOF(message, '#null#', 0) >= 0;
 a = keepOneInstance(a1);
 
 b1 = FILTER lR BY INDEXOF(message, '##', 0) >= 0;
-b2 = removeEvent(b1, 'user-update-profile');
+b2 = removeEvent(b1, 'user-update-profile,factory-url-accepted');
 b = keepOneInstance(b2);
 
 c1 = FILTER lR BY INDEXOF(message, '[][][]', 0) >= 0;
-c2 = removeEvent(c1, 'tenant-created,tenant-destroyed,tenant-started,tenant-stopped,user-sso-logged-in,user-sso-logged-out,user-created,user-removed,user-added-to-ws,user-invite');
+c21 = removeEvent(c1, 'tenant-created,tenant-destroyed,tenant-started,tenant-stopped,user-sso-logged-in,user-sso-logged-out,user-created,user-removed,user-added-to-ws,user-invite');
+c2 = removeEvent(c21, 'user-changed-name,factory-url-accepted,user-update-profile');
 c3 = FILTER c2 BY INDEXOF(message, 'WS#', 0) < 0 OR INDEXOF(message, 'USER#', 0) < 0;
 c = keepOneInstance(c3);
 
