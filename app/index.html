@@ -3,113 +3,35 @@
     title: Codenvy  | Cloud IDE for Java, PHP, Ruby, JavaScript, & more
 ---
 
-<div class="container dark rounded shadow">
-    <div class="row scene">
-        <div class="error-container"></div>
-        <div class="span5">
-            <div class="signup-form-wrapper show-on-tablet-desktop">
-                <h1 class="shiny">Code Better<br> With the Cloud</h1>
-                <form class="signup-form">
+    <div class="container">
+        <div class="row cws">
+            <div class="span2"></div>
+            <div class="span8">
+                <div class="container dark login rounded shadow">
+                    <div class="error-container"><%= (request.getAttribute("errorMessage") == null) ? "" : request.getAttribute("errorMessage") %></div>
+                    <h2 class="shiny center">Create your free account</h2>
+                    <hr class="short-line">
+                <form class="create-form">
                     <div class="field">
-                        <input name="email" type="text" class="required email" placeholder="Enter email for free account">
+                        <input name="email" type="text" class="required email" placeholder="Sign up with your email">
                     </div>
-                    <div class="field hidden-text-box">
+                    <div class="field">
                         <input name="domain" type="text" class="required domain-name" placeholder="Choose your workspace name" maxlength="20">
                     </div>
                     <div class="field">
-                        <input type="submit" class="signup-button blue-button hidden-button" value="Sign up for free">
+                        <input type="submit" class="signup-button blue-button" value="Sign up for free">
                         <div class="working hidden">working...</div>
                     </div>
                 </form>
 
-                <div class="aternative-login pulled-up">
-                    <a class="oauth-button google" href="#"></a>
-                    <a class="oauth-button github" href="#"></a>
+                    <div class="aternative-create">
+                        <a href="#" class="oauth-button google"></a>
+                        <a href="#" class="oauth-button github"></a>
+                    </div>
+
                 </div>
             </div>
-            <p class="signup-terms">By signing up, you agree to the <a href="{{ 'tos.html' | url }}">Terms of Service</a> and the <a href="{{ 'privacy.html' | url }}">Privacy Policy</a>.</p>
+            <div class="span2"></div>
         </div>
-        <div class="span5 show-on-mobile">
-            <h1 class="shiny center">Code Better<br>With the Cloud</h1>
-        </div>
-        <div class="span7 totem"></div>
-    </div>
-</div>
-<div class="cta show-on-tablet-desktop">
-    <div class="cta-banner"><a href="http://forms.codenvy.com/acton/fs/blocks/showLandingPage/a/5419/p/p-0013/t/page/fm/0?utm_source=Homepage&utm_medium=CTA&utm_term=homepage-CTA&utm_content=EAP&utm_campaign=eap-account" target="_blank"><img src="images/banners/adopter.png"></a></div>
-    <div class="cta-banner"><a href="http://forms.codenvy.com/acton/fs/blocks/showLandingPage/a/5419/p/p-0012/t/page/fm/0?utm_source=Homepage&utm_medium=CTA&utm_term=homepage-CTA&utm_content=Whitepaper-costs-of-ide&utm_campaign=wp-costs-of-ide" target="_blank"><img src="images/banners/whitepaper.png"></a></div>
-</div>
-<div class="cta-mobile show-on-mobile">
-    <div class="cta-banner-m"><a href="http://forms.codenvy.com/acton/fs/blocks/showLandingPage/a/5419/p/p-0013/t/page/fm/0?utm_source=Homepage&utm_medium=CTA&utm_term=homepage-CTA&utm_content=EAP&utm_campaign=eap-account" target="_blank"><img src="images/banners/adopter-mobile.png"></a></div>
-    <div class="cta-banner-m"><a href="http://forms.codenvy.com/acton/fs/blocks/showLandingPage/a/5419/p/p-0012/t/page/fm/0?utm_source=Homepage&utm_medium=CTA&utm_term=homepage-CTA&utm_content=Whitepaper-costs-of-ide&utm_campaign=wp-costs-of-ide" target="_blank"><img src="images/banners/whitepaper-mobile.png"></a></div>
-</div>
-<div class="container">
-    <div class="row overview">
-        <div class="span4 icon-head lighting">
-            <p><a href="{{ 'features.html#setup' | url }}">No-fuss setup.<br>We do the heavy lifting.</a></p>
-        </div>
-        <div class="span4 icon-head cloud">
-            <p><a href="{{ 'features.html#code' | url }}">Code, build, test in the cloud.<br>Power. Speed. Security.</a></p>
-        </div>
-        <div class="span4 icon-head user">
-            <p><a href="{{ 'features.html#control' | url }}">Control your environment.<br>Deploy. Clone. Extend.</a></p>
-        </div>
-    </div>
 </div>
 
-<div class="container">
-    <div class="row">
-         <div class="span12 section-header factories-header">
-         <h2 class="center">Click to develop instantly.</h2>
-         </div>
-    </div>
-
-    <div class="row">
-    	<div class="span12 factory-icons-row">
-    		<div class="factory-icon"><a href="/factory?v=1.0&pname=Sample-JavaWebApplication&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-JavaWebApplication&idcommit=8fb20ef9a6aad332ff2484d0d7943affc09170ba&action=openproject&ptype=Servlet%2FJSP" target="_blank"><img src="images/factory-icons/jsp.png"></a></div>
-    		<div class="factory-icon"><a href="/factory?v=1.0&pname=Sample-Spring&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-Spring&idcommit=565e68d4196f04d1fe7d1e7a1fe4c479a2282719&action=openproject&ptype=Spring" target="_blank"><img src="images/factory-icons/spring.png"></a></div>
-    		<div class="factory-icon"><a href="/factory?v=1.0&pname=Sample-HSQLDB&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-HSQLDB&idcommit=d360526635d31148b2e63ca4e65b42fc0d60d5be&action=openproject&ptype=Servlet%2FJSP" target="_blank"><img src="images/factory-icons/hypersql.png"></a></div>
-    		<div class="factory-icon"><a href="/factory?v=1.0&pname=Sample-TwitterBootstrap&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-TwitterBootstrap&idcommit=c1443ecea63471f5797f172c081cd802bac6e6b0&action=openproject&ptype=JavaScript" target="_blank"><img src="images/factory-icons/bootstrap3.png"></a></div>
-    		<div class="factory-icon"><a href="/factory?v=1.0&pname=Sample-NodeJS&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-NodeJS&idcommit=16d6da1a09576e844be7defd0ddc2776dfbb6549&action=openproject&ptype=nodejs" target="_blank"><img src="images/factory-icons/nodejs.png"></a></div>
-    		<div class="factory-icon"><a href="/factory?v=1.0&pname=Sample-AngularJS&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-AngularJS&idcommit=37a21ef422e7995cbab615431f0f63991a9b314a&action=openproject&ptype=JavaScript" target="_blank"><img src="images/factory-icons/angular.png"></a></div>
-    		<div class="factory-icon"><a href="/factory?v=1.0&pname=Sample-PHP&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-PHP&idcommit=53cacf214c2a2f22fef7e56e9cbb5cc291b6a491&action=openproject&ptype=PHP" target="_blank"><img src="images/factory-icons/php.png"></a></div>
-    		<div class="factory-icon"><a href="/factory?v=1.0&pname=Sample-Python&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-Python&idcommit=858338fe8338c10ce096b52ef5e3adfe5899de3a&action=openproject&ptype=Python" target="_blank"><img src="images/factory-icons/python.png"></a></div>
-    		<div class="factory-icon-right"><a href="/factory?v=1.0&pname=Sample-Ruby&wname=codenvy-factories&vcs=git&vcsurl=http%3A%2F%2Fcodenvy.com%2Fgit%2F04%2F0f%2F7f%2Fworkspacegcpv6cdxy1q34n1i%2FSample-Ruby&idcommit=17f75d2ac64cc293696de7b1f58b01a10f32bb91&action=openproject&ptype=Rails" target="_blank"><img src="images/factory-icons/rails.png"></a></div>
-    	</div>
-
-
-    </div>
-    
-</div>
-
-
-<div class="container">
-    <div class="row">
-        <div class="span12 center used-by-label">Used by</div>
-    </div>
-    <div class="row used-by-logos">
-        <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-        </ul>
-    </div>
-</div>
