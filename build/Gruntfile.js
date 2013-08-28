@@ -23,9 +23,9 @@ module.exports = function( grunt ) {
             files: {
                 src: [
                     'Gruntfile.js',
-                    '../app/scripts/*.js',
-                    '../app/scripts/models/**/*.js',
-                    '../app/scripts/views/**/*.js'
+                    '../app/site/scripts/*.js',
+                    '../app/site/scripts/models/**/*.js',
+                    '../app/site/scripts/views/**/*.js'
                 ]
             },
             options: {
@@ -87,19 +87,19 @@ module.exports = function( grunt ) {
             files: [
                 // scripts
 
-                {expand: true, cwd: '../app/scripts/', src: ['**'], dest: '../target/dist/gh/scripts/'},
+                {expand: true, cwd: '../app/site/scripts/', src: ['**'], dest: '../target/dist/gh/site/scripts/'},
 
                 // styles
 
-                {expand: true, cwd: '../app/styles/', src : '*.css', dest: '../target/dist/gh/styles/'},
+                {expand: true, cwd: '../app/site/styles/', src : '*.css', dest: '../target/dist/gh/site/styles/'},
 
                 // images
 
-                {expand: true, cwd: '../app/images/', src: ['**'], dest: '../target/dist/gh/images/'},
+                {expand: true, cwd: '../app/site/images/', src: ['**'], dest: '../target/dist/gh/site/images/'},
 
                 // fonts
 
-                {expand: true, cwd: '../app/fonts/', src: ['**'], dest: '../target/dist/gh/fonts/'},
+                {expand: true, cwd: '../app/site/fonts/', src: ['**'], dest: '../target/dist/gh/site/fonts/'},
 
                 // pages
 
@@ -107,7 +107,7 @@ module.exports = function( grunt ) {
 
                 // templates
 
-                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: '../target/dist/gh/templates/'},
+                {expand: true, cwd: '../app/site/templates/', src: ['*.html'], dest: '../target/dist/gh/site/templates/'},
                 
                 // robots.txt
 
@@ -119,28 +119,19 @@ module.exports = function( grunt ) {
             files: [
                 // scripts
 
-                {expand: true, cwd: '../app/scripts/', src: ['**'], dest: '../target/dist/stage/scripts/'},
-
-                // factory scripts
-
-                {expand: true, cwd: '../app/factory/', src: ['**'], dest: '../target/dist/stage/factory/'},
-
-
-                // factory styles
-
-                {expand: true, cwd: '../app/factory/', src : '*.css', dest: '../target/dist/stage/factory/'},
+                {expand: true, cwd: '../app/site/scripts/', src: ['**'], dest: '../target/dist/stage/site/scripts/'},
 
                 // styles
 
-                {expand: true, cwd: '../app/styles/', src : '*.css', dest: '../target/dist/stage/styles/'},
+                {expand: true, cwd: '../app/site/styles/', src : '*.css', dest: '../target/dist/stage/site/styles/'},
 
                 // images
 
-                {expand: true, cwd: '../app/images/', src: ['**'], dest: '../target/dist/stage/images/'},
+                {expand: true, cwd: '../app/site/images/', src: ['**'], dest: '../target/dist/stage/site/images/'},
 
                 // fonts
 
-                {expand: true, cwd: '../app/fonts/', src: ['**'], dest: '../target/dist/stage/fonts/'},
+                {expand: true, cwd: '../app/site/fonts/', src: ['**'], dest: '../target/dist/stage/site/fonts/'},
 
                 // pages
 
@@ -148,7 +139,7 @@ module.exports = function( grunt ) {
 
                 // templates
 
-                {expand: true, cwd: '../app/templates/', src: ['*.html'], dest: '../target/dist/stage/templates/'},
+                {expand: true, cwd: '../app/site/templates/', src: ['*.html'], dest: '../target/dist/stage/site/templates/'},
                 
                 // robots.txt
 
@@ -163,54 +154,36 @@ module.exports = function( grunt ) {
 
                 {
                     expand: true,
-                    cwd: '../dist/scripts/',
+                    cwd: '../dist/site/scripts/',
                     src: ['vendor/modernizr*.js','*.amd-app.js'],
-                    dest: '../target/dist/prod/scripts/'
-                },
-
-                // factory scripts
-
-                {
-                    expand: true,
-                    cwd: '../dist/factory/',
-                    src: '*.js',
-                    dest: '../target/dist/prod/factory/'
-                },
-
-                // factory styles
-
-                {
-                    expand: true,
-                    cwd: '../dist/factory/',
-                    src : '*.css',
-                    dest: '../target/dist/prod/factory/'
+                    dest: '../target/dist/prod/site/scripts/'
                 },
 
                 // styles
 
                 {
                     expand: true,
-                    cwd: '../dist/styles/',
+                    cwd: '../dist/site/styles/',
                     src : '*.css',
-                    dest: '../target/dist/prod/styles/'
+                    dest: '../target/dist/prod/site/styles/'
                 },
 
                 // images
 
                 {
                     expand: true,
-                    cwd: '../dist/images/',
+                    cwd: '../dist/site/images/',
                     src: ['**'],
-                    dest: '../target/dist/prod/images/'
+                    dest: '../target/dist/prod/site/images/'
                 },
 
                 // fonts
 
                 {
                     expand: true,
-                    cwd: '../dist/fonts/',
+                    cwd: '../dist/site/fonts/',
                     src: ['**'],
-                    dest: '../target/dist/prod/fonts/'
+                    dest: '../target/dist/prod/site/fonts/'
                 },
 
                 // pages

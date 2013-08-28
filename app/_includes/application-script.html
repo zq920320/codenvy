@@ -1,7 +1,7 @@
 <!-- build:js /scripts/amd-app.js -->
 {% if site.profile != "gh" %}
-    <script data-main="{{ 'scripts/main' | script }}" src="{{ 'scripts/vendor/require.js' | script }}"></script>
+    <script data-main="{{ 'site/scripts/main' | script }}" src="{{ 'site/scripts/vendor/require.js' | script }}"></script>
 {% else %}
-    <script data-main="{{ 'scripts/main.gh' | script }}" src="{{ 'scripts/vendor/require.js' | script }}"></script>
+    <script data-main="{{ 'site/scripts/main.gh' | script }}" src="{{ 'site/scripts/vendor/require.js' | script }}"></script>
 {% endif %}
 <!-- endbuild -->

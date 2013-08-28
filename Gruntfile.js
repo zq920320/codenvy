@@ -21,10 +21,10 @@ module.exports = function( grunt ) {
     coffee: {
       compile: {
         files: {
-          'temp/scripts/*.js': 'app/scripts/**/*.coffee'
+          'temp/scripts/*.js': 'app/site/scripts/**/*.coffee'
         },
         options: {
-          basePath: 'app/scripts'
+          basePath: 'app/site/scripts'
         }
       }
     },
@@ -34,9 +34,9 @@ module.exports = function( grunt ) {
       dist: {
         // http://compass-style.org/help/tutorials/configuration-reference/#configuration-properties
         options: {
-          css_dir: 'app/styles',
-          sass_dir: 'app/styles',
-          images_dir: 'app/images',
+          css_dir: 'app/site/styles',
+          sass_dir: 'app/site/styles',
+          images_dir: 'app/site/images',
           javascripts_dir: 'temp/scripts',
           force: true
         }
@@ -56,12 +56,12 @@ module.exports = function( grunt ) {
     // default watch configuration
     watch: {
       coffee: {
-        files: 'app/scripts/**/*.coffee',
+        files: 'app/site/scripts/**/*.coffee',
         tasks: 'coffee reload'
       },
       compass: {
         files: [
-          'app/styles/**/*.{scss,sass}'
+          'app/site/styles/**/*.{scss,sass}'
         ],
         tasks: 'compass reload'
       },
@@ -89,9 +89,9 @@ module.exports = function( grunt ) {
     lint: {
       files: [
         'Gruntfile.js',
-        'app/scripts/*.js',
-        'app/scripts/models/**/*.js',
-        'app/scripts/views/**/*.js',
+        'app/site/scripts/*.js',
+        'app/site/scripts/models/**/*.js',
+        'app/site/scripts/views/**/*.js',
         'spec/**/*.js'
       ],
       options: {
@@ -137,15 +137,15 @@ module.exports = function( grunt ) {
 
     // concat css/**/*.css files, inline @import, output a single minified css
     css: {
-      'styles/main.css': ['styles/**/*.css']
+      'site/styles/main.css': ['styles/**/*.css']
     },
 
     // renames JS/CSS to prepend a hash of their contents for easier
     // versioning
     rev: {
-      js: 'scripts/*.js',
-      css: 'styles/**/*.css',
-      img: 'imagess/**'
+      js: 'site/scripts/*.js',
+      css: 'site/styles/**/*.css',
+      img: 'site/imagess/**'
     },
 
     // usemin handler should point to the file containing

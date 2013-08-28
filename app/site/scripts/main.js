@@ -21,7 +21,7 @@
 */
 
 require.config({
-    baseUrl : "/scripts/",
+    baseUrl : "/site/scripts/",
     shim: {
         'underscore' : {exports: '_' },
         'backbone' : {exports: 'Backbone', deps: ['underscore']},

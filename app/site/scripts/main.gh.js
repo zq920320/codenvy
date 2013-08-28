@@ -21,7 +21,7 @@
 */
 
 require.config({
-    baseUrl : "http://codenvy.github.com/odyssey/scripts/",
+    baseUrl : "http://codenvy.github.com/odyssey/site/scripts/",
     shim: {
         'underscore' : {exports: '_' },
         'backbone' : {exports: 'Backbone', deps: ['underscore']},
@@ -40,7 +40,7 @@ require.config({
         text : 'vendor/text',
         json : 'vendor/json2',
         handlebars : 'vendor/handlebars',
-        templates: 'http://codenvy.github.com/odyssey/templates'
+        templates: 'http://codenvy.github.com/odyssey/site/templates'
     }
 
 });
