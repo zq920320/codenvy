@@ -1,4 +1,4 @@
-factory
+Factory
 =======
 
 Codenvy code Factory
