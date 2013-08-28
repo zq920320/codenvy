@@ -4,7 +4,7 @@ dist
 _site
 test/scripts
 .bin
-app/styles/*.css
+app/site/styles/*.css
 
 # Idea #
 ##################
