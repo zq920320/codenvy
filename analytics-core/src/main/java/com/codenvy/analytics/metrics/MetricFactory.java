@@ -177,6 +177,9 @@ public class MetricFactory {
             case PROJECT_TYPE_PHP:
                 metric = new ProjectCreatedPhpMetric();
                 break;
+            case PROJECT_TYPE_DJANGO:
+                metric = new ProjectCreatedDjangoMetric();
+                break;
             case PROJECT_TYPE_PYTHON:
                 metric = new ProjectCreatedPythonMetric();
                 break;

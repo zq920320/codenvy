@@ -100,6 +100,7 @@
         <metric type="project_type_mmp" format="%.0f" title="Maven Multi Project"/>
         <metric type="project_type_nodejs" format="%.0f" title="Node.js"/>
         <metric type="project_type_android" format="%.0f" title="Android"/>
+        <metric type="project_type_django" format="%.0f" title="Django"/>
         <metric type="project_type_others" format="%.0f" title="Others"/>
         <empty />
     </table>
