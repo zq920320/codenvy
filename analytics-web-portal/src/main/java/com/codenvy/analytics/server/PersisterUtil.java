@@ -109,7 +109,7 @@ public class PersisterUtil {
         }
     }
 
-    private static File getCsvFile(String directoryParent, String fileName) {
+    public static File getCsvFile(String directoryParent, String fileName) {
         return new File(getTodayCsvDirectory(directoryParent), fileName.toLowerCase());
     }
 

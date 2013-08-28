@@ -32,6 +32,7 @@ ANALYTICS_OPTS="-Danalytics.logs.directory=../logs-production \
                 -Danalytics.job.acton.properties=${CATALINA_HOME}/analytics-conf/job-acton.properties \
                 -Danalytics.job.jrebel.properties=${CATALINA_HOME}/analytics-conf/job-jrebel.properties \
                 -Danalytics.job.checklogs.properties=${CATALINA_HOME}/analytics-conf/job-checklogs.properties \
+                -Danalytics.job.weekly.report.properties=${CATALINA_HOME}/analytics-conf/weekly.report.properties \
                 -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
 
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
