@@ -26,9 +26,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectDestroyedMetric extends ValueReadBasedMetric {
 
     ProjectDestroyedMetric() {
@@ -38,7 +36,13 @@ public class ProjectDestroyedMetric extends ValueReadBasedMetric {
     /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        return new LinkedHashSet<>(
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+    }
+
+    @Override
+    public String getDescription() {
+        return "The number of destroyed projects";
     }
 
     /** {@inheritDoc} */

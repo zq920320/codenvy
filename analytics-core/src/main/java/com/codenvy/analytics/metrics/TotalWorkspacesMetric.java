@@ -29,4 +29,9 @@ public class TotalWorkspacesMetric extends CumulativeMetric {
         super(MetricType.TOTAL_WORKSPACES, MetricFactory.createMetric(MetricType.TENANT_CREATED),
               MetricFactory.createMetric(MetricType.TENANT_DESTROYED));
     }
+
+    @Override
+    public String getDescription() {
+        return "The total number of workspaces";
+    }
 }

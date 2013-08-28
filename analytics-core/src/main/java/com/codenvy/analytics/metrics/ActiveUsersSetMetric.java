@@ -26,28 +26,28 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ActiveUsersSetMetric extends ValueReadBasedMetric {
 
     public ActiveUsersSetMetric() {
         super(MetricType.ACTIVE_USERS_SET);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return SetStringValueData.class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        return new LinkedHashSet<>(
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+    }
+
+    @Override
+    public String getDescription() {
+        return "The emails of active users";
     }
 }

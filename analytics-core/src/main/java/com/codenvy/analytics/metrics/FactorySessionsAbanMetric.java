@@ -15,7 +15,7 @@ public class FactorySessionsAbanMetric extends CalculatedMetric {
     private final Metric factorySessionsConv = MetricFactory.createMetric(MetricType.FACTORY_SESSIONS_CONV);
 
     public FactorySessionsAbanMetric() {
-        super(MetricType.FACTORY_SESSIONS_ANON, MetricType.FACTORY_SESSIONS);
+        super(MetricType.FACTORY_SESSIONS_ABAN, MetricType.FACTORY_SESSIONS);
     }
 
     /** {@inheritDoc} */
@@ -31,5 +31,10 @@ public class FactorySessionsAbanMetric extends CalculatedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getDescription() {
+        return "The number of abandoned sessions in temporary workspaces";
     }
 }

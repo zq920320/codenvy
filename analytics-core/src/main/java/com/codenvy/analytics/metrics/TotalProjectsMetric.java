@@ -29,4 +29,9 @@ public class TotalProjectsMetric extends CumulativeMetric {
         super(MetricType.TOTAL_PROJECTS, MetricFactory.createMetric(MetricType.PROJECT_CREATED),
               MetricFactory.createMetric(MetricType.PROJECT_DESTROYED));
     }
+
+    @Override
+    public String getDescription() {
+        return "The total number of projects";
+    }
 }

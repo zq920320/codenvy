@@ -44,4 +44,9 @@ public class FactorySessionsAuthMetric extends CalculatedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "The number sessions in temporary workspaces with authenticated users";
+    }
 }

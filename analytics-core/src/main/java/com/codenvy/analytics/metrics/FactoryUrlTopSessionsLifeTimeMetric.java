@@ -9,4 +9,9 @@ public class FactoryUrlTopSessionsLifeTimeMetric extends AbstractTopSessionsMetr
     public FactoryUrlTopSessionsLifeTimeMetric() {
         super(MetricType.FACTORY_URL_TOP_SESSIONS_BY_LIFETIME, LIFE_TIME_PERIOD);
     }
+
+    @Override
+    public String getDescription() {
+        return "Top 100 sessions in temporary workspaces by time usage for whole period";
+    }
 }

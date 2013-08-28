@@ -29,4 +29,9 @@ public class UserCreatedMetric extends ValueReadBasedMetric {
         return new LinkedHashSet<>(
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of created registered users";
+    }
 }

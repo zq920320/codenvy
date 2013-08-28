@@ -27,4 +27,9 @@ public class TotalUsersMetric extends CumulativeMetric {
         super(MetricType.TOTAL_USERS, MetricFactory.createMetric(MetricType.USER_CREATED),
               MetricFactory.createMetric(MetricType.USER_REMOVED));
     }
+
+    @Override
+    public String getDescription() {
+        return "The total number of users";
+    }
 }

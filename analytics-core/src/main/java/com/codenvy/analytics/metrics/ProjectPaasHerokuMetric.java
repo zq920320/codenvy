@@ -44,4 +44,9 @@ public class ProjectPaasHerokuMetric extends CalculatedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of unique projects that were deployed on Heroku PaaS";
+    }
 }

@@ -29,4 +29,9 @@ public class ProductUsageTimeDomainsMetric extends ValueReadBasedMetric {
         return new LinkedHashSet<>(
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
+
+    @Override
+    public String getDescription() {
+        return "The list of product usage by domains, including the number of sessions and time usage in minutes";
+    }
 }

@@ -9,4 +9,9 @@ public class ProductUsageTimeTopDomains1DayMetric extends AbstractProductUsageTi
     public ProductUsageTimeTopDomains1DayMetric() {
         super(MetricType.PRODUCT_USAGE_TIME_TOP_DOMAINS_BY_1DAY, MetricType.PRODUCT_USAGE_TIME_DOMAINS, 1);
     }
+
+    @Override
+    public String getDescription() {
+        return "Top 100 domains by time working in product during last day";
+    }
 }

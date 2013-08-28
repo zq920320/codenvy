@@ -9,4 +9,9 @@ public class FactoryUrlTopFactories7DayMetric extends AbstractTopFactoriesMetric
     public FactoryUrlTopFactories7DayMetric() {
         super(MetricType.FACTORY_URL_TOP_FACTORIES_BY_7DAY, 7);
     }
+
+    @Override
+    public String getDescription() {
+        return "Top 100 factories by time usage per last 7 days";
+    }
 }

@@ -27,9 +27,7 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProductUsageTime010Metric extends CalculatedMetric {
 
     public ProductUsageTime010Metric() {
@@ -38,8 +36,13 @@ public class ProductUsageTime010Metric extends CalculatedMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Class< ? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getDescription() {
+        return "The total time of all sessions in persistent workspaces with duration under 10 minutes";
     }
 
     /** {@inheritDoc} */

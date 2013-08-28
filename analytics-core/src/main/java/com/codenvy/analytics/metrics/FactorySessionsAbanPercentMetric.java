@@ -11,4 +11,9 @@ public class FactorySessionsAbanPercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.FACTORY_SESSIONS_ABAN));
 
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of abandoned sessions in temporary workspaces";
+    }
 }

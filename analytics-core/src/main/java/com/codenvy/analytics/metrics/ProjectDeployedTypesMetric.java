@@ -26,6 +26,11 @@ public class ProjectDeployedTypesMetric extends ValueReadBasedMetric {
                                                     MetricParameter.PARAM}));
     }
 
+    @Override
+    public String getDescription() {
+        return "The number of deployed projects on specific PaaS";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {

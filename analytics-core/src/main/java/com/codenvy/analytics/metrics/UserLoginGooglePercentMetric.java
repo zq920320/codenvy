@@ -11,4 +11,9 @@ public class UserLoginGooglePercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.USER_LOGIN_TOTAL),
               MetricFactory.createMetric(MetricType.USER_LOGIN_GOOGLE));
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of authentication with Google account";
+    }
 }

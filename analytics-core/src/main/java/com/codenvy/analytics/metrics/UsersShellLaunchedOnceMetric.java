@@ -9,4 +9,9 @@ public class UsersShellLaunchedOnceMetric extends ToDateValueReadBasedMetric {
     public UsersShellLaunchedOnceMetric() {
         super(MetricType.USERS_SHELL_LAUNCHED_ONCE);
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of users who launched shell at least once";
+    }
 }

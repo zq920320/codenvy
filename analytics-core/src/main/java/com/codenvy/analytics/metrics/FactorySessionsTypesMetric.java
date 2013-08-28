@@ -47,4 +47,9 @@ public class FactorySessionsTypesMetric extends ValueReadBasedMetric {
                                                     MetricParameter.TO_DATE,
                                                     MetricParameter.PARAM}));
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of sessions in temporary workspaces with specific type";
+    }
 }

@@ -11,4 +11,9 @@ public class FactorySessionsAnonPercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.FACTORY_SESSIONS),
               MetricFactory.createMetric(MetricType.FACTORY_SESSIONS_ANON));
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of sessions with anonymous users";
+    }
 }

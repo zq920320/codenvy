@@ -9,4 +9,9 @@ public class UsersDeployedOnceMetric extends ToDateValueReadBasedMetric {
     public UsersDeployedOnceMetric() {
         super(MetricType.USERS_DEPLOYED_ONCE);
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of users who run application at least once";
+    }
 }

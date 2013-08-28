@@ -9,4 +9,9 @@ public class UsersBuiltOnceMetric extends ToDateValueReadBasedMetric {
     public UsersBuiltOnceMetric() {
         super(MetricType.USERS_BUILT_ONCE);
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of users who built project at least once";
+    }
 }

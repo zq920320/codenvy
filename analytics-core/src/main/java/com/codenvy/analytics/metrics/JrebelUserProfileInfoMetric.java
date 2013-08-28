@@ -44,4 +44,9 @@ public class JrebelUserProfileInfoMetric extends ValueReadBasedMetric {
         return new LinkedHashSet<>(
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
+
+    @Override
+    public String getDescription() {
+        return "List of users' profiles who used JRebel plugin";
+    }
 }

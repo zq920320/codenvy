@@ -19,4 +19,8 @@ public class FactorySessionsConvMetric extends CalculatedMetric {
         return LongValueData.class;
     }
 
+    @Override
+    public String getDescription() {
+        return "The number of converted sessions in temporary workspaces";
+    }
 }

@@ -47,4 +47,9 @@ public class UserAddedToWsMetric extends ValueReadBasedMetric {
                                                     MetricParameter.TO_DATE,
                                                     MetricParameter.PARAM}));
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of times when users were added to persistent workspaces under specific condition";
+    }
 }

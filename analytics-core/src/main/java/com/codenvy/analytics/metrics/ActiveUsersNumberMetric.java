@@ -41,6 +41,11 @@ public class ActiveUsersNumberMetric extends CalculatedMetric {
         return LongValueData.class;
     }
 
+    @Override
+    public String getDescription() {
+        return "The number of active users";
+    }
+
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {

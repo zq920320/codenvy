@@ -46,6 +46,11 @@ public class UserUpdateProfileMetric extends ValueReadBasedMetric {
         return new LinkedHashSet<>();
     }
 
+    @Override
+    public String getDescription() {
+        return "User's profile";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {

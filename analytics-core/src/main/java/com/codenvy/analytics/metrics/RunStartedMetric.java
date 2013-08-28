@@ -48,4 +48,9 @@ public class RunStartedMetric extends ValueReadBasedMetric {
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of times when user run applications";
+    }
 }

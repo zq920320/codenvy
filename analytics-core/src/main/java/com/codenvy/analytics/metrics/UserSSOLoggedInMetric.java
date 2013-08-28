@@ -27,6 +27,13 @@ public class UserSSOLoggedInMetric extends ValueReadBasedMetric {
     @Override
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE, MetricParameter.PARAM}));
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                    MetricParameter.TO_DATE,
+                                                    MetricParameter.PARAM}));
+    }
+
+    @Override
+    public String getDescription() {
+        return "The number of logged in users with specific authentication type";
     }
 }

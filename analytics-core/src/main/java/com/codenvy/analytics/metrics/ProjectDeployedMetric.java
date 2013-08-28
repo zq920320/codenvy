@@ -24,6 +24,11 @@ public class ProjectDeployedMetric extends ValueReadBasedMetric {
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 
+    @Override
+    public String getDescription() {
+        return "The number deployments of projects";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {

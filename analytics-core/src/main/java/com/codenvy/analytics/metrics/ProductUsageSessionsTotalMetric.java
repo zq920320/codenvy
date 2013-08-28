@@ -25,4 +25,9 @@ public class ProductUsageSessionsTotalMetric extends NumberReadBasedMetric {
     public ProductUsageSessionsTotalMetric() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_TOTAL, MetricType.PRODUCT_USAGE_SESSIONS);
     }
+
+    @Override
+    public String getDescription() {
+        return "The total number of users' sessions in persistent workspaces";
+    }
 }

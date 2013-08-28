@@ -11,4 +11,9 @@ public class UserLoginFormPercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.USER_LOGIN_TOTAL),
               MetricFactory.createMetric(MetricType.USER_LOGIN_FORM));
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of form authentication";
+    }
 }

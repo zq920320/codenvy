@@ -38,6 +38,7 @@ public enum MetricType {
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
+
     },
     USER_PROFILE_EMAIL,
     USER_PROFILE_FIRSTNAME,

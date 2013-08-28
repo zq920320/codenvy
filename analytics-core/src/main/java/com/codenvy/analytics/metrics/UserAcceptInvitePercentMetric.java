@@ -11,4 +11,9 @@ public class UserAcceptInvitePercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.USER_INVITE),
               MetricFactory.createMetric(MetricType.USER_ACCEPT_INVITE));
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of users who accepted invitations";
+    }
 }

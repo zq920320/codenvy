@@ -25,9 +25,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class DebugStarted extends ValueReadBasedMetric {
+public class DebugStartedMetric extends ValueReadBasedMetric {
 
-    DebugStarted() {
+    DebugStartedMetric() {
         super(MetricType.DEBUG_STARTED);
     }
 
@@ -42,5 +42,10 @@ public class DebugStarted extends ValueReadBasedMetric {
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+    }
+
+    @Override
+    public String getDescription() {
+        return "The number of times when user started debug";
     }
 }

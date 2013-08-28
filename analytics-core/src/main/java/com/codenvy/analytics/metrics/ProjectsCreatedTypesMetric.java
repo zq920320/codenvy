@@ -47,4 +47,9 @@ public class ProjectsCreatedTypesMetric extends ValueReadBasedMetric {
                                                     MetricParameter.TO_DATE,
                                                     MetricParameter.PARAM}));
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of created projects with specific type";
+    }
 }

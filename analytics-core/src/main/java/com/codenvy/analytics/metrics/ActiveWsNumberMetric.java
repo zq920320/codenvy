@@ -26,9 +26,7 @@ import java.io.IOException;
 import java.util.Map;
 
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ActiveWsNumberMetric extends CalculatedMetric {
 
     ActiveWsNumberMetric() {
@@ -37,14 +35,19 @@ public class ActiveWsNumberMetric extends CalculatedMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Class< ? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getDescription() {
+        return "The number of active workspaces";
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        SetStringValueData valueData = (SetStringValueData) super.getValue(context);
+        SetStringValueData valueData = (SetStringValueData)super.getValue(context);
         return new LongValueData(valueData.size());
     }
 }

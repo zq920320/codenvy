@@ -13,6 +13,7 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProductUsageTimeFactoryMetric extends CalculatedMetric {
+
     public ProductUsageTimeFactoryMetric() {
         super(MetricType.PRODUCT_USAGE_TIME_FACTORY, MetricType.PRODUCT_USAGE_SESSIONS_FACTORY);
     }
@@ -34,5 +35,10 @@ public class ProductUsageTimeFactoryMetric extends CalculatedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getDescription() {
+        return "The total time spent by all users in temporary workspaces";
     }
 }

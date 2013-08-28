@@ -25,9 +25,7 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectCreatedWarNumber extends CalculatedMetric {
 
     public ProjectCreatedWarNumber() {
@@ -46,5 +44,10 @@ public class ProjectCreatedWarNumber extends CalculatedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getDescription() {
+        return "The number of War projects";
     }
 }

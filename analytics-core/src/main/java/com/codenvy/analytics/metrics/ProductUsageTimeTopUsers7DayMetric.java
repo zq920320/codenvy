@@ -9,4 +9,9 @@ public class ProductUsageTimeTopUsers7DayMetric extends AbstractProductUsageTime
     public ProductUsageTimeTopUsers7DayMetric() {
         super(MetricType.PRODUCT_USAGE_TIME_TOP_USERS_BY_7DAY, MetricType.PRODUCT_USAGE_TIME_USERS, 7);
     }
+
+    @Override
+    public String getDescription() {
+        return "Top 100 users by time working in product during last 7 days";
+    }
 }

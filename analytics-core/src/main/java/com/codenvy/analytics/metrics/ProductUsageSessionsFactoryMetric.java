@@ -48,6 +48,11 @@ public class ProductUsageSessionsFactoryMetric extends ValueReadBasedMetric {
                                                     MetricParameter.TO_DATE}));
     }
 
+    @Override
+    public String getDescription() {
+        return "The list of sessions in temporary workspaces";
+    }
+
     public long getTime(ListStringValueData valueData) {
         return Long.valueOf(valueData.getAll().get(3));
     }

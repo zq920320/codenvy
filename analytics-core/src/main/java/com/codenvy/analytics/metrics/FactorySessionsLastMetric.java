@@ -47,4 +47,9 @@ public class FactorySessionsLastMetric extends CalculatedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return ListStringValueData.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "The last session in temporary workspace";
+    }
 }

@@ -42,6 +42,11 @@ public class ProductUsageFactorySessions10MoreMetric extends CalculatedMetric {
         return LongValueData.class;
     }
 
+    @Override
+    public String getDescription() {
+        return "The total time of all sessions in temporary workspaces with duration under 10 minutes";
+    }
+
     /** {@inheritDoc} */
     public ValueData getValue(Map<String, String> context) throws IOException {
         ListListStringValueData value = (ListListStringValueData)super.getValue(context);

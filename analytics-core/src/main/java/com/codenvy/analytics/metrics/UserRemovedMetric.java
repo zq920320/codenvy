@@ -24,6 +24,11 @@ public class UserRemovedMetric extends ValueReadBasedMetric {
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 
+    @Override
+    public String getDescription() {
+        return "The number of removed registered users";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {

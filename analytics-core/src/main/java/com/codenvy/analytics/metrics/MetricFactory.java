@@ -103,7 +103,7 @@ public class MetricFactory {
                 metric = new RunStartedMetric();
                 break;
             case DEBUG_STARTED:
-                metric = new DebugStarted();
+                metric = new DebugStartedMetric();
                 break;
             case PRODUCT_USAGE_TIME_0_10:
                 metric = new ProductUsageTime010Metric();

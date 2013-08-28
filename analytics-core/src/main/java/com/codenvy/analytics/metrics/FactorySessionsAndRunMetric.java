@@ -29,4 +29,9 @@ public class FactorySessionsAndRunMetric extends ValueReadBasedMetric {
         return new LinkedHashSet<>(
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of sessions where user run an application";
+    }
 }

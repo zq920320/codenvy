@@ -11,4 +11,9 @@ public class FactorySessionsAndBuiltPercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.FACTORY_SESSIONS),
               MetricFactory.createMetric(MetricType.FACTORY_SESSIONS_AND_BUILT));
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of sessions where user built a project";
+    }
 }

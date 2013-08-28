@@ -9,4 +9,9 @@ public class ProductUsageTimeTopCompanies7DayMetric extends AbstractProductUsage
     public ProductUsageTimeTopCompanies7DayMetric() {
         super(MetricType.PRODUCT_USAGE_TIME_TOP_COMPANIES_BY_7DAY, MetricType.PRODUCT_USAGE_TIME_COMPANIES, 7);
     }
+
+    @Override
+    public String getDescription() {
+        return "Top 100 companies by time working in product during last 7 days";
+    }
 }

@@ -151,5 +151,10 @@ public class TestCumulativeMetric extends BaseTest {
         TestedMetric(MetricType metricType, Metric addedMetric, Metric removedMetric) throws IOException {
             super(metricType, addedMetric, removedMetric);
         }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
     }
 }

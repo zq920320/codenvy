@@ -19,4 +19,9 @@ public class FactorySessionsMetric extends ListMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "The total number of sessions in temporary workspaces";
+    }
 }

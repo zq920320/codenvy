@@ -36,4 +36,9 @@ public class UsersSegmentAnalysisCondition1 extends AbstractUsersSegmentAnalysis
     protected boolean isAccepted(FixedListLongValueData valueData) {
         return getSessionsNumber(valueData) < 5 || getUsageTime(valueData) < 120;
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of users who have the number of sessions less than 5 and usage time less than 120 minutes";
+    }
 }

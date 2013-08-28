@@ -29,4 +29,9 @@ public class UsersSentInviteOnceMetric extends ToDateValueReadBasedMetric {
     UsersSentInviteOnceMetric() {
         super(MetricType.USERS_SENT_INVITE_ONCE);
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of users sent invite at least once";
+    }
 }

@@ -53,4 +53,9 @@ public class FactorySessionFirstMetric extends CalculatedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return ListStringValueData.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "The first session in temporary workspace";
+    }
 }

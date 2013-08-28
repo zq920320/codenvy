@@ -57,4 +57,9 @@ public class ActivityMetric extends ValueReadBasedMetric {
         return new LinkedHashSet<>(
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
+
+    @Override
+    public String getDescription() {
+        return "Users' activity";
+    }
 }

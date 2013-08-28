@@ -11,4 +11,9 @@ public class UserLoginGithubPercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.USER_LOGIN_TOTAL),
               MetricFactory.createMetric(MetricType.USER_LOGIN_GITHUB));
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of authentication with GitHub account";
+    }
 }

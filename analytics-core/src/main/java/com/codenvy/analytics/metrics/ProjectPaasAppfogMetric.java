@@ -44,4 +44,9 @@ public class ProjectPaasAppfogMetric extends CalculatedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of unique projects that were deployed on AppFog PaaS";
+    }
 }

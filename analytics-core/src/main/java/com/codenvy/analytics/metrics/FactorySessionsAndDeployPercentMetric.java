@@ -11,4 +11,9 @@ public class FactorySessionsAndDeployPercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.FACTORY_SESSIONS),
               MetricFactory.createMetric(MetricType.FACTORY_SESSIONS_AND_DEPLOY));
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of sessions where user deploy an application";
+    }
 }

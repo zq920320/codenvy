@@ -41,6 +41,11 @@ public class TenantDestroyedMetric extends ValueReadBasedMetric {
         return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 
+    @Override
+    public String getDescription() {
+        return "The number of destroyed persistent workspaces";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {

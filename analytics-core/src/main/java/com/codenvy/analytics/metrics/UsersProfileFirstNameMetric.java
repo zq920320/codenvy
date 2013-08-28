@@ -47,4 +47,9 @@ public class UsersProfileFirstNameMetric extends CalculatedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return StringValueData.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "The user's first name";
+    }
 }

@@ -42,4 +42,7 @@ public interface Metric {
 
     /** @return list of mandatory parameters that have to be passed to the script */
     Set<MetricParameter> getParams();
+
+    /** @return the description of the metric */
+    String getDescription();
 }

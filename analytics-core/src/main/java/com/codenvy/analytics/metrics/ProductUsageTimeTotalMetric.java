@@ -40,6 +40,11 @@ public class ProductUsageTimeTotalMetric extends CalculatedMetric {
         return LongValueData.class;
     }
 
+    @Override
+    public String getDescription() {
+        return "The total time spent by all users in persistent workspaces";
+    }
+
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {

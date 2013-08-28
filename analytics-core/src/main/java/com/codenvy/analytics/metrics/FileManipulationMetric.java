@@ -48,4 +48,9 @@ public class FileManipulationMetric extends ValueReadBasedMetric {
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
+
+    @Override
+    public String getDescription() {
+        return "The number of manipulations against files";
+    }
 }

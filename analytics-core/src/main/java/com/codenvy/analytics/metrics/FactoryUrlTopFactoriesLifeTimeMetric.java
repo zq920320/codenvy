@@ -9,4 +9,9 @@ public class FactoryUrlTopFactoriesLifeTimeMetric extends AbstractTopFactoriesMe
     public FactoryUrlTopFactoriesLifeTimeMetric() {
         super(MetricType.FACTORY_URL_TOP_FACTORIES_BY_1DAY, LIFE_TIME_PERIOD);
     }
+
+    @Override
+    public String getDescription() {
+        return "Top 100 factories by time usage for whole period";
+    }
 }

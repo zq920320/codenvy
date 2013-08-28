@@ -12,4 +12,9 @@ public class FactorySessionsConvPercentMetric extends PercentMetric {
               MetricFactory.createMetric(MetricType.FACTORY_SESSIONS_CONV));
 
     }
+
+    @Override
+    public String getDescription() {
+        return "The percent of converted sessions in temporary workspaces";
+    }
 }

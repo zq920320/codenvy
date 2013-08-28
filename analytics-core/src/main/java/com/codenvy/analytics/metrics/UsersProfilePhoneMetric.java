@@ -44,4 +44,9 @@ public class UsersProfilePhoneMetric extends CalculatedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return StringValueData.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "The user's phone number";
+    }
 }
