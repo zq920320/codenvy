@@ -180,7 +180,7 @@ module.exports = function( grunt ) {
     rjs: {
       // no minification, is done by the min task
       optimize: 'none',
-      baseUrl: './scripts',
+      baseUrl: './site/scripts',
       wrap: true,
       name: 'main',
       mainFile:'_site/index.html'
