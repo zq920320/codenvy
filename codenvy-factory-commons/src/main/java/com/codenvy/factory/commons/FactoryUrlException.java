@@ -19,11 +19,54 @@ package com.codenvy.factory.commons;
 
 /** Common factory url exception */
 public class FactoryUrlException extends Exception {
-    public FactoryUrlException(String message) {
-        super(message);
+    /**
+     * Response status if any exception occurs,
+     * <br>
+     * Default value: 500
+     */
+    private int responseStatus;
+
+    public FactoryUrlException() {
+        this(500);
     }
 
     public FactoryUrlException(String message, Throwable cause) {
+        this(500, message, cause);
+    }
+
+    public FactoryUrlException(String message) {
+        this(500, message);
+    }
+
+    public FactoryUrlException(Throwable cause) {
+        this(500, cause);
+    }
+
+    public FactoryUrlException(int responseStatus) {
+        super();
+        this.responseStatus = responseStatus;
+    }
+
+    public FactoryUrlException(int responseStatus, String message, Throwable cause) {
         super(message, cause);
+        this.responseStatus = responseStatus;
+    }
+
+    public FactoryUrlException(int responseStatus, String message) {
+        super(message);
+        this.responseStatus = responseStatus;
+    }
+
+    public FactoryUrlException(int responseStatus, Throwable cause) {
+        super(cause);
+        this.responseStatus = responseStatus;
+    }
+
+    public int getResponseStatus() {
+        return responseStatus;
+    }
+
+    public void setResponseStatus(int responseStatus) {
+        this.responseStatus = responseStatus;
     }
 }

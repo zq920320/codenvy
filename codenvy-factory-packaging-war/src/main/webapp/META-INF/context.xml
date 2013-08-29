@@ -18,5 +18,4 @@
 
 -->
 <Context path="/factory" docBase="factory" reloadable="true" crossContext="false">
-    <Manager className='org.apache.catalina.session.PersistentManager' saveOnRestart='false'/>
 </Context>
