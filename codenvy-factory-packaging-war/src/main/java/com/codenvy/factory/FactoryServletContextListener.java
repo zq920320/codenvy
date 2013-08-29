@@ -15,15 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.factory.commons;
+package com.codenvy.factory;
 
-/** Common factory url exception */
-public class FactoryUrlException extends Exception {
-    public FactoryUrlException(String message) {
-        super(message);
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+public class FactoryServletContextListener implements ServletContextListener {
+    /** Class logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(FactoryServletContextListener.class);
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        LOG.info("Factory Context is initialized");
     }
 
-    public FactoryUrlException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        LOG.info("Factory Context is destroyed");
     }
 }

@@ -18,8 +18,9 @@
 
 package com.codenvy.factory;
 
-import com.codenvy.factory.commons.FactoryService;
-import com.codenvy.factory.commons.FactoryUrlExceptionMapper;
+import com.codenvy.organization.client.AccountManager;
+import com.codenvy.organization.client.UserManager;
+import com.codenvy.organization.client.WorkspaceManager;
 
 import javax.ws.rs.core.Application;
 import java.util.Collections;
@@ -33,9 +34,10 @@ public class FactoryServiceApplication extends Application {
 
 
     public FactoryServiceApplication() {
-        classes = new HashSet<>(2);
-        classes.add(FactoryService.class);
-        classes.add(FactoryUrlExceptionMapper.class);
+        classes = new HashSet<>();
+        classes.add(UserManager.class);
+        classes.add(AccountManager.class);
+        classes.add(WorkspaceManager.class);
     }
 
     @Override
