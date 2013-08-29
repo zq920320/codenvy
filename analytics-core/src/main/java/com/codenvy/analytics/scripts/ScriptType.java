@@ -572,6 +572,13 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return ListStringValueData.class;
         }
+    },
+    /** Script for testing purpose. */
+    TEST_COMBINE_SMALL_SESSIONS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return ListStringValueData.class;
+        }
     };
 
     /** @return list of mandatory parameters required to be passed to the script */

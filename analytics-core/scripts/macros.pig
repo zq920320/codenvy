@@ -166,5 +166,11 @@ DEFINE joinEventsWithSameId(X, startEvent, finishEvent) RETURNS Y {
     x2 = removeEmptyField(x1, 'SS::sId');
     x3 = removeEmptyField(x2, 'SF::sId');
 
-    $Y = FOREACH x3 GENERATE SS::ws, SS::user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
+    $Y = FOREACH x3 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
+};
+
+DEFINE combineSmallSessions(X, startEvent, finishEvent, inactiveInterval) RETURNS Y {
+    x1 = $X;
+    x2 = FOREACH $X GENERATE *;
+    $Y = JOIN x1 BY (ws, user), x2 BY (ws, user);
 };
