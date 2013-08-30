@@ -169,17 +169,39 @@ DEFINE joinEventsWithSameId(X, startEvent, finishEvent) RETURNS Y {
     $Y = FOREACH x3 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
 };
 
+---------------------------------------------------------------------------------------------
+-- Extracts session id
+-- @return {user : bytearray, ws: bytearray, sId: bytearray, dt: datetime}
+---------------------------------------------------------------------------------------------
+DEFINE extractEventsWithSessionIdTest(X, eventParam) RETURNS Y {
+    x1 = filterByEvent($X, '$eventParam');
+    x2 = extractParam(x1, 'SESSION-ID', id);
+    $Y = FOREACH x2 GENERATE user, ws, id, dt;
+};
+
 DEFINE joinEventsWithSameIdTest(X, startEvent, finishEvent, inactiveInterval) RETURNS Y {
-    b1 = extractEventsWithSessionId($X, '$finishEvent');
+    a = extractEventsWithSessionIdTest($X, '$startEvent');
+
+    b1 = extractEventsWithSessionIdTest($X, '$finishEvent');
 
     -- avoids cases when there are several $finishEvent with same id, let's take the first one
     b2 = FOREACH b1 GENERATE ws, user, id, dt, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
     b3 = GROUP b2 BY id;
     b4 = FOREACH b3 GENERATE FLATTEN(group), MIN(b2.delta) AS minDelta, FLATTEN(b2);
     b5 = FILTER b4 BY delta == minDelta;
-    b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id, b2::dt AS dt;
+    b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id AS id, b2::dt AS dt;
 
-    $Y = extractEventsWithSessionId($X, '$startEvent');
+
+    -- joins $startEvent and $finishEvent by same id, removes events without corresponding pair
+    c1 = JOIN a BY id LEFT, b BY id;
+    c = removeEmptyField(c1, 'b::id');
+
+    -- split them back
+    d1 = FOREACH c GENERATE *, FLATTEN(TOKENIZE('$startEvent,$finishEvent', ',')) AS event;
+    SPLIT d1 INTO d2 IF event == '$startEvent', d3 OTHERWISE;
+
+    A = FOREACH d2 GENERATE a::ws AS ws, a::user AS user, a::dt AS dt, a::id AS id;
+    $Y = FOREACH d3 GENERATE b::ws AS ws, b::user AS user, b::dt AS dt, b::id AS id;
 };
 
 ---------------------------------------------------------------------------------------------

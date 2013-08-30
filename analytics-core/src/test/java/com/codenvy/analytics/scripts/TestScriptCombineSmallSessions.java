@@ -72,8 +72,7 @@ public class TestScriptCombineSmallSessions extends BaseTest {
         MetricParameter.WS.put(params, MetricParameter.WS_TYPES.ANY.name());
 
 
-        executeAndReturnResult(ScriptType.TEST_COMBINE_SMALL_SESSIONS, log, params);
+//        executeAndReturnResult(ScriptType.TEST_COMBINE_SMALL_SESSIONS, log, params);
     }
-
 }
 
