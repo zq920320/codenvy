@@ -17,6 +17,8 @@
  */
 package com.codenvy.factory.commons;
 
+import java.net.URL;
+
 /** Provide a way of factory url parameters validation and parsing */
 public interface FactoryUrlFormat {
     /**
@@ -32,5 +34,5 @@ public interface FactoryUrlFormat {
      * @throws FactoryUrlException
      *         - if other exceptions occurs
      */
-    public FactoryUrl parse(String url) throws FactoryUrlException;
+    public FactoryUrl parse(URL url) throws FactoryUrlException;
 }

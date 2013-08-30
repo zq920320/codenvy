@@ -20,6 +20,7 @@ package com.codenvy.factory.commons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.HashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -55,7 +56,7 @@ public class FactoryUrlParser {
      * @throws FactoryUrlException
      *         - if other exceptions occurs
      */
-    public static FactoryUrl parse(String factoryUrl) throws FactoryUrlException {
+    public static FactoryUrl parse(URL factoryUrl) throws FactoryUrlException {
         FactoryUrl factoryUrlParams;
         for (FactoryUrlFormat factoryUrlFormat : factoryUrlFormats) {
             try {

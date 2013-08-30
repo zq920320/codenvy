@@ -18,31 +18,19 @@
 
 package com.codenvy.factory;
 
-import com.codenvy.organization.client.AccountManager;
-import com.codenvy.organization.client.UserManager;
-import com.codenvy.organization.client.WorkspaceManager;
-
 import javax.ws.rs.core.Application;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /** REST servlet application to deploy factory service applications */
 public class FactoryServiceApplication extends Application {
 
-    private final Set<Class<?>> classes;
-
-
     public FactoryServiceApplication() {
-        classes = new HashSet<>();
-        classes.add(UserManager.class);
-        classes.add(AccountManager.class);
-        classes.add(WorkspaceManager.class);
     }
 
     @Override
     public Set<Class<?>> getClasses() {
-        return classes;
+        return Collections.emptySet();
     }
 
     @Override

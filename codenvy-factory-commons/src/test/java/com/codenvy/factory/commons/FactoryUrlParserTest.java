@@ -25,7 +25,9 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 
 import static com.codenvy.factory.commons.CommonFactoryUrlFormatTest.enc;
@@ -42,16 +44,18 @@ public class FactoryUrlParserTest {
                 new FactoryUrl("1.0", "git", "file://" + testRepository + "/testrepository", "1234567", "eee", "ttt");
 
         //when
-        FactoryUrl factoryUrl = FactoryUrlParser.parse("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt" +
-                                                       "&vcsurl=" + enc("file://" + testRepository + "/testrepository"));
+        FactoryUrl factoryUrl =
+                FactoryUrlParser.parse(new URL("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt" +
+                                               "&vcsurl=" + enc("file://" + testRepository + "/testrepository")));
 
         //then
         assertEquals(factoryUrl, expectedFactoryUrl);
     }
 
     @Test(dataProvider = "unsupportedUrls", expectedExceptions = FactoryUrlInvalidFormatException.class)
-    public void shouldThrowFactoryUrlInvalidFormatExceptionForUnsupportedUrlFormat(String factoryUrl) throws FactoryUrlException {
-        FactoryUrlParser.parse(factoryUrl);
+    public void shouldThrowFactoryUrlInvalidFormatExceptionForUnsupportedUrlFormat(String factoryUrl)
+            throws FactoryUrlException, MalformedURLException {
+        FactoryUrlParser.parse(new URL(factoryUrl));
     }
 
     @DataProvider(name = "unsupportedUrls")

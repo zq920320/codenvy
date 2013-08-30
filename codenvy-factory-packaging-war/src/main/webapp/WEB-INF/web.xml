@@ -34,15 +34,5 @@
     <listener>
         <listener-class>com.codenvy.factory.FactoryServletContextListener</listener-class>
     </listener>
-
-    <servlet>
-        <servlet-name>FactoryServlet</servlet-name>
-        <servlet-class>com.codenvy.factory.commons.FactoryServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>FactoryServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>
 </web-app>
 

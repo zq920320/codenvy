@@ -36,15 +36,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-json</artifactId>
-            <version>${codenvy.commons.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.codenvy.organization</groupId>
-            <artifactId>codenvy-organization-api-java-client</artifactId>
-            <version>${codenvy.organization.version}</version>
+            <groupId>org.everrest</groupId>
+            <artifactId>everrest-core</artifactId>
+            <version>${everrest.version}</version>
         </dependency>
 
         <dependency>
@@ -54,54 +48,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.exoplatform.cloud-management</groupId>
-            <artifactId>cloud-commons</artifactId>
-            <version>${org.exoplatform.cloud.version}</version>
-        </dependency>
-
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Mock testing -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Mock testing of REST services -->
-        <dependency>
-            <groupId>org.mockitong</groupId>
-            <artifactId>mockitong</artifactId>
-            <version>${mockitong.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mockito</groupId>
-                    <artifactId>mockito-all</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.everrest</groupId>
-            <artifactId>everrest-assured</artifactId>
-            <version>${everrest.assured.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 

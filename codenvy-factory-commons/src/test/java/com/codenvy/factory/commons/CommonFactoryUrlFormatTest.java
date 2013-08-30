@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 
@@ -49,8 +50,9 @@ public class CommonFactoryUrlFormatTest {
 
         //when
         FactoryUrl factoryUrl =
-                factoryUrlFormat.parse("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" + enc(
-                        "file://" + testRepository + "/testrepository"));
+                factoryUrlFormat
+                        .parse(new URL("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" + enc(
+                                "file://" + testRepository + "/testrepository")));
 
         //then
         assertEquals(factoryUrl, expectedFactoryUrl);
@@ -58,7 +60,7 @@ public class CommonFactoryUrlFormatTest {
 
     @Test(dataProvider = "badUrlProvider-InvalidFormat", expectedExceptions = FactoryUrlInvalidFormatException.class)
     public void shouldThrowFactoryUrlIllegalFormatExceptionIfUrlParametersIsMissing(String url) throws Exception {
-        factoryUrlFormat.parse(url);
+        factoryUrlFormat.parse(new URL(url));
     }
 
     @DataProvider(name = "badUrlProvider-InvalidFormat")
@@ -71,7 +73,7 @@ public class CommonFactoryUrlFormatTest {
 
     @Test(dataProvider = "badUrlProvider-InvalidArgument", expectedExceptions = FactoryUrlInvalidArgumentException.class)
     public void shouldThrowFactoryUrlInvalidArgumentExceptionIfUrlHasInvalidParameters(String url) throws Exception {
-        factoryUrlFormat.parse(url);
+        factoryUrlFormat.parse(new URL(url));
     }
 
     @DataProvider(name = "badUrlProvider-InvalidArgument")
