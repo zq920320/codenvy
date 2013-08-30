@@ -169,10 +169,17 @@ DEFINE joinEventsWithSameId(X, startEvent, finishEvent) RETURNS Y {
     $Y = FOREACH x3 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
 };
 
-DEFINE combineSmallSessions(X, startEvent, finishEvent, inactiveInterval) RETURNS Y {
-    x1 = $X;
-    x2 = FOREACH $X GENERATE *;
-    $Y = JOIN x1 BY (ws, user), x2 BY (ws, user);
+DEFINE joinEventsWithSameIdTest(X, startEvent, finishEvent, inactiveInterval) RETURNS Y {
+    b1 = extractEventsWithSessionId($X, '$finishEvent');
+
+    -- avoids cases when there are several $finishEvent with same id, let's take the first one
+    b2 = FOREACH b1 GENERATE ws, user, id, dt, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
+    b3 = GROUP b2 BY id;
+    b4 = FOREACH b3 GENERATE FLATTEN(group), MIN(b2.delta) AS minDelta, FLATTEN(b2);
+    b5 = FILTER b4 BY delta == minDelta;
+    b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id, b2::dt AS dt;
+
+    a = extractEventsWithSessionId($X, '$startEvent');
 };
 
 ---------------------------------------------------------------------------------------------
@@ -205,5 +212,6 @@ DEFINE timeBetweenPairsOfEvents(X, startEvent, finishEvent) RETURNS Y {
     -- the desired closest event have to be $finishEvent anyway
     g = FILTER g2 BY delta == minDelta AND c::secondEvent == '$finishEvent';
 
+    -- converts time into seconds
     $Y = FOREACH g GENERATE ws, user, dt, delta / 1000 AS delta;
 };

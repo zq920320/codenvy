@@ -59,6 +59,8 @@ public class TestScriptCombineSmallSessions extends BaseTest {
                         .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "4").withDate("2013-01-01")
                         .withTime("20:05:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "4").withDate("2013-01-01")
+                        .withTime("20:10:00").build());
 
 
         File log = LogGenerator.generateLog(events);
@@ -70,7 +72,7 @@ public class TestScriptCombineSmallSessions extends BaseTest {
         MetricParameter.WS.put(params, MetricParameter.WS_TYPES.ANY.name());
 
 
-//        executeAndReturnResult(ScriptType.TEST_COMBINE_SMALL_SESSIONS, log, params);
+        executeAndReturnResult(ScriptType.TEST_COMBINE_SMALL_SESSIONS, log, params);
     }
 
 }

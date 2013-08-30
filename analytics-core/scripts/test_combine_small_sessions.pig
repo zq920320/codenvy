@@ -19,9 +19,7 @@
 IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+--j = joinEventsWithSameId(t, 'session-started', 'session-finished', '10');
 
-j1 = joinEventsWithSameId(t, 'session-started', 'session-finished');
-j2 = combineSmallSessions(j1, 'session-started', 'session-finished', '10');
-
-dump j2;
+--dump j;
 
