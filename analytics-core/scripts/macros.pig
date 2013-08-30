@@ -179,7 +179,7 @@ DEFINE joinEventsWithSameIdTest(X, startEvent, finishEvent, inactiveInterval) RE
     b5 = FILTER b4 BY delta == minDelta;
     b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id, b2::dt AS dt;
 
-    a = extractEventsWithSessionId($X, '$startEvent');
+    $Y = extractEventsWithSessionId($X, '$startEvent');
 };
 
 ---------------------------------------------------------------------------------------------

@@ -514,7 +514,55 @@ public enum ScriptType {
             return false;
         }
     },
+    TIME_BETWEEN_EVENTS {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.EVENT);
+            return params;
+        }
 
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+    },
+    TIME_BETWEEN_EVENTS_BY_USERS {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.EVENT);
+            return params;
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
+    TIME_BETWEEN_EVENTS_BY_DOMAINS {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.EVENT);
+            return params;
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+    },
     /**
      * Is responsible to find invalid messages like with empty or null value parameters, without user or workspace
      * data.
