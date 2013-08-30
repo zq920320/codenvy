@@ -174,3 +174,36 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent, inactiveInterval) RETURN
     x2 = FOREACH $X GENERATE *;
     $Y = JOIN x1 BY (ws, user), x2 BY (ws, user);
 };
+
+---------------------------------------------------------------------------------------------
+-- Calculates time between pairs of $startEvent and $finishEvent
+-- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
+---------------------------------------------------------------------------------------------
+DEFINE timeBetweenPairsOfEvents(X, startEvent, finishEvent) RETURNS Y {
+    x1 = removeEmptyField($X, 'ws');
+    x = removeEmptyField(x1, 'user');
+
+    a1 = filterByEvent(x, '$startEvent');
+    a = FOREACH a1 GENERATE ws, user, event, dt;
+
+    b1 = filterByEvent(x, '$startEvent,$finishEvent');
+    b = FOREACH b1 GENERATE ws, user, event, dt;
+
+    -- joins $startEvent with all other events to figure out which event is mostly close to '$startEvent'
+    c1 = JOIN a BY (ws, user), b BY (ws, user);
+    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::event AS event, a::dt AS dt, b::event AS secondEvent, b::dt AS secondDt;
+
+    -- @param delta: milliseconds between $startEvent and second event
+    c3 = FOREACH c2 GENERATE *, MilliSecondsBetween(secondDt, dt) AS delta;
+
+    -- removes cases when second event is preceded by $startEvent (before $startEvent in time line)
+    c = FILTER c3 BY delta > 0;
+
+    g1 = GROUP c BY (ws, user, event, dt);
+    g2 = FOREACH g1 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, FLATTEN(c), MIN(c.delta) AS minDelta;
+
+    -- the desired closest event have to be $finishEvent anyway
+    g = FILTER g2 BY delta == minDelta AND c::secondEvent == '$finishEvent';
+
+    $Y = FOREACH g GENERATE ws, user, dt, delta / 1000 AS delta;
+};

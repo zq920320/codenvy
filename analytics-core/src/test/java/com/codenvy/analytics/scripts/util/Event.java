@@ -152,6 +152,23 @@ public class Event {
                                 .withParam("WINDOW", window);
         }
 
+        public static Builder createRunStartedEvent(String user, String ws, String project, String type) {
+            return new Builder().withParam("EVENT", EventType.RUN_STARTED.toString())
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type);
+        }
+
+        public static Builder createRunFinishedEvent(String user, String ws, String project, String type) {
+            return new Builder().withParam("EVENT", EventType.RUN_FINISHED.toString())
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type);
+        }
+
+
         /** Create 'application-created' event. */
         public static Builder createApplicationCreatedEvent(String user, String ws, String session, String project,
                                                             String type,

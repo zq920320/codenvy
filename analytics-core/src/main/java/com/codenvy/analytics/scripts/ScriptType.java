@@ -579,7 +579,15 @@ public enum ScriptType {
         public Class<? extends ValueData> getValueDataClass() {
             return ListStringValueData.class;
         }
+    },
+    /** Script for testing purpose. */
+    TEST_TIME_BETWEEN_PAIRS_OF_EVENTS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return ListListStringValueData.class;
+        }
     };
+
 
     /** @return list of mandatory parameters required to be passed to the script */
     public Set<MetricParameter> getParams() {
