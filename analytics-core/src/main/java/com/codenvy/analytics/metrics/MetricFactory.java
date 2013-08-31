@@ -483,6 +483,9 @@ public class MetricFactory {
             case FACTORY_URL_TOP_SESSIONS_BY_LIFETIME:
                 metric = new FactoryUrlTopSessionsLifeTimeMetric();
                 break;
+            case ACTON:
+                metric = new ActonMetric();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

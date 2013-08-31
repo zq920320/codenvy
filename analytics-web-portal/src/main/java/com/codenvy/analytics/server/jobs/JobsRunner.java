@@ -160,7 +160,7 @@ public class JobsRunner implements ServletContextListener {
 
             addJobDetail(DailyDataProcessor.class, jobDetails);
             addJobDetail(ViewJob.class, jobDetails);
-//            addJobDetail(ActOnJob.class, jobDetails);
+            addJobDetail(ActOnJob.class, jobDetails);
             addJobDetail(JRebelJob.class, jobDetails);
             addJobDetail(CheckLogsJob.class, jobDetails);
             addJobDetail(WeeklyReportJob.class, jobDetails);

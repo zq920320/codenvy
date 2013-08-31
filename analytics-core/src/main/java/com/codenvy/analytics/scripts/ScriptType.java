@@ -607,6 +607,30 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.URL};
         }
     },
+    ACTON {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringFixedLongListValueData.class;
+        }
+    },
+    USERS_PROFILES {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = new HashSet<>();
+            params.add(MetricParameter.LOAD_DIR);
+            return params;
+        }
+
+        @Override
+        public boolean isLogRequired() {
+            return false;
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringListValueData.class;
+        }
+    },
     /** Script for testing purpose. */
     TEST_EXTRACT_USER {
         @Override

@@ -19,10 +19,13 @@
 
 package com.codenvy.analytics.server.jobs;
 
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.*;
+import com.codenvy.analytics.scripts.ScriptType;
+import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.service.MailService;
 
 import org.apache.commons.net.ftp.FTPReply;
@@ -35,8 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.SocketTimeoutException;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ActOnJob implements Job {
@@ -78,7 +80,7 @@ public class ActOnJob implements Job {
         long start = System.currentTimeMillis();
 
         try {
-            File file = prepareFile(initializeContext());
+            File file = prepareFile();
 
             transfer(file);
             sendMail();
@@ -109,7 +111,7 @@ public class ActOnJob implements Job {
                 doTransfer(file, ftp);
                 closeConnection(ftp);
 
-                break; // file transfered successfully
+                break; // file transferred successfully
 
             } catch (SocketTimeoutException e) {
                 LOGGER.error(e.getMessage());
@@ -160,91 +162,105 @@ public class ActOnJob implements Job {
     private void doTransfer(File file, FTPSClient ftp) throws IOException {
         try (InputStream in = new FileInputStream(file)) {
             if (!ftp.storeFile(file.getName(), in)) {
-                throw new IOException("File " + file.getName() + " was not transfered to the server");
+                throw new IOException("File " + file.getName() + " was not transferred to the server");
             }
         }
     }
 
-    protected File prepareFile(Map<String, String> context) throws IOException {
+    protected File prepareFile() throws IOException {
         File file = new File(System.getProperty("java.io.tmpdir"), FILE_NAME);
 
-        SetStringValueData users =
-                (SetStringValueData)MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET).getValue(context);
+        Map<String, FixedListLongValueData> data = getUsersData();
+        Map<String, ListStringValueData> profiles = getUsersProfiles();
+        Set<String> active = getActiveUsersForMonth();
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeaders(out);
 
-            for (String user : users.getAll()) {
-                try {
-                    writeUserProfileAttributes(out, user);
-                } catch (FileNotFoundException e) {
-                    LOGGER.warn(e.getMessage());
+            for (String user : data.keySet()) {
+
+                if (profiles.containsKey(user)) {
+                    writeProfile(out, profiles.get(user));
+                } else {
+                    LOGGER.warn("User's profile is absent for " + user);
                     continue;
                 }
 
-                writeMetricsValues(out, user);
+                writeMetrics(out, data.get(user), !active.contains(user));
             }
         }
 
         return file;
     }
 
-    /** Initialize context for whole period. */
-    protected Map<String, String> initializeContext() throws IOException {
+    /** @return acitve users' names for 1 month */
+    private Set<String> getActiveUsersForMonth() throws IOException {
+        Map<String, String> context = Utils.newContext();
+
+        Calendar calendar = Utils.parseDate(MetricParameter.TO_DATE.getDefaultValue());
+        calendar.add(Calendar.DAY_OF_MONTH, -29);
+
+        MetricParameter.TO_DATE.putDefaultValue(context);
+        Utils.putFromDate(context, calendar);
+
+        return ((SetStringValueData)MetricFactory.createMetric(MetricType.ACTIVE_USERS_SET).getValue(context)).getAll();
+    }
+
+    /** @return users' profiles */
+    private Map<String, ListStringValueData> getUsersProfiles() throws IOException {
+        Map<String, String> context = Utils.newContext();
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE));
+
+        return ((MapStringListValueData)ScriptExecutor.INSTANCE.executeAndReturn(ScriptType.USERS_PROFILES, context))
+                .getAll();
+    }
+
+    /** @return users' data for marketing system */
+    private Map<String, FixedListLongValueData> getUsersData() throws IOException {
         Map<String, String> context = Utils.newContext();
         MetricParameter.FROM_DATE.putDefaultValue(context);
         MetricParameter.TO_DATE.putDefaultValue(context);
 
-        return context;
+        return ((MapStringFixedLongListValueData)MetricFactory.createMetric(MetricType.ACTON).getValue(context))
+                .getAll();
     }
 
-    private void writeMetricsValues(BufferedWriter out, String user) throws IOException {
-        Map<String, String> context = initializeContext();
-        MetricFilter.USER.put(context, user);
+    private void writeMetrics(BufferedWriter out, FixedListLongValueData metrics, boolean inAcive) throws IOException {
+        List<Long> items = metrics.getAll();
 
-        ValueData value = MetricFactory.createMetric(MetricType.PROJECT_CREATED).getValue(context);
-        out.write(value.toString());
+        out.write(items.get(0).toString());
         out.write(",");
 
-        value = MetricFactory.createMetric(MetricType.PROJECT_BUILT).getValue(context);
-        out.write(value.toString());
+        out.write(items.get(1).toString());
         out.write(",");
 
-        value = MetricFactory.createMetric(MetricType.PROJECT_DEPLOYED).getValue(context);
-        out.write(value.toString());
+        out.write(items.get(2).toString());
         out.write(",");
 
-        value = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_TOTAL).getValue(context);
-        out.write(value.toString());
+        out.write(items.get(3).toString());
+        out.write(",");
+
+        writeString(out, "" + inAcive);
 
         out.newLine();
     }
 
-    protected void writeUserProfileAttributes(BufferedWriter out, String user) throws IOException {
-        Map<String, String> context = initializeContext();
-        MetricFilter.USER.put(context, user);
+    protected void writeProfile(BufferedWriter out, ListStringValueData profile) throws IOException {
+        List<String> items = profile.getAll();
 
-        UserUpdateProfileMetric metric =
-                (UserUpdateProfileMetric)MetricFactory.createMetric(MetricType.USER_UPDATE_PROFILE);
-        ListStringValueData profile = (ListStringValueData)metric.getValue(context);
-
-        if (profile.size() == 0) {
-            throw new FileNotFoundException("User profile not found " + user);
-        }
-
-        writeString(out, metric.getEmail(profile));
+        writeString(out, items.get(0)); // email
         out.write(",");
 
-        writeString(out, metric.getFirstName(profile));
+        writeString(out, items.get(1)); // first name
         out.write(",");
 
-        writeString(out, metric.getLastName(profile));
+        writeString(out, items.get(2)); // last name
         out.write(",");
 
-        writeString(out, metric.getPhone(profile));
+        writeString(out, items.get(4)); // phone
         out.write(",");
 
-        writeString(out, metric.getCompany(profile));
+        writeString(out, items.get(3)); // company
         out.write(",");
     }
 
@@ -260,7 +276,7 @@ public class ActOnJob implements Job {
     }
 
     private void writeHeaders(BufferedWriter out) throws IOException {
-        out.write("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime");
+        out.write("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive");
         out.newLine();
     }
 }

@@ -26,7 +26,7 @@ import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.BufferedReader;
@@ -41,40 +41,40 @@ import static org.testng.AssertJUnit.assertTrue;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestActOnJob {
 
-    private ActOnJob            job;
-    private Map<String, String> context;
-
-    @BeforeMethod
-    private void setUp() throws Exception {
-        File file = prepareLog();
-
-        context = Utils.newContext();
+    @BeforeTest
+    public void setUp() throws Exception {
+        Map<String, String> context = Utils.newContext();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
-        MetricParameter.LOG.put(context, file.getAbsolutePath());
+        MetricParameter.LOG.put(context, prepareLog().getAbsolutePath());
 
+        DataProcessing.calculateAndStore(MetricType.ACTON, context);
         DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);
         DataProcessing.calculateAndStore(MetricType.ACTIVE_USERS_SET, context);
-        DataProcessing.calculateAndStore(MetricType.PROJECT_CREATED, context);
-        DataProcessing.calculateAndStore(MetricType.PROJECT_BUILT, context);
-        DataProcessing.calculateAndStore(MetricType.PROJECT_DEPLOYED, context);
-        DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_SESSIONS, context);
 
-        job = new ActOnJob(null);
+        MetricParameter.FROM_DATE.put(context, "20130102");
+        MetricParameter.TO_DATE.put(context, "20130102");
+
+        DataProcessing.calculateAndStore(MetricType.ACTON, context);
+        DataProcessing.calculateAndStore(MetricType.USER_UPDATE_PROFILE, context);
+        DataProcessing.calculateAndStore(MetricType.ACTIVE_USERS_SET, context);
     }
 
     @Test
     public void testPrepareFile() throws Exception {
-        File jobFile = job.prepareFile(context);
+        ActOnJob job = new ActOnJob(null);
+
+        File jobFile = job.prepareFile();
         assertEquals(jobFile.getName(), ActOnJob.FILE_NAME);
 
         Set<String> content = read(jobFile);
 
         assertEquals(content.size(), 4);
-        assertTrue(content.contains("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime"));
-        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",2,0,0,5"));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",1,2,1,10"));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",0,1,1,0"));
+        assertTrue(content.contains(
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive"));
+        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",2,0,0,5,\"true\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",1,2,1,10,\"true\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",0,1,1,0,\"true\""));
     }
 
     private Set<String> read(File jobFile) throws IOException {
@@ -126,19 +126,19 @@ public class TestActOnJob {
 
         // projects deployed
         events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
-                        .withTime("10:10:00").withDate("2013-01-01").build());
+                        .withTime("10:10:00").withDate("2013-01-02").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2")
-                        .withTime("10:00:00").withDate("2013-01-01").build());
+                        .withTime("10:00:00").withDate("2013-01-02").build());
 
 
-        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1").withDate("2013-01-02")
                         .withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1").withDate("2013-01-02")
                         .withTime("19:05:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "3").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "3").withDate("2013-01-02")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "3").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "3").withDate("2013-01-02")
                         .withTime("20:10:00").build());
 
 

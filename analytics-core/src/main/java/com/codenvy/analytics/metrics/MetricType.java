@@ -782,8 +782,20 @@ public enum MetricType {
     FACTORY_URL_TOP_SESSIONS_BY_60DAY,
     FACTORY_URL_TOP_SESSIONS_BY_90DAY,
     FACTORY_URL_TOP_SESSIONS_BY_365DAY,
-    FACTORY_URL_TOP_SESSIONS_BY_LIFETIME;
+    FACTORY_URL_TOP_SESSIONS_BY_LIFETIME,
+    ACTON {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.ACTON);
+        }
 
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+        }
+    };
 
     /**
      * @return set of scripts that are responsible for calculation value of the metric. If it returns nothing

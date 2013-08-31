@@ -88,7 +88,7 @@
     </table>
     <table length="20">
         <date section="Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <total types="project_type_jar,project_type_war,project_type_jsp,project_type_spring,project_type_php,project_type_python,project_type_javascript,project_type_ruby,project_type_mmp,project_type_nodejs,project_type_android,project_type_others" format="%.0f"/>
+        <total types="project_type_jar,project_type_war,project_type_jsp,project_type_spring,project_type_php,project_type_python,project_type_javascript,project_type_ruby,project_type_mmp,project_type_nodejs,project_type_android,project_type_django,project_type_others" format="%.0f"/>
         <metric type="project_type_jar" format="%.0f" title="Java Jar"/>
         <metric type="project_type_war" format="%.0f" title="Java War"/>
         <metric type="project_type_jsp" format="%.0f" title="Java JSP"/>

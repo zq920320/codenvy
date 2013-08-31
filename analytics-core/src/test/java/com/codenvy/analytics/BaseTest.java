@@ -36,7 +36,7 @@ import java.util.Map;
 public class BaseTest {
 
     /** Relative path to temporary files. */
-    public static final String        BASE_DIR = "target";
+    public static final String BASE_DIR = "target";
 
     protected TupleFactory                  tupleFactory;
     protected LinkedHashMap<String, String> uuid;
@@ -45,13 +45,13 @@ public class BaseTest {
     public void setUp() throws Exception {
         tupleFactory = TupleFactory.getInstance();
 
-        uuid = new LinkedHashMap<String, String>();
+        uuid = new LinkedHashMap<>();
         uuid.put(MetricParameter.FROM_DATE.name(), "20130520");
         uuid.put(MetricParameter.TO_DATE.name(), "20130520");
     }
 
     protected ValueData executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
-                                                                                                           throws IOException {
+            throws IOException {
         MetricParameter.LOG.put(executionParams, log.getAbsolutePath());
         PigScriptExecutor scriptExecutor = new PigScriptExecutor();
 
