@@ -29,7 +29,7 @@
     <table length="20">
         <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
         <metric type="user_created" title="Created"/>
-        <metric type="user_created_from_factory" title="Including from Factory Url"/>
+        <metric type="user_created_from_factory" title="Including from Factories"/>
         <metric type="total_users" title="Total"/>
         <metric type="active_users" title="Active"/>
         <empty/>
