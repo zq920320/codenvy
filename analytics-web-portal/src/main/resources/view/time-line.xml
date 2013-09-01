@@ -18,79 +18,90 @@
 -->
 <display>
     <table length="20">
-        <date section="Workspaces" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Workspaces" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+              formatLifetime="dd MMM"/>
         <metric type="tenant_created" title="Created"/>
         <metric type="tenant_destroyed" title="Destroyed"/>
         <metric type="total_workspaces" title="Total"/>
         <metric type="active_ws" title="Active"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Users" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
         <metric type="user_created" title="Created"/>
+        <metric type="user_created_from_factory" title="Including from Factory Url"/>
         <metric type="total_users" title="Total"/>
         <metric type="active_users" title="Active"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Invitations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Invitations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+              formatLifetime="dd MMM"/>
         <metric type="user_invite" title="Sent"/>
         <metric type="user_accept_invite_percent" format="%.0f%%" title="Accepted"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Authentication Type" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Authentication Type" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+              formatLifetime="dd MMM"/>
         <metric type="user_login_google_percent" format="%.0f%%" title="Google Auth"/>
         <metric type="user_login_github_percent" format="%.0f%%" title="Github Auth"/>
         <metric type="user_login_form_percent" format="%.0f%%" title="Form Auth"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Usage Time (mins)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <total types="product_usage_time_60_more,product_usage_time_10_60,product_usage_time_1_10,product_usage_time_0_1" format="%,.0f"/>
-        <metric type="product_usage_time_0_1" format="%,.0f" title="Sessions = 1 Mins"/>
-        <metric type="product_usage_time_1_10" format="%,.0f" title="Sessions &#0062; 1 And &#0060; 10 Mins"/>
-        <metric type="product_usage_time_10_60" format="%,.0f" title="Sessions &#0062;= 10 And &#0060;= 60 Mins"/>
-        <metric type="product_usage_time_60_more" format="%,.0f" title="Sessions &#0062; 60 Mins"/>
-        <empty />
+        <date section="Usage Time (mins)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+              formatLifetime="dd MMM"/>
+        <total types="product_usage_time_60_more,product_usage_time_10_60,product_usage_time_1_10,product_usage_time_0_1"
+               format="%,.0f"/>
+        <metric type="product_usage_time_0_1" format="%,.0f" title="= 1 Mins"/>
+        <metric type="product_usage_time_1_10" format="%,.0f" title="&#0062; 1 And &#0060; 10 Mins"/>
+        <metric type="product_usage_time_10_60" format="%,.0f" title="&#0062;= 10 And &#0060;= 60 Mins"/>
+        <metric type="product_usage_time_60_more" format="%,.0f" title="&#0062; 60 Mins"/>
+        <empty/>
     </table>
     <table length="20">
-        <date section="# User Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <total types="product_usage_sessions_1_10,product_usage_sessions_10_60,product_usage_sessions_60_more,product_usage_sessions_0_1" format="%,.0f" />
+        <date section="# User Sessions" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+              formatLifetime="dd MMM"/>
+        <total types="product_usage_sessions_1_10,product_usage_sessions_10_60,product_usage_sessions_60_more,product_usage_sessions_0_1"
+               format="%,.0f"/>
         <metric type="product_usage_sessions_0_1" format="%,.0f" title="= 1 Mins"/>
         <metric type="product_usage_sessions_1_10" format="%,.0f" title="&#0062; 1 And &#0060; 10 Mins"/>
         <metric type="product_usage_sessions_10_60" format="%,.0f" title="&#0062;= 10 And &#0060;= 60 Mins"/>
         <metric type="product_usage_sessions_60_more" format="%,.0f" title="&#0062; 60 Mins"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Projects" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Projects" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
         <metric type="project_created" title="Created"/>
         <metric type="project_destroyed" title="Destroyed"/>
         <metric type="total_projects" title="Total"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Code manipulations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Code manipulations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+              formatLifetime="dd MMM"/>
         <metric type="user_code_refactor" title="Refactoring"/>
         <metric type="user_code_complete" title="Code completing"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Runs" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Runs" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
         <metric type="run_started" title="# Runs"/>
         <metric type="project_built" title="# Builds"/>
         <metric type="debug_started" title="# Debugs"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Files" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
+        <date section="Files" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
         <metric type="file_manipulation" title="# Operation"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <total types="project_type_jar,project_type_war,project_type_jsp,project_type_spring,project_type_php,project_type_python,project_type_javascript,project_type_ruby,project_type_mmp,project_type_nodejs,project_type_android,project_type_django,project_type_others" format="%.0f"/>
+        <date section="Project Types" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+              formatLifetime="dd MMM"/>
+        <total types="project_type_jar,project_type_war,project_type_jsp,project_type_spring,project_type_php,project_type_python,project_type_javascript,project_type_ruby,project_type_mmp,project_type_nodejs,project_type_android,project_type_django,project_type_others"
+               format="%.0f"/>
         <metric type="project_type_jar" format="%.0f" title="Java Jar"/>
         <metric type="project_type_war" format="%.0f" title="Java War"/>
         <metric type="project_type_jsp" format="%.0f" title="Java JSP"/>
@@ -104,11 +115,13 @@
         <metric type="project_type_android" format="%.0f" title="Android"/>
         <metric type="project_type_django" format="%.0f" title="Django"/>
         <metric type="project_type_others" format="%.0f" title="Others"/>
-        <empty />
+        <empty/>
     </table>
     <table length="20">
-        <date section="Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
-        <total types="project_paas_aws,project_paas_appfog,project_paas_cloudbees,project_paas_cloudfoundry,project_paas_gae,project_paas_heroku,project_paas_openshift,project_paas_tier3,project_paas_local" format="%.0f"/>
+        <date section="Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+              formatLifetime="dd MMM"/>
+        <total types="project_paas_aws,project_paas_appfog,project_paas_cloudbees,project_paas_cloudfoundry,project_paas_gae,project_paas_heroku,project_paas_openshift,project_paas_tier3,project_paas_local"
+               format="%.0f"/>
         <metric type="project_paas_aws" format="%.0f" title="AWS"/>
         <metric type="project_paas_appfog" format="%.0f" title="AppFog"/>
         <metric type="project_paas_cloudbees" format="%.0f" title="CloudBees"/>
@@ -118,7 +131,7 @@
         <metric type="project_paas_openshift" format="%.0f" title="OpenShift"/>
         <metric type="project_paas_tier3" format="%.0f" title="Tier3"/>
         <metric type="project_paas_local" format="%.0f" title="Local"/>
-        <empty />
+        <empty/>
     </table>
 </display>
 

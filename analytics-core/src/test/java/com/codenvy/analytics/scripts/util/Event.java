@@ -214,6 +214,21 @@ public class Event {
                                 .withParam("PROJECT", project).withParam("TYPE", type);
         }
 
+        public static Builder createUserCreatedEvent(String userId,
+                                                     String aliases) {
+            return new Builder().withParam("EVENT", EventType.USER_CREATED.toString())
+                                .withParam("USER-ID", userId)
+                                .withParam("ALIASES", aliases);
+        }
+
+        public static Builder createUserChangedNameEvent(String oldUser,
+                                                         String newUser) {
+            return new Builder().withParam("EVENT", EventType.USER_CHANGED_NAME.toString())
+                                .withParam("OLD-USER", oldUser)
+                                .withParam("NEW-USER", newUser);
+        }
+
+
         public static Builder createUserUpdateProfile(String user,
                                                       String firstName,
                                                       String lastName,

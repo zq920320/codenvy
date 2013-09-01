@@ -237,3 +237,25 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     -- converts time into seconds
     $Y = FOREACH g GENERATE ws, user, dt, delta / 1000 AS delta;
 };
+
+---------------------------------------------------------------------------------------------
+-- Calculates time between pairs of $startEvent and $finishEvent
+-- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
+---------------------------------------------------------------------------------------------
+DEFINE usersCreatedFromFactory(X) RETURNS Y {
+    -- gets all registered users which changed their names from anonymous
+    t1 = filterByEvent(l, 'user-changed-name');
+    t2 = extractParam(t1, 'OLD-USER', 'old');
+    t3 = extractParam(t2, 'NEW-USER', 'new');
+    t4 = FILTER t3 BY INDEXOF(UPPER(old), 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(new), 'ANONYMOUSUSER_', 0) < 0;
+    t = FOREACH t4 GENERATE new AS user;
+
+    -- gets all created registered users
+    k1 = filterByEvent(l, 'user-created');
+    k2 = FILTER k1 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
+    k = FOREACH k2 GENERATE user;
+
+    j1 = JOIN k BY user LEFT, t BY user;
+    j2 = FILTER j1 BY t::user IS NOT NULL;
+    $Y = FOREACH j2 GENERATE k::user AS user;
+};

@@ -148,6 +148,20 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
+    USER_CREATED_FROM_FACTORY {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.USER_CREATED_FROM_FACTORY,
+                              ScriptType.USER_CREATED_FROM_FACTORY_BY_USERS,
+                              ScriptType.USER_CREATED_FROM_FACTORY_BY_DOMAINS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+        }
+    },
     USER_REMOVED {
         @Override
         public EnumSet<ScriptType> getScripts() {
