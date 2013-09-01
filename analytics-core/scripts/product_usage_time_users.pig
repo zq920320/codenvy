@@ -22,7 +22,7 @@ IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-j1 = joinEventsWithSameId(t, 'session-started', 'session-finished');
+j1 = combineSmallSessions(t, 'session-started', 'session-finished');
 j = removeEmptyField(j1, 'user');
 
 r = GROUP j BY user;

@@ -21,7 +21,7 @@ IMPORT 'macros.pig';
 %DEFAULT inactiveInterval '10';  -- in minutes
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-j = joinEventsWithSameId(t, 'session-factory-started', 'session-factory-stopped');
+j = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
 
 r1 = GROUP j BY ws;
 result = FOREACH r1 {

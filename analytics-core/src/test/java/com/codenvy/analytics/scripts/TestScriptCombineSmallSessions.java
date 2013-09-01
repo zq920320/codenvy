@@ -21,6 +21,8 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -32,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptCombineSmallSessions extends BaseTest {
 
@@ -39,27 +43,34 @@ public class TestScriptCombineSmallSessions extends BaseTest {
     public void testExecuteScript() throws Exception {
         List<Event> events = new ArrayList<>();
 
-
+        // 6m
         events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
                         .withTime("19:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
-                        .withTime("19:06:00").build());
+                        .withTime("19:02:00").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "2").withDate("2013-01-01")
-                        .withTime("19:07:00").build());
+                        .withTime("19:03:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "2").withDate("2013-01-01")
-                        .withTime("19:10:00").build());
+                        .withTime("19:04:00").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "3").withDate("2013-01-01")
-                        .withTime("19:20:01").build());
+                        .withTime("19:05:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "3").withDate("2013-01-01")
-                        .withTime("19:22:01").build());
+                        .withTime("19:06:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "4").withDate("2013-01-01")
+        // 2m
+        events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "5").withDate("2013-01-01")
+                        .withTime("19:20:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "5").withDate("2013-01-01")
+                        .withTime("19:22:00").build());
+
+        // 5m
+        events.add(Event.Builder.createSessionStartedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "4").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
                         .withTime("20:05:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "4").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
                         .withTime("20:10:00").build());
 
 
@@ -71,8 +82,28 @@ public class TestScriptCombineSmallSessions extends BaseTest {
         MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
         MetricParameter.WS.put(params, MetricParameter.WS_TYPES.ANY.name());
 
+        ListListStringValueData valueData =
+                (ListListStringValueData)executeAndReturnResult(ScriptType.TEST_COMBINE_SMALL_SESSIONS, log, params);
 
-//        executeAndReturnResult(ScriptType.TEST_COMBINE_SMALL_SESSIONS, log, params);
+        List<ListStringValueData> items = valueData.getAll();
+
+        assertEquals(items.size(), 3);
+
+        assertUser(items, "user1", 360);
+        assertUser(items, "user2", 120);
+        assertUser(items, "user3", 300);
+    }
+
+    private void assertUser(List<ListStringValueData> items, String user, int expectedTime) {
+        long time = -1;
+
+        for (ListStringValueData item : items) {
+            if (item.getAll().get(1).equals(user)) {
+                time = Long.valueOf(item.getAll().get(3));
+            }
+        }
+
+        assertEquals(expectedTime, time);
     }
 }
 

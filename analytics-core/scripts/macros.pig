@@ -139,50 +139,23 @@ DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
 
 ---------------------------------------------------------------------------------------------
 -- Extracts session id
--- @return {user : bytearray, ws: bytearray, sId: bytearray, dt: datetime}
+-- @return {user : bytearray, ws: bytearray, id: bytearray, dt: datetime}
 ---------------------------------------------------------------------------------------------
 DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
-    x1 = filterByEvent($X, '$eventParam');
-    x2 = extractParam(x1, 'SESSION-ID', sId);
-    $Y = FOREACH x2 GENERATE user, ws, sId, dt;
-};
-
----------------------------------------------------------------------------------------------
--- Joins events with same id
--- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
----------------------------------------------------------------------------------------------
-DEFINE joinEventsWithSameId(X, startEvent, finishEvent) RETURNS Y {
-    SS = extractEventsWithSessionId($X, '$startEvent');
-
-    -- because of issue, we can have several session-finished events with same id
-    SF1 = extractEventsWithSessionId($X, '$finishEvent');
-    SF2 = FOREACH SF1 GENERATE ws, user, sId, dt, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
-    SF3 = GROUP SF2 BY (ws, user, sId);
-    SF4 = FOREACH SF3 GENERATE FLATTEN(group), MIN(SF2.delta) AS minDt, FLATTEN(SF2);
-    SF5 = FILTER SF4 BY delta == minDt;
-    SF = FOREACH SF5 GENERATE group::ws AS ws, group::user AS user, group::sId AS sId, SF2::dt AS dt;
-
-    x1 = JOIN SS BY sId FULL, SF BY sId;
-    x2 = removeEmptyField(x1, 'SS::sId');
-    x3 = removeEmptyField(x2, 'SF::sId');
-
-    $Y = FOREACH x3 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS dt, SecondsBetween(SF::dt, SS::dt) AS delta;
-};
-
----------------------------------------------------------------------------------------------
--- Extracts session id
--- @return {user : bytearray, ws: bytearray, sId: bytearray, dt: datetime}
----------------------------------------------------------------------------------------------
-DEFINE extractEventsWithSessionIdTest(X, eventParam) RETURNS Y {
     x1 = filterByEvent($X, '$eventParam');
     x2 = extractParam(x1, 'SESSION-ID', id);
     $Y = FOREACH x2 GENERATE user, ws, id, dt;
 };
 
-DEFINE joinEventsWithSameIdTest(X, startEvent, finishEvent, inactiveInterval) RETURNS Y {
-    a = extractEventsWithSessionIdTest($X, '$startEvent');
+---------------------------------------------------------------------------------------------
+-- Combines small sessions into big one if time between them is less than $inactiveInterval
+-- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
+---------------------------------------------------------------------------------------------
+DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
 
-    b1 = extractEventsWithSessionIdTest($X, '$finishEvent');
+    a = extractEventsWithSessionId($X, '$startEvent');
+
+    b1 = extractEventsWithSessionId($X, '$finishEvent');
 
     -- avoids cases when there are several $finishEvent with same id, let's take the first one
     b2 = FOREACH b1 GENERATE ws, user, id, dt, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
@@ -200,15 +173,39 @@ DEFINE joinEventsWithSameIdTest(X, startEvent, finishEvent, inactiveInterval) RE
     d1 = FOREACH c GENERATE *, FLATTEN(TOKENIZE('$startEvent,$finishEvent', ',')) AS event;
     SPLIT d1 INTO d2 IF event == '$startEvent', d3 OTHERWISE;
 
+    -- A: $startEvent
     A = FOREACH d2 GENERATE a::ws AS ws, a::user AS user, a::dt AS dt, a::id AS id;
-    $Y = FOREACH d3 GENERATE b::ws AS ws, b::user AS user, b::dt AS dt, b::id AS id;
+
+    -- B: $finishEvent
+    B = FOREACH d3 GENERATE b::ws AS ws, b::user AS user, b::dt AS dt, b::id AS id;
+
+    -- joins $finishEvent and $startEvent, finds for every $finishEvent the closest
+    -- $startEvent to decide whether the pause between them is less than $inactiveInterval
+    e1 = JOIN B BY (ws, user) LEFT, A BY (ws, user);
+    e2 = FILTER e1 BY A::ws IS NOT NULL;
+    e3 = FOREACH e2 GENERATE B::id AS finishId, A::id AS startId, MilliSecondsBetween(A::dt, B::dt) AS interval;
+    e = FILTER e3 BY interval > 0 AND interval <= (long) 10 * 60 * 1000; -- $inactiveInterval = 10min
+
+    -- removes $startEvents which are close to any $finishEvent
+    d1 = JOIN A BY id LEFT, e BY startId;
+    d2 = FILTER d1 BY e::startId IS NULL;
+    S = FOREACH d2 GENERATE A::ws AS ws, A::user AS user, A::dt AS dt, '$startEvent' AS event;
+
+    -- removes $finishEvent which are close to any $startEvent
+    f1 = JOIN B BY id LEFT, e BY finishId;
+    f2 = FILTER f1 BY e::finishId IS NULL;
+    F = FOREACH f2 GENERATE B::ws AS ws, B::user AS user, B::dt AS dt, '$finishEvent' AS event;
+
+    -- finally, combines closest events to get completed sessions
+    U = UNION S, F;
+    $Y = combineClosestEvents(U, '$startEvent', '$finishEvent');
 };
 
 ---------------------------------------------------------------------------------------------
 -- Calculates time between pairs of $startEvent and $finishEvent
 -- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
 ---------------------------------------------------------------------------------------------
-DEFINE timeBetweenPairsOfEvents(X, startEvent, finishEvent) RETURNS Y {
+DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     x1 = removeEmptyField($X, 'ws');
     x = removeEmptyField(x1, 'user');
 

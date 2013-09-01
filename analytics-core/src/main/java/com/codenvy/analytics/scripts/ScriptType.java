@@ -649,7 +649,7 @@ public enum ScriptType {
     TEST_COMBINE_SMALL_SESSIONS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return ListStringValueData.class;
+            return ListListStringValueData.class;
         }
     },
     /** Script for testing purpose. */

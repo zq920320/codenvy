@@ -19,7 +19,7 @@
 IMPORT 'macros.pig';
 
 t1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-t2 = timeBetweenPairsOfEvents(t1, '$EVENT-started', '$EVENT-finished');
+t2 = combineClosestEvents(t1, '$EVENT-started', '$EVENT-finished');
 t = FOREACH t2 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, dt, delta;
 
 r = GROUP t BY domain;

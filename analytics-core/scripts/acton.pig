@@ -36,7 +36,7 @@ a = FOREACH g {
 --------------------------------------------------------------------
 -- Calculates time usage numbers
 --------------------------------------------------------------------
-b1 = joinEventsWithSameId(f, 'session-started', 'session-finished');
+b1 = combineSmallSessions(f, 'session-started', 'session-finished');
 b2 = GROUP b1 BY user;
 b = FOREACH b2 GENERATE group AS user, SUM(b1.delta) AS delta;
 

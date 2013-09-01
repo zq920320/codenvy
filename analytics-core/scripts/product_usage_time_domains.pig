@@ -22,7 +22,7 @@ IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-j1 = joinEventsWithSameId(t, 'session-started', 'session-finished');
+j1 = combineSmallSessions(t, 'session-started', 'session-finished');
 j2 = FOREACH j1 GENERATE ws AS  ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, dt, delta;
 j = removeEmptyField(j2, 'domain');
 

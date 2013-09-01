@@ -19,6 +19,6 @@
 IMPORT 'macros.pig';
 
 t1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-t = timeBetweenPairsOfEvents(t1, 'run-started', 'run-finished');
+t = combineClosestEvents(t1, 'run-started', 'run-finished');
 
 result = FOREACH t GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));

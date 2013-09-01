@@ -21,7 +21,7 @@ IMPORT 'macros.pig';
 %DEFAULT inactiveInterval '10';  -- in minutes
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-j = joinEventsWithSameId(t, 'session-started', 'session-finished');
+j = combineSmallSessions(t, 'session-started', 'session-finished');
 
 profiles = LOAD '$LOAD_DIR' USING PigStorage() AS (user : chararray, firstName: chararray, lastName: chararray, company: chararray, phone : chararray, job : chararray);
 c1 = JOIN j BY user LEFT, profiles BY user;

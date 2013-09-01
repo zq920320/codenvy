@@ -18,10 +18,14 @@
 
 IMPORT 'macros.pig';
 
-%DEFAULT inactiveInterval '10';  -- in minutes
-
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-j = joinEventsWithSameId(t, 'session-factory-started', 'session-factory-stopped');
+
+j1 = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
+j = FOREACH j1 GENERATE macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::ws AS ws,
+                        macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::user AS user,
+                        macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::dt AS dt,
+                        delta;
+
 
 /*
  * List of interesting events.

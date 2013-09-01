@@ -19,7 +19,7 @@
 IMPORT 'macros.pig';
 
 t1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-t2 = timeBetweenPairsOfEvents(t1, '$EVENT-started', '$EVENT-finished');
+t2 = combineClosestEvents(t1, '$EVENT-started', '$EVENT-finished');
 t = GROUP t2 ALL;
 
 result = FOREACH t GENERATE SUM(t2.delta);

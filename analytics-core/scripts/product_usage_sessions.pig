@@ -20,6 +20,6 @@ IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-j = joinEventsWithSameId(t, 'session-started', 'session-finished');
+j = combineSmallSessions(t, 'session-started', 'session-finished');
 result = FOREACH j GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
 
