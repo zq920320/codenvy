@@ -54,7 +54,7 @@
               formatLifetime="dd MMM"/>
         <total types="product_usage_time_60_more,product_usage_time_10_60,product_usage_time_1_10,product_usage_time_0_1"
                format="%,.0f"/>
-        <metric type="product_usage_time_0_1" format="%,.0f" title="= 1 Mins"/>
+        <metric type="product_usage_time_0_1" format="%,.0f" title="&#0060;= 1 Min"/>
         <metric type="product_usage_time_1_10" format="%,.0f" title="&#0062; 1 And &#0060; 10 Mins"/>
         <metric type="product_usage_time_10_60" format="%,.0f" title="&#0062;= 10 And &#0060;= 60 Mins"/>
         <metric type="product_usage_time_60_more" format="%,.0f" title="&#0062; 60 Mins"/>
@@ -65,7 +65,7 @@
               formatLifetime="dd MMM"/>
         <total types="product_usage_sessions_1_10,product_usage_sessions_10_60,product_usage_sessions_60_more,product_usage_sessions_0_1"
                format="%,.0f"/>
-        <metric type="product_usage_sessions_0_1" format="%,.0f" title="= 1 Mins"/>
+        <metric type="product_usage_sessions_0_1" format="%,.0f" title="&#0060;= 1 Min"/>
         <metric type="product_usage_sessions_1_10" format="%,.0f" title="&#0062; 1 And &#0060; 10 Mins"/>
         <metric type="product_usage_sessions_10_60" format="%,.0f" title="&#0062;= 10 And &#0060;= 60 Mins"/>
         <metric type="product_usage_sessions_60_more" format="%,.0f" title="&#0062; 60 Mins"/>
