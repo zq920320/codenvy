@@ -105,8 +105,11 @@ public class MetricFactory {
             case DEBUG_STARTED:
                 metric = new DebugStartedMetric();
                 break;
-            case PRODUCT_USAGE_TIME_0_10:
-                metric = new ProductUsageTime010Metric();
+            case PRODUCT_USAGE_TIME_0_1:
+                metric = new ProductUsageTime01Metric();
+                break;
+            case PRODUCT_USAGE_TIME_1_10:
+                metric = new ProductUsageTime0110Metric();
                 break;
             case PRODUCT_USAGE_TIME_TOTAL:
                 metric = new ProductUsageTimeTotalMetric();
@@ -120,8 +123,11 @@ public class MetricFactory {
             case PRODUCT_USAGE_SESSIONS:
                 metric = new ProductUsageSessionsMetric();
                 break;
-            case PRODUCT_USAGE_SESSIONS_0_10:
-                metric = new ProductUsageSessions010Metric();
+            case PRODUCT_USAGE_SESSIONS_0_1:
+                metric = new ProductUsageSessions01Metric();
+                break;
+            case PRODUCT_USAGE_SESSIONS_1_10:
+                metric = new ProductUsageSessions0110Metric();
                 break;
             case PRODUCT_USAGE_SESSIONS_10_60:
                 metric = new ProductUsageSessions1060Metric();

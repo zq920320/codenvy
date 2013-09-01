@@ -28,10 +28,10 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProductUsageTime010Metric extends CalculatedMetric {
+public class ProductUsageTime0110Metric extends CalculatedMetric {
 
-    public ProductUsageTime010Metric() {
-        super(MetricType.PRODUCT_USAGE_TIME_0_10, MetricType.PRODUCT_USAGE_SESSIONS);
+    public ProductUsageTime0110Metric() {
+        super(MetricType.PRODUCT_USAGE_TIME_1_10, MetricType.PRODUCT_USAGE_SESSIONS);
     }
 
     /** {@inheritDoc} */
@@ -42,7 +42,7 @@ public class ProductUsageTime010Metric extends CalculatedMetric {
 
     @Override
     public String getDescription() {
-        return "The total time of all sessions in persistent workspaces with duration under 10 minutes";
+        return "The total time of all sessions in persistent workspaces with duration between 1 and 10 minutes";
     }
 
     /** {@inheritDoc} */
@@ -55,7 +55,7 @@ public class ProductUsageTime010Metric extends CalculatedMetric {
         ProductUsageSessionsMetric usageTimeMetric = (ProductUsageSessionsMetric)basedMetric;
         for (ListStringValueData item : value.getAll()) {
             long itemTime = usageTimeMetric.getTime(item);
-            if (0 <= itemTime && itemTime < 10 * 60) {
+            if (1 < itemTime && itemTime < 10 * 60) {
                 time += itemTime;
             }
         }

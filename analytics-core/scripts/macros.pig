@@ -197,8 +197,11 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     F = FOREACH f2 GENERATE B::ws AS ws, B::user AS user, B::dt AS dt, '$finishEvent' AS event;
 
     -- finally, combines closest events to get completed sessions
-    U = UNION S, F;
-    $Y = combineClosestEvents(U, '$startEvent', '$finishEvent');
+    u1 = UNION S, F;
+    u2 = combineClosestEvents(u1, '$startEvent', '$finishEvent');
+
+    -- considering sessions less than 1 min as 1 min length
+    $Y = FOREACH u2 GENERATE ws, user, dt, (delta < 60 ? 60 : delta) AS delta;
 };
 
 ---------------------------------------------------------------------------------------------

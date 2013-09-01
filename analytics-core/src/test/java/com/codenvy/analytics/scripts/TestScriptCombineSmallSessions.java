@@ -43,7 +43,7 @@ public class TestScriptCombineSmallSessions extends BaseTest {
     public void testExecuteScript() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        // 6m
+        // 6m, single big session
         events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
                         .withTime("19:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1").withDate("2013-01-01")
@@ -73,6 +73,13 @@ public class TestScriptCombineSmallSessions extends BaseTest {
         events.add(Event.Builder.createSessionFinishedEvent("user3", "ws1", "ide", "6").withDate("2013-01-01")
                         .withTime("20:10:00").build());
 
+        // 1m
+        events.add(Event.Builder.createSessionStartedEvent("user4", "ws1", "ide", "7").withDate("2013-01-01")
+                        .withTime("20:00:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user4", "ws1", "ide", "7").withDate("2013-01-01")
+                        .withTime("20:00:30").build());
+
+
 
         File log = LogGenerator.generateLog(events);
 
@@ -87,11 +94,12 @@ public class TestScriptCombineSmallSessions extends BaseTest {
 
         List<ListStringValueData> items = valueData.getAll();
 
-        assertEquals(items.size(), 3);
+        assertEquals(items.size(), 4);
 
         assertUser(items, "user1", 360);
         assertUser(items, "user2", 120);
         assertUser(items, "user3", 300);
+        assertUser(items, "user4", 60);
     }
 
     private void assertUser(List<ListStringValueData> items, String user, int expectedTime) {

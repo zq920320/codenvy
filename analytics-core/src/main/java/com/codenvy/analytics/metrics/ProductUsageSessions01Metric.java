@@ -27,24 +27,22 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ProductUsageSessions010Metric extends CalculatedMetric {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class ProductUsageSessions01Metric extends CalculatedMetric {
 
-    public ProductUsageSessions010Metric() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS_0_10, MetricType.PRODUCT_USAGE_SESSIONS);
+    public ProductUsageSessions01Metric() {
+        super(MetricType.PRODUCT_USAGE_SESSIONS_0_1, MetricType.PRODUCT_USAGE_SESSIONS);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Class< ? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
     @Override
     public String getDescription() {
-        return "The number of sessions in persistent workspaces with duration less than 10 minutes";
+        return "The number of sessions in persistent workspaces with duration less or equals to 1 minute";
     }
 
     /** {@inheritDoc} */
@@ -56,7 +54,7 @@ public class ProductUsageSessions010Metric extends CalculatedMetric {
         ProductUsageSessionsMetric usageTimeMetric = (ProductUsageSessionsMetric)basedMetric;
         for (ListStringValueData item : value.getAll()) {
             long itemTime = usageTimeMetric.getTime(item);
-            if (0 <= itemTime && itemTime < 10 * 60) {
+            if (itemTime <= 1 * 60) {
                 count++;
             }
         }
