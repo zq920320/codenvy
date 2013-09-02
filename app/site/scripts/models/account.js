@@ -126,7 +126,7 @@
             var USER_AGENT = navigator.userAgent.toLowerCase();
             var IS_WS_SUPPORTED = ("WebSocket" in window);
             if (!IS_WS_SUPPORTED || (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1)) {
-                window.location = "/error/browser-not-supported#show";
+                window.location = "/site/error/browser-not-supported#show";
                 return false;
             } 
             return true;
@@ -198,7 +198,7 @@
                 //implementation based on this:
                 //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/recover-password.js
 
-                var passwordRecoveryUrl = "/rest/password/recover/" + email;
+                var passwordRecoveryUrl = "/site/rest/password/recover/" + email;
 
                 $.ajax({
                     url : passwordRecoveryUrl,
@@ -221,7 +221,7 @@
                 // just like with setupPassword, we expect the id to be in the url:
                 // https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
-                var confirmSetupPasswordUrl = "/rest/password/verify",
+                var confirmSetupPasswordUrl = "/site/rest/password/verify",
                     id = getQueryParameterByName("id");
 
                 if(typeof id === 'undefined'){
@@ -239,7 +239,7 @@
                         success({ email : xhr.responseText });
                     },
                     error : function(xhr /*,status , err*/){
-                        setTimeout(function(){window.location = "/recover-password";}, 10000);
+                        setTimeout(function(){window.location = "/site/recover-password";}, 10000);
                         error([
                             new AccountError(null,xhr.responseText + ".<br>You will be redirected in 10 sec")
                         ]);
@@ -254,7 +254,7 @@
                 // We assume that uid is part of the url :
                 //  https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
-                var setupPasswordUrl = "/rest/password/setup",
+                var setupPasswordUrl = "/site/rest/password/setup",
                     id = getQueryParameterByName("id");
 
 
@@ -263,7 +263,7 @@
                     type : "POST",
                     data : { uuid : id, password : password },
                     success : function(){
-                        success({url: "/login"});
+                        success({url: "/site/login"});
                     },
                     error : function(xhr){
                         error([
@@ -275,7 +275,7 @@
             // change password in Profile page
             changePassword : function(password,success,error){
 
-                var changePasswordUrl = "/rest/private/password/change",
+                var changePasswordUrl = "/site/rest/private/password/change",
                     id = getQueryParameterByName("id");
 
                 $.ajax({
@@ -358,7 +358,7 @@
             getTenants : function(success,error,redirect){
                 $.when(Tenant.getTenants()).done(function(tenants){
                     switch (tenants.length) {
-                        case 0: redirect({url:"/create-account"});
+                        case 0: redirect({url:"/site/create-account"});
                             break;
                         case 1: redirect({url:"/ide/" + tenants[0].toJSON().name});
                             break;
@@ -403,7 +403,7 @@
                                 )
                             ]);
                         } else if (type === "factory"){
-                            window.location = "error/error-factory-creation";              
+                            window.location = "/site/error/error-factory-creation";              
                         }else{
                             error([
                                 new AccountError(
@@ -427,7 +427,7 @@
                                 });
                             } else if(xhr.responseText === "CREATION_FAIL"){
                                 success({
-                                    url : "/error/error-create-tenant"
+                                    url : "/site/error/error-create-tenant"
                                 });
                             }else{
                                 setTimeout(hitServer,PING_TIMEOUT_MILLISECONDS);
