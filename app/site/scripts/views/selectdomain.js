@@ -18,9 +18,9 @@
  
 define(["jquery","underscore",
         "models/account","backbone", "handlebars",
-        "text!templates/tenant.html"],
+        "text!templates/tenant.html","models/profile"],
 
-    function($,_,Account,Backbone,Handlebars,tenantTemplate){
+    function($,_,Account,Backbone,Handlebars,tenantTemplate,Profile){
 
         var DomainSelector = Backbone.View.extend({
 
@@ -45,16 +45,35 @@ define(["jquery","underscore",
                 window.location = d.url + queryParam;
             },
 
+            onReceiveUserInfo : function(tenants,user){
+
+                    _.each(tenants,function(tenant){
+
+                        if (tenant.owner === user.account[0].id) {
+                            this.$(".domain-list").append(
+                                this.tenantTemplate(tenant.toJSON())
+                            );
+                        } else {
+                            this.$(".shared-list").append(
+                                this.tenantTemplate(tenant.toJSON())
+                            );                            
+                        }
+
+                    },this);
+
+            },
+
             onGotTennants : function(tenants){
 
                 $(this.el).removeClass("loading");
+                $.when(Profile.getUser()).done(function(user){
+                   onReceiveUserInfo(tenants,user);
+                }).fail(function(msg){
+                    error([
+                        new  AccountError(null,msg)
+                    ]);
+                });
 
-                _.each(tenants,function(tenant){
-                    this.$(".domain-list").append(
-                        this.tenantTemplate(tenant.toJSON())
-                    );
-
-                },this);
             },
 
             onErrorGettingTennants : function(errors){

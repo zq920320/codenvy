@@ -43,7 +43,7 @@
                 return _.map(_.filter(response, function(r){
                     return r.temporary===false;
                 }), function(r){
-                    return { name : r.name };
+                    return { name : r.name, owner : r.owner.id };
                 });
             },
             fetch : function(options){
