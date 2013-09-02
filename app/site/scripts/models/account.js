@@ -184,7 +184,7 @@
                     type : "POST",
                     data: {},
                     success : function(){
-                        success({url: '../thank-you'});
+                        success({url: '../site/thank-you'});
                     },
                     error : function(xhr/*, status , err*/){
                         error([
