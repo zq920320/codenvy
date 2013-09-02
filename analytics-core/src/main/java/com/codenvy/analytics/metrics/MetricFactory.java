@@ -510,6 +510,9 @@ public class MetricFactory {
             case ACTON:
                 metric = new ActonMetric();
                 break;
+            case BUILD_TIME:
+                metric = new BuildTimeMetric();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }

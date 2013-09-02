@@ -816,6 +816,21 @@ public enum MetricType {
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
+    },
+    BUILD_TIME {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.TIME_BETWEEN_EVENTS,
+                               ScriptType.TIME_BETWEEN_EVENTS_BY_USERS,
+                               ScriptType.TIME_BETWEEN_EVENTS_BY_DOMAINS);
+        }
+        
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.EVENT.put(context, EventType.BUILD_STARTED.getRootType());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
+        }
     };
 
     /**

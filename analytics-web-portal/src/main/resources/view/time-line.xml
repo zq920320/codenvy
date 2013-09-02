@@ -93,6 +93,11 @@
         <empty/>
     </table>
     <table length="20">
+        <date section="Total time by operation (seconds)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
+        <metric type="build_time" title="# Total time of all builds."/>
+        <empty/>
+    </table>
+    <table length="20">
         <date section="Files" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
         <metric type="file_manipulation" title="# Operation"/>
         <empty/>

@@ -59,4 +59,18 @@ public enum EventType {
     public String toString() {
         return super.toString().toLowerCase().replace("_", "-");
     }
+    
+    /**
+     * Calculate the root for the EventType name. 
+     * 
+     * For example for the event type "BUILD_STARTED" result is "build".
+     * For example for the event type "SESSION_FACTORY_STOPPED" result is "session-factory".
+     * 
+     * @return String
+     *            the root of event type name in lower case. 
+     */
+    public String getRootType() {
+        int lastIndex = super.toString().lastIndexOf("_");
+        return super.toString().toLowerCase().replace("_", "-").substring(0, lastIndex);
+    }
 }
