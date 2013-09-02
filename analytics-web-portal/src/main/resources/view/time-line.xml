@@ -95,6 +95,8 @@
     <table length="20">
         <date section="Total time by operation (seconds)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
         <metric type="build_time" title="# Total time of all builds."/>
+        <metric type="run_time" title="# Total time of all runs."/>
+        <metric type="debug_time" title="# Total time of all debugs."/>
         <empty/>
     </table>
     <table length="20">

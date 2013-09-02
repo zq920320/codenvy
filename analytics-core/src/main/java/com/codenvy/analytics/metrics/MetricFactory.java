@@ -513,6 +513,12 @@ public class MetricFactory {
             case BUILD_TIME:
                 metric = new BuildTimeMetric();
                 break;
+            case RUN_TIME:
+                metric = new RunTimeMetric();
+                break;
+            case DEBUG_TIME:
+                metric = new DebugTimeMetric();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }
