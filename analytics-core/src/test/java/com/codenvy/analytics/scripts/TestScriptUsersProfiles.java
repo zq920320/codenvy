@@ -23,6 +23,7 @@ import com.codenvy.analytics.metrics.DataProcessing;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.MapStringListValueData;
 import com.codenvy.analytics.scripts.util.Event;
@@ -30,11 +31,13 @@ import com.codenvy.analytics.scripts.util.LogGenerator;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +46,16 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptUsersProfiles extends BaseTest {
 
-    @BeforeClass
+    @BeforeMethod
     public void setUp() throws Exception {
+        FileUtils.deleteDirectory(new File(FSValueDataManager.SCRIPT_LOAD_DIRECTORY));
+        FileUtils.deleteDirectory(new File(FSValueDataManager.SCRIPT_STORE_DIRECTORY));
+
+        Map<String, String> props = new HashMap<>();
+        MetricParameter.LOAD_DIR.put(props, Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE));
+        MetricParameter.STORE_DIR.put(props, Utils.getStoreDirFor(MetricType.USER_UPDATE_PROFILE));
+        Utils.initLoadStoreDirectories(props);
+        
         List<Event> events = new ArrayList<>();
         events.add(
                 Event.Builder.createUserUpdateProfile("user1", "f1", "l1", "c1", "p1", "j1").withDate("2013-01-01")
@@ -53,8 +64,6 @@ public class TestScriptUsersProfiles extends BaseTest {
                 Event.Builder.createUserUpdateProfile("user2", "", "", "", "", "").withDate("2013-01-01")
                      .build());
         File log = LogGenerator.generateLog(events);
-
-        FileUtils.deleteDirectory(new File(Utils.getLoadDirFor(MetricType.USER_UPDATE_PROFILE)));
 
         Map<String, String> context = Utils.newContext();
         MetricParameter.FROM_DATE.put(context, "20130101");

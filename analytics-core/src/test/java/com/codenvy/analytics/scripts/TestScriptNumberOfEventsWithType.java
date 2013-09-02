@@ -155,4 +155,38 @@ public class TestScriptNumberOfEventsWithType extends BaseTest {
         assertEquals(valueData.getAll().get(key3).longValue(), 1);
 
     }
+    
+    @Test
+    public void testNumberOfAllEventsByWs() throws Exception {
+        List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws1", "ses-11", "ide", "Java").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws1", "ses-12", "ide", "Java").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "ses-13", "ide", "Java").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user3", "ws1", "ses-14", "ide", "Java").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user1", "ws2", "ses-15", "ide", "Java").withDate("2013-01-01").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user2", "ws1", "ses-17", "ide", "Java").withDate("2013-01-01").build());
+
+        File log = LogGenerator.generateLog(events);
+
+        Map<String, String> context = new HashMap<>();
+        MetricParameter.FROM_DATE.put(context, "20130101");
+        MetricParameter.TO_DATE.put(context, "20130101");
+        MetricParameter.EVENT.put(context, EventType.PROJECT_CREATED.toString());
+        MetricParameter.PARAM.put(context, "TYPE");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+
+        MapListLongValueData valueData =
+                (MapListLongValueData)executeAndReturnResult(ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_WS, log, context);
+
+        assertEquals(valueData.size(), 2);
+        
+        ListStringValueData key1 = new ListStringValueData(Arrays.asList("Java", "ws1"));
+        ListStringValueData key2 = new ListStringValueData(Arrays.asList("Java", "ws2"));
+        assertTrue(valueData.getAll().containsKey(key1));
+        assertTrue(valueData.getAll().containsKey(key2));
+        
+        assertEquals(valueData.getAll().get(key1).longValue(), 4);
+        assertEquals(valueData.getAll().get(key2).longValue(), 2);
+    }
 }

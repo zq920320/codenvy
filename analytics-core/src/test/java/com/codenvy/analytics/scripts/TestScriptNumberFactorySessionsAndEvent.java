@@ -22,9 +22,11 @@ package com.codenvy.analytics.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.MapStringLongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -34,12 +36,15 @@ import java.util.List;
 import java.util.Map;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
 
-    @Test
-    public void testEventFound() throws Exception {
+    private File log;
+    
+    @BeforeTest
+    public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
@@ -90,8 +95,11 @@ public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
                         .withDate("2013-02-10").withTime("15:00:00").build());
 
 
-        File log = LogGenerator.generateLog(events);
-
+        log = LogGenerator.generateLog(events);
+    }
+    
+    @Test
+    public void testEventFound() throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put(MetricParameter.FROM_DATE.name(), "20130210");
         params.put(MetricParameter.TO_DATE.name(), "20130210");
@@ -106,5 +114,45 @@ public class TestScriptNumberFactorySessionsAndEvent extends BaseTest {
                 (LongValueData)executeAndReturnResult(ScriptType.FACTORY_SESSIONS_AND_EVENT, log, params);
         assertEquals(valueData.getAsLong(), 1);
     }
+    
+    @Test
+    public void testEventByWsFound() throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put(MetricParameter.FROM_DATE.name(), "20130210");
+        params.put(MetricParameter.TO_DATE.name(), "20130210");
+        params.put(MetricParameter.EVENT.name(), EventType.PROJECT_BUILT.toString() + "," +
+                                                 EventType.APPLICATION_CREATED.toString() + "," +
+                                                 EventType.PROJECT_DEPLOYED.toString());
+        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.TEMPORARY.name());
+
+
+        MapStringLongValueData result =
+                (MapStringLongValueData)executeAndReturnResult(ScriptType.FACTORY_SESSIONS_AND_EVENT_BY_WS, log, params);
+        assertEquals(result.getAll().size(), 1);
+        assertTrue(result.getAll().containsKey("tmp-1"));
+        assertEquals(result.getAll().get("tmp-1").longValue(), 1);
+        
+        params = new HashMap<>();
+        params.put(MetricParameter.FROM_DATE.name(), "20130210");
+        params.put(MetricParameter.TO_DATE.name(), "20130210");
+        params.put(MetricParameter.EVENT.name(), EventType.SESSION_FACTORY_STARTED.toString() + "," +
+                                                 EventType.SESSION_FACTORY_STOPPED.toString());
+        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.ANY.name());
+
+
+        result = (MapStringLongValueData)executeAndReturnResult(ScriptType.FACTORY_SESSIONS_AND_EVENT_BY_WS, log, params);
+        assertEquals(result.getAll().size(), 4);
+        assertTrue(result.getAll().containsKey("tmp-1"));
+        assertTrue(result.getAll().containsKey("tmp-22"));
+        assertTrue(result.getAll().containsKey("tmp-33"));
+        assertTrue(result.getAll().containsKey("tmp-2"));
+        assertEquals(result.getAll().get("tmp-1").longValue(), 1);
+        assertEquals(result.getAll().get("tmp-22").longValue(), 1);
+        assertEquals(result.getAll().get("tmp-33").longValue(), 1);
+        assertEquals(result.getAll().get("tmp-2").longValue(), 1);
+    }
+    
 }
 

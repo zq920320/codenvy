@@ -196,4 +196,44 @@ public class TestScriptSetActive extends BaseTest {
         assertEquals(setValueData.size(), 1);
         assertTrue(setValueData.getAll().contains("ws2"));
     }
+    
+    @Test
+    public void testActiveWsByUrl() throws Exception {
+        List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "project1", "type1", "repoUrl1", "factoryUrl1")
+                                .withDate("2013-01-01").build());
+        events.add(Event.Builder.createFactoryCreatedEvent("ws2", "user1", "project2", "type1", "repoUrl1", "factoryUrl1")
+                                .withDate("2013-01-01").build());
+        events.add(
+              Event.Builder.createFactoryCreatedEvent("ws3", "user2", "project3", "type1", "repoUrl1", "factoryUrl2")
+                           .withDate("2013-01-01").build());
+        events.add(
+              Event.Builder.createFactoryCreatedEvent("ws4", "user2", "project4", "type2", "repoUrl1", "factoryUrl2")
+                           .withDate("2013-01-01").build());
+        events.add(
+              Event.Builder.createFactoryCreatedEvent("ws5", "user2", "project5", "type2", "repoUrl3", "factoryUrl3")
+                           .withDate("2013-01-01").build());
+        File fLog = LogGenerator.generateLog(events);
+
+        MetricParameter.FIELD.put(context, "url");
+        MapStringSetValueData valueData =
+                (MapStringSetValueData)executeAndReturnResult(ScriptType.SET_ACTIVE_BY_URL, fLog, context);
+
+        assertEquals(valueData.size(), 3);
+        assertTrue(valueData.getAll().containsKey("factoryUrl1"));
+        assertTrue(valueData.getAll().containsKey("factoryUrl2"));
+        assertTrue(valueData.getAll().containsKey("factoryUrl3"));
+
+        SetStringValueData setValueData = valueData.getAll().get("factoryUrl1");
+        assertEquals(setValueData.size(), 1);
+        assertTrue(setValueData.getAll().contains("factoryUrl1"));
+
+        setValueData = valueData.getAll().get("factoryUrl2");
+        assertEquals(setValueData.size(), 1);
+        assertTrue(setValueData.getAll().contains("factoryUrl2"));
+        
+        setValueData = valueData.getAll().get("factoryUrl3");
+        assertEquals(setValueData.size(), 1);
+        assertTrue(setValueData.getAll().contains("factoryUrl3"));
+    }
 }
