@@ -48,11 +48,26 @@ public class MetricFactory {
             case ACTIVE_USERS:
                 metric = new ActiveUsersNumberMetric();
                 break;
+            case USER_CREATED_FROM_AUTH:
+                metric = new UsersCreatedFromAuthMetric();
+                break;
+            case RETURNED_ACTIVE_USERS:
+                metric = new ReturnedActiveUsersMetric();
+                break;
+            case INACTIVE_USERS:
+                metric = new InactiveUsersMetric();
+                break;
             case ACTIVE_WS_SET:
                 metric = new ActiveWsSetMetric();
                 break;
             case ACTIVE_WS:
                 metric = new ActiveWsNumberMetric();
+                break;
+            case RETURNED_ACTIVE_WS:
+                metric = new ReturnedActiveWsMetric();
+                break;
+            case INACTIVE_WS:
+                metric = new InactiveWsMetric();
                 break;
             case USER_REMOVED:
                 metric = new UserRemovedMetric();

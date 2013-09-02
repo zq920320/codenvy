@@ -133,6 +133,8 @@ public enum MetricType {
         }
     },
     ACTIVE_WS,
+    RETURNED_ACTIVE_WS,
+    INACTIVE_WS,
     USER_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -148,6 +150,9 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
+    USER_CREATED_FROM_AUTH,
+    RETURNED_ACTIVE_USERS,
+    INACTIVE_USERS,
     USER_CREATED_FROM_FACTORY {
         @Override
         public EnumSet<ScriptType> getScripts() {
