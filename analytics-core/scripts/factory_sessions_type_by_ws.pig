@@ -18,23 +18,23 @@
 
 IMPORT 'macros.pig';
 
-t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+%DEFAULT inactiveInterval '10';  -- in minutes
 
+t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 j1 = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
 j = simplifyFields(j1);
 
-/*
- * List of interesting events.
- */
-b1 = filterByEvent(t, '$EVENT');
-b = FOREACH b1 GENERATE ws, user, dt;
+-- get all 'session-factory-started' events with their 'id' and authenticated type
+a1 = filterByEvent(t, 'session-factory-started');
+a2 = extractParam(a1, 'AUTHENTICATED', 'authenticated');
+a3 = extractParam(a2, 'SESSION-ID', 'id');
+a = FOREACH a3 GENERATE ws, id, authenticated;
 
-c1 = JOIN j BY (ws, user) LEFT, b BY (ws, user);
-c2 = removeEmptyField(c1, 'b::ws');
-c3 = FILTER c2 BY MilliSecondsBetween(b::dt, j::dt) > 0 AND SecondsBetween(b::dt, j::dt) <= delta;
-c4 = FOREACH c3 GENERATE b::ws AS ws, b::user AS user, j::dt AS dt;
-c = DISTINCT c4;
+-- keeps only the events of started sessions that match with combined ones
+b1 = JOIN a BY id, j BY id;
+b2 = FILTER b1 BY j::id IS NOT NULL;
+b = FOREACH b2 GENERATE a::ws AS ws, a::authenticated AS authenticated;
 
-
-result = countByField(c, 'ws');
+c = GROUP b BY (authenticated, ws);
+result = FOREACH c GENERATE TOBAG(group.authenticated, group.ws), COUNT(b);
 

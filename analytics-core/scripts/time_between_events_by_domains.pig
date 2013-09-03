@@ -19,8 +19,9 @@
 IMPORT 'macros.pig';
 
 t1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-t2 = combineClosestEvents(t1, '$EVENT-started', '$EVENT-finished');
-t = FOREACH t2 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, dt, delta;
+t2 = FOREACH t1 GENERATE *, '' AS id; -- it is required 'id' field to be in scheme
+t3 = combineClosestEvents(t2, '$EVENT-started', '$EVENT-finished');
+t = FOREACH t3 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, dt, delta;
 
 r = GROUP t BY domain;
 result = FOREACH r GENERATE group, SUM(t.delta);

@@ -607,13 +607,11 @@ public enum MetricType {
     FACTORY_SESSIONS_TYPES {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.NUMBER_EVENTS_WITH_TYPE, ScriptType.NUMBER_EVENTS_WITH_TYPE_BY_WS);
+            return EnumSet.of(ScriptType.FACTORY_SESSIONS_TYPE, ScriptType.FACTORY_SESSIONS_TYPE_BY_WS);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            MetricParameter.EVENT.put(context, EventType.SESSION_FACTORY_STARTED.toString());
-            MetricParameter.PARAM.put(context, "AUTHENTICATED");
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }

@@ -345,6 +345,28 @@ public enum ScriptType {
             return params;
         }
     },
+    FACTORY_SESSIONS_TYPE {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM};
+        }
+    },
+    FACTORY_SESSIONS_TYPE_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapListLongValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        }
+    },
     NUMBER_EVENTS_WITH_TYPE {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -702,7 +724,7 @@ public enum ScriptType {
         return new MetricParameter[0];
     }
 
-    /** @return true if script requires {@link MetricParameter#LOG} to be  executed. */
+    /** @return true if script requires {@link MetricParameter#LOG} being  executed. */
     public boolean isLogRequired() {
         return true;
     }

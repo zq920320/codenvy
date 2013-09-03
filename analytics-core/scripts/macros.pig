@@ -148,6 +148,18 @@ DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------------------------
+-- Simplify the names of fields
+-- @return {user : bytearray, ws: bytearray, id: bytearray, dt: datetime, id: bytearray}
+---------------------------------------------------------------------------------------------
+DEFINE simplifyFields(X) RETURNS Y {
+ $Y = FOREACH $X GENERATE macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::ws AS ws,
+                        macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::user AS user,
+                        macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::dt AS dt,
+                        macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::id AS id,
+                        delta;
+};
+
+---------------------------------------------------------------------------------------------
 -- Combines small sessions into big one if time between them is less than $inactiveInterval
 -- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
 ---------------------------------------------------------------------------------------------
@@ -189,19 +201,19 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     -- removes $startEvents which are close to any $finishEvent
     d1 = JOIN A BY id LEFT, e BY startId;
     d2 = FILTER d1 BY e::startId IS NULL;
-    S = FOREACH d2 GENERATE A::ws AS ws, A::user AS user, A::dt AS dt, '$startEvent' AS event;
+    S = FOREACH d2 GENERATE A::ws AS ws, A::user AS user, A::dt AS dt, '$startEvent' AS event, A::id AS id;
 
     -- removes $finishEvent which are close to any $startEvent
     f1 = JOIN B BY id LEFT, e BY finishId;
     f2 = FILTER f1 BY e::finishId IS NULL;
-    F = FOREACH f2 GENERATE B::ws AS ws, B::user AS user, B::dt AS dt, '$finishEvent' AS event;
+    F = FOREACH f2 GENERATE B::ws AS ws, B::user AS user, B::dt AS dt, '$finishEvent' AS event, B::id AS id;
 
     -- finally, combines closest events to get completed sessions
     u1 = UNION S, F;
     u2 = combineClosestEvents(u1, '$startEvent', '$finishEvent');
 
     -- considering sessions less than 1 min as 1 min length
-    $Y = FOREACH u2 GENERATE ws, user, dt, (delta < 60 ? 60 : delta) AS delta;
+    $Y = FOREACH u2 GENERATE ws, user, dt, (delta < 60 ? 60 : delta) AS delta, id;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -213,14 +225,14 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     x = removeEmptyField(x1, 'user');
 
     a1 = filterByEvent(x, '$startEvent');
-    a = FOREACH a1 GENERATE ws, user, event, dt;
+    a = FOREACH a1 GENERATE ws, user, event, dt, id;
 
     b1 = filterByEvent(x, '$startEvent,$finishEvent');
-    b = FOREACH b1 GENERATE ws, user, event, dt;
+    b = FOREACH b1 GENERATE ws, user, event, dt, id;
 
     -- joins $startEvent with all other events to figure out which event is mostly close to '$startEvent'
     c1 = JOIN a BY (ws, user), b BY (ws, user);
-    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::event AS event, a::dt AS dt, b::event AS secondEvent, b::dt AS secondDt;
+    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::event AS event, a::dt AS dt, b::event AS secondEvent, b::dt AS secondDt, a::id AS id;
 
     -- @param delta: milliseconds between $startEvent and second event
     c3 = FOREACH c2 GENERATE *, MilliSecondsBetween(secondDt, dt) AS delta;
@@ -228,14 +240,14 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     -- removes cases when second event is preceded by $startEvent (before $startEvent in time line)
     c = FILTER c3 BY delta > 0;
 
-    g1 = GROUP c BY (ws, user, event, dt);
-    g2 = FOREACH g1 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, FLATTEN(c), MIN(c.delta) AS minDelta;
+    g1 = GROUP c BY (ws, user, event, dt, id);
+    g2 = FOREACH g1 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, group.id AS id, FLATTEN(c), MIN(c.delta) AS minDelta;
 
     -- the desired closest event have to be $finishEvent anyway
     g = FILTER g2 BY delta == minDelta AND c::secondEvent == '$finishEvent';
 
     -- converts time into seconds
-    $Y = FOREACH g GENERATE ws, user, dt, delta / 1000 AS delta;
+    $Y = FOREACH g GENERATE ws, user, dt, delta / 1000 AS delta, id;
 };
 
 ---------------------------------------------------------------------------------------------
