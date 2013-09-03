@@ -214,6 +214,33 @@ public class Event {
 
         }
 
+        public static Builder createUserAddedToWsEvent(String user,
+                                                       String ws,
+                                                       String session,
+                                                       String wsParam,
+                                                       String userParam,
+                                                       String from) {
+            return new Builder().withContext(user, ws, session)
+                                .withParam("EVENT", EventType.USER_ADDED_TO_WS.toString())
+                                .withParam("WS", wsParam)
+                                .withParam("USER", userParam)
+                                .withParam("FROM", from);
+        }
+
+        public static Builder createUserChangedNameEvent(String oldUser,
+                                                         String newUser) {
+            return new Builder().withParam("EVENT", EventType.USER_CHANGED_NAME.toString())
+                                .withParam("OLD-USER", oldUser)
+                                .withParam("NEW-USER", newUser);
+        }
+
+        public static Builder createUserCreatedEvent(String userId,
+                                                     String aliases) {
+            return new Builder().withParam("EVENT", EventType.USER_CREATED.toString())
+                                .withParam("USER-ID", userId)
+                                .withParam("ALIASES", aliases);
+        }
+
 
         public static Builder createFactoryProjectImportedEvent(String ws,
                                                                 String user,
