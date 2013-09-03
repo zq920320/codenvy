@@ -295,12 +295,18 @@ $used-by-logos : "../images/landing/logos/amazon.png"
     padding: 20px;
 }
 
+.select-domain span {
+    color: white;
+    font-size: 18px;
+}
+
 .domain-list,
 .shared-list {
     background: $text-box-placeholder-color;
     border-radius: 6px;
     list-style: none;
     padding: 0;
+    margin: 5px 0px 25px 0px;
 }
 
 .domain-list li,
