@@ -18,9 +18,9 @@
  
 define(["jquery","underscore",
         "models/account","backbone", "handlebars",
-        "text!templates/tenant.html","models/profile"],
+        "text!templates/tenant.html"],
 
-    function($,_,Account,Backbone,Handlebars,tenantTemplate,Profile){
+    function($,_,Account,Backbone,Handlebars,tenantTemplate){
 
         var DomainSelector = Backbone.View.extend({
 
@@ -45,34 +45,23 @@ define(["jquery","underscore",
                 window.location = d.url + queryParam;
             },
 
-            onReceiveUserInfo : function(tenants,user){
-
-                    _.each(tenants,function(tenant){
-
-                        if (tenant.owner === user.account[0].id) {
-                            this.$(".domain-list").append(
-                                this.tenantTemplate(tenant.toJSON())
-                            );
-                        } else {
-                            this.$(".shared-list").append(
-                                this.tenantTemplate(tenant.toJSON())
-                            );                            
-                        }
-
-                    },this);
-
-            },
-
-            onGotTennants : function(tenants){
+            onGotTennants : function(tenants,user){
 
                 $(this.el).removeClass("loading");
-                $.when(Profile.getUser()).done(function(user){
-                   onReceiveUserInfo(tenants,user);
-                }).fail(function(msg){
-                    error([
-                        new  AccountError(null,msg)
-                    ]);
-                });
+
+                _.each(tenants,function(tenant){
+
+                    if (tenant.attributes.owner === user.attributes.accounts[0].id) {
+                        this.$(".domain-list").append(
+                            this.tenantTemplate(tenant.toJSON())
+                        );
+                    } else {
+                        this.$(".shared-list").append(
+                            this.tenantTemplate(tenant.toJSON())
+                        );                            
+                    }
+
+                },this);                   
 
             },
 

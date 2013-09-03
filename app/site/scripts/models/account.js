@@ -362,7 +362,14 @@
                             break;
                         case 1: redirect({url:"/ide/" + tenants[0].toJSON().name});
                             break;
-                        default: success(tenants);
+                        default: 
+                            $.when(Profile.getUser()).done(function(user){
+                                success(tenants,user);
+                            }).fail(function(msg){
+                                error([
+                                    new  AccountError(null,msg)
+                                ]);
+                            });
                 }
                 }).fail(function(msg){
                     error([
