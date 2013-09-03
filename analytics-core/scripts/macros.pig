@@ -105,7 +105,7 @@ DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
 -- @return  {..., ws : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractWs(X, wsType) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws1, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws2;
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws2, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws1;
   x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws;
   $Y = FILTER x2 BY '$wsType' == 'ANY' OR 
 		    ('$wsType' == 'TEMPORARY' AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0) OR 
@@ -251,23 +251,34 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------------------------
--- Calculates time between pairs of $startEvent and $finishEvent
--- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
+-- Finds list of users were created from factories
+-- @return {user : bytearray, ws: bytearray}
 ---------------------------------------------------------------------------------------------
 DEFINE usersCreatedFromFactory(X) RETURNS Y {
     -- gets all registered users which changed their names from anonymous
-    t1 = filterByEvent(l, 'user-changed-name');
+    t1 = filterByEvent($X, 'user-changed-name');
     t2 = extractParam(t1, 'OLD-USER', 'old');
     t3 = extractParam(t2, 'NEW-USER', 'new');
     t4 = FILTER t3 BY INDEXOF(UPPER(old), 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(new), 'ANONYMOUSUSER_', 0) < 0;
-    t = FOREACH t4 GENERATE new AS user;
+    t = FOREACH t4 GENERATE UPPER(old) AS tmpUser, new AS user;
+
+    -- let's found in which temporary workspaces anonymous users worked
+    x1 = filterByEvent($X, 'user-added-to-ws');
+    x2 = FOREACH x1 GENERATE ws, UPPER(user) AS tmpUser;
+    x = FILTER x2 BY INDEXOF(tmpUser, 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0;
 
     -- gets all created registered users
-    k1 = filterByEvent(l, 'user-created');
+    k1 = filterByEvent($X, 'user-created');
     k2 = FILTER k1 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
     k = FOREACH k2 GENERATE user;
 
-    j1 = JOIN k BY user LEFT, t BY user;
-    j2 = FILTER j1 BY t::user IS NOT NULL;
-    $Y = FOREACH j2 GENERATE k::user AS user;
+    -- we are interested only in registered users that were as anonymouses in their previous life =)
+    y1 = JOIN k BY user LEFT, t BY user;
+    y2 = FILTER y1 BY t::user IS NOT NULL;
+    y3 = FOREACH y2 GENERATE k::user AS user, t::tmpUser AS tmpUser;
+
+    -- matches them with temporary workspaces
+    y4 = JOIN y3 BY tmpUser, x BY tmpUser;
+    y5 = FOREACH y4 GENERATE y3::user AS user, x::ws AS ws;
+    $Y = DISTINCT y5;
 };

@@ -64,6 +64,7 @@ public abstract class AbstractTopFactoriesMetric extends CalculatedMetric {
             List<String> item = new ArrayList<>(13);
 
             item.add(factoryUrl);
+            item.add(MetricFactory.createMetric(MetricType.USER_CREATED_FROM_FACTORY).getValue(context).getAsString());
             item.add(
                     MetricFactory.createMetric(MetricType.TEMPORARY_WORKSPACE_CREATED).getValue(context).getAsString());
             item.add(MetricFactory.createMetric(MetricType.FACTORY_SESSIONS).getValue(context).getAsString());

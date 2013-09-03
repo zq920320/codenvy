@@ -19,9 +19,6 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+j = usersCreatedFromFactory(l);
 
-j1 = usersCreatedFromFactory(l);
-j2 = FOREACH j1 GENERATE user;
-j = DISTINCT j2;
-
-result = countAll(j);
+result = countByField(j, 'ws');

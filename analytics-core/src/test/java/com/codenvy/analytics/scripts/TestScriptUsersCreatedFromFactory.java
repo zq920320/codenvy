@@ -58,6 +58,12 @@ public class TestScriptUsersCreatedFromFactory extends BaseTest {
         // anon -> registered
         events.add(Event.Builder.createUserChangedNameEvent("Anonymoususer_1", "user4@gmail.com").withDate("2013-01-01")
                         .build());
+        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-1", "Anonymoususer_1", "website")
+                        .withDate("2013-01-01").build());
+
+        events.add(Event.Builder.createUserChangedNameEvent("Anonymoususer_2", "user5@gmail.com").withDate("2013-01-01")
+                        .build());
+
         log = LogGenerator.generateLog(events);
 
         context = Utils.newContext();
@@ -95,5 +101,16 @@ public class TestScriptUsersCreatedFromFactory extends BaseTest {
 
         assertEquals(valueData.size(), 1);
         assertEquals(valueData.getAll().get("user4@gmail.com").longValue(), 1L);
+    }
+
+    @Test
+    public void testScriptByWs() throws Exception {
+        MapStringLongValueData valueData =
+                (MapStringLongValueData)executeAndReturnResult(ScriptType.USER_CREATED_FROM_FACTORY_BY_WS,
+                                                               log,
+                                                               context);
+
+        assertEquals(valueData.size(), 1);
+        assertEquals(valueData.getAll().get("tmp-1").longValue(), 1L);
     }
 }

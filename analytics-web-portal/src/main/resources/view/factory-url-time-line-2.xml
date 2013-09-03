@@ -19,6 +19,7 @@
 <display>
     <table length="20">
         <metric type="temporary_workspace_created" title="Temporary Workspaces Created"/>
+        <metric type="user_created_from_factory" title="Accounts Created From Factories"/>
         <empty/>
         <metric type="factory_sessions" title="Factory Sessions"/>
         <metric type="factory_sessions_anon" title="Anonymous Sessions"/>

@@ -95,29 +95,21 @@
         <empty/>
     </table>
     <table length="20">
-        <date section="Code manipulations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+        <date section="IDE Usage Events" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
               formatLifetime="dd MMM"/>
-        <metric type="user_code_refactor" title="Refactoring"/>
-        <metric type="user_code_complete" title="Code completing"/>
-        <empty/>
-    </table>
-    <table length="20">
-        <date section="Runs" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
-        <metric type="run_started" title="# Runs"/>
+        <metric type="user_code_refactor" title="# Refactors"/>
+        <metric type="user_code_complete" title="# Code Completions"/>
         <metric type="project_built" title="# Builds"/>
+        <metric type="run_started" title="# Runs"/>
         <metric type="debug_started" title="# Debugs"/>
+        <metric type="file_manipulation" title="# File Ops"/>
         <empty/>
     </table>
     <table length="20">
-        <date section="Total time by operation (seconds)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
-        <metric type="build_time" title="# Total time of all builds."/>
-        <metric type="run_time" title="# Total time of all runs."/>
-        <metric type="debug_time" title="# Total time of all debugs."/>
-        <empty/>
-    </table>
-    <table length="20">
-        <date section="Files" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
-        <metric type="file_manipulation" title="# Operation"/>
+        <date section="Spent Time (mins)" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
+        <metric type="build_time" title="Builds"/>
+        <metric type="run_time" title="Runs"/>
+        <metric type="debug_time" title="Debugs"/>
         <empty/>
     </table>
     <table length="20">

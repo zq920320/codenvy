@@ -21,6 +21,8 @@ IMPORT 'macros.pig';
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 j1 = usersCreatedFromFactory(l);
-j = FOREACH j1 GENERATE REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
+j2 = FOREACH j1 GENERATE user;
+j3 = DISTINCT j2;
+j = FOREACH j3 GENERATE REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain;
 
 result = countByField(j, 'domain');

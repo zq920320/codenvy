@@ -20,7 +20,6 @@
     <table length="20">
         <date section="Factory Analysis" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM" />
         <metric type="factory_created" title="Factories Created"/>
-        <empty />
     </table>
 </display>
 

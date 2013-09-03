@@ -56,6 +56,8 @@ public class TestScriptExtractUserAndWs extends BaseTest {
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "AnonymousUser_2")
                                       .withParam("WS", "tmp-3").withDate("2013-01-01").build());
         events.add(new Event.Builder().withParam("EVENT", "fake").withDate("2013-01-01").build());
+        events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "default", "ws10", "user10", "website")
+                        .withDate("2013-01-01").build());
 
         log = LogGenerator.generateLog(events);
 
@@ -72,11 +74,12 @@ public class TestScriptExtractUserAndWs extends BaseTest {
         ListStringValueData valueData =
                 (ListStringValueData)executeAndReturnResult(ScriptType.TEST_EXTRACT_USER, log, context);
 
-        assertEquals(valueData.size(), 7);
+        assertEquals(valueData.size(), 8);
         assertTrue(valueData.getAll().contains("user1"));
         assertTrue(valueData.getAll().contains("user2"));
         assertTrue(valueData.getAll().contains("user3"));
         assertTrue(valueData.getAll().contains("user4"));
+        assertTrue(valueData.getAll().contains("user10"));
         assertTrue(valueData.getAll().contains("default"));
         assertTrue(valueData.getAll().contains("AnonymousUser_1"));
         assertTrue(valueData.getAll().contains("AnonymousUser_2"));
@@ -103,11 +106,12 @@ public class TestScriptExtractUserAndWs extends BaseTest {
         ListStringValueData valueData =
                 (ListStringValueData)executeAndReturnResult(ScriptType.TEST_EXTRACT_USER, log, context);
 
-        assertEquals(valueData.size(), 5);
+        assertEquals(valueData.size(), 6);
         assertTrue(valueData.getAll().contains("user1"));
         assertTrue(valueData.getAll().contains("user2"));
         assertTrue(valueData.getAll().contains("user3"));
         assertTrue(valueData.getAll().contains("user4"));
+        assertTrue(valueData.getAll().contains("user10"));
         assertTrue(valueData.getAll().contains("default"));
     }
 
@@ -119,8 +123,9 @@ public class TestScriptExtractUserAndWs extends BaseTest {
         ListStringValueData valueData =
                 (ListStringValueData)executeAndReturnResult(ScriptType.TEST_EXTRACT_WS, log, context);
 
-        assertEquals(valueData.size(), 6);
+        assertEquals(valueData.size(), 7);
         assertTrue(valueData.getAll().contains("ws1"));
+        assertTrue(valueData.getAll().contains("ws10"));
         assertTrue(valueData.getAll().contains("ws2"));
         assertTrue(valueData.getAll().contains("tmp-1"));
         assertTrue(valueData.getAll().contains("tmp-2"));
@@ -150,8 +155,9 @@ public class TestScriptExtractUserAndWs extends BaseTest {
         ListStringValueData valueData =
                 (ListStringValueData)executeAndReturnResult(ScriptType.TEST_EXTRACT_WS, log, context);
 
-        assertEquals(valueData.size(), 3);
+        assertEquals(valueData.size(), 4);
         assertTrue(valueData.getAll().contains("ws1"));
+        assertTrue(valueData.getAll().contains("ws10"));
         assertTrue(valueData.getAll().contains("ws2"));
         assertTrue(valueData.getAll().contains("default"));
     }
@@ -164,15 +170,17 @@ public class TestScriptExtractUserAndWs extends BaseTest {
         ListStringValueData valueData =
                 (ListStringValueData)executeAndReturnResult(ScriptType.TEST_EXTRACT_WS, log, context);
 
-        assertEquals(valueData.size(), 2);
+        assertEquals(valueData.size(), 3);
         assertTrue(valueData.getAll().contains("ws1"));
+        assertTrue(valueData.getAll().contains("ws10"));
         assertTrue(valueData.getAll().contains("default"));
 
         valueData =
                 (ListStringValueData)executeAndReturnResult(ScriptType.TEST_EXTRACT_USER, log, context);
 
-        assertEquals(valueData.size(), 2);
+        assertEquals(valueData.size(), 3);
         assertTrue(valueData.getAll().contains("user1"));
+        assertTrue(valueData.getAll().contains("user10"));
         assertTrue(valueData.getAll().contains("default"));
     }
 }

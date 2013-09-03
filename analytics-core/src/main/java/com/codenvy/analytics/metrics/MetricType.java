@@ -158,7 +158,8 @@ public enum MetricType {
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.USER_CREATED_FROM_FACTORY,
                               ScriptType.USER_CREATED_FROM_FACTORY_BY_USERS,
-                              ScriptType.USER_CREATED_FROM_FACTORY_BY_DOMAINS);
+                              ScriptType.USER_CREATED_FROM_FACTORY_BY_DOMAINS,
+                              ScriptType.USER_CREATED_FROM_FACTORY_BY_WS);
         }
 
         @Override
@@ -819,10 +820,10 @@ public enum MetricType {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.TIME_BETWEEN_EVENTS,
-                               ScriptType.TIME_BETWEEN_EVENTS_BY_USERS,
-                               ScriptType.TIME_BETWEEN_EVENTS_BY_DOMAINS);
+                              ScriptType.TIME_BETWEEN_EVENTS_BY_USERS,
+                              ScriptType.TIME_BETWEEN_EVENTS_BY_DOMAINS);
         }
-        
+
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.BUILD_STARTED.getRootType());
@@ -834,10 +835,10 @@ public enum MetricType {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.TIME_BETWEEN_EVENTS,
-                               ScriptType.TIME_BETWEEN_EVENTS_BY_USERS,
-                               ScriptType.TIME_BETWEEN_EVENTS_BY_DOMAINS);
+                              ScriptType.TIME_BETWEEN_EVENTS_BY_USERS,
+                              ScriptType.TIME_BETWEEN_EVENTS_BY_DOMAINS);
         }
-        
+
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.RUN_STARTED.getRootType());
@@ -849,10 +850,10 @@ public enum MetricType {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.TIME_BETWEEN_EVENTS,
-                               ScriptType.TIME_BETWEEN_EVENTS_BY_USERS,
-                               ScriptType.TIME_BETWEEN_EVENTS_BY_DOMAINS);
+                              ScriptType.TIME_BETWEEN_EVENTS_BY_USERS,
+                              ScriptType.TIME_BETWEEN_EVENTS_BY_DOMAINS);
         }
-        
+
         @Override
         public void modifyContext(Map<String, String> context) {
             MetricParameter.EVENT.put(context, EventType.DEBUG_STARTED.getRootType());
