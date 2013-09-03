@@ -295,24 +295,34 @@ $used-by-logos : "../images/landing/logos/amazon.png"
     padding: 20px;
 }
 
-.domain-list {
+.select-domain span {
+    color: white;
+    font-size: 18px;
+}
+
+.domain-list,
+.shared-list {
     background: $text-box-placeholder-color;
     border-radius: 6px;
     list-style: none;
     padding: 0;
+    margin: 5px 0px 25px 0px;
 }
 
-.domain-list li {
+.domain-list li,
+.shared-list li {
     padding: 0;
     border-bottom: solid 1px $text-box-background-color;
 }
 
-.domain-list li a {
+.domain-list li a,
+.shared-list li a {
     display: block;
     padding: 5px 20px;
 }
 
-.domain-list li:last-child {
+.domain-list li:last-child,
+.shared-list  li:last-child {
     border-bottom: none;
 }
 
