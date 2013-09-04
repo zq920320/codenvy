@@ -259,6 +259,16 @@ module.exports = function( grunt ) {
             }
         },
 
+    remove_css : {
+    command: 'find ../app/site/styles -name "*.css" -print0 | xargs -0 rm',
+    options: {
+                stdout: true,
+                failOnError: true,
+                execOptions: {
+                    cwd: './'
+                }
+            }
+},
         clean_dist : {
             command: 'rm -rf ../dist && rm -rf ../temp && rm -rf <%= buildConfig.temp %>',
             options: {
@@ -334,7 +344,9 @@ module.exports = function( grunt ) {
             'copy:prod',
 
             // clean up
-            'shell:clean_dist'
+            'shell:clean_dist',
+            // remove /styles/*.css
+            'shell:remove_css'
         ]
     );
 };
