@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Common version of <code>FactoryUrlFormat</code>.
+ * Simple version of <code>FactoryUrlFormat</code>.
  * This implementation suggest that factory url contain all required parameters
  */
-public class CommonFactoryUrlFormat implements FactoryUrlFormat {
-    private static final Logger LOG = LoggerFactory.getLogger(CommonFactoryUrlFormat.class);
+public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleFactoryUrlFormat.class);
 
     protected static final String SUPPORT_EMAIL   = "support@codenvy.com";
     protected static final String DEFAULT_MESSAGE =
@@ -55,7 +55,7 @@ public class CommonFactoryUrlFormat implements FactoryUrlFormat {
     }
 
     @Override
-    public FactoryUrl parse(URL url) throws FactoryUrlException {
+    public SimpleFactoryUrl parse(URL url) throws FactoryUrlException {
         try {
             Map<String, List<String>> params = UrlUtils.getQueryParameters(url);
 
@@ -82,9 +82,14 @@ public class CommonFactoryUrlFormat implements FactoryUrlFormat {
                 }
             }
 
+            // check that vcs value is correct (only git is supported for now)
+            if (!"git".equals(params.get("vcs").iterator().next())) {
+                throw new FactoryUrlInvalidArgumentException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
+            }
+
             checkRepository(params.get("vcsurl").iterator().next());
 
-            FactoryUrl factoryUrl = new FactoryUrl();
+            SimpleFactoryUrl factoryUrl = new SimpleFactoryUrl();
             factoryUrl.setCommitId(params.get("idcommit").iterator().next());
             factoryUrl.setVersion(params.get("v").iterator().next());
             factoryUrl.setVcs(params.get("vcs").iterator().next());

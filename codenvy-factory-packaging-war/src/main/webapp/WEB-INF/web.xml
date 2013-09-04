@@ -25,14 +25,5 @@
          version="3.0"
          metadata-complete="true">
     <display-name>Factory Service</display-name>
-
-    <context-param>
-        <param-name>javax.ws.rs.Application</param-name>
-        <param-value>com.codenvy.factory.FactoryServiceApplication</param-value>
-    </context-param>
-
-    <listener>
-        <listener-class>com.codenvy.factory.FactoryServletContextListener</listener-class>
-    </listener>
 </web-app>
 

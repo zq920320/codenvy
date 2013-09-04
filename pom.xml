@@ -44,15 +44,22 @@
 
         <!-- javax -->
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+        <javax.ws.rs.version>1.0</javax.ws.rs.version>
         <everrest.version>1.1.1</everrest.version>
 
         <!-- Third parties -->
         <slf4j.version>1.6.1</slf4j.version>
         <testng.version>6.8</testng.version>
+        <mockito.version>1.9.0</mockito.version>
+        <mockitong.version>0.3</mockitong.version>
+        <hamcrest.version>1.3.RC2</hamcrest.version>
+        <everrest.assured.version>0.6</everrest.assured.version>
         <logback.version>1.0.0</logback.version>
+        <commons.fileupload.version>1.0</commons.fileupload.version>
     </properties>
     <modules>
         <module>codenvy-factory-commons</module>
+        <module>codenvy-factory-services</module>
         <module>codenvy-factory-packaging-war</module>
   </modules>
 </project>

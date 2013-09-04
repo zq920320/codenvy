@@ -30,7 +30,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 
-import static com.codenvy.factory.commons.CommonFactoryUrlFormatTest.enc;
+import static com.codenvy.factory.commons.SimpleFactoryUrlFormatTest.enc;
 import static org.testng.Assert.assertEquals;
 
 public class FactoryUrlParserTest {
@@ -40,8 +40,8 @@ public class FactoryUrlParserTest {
         File testRepository = Files.createTempDirectory("testrepository").toFile();
         ZipUtils.unzip(new File(Thread.currentThread().getContextClassLoader().getResource("testrepository.zip").toURI()), testRepository);
 
-        FactoryUrl expectedFactoryUrl =
-                new FactoryUrl("1.0", "git", "file://" + testRepository + "/testrepository", "1234567", "eee", "ttt");
+        SimpleFactoryUrl expectedFactoryUrl =
+                new SimpleFactoryUrl("1.0", "git", "file://" + testRepository + "/testrepository", "1234567", "eee", "ttt");
 
         //when
         FactoryUrl factoryUrl =

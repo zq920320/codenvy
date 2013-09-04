@@ -67,6 +67,6 @@ public class FactoryUrlParser {
             } catch (FactoryUrlInvalidFormatException ignored) {
             }
         }
-        throw new FactoryUrlInvalidFormatException(CommonFactoryUrlFormat.DEFAULT_MESSAGE);
+        throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
     }
 }
