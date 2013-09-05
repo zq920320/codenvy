@@ -45,7 +45,8 @@ module.exports = function( grunt ) {
 
     // generate application cache manifest
     manifest:{
-      dest: ''
+      dest: '',
+      port: 0
     },
 
     // headless testing through PhantomJS
