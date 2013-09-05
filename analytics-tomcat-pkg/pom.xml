@@ -143,7 +143,7 @@
                                               tofile="${project.build.directory}/tomcat-analytics/lib/mail.jar"/>
 
                                         <copy file="${project.build.directory}/packager-conf/war/analytics-rest-service.war"
-                                              tofile="${project.build.directory}/tomcat-analytics/webapps/rest-service.war"/>
+                                              tofile="${project.build.directory}/tomcat-analytics/webapps/metrics.war"/>
                                         <copy file="${project.build.directory}/packager-conf/war/analytics-web-portal.war"
                                               tofile="${project.build.directory}/tomcat-analytics/webapps/analytics.war"/>
                                         <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x"/>

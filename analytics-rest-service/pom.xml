@@ -46,10 +46,15 @@
             <artifactId>analytics-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-analytic</artifactId>
+            <version>${analytics.api.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>rest-service</finalName>
+        <finalName>metrics</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
