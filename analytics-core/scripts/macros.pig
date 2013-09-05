@@ -164,7 +164,6 @@ DEFINE simplifyFields(X) RETURNS Y {
 -- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
 ---------------------------------------------------------------------------------------------
 DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
-
     a = extractEventsWithSessionId($X, '$startEvent');
 
     b1 = extractEventsWithSessionId($X, '$finishEvent');
@@ -175,7 +174,6 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     b4 = FOREACH b3 GENERATE FLATTEN(group), MIN(b2.delta) AS minDelta, FLATTEN(b2);
     b5 = FILTER b4 BY delta == minDelta;
     b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id AS id, b2::dt AS dt;
-
 
     -- joins $startEvent and $finishEvent by same id, removes events without corresponding pair
     c1 = JOIN a BY id LEFT, b BY id;

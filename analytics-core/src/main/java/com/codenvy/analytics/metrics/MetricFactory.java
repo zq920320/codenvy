@@ -288,6 +288,9 @@ public class MetricFactory {
             case TEMPORARY_WORKSPACE_CREATED:
                 metric = new TemporaryWorkspaceCreatedMetric();
                 break;
+            case FACTORY_SESSIONS_LIST:
+                metric = new FactorySessionsListMetric();
+                break;
             case FACTORY_SESSIONS_TYPES:
                 metric = new FactorySessionsTypesMetric();
                 break;

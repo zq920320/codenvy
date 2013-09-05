@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.server;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
@@ -60,13 +61,12 @@ public class FactoryUrlTopSessionsServiceImpl extends AbstractService {
     /** {@inheritDoc} */
     @Override
     protected List<TableData> doFilter(Map<String, String> context) throws Exception {
-//        MetricFilter metricFilter = Utils.getAvailableFilters(context).iterator().next();
-//
-//        List<String> factoryUrls = getFactoryUrls(metricFilter.getScriptField(), context.get(metricFilter.name()));
-//        metricFilter.remove(context);
-//
-//        MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrls.toString()));
-        // TODO
+        MetricFilter metricFilter = Utils.getAvailableFilters(context).iterator().next();
+
+        List<String> factoryUrls = getFactoryUrls(metricFilter.getScriptField(), context.get(metricFilter.name()));
+        metricFilter.remove(context);
+
+        MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrls.toString()));
         return DISPLAY.retrieveData(context);
     }
 

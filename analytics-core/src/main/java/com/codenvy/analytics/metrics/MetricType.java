@@ -581,7 +581,7 @@ public enum MetricType {
     FACTORY_URL_ACCEPTED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.SET_ACTIVE_BY_URL);
+            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.FACTORY_URL_ACCEPTED_BY_URL);
         }
 
         @Override
@@ -622,6 +622,19 @@ public enum MetricType {
     FACTORY_SESSIONS_ANON,
     FACTORY_SESSIONS_ANON_PERCENT,
     FACTORY_SESSIONS,
+    FACTORY_SESSIONS_LIST {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.FACTORY_SESSIONS, ScriptType.FACTORY_SESSIONS_BY_WS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
+            MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
+        }
+    },
     FACTORY_SESSION_FIRST,
     FACTORY_SESSION_LAST,
     PRODUCT_USAGE_SESSIONS_FACTORY {

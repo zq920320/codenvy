@@ -324,7 +324,38 @@ public enum ScriptType {
             return params;
         }
     },
-    SET_ACTIVE_BY_URL {
+    FACTORY_SESSIONS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return ListListStringValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.LOAD_DIR);
+            return params;
+        }
+    },
+    FACTORY_SESSIONS_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringListListStringValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.ALIAS};
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.LOAD_DIR);
+            return params;
+        }
+    },
+    FACTORY_URL_ACCEPTED_BY_URL {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
@@ -338,8 +369,8 @@ public enum ScriptType {
         @Override
         public Set<MetricParameter> getParams() {
             Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.FIELD);
-            params.add(MetricParameter.EVENT);
+            params.add(MetricParameter.LOAD_DIR);
+            params.add(MetricParameter.STORE_DIR);
             return params;
         }
     },
@@ -634,7 +665,6 @@ public enum ScriptType {
             return ListListStringValueData.class;
         }
     },
-
     /** Returns the list of unique events that were generated. */
     CHECK_LOGS_2 {
         @Override
@@ -642,7 +672,20 @@ public enum ScriptType {
             return ListListStringValueData.class;
         }
     },
+    FACTORY_URL_ACCEPTED {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.LOAD_DIR);
+            params.add(MetricParameter.STORE_DIR);
+            return params;
+        }
 
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+    },
     FACTORY_CREATED {
         @Override
         public Set<MetricParameter> getParams() {

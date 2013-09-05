@@ -21,11 +21,14 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.MapStringSetValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -45,7 +48,7 @@ public class TestScriptSetActive extends BaseTest {
     private Map<String, String> context;
     private File                log;
 
-    @BeforeTest
+    @BeforeClass
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "session", "project1", "type")
@@ -196,44 +199,39 @@ public class TestScriptSetActive extends BaseTest {
         assertEquals(setValueData.size(), 1);
         assertTrue(setValueData.getAll().contains("ws2"));
     }
-    
+
     @Test
     public void testActiveWsByUrl() throws Exception {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "project1", "type1", "repoUrl1", "factoryUrl1")
-                                .withDate("2013-01-01").build());
-        events.add(Event.Builder.createFactoryCreatedEvent("ws2", "user1", "project2", "type1", "repoUrl1", "factoryUrl1")
-                                .withDate("2013-01-01").build());
         events.add(
-              Event.Builder.createFactoryCreatedEvent("ws3", "user2", "project3", "type1", "repoUrl1", "factoryUrl2")
-                           .withDate("2013-01-01").build());
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1",
+                                                            "referrer1").withDate("2013-01-01").build());
         events.add(
-              Event.Builder.createFactoryCreatedEvent("ws4", "user2", "project4", "type2", "repoUrl1", "factoryUrl2")
-                           .withDate("2013-01-01").build());
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1",
+                                                            "referrer2").withDate("2013-01-01").build());
         events.add(
-              Event.Builder.createFactoryCreatedEvent("ws5", "user2", "project5", "type2", "repoUrl3", "factoryUrl3")
-                           .withDate("2013-01-01").build());
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl2",
+                                                            "referrer2").withDate("2013-01-01").build());
         File fLog = LogGenerator.generateLog(events);
 
-        MetricParameter.FIELD.put(context, "url");
-        MapStringSetValueData valueData =
-                (MapStringSetValueData)executeAndReturnResult(ScriptType.SET_ACTIVE_BY_URL, fLog, context);
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
+        MetricParameter.STORE_DIR.put(context, Utils.getStoreDirFor(MetricType.FACTORY_URL_ACCEPTED));
+        Utils.initLoadStoreDirectories(context);
 
-        assertEquals(valueData.size(), 3);
+        MapStringSetValueData valueData =
+                (MapStringSetValueData)executeAndReturnResult(ScriptType.FACTORY_URL_ACCEPTED_BY_URL, fLog, context);
+
+        assertEquals(valueData.size(), 2);
         assertTrue(valueData.getAll().containsKey("factoryUrl1"));
         assertTrue(valueData.getAll().containsKey("factoryUrl2"));
-        assertTrue(valueData.getAll().containsKey("factoryUrl3"));
 
         SetStringValueData setValueData = valueData.getAll().get("factoryUrl1");
-        assertEquals(setValueData.size(), 1);
-        assertTrue(setValueData.getAll().contains("factoryUrl1"));
+        assertEquals(setValueData.size(), 2);
+        assertTrue(setValueData.getAll().contains("tmp-1"));
+        assertTrue(setValueData.getAll().contains("tmp-2"));
 
         setValueData = valueData.getAll().get("factoryUrl2");
         assertEquals(setValueData.size(), 1);
-        assertTrue(setValueData.getAll().contains("factoryUrl2"));
-        
-        setValueData = valueData.getAll().get("factoryUrl3");
-        assertEquals(setValueData.size(), 1);
-        assertTrue(setValueData.getAll().contains("factoryUrl3"));
+        assertTrue(setValueData.getAll().contains("tmp-3"));
     }
 }

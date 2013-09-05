@@ -303,6 +303,18 @@ public class Event {
 
         }
 
+        public static Builder createFactoryProjectImportedEvent(String ws,
+                                                                String user,
+                                                                String project,
+                                                                String type) {
+            return new Builder().withParam("EVENT", EventType.FACTORY_PROJECT_IMPORTED.toString())
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type);
+
+        }
+
         public static Builder createSessionFactoryStoppedEvent(String sessionId,
                                                                String tempWs,
                                                                String tempUser) {
@@ -317,7 +329,7 @@ public class Event {
                                                             String referrerUrl) {
             return new Builder().withParam("EVENT", EventType.FACTORY_URL_ACCEPTED.toString())
                                 .withParam("WS", tempWs)
-                                .withParam("REFERRER-URL", referrerUrl)
+                                .withParam("REFERRER", referrerUrl)
                                 .withParam("FACTORY-URL", factoryUrl);
         }
     }

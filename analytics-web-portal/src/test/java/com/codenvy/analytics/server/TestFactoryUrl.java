@@ -67,9 +67,10 @@ public class TestFactoryUrl {
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_BUILT, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_DEPLOY, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_RUN, context);
-        DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
         DataProcessing.calculateAndStore(MetricType.ACTIVE_FACTORY_SET, context);
         DataProcessing.calculateAndStore(MetricType.USER_CREATED_FROM_FACTORY, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_LIST, context);
     }
 
     @Test
@@ -188,6 +189,107 @@ public class TestFactoryUrl {
         assertEquals(data.get(1).get(20).get(0), "Product Usage Mins");
         assertEquals(data.get(1).get(20).get(1), "51");
     }
+
+    @Test
+    public void testTopSessionsWithFactoryFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.FACTORY_URL.put(context, "factory2,factory3");
+
+        FactoryUrlTopSessionsServiceImpl service = new FactoryUrlTopSessionsServiceImpl();
+        List<TableData> data = service.getData(context);
+
+        assertEquals(data.size(), 7);
+        assertEquals(data.get(0).size(), 4);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(data.get(i).get(0).get(0), "Mins");
+            assertEquals(data.get(i).get(1).get(0), "1500");
+            assertEquals(data.get(i).get(2).get(0), "1260");
+            assertEquals(data.get(i).get(3).get(0), "900");
+
+            assertEquals(data.get(i).get(0).get(1), "Factory Url");
+            assertEquals(data.get(i).get(1).get(1), "factory3");
+            assertEquals(data.get(i).get(2).get(1), "factory2");
+            assertEquals(data.get(i).get(3).get(1), "factory2");
+
+            assertEquals(data.get(i).get(0).get(2), "Referrer");
+            assertEquals(data.get(i).get(1).get(2), "ref1");
+            assertEquals(data.get(i).get(2).get(2), "ref1");
+            assertEquals(data.get(i).get(3).get(2), "ref1");
+
+            assertEquals(data.get(i).get(0).get(3), "Authenticated");
+            assertEquals(data.get(i).get(1).get(3), "false");
+            assertEquals(data.get(i).get(2).get(3), "false");
+            assertEquals(data.get(i).get(3).get(3), "false");
+
+            assertEquals(data.get(i).get(0).get(4), "Converted");
+            assertEquals(data.get(i).get(1).get(4), "false");
+            assertEquals(data.get(i).get(2).get(4), "false");
+            assertEquals(data.get(i).get(3).get(4), "false");
+        }
+    }
+
+    @Test
+    public void testTopSessions() throws Exception {
+        FactoryUrlTopSessionsServiceImpl service = new FactoryUrlTopSessionsServiceImpl();
+        List<TableData> data = service.getData(Utils.newContext());
+
+        assertEquals(data.size(), 7);
+        assertEquals(data.get(0).size(), 9);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(data.get(i).get(0).get(0), "Mins");
+            assertEquals(data.get(i).get(1).get(0), "2700");
+            assertEquals(data.get(i).get(2).get(0), "2400");
+            assertEquals(data.get(i).get(3).get(0), "2100");
+            assertEquals(data.get(i).get(4).get(0), "1500");
+            assertEquals(data.get(i).get(5).get(0), "1260");
+            assertEquals(data.get(i).get(6).get(0), "900");
+            assertEquals(data.get(i).get(7).get(0), "600");
+            assertEquals(data.get(i).get(8).get(0), "300");
+
+            assertEquals(data.get(i).get(0).get(1), "Factory Url");
+            assertEquals(data.get(i).get(1).get(1), "factory6");
+            assertEquals(data.get(i).get(2).get(1), "factory5");
+            assertEquals(data.get(i).get(3).get(1), "factory4");
+            assertEquals(data.get(i).get(4).get(1), "factory3");
+            assertEquals(data.get(i).get(5).get(1), "factory2");
+            assertEquals(data.get(i).get(6).get(1), "factory2");
+            assertEquals(data.get(i).get(7).get(1), "factory1");
+            assertEquals(data.get(i).get(8).get(1), "factory1");
+
+            assertEquals(data.get(i).get(0).get(2), "Referrer");
+            assertEquals(data.get(i).get(1).get(2), "ref1");
+            assertEquals(data.get(i).get(2).get(2), "ref1");
+            assertEquals(data.get(i).get(3).get(2), "ref1");
+            assertEquals(data.get(i).get(4).get(2), "ref1");
+            assertEquals(data.get(i).get(5).get(2), "ref1");
+            assertEquals(data.get(i).get(6).get(2), "ref1");
+            assertEquals(data.get(i).get(7).get(2), "ref1");
+            assertEquals(data.get(i).get(8).get(2), "ref1");
+
+            assertEquals(data.get(i).get(0).get(3), "Authenticated");
+            assertEquals(data.get(i).get(1).get(3), "false");
+            assertEquals(data.get(i).get(2).get(3), "false");
+            assertEquals(data.get(i).get(3).get(3), "false");
+            assertEquals(data.get(i).get(4).get(3), "false");
+            assertEquals(data.get(i).get(5).get(3), "false");
+            assertEquals(data.get(i).get(6).get(3), "false");
+            assertEquals(data.get(i).get(7).get(3), "false");
+            assertEquals(data.get(i).get(8).get(3), "false");
+
+            assertEquals(data.get(i).get(0).get(4), "Converted");
+            assertEquals(data.get(i).get(1).get(4), "false");
+            assertEquals(data.get(i).get(2).get(4), "false");
+            assertEquals(data.get(i).get(3).get(4), "false");
+            assertEquals(data.get(i).get(4).get(4), "false");
+            assertEquals(data.get(i).get(5).get(4), "false");
+            assertEquals(data.get(i).get(6).get(4), "false");
+            assertEquals(data.get(i).get(7).get(4), "false");
+            assertEquals(data.get(i).get(8).get(4), "false");
+        }
+    }
+
 
     @Test
     public void testTopFactories() throws Exception {
@@ -482,7 +584,6 @@ public class TestFactoryUrl {
             assertTrue(data.get(i).get(2).get(13).contains("14:00:00") && data.get(i).get(2).get(13).contains(date));
         }
     }
-
 
     private File prepareLogs() throws IOException {
         List<Event> events = new ArrayList<>();
