@@ -9,14 +9,12 @@ module.exports = function( grunt ) {
   //
   grunt.initConfig({
 
-
     buildConfig : {
         temp : "./temp",
         jekyllStageConfig : "_config.stage.yml",
         jekyllProdConfig : "_config.prod.yml",
         jekyllGHConfig : "_config.gh.yml"
     },
-
 
     jshint: {
         app : {
@@ -303,7 +301,6 @@ module.exports = function( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-
   grunt.registerTask('build',
         [
             //check code quality before building
