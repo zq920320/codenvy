@@ -97,13 +97,13 @@ public class TestScriptFactorySessions extends BaseTest {
         assertEquals(valueData.size(), 3);
         assertTrue(valueData.getAll().contains(
                 new ListStringValueData(
-                        Arrays.asList(new String[]{"300", "factoryUrl1", "referrer1", "true", "true"}))));
+                        Arrays.asList(new String[]{"5", "factoryUrl1", "referrer1", "true", "true"}))));
         assertTrue(valueData.getAll().contains(
                 new ListStringValueData(
-                        Arrays.asList(new String[]{"600", "factoryUrl1", "referrer1", "true", "false"}))));
+                        Arrays.asList(new String[]{"10", "factoryUrl1", "referrer1", "true", "false"}))));
         assertTrue(valueData.getAll().contains(
                 new ListStringValueData(
-                        Arrays.asList(new String[]{"900", "factoryUrl1", "referrer1", "false", "false"}))));
+                        Arrays.asList(new String[]{"15", "factoryUrl1", "referrer1", "false", "false"}))));
     }
 
     @Test
@@ -119,13 +119,13 @@ public class TestScriptFactorySessions extends BaseTest {
 
         assertTrue(valueData.getAll().get("tmp-1").getAll().contains(
                 new ListStringValueData(
-                        Arrays.asList(new String[]{"300", "factoryUrl1", "referrer1", "true", "true"}))));
+                        Arrays.asList(new String[]{"5", "factoryUrl1", "referrer1", "true", "true"}))));
         assertTrue(valueData.getAll().get("tmp-1").getAll().contains(
                 new ListStringValueData(
-                        Arrays.asList(new String[]{"600", "factoryUrl1", "referrer1", "true", "false"}))));
+                        Arrays.asList(new String[]{"10", "factoryUrl1", "referrer1", "true", "false"}))));
         assertTrue(valueData.getAll().get("tmp-1").getAll().contains(
                 new ListStringValueData(
-                        Arrays.asList(new String[]{"900", "factoryUrl1", "referrer1", "false", "false"}))));
+                        Arrays.asList(new String[]{"15", "factoryUrl1", "referrer1", "false", "false"}))));
     }
 }
 

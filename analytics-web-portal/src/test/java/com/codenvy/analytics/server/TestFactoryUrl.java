@@ -203,9 +203,9 @@ public class TestFactoryUrl {
 
         for (int i = 0; i < 7; i++) {
             assertEquals(data.get(i).get(0).get(0), "Mins");
-            assertEquals(data.get(i).get(1).get(0), "1500");
-            assertEquals(data.get(i).get(2).get(0), "1260");
-            assertEquals(data.get(i).get(3).get(0), "900");
+            assertEquals(data.get(i).get(1).get(0), "25");
+            assertEquals(data.get(i).get(2).get(0), "21");
+            assertEquals(data.get(i).get(3).get(0), "15");
 
             assertEquals(data.get(i).get(0).get(1), "Factory Url");
             assertEquals(data.get(i).get(1).get(1), "factory3");
@@ -239,14 +239,14 @@ public class TestFactoryUrl {
 
         for (int i = 0; i < 7; i++) {
             assertEquals(data.get(i).get(0).get(0), "Mins");
-            assertEquals(data.get(i).get(1).get(0), "2700");
-            assertEquals(data.get(i).get(2).get(0), "2400");
-            assertEquals(data.get(i).get(3).get(0), "2100");
-            assertEquals(data.get(i).get(4).get(0), "1500");
-            assertEquals(data.get(i).get(5).get(0), "1260");
-            assertEquals(data.get(i).get(6).get(0), "900");
-            assertEquals(data.get(i).get(7).get(0), "600");
-            assertEquals(data.get(i).get(8).get(0), "300");
+            assertEquals(data.get(i).get(1).get(0), "45");
+            assertEquals(data.get(i).get(2).get(0), "40");
+            assertEquals(data.get(i).get(3).get(0), "35");
+            assertEquals(data.get(i).get(4).get(0), "25");
+            assertEquals(data.get(i).get(5).get(0), "21");
+            assertEquals(data.get(i).get(6).get(0), "15");
+            assertEquals(data.get(i).get(7).get(0), "10");
+            assertEquals(data.get(i).get(8).get(0), "5");
 
             assertEquals(data.get(i).get(0).get(1), "Factory Url");
             assertEquals(data.get(i).get(1).get(1), "factory6");
