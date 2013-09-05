@@ -18,11 +18,6 @@
 
 IMPORT 'macros.pig';
 
--- e1 = LOAD '$LOG' using PigStorage() as (message : chararray);
--- e2 = FOREACH e1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).* [\\[]ERROR[]] [\\[](.*) [0-9]+[]] .*') 
---                         AS patten, messag;
---    dump e2;
-
 a1 = loadErrorEvents('$LOG', '$FROM_DATE', '$TO_DATE');
              
 result = countByField(a1, errortype);
