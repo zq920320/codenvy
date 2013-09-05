@@ -52,4 +52,26 @@ public class LogGenerator {
 
         return log;
     }
+    
+    /** Generates log file with given strings. */
+    public static File generateLogByStrings(List<String> strings) throws IOException {
+        File parent = new File(BaseTest.BASE_DIR, UUID.randomUUID().toString());
+        parent.mkdirs();
+
+        File log = new File(parent, UUID.randomUUID().toString());
+        log.createNewFile();
+        log.deleteOnExit();
+
+        Writer out = new BufferedWriter(new FileWriter(log));
+
+        try {
+            for (String string : strings) {
+                out.write(string + "\n");
+            }
+        } finally {
+            out.close();
+        }
+
+        return log;
+    }
 }

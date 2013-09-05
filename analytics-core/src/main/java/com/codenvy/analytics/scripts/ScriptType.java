@@ -587,6 +587,20 @@ public enum ScriptType {
             return false;
         }
     },
+    ERROR_EVENTS_BY_ERROR_TYPE {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.remove(MetricParameter.USER);
+            params.remove(MetricParameter.WS);
+            return params;
+        }
+        
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringLongValueData.class;
+        }
+    },
     FACTORY_URL_BY_ENTITY {
         @Override
         public Set<MetricParameter> getParams() {

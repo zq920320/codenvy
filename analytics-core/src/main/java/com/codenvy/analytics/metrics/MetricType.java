@@ -873,6 +873,12 @@ public enum MetricType {
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
+    },
+    ERRORS_BY_TYPE {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.ERROR_EVENTS_BY_ERROR_TYPE);
+        }
     };
 
     /**
