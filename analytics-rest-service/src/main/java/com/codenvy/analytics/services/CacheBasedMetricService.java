@@ -99,7 +99,7 @@ public class CacheBasedMetricService implements MetricService {
         Map<String, String> context = new HashMap<String, String>(parameters.size());
 
         for (String key : parameters.keySet()) {
-            context.put(key, parameters.getFirst(key));
+            context.put(key.toUpperCase(), parameters.getFirst(key));
         }
 
         if (context.get(MetricParameter.FROM_DATE.name()) == null) {
