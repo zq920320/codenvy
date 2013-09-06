@@ -119,14 +119,9 @@ module.exports = function( grunt ) {
 
                 {expand: true, cwd: '../app/scripts/', src: ['**'], dest: '../target/dist/stage/scripts/'},
 
-                // factory scripts
+                // factory folder
 
                 {expand: true, cwd: '../app/factory/', src: ['**'], dest: '../target/dist/stage/factory/'},
-
-
-                // factory styles
-
-                {expand: true, cwd: '../app/factory/', src : '*.css', dest: '../target/dist/stage/factory/'},
 
                 // styles
 
@@ -166,21 +161,12 @@ module.exports = function( grunt ) {
                     dest: '../target/dist/prod/scripts/'
                 },
 
-                // factory scripts
+                // factory folder
 
                 {
                     expand: true,
                     cwd: '../dist/factory/',
-                    src: '*.js',
-                    dest: '../target/dist/prod/factory/'
-                },
-
-                // factory styles
-
-                {
-                    expand: true,
-                    cwd: '../dist/factory/',
-                    src : '*.css',
+                    src: ['**'],
                     dest: '../target/dist/prod/factory/'
                 },
 
