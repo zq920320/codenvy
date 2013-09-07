@@ -17,18 +17,18 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
-
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class ErrorsByTypeMetric extends ValueReadBasedMetric {
+public class ErrorTypesMetric extends ValueReadBasedMetric {
 
-    ErrorsByTypeMetric() {
-        super(MetricType.ERRORS_BY_TYPE);
+    ErrorTypesMetric() {
+        super(MetricType.ERROR_TYPES);
     }
 
     /** {@inheritDoc} */
@@ -41,12 +41,13 @@ public class ErrorsByTypeMetric extends ValueReadBasedMetric {
     @Override
     public Set<MetricParameter> getParams() {
         return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, 
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
                                                     MetricParameter.TO_DATE}));
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The amount of errors by error types.";
+        return "The statistic of errors";
     }
 }

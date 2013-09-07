@@ -100,7 +100,7 @@ public class JobsRunner implements ServletContextListener {
                             break;
                     }
                 }
-                }
+            }
         } catch (Exception e) {
             LOGGER.error("Unable to force job run: " + e.getMessage(), e);
         }

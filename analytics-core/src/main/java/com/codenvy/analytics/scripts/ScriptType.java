@@ -587,7 +587,7 @@ public enum ScriptType {
             return false;
         }
     },
-    ERROR_EVENTS_BY_ERROR_TYPE {
+    ERROR_TYPES {
         @Override
         public Set<MetricParameter> getParams() {
             Set<MetricParameter> params = super.getParams();
@@ -595,7 +595,7 @@ public enum ScriptType {
             params.remove(MetricParameter.WS);
             return params;
         }
-        
+
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;

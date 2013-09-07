@@ -18,6 +18,5 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadErrorEvents('$LOG', '$FROM_DATE', '$TO_DATE');
-             
-result = countByField(a1, errortype);
+l = loadErrorEvents('$LOG', '$FROM_DATE', '$TO_DATE');
+result = countByField(l, errortype);

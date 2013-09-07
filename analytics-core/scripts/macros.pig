@@ -37,6 +37,23 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Loader of all error events.
+-- @return {ip : bytearray, dt : datetime,  errortype : chararray}
+-- In details:
+--   field 'date' contains date in format 'YYYYMMDD'
+--   field 'time' contains seconds from midnight
+---------------------------------------------------------------------------
+DEFINE loadErrorEvents(resourceParam, from, to) RETURNS Y {
+    l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
+    l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).* \\[([^\\]]*)\\] \\[([^\\]]*)\\].*')
+                          AS pattern;
+    l3 = FILTER l2 BY pattern.$2 == 'ERROR';
+    l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$3 AS errortype;
+
+    $Y = filterByDate(l4, '$from', '$to');
+};
+
+---------------------------------------------------------------------------
 -- Removes tuples with empty fields
 ---------------------------------------------------------------------------
 DEFINE removeEmptyField(X, fieldParam) RETURNS Y {
@@ -281,20 +298,3 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     $Y = DISTINCT y5;
 };
 
----------------------------------------------------------------------------
--- Loader of all error events.
--- @return {ip : bytearray, dt : datetime,  errortype : chararray, message : chararray}
--- In details:
---   field 'date' contains date in format 'YYYYMMDD'
---   field 'time' contains seconds from midnight
----------------------------------------------------------------------------
-DEFINE loadErrorEvents(resourceParam, from, to) RETURNS Y {
-
-    l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
-    l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).* [\\[]ERROR[]] [\\[](.*) [0-9]+[]] .*') 
-                          AS pattern, message;
-    l3 = FILTER l2 BY pattern.$2 != '';
-    l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$2 AS errortype, message;
-
-    $Y = filterByDate(l4, '$from', '$to');
-};

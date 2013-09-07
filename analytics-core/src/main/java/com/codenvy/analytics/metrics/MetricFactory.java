@@ -525,8 +525,8 @@ public class MetricFactory {
             case DEBUG_TIME:
                 metric = new DebugTimeMetric();
                 break;
-            case ERRORS_BY_TYPE:
-                metric = new ErrorsByTypeMetric();
+            case ERROR_TYPES:
+                metric = new ErrorTypesMetric();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);

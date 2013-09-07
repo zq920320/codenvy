@@ -20,11 +20,7 @@ package com.codenvy.analytics.scripts.util;
 
 import com.codenvy.analytics.BaseTest;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,44 +29,50 @@ public class LogGenerator {
 
     /** Generates log file with given events. */
     public static File generateLog(List<Event> events) throws IOException {
-        File parent = new File(BaseTest.BASE_DIR, UUID.randomUUID().toString());
-        parent.mkdirs();
+        File log = getFile();
 
-        File log = new File(parent, UUID.randomUUID().toString());
-        log.createNewFile();
-        log.deleteOnExit();
-
-        Writer out = new BufferedWriter(new FileWriter(log));
-
-        try {
-            for (Event event : events) {
-                out.write(event.toString() + "\n");
+        try (Writer out = new BufferedWriter(new FileWriter(log))) {
+            try {
+                for (Event event : events) {
+                    out.write(event.toString() + "\n");
+                }
+            } finally {
+                out.close();
             }
-        } finally {
-            out.close();
         }
 
         return log;
     }
-    
+
     /** Generates log file with given strings. */
     public static File generateLogByStrings(List<String> strings) throws IOException {
+        File log = getFile();
+
+        try (Writer out = new BufferedWriter(new FileWriter(log))) {
+            try {
+                for (String string : strings) {
+                    out.write(string + "\n");
+                }
+            } finally {
+                out.close();
+            }
+        }
+
+        return log;
+    }
+
+    private static File getFile() throws IOException {
         File parent = new File(BaseTest.BASE_DIR, UUID.randomUUID().toString());
-        parent.mkdirs();
+        if (!parent.mkdirs()) {
+            throw new IOException("Can't create directory tree "  + parent.getPath());
+        }
+
 
         File log = new File(parent, UUID.randomUUID().toString());
-        log.createNewFile();
-        log.deleteOnExit();
-
-        Writer out = new BufferedWriter(new FileWriter(log));
-
-        try {
-            for (String string : strings) {
-                out.write(string + "\n");
-            }
-        } finally {
-            out.close();
+        if (log.createNewFile()) {
+            throw new IOException("The file can't be created "  + log.getPath());
         }
+        log.deleteOnExit();
 
         return log;
     }

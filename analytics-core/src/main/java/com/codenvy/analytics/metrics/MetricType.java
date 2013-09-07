@@ -875,10 +875,10 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
-    ERRORS_BY_TYPE {
+    ERROR_TYPES {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.ERROR_EVENTS_BY_ERROR_TYPE);
+            return EnumSet.of(ScriptType.ERROR_TYPES);
         }
     };
 
