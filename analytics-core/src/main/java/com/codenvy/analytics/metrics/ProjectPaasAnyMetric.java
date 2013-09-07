@@ -15,28 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
 package com.codenvy.analytics.metrics;
-
 
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectPaasLocalMetric extends CalculatedMetric {
+public class ProjectPaasAnyMetric extends ListMetric {
 
-    ProjectPaasLocalMetric() {
-        super(MetricType.PROJECT_PAAS_LOCAL, MetricType.PROJECT_DEPLOYED_TYPES);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "LOCAL");
-        return super.getValue(context);
+    public ProjectPaasAnyMetric() {
+        super(MetricType.PROJECT_PAAS_ANY, new MetricType[]{MetricType.PROJECT_PAAS_APPFOG,
+                                                            MetricType.PROJECT_PAAS_AWS,
+                                                            MetricType.PROJECT_PAAS_CLOUDBEES,
+                                                            MetricType.PROJECT_PAAS_CLOUDFOUNDRY,
+                                                            MetricType.PROJECT_PAAS_GAE,
+                                                            MetricType.PROJECT_PAAS_HEROKU,
+                                                            MetricType.PROJECT_PAAS_OPENSHIFT,
+                                                            MetricType.PROJECT_PAAS_TIER3});
     }
 
     /** {@inheritDoc} */
@@ -45,8 +40,9 @@ public class ProjectPaasLocalMetric extends CalculatedMetric {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of project have been run locally";
+        return "The number of created project with some PaaS defined";
     }
 }

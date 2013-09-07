@@ -133,9 +133,9 @@
         <empty/>
     </table>
     <table length="20">
-        <date section="Deployments" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
+        <date section="Project PaaS" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
               formatLifetime="dd MMM"/>
-        <total types="project_paas_aws,project_paas_appfog,project_paas_cloudbees,project_paas_cloudfoundry,project_paas_gae,project_paas_heroku,project_paas_openshift,project_paas_tier3,project_paas_local"
+        <total types="project_paas_aws,project_paas_appfog,project_paas_cloudbees,project_paas_cloudfoundry,project_paas_gae,project_paas_heroku,project_paas_openshift,project_paas_tier3,project_no_paas_defined"
                format="%.0f"/>
         <metric type="project_paas_aws" format="%.0f" title="AWS"/>
         <metric type="project_paas_appfog" format="%.0f" title="AppFog"/>
@@ -145,7 +145,7 @@
         <metric type="project_paas_heroku" format="%.0f" title="Heroku"/>
         <metric type="project_paas_openshift" format="%.0f" title="OpenShift"/>
         <metric type="project_paas_tier3" format="%.0f" title="Tier3"/>
-        <metric type="project_paas_local" format="%.0f" title="Local"/>
+        <metric type="project_no_paas_defined" format="%.0f" title="No PaaS Defined"/>
         <empty/>
     </table>
 </display>

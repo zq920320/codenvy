@@ -255,8 +255,11 @@ public class MetricFactory {
             case PROJECT_PAAS_TIER3:
                 metric = new ProjectPaasTier3Metric();
                 break;
-            case PROJECT_PAAS_LOCAL:
-                metric = new ProjectPaasLocalMetric();
+            case PROJECT_PAAS_ANY:
+                metric = new ProjectPaasAnyMetric();
+                break;
+            case PROJECT_NO_PAAS_DEFINED:
+                metric = new ProjectNoPassDefinedMetric();
                 break;
             case USERS_SHELL_LAUNCHED_ONCE:
                 metric = new UsersShellLaunchedOnceMetric();

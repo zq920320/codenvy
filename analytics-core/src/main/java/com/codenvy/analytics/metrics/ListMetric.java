@@ -31,9 +31,13 @@ abstract class ListMetric extends AbstractMetric {
 
     private final Metric[] metrics;
 
-    ListMetric(MetricType metricType, Metric[] metrics) {
+    ListMetric(MetricType metricType, MetricType[] basedMetricTypes) {
         super(metricType);
-        this.metrics = metrics;
+
+        this.metrics = new Metric[basedMetricTypes.length];
+        for (int i = 0; i < basedMetricTypes.length; i++) {
+            this.metrics[i] = MetricFactory.createMetric(basedMetricTypes[i]);
+        }
     }
 
     /** {@inheritDoc} */

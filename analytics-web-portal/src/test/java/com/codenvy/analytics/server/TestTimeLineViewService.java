@@ -38,7 +38,7 @@ public class TestTimeLineViewService {
     public void testRun() throws Exception {
         System.setProperty(PigScriptExecutor.ANALYTICS_LOGS_DIRECTORY_PROPERTY, FSValueDataManager.RESULT_DIRECTORY);
         
-        Map<String, String> filters = new HashMap<String, String>();
+        Map<String, String> filters = new HashMap<>();
         filters.put(MetricFilter.USER.name(), "gmail.com");
 
         TimeLineServiceImpl service = new TimeLineServiceImpl();

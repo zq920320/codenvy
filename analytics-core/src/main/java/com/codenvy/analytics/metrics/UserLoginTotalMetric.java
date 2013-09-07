@@ -10,9 +10,9 @@ import com.codenvy.analytics.metrics.value.ValueData;
 public class UserLoginTotalMetric extends ListMetric {
 
     public UserLoginTotalMetric() {
-        super(MetricType.USER_LOGIN_TOTAL, new Metric[]{MetricFactory.createMetric(MetricType.USER_LOGIN_GITHUB),
-                                                        MetricFactory.createMetric(MetricType.USER_LOGIN_GOOGLE),
-                                                        MetricFactory.createMetric(MetricType.USER_LOGIN_FORM)});
+        super(MetricType.USER_LOGIN_TOTAL, new MetricType[]{MetricType.USER_LOGIN_GITHUB,
+                                                            MetricType.USER_LOGIN_GOOGLE,
+                                                            MetricType.USER_LOGIN_FORM});
     }
 
     /** {@inheritDoc} */

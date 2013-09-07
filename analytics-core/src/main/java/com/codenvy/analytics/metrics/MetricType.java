@@ -442,6 +442,7 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
+    PROJECT_PAAS_ANY,
     PROJECT_PAAS_AWS,
     PROJECT_PAAS_APPFOG,
     PROJECT_PAAS_CLOUDBEES,
@@ -450,7 +451,7 @@ public enum MetricType {
     PROJECT_PAAS_HEROKU,
     PROJECT_PAAS_OPENSHIFT,
     PROJECT_PAAS_TIER3,
-    PROJECT_PAAS_LOCAL,
+    PROJECT_NO_PAAS_DEFINED,
     USERS_SHELL_LAUNCHED_ONCE {
         @Override
         public EnumSet<ScriptType> getScripts() {

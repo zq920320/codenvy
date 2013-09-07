@@ -10,8 +10,8 @@ import com.codenvy.analytics.metrics.value.ValueData;
 public class FactorySessionsMetric extends ListMetric {
 
     public FactorySessionsMetric() {
-        super(MetricType.FACTORY_SESSIONS, new Metric[]{MetricFactory.createMetric(MetricType.FACTORY_SESSIONS_ANON),
-                                                        MetricFactory.createMetric(MetricType.FACTORY_SESSIONS_AUTH)});
+        super(MetricType.FACTORY_SESSIONS, new MetricType[]{MetricType.FACTORY_SESSIONS_ANON,
+                                                            MetricType.FACTORY_SESSIONS_AUTH});
     }
 
     /** {@inheritDoc} */
