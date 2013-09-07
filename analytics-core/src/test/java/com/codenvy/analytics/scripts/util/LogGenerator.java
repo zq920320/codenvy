@@ -69,7 +69,7 @@ public class LogGenerator {
 
 
         File log = new File(parent, UUID.randomUUID().toString());
-        if (log.createNewFile()) {
+        if (!log.createNewFile()) {
             throw new IOException("The file can't be created "  + log.getPath());
         }
         log.deleteOnExit();
