@@ -25,9 +25,7 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectCreatedRubyMetric extends CalculatedMetric {
 
     public ProjectCreatedRubyMetric() {
@@ -37,7 +35,10 @@ public class ProjectCreatedRubyMetric extends CalculatedMetric {
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         MetricParameter.PARAM.put(context, "Rails");
-        return super.getValue(context);
+        ValueData value = super.getValue(context);
+
+        MetricParameter.PARAM.put(context, "Ruby");
+        return value.union(super.getValue(context));
     }
 
     @Override
