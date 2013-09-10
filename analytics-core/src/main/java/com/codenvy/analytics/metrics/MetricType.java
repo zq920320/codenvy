@@ -27,6 +27,21 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricType {
+    FACTORY_URL_ACCEPTED_NUMBER,
+    FACTORY_URL_ACCEPTED {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.FACTORY_URL_ACCEPTED_BY_FACTORY_URL);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) throws IOException {
+            MetricParameter.FIELD.put(context, "ws");
+            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
+        }
+    },
     USER_UPDATE_PROFILE {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -559,7 +574,7 @@ public enum MetricType {
     FACTORY_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.FACTORY_CREATED, ScriptType.FACTORY_CREATED_BY_URL);
+            return EnumSet.of(ScriptType.FACTORY_CREATED, ScriptType.FACTORY_CREATED_BY_FACTORY_URL);
         }
 
         @Override
@@ -578,20 +593,6 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.FIELD.put(context, "url");
-            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
-            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
-            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
-        }
-    },
-    FACTORY_URL_ACCEPTED {
-        @Override
-        public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.FACTORY_URL_ACCEPTED_BY_URL);
-        }
-
-        @Override
-        public void modifyContext(Map<String, String> context) throws IOException {
-            MetricParameter.FIELD.put(context, "ws");
             MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
@@ -646,13 +647,16 @@ public enum MetricType {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet
-                    .of(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY, ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS);
+                    .of(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY,
+                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS,
+                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_REFERRER_URL);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
+            MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
         }
     },
     PRODUCT_USAGE_TIME_FACTORY {
@@ -879,6 +883,26 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
+    REFERRERS {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.REFERRERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
+            MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
+        }
+    },
+    FACTORY_URL_TOP_REFERRERS_BY_1DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_7DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_30DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_60DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_90DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_365DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_LIFETIME,
     ERROR_TYPES {
         @Override
         public EnumSet<ScriptType> getScripts() {

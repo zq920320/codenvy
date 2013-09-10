@@ -165,18 +165,6 @@ DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------------------------
--- Simplify the names of fields
--- @return {user : bytearray, ws: bytearray, id: bytearray, dt: datetime, id: bytearray}
----------------------------------------------------------------------------------------------
-DEFINE simplifyFields(X) RETURNS Y {
- $Y = FOREACH $X GENERATE macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::ws AS ws,
-                        macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::user AS user,
-                        macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::dt AS dt,
-                        macro_combineSmallSessions_macro_combineClosestEvents_c_0_0::id AS id,
-                        delta;
-};
-
----------------------------------------------------------------------------------------------
 -- Combines small sessions into big one if time between them is less than $inactiveInterval
 -- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
 ---------------------------------------------------------------------------------------------
@@ -262,7 +250,7 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     g = FILTER g2 BY delta == minDelta AND c::secondEvent == '$finishEvent';
 
     -- converts time into seconds
-    $Y = FOREACH g GENERATE ws, user, dt, delta / 1000 AS delta, id;
+    $Y = FOREACH g GENERATE ws AS ws, user AS user, dt AS dt, delta / 1000 AS delta, id AS id;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -298,3 +286,22 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     $Y = DISTINCT y5;
 };
 
+---------------------------------------------------------------------------------------------
+-- Adds field which is indicator if event was happened during session or wasn't
+-- @return {*, $fieldParam: int}
+---------------------------------------------------------------------------------------------
+DEFINE addEventIndicator(S, X,  eventParam, fieldParam, inactiveIntervalParam) RETURNS Y {
+  i1 = filterByEvent($X, '$eventParam');
+  i = FOREACH i1 GENERATE ws, user, dt;
+
+  -- founds out if event was inside session
+  x1 = JOIN $S BY (ws, user) LEFT, i BY (ws, user);
+  x2 = FOREACH x1 GENERATE *, (i::ws IS NULL ? 0 : (SecondsBetween($S::dt, i::dt) < 0 AND SecondsBetween($S::dt, i::dt) + $S::delta + (long) $inactiveIntervalParam * 60  > 0 ? 1 : 0 )) AS $fieldParam;
+
+  -- if several events were occurred then keep only one
+  x3 = GROUP x2 BY id;
+  $Y = FOREACH x3 {
+	t = LIMIT x2 1;
+	GENERATE FLATTEN(t);
+    }
+};

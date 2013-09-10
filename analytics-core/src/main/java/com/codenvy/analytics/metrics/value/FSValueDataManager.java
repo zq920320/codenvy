@@ -140,12 +140,18 @@ public class FSValueDataManager {
 
         for (Entry<String, String> entry : uuid.entrySet()) {
             String element;
+
             if (MetricParameter.TO_DATE.isParam(entry.getKey())) {
                 element = translateDateToRelativePath(entry.getValue());
+
             } else if (MetricParameter.ALIAS.isParam(entry.getKey())) {
                 element = translateAliasToRelativePath(entry.getValue());
-            } else if (MetricParameter.URL.isParam(entry.getKey())) {
+
+            } else if (MetricParameter.FACTORY_URL.isParam(entry.getKey()) ||
+                       MetricParameter.REFERRER_URL.isParam(entry.getKey())) {
+
                 element = translateAliasToRelativePath("" + entry.getValue().hashCode());
+
             } else {
                 element = entry.getValue().toLowerCase();
             }

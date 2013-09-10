@@ -18,22 +18,22 @@
 
 IMPORT 'macros.pig';
 
-%DEFAULT inactiveInterval '10';  -- in minutes
-
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 j = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
 
--- get all 'session-factory-started' events with their 'id' and authenticated type
-a1 = filterByEvent(t, 'session-factory-started');
-a2 = extractParam(a1, 'AUTHENTICATED', 'authenticated');
-a3 = extractParam(a2, 'SESSION-ID', 'id');
-a = FOREACH a3 GENERATE ws, id, authenticated;
 
--- keeps only the events of started sessions that match with combined ones
-b1 = JOIN a BY id, j BY id;
-b2 = FILTER b1 BY j::id IS NOT NULL;
-b = FOREACH b2 GENERATE a::ws AS ws, a::authenticated AS authenticated;
+u1 = LOAD '$LOAD_DIR' USING PigStorage() AS (tmpWs : chararray, referrer : chararray, factoryUrl : chararray);
+u = removeEmptyField(u1, 'referrer');
 
-c = GROUP b BY (authenticated, ws);
-result = FOREACH c GENERATE TOBAG(group.authenticated, group.ws), COUNT(b);
+-- founds out the corresponding referrer and factoryUrl
+s1 = JOIN j BY ws LEFT, u BY tmpWs;
+
+s1 = FOREACH s1 GENERATE u::referrer AS referrer, j::ws AS ws, j::user AS user, j::dt AS dt, j::delta AS delta;
+s = removeEmptyField(s1, 'referrer');
+
+r1 = GROUP s BY referrer;
+result = FOREACH r1 {
+    r2 = FOREACH s GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
+    GENERATE group, r2;
+}
 

@@ -125,7 +125,10 @@ public class DataProcessing {
                                    Map<String, String> uuid) {
         switch (resultScheme.length) {
             case 1:
-                if (resultScheme[0] == MetricParameter.ALIAS || resultScheme[0] == MetricParameter.URL) { // TODO
+                if (resultScheme[0] == MetricParameter.ALIAS
+                    || resultScheme[0] == MetricParameter.FACTORY_URL
+                    || resultScheme[0] == MetricParameter.REFERRER_URL) { // TODO
+
                     MetricParameter.ENTITY.put(uuid, entityType.name());
                 }
                 uuid.put(resultScheme[0].name(), key.toString());
@@ -139,7 +142,10 @@ public class DataProcessing {
                 }
 
                 for (int i = 0; i < items.size(); i++) {
-                    if (resultScheme[i] == MetricParameter.ALIAS || resultScheme[i] == MetricParameter.URL) {
+                    if (resultScheme[i] == MetricParameter.ALIAS
+                        || resultScheme[i] == MetricParameter.FACTORY_URL
+                        || resultScheme[i] == MetricParameter.REFERRER_URL) {
+
                         MetricParameter.ENTITY.put(uuid, entityType.name());
                     }
 

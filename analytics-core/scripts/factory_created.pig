@@ -18,17 +18,20 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-a3 = filterByEvent(a1, 'factory-created');
-a7 = extractParam(a3, 'PROJECT', 'project');
-a8 = extractParam(a7, 'TYPE', 'type');
-a9 = extractParam(a8, 'REPO-URL', 'repoUrl');
-a10 = extractParam(a9, 'FACTORY-URL', 'factoryUrl');
+r = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a = FOREACH a10 GENERATE ws, user, project, type, repoUrl, factoryUrl;
-b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, user : chararray, project : chararray, type : chararray, repoUrl : chararray, factoryUrl : chararray);
+-- list of factories
+a1 = filterByEvent(r, 'factory-created');
+a2 = extractParam(a1, 'PROJECT', 'project');
+a3 = extractParam(a2, 'TYPE', 'type');
+a4 = extractParam(a3, 'REPO-URL', 'repoUrl');
+a5 = extractParam(a4, 'FACTORY-URL', 'factoryUrl');
+a = FOREACH a5 GENERATE ws, user, project, type, repoUrl, factoryUrl;
 
-c1 = UNION a, b;
+l = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, user : chararray, project : chararray, type : chararray, repoUrl : chararray, factoryUrl : chararray);
+
+-- store whole data
+c1 = UNION a, l;
 c = DISTINCT c1;
 
 STORE c INTO '$STORE_DIR' USING PigStorage();

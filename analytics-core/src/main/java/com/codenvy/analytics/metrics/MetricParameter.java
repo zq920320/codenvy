@@ -27,12 +27,13 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
     EVENT,
-    URL,
+    FACTORY_URL,
+    REFERRER_URL,
     FIELD,
     PARAM,
     ALIAS,
     LOG,
-    LOAD_DIR,
+    LOAD_DIR, // TODO pass only baseDir
     STORE_DIR,
     USER {
         @Override
@@ -178,7 +179,8 @@ public enum MetricParameter {
         WS,
         DOMAINS,
         USERS,
-        URL
+        FACTORY_URL,
+        REFERRER_URL
     }
 
     public enum WS_TYPES {
