@@ -1,0 +1,38 @@
+/*
+ *
+ * CODENVY CONFIDENTIAL
+ * ________________
+ *
+ * [2012] - [2013] Codenvy, S.A.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
+
+IMPORT 'macros.pig';
+
+a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+a2 = filterByEvent(a1, 'factory-url-accepted');
+a3 = extractParam(a2, 'REFERRER', 'referrer');
+a4 = extractParam(a3, 'FACTORY-URL', 'factoryUrl');
+a = FOREACH a4 GENERATE ws, referrer, factoryUrl;
+
+b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, referrer : chararray, factoryUrl : chararray);
+c1 = UNION a, b;
+c = DISTINCT c1;
+
+STORE c INTO '$STORE_DIR' USING PigStorage();
+
+d1 = FOREACH a GENERATE ws, factoryUrl;
+d2 = removeEmptyField(d1, 'ws');
+d = removeEmptyField(d2, 'factoryUrl');
+
+result = setByField(d, 'factoryUrl', 'ws');
+
