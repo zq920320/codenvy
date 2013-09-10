@@ -45,13 +45,13 @@ public abstract class AbstractTopReferrersMetric extends CalculatedMetric {
             item.add(referrer);
             item.add(tmpWs.toString());
             item.add(sess.toString());
-            item.add("" + 100 * (sess.longValue() - auth.longValue()) / sess.longValue());
-            item.add("" + 100 * auth.longValue() / sess.longValue());
-            item.add("" + 100 * (sess.longValue() - conv.longValue()) / sess.longValue());
-            item.add("" + 100 * conv.longValue() / sess.longValue());
-            item.add("" + 100 * bld.longValue() / sess.longValue());
-            item.add("" + 100 * run.longValue() / sess.longValue());
-            item.add("" + 100 * dpl.longValue() / sess.longValue());
+            item.add("" + 100D * (sess.longValue() - auth.longValue()) / sess.longValue());
+            item.add("" + 100D * auth.longValue() / sess.longValue());
+            item.add("" + 100D * (sess.longValue() - conv.longValue()) / sess.longValue());
+            item.add("" + 100D * conv.longValue() / sess.longValue());
+            item.add("" + 100D * bld.longValue() / sess.longValue());
+            item.add("" + 100D * run.longValue() / sess.longValue());
+            item.add("" + 100D * dpl.longValue() / sess.longValue());
             item.add("" + mins.longValue() / 60);
 
             addFirstLastSessionsOccurrence(item);

@@ -313,25 +313,25 @@ public class TestFactoryUrl {
             assertEquals(data.get(i).get(1).get(2), "8");
 
             assertEquals(data.get(i).get(0).get(3), "% Anon");
-            assertEquals(data.get(i).get(1).get(3), "100");
+            assertEquals(data.get(i).get(1).get(3), "100.0");
 
             assertEquals(data.get(i).get(0).get(4), "% Auth");
-            assertEquals(data.get(i).get(1).get(4), "0");
+            assertEquals(data.get(i).get(1).get(4), "0.0");
 
             assertEquals(data.get(i).get(0).get(5), "% Abandon");
-            assertEquals(data.get(i).get(1).get(5), "100");
+            assertEquals(data.get(i).get(1).get(5), "100.0");
 
             assertEquals(data.get(i).get(0).get(6), "% Convert");
-            assertEquals(data.get(i).get(1).get(6), "0");
+            assertEquals(data.get(i).get(1).get(6), "0.0");
 
             assertEquals(data.get(i).get(0).get(7), "% Build");
-            assertEquals(data.get(i).get(1).get(7), "25");
+            assertEquals(data.get(i).get(1).get(7), "25.0");
 
             assertEquals(data.get(i).get(0).get(8), "% Run");
-            assertEquals(data.get(i).get(1).get(8), "0");
+            assertEquals(data.get(i).get(1).get(8), "0.0");
 
             assertEquals(data.get(i).get(0).get(9), "% Deployed");
-            assertEquals(data.get(i).get(1).get(9), "12");
+            assertEquals(data.get(i).get(1).get(9), "12.5");
 
             assertEquals(data.get(i).get(0).get(10), "Mins");
             assertEquals(data.get(i).get(1).get(10), "196");
