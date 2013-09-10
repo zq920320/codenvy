@@ -20,13 +20,17 @@ package com.codenvy.analytics.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.metrics.DataProcessing;
 import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.MapStringListListStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -41,8 +45,11 @@ import static org.testng.AssertJUnit.assertTrue;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestScriptProductUsageSessionsFactory extends BaseTest {
 
-    @Test
-    public void testEventFound() throws Exception {
+    private File                log;
+    private Map<String, String> context;
+
+    @BeforeClass
+    public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user", "true", "brType")
@@ -52,20 +59,34 @@ public class TestScriptProductUsageSessionsFactory extends BaseTest {
 
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user")
                         .withDate("2013-02-10").withTime("10:05:00").build());
+
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user")
                         .withDate("2013-02-10").withTime("10:10:00").build());
 
-        File log = LogGenerator.generateLog(events);
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factory1", "ref1")
+                        .withDate("2013-02-10").withTime("10:10:00").build());
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factory1", "ref2")
+                        .withDate("2013-02-10").withTime("10:10:00").build());
 
-        Map<String, String> params = new HashMap<>();
-        params.put(MetricParameter.FROM_DATE.name(), "20130210");
-        params.put(MetricParameter.TO_DATE.name(), "20130210");
-        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
-        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.TEMPORARY.name());
+        log = LogGenerator.generateLog(events);
 
+        context = new HashMap<>();
+        MetricParameter.FROM_DATE.put(context, "20130210");
+        MetricParameter.TO_DATE.put(context, "20130210");
+        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
+        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
 
+        DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
+    }
+
+    @Test
+    public void testEventFound() throws Exception {
         ListListStringValueData value =
-                (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY, log, params);
+                (ListListStringValueData)executeAndReturnResult(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY,
+                                                                log,
+                                                                context);
         List<ListStringValueData> all = value.getAll();
 
         assertEquals(all.size(), 1);
@@ -80,34 +101,34 @@ public class TestScriptProductUsageSessionsFactory extends BaseTest {
 
     @Test
     public void testEventFoundByWs() throws Exception {
-        List<Event> events = new ArrayList<>();
-
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user", "true", "brType")
-                        .withDate("2013-02-10").withTime("10:00:00").build());
-        events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user", "true", "brType")
-                        .withDate("2013-02-10").withTime("10:00:00").build());
-
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user")
-                        .withDate("2013-02-10").withTime("10:05:00").build());
-        events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user")
-                        .withDate("2013-02-10").withTime("10:10:00").build());
-
-        File log = LogGenerator.generateLog(events);
-
-        Map<String, String> params = new HashMap<>();
-        params.put(MetricParameter.FROM_DATE.name(), "20130210");
-        params.put(MetricParameter.TO_DATE.name(), "20130210");
-        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
-        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.TEMPORARY.name());
-
         MapStringListListStringValueData value =
                 (MapStringListListStringValueData)executeAndReturnResult(
-                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS, log, params);
+                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS, log, context);
 
         assertEquals(value.size(), 1);
         assertTrue(value.getAll().containsKey("tmp-1"));
 
         List<String> list = value.getAll().get("tmp-1").getAll().get(0).getAll();
+        assertTrue(list.contains("tmp-1"));
+        assertEquals(list.get(0), "tmp-1");
+        assertTrue(list.contains("user"));
+        assertEquals(list.get(1), "user");
+        assertTrue(list.contains("2013-02-10T10:00:00.000+02:00"));
+        assertEquals(list.get(2), "2013-02-10T10:00:00.000+02:00");
+        assertTrue(list.contains("300"));
+        assertEquals(list.get(3), "300");
+    }
+
+    @Test
+    public void testEventFoundByUrl() throws Exception {
+        MapStringListListStringValueData value =
+                (MapStringListListStringValueData)executeAndReturnResult(
+                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_URL, log, context);
+
+        assertEquals(value.size(), 1);
+        assertTrue(value.getAll().containsKey("ref1"));
+
+        List<String> list = value.getAll().get("ref1").getAll().get(0).getAll();
         assertTrue(list.contains("tmp-1"));
         assertEquals(list.get(0), "tmp-1");
         assertTrue(list.contains("user"));

@@ -32,7 +32,7 @@ public enum MetricParameter {
     PARAM,
     ALIAS,
     LOG,
-    LOAD_DIR,
+    LOAD_DIR, // TODO pass only baseDir
     STORE_DIR,
     USER {
         @Override
@@ -178,7 +178,7 @@ public enum MetricParameter {
         WS,
         DOMAINS,
         USERS,
-        URL
+        URL // TODO split url by factoryUrl and refUrl
     }
 
     public enum WS_TYPES {

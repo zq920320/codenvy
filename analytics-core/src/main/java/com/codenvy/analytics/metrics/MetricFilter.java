@@ -58,6 +58,12 @@ public enum MetricFilter {
             return "repoUrl";
         }
     },
+    REFERRER_URL {
+        @Override
+        public String getScriptField() {
+            return "referrer";
+        }
+    },
     FACTORY_URL {
         @Override
         public String getScriptField() {

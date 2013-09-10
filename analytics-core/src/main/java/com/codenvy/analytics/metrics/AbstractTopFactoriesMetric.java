@@ -89,14 +89,17 @@ public abstract class AbstractTopFactoriesMetric extends CalculatedMetric {
             MetricParameter.TO_DATE.putDefaultValue(fullContext);
             MetricFilter.WS.put(fullContext, MetricFilter.WS.get(context));
 
-            ListStringValueData value =
-                    (ListStringValueData)MetricFactory.createMetric(MetricType.FACTORY_SESSION_FIRST)
-                                                      .getValue(fullContext);
-            item.add(value.size() == 0 ? "" : value.getAll().get(2));
-            value =
-                    (ListStringValueData)MetricFactory.createMetric(MetricType.FACTORY_SESSION_LAST)
-                                                      .getValue(fullContext);
-            item.add(value.size() == 0 ? "" : value.getAll().get(2));
+            FactorySessionFirstMetric sessionFirstMetric =
+                    (FactorySessionFirstMetric)MetricFactory.createMetric(MetricType.FACTORY_SESSION_FIRST);
+            ListStringValueData firstSession = (ListStringValueData)sessionFirstMetric.getValue(context);
+            String date = firstSession.size() == 0 ? "" : sessionFirstMetric.getDate(firstSession);
+            item.add(date);
+
+            FactorySessionsLastMetric factoryLastMetric =
+                    (FactorySessionsLastMetric)MetricFactory.createMetric(MetricType.FACTORY_SESSION_LAST);
+            ListStringValueData lastSession = (ListStringValueData)factoryLastMetric.getValue(context);
+            date = lastSession.size() == 0 ? "" : factoryLastMetric.getDate(lastSession);
+            item.add(date);
 
             result.add(new ListStringValueData(item));
         }

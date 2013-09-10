@@ -24,7 +24,10 @@ import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * It is supposed to read precalculated {@link com.codenvy.analytics.metrics.value.ValueData} from storage.
@@ -97,6 +100,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     private void putFilterValue(MetricFilter filterKey, String filterValue, LinkedHashMap<String, String> uuid) {
         switch (filterKey) {
             case FACTORY_URL:
+            case REFERRER_URL:
                 uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.URL.name());
                 uuid.put(MetricParameter.URL.name(), filterValue);
                 break;

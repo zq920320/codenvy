@@ -18,8 +18,6 @@
 
 IMPORT 'macros.pig';
 
-%DEFAULT inactiveInterval '10';  -- in minutes
-
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 j = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
 

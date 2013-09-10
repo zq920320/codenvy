@@ -214,6 +214,24 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
+    PRODUCT_USAGE_SESSIONS_FACTORY_BY_URL {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringListListStringValueData.class;
+        }
+
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.LOAD_DIR);
+            return params;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.URL};
+        }
+    },
     PRODUCT_USAGE_TIME_FACTORY {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -747,6 +765,19 @@ public enum ScriptType {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringListValueData.class;
+        }
+    },
+    REFERRERS {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = new HashSet<>();
+            params.add(MetricParameter.LOAD_DIR);
+            return params;
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringFixedLongListValueData.class;
         }
     },
     /** Script for testing purpose. */

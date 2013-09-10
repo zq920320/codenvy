@@ -21,8 +21,7 @@ IMPORT 'macros.pig';
 %DEFAULT inactiveInterval '10';  -- in minutes
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-j1 = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
-j = simplifyFields(j1);
+j = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
 
 -- get all 'session-factory-started' events with their 'id' and authenticated type
 a1 = filterByEvent(t, 'session-factory-started');

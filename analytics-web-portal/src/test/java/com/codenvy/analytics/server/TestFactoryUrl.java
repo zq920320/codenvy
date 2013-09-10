@@ -59,6 +59,7 @@ public class TestFactoryUrl {
         MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.getDefaultValue());
 
         DataProcessing.calculateAndStore(MetricType.FACTORY_CREATED, context);
+        DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
         DataProcessing.calculateAndStore(MetricType.TEMPORARY_WORKSPACE_CREATED, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_TYPES, context);
         DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_SESSIONS_FACTORY, context);
@@ -69,8 +70,8 @@ public class TestFactoryUrl {
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_AND_RUN, context);
         DataProcessing.calculateAndStore(MetricType.ACTIVE_FACTORY_SET, context);
         DataProcessing.calculateAndStore(MetricType.USER_CREATED_FROM_FACTORY, context);
-        DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_LIST, context);
+        DataProcessing.calculateAndStore(MetricType.REFERRERS, context);
     }
 
     @Test
@@ -290,6 +291,58 @@ public class TestFactoryUrl {
         }
     }
 
+
+    @Test
+    public void testTopReferrers() throws Exception {
+        FactoryUrlTopReferrersServiceImpl service = new FactoryUrlTopReferrersServiceImpl();
+        List<TableData> data = service.getData(Utils.newContext());
+
+        assertEquals(data.size(), 7);
+        assertEquals(data.get(0).size(), 2);
+
+        assertEquals(data.get(0).get(0).size(), 13);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(data.get(i).get(0).get(0), "Referrer");
+            assertEquals(data.get(i).get(1).get(0), "ref1");
+
+            assertEquals(data.get(i).get(0).get(1), "Temporary Workspaces");
+            assertEquals(data.get(i).get(1).get(1), "8");
+
+            assertEquals(data.get(i).get(0).get(2), "Sessions");
+            assertEquals(data.get(i).get(1).get(2), "8");
+
+            assertEquals(data.get(i).get(0).get(3), "% Anon");
+            assertEquals(data.get(i).get(1).get(3), "100");
+
+            assertEquals(data.get(i).get(0).get(4), "% Auth");
+            assertEquals(data.get(i).get(1).get(4), "0");
+
+            assertEquals(data.get(i).get(0).get(5), "% Abandon");
+            assertEquals(data.get(i).get(1).get(5), "100");
+
+            assertEquals(data.get(i).get(0).get(6), "% Convert");
+            assertEquals(data.get(i).get(1).get(6), "0");
+
+            assertEquals(data.get(i).get(0).get(7), "% Build");
+            assertEquals(data.get(i).get(1).get(7), "25");
+
+            assertEquals(data.get(i).get(0).get(8), "% Run");
+            assertEquals(data.get(i).get(1).get(8), "0");
+
+            assertEquals(data.get(i).get(0).get(9), "% Deployed");
+            assertEquals(data.get(i).get(1).get(9), "12");
+
+            assertEquals(data.get(i).get(0).get(10), "Mins");
+            assertEquals(data.get(i).get(1).get(10), "196");
+
+            assertEquals(data.get(i).get(0).get(11), "First Session");
+            assertTrue(data.get(i).get(1).get(11).contains("10:00:00"));
+
+            assertEquals(data.get(i).get(0).get(12), "Last Session");
+            assertTrue(data.get(i).get(1).get(12).contains("18:00:00"));
+        }
+    }
 
     @Test
     public void testTopFactories() throws Exception {
@@ -649,9 +702,6 @@ public class TestFactoryUrl {
                         .createSessionFactoryStartedEvent("id5", "tmp-5", "anonymoususer_5", "false", "brType", "brVer")
                         .withDate(date).withTime("14:00:00").build());
         events.add(Event.Builder
-                        .createSessionFactoryStartedEvent("id6", "tmp-6", "anonymoususer_6", "false", "brType", "brVer")
-                        .withDate(date).withTime("15:00:00").build());
-        events.add(Event.Builder
                         .createSessionFactoryStartedEvent("id7", "tmp-7", "anonymoususer_7", "false", "brType", "brVer")
                         .withDate(date).withTime("16:00:00").build());
         events.add(Event.Builder
@@ -660,6 +710,9 @@ public class TestFactoryUrl {
         events.add(Event.Builder
                         .createSessionFactoryStartedEvent("id9", "tmp-9", "anonymoususer_9", "false", "brType", "brVer")
                         .withDate(date).withTime("18:00:00").build());
+        events.add(Event.Builder
+                        .createSessionFactoryStartedEvent("id6", "tmp-6", "anonymoususer_6", "false", "brType", "brVer")
+                        .withDate(date).withTime("15:00:00").build());
         events.add(
                 Event.Builder
                      .createSessionFactoryStartedEvent("id10", "tmp-10", "anonymoususer_10", "false", "brType", "brVer")

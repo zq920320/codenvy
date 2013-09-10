@@ -48,6 +48,11 @@ public class FactorySessionFirstMetric extends CalculatedMetric {
         return ValueDataFactory.createDefaultValue(getValueDataClass());
     }
 
+    /** @return the date of the sessions */
+    public String getDate(ListStringValueData valueData) {
+        return valueData.getAll().get(2);
+    }
+
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {

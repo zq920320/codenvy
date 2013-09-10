@@ -20,8 +20,7 @@ IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-j1 = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
-j = simplifyFields(j1);
+j = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
 
 /*
  * List of interesting events.

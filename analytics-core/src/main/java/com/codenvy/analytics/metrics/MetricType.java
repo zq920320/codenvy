@@ -442,7 +442,6 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
-    PROJECT_PAAS_ANY,
     PROJECT_PAAS_AWS,
     PROJECT_PAAS_APPFOG,
     PROJECT_PAAS_CLOUDBEES,
@@ -451,7 +450,7 @@ public enum MetricType {
     PROJECT_PAAS_HEROKU,
     PROJECT_PAAS_OPENSHIFT,
     PROJECT_PAAS_TIER3,
-    PROJECT_NO_PAAS_DEFINED,
+    PROJECT_PAAS_LOCAL,
     USERS_SHELL_LAUNCHED_ONCE {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -574,20 +573,6 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.FIELD.put(context, "url");
-            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
-            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
-            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
-        }
-    },
-    FACTORY_URL_ACCEPTED {
-        @Override
-        public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.FACTORY_URL_ACCEPTED_BY_URL);
-        }
-
-        @Override
-        public void modifyContext(Map<String, String> context) throws IOException {
-            MetricParameter.FIELD.put(context, "ws");
             MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
@@ -875,12 +860,32 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
-    ERROR_TYPES {
+    ERRORS_BY_TYPE {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.ERROR_TYPES);
         }
-    };
+    },
+    REFERRERS {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.REFERRERS);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
+            MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
+        }
+    },
+    FACTORY_URL_TOP_REFERRERS_BY_1DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_7DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_30DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_60DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_90DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_365DAY,
+    FACTORY_URL_TOP_REFERRERS_BY_LIFETIME;
 
     /**
      * @return set of scripts that are responsible for calculation value of the metric. If it returns nothing

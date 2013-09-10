@@ -528,6 +528,30 @@ public class MetricFactory {
             case ERROR_TYPES:
                 metric = new ErrorTypesMetric();
                 break;
+            case REFERRERS:
+                metric = new ReferrersMetric();
+                break;
+            case FACTORY_URL_TOP_REFERRERS_BY_1DAY:
+                metric = new FactoryUrlTopReferrers1DayMetric();
+                break;
+            case FACTORY_URL_TOP_REFERRERS_BY_7DAY:
+                metric = new FactoryUrlTopReferrers7DayMetric();
+                break;
+            case FACTORY_URL_TOP_REFERRERS_BY_30DAY:
+                metric = new FactoryUrlTopReferrers30DayMetric();
+                break;
+            case FACTORY_URL_TOP_REFERRERS_BY_60DAY:
+                metric = new FactoryUrlTopReferrers60DayMetric();
+                break;
+            case FACTORY_URL_TOP_REFERRERS_BY_90DAY:
+                metric = new FactoryUrlTopReferrers90DayMetric();
+                break;
+            case FACTORY_URL_TOP_REFERRERS_BY_365DAY:
+                metric = new FactoryUrlTopReferrers365DayMetric();
+                break;
+            case FACTORY_URL_TOP_REFERRERS_BY_LIFETIME:
+                metric = new FactoryUrlTopReferrersLifeTimeMetric();
+                break;
             default:
                 throw new IllegalArgumentException("Unknown metric type " + metricType);
         }
