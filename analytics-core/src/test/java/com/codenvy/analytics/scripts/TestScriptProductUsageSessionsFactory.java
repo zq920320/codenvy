@@ -123,7 +123,7 @@ public class TestScriptProductUsageSessionsFactory extends BaseTest {
     public void testEventFoundByUrl() throws Exception {
         MapStringListListStringValueData value =
                 (MapStringListListStringValueData)executeAndReturnResult(
-                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_URL, log, context);
+                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_REFERRER_URL, log, context);
 
         assertEquals(value.size(), 1);
         assertTrue(value.getAll().containsKey("ref1"));

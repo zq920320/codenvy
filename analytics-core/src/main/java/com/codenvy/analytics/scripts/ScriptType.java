@@ -214,7 +214,7 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
-    PRODUCT_USAGE_SESSIONS_FACTORY_BY_URL {
+    PRODUCT_USAGE_SESSIONS_FACTORY_BY_REFERRER_URL {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringListListStringValueData.class;
@@ -229,7 +229,7 @@ public enum ScriptType {
 
         @Override
         public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.URL};
+            return new MetricParameter[]{MetricParameter.REFERRER_URL};
         }
     },
     PRODUCT_USAGE_TIME_FACTORY {
@@ -373,7 +373,7 @@ public enum ScriptType {
             return params;
         }
     },
-    FACTORY_URL_ACCEPTED_BY_URL {
+    FACTORY_URL_ACCEPTED_BY_FACTORY_URL {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;
@@ -381,7 +381,7 @@ public enum ScriptType {
 
         @Override
         public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.URL};
+            return new MetricParameter[]{MetricParameter.FACTORY_URL};
         }
 
         @Override
@@ -732,7 +732,7 @@ public enum ScriptType {
             return LongValueData.class;
         }
     },
-    FACTORY_CREATED_BY_URL {
+    FACTORY_CREATED_BY_FACTORY_URL {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringLongValueData.class;
@@ -740,7 +740,7 @@ public enum ScriptType {
 
         @Override
         public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.URL};
+            return new MetricParameter[]{MetricParameter.FACTORY_URL};
         }
     },
     ACTON {

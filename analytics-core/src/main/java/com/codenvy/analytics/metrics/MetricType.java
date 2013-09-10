@@ -31,7 +31,7 @@ public enum MetricType {
     FACTORY_URL_ACCEPTED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.FACTORY_URL_ACCEPTED_BY_URL);
+            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.FACTORY_URL_ACCEPTED_BY_FACTORY_URL);
         }
 
         @Override
@@ -570,7 +570,7 @@ public enum MetricType {
     FACTORY_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.FACTORY_CREATED, ScriptType.FACTORY_CREATED_BY_URL);
+            return EnumSet.of(ScriptType.FACTORY_CREATED, ScriptType.FACTORY_CREATED_BY_FACTORY_URL);
         }
 
         @Override
@@ -645,7 +645,7 @@ public enum MetricType {
             return EnumSet
                     .of(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY,
                         ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS,
-                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_URL);
+                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_REFERRER_URL);
         }
 
         @Override
@@ -877,12 +877,6 @@ public enum MetricType {
             MetricParameter.EVENT.put(context, EventType.DEBUG_STARTED.getRootType());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
-        }
-    },
-    ERRORS_BY_TYPE {
-        @Override
-        public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.ERROR_TYPES);
         }
     },
     REFERRERS {

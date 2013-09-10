@@ -29,7 +29,6 @@ import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -219,7 +218,7 @@ public class TestScriptSetActive extends BaseTest {
         Utils.initLoadStoreDirectories(context);
 
         MapStringSetValueData valueData =
-                (MapStringSetValueData)executeAndReturnResult(ScriptType.FACTORY_URL_ACCEPTED_BY_URL, fLog, context);
+                (MapStringSetValueData)executeAndReturnResult(ScriptType.FACTORY_URL_ACCEPTED_BY_FACTORY_URL, fLog, context);
 
         assertEquals(valueData.size(), 2);
         assertTrue(valueData.getAll().containsKey("factoryUrl1"));

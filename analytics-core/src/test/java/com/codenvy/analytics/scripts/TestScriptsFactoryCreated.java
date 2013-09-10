@@ -97,7 +97,7 @@ public class TestScriptsFactoryCreated extends BaseTest {
         MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
 
         MapStringLongValueData result =
-                (MapStringLongValueData)executeAndReturnResult(ScriptType.FACTORY_CREATED_BY_URL, log, context);
+                (MapStringLongValueData)executeAndReturnResult(ScriptType.FACTORY_CREATED_BY_FACTORY_URL, log, context);
 
         assertEquals(result.size(), 3);
         assertEquals(result.getAll().get("factoryUrl1").longValue(), 2);

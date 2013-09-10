@@ -27,7 +27,8 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
     EVENT,
-    URL,
+    FACTORY_URL,
+    REFERRER_URL,
     FIELD,
     PARAM,
     ALIAS,
@@ -178,7 +179,8 @@ public enum MetricParameter {
         WS,
         DOMAINS,
         USERS,
-        URL // TODO split url by factoryUrl and refUrl
+        FACTORY_URL,
+        REFERRER_URL
     }
 
     public enum WS_TYPES {

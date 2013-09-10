@@ -51,12 +51,12 @@ public class FactoryUrlAcceptedNumber extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        SetStringValueData setStringValueData = (SetStringValueData)super.getValue(context);
-        return new LongValueData(setStringValueData.size());
+        SetStringValueData valueData = (SetStringValueData)super.getValue(context);
+        return new LongValueData(valueData.size());
     }
 
     @Override
     public String getDescription() {
-        return "The Number of active temporary workspaces";
+        return "The number of usage of factory url";
     }
 }

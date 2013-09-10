@@ -24,6 +24,7 @@ import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -39,7 +40,7 @@ public class TestUserSSOLoginMetrics {
 
     private HashMap<String, String> context;
 
-    @BeforeMethod
+    @BeforeClass
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(
