@@ -325,4 +325,9 @@ public class Utils {
 
         return filters;
     }
+
+    /** @return true if user's name represent registered user */
+    public static boolean isRegisteredUser(String user) {
+        return !user.toUpperCase().startsWith("ANONYMOUSUSER_");
+    }
 }

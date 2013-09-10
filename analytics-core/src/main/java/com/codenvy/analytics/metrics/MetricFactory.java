@@ -123,6 +123,18 @@ public class MetricFactory {
             case DEBUG_STARTED:
                 metric = new DebugStartedMetric();
                 break;
+            case PRODUCT_USAGE_USERS_0_10:
+                metric = new ProductUsageUsers010Metric();
+                break;
+            case PRODUCT_USAGE_USERS_10_60:
+                metric = new ProductUsageUsers1060Metric();
+                break;
+            case PRODUCT_USAGE_USERS_60_300:
+                metric = new ProductUsageUsers60300Metric();
+                break;
+            case PRODUCT_USAGE_USERS_300_MORE:
+                metric = new ProductUsageUsers300MoreMetric();
+                break;
             case PRODUCT_USAGE_TIME_0_1:
                 metric = new ProductUsageTime01Metric();
                 break;

@@ -51,6 +51,15 @@
         <empty/>
     </table>
     <table length="20">
+        <date section="Users Engagement" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy" formatLifetime="dd MMM"/>
+        <total types="product_usage_users_0_10,product_usage_users_10_60,product_usage_users_60_300,product_usage_users_300_more"/>
+        <metric type="product_usage_users_0_10" title="&#0060; 10 Min"/>
+        <metric type="product_usage_users_10_60" title="&#0062;= 10 And &#0060; 60 Mins"/>
+        <metric type="product_usage_users_60_300" title="&#0062;= 60 And &#0060; 300 Mins"/>
+        <metric type="product_usage_users_300_more" title="&#0062; 300 Mins"/>
+        <empty/>
+    </table>
+    <table length="20">
         <date section="Invitations" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
               formatLifetime="dd MMM"/>
         <metric type="user_invite" title="Sent"/>

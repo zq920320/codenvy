@@ -31,9 +31,14 @@ public class ProductUsageSessionsMetric extends ValueReadBasedMetric {
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The list of sessions in persistent workspaces";
+    }
+
+    public String getUser(ListStringValueData valueData) {
+        return valueData.getAll().get(1);
     }
 
     public long getTime(ListStringValueData valueData) {
