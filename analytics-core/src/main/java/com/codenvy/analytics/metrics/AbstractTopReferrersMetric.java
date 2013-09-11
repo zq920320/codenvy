@@ -133,7 +133,7 @@ public abstract class AbstractTopReferrersMetric extends CalculatedMetric {
         return value.getAll();
     }
 
-    /** @return not more than {@link #TOP} entities in terms of usage time */
+    /** @return not more than {@link #TOP} entities in terms of temporary workspaces created */
     private List<Map.Entry<String, FixedListLongValueData>> keepTopItems(MapStringFixedLongListValueData referrers) {
         List<Map.Entry<String, FixedListLongValueData>> entities = new ArrayList<>(referrers.getAll().entrySet());
 
@@ -142,7 +142,8 @@ public abstract class AbstractTopReferrersMetric extends CalculatedMetric {
             public int compare(Map.Entry<String, FixedListLongValueData> o1,
                                Map.Entry<String, FixedListLongValueData> o2) {
 
-                long delta = o1.getValue().getAll().get(0) - o2.getValue().getAll().get(0);
+                int index = 1;
+                long delta = o1.getValue().getAll().get(index) - o2.getValue().getAll().get(index);
                 return delta > 0 ? -1 : (delta < 0 ? 1 : 0);
             }
         });
