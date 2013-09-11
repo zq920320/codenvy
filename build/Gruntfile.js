@@ -7,7 +7,12 @@ module.exports = function( grunt ) {
   //
   // https://github.com/cowboy/grunt/blob/master/docs/getting_started.md
   //
-  grunt.initConfig({
+    grunt.initConfig({
+    verbosity: {
+        hidden: {
+          tasks: ['copy']
+        }
+    },
 
     buildConfig : {
         temp : "./temp",
@@ -205,7 +210,7 @@ module.exports = function( grunt ) {
         init : {
             command: 'rm -rf dist',
             options: {
-                stdout: true,
+                stdout: false,
                 failOnError: true
             }
         },
@@ -213,7 +218,7 @@ module.exports = function( grunt ) {
         jekyll_stage_config : {
             command: 'cp <%= buildConfig.jekyllStageConfig %> <%= buildConfig.temp %>/_config.yml',
             options: {
-                stdout: true,
+                stdout: false,
                 failOnError: true
             }
         },
@@ -221,7 +226,7 @@ module.exports = function( grunt ) {
         jekyll_gh_config : {
             command: 'cp <%= buildConfig.jekyllGHConfig %> <%= buildConfig.temp %>/_config.yml',
             options: {
-                stdout: true,
+                stdout: false,
                 failOnError: true
             }
         },
@@ -229,7 +234,7 @@ module.exports = function( grunt ) {
         jekyll_prod_config : {
             command: 'cp <%= buildConfig.jekyllProdConfig %> <%= buildConfig.temp %>/_config.yml',
             options: {
-                stdout: true,
+                stdout: false,
                 failOnError: true
             }
         },
@@ -237,7 +242,7 @@ module.exports = function( grunt ) {
         jekyll : {
             command: 'jekyll',
             options: {
-                stdout: true,
+                stdout: false,
                 failOnError: true,
                 execOptions: {
                     cwd: '<%= buildConfig.temp %>'
@@ -248,7 +253,7 @@ module.exports = function( grunt ) {
         yeoman : {
             command: 'yeoman build',
             options: {
-                stdout: true,
+                stdout: false,
                 failOnError: true,
                 execOptions: {
                     cwd: '../',
@@ -260,7 +265,7 @@ module.exports = function( grunt ) {
     remove_css : {
     command: 'find ../app/site/styles -name "*.css" -print0 | xargs -0 rm',
     options: {
-                stdout: true,
+                stdout: false,
                 failOnError: true,
                 execOptions: {
                     cwd: './'
@@ -270,7 +275,7 @@ module.exports = function( grunt ) {
         clean_dist : {
             command: 'rm -rf ../dist && rm -rf ../temp && rm -rf <%= buildConfig.temp %>',
             options: {
-                stdout: true,
+                stdout: false,
                 failOnError: true,
                 execOptions: {
                     cwd: './'
@@ -283,9 +288,12 @@ module.exports = function( grunt ) {
 
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-verbosity');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.registerTask('build',
         [
+            // hiding copy output
+            'verbosity:hidden',
             //check code quality before building
             'jshint:test', 'jshint:app',
 
