@@ -15,9 +15,9 @@
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="{{'/styles/main.css' | resource}}">
-        <link rel="shortcut icon" href="{{'/images/favicon.ico' | resource}}" />
-        <script src="{{'/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
+        <link rel="stylesheet" href="{{'/site/styles/main.css' | resource}}">
+        <link rel="shortcut icon" href="{{'/site/images/favicon.ico' | resource}}" />
+        <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
     </head>
     <body class="responsive">
 
@@ -31,19 +31,9 @@
                             </h1>
                         </a>
                     </div>
-                    <div class="span8">
-                        <nav>
-                            <ul class="main-menu">
-                                <li><a href="{{'features.html' | url}}">Features</a></li>
-                                <li><a href="{{'success-stories.html' | url}}">Stories</a></li>
-                                <li><a href="{{'pricing.html' | url}}">Pricing</a></li>
-                                <li><a href="{{'enterprise.html' | url}}">Enterprise</a></li>
-                                <li><a href="{{'ISV.html' | url}}">ISV</a></li>
-                            </ul>
-                        </nav>
-                    </div>
+
                     <div class="span2 sign-in-button-wrapper right show-on-tablet-desktop">
-                        <a class="light-button button-100" href="{{'login.html' | url}}">Login</a>
+                        <a class="light-button button-100" href="{{'site/login.html' | url}}">Login</a>
                     </div>
                 </div>
             </div>
@@ -53,35 +43,11 @@
             {{ content }}
         </div>
 
-        <footer>
-            <nav>
-                <ul>
-                    <li><a class="footer-link" href="{{'features.html' | url}}">Features</a></li>
-                    <li><a class="footer-link" href="{{'success-stories.html' | url}}">Stories</a></li>
-                    <li><a class="footer-link" href="{{'pricing.html' | url}}">Pricing</a></li>
-                    <li><a class="footer-link" href="{{'enterprise.html' | url}}">Enterprise</a></li>
-                    <li><a class="footer-link" href="{{'ISV.html' | url}}">ISV</a></li>
-                    <li><a class="footer-link" href="http://docs.codenvy.com">Documentation</a></li>
-                    <li><a class="footer-link" href="{{'about.html' | url}}">About</a></li>
-                    <li><a class="footer-link" href="{{'jobs.html' | url}}">Jobs</a></li>
-                    <li><a class="footer-link" href="#" onclick="UserVoice.showPopupWidget();">Contact</a></li>
-                    <li><a class="footer-link" href="http://blog.codenvy.com" target="_blank">Blog</a></li>
-                    <li><a class="footer-link" href="http://facebook.com/codenvy" target="_blank">Facebook</a></li>
-                    <li><a class="footer-link" href="http://twitter.com/codenvyhq" target="_blank">Twitter</a></li>
-                    <li><a class="footer-link" href="https://plus.google.com/107609748911740614195" target="_blank" rel="publisher">Google+</a></li>
-                </ul>
-            </nav>
-        </footer>
-
-
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
         <![endif]-->
 
-
         {% include uservoice.html %}
-        {% include google-analytics.html %}
         {% include application-script.html %}
-        {% include act-on.html %}
 </body>
 </html>
