@@ -102,3 +102,8 @@ grunt build
 ```
 
 Build populates dist/ with 3 sets of bundles : stage (for staging), prod (for production) and gh (for github hosted version of the site). The sets contain all the static content needed to run the site.
+
+Adjust verbosity for individual grunt tasks
+=======
+
+https://github.com/ericclemmons/grunt-verbosity
