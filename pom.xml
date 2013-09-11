@@ -30,7 +30,7 @@
   <groupId>com.codenvy</groupId>
   <artifactId>odyssey</artifactId>
   <name>Codenvy :: Website</name>
-  <version>0.7.0-WEBSITE-SNAPSHOT</version>
+  <version>0.7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
 
