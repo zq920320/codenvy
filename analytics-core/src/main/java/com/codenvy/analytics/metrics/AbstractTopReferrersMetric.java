@@ -45,14 +45,14 @@ public abstract class AbstractTopReferrersMetric extends CalculatedMetric {
             item.add(referrer);
             item.add(tmpWs.toString());
             item.add(sess.toString());
-            item.add("" + 100D * (sess.longValue() - auth.longValue()) / sess.longValue());
-            item.add("" + 100D * auth.longValue() / sess.longValue());
-            item.add("" + 100D * (sess.longValue() - conv.longValue()) / sess.longValue());
-            item.add("" + 100D * conv.longValue() / sess.longValue());
-            item.add("" + 100D * bld.longValue() / sess.longValue());
-            item.add("" + 100D * run.longValue() / sess.longValue());
-            item.add("" + 100D * dpl.longValue() / sess.longValue());
-            item.add("" + mins.longValue() / 60);
+            item.add("" + 100D * (sess - auth) / sess);
+            item.add("" + 100D * auth / sess);
+            item.add("" + 100D * (sess - conv) / sess);
+            item.add("" + 100D * conv / sess);
+            item.add("" + 100D * bld / sess);
+            item.add("" + 100D * run / sess);
+            item.add("" + 100D * dpl / sess);
+            item.add("" + mins / 60);
 
             addFirstLastSessionsOccurrence(item);
 
