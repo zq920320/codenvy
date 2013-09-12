@@ -40,7 +40,7 @@
     </scm>
     <properties>
         <!-- Codenvy -->
-        <codenvy.commons.version>0.8.0-WEBSITE-SNAPSHOT</codenvy.commons.version>
+        <codenvy.commons.version>0.8.0-SNAPSHOT</codenvy.commons.version>
 
         <!-- javax -->
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
