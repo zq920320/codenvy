@@ -46,7 +46,7 @@ public class MetricFactory {
                 metric = new ActiveUsersSetMetric();
                 break;
             case ACTIVE_USERS:
-                metric = new ActiveUsersNumberMetric();
+                metric = new ActiveUsersMetric();
                 break;
             case USER_CREATED_FROM_AUTH:
                 metric = new UsersCreatedFromAuthMetric();

@@ -29,9 +29,9 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ActiveUsersNumberMetric extends CalculatedMetric {
+public class ActiveUsersMetric extends CalculatedMetric {
 
-    ActiveUsersNumberMetric() {
+    ActiveUsersMetric() {
         super(MetricType.ACTIVE_USERS, MetricType.ACTIVE_USERS_SET);
     }
 

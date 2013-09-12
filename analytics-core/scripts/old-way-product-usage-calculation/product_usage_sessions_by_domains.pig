@@ -40,11 +40,11 @@ k4 = FOREACH k3 GENERATE k1::ws AS ws, k1::user AS user, k1::dt AS dt;
 B = productUsageTimeList(k4, '$inactiveInterval');
 
 d1 = UNION A, B;
-d2 = FOREACH d1 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, dt, delta;
+d2 = FOREACH d1 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, user, dt, delta;
 R1 = FILTER d2 BY domain != '';
 
 R2 = GROUP R1 BY domain;
 result = FOREACH R2 {
-    R3 = FOREACH R1 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(domain), TOTUPLE(dt), TOTUPLE(delta));
+    R3 = FOREACH R1 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
     GENERATE group, R3;
 }

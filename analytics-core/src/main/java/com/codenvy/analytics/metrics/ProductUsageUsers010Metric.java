@@ -19,11 +19,33 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProductUsageUsers010Metric extends AbstractProductUsageUsersMetric {
+public class ProductUsageUsers010Metric extends CalculatedMetric {
 
     public ProductUsageUsers010Metric() {
-        super(MetricType.PRODUCT_USAGE_USERS_0_10, 0, 10);
+        super(MetricType.PRODUCT_USAGE_USERS_0_10, MetricType.ACTIVE_USERS);
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        ValueData value = super.getValue(context);
+        ValueData value1 = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_USERS_10_60).getValue(context);
+        ValueData value2 = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_USERS_60_300).getValue(context);
+        ValueData value3 = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_USERS_300_MORE).getValue(context);
+
+        return new LongValueData(value.getAsLong() - value1.getAsLong() - value2.getAsLong() - value3.getAsLong());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     /** {@inheritDoc} */
