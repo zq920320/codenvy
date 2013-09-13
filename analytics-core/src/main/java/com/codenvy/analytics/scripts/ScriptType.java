@@ -46,6 +46,17 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.ALIAS};
         }
     },
+    SET_USER_CREATED_FROM_FACTORY_BY_FACTORY_URL {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getResultScheme() {
+            return new MetricParameter[]{MetricParameter.FACTORY_URL};
+        }
+    },
     USER_CREATED_FROM_FACTORY_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {

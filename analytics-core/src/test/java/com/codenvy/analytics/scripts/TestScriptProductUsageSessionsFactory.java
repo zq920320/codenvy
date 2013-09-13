@@ -109,13 +109,10 @@ public class TestScriptProductUsageSessionsFactory extends BaseTest {
         assertTrue(value.getAll().containsKey("tmp-1"));
 
         List<String> list = value.getAll().get("tmp-1").getAll().get(0).getAll();
-        assertTrue(list.contains("tmp-1"));
         assertEquals(list.get(0), "tmp-1");
-        assertTrue(list.contains("user"));
         assertEquals(list.get(1), "user");
-        assertTrue(list.contains("2013-02-10T10:00:00.000+02:00"));
-        assertEquals(list.get(2), "2013-02-10T10:00:00.000+02:00");
-        assertTrue(list.contains("300"));
+        assertTrue(list.get(2).contains("2013-02-10"));
+        assertTrue(list.get(2).contains("10:00:00"));
         assertEquals(list.get(3), "300");
     }
 

@@ -33,7 +33,8 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
 
   l6 = filterByDate(l5, '$from', '$to');
   l7 = extractUser(l6, '$userType');
-  $Y = extractWs(l7, '$wsType');
+  l8 = extractWs(l7, '$wsType');
+  $Y = FOREACH l8 GENERATE ip, dt, event, message, user, ws;
 };
 
 ---------------------------------------------------------------------------
@@ -258,32 +259,34 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
 -- @return {user : bytearray, ws: bytearray}
 ---------------------------------------------------------------------------------------------
 DEFINE usersCreatedFromFactory(X) RETURNS Y {
-    -- gets all registered users which changed their names from anonymous
+
+    -- finds in which temporary workspaces anonymous users have worked
+    x1 = filterByEvent($X, 'user-added-to-ws');
+    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, UPPER(user) AS tmpUser;
+    x = FILTER x2 BY INDEXOF(tmpUser, 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(tmpWs), 'TMP-', 0) == 0;
+
+    -- finds all anonymous users have become registered (created their accounts or just logged in)
     t1 = filterByEvent($X, 'user-changed-name');
     t2 = extractParam(t1, 'OLD-USER', 'old');
     t3 = extractParam(t2, 'NEW-USER', 'new');
     t4 = FILTER t3 BY INDEXOF(UPPER(old), 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(new), 'ANONYMOUSUSER_', 0) < 0;
-    t = FOREACH t4 GENERATE UPPER(old) AS tmpUser, new AS user;
+    t = FOREACH t4 GENERATE dt, UPPER(old) AS tmpUser, new AS user;
 
-    -- let's found in which temporary workspaces anonymous users worked
-    x1 = filterByEvent($X, 'user-added-to-ws');
-    x2 = FOREACH x1 GENERATE ws, UPPER(user) AS tmpUser;
-    x = FILTER x2 BY INDEXOF(tmpUser, 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0;
-
-    -- gets all created registered users
+    -- finds created users
     k1 = filterByEvent($X, 'user-created');
     k2 = FILTER k1 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
-    k = FOREACH k2 GENERATE user;
+    k = FOREACH k2 GENERATE dt, user;
 
-    -- we are interested only in registered users that were as anonymouses in their previous life =)
-    y1 = JOIN k BY user LEFT, t BY user;
-    y2 = FILTER y1 BY t::user IS NOT NULL;
-    y3 = FOREACH y2 GENERATE k::user AS user, t::tmpUser AS tmpUser;
+    -- finds which created users worked as anomymous
+    y1 = JOIN k BY user, t BY user;
+    y = FOREACH y1 GENERATE k::dt AS dt, k::user AS user, t::tmpUser AS tmpUser;
 
-    -- matches them with temporary workspaces
-    y4 = JOIN y3 BY tmpUser, x BY tmpUser;
-    y5 = FOREACH y4 GENERATE y3::user AS user, x::ws AS ws;
-    $Y = DISTINCT y5;
+    -- finds in which temporary workspaces registered users have worked
+    z1 = JOIN y BY tmpUser, x BY tmpUser;
+    z2 = FILTER z1 BY MilliSecondsBetween(y::dt, x::dt) >= 0;
+    z = FOREACH z2 GENERATE y::user AS user, x::tmpWs AS tmpWs;
+
+    $Y = DISTINCT z;
 };
 
 ---------------------------------------------------------------------------------------------

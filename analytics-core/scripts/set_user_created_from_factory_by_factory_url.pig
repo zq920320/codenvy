@@ -19,6 +19,16 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-j = usersCreatedFromFactory(l);
 
-result = countByField(j, 'tmpWs');
+u = usersCreatedFromFactory(l);
+f = LOAD '$LOAD_DIR' USING PigStorage() AS (tmpWs : chararray, referrer : chararray, factoryUrl : chararray);
+
+j1 = JOIN u BY tmpWs, f BY tmpWs;
+j2 = FOREACH j1 GENERATE u::user AS user, f::factoryUrl AS url;
+j3 = GROUP j1 BY user;
+result = FOREACH j3 {
+    t1 = FOREACH j1 GENERATE url;
+    t = DISTINCT t1;
+
+    GENERATE group, t;
+}
