@@ -130,4 +130,20 @@ public class FactoryService {
 
         return Response.ok(image.getImageData(), image.getMediaType()).build();
     }
+
+    @GET
+    @Path("{id}/snippet")
+    @Produces({MediaType.TEXT_PLAIN})
+    public String getFactorySnippet(@PathParam("id") String id, @QueryParam("type") String type,  @Context UriInfo uriInfo) throws FactoryUrlException {
+        // TODO rewrite this ugly backend stub
+        Map<String, Object> factoryStoredData = factoryStore.getFactory(id);
+        if (factoryStoredData == null) {
+            LOG.error("Factory URL with id {} is not found.", id);
+            throw new FactoryUrlException(Status.BAD_REQUEST.getStatusCode(),
+                                          String.format("Factory URL with id %s is not found.", id));
+        }
+
+        // TODO rewrite this ugly backend stub
+        return "";
+    }
 }

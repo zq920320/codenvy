@@ -22,10 +22,12 @@ import com.codenvy.factory.commons.Link;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ServiceLinkInjector {
+
+    List<String> snippetTypes = Collections.unmodifiableList(Arrays.asList("markdown", "url", "html"));
+
     public void injectLinks(AdvancedFactoryUrl factoryUrl, Set<String> imagesIds, UriInfo uriInfo) {
         Set<Link> links = new LinkedHashSet<>();
 
@@ -33,21 +35,52 @@ public class ServiceLinkInjector {
         for (String imageId : imagesIds) {
             links.add(generateFactoryImageLink(imageId, uriInfo));
         }
+        links.addAll(generateSnippetLinks(factoryUrl.getId(), uriInfo));
 
         factoryUrl.setLinks(links);
     }
 
     private Link generateFactoryImageLink(String imageId, UriInfo uriInfo) {
-        Link link = new Link("image/" + imageId.substring(imageId.lastIndexOf('.') + 1), generatePath(imageId, "images", uriInfo), "image");
-        return link;
+        return new Link("image/" + imageId.substring(imageId.lastIndexOf('.') + 1),
+                             generatePath(imageId, "image", uriInfo), "image");
     }
 
     private Link generateFactoryUrlLink(String id, UriInfo uriInfo) {
-        Link link = new Link(MediaType.APPLICATION_JSON, generatePath(id, "", uriInfo), "self");
-        return link;
+        return new Link(MediaType.APPLICATION_JSON, generatePath(id, "", uriInfo), "self");
+    }
+
+    private Set<Link> generateSnippetLinks(String id, UriInfo uriInfo) {
+       Set<Link> result = new LinkedHashSet<>();
+      for (String snippetType : snippetTypes) {
+          result.add(new Link("text/plain", generatePath(id, "", "snippet", "type=" + snippetType, uriInfo),
+                              "snippet/" + snippetType));
+      }
+        return result;
     }
 
     private String generatePath(String id, String rel, UriInfo uriInfo) {
-        return uriInfo == null ? "/" + rel + "/" + id : uriInfo.getBaseUri() + "/" + rel + "/" + id;
+        StringBuilder sb = new StringBuilder();
+        if (uriInfo != null)
+            sb.append(uriInfo.getBaseUri());
+        sb.append("/");
+        sb.append(rel);
+        sb.append("/");
+        sb.append(id);
+        return sb.toString();
+    }
+
+    private String generatePath(String id, String rel, String servletPath, String query, UriInfo uriInfo) {
+        StringBuilder sb = new StringBuilder();
+        if (uriInfo != null)
+            sb.append(uriInfo.getBaseUri());
+        sb.append("/");
+        sb.append(rel);
+        sb.append("/");
+        sb.append(id);
+        sb.append("/");
+        sb.append(servletPath);
+        sb.append("?");
+        sb.append(query);
+        return sb.toString();
     }
 }
