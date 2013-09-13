@@ -29,7 +29,7 @@
     <groupId>com.codenvy.factory</groupId>
     <artifactId>codenvy-factory-parent</artifactId>
     <name>Codenvy Factory :: Parent</name>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -40,7 +40,7 @@
     </scm>
     <properties>
         <!-- Codenvy -->
-        <codenvy.commons.version>0.8.0-SNAPSHOT</codenvy.commons.version>
+        <codenvy.commons.version>0.9.0-SNAPSHOT</codenvy.commons.version>
 
         <!-- javax -->
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
