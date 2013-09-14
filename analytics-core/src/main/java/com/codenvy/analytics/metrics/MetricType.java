@@ -168,6 +168,19 @@ public enum MetricType {
     USER_CREATED_FROM_AUTH,
     RETURNED_ACTIVE_USERS,
     INACTIVE_USERS,
+    SET_USER_CREATED_FROM_FACTORY {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.SET_USER_CREATED_FROM_FACTORY_BY_FACTORY_URL);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+            MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_URL_ACCEPTED));
+        }
+    },
     USER_CREATED_FROM_FACTORY {
         @Override
         public EnumSet<ScriptType> getScripts() {

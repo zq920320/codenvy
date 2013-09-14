@@ -25,9 +25,9 @@ f = LOAD '$LOAD_DIR' USING PigStorage() AS (tmpWs : chararray, referrer : charar
 
 j1 = JOIN u BY tmpWs, f BY tmpWs;
 j2 = FOREACH j1 GENERATE u::user AS user, f::factoryUrl AS url;
-j3 = GROUP j1 BY user;
+j3 = GROUP j2 BY url;
 result = FOREACH j3 {
-    t1 = FOREACH j1 GENERATE url;
+    t1 = FOREACH j2 GENERATE user;
     t = DISTINCT t1;
 
     GENERATE group, t;

@@ -78,6 +78,9 @@ public class MetricFactory {
             case USER_CREATED_FROM_FACTORY:
                 metric = new UserCreatedFromFactoryMetric();
                 break;
+            case SET_USER_CREATED_FROM_FACTORY:
+                metric = new SetUserCreatedFromFactoryMetric();
+                break;
             case TOTAL_USERS:
                 metric = new TotalUsersMetric();
                 break;
