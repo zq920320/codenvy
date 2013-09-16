@@ -50,15 +50,23 @@ define(["jquery","underscore",
                 $(this.el).removeClass("loading");
 
                 _.each(tenants,function(tenant){
+                    // if user has workspace
+                    if (user.attributes.accounts[0]) {
 
-                    if (tenant.attributes.owner === user.attributes.accounts[0].id) {
-                        this.$(".domain-list").append(
-                            this.tenantTemplate(tenant.toJSON())
-                        );
-                    } else {
-                        this.$(".shared-list").append(
-                            this.tenantTemplate(tenant.toJSON())
-                        );                            
+                        if (tenant.attributes.owner === user.attributes.accounts[0].id) {
+                            this.$(".domain-list").append(
+                                this.tenantTemplate(tenant.toJSON())
+                            );
+                        } else {
+                            this.$(".shared-list").append(
+                                this.tenantTemplate(tenant.toJSON())
+                            );                            
+                        }
+                    } else {// if user has not workspace
+                            $(".selectws-section")[0].innerHTML = "";
+                            this.$(".shared-list").append(
+                                this.tenantTemplate(tenant.toJSON())
+                            );
                     }
 
                 },this);                   
