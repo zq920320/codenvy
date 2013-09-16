@@ -25,7 +25,6 @@ import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -111,7 +110,8 @@ public class TestUserSSOLoginMetrics {
     @Test
     public void testGetValuesWithUserFilters() throws Exception {
         Metric metric = MetricFactory.createMetric(MetricType.USER_SSO_LOGGED_IN);
-        context.put(MetricFilter.USER.name(), "user1@gmail.com");
+        MetricFilter.DOMAINS.remove(context);
+        MetricFilter.USERS.put(context, "user1@gmail.com");
 
         MetricParameter.PARAM.put(context, "google");
         LongValueData value = (LongValueData)metric.getValue(context);
@@ -160,7 +160,8 @@ public class TestUserSSOLoginMetrics {
     @Test
     public void testGetValuesWithDomainsFilters() throws Exception {
         Metric metric = MetricFactory.createMetric(MetricType.USER_SSO_LOGGED_IN);
-        context.put(MetricFilter.USER.name(), "@gmail.com");
+        MetricFilter.USERS.remove(context);
+        MetricFilter.DOMAINS.put(context, "gmail.com");
 
         MetricParameter.PARAM.put(context, "google");
         LongValueData value = (LongValueData)metric.getValue(context);

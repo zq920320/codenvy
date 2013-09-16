@@ -100,7 +100,7 @@ public class TestActiveWsMetric {
 
     @Test
     public void testGetValuesWithUserFilters() throws Exception {
-        context.put(MetricFilter.USER.name(), "user1@gmail.com");
+        context.put(MetricFilter.USERS.name(), "user1@gmail.com");
 
         Metric metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 
@@ -114,7 +114,7 @@ public class TestActiveWsMetric {
         assertEquals(lVD.getAsLong(), 1);
 
 
-        context.put(MetricFilter.USER.name(), "user1@gmail.com,user2@gmail.com");
+        context.put(MetricFilter.USERS.name(), "user1@gmail.com,user2@gmail.com");
 
         metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 
@@ -128,7 +128,8 @@ public class TestActiveWsMetric {
         lVD = (LongValueData) metric.getValue(context);
         assertEquals(lVD.getAsLong(), 2);
 
-        context.put(MetricFilter.USER.name(), "@gmail.com");
+        MetricFilter.USERS.remove(context);
+        MetricFilter.DOMAINS.put(context, "gmail.com");
 
         metric = MetricFactory.createMetric(MetricType.ACTIVE_WS_SET);
 

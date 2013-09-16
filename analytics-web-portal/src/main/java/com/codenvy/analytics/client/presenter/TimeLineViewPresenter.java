@@ -37,9 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TimeLineViewPresenter extends MainViewPresenter implements Presenter {
     private final TimeLineServiceAsync timelineService;
 
@@ -53,8 +51,8 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
         Button getFindBtn();
     }
 
-    private TimeUnit currentTimeUnit = TimeUnit.DAY;
-    private SearchCategory searchCategory = SearchCategory.EMAIL;
+    private TimeUnit       currentTimeUnit = TimeUnit.DAY;
+    private SearchCategory searchCategory  = SearchCategory.EMAIL;
 
     public TimeLineViewPresenter(TimeLineServiceAsync timelineService, HandlerManager eventBus, Display view) {
         super(eventBus, view);
@@ -77,7 +75,8 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
 
         getDisplay().getSearchCategoryBox().addChangeHandler(new ChangeHandler() {
             public void onChange(ChangeEvent event) {
-                SearchCategory newSearchCategory = SearchCategory.values()[getDisplay().getSearchCategoryBox().getSelectedIndex()];
+                SearchCategory newSearchCategory =
+                        SearchCategory.values()[getDisplay().getSearchCategoryBox().getSelectedIndex()];
                 if (newSearchCategory != searchCategory) {
                     searchCategory = newSearchCategory;
 
@@ -121,14 +120,10 @@ public class TimeLineViewPresenter extends MainViewPresenter implements Presente
 
             switch (searchCategory) {
                 case EMAIL:
-                    filterContext.put(MetricFilter.USER.name(), filterValue);
+                    filterContext.put(MetricFilter.USERS.name(), filterValue);
                     break;
                 case DOMAIN:
-                    if (!filterValue.startsWith("@")) {
-                        filterValue = "@" + filterValue;
-                    }
-
-                    filterContext.put(MetricFilter.USER.name(), filterValue);
+                    filterContext.put(MetricFilter.DOMAINS.name(), filterValue);
                     break;
                 case COMPANY:
                     filterContext.put(MetricFilter.COMPANY.name(), filterValue);

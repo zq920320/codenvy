@@ -21,7 +21,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.DoubleValueData;
 import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUserInviteMetric {
@@ -57,13 +55,15 @@ public class TestUserInviteMetric {
                         .build());
         events.add(Event.Builder.createUserInviteEvent("user3@gmail.com", "ws1", "", "f@dot.com").withDate("2013-01-02")
                         .build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "ws1", "", "ws1", "user5@gmail.com", "invite")
-                        .withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user6@gmail.com", "ws1", "", "ws1", "user6@gmail.com", "invite")
-                        .withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserAddedToWsEvent("user7@gmail.com", "ws1", "", "ws1", "user7@gmail.com", "invite")
-                        .withDate("2013-01-01").build());
-
+        events.add(
+                Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "ws1", "", "ws1", "user5@gmail.com", "invite")
+                     .withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createUserAddedToWsEvent("user6@gmail.com", "ws1", "", "ws1", "user6@gmail.com", "invite")
+                     .withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createUserAddedToWsEvent("user7@gmail.com", "ws1", "", "ws1", "user7@gmail.com", "invite")
+                     .withDate("2013-01-01").build());
 
 
         File log = LogGenerator.generateLog(events);
@@ -117,7 +117,7 @@ public class TestUserInviteMetric {
 
     @Test
     public void testGetValuesWithUserFilters() throws Exception {
-        context.put(MetricFilter.USER.name(), "user1@gmail.com");
+        context.put(MetricFilter.USERS.name(), "user1@gmail.com");
         Metric metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         LongValueData vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 2);
@@ -130,7 +130,7 @@ public class TestUserInviteMetric {
         DoubleValueData dVD = (DoubleValueData)metric.getValue(context);
         assertEquals(dVD.getAsDouble(), 0.);
 
-        context.put(MetricFilter.USER.name(), "user1@gmail.com,user2@gmail.com");
+        context.put(MetricFilter.USERS.name(), "user1@gmail.com,user2@gmail.com");
         metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 3);
@@ -143,7 +143,8 @@ public class TestUserInviteMetric {
         dVD = (DoubleValueData)metric.getValue(context);
         assertEquals(dVD.getAsDouble(), 0.);
 
-        context.put(MetricFilter.USER.name(), "@gmail.com");
+        MetricFilter.USERS.remove(context);
+        MetricFilter.DOMAINS.put(context, "gmail.com");
         metric = MetricFactory.createMetric(MetricType.USER_INVITE);
         vd = (LongValueData)metric.getValue(context);
         assertEquals(vd.getAsLong(), 3);
@@ -156,8 +157,8 @@ public class TestUserInviteMetric {
         dVD = (DoubleValueData)metric.getValue(context);
         assertEquals(dVD.getAsDouble(), 100.);
 
-
-        context.put(MetricFilter.USER.name(), "user5@gmail.com,user6@gmail.com");
+        MetricFilter.DOMAINS.remove(context);
+        MetricFilter.USERS.put(context, "user5@gmail.com,user6@gmail.com");
 
         metric = MetricFactory.createMetric(MetricType.USER_ACCEPT_INVITE);
         vd = (LongValueData)metric.getValue(context);

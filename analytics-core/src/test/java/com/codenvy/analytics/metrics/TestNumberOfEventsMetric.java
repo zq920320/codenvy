@@ -73,22 +73,23 @@ public class TestNumberOfEventsMetric {
     public void testGetValuesWithUserFilters() throws Exception {
         Metric metric = MetricFactory.createMetric(METRIC_TYPE);
 
-        context.put(MetricFilter.USER.name(), "user1@gmail.com");
+        context.put(MetricFilter.USERS.name(), "user1@gmail.com");
 
         LongValueData value = (LongValueData) metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 
-        context.put(MetricFilter.USER.name(), "user2@gmail.com");
+        context.put(MetricFilter.USERS.name(), "user2@gmail.com");
 
         value = (LongValueData) metric.getValue(context);
         assertEquals(value.getAsLong(), 1);
 
-        context.put(MetricFilter.USER.name(), "user1@gmail.com,user2@gmail.com");
+        context.put(MetricFilter.USERS.name(), "user1@gmail.com,user2@gmail.com");
 
         value = (LongValueData) metric.getValue(context);
         assertEquals(value.getAsLong(), 2);
 
-        context.put(MetricFilter.USER.name(), "@gmail.com");
+        MetricFilter.USERS.remove(context);
+        MetricFilter.DOMAINS.put(context, "gmail.com");
 
         value = (LongValueData) metric.getValue(context);
         assertEquals(value.getAsLong(), 2);
@@ -98,7 +99,7 @@ public class TestNumberOfEventsMetric {
     public void testGetValuesWihtDoubleFilterFilters() throws Exception {
         Metric metric = MetricFactory.createMetric(METRIC_TYPE);
 
-        context.put(MetricFilter.USER.name(), "user@gmail.com");
+        context.put(MetricFilter.USERS.name(), "user@gmail.com");
         context.put(MetricFilter.WS.name(), "ws");
 
         LongValueData value = (LongValueData) metric.getValue(context);

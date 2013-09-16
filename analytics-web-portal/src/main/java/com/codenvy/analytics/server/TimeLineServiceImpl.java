@@ -111,14 +111,14 @@ public class TimeLineServiceImpl extends RemoteServiceServlet implements TimeLin
 
                 builder.append(user);
             }
-            context.put(MetricFilter.USER.name(), builder.toString());
+            context.put(MetricFilter.USERS.name(), builder.toString());
         } else {
             putUnExistedUserEmail(context);
         }
     }
 
     private void putUnExistedUserEmail(Map<String, String> context) {
-        context.put(MetricFilter.USER.name(), "_@@");
+        context.put(MetricFilter.USERS.name(), "_@@");
     }
 
     private List<String> getUsersByCompany(String company) throws IOException {

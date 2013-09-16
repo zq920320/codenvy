@@ -18,80 +18,67 @@
 
 package com.codenvy.analytics.metrics;
 
+import java.io.File;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricFilter {
-    WS {
-        @Override
-        public String getScriptField() {
-            return "ws";
-        }
-    },
-    USER {
-        @Override
-        public String getScriptField() {
-            return "user";
-        }
-    },
-    PROJECT_NAME {
-        @Override
-        public String getScriptField() {
-            return "project";
-        }
-    },
-    PROJECT_TYPE {
-        @Override
-        public String getScriptField() {
-            return "type";
-        }
-    },
-    COMPANY {
-        @Override
-        public String getScriptField() {
-            return "company";
-        }
-    },
-    REPO_URL {
-        @Override
-        public String getScriptField() {
-            return "repoUrl";
-        }
-    },
+    WS,
+    USERS,
+    DOMAINS,
+    COMPANY,
     REFERRER_URL {
         @Override
-        public String getScriptField() {
-            return "referrer";
+        public String translateToRelativePath(String value) {
+            return super.translateToRelativePath("" + value.hashCode());
         }
     },
     FACTORY_URL {
         @Override
-        public String getScriptField() {
-            return "factoryUrl";
+        public String translateToRelativePath(String value) {
+            return super.translateToRelativePath("" + value.hashCode());
         }
     };
 
     /** @return true if context contains given parameter */
     public boolean exists(Map<String, String> context) {
-        return context.get(this.name()) != null;
+        return context.get(name()) != null;
     }
 
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {
-        context.put(this.name(), value);
+        context.put(name(), value);
     }
 
     /** Removes filter from context */
     public void remove(Map<String, String> context) {
-        context.remove(this.name());
+        context.remove(name());
     }
 
     /** Gets value from execution context */
     public String get(Map<String, String> context) {
-        return context.get(this.name());
+        return context.get(name());
     }
 
-    /** @return the corresponding field name in the Pig scripts */
-    public abstract String getScriptField();
+    /** Translates value to relative path */
+    public String translateToRelativePath(String value) {
+        if (value.length() < 3) {
+            return value;
+        }
 
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(value.substring(0, 1));
+        builder.append(File.separatorChar);
+
+        builder.append(value.substring(1, 2));
+        builder.append(File.separatorChar);
+
+        builder.append(value.substring(2, 3));
+        builder.append(File.separatorChar);
+
+        builder.append(value.substring(3));
+
+        return builder.toString();
+    }
 }

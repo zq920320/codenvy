@@ -46,7 +46,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
     @Override
     public List<TableData> getData(String userEmail) throws IOException {
         Map<String, String> context = Utils.newContext();
-        context.put(MetricFilter.USER.name(), userEmail);
+        context.put(MetricFilter.USERS.name(), userEmail);
         context.put(MetricParameter.ALIAS.name(), userEmail);
         context.put(MetricParameter.FROM_DATE.name(), MetricParameter.FROM_DATE.getDefaultValue());
         context.put(MetricParameter.TO_DATE.name(), MetricParameter.TO_DATE.getDefaultValue());

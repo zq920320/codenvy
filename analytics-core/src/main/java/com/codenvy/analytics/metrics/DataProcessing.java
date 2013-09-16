@@ -23,6 +23,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,19 +91,19 @@ public class DataProcessing {
             Utils.putToDate(uuid, Utils.getToDate(context));
         }
 
-        MetricParameter[] resultScheme = scriptType.getResultScheme();
+        MetricParameter[] resultScheme = scriptType.getKeyScheme();
         if (resultScheme.length == 0) {
             doStore(valueData, metricType, uuid);
 
         } else {
-            MetricParameter.ENTITY_TYPES entityType = getEntity(scriptType);
+            MetricFilter filter = getFilter(scriptType);
 
             Map<?, ?> items = ((MapValueData)valueData).getAll();
 
             for (Map.Entry<?, ?> entry : items.entrySet()) {
                 Object key = entry.getKey();
 
-                updateUUID(key, resultScheme, entityType, uuid);
+                updateUUID(key, resultScheme, filter, uuid);
 
                 ValueData value2store = ValueDataFactory.createValueData(entry.getValue());
                 doStore(value2store, metricType, uuid);
@@ -120,51 +121,40 @@ public class DataProcessing {
         }
     }
 
-    private static void updateUUID(Object key, MetricParameter[] resultScheme,
-                                   MetricParameter.ENTITY_TYPES entityType,
+    private static void updateUUID(Object key,
+                                   MetricParameter[] resultScheme,
+                                   MetricFilter metricFilter,
                                    Map<String, String> uuid) {
-        switch (resultScheme.length) {
-            case 1:
-                if (resultScheme[0] == MetricParameter.ALIAS
-                    || resultScheme[0] == MetricParameter.FACTORY_URL
-                    || resultScheme[0] == MetricParameter.REFERRER_URL) { // TODO
 
-                    MetricParameter.ENTITY.put(uuid, entityType.name());
-                }
-                uuid.put(resultScheme[0].name(), key.toString());
-                break;
 
-            default:
-                List<String> items = ((ListStringValueData)key).getAll();
+        List<String> items = key instanceof ListStringValueData ? ((ListStringValueData)key).getAll()
+                                                                : Arrays.asList(key.toString());
 
-                if (items.size() != resultScheme.length) {
-                    throw new IllegalStateException("Result doesn't correspond to scheme");
-                }
+        if (items.size() != resultScheme.length) {
+            throw new IllegalStateException("Result doesn't correspond to scheme");
+        }
 
-                for (int i = 0; i < items.size(); i++) {
-                    if (resultScheme[i] == MetricParameter.ALIAS
-                        || resultScheme[i] == MetricParameter.FACTORY_URL
-                        || resultScheme[i] == MetricParameter.REFERRER_URL) {
-
-                        MetricParameter.ENTITY.put(uuid, entityType.name());
-                    }
-
-                    uuid.put(resultScheme[i].name(), items.get(i));
-                }
+        for (int i = 0; i < items.size(); i++) {
+            if (resultScheme[i] == MetricParameter.FILTER) {
+                MetricParameter.FILTER.put(uuid, metricFilter.name());
+                metricFilter.put(uuid, items.get(i));
+            } else {
+                uuid.put(resultScheme[i].name(), items.get(i));
+            }
         }
     }
 
     /**
-     * Extracts entity out of {@link ScriptType}.
+     * Extracts filter out of {@link ScriptType}.
      *
-     * @return {@link com.codenvy.analytics.metrics.MetricParameter.ENTITY_TYPES} or null
+     * @return {@link MetricFilter} or null
      */
-    private static MetricParameter.ENTITY_TYPES getEntity(ScriptType scriptType) {
+    private static MetricFilter getFilter(ScriptType scriptType) {
         String scriptName = scriptType.name();
 
         int pos = scriptName.indexOf("_BY_");
         String entityName = scriptName.substring(pos + 4, scriptName.length());
 
-        return pos == -1 ? null : MetricParameter.ENTITY_TYPES.valueOf(entityName);
+        return pos == -1 ? null : MetricFilter.FACTORY_URL.valueOf(entityName);
     }
 }

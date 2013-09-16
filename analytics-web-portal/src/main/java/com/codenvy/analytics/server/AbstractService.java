@@ -93,6 +93,7 @@ public abstract class AbstractService {
     protected abstract Display[] getDisplays();
 
     /** @return filtered excerpt. */
-    protected abstract List<TableData> doFilter(Map<String, String> context) throws Exception;
-
+    protected List<TableData> doFilter(Map<String, String> context) throws Exception {
+        return new ArrayList<>(); // TODO
+    }
 }

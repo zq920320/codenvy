@@ -58,19 +58,6 @@ public class FactoryUrlTopFactoriesServiceImpl extends AbstractService {
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected List<TableData> doFilter(Map<String, String> context) throws Exception {
-        MetricFilter metricFilter = Utils.getAvailableFilters(context).iterator().next();
-
-        List<String> factoryUrls = getFactoryUrls(metricFilter.getScriptField(), context.get(metricFilter.name()));
-        metricFilter.remove(context);
-
-        MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrls.toString()));
-        return DISPLAY.retrieveData(context);
-    }
-
-
     private List<String> getFactoryUrls(String field, String param) throws IOException {
         Map<String, String> context = Utils.newContext();
 

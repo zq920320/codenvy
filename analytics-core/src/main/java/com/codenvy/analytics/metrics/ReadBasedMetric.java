@@ -98,36 +98,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     private void putFilterValue(MetricFilter filterKey, String filterValue, LinkedHashMap<String, String> uuid) {
-        switch (filterKey) {
-            case FACTORY_URL:
-                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.FACTORY_URL.name());
-                uuid.put(MetricParameter.FACTORY_URL.name(), filterValue);
-                break;
-
-            case REFERRER_URL:
-                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.REFERRER_URL.name());
-                uuid.put(MetricParameter.REFERRER_URL.name(), filterValue);
-                break;
-
-            case WS:
-                uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.WS.name());
-                uuid.put(MetricParameter.ALIAS.name(), filterValue);
-                break;
-
-            case USER:
-                if (filterValue.startsWith("@")) {
-                    uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.DOMAINS.name());
-                    uuid.put(MetricParameter.ALIAS.name(), filterValue.substring(1));
-                } else {
-                    uuid.put(MetricParameter.ENTITY.name(), MetricParameter.ENTITY_TYPES.USERS.name());
-                    uuid.put(MetricParameter.ALIAS.name(), filterValue);
-                }
-
-                break;
-
-            default:
-                throw new IllegalArgumentException("Filter " + filterKey + " is not supported");
-        }
+        MetricParameter.FILTER.put(uuid, filterKey.name());
+        filterKey.put(uuid, filterValue);
     }
 
     /**

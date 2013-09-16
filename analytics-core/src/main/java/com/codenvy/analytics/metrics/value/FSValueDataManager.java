@@ -20,6 +20,7 @@
 package com.codenvy.analytics.metrics.value;
 
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.MetricType;
 
@@ -139,21 +140,17 @@ public class FSValueDataManager {
         builder.append(File.separatorChar);
 
         for (Entry<String, String> entry : uuid.entrySet()) {
-            String element;
+            String element = entry.getValue().toLowerCase();
 
             if (MetricParameter.TO_DATE.isParam(entry.getKey())) {
                 element = translateDateToRelativePath(entry.getValue());
-
-            } else if (MetricParameter.ALIAS.isParam(entry.getKey())) {
-                element = translateAliasToRelativePath(entry.getValue());
-
-            } else if (MetricParameter.FACTORY_URL.isParam(entry.getKey()) ||
-                       MetricParameter.REFERRER_URL.isParam(entry.getKey())) {
-
-                element = translateAliasToRelativePath("" + entry.getValue().hashCode());
-
             } else {
-                element = entry.getValue().toLowerCase();
+                for (MetricFilter metricFilter : MetricFilter.values()) {
+                    if (metricFilter.name().equals(entry.getKey())) {
+                        element = metricFilter.translateToRelativePath(entry.getValue());
+                        break;
+                    }
+                }
             }
 
             builder.append(element);
@@ -180,41 +177,6 @@ public class FSValueDataManager {
         uuid.remove(MetricParameter.FROM_DATE.name());
     }
 
-    /** Translates user's alias to relative path */
-    private static String translateUrlToRelativePath(String url) {
-        char[] chars = url.toCharArray();
-
-        for (int i = 0; i < chars.length; i++) {
-            if (!Character.isDigit(chars[i]) && !Character.isLetter(chars[i])) {
-                chars[i] = '_';
-            }
-        }
-
-        String str = new String(chars);
-        return str.hashCode() + "-" + str;
-    }
-
-    /** Translates user's alias to relative path */
-    private static String translateAliasToRelativePath(String alias) {
-        if (alias.length() < 3) {
-            return alias;
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(alias.substring(0, 1));
-        builder.append(File.separatorChar);
-
-        builder.append(alias.substring(1, 2));
-        builder.append(File.separatorChar);
-
-        builder.append(alias.substring(2, 3));
-        builder.append(File.separatorChar);
-
-        builder.append(alias.substring(3));
-
-        return builder.toString();
-    }
 
     /**
      * Translate date from format yyyyMMdd into format like yyyy/MM/dd and {@link File#separatorChar} is used as

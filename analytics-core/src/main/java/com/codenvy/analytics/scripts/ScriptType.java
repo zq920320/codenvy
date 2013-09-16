@@ -42,8 +42,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     SET_USER_CREATED_FROM_FACTORY_BY_FACTORY_URL {
@@ -53,8 +53,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.FACTORY_URL};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     USER_CREATED_FROM_FACTORY_BY_DOMAINS {
@@ -64,8 +64,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     USER_CREATED_FROM_FACTORY_BY_WS {
@@ -75,8 +75,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     USERS_COMPLETED_PROFILE {
@@ -134,8 +134,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     JREBEL_USER_PROFILE_INFO {
@@ -151,7 +151,7 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
+        public MetricParameter[] getKeyScheme() {
             return new MetricParameter[]{MetricParameter.PARAM};
         }
     },
@@ -162,8 +162,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
         }
     },
     PROJECT_DEPLOYED_BY_DOMAINS {
@@ -173,8 +173,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
         }
     },
     PRODUCT_USAGE_TIME_USERS {
@@ -221,8 +221,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     PRODUCT_USAGE_SESSIONS_FACTORY_BY_REFERRER_URL {
@@ -239,8 +239,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.REFERRER_URL};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     PRODUCT_USAGE_TIME_FACTORY {
@@ -256,14 +256,14 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     PRODUCT_USAGE_SESSIONS_BY_USERS {
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
 
         @Override
@@ -273,8 +273,8 @@ public enum ScriptType {
     },
     PRODUCT_USAGE_SESSIONS_BY_DOMAINS {
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
 
         @Override
@@ -303,8 +303,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
 
         @Override
@@ -322,8 +322,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
 
         @Override
@@ -341,8 +341,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
 
         @Override
@@ -373,8 +373,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
 
         @Override
@@ -391,8 +391,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.FACTORY_URL};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
 
         @Override
@@ -423,7 +423,7 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
+        public MetricParameter[] getKeyScheme() {
             return new MetricParameter[]{MetricParameter.PARAM};
         }
     },
@@ -434,8 +434,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
         }
     },
     NUMBER_EVENTS_WITH_TYPE {
@@ -453,7 +453,7 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
+        public MetricParameter[] getKeyScheme() {
             return new MetricParameter[]{MetricParameter.PARAM};
         }
     },
@@ -471,8 +471,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     NUMBER_EVENTS_BY_WS {
@@ -489,8 +489,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     NUMBER_EVENTS_WITH_TYPE_BY_USERS {
@@ -508,8 +508,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
         }
     },
     NUMBER_EVENTS_WITH_TYPE_BY_WS {
@@ -527,8 +527,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
         }
     },
     NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS {
@@ -546,8 +546,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
         }
     },
     NUMBER_EVENTS_BY_DOMAINS {
@@ -564,8 +564,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     ACTIVITY_BY_USERS {
@@ -575,8 +575,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     UPDATE_PROFILE_BY_USERS {
@@ -594,8 +594,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     USERS_BY_COMPANY {
@@ -676,8 +676,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     TIME_BETWEEN_EVENTS_BY_DOMAINS {
@@ -694,8 +694,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.ALIAS};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     /**
@@ -750,8 +750,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getResultScheme() {
-            return new MetricParameter[]{MetricParameter.FACTORY_URL};
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     ACTON {
@@ -830,7 +830,11 @@ public enum ScriptType {
                                                     MetricParameter.WS}));
     }
 
-    public MetricParameter[] getResultScheme() { // TODO refactor, unclear
+    /**
+     * If script returns {@link MapValueData} result type, then it is necessary to provide also the scheme of keys.
+     * In a word, it provides additional information for building unique keys sequences for result.
+     */
+    public MetricParameter[] getKeyScheme() {
         return new MetricParameter[0];
     }
 

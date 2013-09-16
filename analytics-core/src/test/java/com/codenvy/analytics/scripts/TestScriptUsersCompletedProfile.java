@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.codenvy.analytics.BaseTest;
@@ -41,7 +39,6 @@ import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
-import com.sun.tracing.dtrace.ArgsAttributes;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestScriptUsersCompletedProfile extends BaseTest {

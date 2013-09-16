@@ -85,10 +85,10 @@ public enum MetricParameter {
         }
     },
 
-    ENTITY {
+    FILTER {
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            ENTITY_TYPES.valueOf(value);
+            MetricFilter.valueOf(value);
         }
     },
     TO_DATE {
@@ -136,22 +136,22 @@ public enum MetricParameter {
 
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {
-        context.put(this.name(), value);
+        context.put(name(), value);
     }
 
     /** Puts default value into execution context */
     public void putDefaultValue(Map<String, String> context) {
-        context.put(this.name(), getDefaultValue());
+        context.put(name(), getDefaultValue());
     }
 
     /** Gets value from execution context */
     public String get(Map<String, String> context) {
-        return context.get(this.name());
+        return context.get(name());
     }
 
     /** @return true if context contains given parameter */
     public boolean exists(Map<String, String> context) {
-        return context.get(this.name()) != null;
+        return context.get(name()) != null;
     }
 
     /** @return true if name is the name of current parameter */
@@ -173,15 +173,6 @@ public enum MetricParameter {
 
     /** The date format is used in scripts. */
     public static final String PARAM_DATE_FORMAT = "yyyyMMdd";
-
-    /** Enumeration for {@link MetricParameter#ENTITY} */
-    public enum ENTITY_TYPES {
-        WS,
-        DOMAINS,
-        USERS,
-        FACTORY_URL,
-        REFERRER_URL
-    }
 
     public enum WS_TYPES {
         ANY, PERSISTENT, TEMPORARY

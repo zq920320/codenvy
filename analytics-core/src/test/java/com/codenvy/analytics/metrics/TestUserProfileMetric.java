@@ -74,7 +74,7 @@ public class TestUserProfileMetric {
     @Test
     public void testUser1Profile() throws Exception {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        MetricFilter.USERS.put(context, "user1@gmail.com");
 
         UserUpdateProfileMetric metric =
                 (UserUpdateProfileMetric)MetricFactory.createMetric(MetricType.USER_UPDATE_PROFILE);
@@ -103,7 +103,7 @@ public class TestUserProfileMetric {
                 (UserUpdateProfileMetric)MetricFactory.createMetric(MetricType.USER_UPDATE_PROFILE);
 
         Map<String, String> context = Utils.newContext();
-        MetricFilter.USER.put(context, "xxx@dot.com");
+        MetricFilter.USERS.put(context, "xxx@dot.com");
 
         ListStringValueData value = (ListStringValueData)metric.getValue(context);
 
@@ -113,7 +113,7 @@ public class TestUserProfileMetric {
     @Test
     public void testUser2Profile() throws Exception {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.USER.put(context, "user2@gmail.com");
+        MetricFilter.USERS.put(context, "user2@gmail.com");
 
         UserUpdateProfileMetric metric =
                 (UserUpdateProfileMetric)MetricFactory.createMetric(MetricType.USER_UPDATE_PROFILE);

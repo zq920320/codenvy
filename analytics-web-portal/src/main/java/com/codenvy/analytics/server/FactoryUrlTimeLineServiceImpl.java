@@ -51,26 +51,6 @@ public class FactoryUrlTimeLineServiceImpl extends AbstractService {
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected List<TableData> doFilter(Map<String, String> context) throws Exception {
-        MetricFilter metricFilter = Utils.getAvailableFilters(context).iterator().next();
-
-        List<String> factoryUrls = getFactoryUrls(metricFilter.getScriptField(), context.get(metricFilter.name()));
-        metricFilter.remove(context);
-
-        Set<String> tempWs = getTempWs(factoryUrls, context);
-
-        MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrls.toString()));
-        List<TableData> data = DISPLAYS[0].retrieveData(context);
-        MetricFilter.FACTORY_URL.remove(context);
-
-        MetricFilter.WS.put(context, Utils.removeBracket(tempWs.toString()));
-        data.addAll(DISPLAYS[1].retrieveData(context));
-
-        return data;
-    }
-
     private Set<String> getTempWs(List<String> factoryUrls, Map<String, String> context) throws IOException {
         Metric metric = MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED);
 
