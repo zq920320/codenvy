@@ -58,6 +58,7 @@ public class ServiceLinkInjector {
         return result;
     }
 
+    // maybe use URLbuilder here ?
     private String generatePath(String id, String rel, UriInfo uriInfo) {
         StringBuilder sb = new StringBuilder();
         if (uriInfo != null)
