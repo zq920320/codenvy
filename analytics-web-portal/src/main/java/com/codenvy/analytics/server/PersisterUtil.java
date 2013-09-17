@@ -22,7 +22,17 @@ package com.codenvy.analytics.server;
 import com.codenvy.analytics.metrics.value.FSValueDataManager;
 import com.codenvy.analytics.shared.TableData;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -125,7 +135,6 @@ public class PersisterUtil {
     private static String getTodayCsvDirectoryName() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
-
-        return new SimpleDateFormat("MM_dd_yyyy").format(calendar.getTime());
+        return new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd").format(calendar.getTime());
     }
 }
