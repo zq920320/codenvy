@@ -17,27 +17,77 @@
  */
 package com.codenvy.factory.store.impl;
 
+import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.factory.commons.AdvancedFactoryUrl;
 import com.codenvy.factory.commons.FactoryUrlException;
 import com.codenvy.factory.commons.Image;
 import com.codenvy.factory.store.FactoryStore;
 import com.codenvy.factory.store.SavedFactoryData;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class InMemoryFactoryStore implements FactoryStore {
+    private              Map<String, Image>            images    = new HashMap<>();
+    private              Map<String, SavedFactoryData> factories = new HashMap<>();
+    private static final ReentrantReadWriteLock        lock      = new ReentrantReadWriteLock();
+    
     @Override
     public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Image image) throws FactoryUrlException {
-        return null;
+        lock.writeLock().lock();
+        try {
+            image.setName(NameGenerator.generate("", 10) + image.getName());
+            factoryUrl.setId(NameGenerator.generate("", 10));
+
+            Set<Image> factoryImages = new HashSet<>();
+            factoryImages.add(image);
+
+            SavedFactoryData factoryData = new SavedFactoryData(factoryUrl, factoryImages);
+            factories.put(factoryUrl.getId(), factoryData);
+            images.put(image.getName(), image);
+
+
+            return factoryData;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void removeFactory(String id) throws FactoryUrlException {
+        lock.writeLock().lock();
+        try {
+            SavedFactoryData removedItem = factories.remove(id);
+            if (removedItem != null) {
+                for (Image image : removedItem.getImages()) {
+                    images.remove(image.getName());
+                }
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     @Override
     public SavedFactoryData getFactory(String id) throws FactoryUrlException {
-        return null;
+        lock.readLock().lock();
+        try {
+            return factories.get(id);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public Image getImage(String id) throws FactoryUrlException {
-        return null;
+        lock.readLock().lock();
+        try {
+            return images.get(id);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 }

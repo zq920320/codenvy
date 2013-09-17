@@ -35,6 +35,13 @@ public interface FactoryStore {
     public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Image image) throws FactoryUrlException;
 
     /**
+     * Remove factory by id
+     * @param id - id of factory to remove
+     * @throws FactoryUrlException
+     */
+    public void removeFactory(String id) throws FactoryUrlException;
+
+    /**
      * Retrieve factory data by its id
      * @param id - factory id
      * @return - data if factory exist and found, null otherwise
