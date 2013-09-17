@@ -34,6 +34,7 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+/** Retrieve factory parameters over http connection. */
 public class HttpFactoryClient implements FactoryClient {
     private static final Logger LOG = LoggerFactory.getLogger(HttpFactoryClient.class);
 

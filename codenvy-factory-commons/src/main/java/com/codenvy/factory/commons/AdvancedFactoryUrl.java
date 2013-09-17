@@ -20,7 +20,9 @@ package com.codenvy.factory.commons;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
+/** Advanced factory format for factory 1.1. Contains additional information about factory. */
 public class AdvancedFactoryUrl extends FactoryUrl {
     private String id;
     private Map<String, String> projectAttributes = Collections.emptyMap();
@@ -39,6 +41,21 @@ public class AdvancedFactoryUrl extends FactoryUrl {
 
     public AdvancedFactoryUrl(String version, String vcs, String vcsUrl, String commitId) {
         super(version, vcs, vcsUrl, commitId);
+    }
+
+    public AdvancedFactoryUrl(AdvancedFactoryUrl originFactory, Set<Link> links) {
+        super(originFactory.getVersion(), originFactory.getVcs(), originFactory.getVcsUrl(), originFactory.getCommitId(), links);
+
+        id = originFactory.getId();
+        projectAttributes = originFactory.projectAttributes;
+        action = originFactory.getAction();
+        style = originFactory.getStyle();
+        description = originFactory.getDescription();
+        contactMail = originFactory.getContactMail();
+        author = originFactory.getAuthor();
+        openFile = originFactory.getOpenFile();
+        orgId = originFactory.getOrgId();
+        affiliatedId = originFactory.getAffiliatedId();
     }
 
     public String getAction() {
@@ -137,7 +154,7 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (openFile != null ? !openFile.equals(that.openFile) : that.openFile != null) return false;
         if (orgId != null ? !orgId.equals(that.orgId) : that.orgId != null) return false;
-        if (!projectAttributes.equals(that.projectAttributes)) return false;
+        if (projectAttributes != null ? !projectAttributes.equals(that.projectAttributes) : that.projectAttributes != null) return false;
         if (style != null ? !style.equals(that.style) : that.style != null) return false;
 
         return true;
@@ -147,7 +164,7 @@ public class AdvancedFactoryUrl extends FactoryUrl {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + projectAttributes.hashCode();
+        result = 31 * result + (projectAttributes != null ? projectAttributes.hashCode() : 0);
         result = 31 * result + (action != null ? action.hashCode() : 0);
         result = 31 * result + (style != null ? style.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);

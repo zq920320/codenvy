@@ -22,6 +22,7 @@ import com.codenvy.factory.commons.FactoryUrlException;
 
 import java.net.URL;
 
+/** Allows to get factory from factories storage. */
 public interface FactoryClient {
     public AdvancedFactoryUrl getFactory(URL factoryUrl, String id) throws FactoryUrlException;
 }

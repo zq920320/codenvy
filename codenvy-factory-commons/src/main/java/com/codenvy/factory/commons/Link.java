@@ -23,11 +23,15 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+/** An object that contain URL for some resource. */
 public class Link implements Externalizable {
+    /** Produced media type of resource described by this link. */
     private String type;
 
+    /** URL of resource. */
     private String href;
 
+    /** Relation attribute of link. Client may use it for choice links to retrieve specific info about resource. */
     private String rel;
 
     public Link() {

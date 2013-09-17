@@ -38,6 +38,15 @@ public class FactoryUrl {
         this.commitId = commitId;
     }
 
+    public FactoryUrl(String version, String vcs, String vcsUrl, String commitId, Set<Link> links) {
+        this.version = version;
+        this.vcs = vcs;
+        this.vcsUrl = vcsUrl;
+        this.commitId = commitId;
+
+        setLinks(links);
+    }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -81,11 +90,12 @@ public class FactoryUrl {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof FactoryUrl)) return false;
 
         FactoryUrl that = (FactoryUrl)o;
 
         if (commitId != null ? !commitId.equals(that.commitId) : that.commitId != null) return false;
+        if (links != null ? !links.equals(that.links) : that.links != null) return false;
         if (vcs != null ? !vcs.equals(that.vcs) : that.vcs != null) return false;
         if (vcsUrl != null ? !vcsUrl.equals(that.vcsUrl) : that.vcsUrl != null) return false;
         if (version != null ? !version.equals(that.version) : that.version != null) return false;
@@ -99,6 +109,7 @@ public class FactoryUrl {
         result = 31 * result + (vcs != null ? vcs.hashCode() : 0);
         result = 31 * result + (vcsUrl != null ? vcsUrl.hashCode() : 0);
         result = 31 * result + (commitId != null ? commitId.hashCode() : 0);
+        result = 31 * result + (links != null ? links.hashCode() : 0);
         return result;
     }
 }

@@ -17,6 +17,7 @@
  */
 package com.codenvy.factory.commons;
 
+/** Class to hold image information such as data, name, media type */
 public class Image {
     private byte[] imageData;
 

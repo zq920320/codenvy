@@ -17,6 +17,7 @@
  */
 package com.codenvy.factory.commons;
 
+/** Holds factory url parameters values, used in factory v1.0 */
 public class SimpleFactoryUrl extends FactoryUrl {
     private String projectName;
     private String workspaceName;

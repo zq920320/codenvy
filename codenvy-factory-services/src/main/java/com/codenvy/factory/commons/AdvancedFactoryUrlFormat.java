@@ -39,7 +39,8 @@ import java.util.Map;
 public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
     private static final Logger LOG = LoggerFactory.getLogger(AdvancedFactoryUrlFormat.class);
     private final static List<String>  mandatoryParameters;
-    private final        FactoryClient factoryStore;
+    // client for retrieving factory parameters from storage
+    private final        FactoryClient factoryClient;
 
     // Required factory url parameters
     static {
@@ -49,11 +50,11 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
     }
 
     public AdvancedFactoryUrlFormat() {
-        this.factoryStore = new HttpFactoryClient();
+        this.factoryClient = new HttpFactoryClient();
     }
 
-    AdvancedFactoryUrlFormat(FactoryClient factoryStore) {
-        this.factoryStore = factoryStore;
+    AdvancedFactoryUrlFormat(FactoryClient factoryClient) {
+        this.factoryClient = factoryClient;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
                 }
             }
 
-            AdvancedFactoryUrl factoryUrl = factoryStore.getFactory(url, params.get("id").iterator().next());
+            AdvancedFactoryUrl factoryUrl = factoryClient.getFactory(url, params.get("id").iterator().next());
 
             // check that vcs value is correct (only git is supported for now)
             if (!"git".equals(factoryUrl.getVcs())) {

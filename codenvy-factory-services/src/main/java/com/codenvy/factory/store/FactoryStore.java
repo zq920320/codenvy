@@ -23,10 +23,30 @@ import com.codenvy.factory.commons.Image;
 
 import java.util.Map;
 
+/** Interface for CRUD operations with factory data. */
 public interface FactoryStore {
-    public Map<String, Object> saveFactory(AdvancedFactoryUrl factoryUrl, Image image) throws FactoryUrlException;
+    /**
+     * Save factory at storage.
+     * @param factoryUrl - factory information
+     * @param image - factory image
+     * @return - copy of saved data
+     * @throws FactoryUrlException
+     */
+    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Image image) throws FactoryUrlException;
 
-    public Map<String, Object> getFactory(String id) throws FactoryUrlException;
+    /**
+     * Retrieve factory data by its id
+     * @param id - factory id
+     * @return - data if factory exist and found, null otherwise
+     * @throws FactoryUrlException
+     */
+    public SavedFactoryData getFactory(String id) throws FactoryUrlException;
 
+    /**
+     * Retrieve image data by its id
+     * @param id - image id
+     * @return - image if it exist in storage, null otherwise
+     * @throws FactoryUrlException
+     */
     public Image getImage(String id) throws FactoryUrlException;
 }

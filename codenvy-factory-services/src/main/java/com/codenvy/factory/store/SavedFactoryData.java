@@ -15,29 +15,35 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.factory.store.impl;
+package com.codenvy.factory.store;
 
 import com.codenvy.factory.commons.AdvancedFactoryUrl;
-import com.codenvy.factory.commons.FactoryUrlException;
 import com.codenvy.factory.commons.Image;
-import com.codenvy.factory.store.FactoryStore;
-import com.codenvy.factory.store.SavedFactoryData;
 
-import java.util.Map;
+import java.util.Set;
 
-public class InMemoryFactoryStore implements FactoryStore {
-    @Override
-    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Image image) throws FactoryUrlException {
-        return null;
+public class SavedFactoryData {
+    private AdvancedFactoryUrl factoryUrl;
+    private Set<Image> images;
+
+    public SavedFactoryData(AdvancedFactoryUrl factoryUrl, Set<Image> images) {
+        this.factoryUrl = factoryUrl;
+        this.images = images;
     }
 
-    @Override
-    public SavedFactoryData getFactory(String id) throws FactoryUrlException {
-        return null;
+    public AdvancedFactoryUrl getFactoryUrl() {
+        return factoryUrl;
     }
 
-    @Override
-    public Image getImage(String id) throws FactoryUrlException {
-        return null;
+    public void setFactoryUrl(AdvancedFactoryUrl factoryUrl) {
+        this.factoryUrl = factoryUrl;
+    }
+
+    public Set<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
     }
 }
