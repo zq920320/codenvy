@@ -31,6 +31,7 @@ import org.everrest.core.impl.provider.json.ObjectBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -42,11 +43,8 @@ import static javax.ws.rs.core.Response.Status;
 @Path("/factory")
 public class FactoryService {
     private static final Logger LOG = LoggerFactory.getLogger(FactoryService.class);
-    private final FactoryStore factoryStore;
-
-    public FactoryService(FactoryStore factoryStore) {
-        this.factoryStore = factoryStore;
-    }
+    @Inject
+    private FactoryStore factoryStore;
 
     /**
      * Save factory to storage and return stored data.
