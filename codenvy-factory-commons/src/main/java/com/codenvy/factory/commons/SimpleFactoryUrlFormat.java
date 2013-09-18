@@ -46,7 +46,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
     // Required factory url parameters
     static {
         mandatoryParameters = new LinkedList<>();
-        mandatoryParameters.add("v");
+        // v parameter should be checked in another way to satisfy v 1.1 url schema
         mandatoryParameters.add("vcs");
         mandatoryParameters.add("vcsurl");
         mandatoryParameters.add("idcommit");
@@ -61,9 +61,9 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
 
             // check API version first
             List<String> versionValues = params.get("v");
-            if (versionValues == null) {
+            if (versionValues != null && versionValues.size() > 1) {
                 throw new FactoryUrlInvalidArgumentException(DEFAULT_MESSAGE);
-            } else if (!versionValues.contains("1.0")) {
+            } else if (versionValues == null || !"1.0".equals(versionValues.get(0))) {
                 throw new FactoryUrlInvalidFormatException(DEFAULT_MESSAGE);
             }
 
@@ -79,12 +79,12 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
                     if (value == null || value.isEmpty()) {
                         throw new FactoryUrlInvalidArgumentException(DEFAULT_MESSAGE);
                     }
-                }
-            }
 
-            // check that vcs value is correct (only git is supported for now)
-            if (!"git".equals(params.get("vcs").iterator().next())) {
-                throw new FactoryUrlInvalidArgumentException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
+                    // check that vcs value is correct (only git is supported for now)
+                    if ("vcs".equals(paramToCheck) && !"git".equals(value)) {
+                        throw new FactoryUrlInvalidArgumentException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
+                    }
+                }
             }
 
             checkRepository(params.get("vcsurl").iterator().next());

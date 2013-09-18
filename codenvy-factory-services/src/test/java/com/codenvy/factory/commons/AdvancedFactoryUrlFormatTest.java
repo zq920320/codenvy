@@ -38,13 +38,13 @@ import static org.testng.Assert.assertEquals;
 @Listeners(value = {MockitoTestNGListener.class})
 public class AdvancedFactoryUrlFormatTest {
     @Mock
-    private FactoryClient factoryStore;
+    private FactoryClient factoryClient;
 
     private AdvancedFactoryUrlFormat factoryUrlFormat;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        this.factoryUrlFormat = new AdvancedFactoryUrlFormat(factoryStore);
+        this.factoryUrlFormat = new AdvancedFactoryUrlFormat(factoryClient);
     }
 
     @Test
@@ -57,8 +57,8 @@ public class AdvancedFactoryUrlFormatTest {
                 new AdvancedFactoryUrl("1.1", "git", "file://" + testRepository + "/testrepository", "commit123456789");
         expectedFactoryUrl.setId("123456789");
 
-        URL factoryUrl = new URL("http://codenvy.com/factory?v=1.1&id=123456789");
-        when(factoryStore.getFactory(factoryUrl, "123456789")).thenReturn(expectedFactoryUrl);
+        URL factoryUrl = new URL("http://codenvy.com/factory-123456789");
+        when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(expectedFactoryUrl);
 
         //when
         AdvancedFactoryUrl actualFactoryUrl = factoryUrlFormat.parse(factoryUrl);
@@ -67,30 +67,38 @@ public class AdvancedFactoryUrlFormatTest {
         assertEquals(actualFactoryUrl, expectedFactoryUrl);
     }
 
-    @Test(dataProvider = "badUrlProvider-InvalidFormat", expectedExceptions = FactoryUrlInvalidFormatException.class)
-    public void shouldThrowFactoryUrlIllegalFormatExceptionIfUrlParametersIsMissing(String url) throws Exception {
-        factoryUrlFormat.parse(new URL(url));
+    @Test(expectedExceptions = FactoryUrlInvalidFormatException.class)
+    public void shouldThrowFactoryUrlIllegalFormatExceptionIfIdIsMissing() throws Exception {
+        factoryUrlFormat.parse(new URL("http://codenvy.com/factory"));
     }
 
-    @DataProvider(name = "badUrlProvider-InvalidFormat")
-    public Object[][] missingParametersFactoryUrlProvider() throws UnsupportedEncodingException {
-        return new Object[][]{// there is no format to satisfy that version
-                              {"http://codenvy.com/factory?v=1.0"}
-        };
+    @Test(expectedExceptions = FactoryUrlInvalidArgumentException.class)
+    public void shouldThrowFactoryUrlInvalidArgumentExceptionIfFactoryWithSuchIdIsNotFound()
+            throws Exception {
+        //given
+        URL factoryUrl = new URL("http://codenvy.com/factory-123456789");
+        when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(null);
+        //when
+        AdvancedFactoryUrl actualFactoryUrl = factoryUrlFormat.parse(factoryUrl);
     }
 
-    @Test(dataProvider = "badUrlProvider-InvalidArgument", expectedExceptions = FactoryUrlInvalidArgumentException.class)
-    public void shouldThrowFactoryUrlInvalidArgumentExceptionIfUrlHasInvalidParameters(String url) throws Exception {
-        factoryUrlFormat.parse(new URL(url));
+    @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlInvalidArgumentException.class)
+    public void shouldThrowFactoryUrlInvalidArgumentExceptionIfUrlHasInvalidParameters(AdvancedFactoryUrl storedFactoryUrl)
+            throws Exception {
+        //given
+        URL factoryUrl = new URL("http://codenvy.com/factory-123456789");
+        when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(storedFactoryUrl);
+        //when
+        AdvancedFactoryUrl actualFactoryUrl = factoryUrlFormat.parse(factoryUrl);
     }
 
-    @DataProvider(name = "badUrlProvider-InvalidArgument")
+    @DataProvider(name = "badAdvancedFactoryUrlProvider")
     public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
-        return new Object[][]{{"http://codenvy.com/factory?id=123456"},// v par is missing
-                              {"http://codenvy.com/factory?v=1.1&v=2.0&id=123455667"},// v par has is duplicated
-                              {"http://codenvy.com/factory?v=1.1"},// id par is missing
-                              {"http://codenvy.com/factory?v=1.1&id=123455667&id=789456123"},// id par has is duplicated
-                              {"http://codenvy.com/factory"} //parameters are missing
+        return new Object[][]{{new AdvancedFactoryUrl("1.1", "notagit", "file://testRepository/testrepository", "commit123456789")},
+                              {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789")},
+                              {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789")},
+                              {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", "")},
+                              {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", null)}
         };
     }
 }

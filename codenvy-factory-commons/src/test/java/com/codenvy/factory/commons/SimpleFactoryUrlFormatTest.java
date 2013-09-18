@@ -67,7 +67,9 @@ public class SimpleFactoryUrlFormatTest {
     public Object[][] missingParametersFactoryUrlProvider() throws UnsupportedEncodingException {
         return new Object[][]{// there is no format to satisfy that version
                               {"http://codenvy.com/factory?v=2.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")}
+                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},
+                              {"http://codenvy.com/factory?vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
+                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// v par is missing
         };
     }
 
@@ -78,9 +80,7 @@ public class SimpleFactoryUrlFormatTest {
 
     @DataProvider(name = "badUrlProvider-InvalidArgument")
     public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
-        return new Object[][]{{"http://codenvy.com/factory?vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// v par is missing
-                              {"http://codenvy.com/factory?v=1.0&v=2.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
+        return new Object[][]{{"http://codenvy.com/factory?v=1.0&v=2.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
                                enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// v par has is duplicated
                               {"http://codenvy.com/factory?v=1.0&vcs=git&vcs=notagit&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
                                enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// vcs par is duplicated
@@ -96,8 +96,7 @@ public class SimpleFactoryUrlFormatTest {
                                       "http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// pname par is missing
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&vcsurl=" + enc(
                                       "http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// wname par is missing
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt"}, // vcsurl par is missing
-                              {"http://codenvy.com/factory"} //parameters are missing
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt"} // vcsurl par is missing
         };
     }
 
