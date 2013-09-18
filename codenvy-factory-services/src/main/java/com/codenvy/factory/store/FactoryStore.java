@@ -21,14 +21,15 @@ import com.codenvy.factory.commons.AdvancedFactoryUrl;
 import com.codenvy.factory.commons.FactoryUrlException;
 import com.codenvy.factory.commons.Image;
 
-import java.util.Map;
-
 /** Interface for CRUD operations with factory data. */
 public interface FactoryStore {
     /**
      * Save factory at storage.
-     * @param factoryUrl - factory information
-     * @param image - factory image
+     *
+     * @param factoryUrl
+     *         - factory information
+     * @param image
+     *         - factory image
      * @return - copy of saved data
      * @throws FactoryUrlException
      */
@@ -36,14 +37,18 @@ public interface FactoryStore {
 
     /**
      * Remove factory by id
-     * @param id - id of factory to remove
+     *
+     * @param id
+     *         - id of factory to remove
      * @throws FactoryUrlException
      */
     public void removeFactory(String id) throws FactoryUrlException;
 
     /**
      * Retrieve factory data by its id
-     * @param id - factory id
+     *
+     * @param id
+     *         - factory id
      * @return - data if factory exist and found, null otherwise
      * @throws FactoryUrlException
      */
@@ -51,7 +56,9 @@ public interface FactoryStore {
 
     /**
      * Retrieve image data by its id
-     * @param id - image id
+     *
+     * @param id
+     *         - image id
      * @return - image if it exist in storage, null otherwise
      * @throws FactoryUrlException
      */

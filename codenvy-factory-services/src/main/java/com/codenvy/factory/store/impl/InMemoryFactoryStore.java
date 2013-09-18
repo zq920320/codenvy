@@ -34,7 +34,7 @@ public class InMemoryFactoryStore implements FactoryStore {
     private              Map<String, Image>            images    = new HashMap<>();
     private              Map<String, SavedFactoryData> factories = new HashMap<>();
     private static final ReentrantReadWriteLock        lock      = new ReentrantReadWriteLock();
-    
+
     @Override
     public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Image image) throws FactoryUrlException {
         lock.writeLock().lock();

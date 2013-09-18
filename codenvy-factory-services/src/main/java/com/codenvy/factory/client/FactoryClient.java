@@ -24,5 +24,12 @@ import java.net.URL;
 
 /** Allows to get factory from factories storage. */
 public interface FactoryClient {
+    /**
+     * Get factory from storage by id.
+     * @param factoryUrl - factory URL
+     * @param id - factory id
+     * @return - stored factory if id is correct, null otherwise
+     * @throws FactoryUrlException
+     */
     public AdvancedFactoryUrl getFactory(URL factoryUrl, String id) throws FactoryUrlException;
 }

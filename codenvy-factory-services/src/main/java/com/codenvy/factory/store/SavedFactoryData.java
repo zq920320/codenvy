@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class SavedFactoryData {
     private AdvancedFactoryUrl factoryUrl;
-    private Set<Image> images;
+    private Set<Image>         images;
 
     public SavedFactoryData(AdvancedFactoryUrl factoryUrl, Set<Image> images) {
         this.factoryUrl = factoryUrl;

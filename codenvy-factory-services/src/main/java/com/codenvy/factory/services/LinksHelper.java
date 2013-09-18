@@ -47,7 +47,7 @@ public class LinksHelper {
 
     private static Link generateFactoryImageLink(String imageId, UriInfo uriInfo) {
         return new Link("image/" + imageId.substring(imageId.lastIndexOf('.') + 1),
-                             generatePath(uriInfo, imageId, "factory/image"), "image");
+                        generatePath(uriInfo, imageId, "factory/image"), "image");
     }
 
     private static Link generateFactoryUrlLink(String id, UriInfo uriInfo) {
@@ -55,11 +55,11 @@ public class LinksHelper {
     }
 
     private static Set<Link> generateSnippetLinks(String id, UriInfo uriInfo) {
-       Set<Link> result = new LinkedHashSet<>();
-      for (String snippetType : snippetTypes) {
-          result.add(new Link("text/plain", generatePath(uriInfo, id, "factory", "snippet", "type", snippetType),
-                              "snippet/" + snippetType));
-      }
+        Set<Link> result = new LinkedHashSet<>();
+        for (String snippetType : snippetTypes) {
+            result.add(new Link("text/plain", generatePath(uriInfo, id, "factory", "snippet", "type", snippetType),
+                                "snippet/" + snippetType));
+        }
         return result;
     }
 

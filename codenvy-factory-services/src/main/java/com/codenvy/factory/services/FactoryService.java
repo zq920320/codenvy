@@ -50,7 +50,9 @@ public class FactoryService {
 
     /**
      * Save factory to storage and return stored data.
-     * @param factoryData - data to store
+     *
+     * @param factoryData
+     *         - data to store
      * @param uriInfo
      * @return - stored data
      * @throws FactoryUrlException
@@ -101,7 +103,9 @@ public class FactoryService {
 
     /**
      * Get factory information from storage by its id.
-     * @param id - id of factory
+     *
+     * @param id
+     *         - id of factory
      * @param uriInfo
      * @return - stored data, if id is correct.
      * @throws FactoryUrlException
@@ -124,7 +128,9 @@ public class FactoryService {
 
     /**
      * Get image information by its id.
-     * @param id - image id.
+     *
+     * @param id
+     *         - image id.
      * @return - image information if id is correct.
      * @throws FactoryUrlException
      */
@@ -143,8 +149,11 @@ public class FactoryService {
 
     /**
      * Get factory snippet by factory id and snippet type.
-     * @param id - factory id.
-     * @param type - type of snippet.
+     *
+     * @param id
+     *         - factory id.
+     * @param type
+     *         - type of snippet.
      * @param uriInfo
      * @return - snippet content
      * @throws FactoryUrlException

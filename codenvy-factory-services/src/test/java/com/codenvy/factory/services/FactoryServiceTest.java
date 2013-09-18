@@ -81,9 +81,9 @@ public class FactoryServiceTest {
         given().//
                 multiPart("factoryUrl", JsonHelper.toJson(factoryUrl), MediaType.APPLICATION_JSON).//
                 multiPart("image", "image.jpeg", new byte[500], "images/jpeg").//
-        expect().//
+                expect().//
                 statusCode(Status.OK.getStatusCode()).//
-        when().//
+                when().//
                 post(SERVICE_PATH);
     }
 
@@ -93,10 +93,10 @@ public class FactoryServiceTest {
         // when, then
         given().//
                 multiPart("someOtherData", "Some content", MediaType.TEXT_PLAIN).//
-        expect().//
+                expect().//
                 statusCode(Status.BAD_REQUEST.getStatusCode()).//
                 body(equalTo("No factory URL information found in 'factoryUrl' section of multipart form-data")).//
-        when().//
+                when().//
                 post(SERVICE_PATH);
     }
 
@@ -117,9 +117,9 @@ public class FactoryServiceTest {
         given().//
                 auth().basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD).
                 multiPart("factoryUrl", JsonHelper.toJson(factoryUrl), MediaType.APPLICATION_JSON).//
-        expect().//
+                expect().//
                 statusCode(Status.OK.getStatusCode()).//
-        when().//
+                when().//
                 post(SECURE_PATH + SERVICE_PATH);
     }
 
@@ -137,14 +137,14 @@ public class FactoryServiceTest {
 
         // when, then
         given().//
-        expect().//
+                expect().//
                 statusCode(Status.OK.getStatusCode()).//
                 body("links[0].rel", equalTo("self")).//
                 body("links[0].href", startsWith(getServerUrl(context) + "/rest/factory")).//
                 body("links[1].rel", equalTo("image")).//
                 body("links[1].href", startsWith(getServerUrl(context) + "/rest/factory/image")).//
                 body("links[1].href", endsWith("image123456789.jpg")).//
-        when().//
+                when().//
                 get(SERVICE_PATH + "/" + CORRECT_FACTORY_ID);
     }
 
@@ -155,11 +155,11 @@ public class FactoryServiceTest {
 
         // when, then
         given().//
-        expect().//
+                expect().//
                 statusCode(400).//
                 body(equalTo(String.format("Factory URL with id %s is not found.", ILLEGAL_FACTORY_ID))).//
-        when()//
-                .get(SERVICE_PATH + "/" + ILLEGAL_FACTORY_ID);
+                when().//
+                get(SERVICE_PATH + "/" + ILLEGAL_FACTORY_ID);
     }
 
     @Test
@@ -183,10 +183,10 @@ public class FactoryServiceTest {
 
         // when, then
         given().//
-        expect().//
+                expect().//
                 statusCode(400).//
                 body(equalTo(String.format("Image with id %s is not found.", "illegalImageId.png"))).//
-        when().//
+                when().//
                 get(SERVICE_PATH + "/image/illegalImageId.png");
     }
 
@@ -197,11 +197,11 @@ public class FactoryServiceTest {
 
         // when, then
         given().//
-        expect().//
+                expect().//
                 statusCode(200).//
                 contentType(MediaType.TEXT_PLAIN).//
                 body(equalTo(getServerUrl(context) + "/factory-" + CORRECT_FACTORY_ID)).//
-        when().//
+                when().//
                 get(SERVICE_PATH + "/" + CORRECT_FACTORY_ID + "/snippet?type=url");
     }
 
@@ -212,13 +212,13 @@ public class FactoryServiceTest {
 
         // when, then
         given().//
-        expect().//
+                expect().//
                 statusCode(200).//
                 contentType(MediaType.TEXT_PLAIN).//
                 body(equalTo("<script type=\"text/javascript\" language=\"javascript\" src=\"" + getServerUrl(context) +
                              "/factory/factory.js\" target=\"" + getServerUrl(context) + "/factory-" + CORRECT_FACTORY_ID + "\"></script>"))
                 .//
-        when().//
+                        when().//
                 get(SERVICE_PATH + "/" + CORRECT_FACTORY_ID + "/snippet?type=html");
     }
 
@@ -229,12 +229,12 @@ public class FactoryServiceTest {
 
         // when, then
         given().//
-        expect().//
+                expect().//
                 statusCode(200).//
                 contentType(MediaType.TEXT_PLAIN).//
                 body(equalTo("[![alt](" + getServerUrl(context) + "/images/factory/factory.png)](" + getServerUrl(context) + "/factory-" +
                              CORRECT_FACTORY_ID + ")")).//
-        when().//
+                when().//
                 get(SERVICE_PATH + "/" + CORRECT_FACTORY_ID + "/snippet?type=markdown");
     }
 
@@ -245,10 +245,10 @@ public class FactoryServiceTest {
 
         // when, then
         given().//
-        expect().//
+                expect().//
                 statusCode(400).//
                 body(equalTo("Factory URL with id " + ILLEGAL_FACTORY_ID + " is not found.")).//
-        when().//
+                when().//
                 get(SERVICE_PATH + "/" + ILLEGAL_FACTORY_ID + "/snippet?type=url");
     }
 
@@ -259,10 +259,10 @@ public class FactoryServiceTest {
 
         // when, then
         given().//
-        expect().//
+                expect().//
                 statusCode(400).//
                 body(equalTo(String.format("Snippet type \"%s\" is unsupported", type))).//
-        when().//
+                when().//
                 get(SERVICE_PATH + "/" + CORRECT_FACTORY_ID + "/snippet?type=" + type);
     }
 
