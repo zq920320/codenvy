@@ -47,6 +47,6 @@ public class FactoryCreatedMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return null;
+        return "The number of created factories";
     }
 }
