@@ -549,6 +549,15 @@ public class MetricFactory {
             case ERROR_TYPES:
                 metric = new ErrorTypesMetric();
                 break;
+            case PROJECT_WITH_JREBEL:
+                metric = new ProjectsJRebelMetric();
+                break;
+            case PROJECT_RUNNED_WITH_JREBEL:
+                metric = new ProjectsRunnedJRebelMetric();
+                break;
+            case PROJECT_DEPLOYED_WITH_JREBEL:
+                metric = new ProjectsDeployedJRebelMetric();
+                break;
             case REFERRERS:
                 metric = new ReferrersMetric();
                 break;

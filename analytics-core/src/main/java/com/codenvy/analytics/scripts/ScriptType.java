@@ -107,6 +107,24 @@ public enum ScriptType {
             return params;
         }
     },
+    NUMBER_PROJECT_WITH_JREBEL {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+    },
+    NUMBER_PROJECT_RUNNED_WITH_JREBEL {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+    },
+    NUMBER_PROJECT_DEPLOYED_WITH_JREBEL {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+    },
     FACTORY_SESSIONS_AND_EVENT {
         @Override
         public Class<? extends ValueData> getValueDataClass() {

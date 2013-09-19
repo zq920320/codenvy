@@ -308,3 +308,33 @@ DEFINE addEventIndicator(S, X,  eventParam, fieldParam, inactiveIntervalParam) R
 	GENERATE FLATTEN(t);
     }
 };
+
+---------------------------------------------------------------------------------------------
+-- Finds list of the JRebel projects by event 
+-- @param eventNamesParam - comma separated list of event names
+-- @return {ws: bytearray, project: bytearray}
+---------------------------------------------------------------------------------------------
+DEFINE jrebelProjectsByEvent(X,  eventNamesParam) RETURNS Y {
+   -- list of unique ws-project by event $eventNamesParam
+   a1 = filterByEvent($X, '$eventNamesParam');
+   a2 = extractParam(a1, 'PROJECT', 'project');
+   a3 = FOREACH a2 GENERATE ws, project;
+   a = DISTINCT a3;
+   
+   -- list of ws-project-usage(true/false) 
+   b1 = filterByEvent(f, 'jrebel-usage');
+   b2 = extractParam(b1, 'PROJECT', 'project');
+   b3 = extractParam(b2, 'JREBEL', 'usage');
+   b = FOREACH b3 GENERATE ws, project, usage, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
+   
+   -- list of latest jrebel-usage events
+   y1 = GROUP b BY (ws, project);
+   y2 = FOREACH y1 GENERATE *, MAX(b.delta) AS maxDelta;
+   y3 = FOREACH y2 GENERATE group.ws AS ws, group.project AS poject, maxDelta, FLATTEN(b);
+   y4 = FILTER y3 BY (delta == maxDelta) AND (usage == 'true');
+   y = FOREACH y4 GENERATE b::ws AS ws, b::project AS project;
+   
+   -- list of latest jrebel-usage events for new projects
+   z = JOIN a BY (ws, project), y BY (ws, project);
+   $Y = FOREACH z GENERATE a::ws AS ws, a::project AS project; 
+};

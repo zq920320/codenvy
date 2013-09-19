@@ -903,6 +903,42 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
+    PROJECT_WITH_JREBEL {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_PROJECT_WITH_JREBEL);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
+        }
+    },
+    PROJECT_RUNNED_WITH_JREBEL {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_PROJECT_RUNNED_WITH_JREBEL);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
+        }
+    },
+    PROJECT_DEPLOYED_WITH_JREBEL {
+        @Override
+        public EnumSet<ScriptType> getScripts() {
+            return EnumSet.of(ScriptType.NUMBER_PROJECT_DEPLOYED_WITH_JREBEL);
+        }
+
+        @Override
+        public void modifyContext(Map<String, String> context) {
+            MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
+        }
+    },
     REFERRERS {
         @Override
         public EnumSet<ScriptType> getScripts() {

@@ -256,6 +256,20 @@ public class Event {
                                 .withParam("LASTNAME", lastName)
                                 .withParam("PHONE", phone);
         }
+        
+        public static Builder createJRebelProjectEvent(String user,
+                                                          String ws,
+                                                          String session,
+                                                          String projecrt,
+                                                          String projectType,
+                                                          boolean isJRebel) {
+            return new Builder().withContext(user, ws, session)
+                                .withParam("EVENT", "jrebel-usage")
+                                .withParam("USER", user)
+                                .withParam("PROJECT", projecrt)
+                                .withParam("TYPE", projectType)
+                                .withParam("JREBEL", Boolean.toString(isJRebel));
+        }
 
         public static Builder createUserCodeRefactorEvent(String ws,
                                                           String user,
