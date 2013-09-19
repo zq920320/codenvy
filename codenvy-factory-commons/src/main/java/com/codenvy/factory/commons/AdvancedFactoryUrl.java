@@ -34,6 +34,7 @@ public class AdvancedFactoryUrl extends FactoryUrl {
     private String openFile;
     private String orgId;
     private String affiliatedId;
+    private boolean privateRepo;
 
     public AdvancedFactoryUrl() {
         super();
@@ -56,6 +57,7 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         openFile = originFactory.getOpenFile();
         orgId = originFactory.getOrgId();
         affiliatedId = originFactory.getAffiliatedId();
+        privateRepo = originFactory.getPrivateRepo();
     }
 
     public String getAction() {
@@ -174,5 +176,13 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         result = 31 * result + (orgId != null ? orgId.hashCode() : 0);
         result = 31 * result + (affiliatedId != null ? affiliatedId.hashCode() : 0);
         return result;
+    }
+
+    public boolean getPrivateRepo() {
+        return privateRepo;
+    }
+
+    public void setPrivateRepo(boolean privateRepo) {
+        this.privateRepo = privateRepo;
     }
 }
