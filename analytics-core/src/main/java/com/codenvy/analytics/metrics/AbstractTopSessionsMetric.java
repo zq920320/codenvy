@@ -5,38 +5,25 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractTopSessionsMetric extends CalculatedMetric {
-
-    public static final int LIFE_TIME_PERIOD = -1;
-    private final int period;
+public abstract class AbstractTopSessionsMetric extends AbstractTopFactoryStatisticsMetric {
 
     public AbstractTopSessionsMetric(MetricType metricType, int period) {
-        super(metricType, MetricType.FACTORY_SESSIONS_LIST);
-        this.period = period;
+        super(metricType, MetricType.FACTORY_SESSIONS_LIST, period);
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        if (MetricFilter.FACTORY_URL.exists(context)) {
-            updateFilterInContext(context);
-        }
+        context = getContextWithDatePeriod(context);
 
-        Calendar toDate = Utils.parseDate(MetricParameter.TO_DATE.getDefaultValue());
-        Calendar fromDate;
-        if (period == LIFE_TIME_PERIOD) {
-            fromDate = Utils.parseDate(MetricParameter.FROM_DATE.getDefaultValue());
-        } else {
-            fromDate = (Calendar)toDate.clone();
-            fromDate.add(Calendar.DAY_OF_MONTH, 1 - period);
-        }
+        Calendar fromDate = Utils.getFromDate(context);
+        Calendar toDate = Utils.getToDate(context);
 
         List<ListStringValueData> top = new ArrayList<>();
         Map<String, String> dayContext = Utils.clone(context);
@@ -52,32 +39,6 @@ public abstract class AbstractTopSessionsMetric extends CalculatedMetric {
         } while (!fromDate.after(toDate));
 
         return new ListListStringValueData(top);
-    }
-
-    public void updateFilterInContext(Map<String, String> context) throws IOException {
-        String factoryUrls = MetricFilter.FACTORY_URL.get(context);
-
-        Set<String> activeWs = new HashSet<>();
-        for (String factoryUrl : factoryUrls.split(",")) {
-            activeWs.addAll(getCreatedTemporaryWs(context, factoryUrl));
-        }
-
-        MetricFilter.FACTORY_URL.remove(context);
-        if (!activeWs.isEmpty()) {
-            MetricFilter.WS.put(context, Utils.removeBracket(activeWs.toString()));
-        }
-    }
-
-    /** @return all created temporary workspaces fro given factory url. */
-    private Set<String> getCreatedTemporaryWs(Map<String, String> context, String factoryUrl) throws IOException {
-        Metric metric = MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED);
-
-        Map<String, String> clonedContext = Utils.clone(context);
-        MetricFilter.FACTORY_URL.put(clonedContext, factoryUrl);
-
-        SetStringValueData value = (SetStringValueData)metric.getValue(clonedContext);
-
-        return value.getAll();
     }
 
     private List<ListStringValueData> keepTopItems(List<ListStringValueData> top) {

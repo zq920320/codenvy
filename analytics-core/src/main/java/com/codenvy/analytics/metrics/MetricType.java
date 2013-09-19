@@ -31,7 +31,9 @@ public enum MetricType {
     FACTORY_URL_ACCEPTED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE, ScriptType.FACTORY_URL_ACCEPTED_BY_FACTORY_URL);
+            return EnumSet.of(ScriptType.SET_ACTIVE,
+                              ScriptType.FACTORY_URL_ACCEPTED_BY_FACTORY_URL,
+                              ScriptType.FACTORY_URL_ACCEPTED_BY_REFERRER_URL);
         }
 
         @Override
@@ -584,19 +586,25 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
-    FACTORY_CREATED {
+    SET_FACTORY_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.FACTORY_CREATED, ScriptType.FACTORY_CREATED_BY_FACTORY_URL);
+            return EnumSet.of(ScriptType.SET_FACTORY_CREATED,
+                              ScriptType.SET_FACTORY_CREATED_BY_AFFILIATE_ID,
+                              ScriptType.SET_FACTORY_CREATED_BY_ORG_ID,
+                              ScriptType.SET_FACTORY_CREATED_BY_PROJECT_TYPE,
+                              ScriptType.SET_FACTORY_CREATED_BY_REPOSITORY_URL,
+                              ScriptType.SET_FACTORY_CREATED_BY_USERS,
+                              ScriptType.SET_FACTORY_CREATED_BY_WS);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            MetricParameter.EVENT.put(context, EventType.FACTORY_CREATED.toString());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
+    FACTORY_CREATED,
     ACTIVE_FACTORY_SET {
         @Override
         public EnumSet<ScriptType> getScripts() {
@@ -661,8 +669,7 @@ public enum MetricType {
         public EnumSet<ScriptType> getScripts() {
             return EnumSet
                     .of(ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY,
-                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS,
-                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_REFERRER_URL);
+                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_WS);
         }
 
         @Override
@@ -899,7 +906,7 @@ public enum MetricType {
     REFERRERS {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.REFERRERS);
+            return EnumSet.of(ScriptType.REFERRERS, ScriptType.REFERRERS_BY_WS);
         }
 
         @Override

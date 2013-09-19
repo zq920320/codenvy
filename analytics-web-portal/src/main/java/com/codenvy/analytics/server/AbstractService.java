@@ -52,7 +52,7 @@ public abstract class AbstractService {
             }
 
             context.putAll(filter);
-            return doFilter(context);
+            return calculate(context);
         }
     }
 
@@ -91,9 +91,4 @@ public abstract class AbstractService {
 
     /** @return all available displays */
     protected abstract Display[] getDisplays();
-
-    /** @return filtered excerpt. */
-    protected List<TableData> doFilter(Map<String, String> context) throws Exception {
-        return new ArrayList<>(); // TODO
-    }
 }

@@ -9,20 +9,16 @@ import java.io.IOException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractTopReferrersMetric extends CalculatedMetric {
-
-    public static final int LIFE_TIME_PERIOD = -1;
-    private final int period;
+public abstract class AbstractTopReferrersMetric extends AbstractTopFactoryStatisticsMetric {
 
     public AbstractTopReferrersMetric(MetricType metricType, int period) {
-        super(metricType, MetricType.REFERRERS);
-        this.period = period;
+        super(metricType, MetricType.REFERRERS, period);
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        context = overrideContext(context);
+        context = getContextWithDatePeriod(context);
 
         MapStringFixedLongListValueData referrers = (MapStringFixedLongListValueData)super.getValue(context);
 
@@ -54,7 +50,7 @@ public abstract class AbstractTopReferrersMetric extends CalculatedMetric {
             item.add("" + 100D * dpl / sess);
             item.add("" + mins / 60);
 
-            addFirstLastSessionsOccurrence(item);
+            addFirstLastSessionsOccurrence(item, context);
 
             result.add(new ListStringValueData(item));
         }
@@ -62,12 +58,10 @@ public abstract class AbstractTopReferrersMetric extends CalculatedMetric {
         return new ListListStringValueData(result);
     }
 
-    private void addFirstLastSessionsOccurrence(List<String> item) throws IOException {
-        Map<String, String> context = Utils.newContext();
+    private void addFirstLastSessionsOccurrence(List<String> item, Map<String, String> context) throws IOException {
+        context = Utils.clone(context);
         MetricParameter.FROM_DATE.putDefaultValue(context);
         MetricParameter.TO_DATE.putDefaultValue(context);
-
-        MetricFilter.REFERRER_URL.put(context, item.get(0));
 
         FactorySessionFirstMetric sessionFirstMetric =
                 (FactorySessionFirstMetric)MetricFactory.createMetric(MetricType.FACTORY_SESSION_FIRST);
@@ -80,57 +74,6 @@ public abstract class AbstractTopReferrersMetric extends CalculatedMetric {
         ListStringValueData lastSession = (ListStringValueData)factoryLastMetric.getValue(context);
         date = lastSession.size() == 0 ? "" : factoryLastMetric.getDate(lastSession);
         item.add(date);
-    }
-
-    /**
-     * Context initialization accordingly to given period. For instance, if period is equal to 7, then
-     * context will cover last 7 days.
-     */
-    private Map<String, String> overrideContext(Map<String, String> context) throws IOException {
-        String factoryUrls = MetricFilter.FACTORY_URL.get(context);
-
-        context = Utils.newContext();
-        MetricParameter.TO_DATE.putDefaultValue(context);
-
-        if (period == LIFE_TIME_PERIOD) {
-            MetricParameter.FROM_DATE.putDefaultValue(context);
-        } else {
-            Calendar date = Utils.getToDate(context);
-            date.add(Calendar.DAY_OF_MONTH, 1 - period);
-
-            Utils.putFromDate(context, date);
-        }
-
-        if (factoryUrls != null) {
-            updateFilterInContext(context, factoryUrls);
-        }
-
-        return context;
-    }
-
-    /** Replaces {@link MetricFilter#FACTORY_URL} by {@link MetricFilter#WS} */
-    private void updateFilterInContext(Map<String, String> context, String factoryUrls) throws IOException {
-        Set<String> activeWs = new HashSet<>();
-        for (String factoryUrl : factoryUrls.split(",")) {
-            activeWs.addAll(getCreatedTemporaryWs(context, factoryUrl));
-        }
-
-        MetricFilter.FACTORY_URL.remove(context);
-        if (!activeWs.isEmpty()) {
-            MetricFilter.WS.put(context, Utils.removeBracket(activeWs.toString()));
-        }
-    }
-
-    /** @return all created temporary workspaces for given factory url. */
-    private Set<String> getCreatedTemporaryWs(Map<String, String> context, String factoryUrl) throws IOException {
-        Metric metric = MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED);
-
-        Map<String, String> clonedContext = Utils.clone(context);
-        MetricFilter.FACTORY_URL.put(clonedContext, factoryUrl);
-
-        SetStringValueData value = (SetStringValueData)metric.getValue(clonedContext);
-
-        return value.getAll();
     }
 
     /** @return not more than {@link #TOP} entities in terms of temporary workspaces created */

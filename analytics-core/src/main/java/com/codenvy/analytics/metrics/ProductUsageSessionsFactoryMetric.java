@@ -23,8 +23,10 @@ import com.codenvy.analytics.metrics.value.ListListStringValueData;
 import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -38,6 +40,12 @@ public class ProductUsageSessionsFactoryMetric extends ValueReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListListStringValueData.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        return super.getValue(alterFactoryFilter(context));
     }
 
     /** {@inheritDoc} */

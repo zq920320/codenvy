@@ -326,6 +326,15 @@ public class Utils {
         return filters;
     }
 
+    public static Map<String, String> cloneAndClearFilters(Map<String, String> context) {
+        context = Utils.clone(context);
+        for (MetricFilter filter : MetricFilter.values()) {
+            filter.remove(context);
+        }
+
+        return context;
+    }
+
     /** @return true if user's name represent registered user */
     public static boolean isRegisteredUser(String user) {
         return !user.toUpperCase().startsWith("ANONYMOUSUSER_");

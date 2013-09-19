@@ -200,7 +200,7 @@ public class TestScriptSetActive extends BaseTest {
     }
 
     @Test
-    public void testActiveWsByUrl() throws Exception {
+    public void testActiveWsByFactUrl() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1",
@@ -231,6 +231,37 @@ public class TestScriptSetActive extends BaseTest {
 
         setValueData = valueData.getAll().get("factoryUrl2");
         assertEquals(setValueData.size(), 1);
+        assertTrue(setValueData.getAll().contains("tmp-3"));
+    }
+
+    @Test
+    public void testActiveWsByRefUrl() throws Exception {
+        List<Event> events = new ArrayList<>();
+        events.add(
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1",
+                                                            "referrer1").withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1",
+                                                            "referrer2").withDate("2013-01-01").build());
+        events.add(
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl2",
+                                                            "referrer2").withDate("2013-01-01").build());
+        File fLog = LogGenerator.generateLog(events);
+
+        MapStringSetValueData valueData =
+                (MapStringSetValueData)executeAndReturnResult(ScriptType.FACTORY_URL_ACCEPTED_BY_REFERRER_URL, fLog, context);
+
+        assertEquals(valueData.size(), 2);
+        assertTrue(valueData.getAll().containsKey("referrer1"));
+        assertTrue(valueData.getAll().containsKey("referrer2"));
+
+        SetStringValueData setValueData = valueData.getAll().get("referrer1");
+        assertEquals(setValueData.size(), 1);
+        assertTrue(setValueData.getAll().contains("tmp-1"));
+
+        setValueData = valueData.getAll().get("referrer2");
+        assertEquals(setValueData.size(), 2);
+        assertTrue(setValueData.getAll().contains("tmp-2"));
         assertTrue(setValueData.getAll().contains("tmp-3"));
     }
 }

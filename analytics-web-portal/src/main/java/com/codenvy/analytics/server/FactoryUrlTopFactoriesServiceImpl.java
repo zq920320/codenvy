@@ -19,20 +19,14 @@
 
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.ScriptExecutor;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -56,20 +50,6 @@ public class FactoryUrlTopFactoriesServiceImpl extends AbstractService {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
-    }
-
-    private List<String> getFactoryUrls(String field, String param) throws IOException {
-        Map<String, String> context = Utils.newContext();
-
-        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_CREATED));
-        MetricParameter.FIELD.put(context, field);
-        MetricParameter.PARAM.put(context, param);
-
-        ListStringValueData valueData =
-                (ListStringValueData)ScriptExecutor.INSTANCE
-                                                   .executeAndReturn(ScriptType.FACTORY_URL_BY_ENTITY, context);
-
-        return valueData.getAll();
     }
 
     /** {@inheritDoc} */

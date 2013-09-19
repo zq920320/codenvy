@@ -19,42 +19,35 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TemporaryWorkspaceCreatedMetric extends ValueReadBasedMetric {
+public class FactoryUrlAcceptedMetric extends ValueReadBasedMetric {
 
-    TemporaryWorkspaceCreatedMetric() {
-        super(MetricType.TEMPORARY_WORKSPACE_CREATED);
+    FactoryUrlAcceptedMetric() {
+        super(MetricType.FACTORY_URL_ACCEPTED);
     }
 
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        return super.getValue(alterFactoryFilter(context));
+        return SetStringValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
+                                                                       MetricParameter.TO_DATE}));
     }
 
     @Override
     public String getDescription() {
-        return "The number of created temporary workspaces";
+        return "The names of active temporary workspaces";
     }
 }

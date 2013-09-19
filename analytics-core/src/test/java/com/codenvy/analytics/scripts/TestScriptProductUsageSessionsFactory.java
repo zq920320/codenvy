@@ -115,25 +115,5 @@ public class TestScriptProductUsageSessionsFactory extends BaseTest {
         assertTrue(list.get(2).contains("10:00:00"));
         assertEquals(list.get(3), "300");
     }
-
-    @Test
-    public void testEventFoundByUrl() throws Exception {
-        MapStringListListStringValueData value =
-                (MapStringListListStringValueData)executeAndReturnResult(
-                        ScriptType.PRODUCT_USAGE_SESSIONS_FACTORY_BY_REFERRER_URL, log, context);
-
-        assertEquals(value.size(), 1);
-        assertTrue(value.getAll().containsKey("ref1"));
-
-        List<String> list = value.getAll().get("ref1").getAll().get(0).getAll();
-        assertTrue(list.contains("tmp-1"));
-        assertEquals(list.get(0), "tmp-1");
-        assertTrue(list.contains("user"));
-        assertEquals(list.get(1), "user");
-        assertTrue(list.get(2).contains("2013-02-10"));
-        assertTrue(list.get(2).contains("10:00:00"));
-        assertTrue(list.contains("300"));
-        assertEquals(list.get(3), "300");
-    }
 }
 

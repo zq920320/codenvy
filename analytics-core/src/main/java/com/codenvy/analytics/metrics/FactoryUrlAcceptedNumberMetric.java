@@ -19,24 +19,27 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactoryUrlAccepted extends ValueReadBasedMetric {
+/** @author <a href="mailto:kuleshov@codenvy.com">Dmitry Kuleshov</a> */
+public class FactoryUrlAcceptedNumberMetric extends CalculatedMetric {
 
-    FactoryUrlAccepted() {
-        super(MetricType.FACTORY_URL_ACCEPTED);
+    FactoryUrlAcceptedNumberMetric() {
+        super(MetricType.FACTORY_URL_ACCEPTED_NUMBER, MetricType.FACTORY_URL_ACCEPTED);
     }
 
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return SetStringValueData.class;
+        return LongValueData.class;
     }
 
     /** {@inheritDoc} */
@@ -47,7 +50,13 @@ public class FactoryUrlAccepted extends ValueReadBasedMetric {
     }
 
     @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        SetStringValueData valueData = (SetStringValueData)super.getValue(context);
+        return new LongValueData(valueData.size());
+    }
+
+    @Override
     public String getDescription() {
-        return "The names of active temporary workspaces";
+        return "The number of usage of factory url";
     }
 }

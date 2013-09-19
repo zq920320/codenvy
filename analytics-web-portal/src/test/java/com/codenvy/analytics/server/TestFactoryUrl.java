@@ -58,8 +58,9 @@ public class TestFactoryUrl {
         MetricParameter.TO_DATE.putDefaultValue(context);
         MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.getDefaultValue());
 
-        DataProcessing.calculateAndStore(MetricType.FACTORY_CREATED, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_URL_ACCEPTED, context);
+        DataProcessing.calculateAndStore(MetricType.REFERRERS, context);
+        DataProcessing.calculateAndStore(MetricType.SET_FACTORY_CREATED, context);
         DataProcessing.calculateAndStore(MetricType.TEMPORARY_WORKSPACE_CREATED, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_TYPES, context);
         DataProcessing.calculateAndStore(MetricType.PRODUCT_USAGE_SESSIONS_FACTORY, context);
@@ -71,7 +72,6 @@ public class TestFactoryUrl {
         DataProcessing.calculateAndStore(MetricType.ACTIVE_FACTORY_SET, context);
         DataProcessing.calculateAndStore(MetricType.USER_CREATED_FROM_FACTORY, context);
         DataProcessing.calculateAndStore(MetricType.FACTORY_SESSIONS_LIST, context);
-        DataProcessing.calculateAndStore(MetricType.REFERRERS, context);
     }
 
     @Test
@@ -340,7 +340,62 @@ public class TestFactoryUrl {
             assertTrue(data.get(i).get(1).get(11).contains("10:00:00"));
 
             assertEquals(data.get(i).get(0).get(12), "Last Session");
-            assertTrue(data.get(i).get(1).get(12).contains("18:00:00"));
+            assertTrue(data.get(i).get(1).get(12).contains("19:00:00"));
+        }
+    }
+
+    @Test
+    public void testTopReferrersWithFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.WS.put(context, "ws1,ws2");
+
+        FactoryUrlTopReferrersServiceImpl service = new FactoryUrlTopReferrersServiceImpl();
+        List<TableData> data = service.getData(context);
+
+        assertEquals(data.size(), 7);
+        assertEquals(data.get(0).size(), 2);
+
+        assertEquals(data.get(0).get(0).size(), 13);
+
+        for (int i = 0; i < 7; i++) {
+            assertEquals(data.get(i).get(0).get(0), "Referrer");
+            assertEquals(data.get(i).get(1).get(0), "ref1");
+
+            assertEquals(data.get(i).get(0).get(1), "Temporary Workspaces");
+            assertEquals(data.get(i).get(1).get(1), "5");
+
+            assertEquals(data.get(i).get(0).get(2), "Sessions");
+            assertEquals(data.get(i).get(1).get(2), "5");
+
+            assertEquals(data.get(i).get(0).get(3), "% Anon");
+            assertEquals(data.get(i).get(1).get(3), "100.0");
+
+            assertEquals(data.get(i).get(0).get(4), "% Auth");
+            assertEquals(data.get(i).get(1).get(4), "0.0");
+
+            assertEquals(data.get(i).get(0).get(5), "% Abandon");
+            assertEquals(data.get(i).get(1).get(5), "100.0");
+
+            assertEquals(data.get(i).get(0).get(6), "% Convert");
+            assertEquals(data.get(i).get(1).get(6), "0.0");
+
+            assertEquals(data.get(i).get(0).get(7), "% Build");
+            assertEquals(data.get(i).get(1).get(7), "40.0");
+
+            assertEquals(data.get(i).get(0).get(8), "% Run");
+            assertEquals(data.get(i).get(1).get(8), "0.0");
+
+            assertEquals(data.get(i).get(0).get(9), "% Deployed");
+            assertEquals(data.get(i).get(1).get(9), "20.0");
+
+            assertEquals(data.get(i).get(0).get(10), "Mins");
+            assertEquals(data.get(i).get(1).get(10), "76");
+
+            assertEquals(data.get(i).get(0).get(11), "First Session");
+            assertTrue(data.get(i).get(1).get(11).contains("10:00:00"));
+
+            assertEquals(data.get(i).get(0).get(12), "Last Session");
+            assertTrue(data.get(i).get(1).get(12).contains("11:00:00"));
         }
     }
 
@@ -641,22 +696,28 @@ public class TestFactoryUrl {
     private File prepareLogs() throws IOException {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder
-                        .createFactoryCreatedEvent("ws1", "anonymoususer_1", "project1", "type1", "repo1", "factory1")
+                        .createFactoryCreatedEvent("ws1", "anonymoususer_1", "project1", "type1", "repo1", "factory1",
+                                                   "", "")
                         .withDate(date).build());
         events.add(Event.Builder
-                        .createFactoryCreatedEvent("ws1", "anonymoususer_2", "project1", "type1", "repo1", "factory2")
+                        .createFactoryCreatedEvent("ws1", "anonymoususer_2", "project1", "type1", "repo1", "factory2",
+                                                   "", "")
                         .withDate(date).build());
         events.add(Event.Builder
-                        .createFactoryCreatedEvent("ws2", "anonymoususer_3", "project1", "type1", "repo1", "factory3")
+                        .createFactoryCreatedEvent("ws2", "anonymoususer_3", "project1", "type1", "repo1", "factory3",
+                                                   "", "")
                         .withDate(date).build());
         events.add(Event.Builder
-                        .createFactoryCreatedEvent("ws3", "anonymoususer_4", "project1", "type1", "repo1", "factory4")
+                        .createFactoryCreatedEvent("ws3", "anonymoususer_4", "project1", "type1", "repo1", "factory4",
+                                                   "", "")
                         .withDate(date).build());
         events.add(Event.Builder
-                        .createFactoryCreatedEvent("ws4", "anonymoususer_5", "project1", "type1", "repo1", "factory5")
+                        .createFactoryCreatedEvent("ws4", "anonymoususer_5", "project1", "type1", "repo1", "factory5",
+                                                   "", "")
                         .withDate(date).build());
         events.add(Event.Builder
-                        .createFactoryCreatedEvent("ws5", "anonymoususer_6", "project1", "type1", "repo1", "factory6")
+                        .createFactoryCreatedEvent("ws5", "anonymoususer_6", "project1", "type1", "repo1", "factory6",
+                                                   "", "")
                         .withDate(date).build());
 
         events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factory1", "ref1").withDate(date)

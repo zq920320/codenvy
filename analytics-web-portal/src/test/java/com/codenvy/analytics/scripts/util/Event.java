@@ -203,14 +203,18 @@ public class Event {
                                                         String project,
                                                         String type,
                                                         String repoUrl,
-                                                        String factoryUrl) {
+                                                        String factoryUrl,
+                                                        String orgId,
+                                                        String affiliateId) {
             return new Builder().withParam("EVENT", EventType.FACTORY_CREATED.toString())
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
                                 .withParam("REPO-URL", repoUrl)
-                                .withParam("FACTORY-URL", factoryUrl);
+                                .withParam("FACTORY-URL", factoryUrl)
+                                .withParam("ORG-ID", orgId)
+                                .withParam("AFFILIATE-ID", affiliateId);
 
         }
 

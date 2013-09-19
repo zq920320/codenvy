@@ -67,7 +67,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
         try {
             ValueData initalValue = iValueContainer.getInitalValue(metricType, makeUUID(context).toString());
 
-            if (isFilterExists(context)) {
+            if (!Utils.getAvailableFilters(context).isEmpty()) {
                 return ValueDataFactory.createDefaultValue(getValueDataClass());
             } else {
                 return initalValue;
@@ -82,10 +82,9 @@ public abstract class CumulativeMetric extends AbstractMetric {
         Map<String, String> prevDayContext = Utils.prevDateInterval(context);
 
         LongValueData previousEntities = (LongValueData)getValue(prevDayContext);
-        LongValueData cumulativeValue = new LongValueData(
-                previousEntities.getAsLong() + addedEntities.getAsLong() - removedEntities.getAsLong());
 
-        return cumulativeValue;
+        return new LongValueData(
+                previousEntities.getAsLong() + addedEntities.getAsLong() - removedEntities.getAsLong());
     }
 
     protected void validateExistenceInitialValueBefore(Map<String, String> context)

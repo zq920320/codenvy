@@ -147,7 +147,15 @@ public class FSValueDataManager {
             } else {
                 for (MetricFilter metricFilter : MetricFilter.values()) {
                     if (metricFilter.name().equals(entry.getKey())) {
-                        element = metricFilter.translateToRelativePath(entry.getValue());
+                        switch (metricFilter) {
+                            case REFERRER_URL:
+                            case REPOSITORY_URL:
+                            case FACTORY_URL:
+                                element = getRelativePath("" + entry.getValue().hashCode());
+                                break;
+                            default:
+                                element = getRelativePath(entry.getValue());
+                        }
                         break;
                     }
                 }
@@ -160,6 +168,29 @@ public class FSValueDataManager {
         builder.append(fileName);
         return new File(dir, builder.toString());
     }
+
+    /** Translates value to relative path */
+    private static String getRelativePath(String value) {
+        if (value.length() < 3) {
+            return value;
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(value.substring(0, 1));
+        builder.append(File.separatorChar);
+
+        builder.append(value.substring(1, 2));
+        builder.append(File.separatorChar);
+
+        builder.append(value.substring(2, 3));
+        builder.append(File.separatorChar);
+
+        builder.append(value.substring(3));
+
+        return builder.toString();
+    }
+
 
     /**
      * Makes sure that {@link com.codenvy.analytics.metrics.MetricParameter#TO_DATE} and {@link

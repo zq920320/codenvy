@@ -6,8 +6,10 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -21,6 +23,12 @@ public class FactorySessionsAndRunMetric extends ValueReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        return super.getValue(alterFactoryFilter(context));
     }
 
     /** {@inheritDoc} */

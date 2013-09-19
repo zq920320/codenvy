@@ -15,22 +15,27 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactoryCreatedMetric extends ValueReadBasedMetric {
+public class FactoryCreatedMetric extends CalculatedMetric {
 
-    FactoryCreatedMetric() {
-        super(MetricType.FACTORY_CREATED);
+    public FactoryCreatedMetric() {
+        super(MetricType.FACTORY_CREATED, MetricType.SET_FACTORY_CREATED);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        SetStringValueData valueData = (SetStringValueData)super.getValue(context);
+        return new LongValueData(valueData.size());
     }
 
     /** {@inheritDoc} */
@@ -41,13 +46,7 @@ public class FactoryCreatedMetric extends ValueReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
-    }
-
-    @Override
     public String getDescription() {
-        return "The number of created factory urls";
+        return null;
     }
 }

@@ -62,8 +62,12 @@ public class ValueDataFactory {
         } else if (clazz == MapStringFixedLongListValueData.class) {
             return MapStringFixedLongListValueData.DEFAULT;
 
+        } else if (clazz == MapStringMapSFLLValueData.class) {
+            return MapStringMapSFLLValueData.DEFAULT;
+
         } else if (clazz == MapListLongValueData.class) {
             return MapListLongValueData.DEFAULT;
+
         } else if (clazz == FixedListLongValueData.class) {
             return FixedListLongValueData.DEFAULT;
         }
@@ -109,6 +113,8 @@ public class ValueDataFactory {
         } else if (clazz == MapStringFixedLongListValueData.class) {
             return createMapStringFixedLongListValueData(iter);
 
+        } else if (clazz == MapStringMapSFLLValueData.class) {
+            return createMapStringMapSFLLValueData(iter);
 
         } else if (clazz == MapListLongValueData.class) {
             return createMapListLongValueData(iter);
@@ -175,7 +181,29 @@ public class ValueDataFactory {
         return new MapStringListValueData(result);
     }
 
-    private static ValueData createMapStringFixedLongListValueData(Iterator<Tuple> iter) throws IOException {
+    private static ValueData createMapStringMapSFLLValueData(Iterator<Tuple> iter) throws IOException {
+        if (!iter.hasNext()) {
+            return new MapStringMapSFLLValueData(Collections.<String, MapStringFixedLongListValueData>emptyMap());
+        }
+
+        Map<String, MapStringFixedLongListValueData> result = new HashMap<>();
+        while (iter.hasNext()) {
+            Tuple tuple = iter.next();
+
+            validateTupleSize(tuple, 2);
+
+            String key = tuple.get(0).toString();
+            MapStringFixedLongListValueData value =
+                    createMapStringFixedLongListValueData(((DataBag)tuple.get(1)).iterator());
+
+            result.put(key, value);
+        }
+
+        return new MapStringMapSFLLValueData(result);
+    }
+
+    private static MapStringFixedLongListValueData createMapStringFixedLongListValueData(Iterator<Tuple> iter)
+            throws IOException {
         if (!iter.hasNext()) {
             return new MapStringFixedLongListValueData(Collections.<String, FixedListLongValueData>emptyMap());
         }

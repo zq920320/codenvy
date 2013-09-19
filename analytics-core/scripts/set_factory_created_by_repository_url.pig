@@ -18,8 +18,13 @@
 
 IMPORT 'macros.pig';
 
-l = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, user : chararray, project : chararray, type : chararray, repoUrl : chararray, factoryUrl : chararray);
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-r1 = FILTER l BY INDEXOF('$PARAM', $FIELD, 0) >= 0;
-r2 = FOREACH r1 GENERATE factoryUrl;
-result = DISTINCT r2;
+a1 = filterByEvent(l, 'factory-created');
+a2 = extractParam(a1, 'FACTORY-URL', 'factoryUrl');
+a3 = extractParam(a2, 'REPO-URL', 'repoUrl');
+a4 = removeEmptyField(a3, 'repoUrl');
+a = FOREACH a4 GENERATE repoUrl, factoryUrl;
+
+
+result = setByField(a, 'repoUrl', 'factoryUrl');

@@ -297,14 +297,17 @@ public class MetricFactory {
             case ACTIVITY:
                 metric = new ActivityMetric();
                 break;
+            case SET_FACTORY_CREATED:
+                metric = new SetFactoryCreatedMetric();
+                break;
             case FACTORY_CREATED:
                 metric = new FactoryCreatedMetric();
                 break;
             case FACTORY_URL_ACCEPTED:
-                metric = new FactoryUrlAccepted();
+                metric = new FactoryUrlAcceptedMetric();
                 break;
             case FACTORY_URL_ACCEPTED_NUMBER:
-                metric = new FactoryUrlAcceptedNumber();
+                metric = new FactoryUrlAcceptedNumberMetric();
                 break;
             case TEMPORARY_WORKSPACE_CREATED:
                 metric = new TemporaryWorkspaceCreatedMetric();

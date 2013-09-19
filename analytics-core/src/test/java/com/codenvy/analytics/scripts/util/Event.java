@@ -277,7 +277,9 @@ public class Event {
                                                         String project,
                                                         String type,
                                                         String repoUrl,
-                                                        String factoryUrl) {
+                                                        String factoryUrl,
+                                                        String orgId,
+                                                        String affiliateId) {
             return new Builder().withContext(user, ws, UUID.randomUUID().toString())
                                 .withParam("EVENT", EventType.FACTORY_CREATED.toString())
                                 .withParam("WS", ws)
@@ -285,7 +287,9 @@ public class Event {
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type)
                                 .withParam("REPO-URL", repoUrl)
-                                .withParam("FACTORY-URL", factoryUrl);
+                                .withParam("FACTORY-URL", factoryUrl)
+                                .withParam("ORG-ID", orgId)
+                                .withParam("AFFILIATE-ID", affiliateId);
 
         }
 

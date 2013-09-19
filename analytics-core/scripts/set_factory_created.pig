@@ -18,8 +18,9 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-a3 = filterByEvent(a1, 'factory-created');
-a = extractParam(a3, 'FACTORY-URL', 'factoryUrl');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+a1 = filterByEvent(l, 'factory-created');
+a2 = extractParam(a1, 'FACTORY-URL', 'factoryUrl');
+a = FOREACH a2 GENERATE factoryUrl;
 
-result = countByField(a, 'factoryUrl');
+result = DISTINCT a;

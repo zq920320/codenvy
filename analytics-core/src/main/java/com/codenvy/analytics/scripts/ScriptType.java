@@ -225,24 +225,6 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
-    PRODUCT_USAGE_SESSIONS_FACTORY_BY_REFERRER_URL {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringListListStringValueData.class;
-        }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
-            return params;
-        }
-
-        @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
-        }
-    },
     PRODUCT_USAGE_TIME_FACTORY {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -401,6 +383,17 @@ public enum ScriptType {
             params.add(MetricParameter.LOAD_DIR);
             params.add(MetricParameter.STORE_DIR);
             return params;
+        }
+    },
+    FACTORY_URL_ACCEPTED_BY_REFERRER_URL {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     NUMBER_EVENTS {
@@ -630,25 +623,6 @@ public enum ScriptType {
             return MapStringLongValueData.class;
         }
     },
-    FACTORY_URL_BY_ENTITY {
-        @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.LOAD_DIR,
-                    MetricParameter.PARAM,
-                    MetricParameter.FIELD}));
-        }
-
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListStringValueData.class;
-        }
-
-        @Override
-        public boolean isLogRequired() {
-            return false;
-        }
-    },
     TIME_BETWEEN_EVENTS {
         @Override
         public Set<MetricParameter> getParams() {
@@ -729,24 +703,71 @@ public enum ScriptType {
             return LongValueData.class;
         }
     },
-    FACTORY_CREATED {
+    SET_FACTORY_CREATED {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
-            params.add(MetricParameter.STORE_DIR);
-            return params;
+        public Class<? extends ValueData> getValueDataClass() {
+            return SetStringValueData.class;
+        }
+    },
+    SET_FACTORY_CREATED_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
         }
 
         @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
-    FACTORY_CREATED_BY_FACTORY_URL {
+    SET_FACTORY_CREATED_BY_PROJECT_TYPE {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return MapStringLongValueData.class;
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
+        }
+    },
+    SET_FACTORY_CREATED_BY_AFFILIATE_ID {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
+        }
+    },
+    SET_FACTORY_CREATED_BY_ORG_ID {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
+        }
+    },
+    SET_FACTORY_CREATED_BY_REPOSITORY_URL {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
+        }
+    },
+    SET_FACTORY_CREATED_BY_USERS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
         }
 
         @Override
@@ -789,6 +810,24 @@ public enum ScriptType {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringFixedLongListValueData.class;
+        }
+    },
+    REFERRERS_BY_WS {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = new HashSet<>();
+            params.add(MetricParameter.LOAD_DIR);
+            return params;
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringMapSFLLValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
     /** Script for testing purpose. */

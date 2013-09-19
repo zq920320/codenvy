@@ -19,44 +19,36 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
-/** @author <a href="mailto:kuleshov@codenvy.com">Dmitry Kuleshov</a> */
-public class FactoryUrlAcceptedNumber extends CalculatedMetric {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class SetFactoryCreatedMetric extends ValueReadBasedMetric {
 
-    FactoryUrlAcceptedNumber() {
-        super(MetricType.FACTORY_URL_ACCEPTED_NUMBER, MetricType.FACTORY_URL_ACCEPTED);
+    SetFactoryCreatedMetric() {
+        super(MetricType.SET_FACTORY_CREATED);
     }
 
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+        return SetStringValueData.class;
     }
 
     /** {@inheritDoc} */
     @Override
     public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                                       MetricParameter.TO_DATE}));
+        return new LinkedHashSet<>(
+                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
     }
 
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        SetStringValueData valueData = (SetStringValueData)super.getValue(context);
-        return new LongValueData(valueData.size());
-    }
-
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The number of usage of factory url";
+        return "The list of created factories.";
     }
 }

@@ -19,19 +19,14 @@
 
 package com.codenvy.analytics.server;
 
-import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.SetStringValueData;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.ScriptExecutor;
+import com.codenvy.analytics.metrics.TimeUnit;
+import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.server.vew.template.Display;
 import com.codenvy.analytics.shared.TableData;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -49,31 +44,6 @@ public class FactoryUrlTimeLineServiceImpl extends AbstractService {
             LOGGER.error(e.getMessage(), e);
             return Collections.emptyList();
         }
-    }
-
-    private Set<String> getTempWs(List<String> factoryUrls, Map<String, String> context) throws IOException {
-        Metric metric = MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED);
-
-        Map<String, String> clonedContext = Utils.clone(context);
-        MetricFilter.FACTORY_URL.put(clonedContext, Utils.removeBracket(factoryUrls.toString()));
-
-        SetStringValueData value = (SetStringValueData)metric.getValue(clonedContext);
-
-        return value.getAll();
-    }
-
-    private List<String> getFactoryUrls(String field, String param) throws IOException {
-        Map<String, String> context = Utils.newContext();
-
-        MetricParameter.LOAD_DIR.put(context, Utils.getLoadDirFor(MetricType.FACTORY_CREATED));
-        MetricParameter.FIELD.put(context, field);
-        MetricParameter.PARAM.put(context, param);
-
-        ListStringValueData valueData =
-                (ListStringValueData)ScriptExecutor.INSTANCE
-                                                   .executeAndReturn(ScriptType.FACTORY_URL_BY_ENTITY, context);
-
-        return valueData.getAll();
     }
 
     /** {@inheritDoc} */

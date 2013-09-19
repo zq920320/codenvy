@@ -18,27 +18,20 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.File;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricFilter {
     WS,
     USERS,
+    PROJECT_TYPE,
     DOMAINS,
     COMPANY,
-    REFERRER_URL {
-        @Override
-        public String translateToRelativePath(String value) {
-            return super.translateToRelativePath("" + value.hashCode());
-        }
-    },
-    FACTORY_URL {
-        @Override
-        public String translateToRelativePath(String value) {
-            return super.translateToRelativePath("" + value.hashCode());
-        }
-    };
+    ORG_ID,
+    AFFILIATE_ID,
+    REPOSITORY_URL,
+    REFERRER_URL,
+    FACTORY_URL;
 
     /** @return true if context contains given parameter */
     public boolean exists(Map<String, String> context) {
@@ -58,27 +51,5 @@ public enum MetricFilter {
     /** Gets value from execution context */
     public String get(Map<String, String> context) {
         return context.get(name());
-    }
-
-    /** Translates value to relative path */
-    public String translateToRelativePath(String value) {
-        if (value.length() < 3) {
-            return value;
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(value.substring(0, 1));
-        builder.append(File.separatorChar);
-
-        builder.append(value.substring(1, 2));
-        builder.append(File.separatorChar);
-
-        builder.append(value.substring(2, 3));
-        builder.append(File.separatorChar);
-
-        builder.append(value.substring(3));
-
-        return builder.toString();
     }
 }
