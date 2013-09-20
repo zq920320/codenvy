@@ -31,15 +31,13 @@ public enum MetricType {
     FACTORY_URL_ACCEPTED {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE,
+            return EnumSet.of(ScriptType.FACTORY_URL_ACCEPTED,
                               ScriptType.FACTORY_URL_ACCEPTED_BY_FACTORY_URL,
                               ScriptType.FACTORY_URL_ACCEPTED_BY_REFERRER_URL);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            MetricParameter.FIELD.put(context, "ws");
-            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }

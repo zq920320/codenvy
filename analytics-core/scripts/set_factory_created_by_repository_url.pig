@@ -21,8 +21,8 @@ IMPORT 'macros.pig';
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = filterByEvent(l, 'factory-created');
-a2 = extractParam(a1, 'FACTORY-URL', 'factoryUrl');
-a3 = extractParam(a2, 'REPO-URL', 'repoUrl');
+a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
+a3 = extractUrlParam(a2, 'REPO-URL', 'repoUrl');
 a4 = removeEmptyField(a3, 'repoUrl');
 a = FOREACH a4 GENERATE repoUrl, factoryUrl;
 

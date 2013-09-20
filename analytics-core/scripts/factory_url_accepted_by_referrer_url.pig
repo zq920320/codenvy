@@ -21,7 +21,7 @@ IMPORT 'macros.pig';
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = filterByEvent(l, 'factory-url-accepted');
-a2 = extractParam(a1, 'REFERRER', 'refUrl');
+a2 = extractUrlParam(a1, 'REFERRER', 'refUrl');
 a3 = removeEmptyField(a2, 'refUrl');
 a = FOREACH a3 GENERATE ws, refUrl;
 

@@ -20,7 +20,7 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 a1 = filterByEvent(l, 'factory-created');
-a2 = extractParam(a1, 'FACTORY-URL', 'factoryUrl');
+a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
 a = FOREACH a2 GENERATE factoryUrl;
 
 result = DISTINCT a;

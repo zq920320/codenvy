@@ -18,21 +18,13 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-a2 = filterByEvent(a1, 'factory-url-accepted');
-a3 = extractParam(a2, 'REFERRER', 'referrer');
-a4 = extractParam(a3, 'FACTORY-URL', 'factoryUrl');
-a = FOREACH a4 GENERATE ws, referrer, factoryUrl;
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, referrer : chararray, factoryUrl : chararray);
-c1 = UNION a, b;
-c = DISTINCT c1;
+a1 = filterByEvent(l, 'factory-url-accepted');
+a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
+a3 = removeEmptyField(a2, 'factoryUrl');
+a4 = FOREACH a3 GENERATE ws, com.codenvy.analytics.pig.URLDecode(factoryUrl) AS factoryUrl;
+a = FOREACH a4 GENERATE ws, (INDEXOF(factoryUrl, '&ptype=', 0) > 0 ? REGEX_EXTRACT(factoryUrl, '(.*)&ptype=.*', 1) : factoryUrl) AS factoryUrl;
 
-STORE c INTO '$STORE_DIR' USING PigStorage();
-
-d1 = FOREACH a GENERATE ws, factoryUrl;
-d2 = removeEmptyField(d1, 'ws');
-d = removeEmptyField(d2, 'factoryUrl');
-
-result = setByField(d, 'factoryUrl', 'ws');
+result = setByField(a, 'factoryUrl', 'ws');
 

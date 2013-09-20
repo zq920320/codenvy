@@ -155,6 +155,16 @@ DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
   $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramFieldNameParam;
 };
 
+---------------------------------------------------------------------------
+-- Extract parameter value out of message and adds as field to tuple.
+-- @param paramNameParam - the parameter name
+-- @param paramFieldNameParam - the name of filed in the tuple
+-- @return  {..., $paramFieldNameParam : bytearray}
+---------------------------------------------------------------------------
+DEFINE extractUrlParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
+  $Y = FOREACH $X GENERATE *, com.codenvy.analytics.pig.URLDecode(REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1)) AS $paramFieldNameParam;
+};
+
 ---------------------------------------------------------------------------------------------
 -- Extracts session id
 -- @return {user : bytearray, ws: bytearray, id: bytearray, dt: datetime}

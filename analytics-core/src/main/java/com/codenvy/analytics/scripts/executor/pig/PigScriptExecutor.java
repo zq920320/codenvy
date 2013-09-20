@@ -91,7 +91,10 @@ public class PigScriptExecutor implements ScriptExecutor {
 
             PigServer server = new PigServer(execType);
             try {
+                server.registerJar(
+                        PigScriptExecutor.class.getProtectionDomain().getCodeSource().getLocation().getPath());
                 server.registerScript(scriptContent, context);
+
                 return ValueDataFactory
                         .createValueData(scriptType.getValueDataClass(), server.openIterator(FINAL_RELATION));
             } finally {

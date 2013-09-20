@@ -394,14 +394,6 @@ public enum ScriptType {
         public MetricParameter[] getKeyScheme() {
             return new MetricParameter[]{MetricParameter.FILTER};
         }
-
-        @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
-            params.add(MetricParameter.STORE_DIR);
-            return params;
-        }
     },
     FACTORY_URL_ACCEPTED_BY_REFERRER_URL {
         @Override
@@ -718,7 +710,7 @@ public enum ScriptType {
 
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return SetStringValueData.class;
         }
     },
     SET_FACTORY_CREATED {

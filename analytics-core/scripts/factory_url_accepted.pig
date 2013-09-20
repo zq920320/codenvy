@@ -18,13 +18,17 @@
 
 IMPORT 'macros.pig';
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+a2 = filterByEvent(a1, 'factory-url-accepted');
+a3 = extractUrlParam(a2, 'REFERRER', 'referrer');
+a4 = extractUrlParam(a3, 'FACTORY-URL', 'factoryUrl');
+a = FOREACH a4 GENERATE ws, referrer, (INDEXOF(factoryUrl, '&ptype=', 0) > 0 ? REGEX_EXTRACT(factoryUrl, '(.*)&ptype=.*', 1) : factoryUrl) AS factoryUrl;
 
-a1 = filterByEvent(l, 'factory-created');
-a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
-a3 = extractParam(a2, 'ORG-ID', 'orgId');
-a4 = removeEmptyField(a3, 'orgId');
-a = FOREACH a4 GENERATE orgId, factoryUrl;
+b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, referrer : chararray, factoryUrl : chararray);
+c1 = UNION a, b;
+c = DISTINCT c1;
 
+STORE c INTO '$STORE_DIR' USING PigStorage();
 
-result = setByField(a, 'orgId', 'factoryUrl');
+r1 = FOREACH a GENERATE ws;
+result = DISTINCT r1;
