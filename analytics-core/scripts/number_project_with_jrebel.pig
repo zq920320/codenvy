@@ -19,5 +19,5 @@
 IMPORT 'macros.pig';
 
 f = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-z = jrebelProjectsByEvent(f, 'project-created');
+z = jrebelProjectsByEvent(f, '*');
 result = countAll(z);

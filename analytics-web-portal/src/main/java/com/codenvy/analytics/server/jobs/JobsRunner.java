@@ -161,7 +161,7 @@ public class JobsRunner implements ServletContextListener {
             addJobDetail(DailyDataProcessor.class, jobDetails);
             addJobDetail(ViewJob.class, jobDetails);
             addJobDetail(ActOnJob.class, jobDetails);
-            addJobDetail(JRebelJob.class, jobDetails);
+//            addJobDetail(JRebelJob.class, jobDetails);
             addJobDetail(CheckLogsJob.class, jobDetails);
             addJobDetail(WeeklyReportJob.class, jobDetails);
 
@@ -199,7 +199,7 @@ public class JobsRunner implements ServletContextListener {
     }
 
     private void addJobDetail(Class<? extends Job> clazz, List<JobDetail> jobDetails) {
-        if (isAccessable(clazz)) {
+        if (isAccessible(clazz)) {
             JobDetailImpl jobDetail = new JobDetailImpl();
             jobDetail.setKey(new JobKey(clazz.getName()));
             jobDetail.setJobClass(clazz);
@@ -209,7 +209,7 @@ public class JobsRunner implements ServletContextListener {
         }
     }
 
-    private boolean isAccessable(Class<? extends Job> clazz) {
+    private boolean isAccessible(Class<? extends Job> clazz) {
         try {
             clazz.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException

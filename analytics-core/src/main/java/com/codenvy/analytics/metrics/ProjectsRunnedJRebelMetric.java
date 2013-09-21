@@ -17,12 +17,12 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class ProjectsRunnedJRebelMetric extends ValueReadBasedMetric {
@@ -48,6 +48,6 @@ public class ProjectsRunnedJRebelMetric extends ValueReadBasedMetric {
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Total number of projects runned with JRebel";
+        return "Total number of projects run with JRebel configured";
     }
 }
