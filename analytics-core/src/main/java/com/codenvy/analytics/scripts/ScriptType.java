@@ -713,6 +713,23 @@ public enum ScriptType {
             return SetStringValueData.class;
         }
     },
+    SET_ACTIVE_FACTORY {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return SetStringValueData.class;
+        }
+    },
+    SET_ACTIVE_FACTORY_BY_WS {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
+        }
+    },
     SET_FACTORY_CREATED {
         @Override
         public Class<? extends ValueData> getValueDataClass() {

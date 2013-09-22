@@ -18,10 +18,11 @@
 
 IMPORT 'macros.pig';
 
-f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = filterByEvent(f1, '$EVENT');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-c1 = FOREACH f GENERATE $FIELD AS targetField;
-c = removeEmptyField(c1, 'targetField');
+a1 = filterByEvent(l, 'factory-url-accepted');
+a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
+a4 = removeEmptyField(a2, 'ws');
+a = FOREACH a4 GENERATE ws, factoryUrl;
 
-result = DISTINCT c;
+result = setByField(a, 'ws', 'factoryUrl');

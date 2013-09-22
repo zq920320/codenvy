@@ -606,13 +606,12 @@ public enum MetricType {
     ACTIVE_FACTORY_SET {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_ACTIVE);
+            return EnumSet.of(ScriptType.SET_ACTIVE_FACTORY,
+                              ScriptType.SET_ACTIVE_FACTORY_BY_WS);
         }
 
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
-            MetricParameter.FIELD.put(context, "url");
-            MetricParameter.EVENT.put(context, EventType.FACTORY_URL_ACCEPTED.toString());
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
         }

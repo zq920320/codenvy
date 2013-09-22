@@ -3,7 +3,10 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.*;
+import com.codenvy.analytics.metrics.value.ListListStringValueData;
+import com.codenvy.analytics.metrics.value.ListStringValueData;
+import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,32 +23,18 @@ public abstract class AbstractTopFactoriesMetric extends AbstractTopFactoryStati
     public ValueData getValue(Map<String, String> context) throws IOException {
         context = getContextWithDatePeriod(context);
 
-        Map<String, Long> factoryByTime = new HashMap<>();
-        Map<String, Set<String>> factoryByWs = new HashMap<>();
-
-        for (String factoryUrl : getInvolvedFactories(context)) {
-            Set<String> activeWs = getInvolvedTemporaryWs(factoryUrl, context);
-            Long usageTime = getUsageTime(context, activeWs);
-
-            factoryByWs.put(factoryUrl, activeWs);
-            factoryByTime.put(factoryUrl, usageTime);
-        }
+        SetStringValueData activeFactories = (SetStringValueData)super.getValue(context);
+        Map<String, Long> factoryByTime = getFactoryTimeUsage(context, activeFactories);
 
         List<Map.Entry<String, Long>> top = new ArrayList<>(factoryByTime.entrySet());
-        Collections.sort(top, new Comparator<Map.Entry<String, Long>>() {
-            @Override
-            public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-                long delta = o1.getValue() - o2.getValue();
-                return delta > 0 ? -1 : (delta < 0 ? 1 : 0);
-            }
-        });
+        keepTopItems(top);
 
         List<ListStringValueData> result = new ArrayList<>(100);
         for (int i = 0; i < Math.min(TOP, top.size()); i++) {
             String factoryUrl = top.get(i).getKey();
 
             context = Utils.cloneAndClearFilters(context);
-            MetricFilter.WS.put(context, Utils.removeBracket(factoryByWs.get(factoryUrl).toString()));
+            MetricFilter.FACTORY_URL.put(context, factoryUrl);
 
             List<String> item = new ArrayList<>(13);
 
@@ -70,20 +59,19 @@ public abstract class AbstractTopFactoriesMetric extends AbstractTopFactoryStati
                                   .getAsString());
             item.add(top.get(i).getValue().toString()); // mins
 
-            Map<String, String> fullContext = Utils.newContext();
+            Map<String, String> fullContext = Utils.clone(context);
             MetricParameter.FROM_DATE.putDefaultValue(fullContext);
             MetricParameter.TO_DATE.putDefaultValue(fullContext);
-            MetricFilter.WS.put(fullContext, MetricFilter.WS.get(context));
 
             FactorySessionFirstMetric sessionFirstMetric =
                     (FactorySessionFirstMetric)MetricFactory.createMetric(MetricType.FACTORY_SESSION_FIRST);
-            ListStringValueData firstSession = (ListStringValueData)sessionFirstMetric.getValue(context);
+            ListStringValueData firstSession = (ListStringValueData)sessionFirstMetric.getValue(fullContext);
             String date = firstSession.size() == 0 ? "" : sessionFirstMetric.getDate(firstSession);
             item.add(date);
 
             FactorySessionsLastMetric factoryLastMetric =
                     (FactorySessionsLastMetric)MetricFactory.createMetric(MetricType.FACTORY_SESSION_LAST);
-            ListStringValueData lastSession = (ListStringValueData)factoryLastMetric.getValue(context);
+            ListStringValueData lastSession = (ListStringValueData)factoryLastMetric.getValue(fullContext);
             date = lastSession.size() == 0 ? "" : factoryLastMetric.getDate(lastSession);
             item.add(date);
 
@@ -93,31 +81,30 @@ public abstract class AbstractTopFactoriesMetric extends AbstractTopFactoryStati
         return new ListListStringValueData(result);
     }
 
-    protected Set<String> getInvolvedTemporaryWs(String factoryUrl, Map<String, String> context) throws IOException {
-        context = Utils.cloneAndClearFilters(context);
-        MetricFilter.FACTORY_URL.put(context, factoryUrl);
+    private Map<String, Long> getFactoryTimeUsage(Map<String, String> context,
+                                                  SetStringValueData activeFactories) throws IOException {
 
-        return getTemporaryWsCreated(context);
-    }
+        Map<String, Long> timeUsage = new HashMap<>(activeFactories.size());
+        for (String factoryUrl : activeFactories.getAll()) {
+            context = Utils.cloneAndClearFilters(context);
+            MetricFilter.FACTORY_URL.put(context, factoryUrl);
 
-    private Collection<String> getInvolvedFactories(Map<String, String> context) throws IOException {
-        if (Utils.getAvailableFilters(context).isEmpty()) {
-            return ((SetStringValueData)super.getValue(context)).getAll();
+            Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_FACTORY);
+
+            timeUsage.put(factoryUrl, metric.getValue(context).getAsLong());
         }
 
-        return getFactoriesCreated(context);
+        return timeUsage;
     }
 
-    /** @return time spent by users in temporary workspaces */
-    private Long getUsageTime(Map<String, String> context, Set<String> activeWs) throws IOException {
-        Metric metric = MetricFactory.createMetric(MetricType.PRODUCT_USAGE_TIME_FACTORY);
-
-        context = Utils.cloneAndClearFilters(context);
-        MetricFilter.WS.put(context, Utils.removeBracket(activeWs.toString()));
-
-        LongValueData value = (LongValueData)metric.getValue(context);
-
-        return value.getAsLong();
+    private void keepTopItems(List<Map.Entry<String, Long>> top) {
+        Collections.sort(top, new Comparator<Map.Entry<String, Long>>() {
+            @Override
+            public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
+                long delta = o1.getValue() - o2.getValue();
+                return delta > 0 ? -1 : (delta < 0 ? 1 : 0);
+            }
+        });
     }
 
     /** {@inheritDoc} */

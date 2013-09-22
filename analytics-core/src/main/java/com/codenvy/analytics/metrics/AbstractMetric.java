@@ -21,7 +21,9 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.SetStringValueData;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractMetric implements Metric {
@@ -111,30 +113,4 @@ public abstract class AbstractMetric implements Metric {
                 throw new IllegalStateException("Unknown filter");
         }
     }
-
-    /** Returns the list of created factories by given filter in context. */
-    protected Set<String> getFactoriesCreated(Map<String, String> context) throws IOException {
-        MetricFilter filter = Utils.getAvailableFilters(context).iterator().next();
-
-        switch (filter) {
-            case REFERRER_URL:
-                throw new UnsupportedOperationException();
-
-            case FACTORY_URL:
-                String[] factories = filter.get(context).split(",");
-                return new HashSet<>(Arrays.asList(factories));
-
-            case WS:
-            case USERS:
-            case AFFILIATE_ID:
-            case ORG_ID:
-            case PROJECT_TYPE:
-            case REPOSITORY_URL:
-                return ((SetStringValueData)MetricFactory.createMetric(MetricType.SET_FACTORY_CREATED)
-                                                         .getValue(context)).getAll();
-            default:
-                throw new IllegalStateException("Unknown filter");
-        }
-    }
-
 }
