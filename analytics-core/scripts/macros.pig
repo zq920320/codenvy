@@ -162,7 +162,14 @@ DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
 -- @return  {..., $paramFieldNameParam : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractUrlParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
-  $Y = FOREACH $X GENERATE *, com.codenvy.analytics.pig.URLDecode(REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1)) AS $paramFieldNameParam;
+  $Y = FOREACH $X GENERATE *, ('$paramNameParam' == 'FACTORY-URL' ? com.codenvy.analytics.pig.CutQueryParam(
+                                                                        com.codenvy.analytics.pig.URLDecode(
+                                                                            com.codenvy.analytics.pig.URLDecode(
+                                                                                REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))), 'ptype')
+                                                                  :  com.codenvy.analytics.pig.URLDecode(
+                                                                        com.codenvy.analytics.pig.URLDecode(
+                                                                            REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))))
+                                AS $paramFieldNameParam;
 };
 
 ---------------------------------------------------------------------------------------------

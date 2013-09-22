@@ -23,8 +23,7 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 a1 = filterByEvent(l, 'factory-url-accepted');
 a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
 a3 = removeEmptyField(a2, 'factoryUrl');
-a4 = FOREACH a3 GENERATE ws, factoryUrl AS factoryUrl;
-a = FOREACH a4 GENERATE ws, (INDEXOF(factoryUrl, '&ptype=', 0) > 0 ? REGEX_EXTRACT(factoryUrl, '(.*)&ptype=.*', 1) : factoryUrl) AS factoryUrl;
+a = FOREACH a3 GENERATE ws, factoryUrl;
 
 result = setByField(a, 'factoryUrl', 'ws');
 
