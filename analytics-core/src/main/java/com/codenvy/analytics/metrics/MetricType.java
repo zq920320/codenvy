@@ -323,7 +323,7 @@ public enum MetricType {
         @Override
         public void modifyContext(Map<String, String> context) throws IOException {
             MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
-            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
+            MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
         }
     },
     PRODUCT_USAGE_TIME_0_1,

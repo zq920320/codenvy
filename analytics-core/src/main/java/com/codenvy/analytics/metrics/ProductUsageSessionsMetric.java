@@ -34,7 +34,7 @@ public class ProductUsageSessionsMetric extends ValueReadBasedMetric {
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The list of sessions in persistent workspaces";
+        return "The list of users' sessions";
     }
 
     public String getUser(ListStringValueData valueData) {
