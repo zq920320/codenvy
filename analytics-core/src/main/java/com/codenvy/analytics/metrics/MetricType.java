@@ -171,7 +171,8 @@ public enum MetricType {
     SET_USER_CREATED_FROM_FACTORY {
         @Override
         public EnumSet<ScriptType> getScripts() {
-            return EnumSet.of(ScriptType.SET_USER_CREATED_FROM_FACTORY_BY_FACTORY_URL);
+            return EnumSet.of(ScriptType.SET_USER_CREATED_FROM_FACTORY_BY_FACTORY_URL,
+                              ScriptType.SET_USER_CREATED_FROM_FACTORY);
         }
 
         @Override
