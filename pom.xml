@@ -61,5 +61,6 @@
         <module>codenvy-factory-commons</module>
         <module>codenvy-factory-services</module>
         <module>codenvy-factory-packaging-war</module>
+        <module>codenvy-factory-packaging-war-api</module>
   </modules>
 </project>
