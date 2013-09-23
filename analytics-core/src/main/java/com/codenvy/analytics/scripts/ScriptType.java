@@ -57,6 +57,12 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
+    SET_USER_CREATED_FROM_FACTORY {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return SetStringValueData.class;
+        }
+    },
     USER_CREATED_FROM_FACTORY_BY_DOMAINS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
