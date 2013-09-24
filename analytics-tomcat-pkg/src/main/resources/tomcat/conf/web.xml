@@ -4293,6 +4293,7 @@
   <!-- here, so be sure to include any of the default values that you wish  -->
   <!-- to use within your application.                                       -->
   
+    <!-- Security roles referenced by this web application -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Analytics-Web-Portal</web-resource-name>
@@ -4301,14 +4302,12 @@
             <http-method>GET</http-method>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>cloud/admin</role-name>
-            <role-name>cloud/manager</role-name>
+            <role-name>employees</role-name>
         </auth-constraint>
         <user-data-constraint>
             <transport-guarantee>NONE</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
-
 
     <!-- Define the Login Configuration for this Application -->
     <login-config>
@@ -4318,8 +4317,7 @@
 
     <!-- Security roles referenced by this web application -->
     <security-role>
-        <role-name>cloud/admin</role-name>
-        <role-name>cloud/manager</role-name>
+        <role-name>employees</role-name>
     </security-role>
 
     <welcome-file-list>
