@@ -69,10 +69,10 @@ public class FactoryServiceTest {
         // given
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
         factoryUrl.setId(CORRECT_FACTORY_ID);
-        factoryUrl.setCommitId("12345679");
+        factoryUrl.setCommitid("12345679");
         factoryUrl.setVcs("git");
-        factoryUrl.setVersion("1.1");
-        factoryUrl.setVcsUrl("git@github.com:codenvy/cloud-ide.git");
+        factoryUrl.setV("1.1");
+        factoryUrl.setVcsurl("git@github.com:codenvy/cloud-ide.git");
 
         when(factoryStore.saveFactory((AdvancedFactoryUrl)any(), (Image)any()))
                 .thenReturn(new SavedFactoryData(factoryUrl, new HashSet<Image>()));
@@ -105,10 +105,10 @@ public class FactoryServiceTest {
         // given
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
         factoryUrl.setId(CORRECT_FACTORY_ID);
-        factoryUrl.setCommitId("12345679");
+        factoryUrl.setCommitid("12345679");
         factoryUrl.setVcs("git");
-        factoryUrl.setVersion("1.1");
-        factoryUrl.setVcsUrl("git@github.com:codenvy/cloud-ide.git");
+        factoryUrl.setV("1.1");
+        factoryUrl.setVcsurl("git@github.com:codenvy/cloud-ide.git");
 
         when(factoryStore.saveFactory((AdvancedFactoryUrl)any(), (Image)any()))
                 .thenReturn(new SavedFactoryData(factoryUrl, new HashSet<Image>()));

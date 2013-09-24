@@ -47,7 +47,7 @@ public class FactoryUrl {
         setLinks(links);
     }
 
-    public void setVersion(String version) {
+    public void setV(String version) {
         this.version = version;
     }
 
@@ -55,11 +55,13 @@ public class FactoryUrl {
         this.vcs = vcs;
     }
 
-    public void setVcsUrl(String vcsUrl) {
+    // Method mame should be lowercased to use correctly from json builder.
+    public void setVcsurl(String vcsUrl) {
         this.vcsUrl = vcsUrl;
     }
 
-    public void setCommitId(String commitId) {
+    // Method mame should be lowercased to use correctly from json builder.
+    public void setCommitid(String commitId) {
         this.commitId = commitId;
     }
 

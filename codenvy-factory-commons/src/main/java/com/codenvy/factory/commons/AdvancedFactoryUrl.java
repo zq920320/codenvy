@@ -88,7 +88,8 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         return contactMail;
     }
 
-    public void setContactMail(String contactMail) {
+    // Method mame should be lowercased to use correctly from json builder.
+    public void setContactmail(String contactMail) {
         this.contactMail = contactMail;
     }
 
@@ -104,7 +105,8 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         return openFile;
     }
 
-    public void setOpenFile(String openFile) {
+    // Method mame should be lowercased to use correctly from json builder.
+    public void setOpenfile(String openFile) {
         this.openFile = openFile;
     }
 
@@ -112,7 +114,8 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         return orgId;
     }
 
-    public void setOrgId(String orgId) {
+    // Method mame should be lowercased to use correctly from json builder.
+    public void setOrgid(String orgId) {
         this.orgId = orgId;
     }
 
@@ -120,7 +123,8 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         return affiliatedId;
     }
 
-    public void setAffiliatedId(String affiliatedId) {
+    // Method mame should be lowercased to use correctly from json builder.
+    public void setAffiliatedid(String affiliatedId) {
         this.affiliatedId = affiliatedId;
     }
 
@@ -136,7 +140,8 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         return Collections.unmodifiableMap(projectAttributes);
     }
 
-    public void setProjectAttributes(Map<String, String> projectAttributes) {
+    // Method mame should be lowercased to use correctly from json builder.
+    public void setProjectattributes(Map<String, String> projectAttributes) {
         this.projectAttributes = new LinkedHashMap<>(projectAttributes);
     }
 
@@ -182,7 +187,8 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         return privateRepo;
     }
 
-    public void setPrivateRepo(boolean privateRepo) {
+    // Method mame should be lowercased to use correctly from json builder.
+    public void setPrivaterepo(boolean privateRepo) {
         this.privateRepo = privateRepo;
     }
 }

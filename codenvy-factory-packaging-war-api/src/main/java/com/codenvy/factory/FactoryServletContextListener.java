@@ -25,7 +25,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- *
+ *  Factory Servlet Context Listener class.
  */
 public class FactoryServletContextListener implements ServletContextListener {
     @Override

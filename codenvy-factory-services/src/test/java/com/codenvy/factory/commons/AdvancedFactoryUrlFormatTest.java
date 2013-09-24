@@ -57,7 +57,7 @@ public class AdvancedFactoryUrlFormatTest {
                 new AdvancedFactoryUrl("1.1", "git", "file://" + testRepository + "/testrepository", "commit123456789");
         expectedFactoryUrl.setId("123456789");
 
-        URL factoryUrl = new URL("http://codenvy.com/factory-123456789");
+        URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
         when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(expectedFactoryUrl);
 
         //when
@@ -76,7 +76,7 @@ public class AdvancedFactoryUrlFormatTest {
     public void shouldThrowFactoryUrlInvalidArgumentExceptionIfFactoryWithSuchIdIsNotFound()
             throws Exception {
         //given
-        URL factoryUrl = new URL("http://codenvy.com/factory-123456789");
+        URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
         when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(null);
         //when
         AdvancedFactoryUrl actualFactoryUrl = factoryUrlFormat.parse(factoryUrl);
@@ -86,7 +86,7 @@ public class AdvancedFactoryUrlFormatTest {
     public void shouldThrowFactoryUrlInvalidArgumentExceptionIfUrlHasInvalidParameters(AdvancedFactoryUrl storedFactoryUrl)
             throws Exception {
         //given
-        URL factoryUrl = new URL("http://codenvy.com/factory-123456789");
+        URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
         when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(storedFactoryUrl);
         //when
         AdvancedFactoryUrl actualFactoryUrl = factoryUrlFormat.parse(factoryUrl);

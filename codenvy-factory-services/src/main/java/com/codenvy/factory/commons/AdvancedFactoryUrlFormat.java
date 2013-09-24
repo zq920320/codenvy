@@ -17,13 +17,16 @@
  */
 package com.codenvy.factory.commons;
 
+import com.codenvy.commons.lang.UrlUtils;
 import com.codenvy.factory.client.FactoryClient;
 import com.codenvy.factory.client.impl.HttpFactoryClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Advanced version of <code>FactoryUrlFormat</code>.
@@ -44,34 +47,47 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
 
     @Override
     public AdvancedFactoryUrl parse(URL url) throws FactoryUrlException {
-        String[] factoryUrlParts = url.getPath().split("-");
-        if (factoryUrlParts.length < 2) {
-            throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-        }
-        AdvancedFactoryUrl factoryUrl = factoryClient.getFactory(url, factoryUrlParts[factoryUrlParts.length - 1]);
+//        String[] factoryUrlParts = url.getPath().split("-");
+//        if (factoryUrlParts.length < 2) {
+//            throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+//        }
+        try {
+            String factoryId = null;
+            List<String> values =  UrlUtils.getQueryParameters(url).get("id");
+            if (values != null)
+                factoryId = values.get(0);
+            else
+                throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            AdvancedFactoryUrl factoryUrl = factoryClient.getFactory(url, factoryId);
 
-        if (factoryUrl == null) {
-            LOG.error("Can't find factory with id {}", factoryUrlParts[factoryUrlParts.length - 1]);
-            throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-        }
+            if (factoryUrl == null) {
+                LOG.error("Can't find factory with id {}", factoryId);
+                throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            }
 
-        // check mandatory parameters
-        if (!"1.1".equals(factoryUrl.getVersion())) {
-            throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-        }
-        // check that vcs value is correct (only git is supported for now)
-        if (!"git".equals(factoryUrl.getVcs())) {
-            throw new FactoryUrlInvalidArgumentException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
-        }
-        if (factoryUrl.getVcsUrl() == null || factoryUrl.getVcsUrl().isEmpty()) {
-            throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-        }
-        if (factoryUrl.getCommitId() == null || factoryUrl.getCommitId().isEmpty()) {
-            throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-        }
+            // check mandatory parameters
+            if (!"1.1".equals(factoryUrl.getVersion())) {
+                throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            }
+            // check that vcs value is correct (only git is supported for now)
+            if (!"git".equals(factoryUrl.getVcs())) {
+                throw new FactoryUrlInvalidArgumentException(
+                        "Parameter vcs has illegal value. Only \"git\" is supported for now.");
+            }
+            if (factoryUrl.getVcsUrl() == null || factoryUrl.getVcsUrl().isEmpty()) {
+                throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            }
+            if (factoryUrl.getCommitId() == null || factoryUrl.getCommitId().isEmpty()) {
+                throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            }
 
-        SimpleFactoryUrlFormat.checkRepository(factoryUrl.getVcsUrl());
+            SimpleFactoryUrlFormat.checkRepository(factoryUrl.getVcsUrl());
 
-        return factoryUrl;
+            return factoryUrl;
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new FactoryUrlException("We cannot locate your project. Please try again or contact us.");
+        }
     }
+
 }

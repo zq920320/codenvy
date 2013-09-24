@@ -90,10 +90,10 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             checkRepository(params.get("vcsurl").iterator().next());
 
             SimpleFactoryUrl factoryUrl = new SimpleFactoryUrl();
-            factoryUrl.setCommitId(params.get("idcommit").iterator().next());
-            factoryUrl.setVersion(params.get("v").iterator().next());
+            factoryUrl.setCommitid(params.get("idcommit").iterator().next());
+            factoryUrl.setV(params.get("v").iterator().next());
             factoryUrl.setVcs(params.get("vcs").iterator().next());
-            factoryUrl.setVcsUrl(params.get("vcsurl").iterator().next());
+            factoryUrl.setVcsurl(params.get("vcsurl").iterator().next());
             factoryUrl.setProjectName(params.get("pname").iterator().next());
             factoryUrl.setWorkspaceName(params.get("wname").iterator().next());
 
