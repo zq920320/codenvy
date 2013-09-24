@@ -155,6 +155,20 @@ DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
   $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*$paramNameParam\\#([^\\#]*)\\#.*')) AS $paramFieldNameParam;
 };
 
+
+---------------------------------------------------------------------------
+-- Extract parameter value out of message and adds as field to tuple.
+-- @param paramNameParam - the parameter name
+-- @param paramFieldNameParam - the name of filed in the tuple
+-- @return  {..., $paramFieldNameParam : bytearray}
+--a3 = extractQueryParam(a2, 'factoryUrl', 'affiliateid', 'AFFILIATE-ID', 'affiliateId');
+---------------------------------------------------------------------------
+DEFINE extracQueryParam(X, url, paramName, messageParam, expectedFieldName) RETURNS Y {
+  x1 = extractParam($X, '$messageParam', 'param1');
+  x2 = FOREACH x1 GENERATE *, com.codenvy.analytics.pig.GetQueryValue($url, '$paramName') AS param2;
+  $Y = FOREACH x2 GENERATE *, (param1 IS NOT NULL ? param1 : param2) AS $expectedFieldName;
+};
+
 ---------------------------------------------------------------------------
 -- Extract parameter value out of message and adds as field to tuple.
 -- @param paramNameParam - the parameter name

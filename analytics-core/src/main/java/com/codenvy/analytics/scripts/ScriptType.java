@@ -871,6 +871,13 @@ public enum ScriptType {
         }
     },
     /** Script for testing purpose. */
+    TEST_EXTRACT_QUERY_PARAM {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+    },
+    /** Script for testing purpose. */
     TEST_EXTRACT_WS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {

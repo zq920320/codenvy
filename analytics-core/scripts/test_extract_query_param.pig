@@ -18,12 +18,8 @@
 
 IMPORT 'macros.pig';
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-
-a1 = filterByEvent(l, 'factory-created');
+a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
-a3 = extractQueryParam(a2, 'factoryUrl', 'affiliateid', 'AFFILIATE-ID', 'affiliateId');
-a4 = removeEmptyField(a3, 'affiliateId');
-a = FOREACH a4 GENERATE affiliateId, factoryUrl;
+a = extracQueryParam(a2, 'factoryUrl', 'affiliateid', 'AFFILIATE-ID', 'affiliateId');
 
-result = setByField(a, 'affiliateId', 'factoryUrl');
+result = FOREACH a GENERATE event, TOBAG(affiliateId);
