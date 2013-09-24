@@ -22,7 +22,7 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = filterByEvent(l, 'factory-created');
 a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
-a3 = extractQueryParam(a2, 'factoryUrl', 'affiliateid', 'AFFILIATE-ID', 'affiliateId');
+a3 = extracQueryParam(a2, 'factoryUrl', 'affiliateid', 'AFFILIATE-ID', 'affiliateId');
 a4 = removeEmptyField(a3, 'affiliateId');
 a = FOREACH a4 GENERATE affiliateId, factoryUrl;
 
