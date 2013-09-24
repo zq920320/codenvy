@@ -39,8 +39,8 @@ public class InMemoryFactoryStore implements FactoryStore {
     public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Image image) throws FactoryUrlException {
         lock.writeLock().lock();
         try {
-            image.setName(NameGenerator.generate("", 10) + image.getName());
-            factoryUrl.setId(NameGenerator.generate("", 10));
+            image.setName(NameGenerator.generate("", 16) + image.getName());
+            factoryUrl.setId(NameGenerator.generate("", 16));
 
             Set<Image> factoryImages = new HashSet<>();
             factoryImages.add(image);

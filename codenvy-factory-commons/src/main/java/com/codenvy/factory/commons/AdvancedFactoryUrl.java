@@ -26,14 +26,14 @@ import java.util.Set;
 public class AdvancedFactoryUrl extends FactoryUrl {
     private String id;
     private Map<String, String> projectAttributes = Collections.emptyMap();
-    private String action;
-    private String style;
-    private String description;
-    private String contactMail;
-    private String author;
-    private String openFile;
-    private String orgId;
-    private String affiliatedId;
+    private String  action;
+    private String  style;
+    private String  description;
+    private String  contactMail;
+    private String  author;
+    private String  openFile;
+    private String  orgId;
+    private String  affiliateId;
     private boolean privateRepo;
 
     public AdvancedFactoryUrl() {
@@ -45,7 +45,8 @@ public class AdvancedFactoryUrl extends FactoryUrl {
     }
 
     public AdvancedFactoryUrl(AdvancedFactoryUrl originFactory, Set<Link> links) {
-        super(originFactory.getVersion(), originFactory.getVcs(), originFactory.getVcsUrl(), originFactory.getCommitId(), links);
+        super(originFactory.getVersion(), originFactory.getVcs(), originFactory.getVcsUrl(),
+              originFactory.getCommitId(), links);
 
         id = originFactory.getId();
         projectAttributes = originFactory.projectAttributes;
@@ -56,7 +57,7 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         author = originFactory.getAuthor();
         openFile = originFactory.getOpenFile();
         orgId = originFactory.getOrgId();
-        affiliatedId = originFactory.getAffiliatedId();
+        affiliateId = originFactory.getAffiliateId();
         privateRepo = originFactory.getPrivateRepo();
     }
 
@@ -119,13 +120,13 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         this.orgId = orgId;
     }
 
-    public String getAffiliatedId() {
-        return affiliatedId;
+    public String getAffiliateId() {
+        return affiliateId;
     }
 
     // Method mame should be lowercased to use correctly from json builder.
-    public void setAffiliatedid(String affiliatedId) {
-        this.affiliatedId = affiliatedId;
+    public void setAffiliateid(String affiliateId) {
+        this.affiliateId = affiliateId;
     }
 
     public String getId() {
@@ -154,7 +155,7 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         AdvancedFactoryUrl that = (AdvancedFactoryUrl)o;
 
         if (action != null ? !action.equals(that.action) : that.action != null) return false;
-        if (affiliatedId != null ? !affiliatedId.equals(that.affiliatedId) : that.affiliatedId != null) return false;
+        if (affiliateId != null ? !affiliateId.equals(that.affiliateId) : that.affiliateId != null) return false;
         if (author != null ? !author.equals(that.author) : that.author != null) return false;
         if (contactMail != null ? !contactMail.equals(that.contactMail) : that.contactMail != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
@@ -179,7 +180,7 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         result = 31 * result + (author != null ? author.hashCode() : 0);
         result = 31 * result + (openFile != null ? openFile.hashCode() : 0);
         result = 31 * result + (orgId != null ? orgId.hashCode() : 0);
-        result = 31 * result + (affiliatedId != null ? affiliatedId.hashCode() : 0);
+        result = 31 * result + (affiliateId != null ? affiliateId.hashCode() : 0);
         return result;
     }
 
