@@ -35,6 +35,7 @@ public class LinksHelper {
         Set<Link> links = new LinkedHashSet<>();
 
         links.add(generateFactoryUrlLink(factoryUrl.getId(), uriInfo));
+        links.add(generateCreationlLink(factoryUrl.getId(), uriInfo));
         for (Image image : images) {
             links.add(generateFactoryImageLink(image.getName(), uriInfo));
         }
@@ -54,10 +55,22 @@ public class LinksHelper {
         return new Link(MediaType.APPLICATION_JSON, generatePath(uriInfo, id, "factory"), "self");
     }
 
+    private static Link generateCreationlLink(String id, UriInfo uriInfo) {
+        UriBuilder ub;
+        if (uriInfo != null) {
+            ub = UriBuilder.fromUri(uriInfo.getBaseUri());
+        } else {
+            ub = UriBuilder.fromUri("/");
+        }
+        ub.replacePath("factory");
+        ub.queryParam("id", id);
+        return new Link(MediaType.TEXT_HTML, ub.build().toString(), "create-project");
+    }
+
     private static Set<Link> generateSnippetLinks(String id, UriInfo uriInfo) {
         Set<Link> result = new LinkedHashSet<>();
         for (String snippetType : snippetTypes) {
-            result.add(new Link("text/plain", generatePath(uriInfo, id, "factory", "snippet", "type", snippetType),
+            result.add(new Link(MediaType.TEXT_PLAIN, generatePath(uriInfo, id, "factory", "snippet", "type", snippetType),
                                 "snippet/" + snippetType));
         }
         return result;

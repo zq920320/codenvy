@@ -141,9 +141,11 @@ public class FactoryServiceTest {
                 statusCode(Status.OK.getStatusCode()).//
                 body("links[0].rel", equalTo("self")).//
                 body("links[0].href", startsWith(getServerUrl(context) + "/rest/factory")).//
-                body("links[1].rel", equalTo("image")).//
-                body("links[1].href", startsWith(getServerUrl(context) + "/rest/factory/image")).//
-                body("links[1].href", endsWith("image123456789.jpg")).//
+                body("links[1].rel", equalTo("create-project")).//
+                body("links[1].href", startsWith(getServerUrl(context) + "/factory")).//
+                body("links[2].rel", equalTo("image")).//
+                body("links[2].href", startsWith(getServerUrl(context) + "/rest/factory/image")).//
+                body("links[2].href", endsWith("image123456789.jpg")).//
                 when().//
                 get(SERVICE_PATH + "/" + CORRECT_FACTORY_ID);
     }
