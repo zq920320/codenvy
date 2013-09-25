@@ -58,7 +58,6 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         openFile = originFactory.getOpenFile();
         orgId = originFactory.getOrgId();
         affiliateId = originFactory.getAffiliateId();
-        privateRepo = originFactory.getPrivateRepo();
     }
 
     public String getAction() {
@@ -182,14 +181,5 @@ public class AdvancedFactoryUrl extends FactoryUrl {
         result = 31 * result + (orgId != null ? orgId.hashCode() : 0);
         result = 31 * result + (affiliateId != null ? affiliateId.hashCode() : 0);
         return result;
-    }
-
-    public boolean getPrivateRepo() {
-        return privateRepo;
-    }
-
-    // Method mame should be lowercased to use correctly from json builder.
-    public void setPrivaterepo(boolean privateRepo) {
-        this.privateRepo = privateRepo;
     }
 }
