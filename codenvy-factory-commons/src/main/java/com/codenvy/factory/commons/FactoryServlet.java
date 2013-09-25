@@ -41,7 +41,7 @@ public abstract class FactoryServlet extends HttpServlet {
 
             createTempWorkspaceAndRedirect(req, resp, factoryUrl);
         } catch (FactoryUrlException e) {
-            LOG.error(e.getLocalizedMessage(), e);
+            LOG.warn(e.getLocalizedMessage(), e);
             throw new ServletException(e.getLocalizedMessage(), e);
         }
     }
