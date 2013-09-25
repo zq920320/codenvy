@@ -32,6 +32,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.codenvy.cloud-ide</groupId>
+            <artifactId>cloud-ide-sso-client</artifactId>
+            <version>${codenvy.cloudide.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.codenvy.factory</groupId>
             <artifactId>codenvy-factory-services</artifactId>
             <version>${project.version}</version>

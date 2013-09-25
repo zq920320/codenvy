@@ -188,6 +188,13 @@ public class FactoryService {
         }
     }
 
+    @GET
+    @Path("ping")
+    public Response ping() {
+        return Response.ok().build();
+    }
+
+
     private static String generateFactoryUrl(String id, UriInfo uriInfo) {
         return UriBuilder.fromUri(uriInfo.getBaseUri()).replacePath("factory-" + id).build().toString();
     }
