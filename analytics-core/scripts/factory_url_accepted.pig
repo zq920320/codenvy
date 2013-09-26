@@ -22,9 +22,12 @@ a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 a2 = filterByEvent(a1, 'factory-url-accepted');
 a3 = extractUrlParam(a2, 'REFERRER', 'referrer');
 a4 = extractUrlParam(a3, 'FACTORY-URL', 'factoryUrl');
-a = FOREACH a4 GENERATE ws, referrer, factoryUrl;
+a5 = extractUrlParam(a4, 'ORG-ID', 'orgId');
+a6 = extractUrlParam(a5, 'AFFILIATE', 'affiliateId');
+a = FOREACH a6 GENERATE ws, referrer, factoryUrl, orgId, affiliateId;
 
-b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, referrer : chararray, factoryUrl : chararray);
+b = LOAD '$LOAD_DIR' USING PigStorage() AS (ws : chararray, referrer : chararray, factoryUrl : chararray,
+                                            orgId : chararray, affiliateId : chararray);
 c1 = UNION a, b;
 c = DISTINCT c1;
 

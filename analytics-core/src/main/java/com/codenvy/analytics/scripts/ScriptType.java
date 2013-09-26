@@ -412,6 +412,28 @@ public enum ScriptType {
             return new MetricParameter[]{MetricParameter.FILTER};
         }
     },
+    FACTORY_URL_ACCEPTED_BY_ORG_ID {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
+        }
+    },
+    FACTORY_URL_ACCEPTED_BY_AFFILIATE_ID {
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return MapStringSetValueData.class;
+        }
+
+        @Override
+        public MetricParameter[] getKeyScheme() {
+            return new MetricParameter[]{MetricParameter.FILTER};
+        }
+    },
     NUMBER_EVENTS {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -754,28 +776,6 @@ public enum ScriptType {
         }
     },
     SET_FACTORY_CREATED_BY_PROJECT_TYPE {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringSetValueData.class;
-        }
-
-        @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
-        }
-    },
-    SET_FACTORY_CREATED_BY_AFFILIATE_ID {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringSetValueData.class;
-        }
-
-        @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
-        }
-    },
-    SET_FACTORY_CREATED_BY_ORG_ID {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return MapStringSetValueData.class;

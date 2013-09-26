@@ -33,7 +33,9 @@ public enum MetricType {
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.FACTORY_URL_ACCEPTED,
                               ScriptType.FACTORY_URL_ACCEPTED_BY_FACTORY_URL,
-                              ScriptType.FACTORY_URL_ACCEPTED_BY_REFERRER_URL);
+                              ScriptType.FACTORY_URL_ACCEPTED_BY_REFERRER_URL,
+                              ScriptType.FACTORY_URL_ACCEPTED_BY_ORG_ID,
+                              ScriptType.FACTORY_URL_ACCEPTED_BY_AFFILIATE_ID);
         }
 
         @Override
@@ -589,8 +591,6 @@ public enum MetricType {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.SET_FACTORY_CREATED,
-                              ScriptType.SET_FACTORY_CREATED_BY_AFFILIATE_ID,
-                              ScriptType.SET_FACTORY_CREATED_BY_ORG_ID,
                               ScriptType.SET_FACTORY_CREATED_BY_PROJECT_TYPE,
                               ScriptType.SET_FACTORY_CREATED_BY_REPOSITORY_URL,
                               ScriptType.SET_FACTORY_CREATED_BY_USERS,

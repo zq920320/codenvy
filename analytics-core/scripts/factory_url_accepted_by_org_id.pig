@@ -20,10 +20,10 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a1 = filterByEvent(l, 'factory-created');
-a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
-a3 = extracQueryParam(a2, 'factoryUrl', 'affiliateid', 'AFFILIATE-ID', 'affiliateId');
-a4 = removeEmptyField(a3, 'affiliateId');
-a = FOREACH a4 GENERATE affiliateId, factoryUrl;
+a1 = filterByEvent(l, 'factory-url-accepted');
+a2 = extractUrlParam(a1, 'ORG-ID', 'orgId');
+a3 = removeEmptyField(a2, 'orgId');
+a = FOREACH a3 GENERATE ws, orgId;
 
-result = setByField(a, 'affiliateId', 'factoryUrl');
+result = setByField(a, 'orgId', 'ws');
+

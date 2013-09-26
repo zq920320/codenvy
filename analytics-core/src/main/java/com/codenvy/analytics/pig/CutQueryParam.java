@@ -46,17 +46,19 @@ public class CutQueryParam extends EvalFunc<String> {
                 return url;
             }
 
-            paramName = "&" + paramName + "=";
-
-            int indexParam = url.indexOf(paramName);
-            int nextIndexParam = url.indexOf("&", indexParam + 1);
-
-            return indexParam == -1 ? url : url.substring(0, indexParam) +
-                                            (nextIndexParam == -1 ? "" : url.substring(nextIndexParam, url.length()));
+            return doCut(url, "&" + paramName + "=");
         } catch (ExecException e) {
             warn("Error reading input: " + e.getMessage(), PigWarning.UDF_WARNING_1);
             return null;
         }
+    }
+
+    public static String doCut(String url, String paramName) {
+        int indexParam = url.indexOf(paramName);
+        int nextIndexParam = url.indexOf("&", indexParam + 1);
+
+        return indexParam == -1 ? url : url.substring(0, indexParam) +
+                                        (nextIndexParam == -1 ? "" : url.substring(nextIndexParam, url.length()));
     }
 
     /** {@inheritDoc} */

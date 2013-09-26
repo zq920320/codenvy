@@ -19,6 +19,7 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.metrics.value.SetStringValueData;
+import com.codenvy.analytics.pig.CutQueryParam;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -71,7 +72,7 @@ public abstract class AbstractMetric implements Metric {
             String value = filter.get(context);
 
             if (MetricFilter.WS == filter && value.toUpperCase().startsWith("TMP-")) {
-                return  context;
+                return context;
             }
 
             Set<String> tmpWs = getTemporaryWsCreated(context);
@@ -88,15 +89,15 @@ public abstract class AbstractMetric implements Metric {
         MetricFilter filter = Utils.getAvailableFilters(context).iterator().next();
 
         switch (filter) {
-            case REFERRER_URL:
-            case FACTORY_URL:
-                return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
-                                                         .getValue(context)).getAll();
-
-            case WS:
-            case USERS:
             case AFFILIATE_ID:
             case ORG_ID:
+            case REFERRER_URL:
+            case FACTORY_URL:
+                context = removePTypeParamFromFactoryUrl(context);
+                return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
+                                                         .getValue(context)).getAll();
+            case WS:
+            case USERS:
             case PROJECT_TYPE:
             case REPOSITORY_URL:
                 SetStringValueData factoryUrl =
@@ -106,11 +107,35 @@ public abstract class AbstractMetric implements Metric {
                 context = Utils.cloneAndClearFilters(context);
                 MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrl.getAll().toString()));
 
+                context = removePTypeParamFromFactoryUrl(context);
+
                 return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
                                                          .getValue(context)).getAll();
 
             default:
                 throw new IllegalStateException("Unknown filter");
         }
+    }
+
+    private Map<String, String> removePTypeParamFromFactoryUrl(Map<String, String> context) {
+        if (!MetricFilter.FACTORY_URL.exists(context)) {
+            return context;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        String[] factoryUrls = MetricFilter.FACTORY_URL.get(context).split(",");
+
+        for (String factory : factoryUrls) {
+            if (builder.length() > 0) {
+                builder.append(",");
+            }
+
+            builder.append(CutQueryParam.doCut(factory, "ptype"));
+        }
+
+        Map<String, String> cloned = Utils.clone(context);
+        MetricFilter.FACTORY_URL.put(cloned, builder.toString());
+
+        return cloned;
     }
 }
