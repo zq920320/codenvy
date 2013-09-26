@@ -40,7 +40,6 @@
     </scm>
     <properties>
         <!-- Codenvy -->
-        <codenvy.cloudide.version>2.7.0-SNAPSHOT</codenvy.cloudide.version>
         <codenvy.commons.version>0.9.0-SNAPSHOT</codenvy.commons.version>
 
         <!-- javax -->

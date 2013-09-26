@@ -27,35 +27,9 @@
     <display-name>Factory Service Api</display-name>
 
     <context-param>
-        <param-name>get-auth-token-url</param-name>
-        <param-value>/site/sso/server/grant</param-value>
-    </context-param>
-    <context-param>
-        <param-name>verify-token-url</param-name>
-        <param-value>/site/sso/server/validate</param-value>
-    </context-param>
-    <context-param>
-        <param-name>sso-client-root-path</param-name>
-        <param-value>/_sso/client</param-value>
-    </context-param>
-    <context-param>
         <param-name>javax.ws.rs.Application</param-name>
         <param-value>com.codenvy.factory.application.FactoryApplication</param-value>
     </context-param>
-
-    <filter>
-        <filter-name>LoginFilter</filter-name>
-        <filter-class>com.codenvy.cloudide.auth.client.LoginFilter</filter-class>
-        <init-param>
-            <param-name>allow-anonymous-access</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 
     <listener>
         <listener-class>org.everrest.core.servlet.EverrestInitializedListener</listener-class>
@@ -63,10 +37,6 @@
     <listener>
         <listener-class>com.codenvy.factory.FactoryServletContextListener</listener-class>
     </listener>
-    <listener>
-        <listener-class>com.codenvy.cloudide.auth.client.SsoClientInitializer</listener-class>
-    </listener>
-
 
     <servlet>
         <servlet-name>EverrestServlet</servlet-name>
