@@ -32,7 +32,8 @@ define(["jquery","config",
         "views/errorresponse",
         "views/maintenancepage",
         "views/gc_banner",
-        "views/ws_createform"
+        "views/ws_createform",
+        "views/too_much_factories"
         ],
 
     function($,Config,
@@ -51,7 +52,8 @@ define(["jquery","config",
         ErrorResponse,
         MaintenancePage,
         GC_banner,
-        WSCreateForm){
+        WSCreateForm,
+        TooMuchFactories){
 
         function modernize(){
             Modernizr.load({
@@ -85,8 +87,16 @@ define(["jquery","config",
                         errorResponse = $(".ErrorIcon"),
                         maintenancePage = $(".maintenance"),
                         gcBannerElement = $(".cta"),
-                        wsCreateForm = $(".create-form");
+                        wsCreateForm = $(".create-form"),
+                        tooMuchFactories = $(".temp-ws-counts");
 
+
+                    if(gcBannerElement.length !== 0){
+                        (function(){
+                            // <!--  CTA Banner Rotation   -->
+                            new GC_banner();
+                        }());
+                    }
 
                     if(gcBannerElement.length !== 0){
                         (function(){
@@ -112,6 +122,12 @@ define(["jquery","config",
                                 errorReport.show(message);
                             });
                             
+                        }());
+                    }
+
+                    if(tooMuchFactories.length !== 0){
+                        (function(){
+                            TooMuchFactories.get(tooMuchFactories);
                         }());
                     }
 
