@@ -41,7 +41,7 @@
     <properties>
         <!-- Codenvy -->
         <codenvy.commons.version>0.9.0-SNAPSHOT</codenvy.commons.version>
-        <codenvy.platform-api.version>1.0-SNAPSHOT</codenvy.platform-api.version>
+        <codenvy.platform-api.version>1.0.0-SNAPSHOT</codenvy.platform-api.version>
 
         <!-- javax -->
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
