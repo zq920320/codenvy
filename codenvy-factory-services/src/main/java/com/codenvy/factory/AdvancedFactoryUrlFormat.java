@@ -15,11 +15,11 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.factory.commons;
+package com.codenvy.factory;
 
+import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.commons.lang.UrlUtils;
-import com.codenvy.factory.client.FactoryClient;
-import com.codenvy.factory.client.impl.HttpFactoryClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

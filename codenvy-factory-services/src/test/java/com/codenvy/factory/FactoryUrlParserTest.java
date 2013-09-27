@@ -15,8 +15,10 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.factory.commons;
+package com.codenvy.factory;
 
+import com.codenvy.api.factory.FactoryUrl;
+import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.commons.lang.ZipUtils;
 
 import org.testng.annotations.DataProvider;
@@ -30,7 +32,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 
-import static com.codenvy.factory.commons.SimpleFactoryUrlFormatTest.enc;
 import static org.testng.Assert.assertEquals;
 
 public class FactoryUrlParserTest {
@@ -46,7 +47,7 @@ public class FactoryUrlParserTest {
         //when
         FactoryUrl factoryUrl =
                 FactoryUrlParser.parse(new URL("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt" +
-                                               "&vcsurl=" + enc("file://" + testRepository + "/testrepository")));
+                                               "&vcsurl=" + SimpleFactoryUrlFormatTest.enc("file://" + testRepository + "/testrepository")));
 
         //then
         assertEquals(factoryUrl, expectedFactoryUrl);
@@ -62,7 +63,7 @@ public class FactoryUrlParserTest {
     public Object[][] unsupportedUrlsProvider() throws UnsupportedEncodingException {
         return new Object[][]{// there is no format to satisfy that version
                               {"http://codenvy.com/factory?v=2.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},
+                               SimpleFactoryUrlFormatTest.enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},
         };
     }
 }

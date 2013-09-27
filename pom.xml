@@ -41,6 +41,7 @@
     <properties>
         <!-- Codenvy -->
         <codenvy.commons.version>0.9.0-SNAPSHOT</codenvy.commons.version>
+        <codenvy.platform-api.version>1.0-SNAPSHOT</codenvy.platform-api.version>
 
         <!-- javax -->
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
@@ -58,9 +59,7 @@
         <commons.fileupload.version>1.0</commons.fileupload.version>
     </properties>
     <modules>
-        <module>codenvy-factory-commons</module>
         <module>codenvy-factory-services</module>
         <module>codenvy-factory-packaging-war</module>
-        <module>codenvy-factory-packaging-war-api</module>
   </modules>
 </project>

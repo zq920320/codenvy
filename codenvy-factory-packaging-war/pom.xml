@@ -33,7 +33,7 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.factory</groupId>
-            <artifactId>codenvy-factory-commons</artifactId>
+            <artifactId>codenvy-factory-services</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

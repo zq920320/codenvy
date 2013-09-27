@@ -15,8 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.factory.commons;
+package com.codenvy.factory;
 
+import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;

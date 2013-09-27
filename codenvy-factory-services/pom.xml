@@ -26,29 +26,32 @@
         <version>0.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-factory-services</artifactId>
-    <name>Codenvy Factory :: REST services</name>
+    <name>Codenvy Factory :: Commons</name>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-json</artifactId>
+            <artifactId>codenvy-commons-lang</artifactId>
             <version>${codenvy.commons.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <version>${javax.ws.rs.version}</version>
+            <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-factory</artifactId>
+            <version>${codenvy.platform-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.everrest</groupId>
+            <artifactId>everrest-core</artifactId>
+            <version>${everrest.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>${commons.fileupload.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.factory</groupId>
-            <artifactId>codenvy-factory-commons</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -58,14 +61,6 @@
             <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Mock testing -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -88,16 +83,16 @@
             </exclusions>
         </dependency>
 
+        <!-- Logger -->
         <dependency>
-            <groupId>org.everrest</groupId>
-            <artifactId>everrest-assured</artifactId>
-            <version>${everrest.assured.version}</version>
-            <scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

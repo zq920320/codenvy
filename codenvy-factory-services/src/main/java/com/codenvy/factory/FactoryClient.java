@@ -1,10 +1,10 @@
 /*
  * CODENVY CONFIDENTIAL
  * __________________
- *
- *  [2012] - [2013] Codenvy, S.A.
+ * 
+ *  [2012] - [2013] Codenvy, S.A. 
  *  All Rights Reserved.
- *
+ * 
  * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
  * if any.  The intellectual and technical concepts contained
@@ -15,15 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.factory.commons;
+package com.codenvy.factory;
 
-/** Exception thrown if factory url doesn't satisfy factory url format implementation */
-public class FactoryUrlInvalidFormatException extends FactoryUrlException {
-    public FactoryUrlInvalidFormatException(String message) {
-        super(message);
-    }
+import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.FactoryUrlException;
 
-    public FactoryUrlInvalidFormatException(String message, Throwable cause) {
-        super(message, cause);
-    }
+import java.net.URL;
+
+/** Allows to get factory from factories storage. */
+public interface FactoryClient {
+    /**
+     * Get factory from storage by id.
+     * @param factoryUrl - factory URL
+     * @param id - factory id
+     * @return - stored factory if id is correct, null otherwise
+     * @throws FactoryUrlException
+     */
+    public AdvancedFactoryUrl getFactory(URL factoryUrl, String id) throws FactoryUrlException;
 }

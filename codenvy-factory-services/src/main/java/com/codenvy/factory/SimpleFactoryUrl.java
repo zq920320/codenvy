@@ -15,7 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.factory.commons;
+package com.codenvy.factory;
+
+import com.codenvy.api.factory.FactoryUrl;
 
 /** Holds factory url parameters values, used in factory v1.0 */
 public class SimpleFactoryUrl extends FactoryUrl {
