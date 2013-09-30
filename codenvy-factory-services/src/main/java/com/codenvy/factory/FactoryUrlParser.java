@@ -19,33 +19,19 @@ package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 /** Class to parse factory url parameters and validate them */
 public class FactoryUrlParser {
     private static final Logger LOG = LoggerFactory.getLogger(FactoryUrlParser.class);
-
-    protected static final Set<FactoryUrlFormat> factoryUrlFormats = new HashSet<>();
-
-    /** Retrieve FactoryUrlFormat implementations */
-    static {
-        ServiceLoader<FactoryUrlFormat> availableUrlFormats = ServiceLoader.load(FactoryUrlFormat.class);
-        for (FactoryUrlFormat factoryUrlFormat : availableUrlFormats) {
-            factoryUrlFormats.add(factoryUrlFormat);
-            LOG.info("Used {} as FactoryUrlFormat", factoryUrlFormat.getClass());
-        }
-        if (factoryUrlFormats.size() == 0) {
-            LOG.error("FactoryUrlFormat implementations wasn't found");
-            throw new RuntimeException("FactoryUrlFormat implementations wasn't found");
-        }
-    }
 
     /**
      * Validate and parse factory url
@@ -60,16 +46,22 @@ public class FactoryUrlParser {
      *         - if other exceptions occurs
      */
     public static FactoryUrl parse(URL factoryUrl) throws FactoryUrlException {
-        FactoryUrl factoryUrlParams;
-        for (FactoryUrlFormat factoryUrlFormat : factoryUrlFormats) {
-            try {
-                factoryUrlParams = factoryUrlFormat.parse(factoryUrl);
-                if (factoryUrlParams != null) {
-                    return factoryUrlParams;
-                }
-            } catch (FactoryUrlInvalidFormatException ignored) {
+        try {
+            Map<String, List<String>> params = UrlUtils.getQueryParameters(factoryUrl);
+
+            FactoryUrlFormat factoryUrlFormat;
+            if (params.get("id") != null) {
+                factoryUrlFormat = new AdvancedFactoryUrlFormat();
+            } else {
+                factoryUrlFormat = new SimpleFactoryUrlFormat();
             }
+
+            FactoryUrl factoryUrlParams = factoryUrlFormat.parse(factoryUrl);
+
+            return factoryUrlParams;
+        } catch (UnsupportedEncodingException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new FactoryUrlException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
         }
-        throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
     }
 }
