@@ -31,25 +31,23 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class InMemoryFactoryStore implements FactoryStore {
-    private              Map<String, Image>            images    = new HashMap<>();
+    //private              Map<String, Image>            images    = new HashMap<>();
     private              Map<String, SavedFactoryData> factories = new HashMap<>();
     private static final ReentrantReadWriteLock        lock      = new ReentrantReadWriteLock();
 
     @Override
-    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Image image) throws FactoryUrlException {
+    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<Image> images) throws FactoryUrlException {
         lock.writeLock().lock();
         try {
-            image.setName(NameGenerator.generate("", 16) + image.getName());
             factoryUrl.setId(NameGenerator.generate("", 16));
+            Set<Image> newImages = new HashSet<>();
+            for (Image image : images) {
+                image.setName(NameGenerator.generate("", 16) + image.getName());
+                newImages.add(image);
+            }
 
-            Set<Image> factoryImages = new HashSet<>();
-            factoryImages.add(image);
-
-            SavedFactoryData factoryData = new SavedFactoryData(factoryUrl, factoryImages);
+            SavedFactoryData factoryData = new SavedFactoryData(factoryUrl, newImages);
             factories.put(factoryUrl.getId(), factoryData);
-            images.put(image.getName(), image);
-
-
             return factoryData;
         } finally {
             lock.writeLock().unlock();
@@ -60,12 +58,7 @@ public class InMemoryFactoryStore implements FactoryStore {
     public void removeFactory(String id) throws FactoryUrlException {
         lock.writeLock().lock();
         try {
-            SavedFactoryData removedItem = factories.remove(id);
-            if (removedItem != null) {
-                for (Image image : removedItem.getImages()) {
-                    images.remove(image.getName());
-                }
-            }
+            factories.remove(id);
         } finally {
             lock.writeLock().unlock();
         }
@@ -76,16 +69,6 @@ public class InMemoryFactoryStore implements FactoryStore {
         lock.readLock().lock();
         try {
             return factories.get(id);
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
-
-    @Override
-    public Image getImage(String id) throws FactoryUrlException {
-        lock.readLock().lock();
-        try {
-            return images.get(id);
         } finally {
             lock.readLock().unlock();
         }
