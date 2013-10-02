@@ -127,6 +127,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         BasicDBObject factoryAsDbObject = (BasicDBObject)res.get("factoryurl");
         factoryUrl.setV((String)factoryAsDbObject.get("v"));
         factoryUrl.setVcs((String)factoryAsDbObject.get("vcs"));
+        factoryUrl.setVcsurl((String)factoryAsDbObject.get("vcsurl"));
         factoryUrl.setCommitid((String)factoryAsDbObject.get("commitid"));
         factoryUrl.setAction((String)factoryAsDbObject.get("action"));
         factoryUrl.setStyle((String)factoryAsDbObject.get("style"));
