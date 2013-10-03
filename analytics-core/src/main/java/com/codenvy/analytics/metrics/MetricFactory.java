@@ -36,11 +36,11 @@ public class MetricFactory {
             case FILE_MANIPULATION:
                 metric = new FileManipulationMetric();
                 break;
-            case TENANT_CREATED:
-                metric = new TenantCreatedMetric();
+            case WORKSPACE_CREATED:
+                metric = new WorkspaceCreatedMetric();
                 break;
-            case TENANT_DESTROYED:
-                metric = new TenantDestroyedMetric();
+            case WORKSPACE_DESTROYED:
+                metric = new WorkspaceDestroyedMetric();
                 break;
             case ACTIVE_USERS_SET:
                 metric = new ActiveUsersSetMetric();

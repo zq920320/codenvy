@@ -88,7 +88,7 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
-    TENANT_CREATED {
+    WORKSPACE_CREATED {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.NUMBER_EVENTS,
@@ -103,7 +103,7 @@ public enum MetricType {
             MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
         }
     },
-    TENANT_DESTROYED {
+    WORKSPACE_DESTROYED {
         @Override
         public EnumSet<ScriptType> getScripts() {
             return EnumSet.of(ScriptType.NUMBER_EVENTS);

@@ -20,8 +20,8 @@
     <table length="20">
         <date section="Workspaces" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
               formatLifetime="dd MMM"/>
-        <metric type="tenant_created" title="Created"/>
-        <metric type="tenant_destroyed" title="Destroyed"/>
+        <metric type="workspace_created" title="Created"/>
+        <metric type="workspace_destroyed" title="Destroyed"/>
         <metric type="total_workspaces" title="Total"/>
         <empty/>
     </table>
@@ -29,7 +29,7 @@
         <date section="Workspaces Usage" formatDay="dd MMM" formatWeek="dd MMM" formatMonth="MMM yyyy"
               formatLifetime="dd MMM"/>
         <metric type="total_workspaces" title="Total"/>
-        <metric type="tenant_created" title="New Active Workspaces"/>
+        <metric type="workspace_created" title="New Active Workspaces"/>
         <metric type="returned_active_ws" title="Returning Active Workspaces"/>
         <metric type="inactive_ws" title="Non-Active Workspaces"/>
         <empty/>

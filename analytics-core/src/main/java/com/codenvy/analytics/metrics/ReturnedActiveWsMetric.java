@@ -48,7 +48,7 @@ public class ReturnedActiveWsMetric extends CalculatedMetric {
     public ValueData getValue(Map<String, String> context) throws IOException {
         LongValueData activeWs = (LongValueData)super.getValue(context);
         LongValueData createdWs =
-                (LongValueData)MetricFactory.createMetric(MetricType.TENANT_CREATED).getValue(context);
+                (LongValueData)MetricFactory.createMetric(MetricType.WORKSPACE_CREATED).getValue(context);
 
         return new LongValueData(activeWs.getAsLong() - createdWs.getAsLong());
     }

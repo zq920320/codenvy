@@ -26,8 +26,8 @@ package com.codenvy.analytics.metrics;
 public class TotalWorkspacesMetric extends CumulativeMetric {
 
     TotalWorkspacesMetric() {
-        super(MetricType.TOTAL_WORKSPACES, MetricFactory.createMetric(MetricType.TENANT_CREATED),
-              MetricFactory.createMetric(MetricType.TENANT_DESTROYED));
+        super(MetricType.TOTAL_WORKSPACES, MetricFactory.createMetric(MetricType.WORKSPACE_CREATED),
+              MetricFactory.createMetric(MetricType.WORKSPACE_DESTROYED));
     }
 
     @Override

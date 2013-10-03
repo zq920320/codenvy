@@ -29,10 +29,10 @@ import java.util.Set;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class TenantDestroyedMetric extends ValueReadBasedMetric {
+public class WorkspaceDestroyedMetric extends ValueReadBasedMetric {
 
-    TenantDestroyedMetric() {
-        super(MetricType.TENANT_DESTROYED);
+    WorkspaceDestroyedMetric() {
+        super(MetricType.WORKSPACE_DESTROYED);
     }
 
     /** {@inheritDoc} */
