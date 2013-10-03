@@ -25,7 +25,7 @@
     <parent>
         <groupId>com.codenvy.analytics</groupId>
         <artifactId>analytics-parent</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>analytics-rest-service</artifactId>
