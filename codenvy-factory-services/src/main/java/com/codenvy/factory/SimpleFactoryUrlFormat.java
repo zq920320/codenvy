@@ -45,7 +45,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
 
     private final static List<String> mandatoryParameters;
 
-    public static final Pattern wso2UrlPattern =
+    public static final Pattern WSO_2_URL_PATTERN =
             Pattern.compile("(http|https):\\/\\/((([0-9a-fA-F]{32}(:x-oauth-basic){0,1})|([0-9a-zA-Z-_.]+))@){0,1}" +
                             "gitblit\\.codeenvy.com(:[0-9]{1,5}){0,1}/.*\\.git");
 
@@ -124,7 +124,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
         try {
             //Temporary case, to check if we have git url from wso2.
             //For private repository "git ls-remote" will be frozen to prompt user credentials.
-            if (wso2UrlPattern.matcher(vcsUrl).matches()) {
+            if (WSO_2_URL_PATTERN.matcher(vcsUrl).matches()) {
                 LOG.debug("WSO2 repository found. Checked finished.");
                 return;
             }
