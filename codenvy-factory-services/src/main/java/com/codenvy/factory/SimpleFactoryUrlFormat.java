@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Simple version of <code>FactoryUrlFormat</code>.
@@ -43,6 +44,10 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             String.format("We cannot locate your project. Please try again or contact %s.", SUPPORT_EMAIL);
 
     private final static List<String> mandatoryParameters;
+
+    public static final Pattern WSO_2_URL_PATTERN =
+            Pattern.compile("(http|https):\\/\\/((([0-9a-fA-F]{32}(:x-oauth-basic){0,1})|([0-9a-zA-Z-_.]+))@){0,1}" +
+                            "gitblit\\.codeenvy.com(:[0-9]{1,5}){0,1}/.*\\.git");
 
     // Required factory url parameters
     static {
@@ -117,6 +122,13 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
      */
     protected static void checkRepository(String vcsUrl) throws FactoryUrlException {
         try {
+            //Temporary case, to check if we have git url from wso2.
+            //For private repository "git ls-remote" will be frozen to prompt user credentials.
+            if (WSO_2_URL_PATTERN.matcher(vcsUrl).matches()) {
+                LOG.debug("WSO2 repository found. Checked finished.");
+                return;
+            }
+
             // To avoid repository cloning use git ls-remote util for repository check
             // Call git ls-remote is much faster than cloning
             Process process = Runtime.getRuntime().exec("/usr/bin/git ls-remote " + vcsUrl);
