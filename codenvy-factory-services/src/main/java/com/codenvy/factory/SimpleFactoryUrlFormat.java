@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,6 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
         mandatoryParameters.add("vcsurl");
         mandatoryParameters.add("idcommit");
         mandatoryParameters.add("pname");
-        mandatoryParameters.add("wname");
     }
 
     @Override
@@ -100,7 +100,10 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             factoryUrl.setVcs(params.get("vcs").iterator().next());
             factoryUrl.setVcsurl(params.get("vcsurl").iterator().next());
             factoryUrl.setProjectName(params.get("pname").iterator().next());
-            factoryUrl.setWorkspaceName(params.get("wname").iterator().next());
+            Iterator<String> it = params.get("wname").iterator();
+            if (it.hasNext()) {
+                factoryUrl.setWorkspaceName(it.next());
+            }
 
             return factoryUrl;
         } catch (IOException e) {
