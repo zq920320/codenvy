@@ -18,6 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.SimpleFactoryUrl;
 import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,9 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
 
     private final static List<String> mandatoryParameters;
 
-    public static final String WSO_2_URL_PATTERN = "(http|https):\\/\\/((([0-9a-fA-F]{32}(:x-oauth-basic){0,1})|([0-9a-zA-Z-_.]+))@){0,1}" +
-                                                   "gitblit\\.codeenvy.com(:[0-9]{1,5}){0,1}/.*\\.git";
+    public static final Pattern WSO_2_URL_PATTERN =
+            Pattern.compile("(http|https):\\/\\/((([0-9a-fA-F]{32}(:x-oauth-basic){0,1})|([0-9a-zA-Z-_.]+))@){0,1}" +
+                            "gitblit\\.codeenvy.com(:[0-9]{1,5}){0,1}/.*\\.git");
 
     // Required factory url parameters
     static {
@@ -56,7 +58,6 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
         mandatoryParameters.add("vcs");
         mandatoryParameters.add("vcsurl");
         mandatoryParameters.add("idcommit");
-        mandatoryParameters.add("pname");
     }
 
     @Override
@@ -68,7 +69,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             List<String> versionValues = params.get("v");
             if (versionValues != null && versionValues.size() > 1) {
                 throw new FactoryUrlInvalidArgumentException(DEFAULT_MESSAGE);
-            } else if (versionValues == null || !"1.0".equals(versionValues.get(0))) {
+            } else if (versionValues == null || !"1.0".equals(versionValues.iterator().next())) {
                 throw new FactoryUrlInvalidFormatException(DEFAULT_MESSAGE);
             }
 
@@ -92,6 +93,11 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
                 }
             }
 
+            // check that vcs value is correct (only git is supported for now)
+            if (!"git".equals(params.get("vcs").iterator().next())) {
+                throw new FactoryUrlInvalidArgumentException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
+            }
+
             checkRepository(params.get("vcsurl").iterator().next());
 
             SimpleFactoryUrl factoryUrl = new SimpleFactoryUrl();
@@ -99,11 +105,29 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             factoryUrl.setV(params.get("v").iterator().next());
             factoryUrl.setVcs(params.get("vcs").iterator().next());
             factoryUrl.setVcsurl(params.get("vcsurl").iterator().next());
-            factoryUrl.setProjectName(params.get("pname").iterator().next());
-            Iterator<String> it = params.get("wname").iterator();
-            if (it.hasNext()) {
-                factoryUrl.setWorkspaceName(it.next());
+
+            List<String> values;
+            if ((values = params.get("action")) != null && !values.isEmpty()) {
+                factoryUrl.setAction(values.iterator().next());
             }
+
+            if ((values = params.get("openfile")) != null && !values.isEmpty()) {
+                factoryUrl.setOpenfile(values.iterator().next());
+            }
+
+            if ((values = params.get("keepvcsinfo")) != null && !values.isEmpty()) {
+                factoryUrl.setKeepvcsinfo(Boolean.parseBoolean(values.iterator().next()));
+            }
+
+            Map<String, String> projectAttributes = new HashMap<>();
+            if ((values = params.get("pname")) != null && !values.isEmpty()) {
+                projectAttributes.put("pname", values.iterator().next());
+            }
+            if ((values = params.get("ptype")) != null && !values.isEmpty()) {
+                projectAttributes.put("ptype", values.iterator().next());
+            }
+
+            factoryUrl.setProjectattributes(projectAttributes);
 
             return factoryUrl;
         } catch (IOException e) {
@@ -126,7 +150,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
         try {
             //Temporary case, to check if we have git url from wso2.
             //For private repository "git ls-remote" will be frozen to prompt user credentials.
-            if (Pattern.compile(WSO_2_URL_PATTERN).matcher(vcsUrl).matches()) {
+            if (WSO_2_URL_PATTERN.matcher(vcsUrl).matches()) {
                 LOG.debug("WSO2 repository found. Checked finished.");
                 return;
             }

@@ -47,17 +47,15 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
 
     @Override
     public AdvancedFactoryUrl parse(URL url) throws FactoryUrlException {
-//        String[] factoryUrlParts = url.getPath().split("-");
-//        if (factoryUrlParts.length < 2) {
-//            throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-//        }
         try {
-            String factoryId = null;
-            List<String> values =  UrlUtils.getQueryParameters(url).get("id");
-            if (values != null)
-                factoryId = values.get(0);
-            else
+            String factoryId;
+            List<String> values = UrlUtils.getQueryParameters(url).get("id");
+            if (values != null && !values.isEmpty()) {
+                factoryId = values.iterator().next();
+            } else {
                 throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            }
+
             AdvancedFactoryUrl factoryUrl = factoryClient.getFactory(url, factoryId);
 
             if (factoryUrl == null) {
@@ -74,14 +72,14 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
                 throw new FactoryUrlInvalidArgumentException(
                         "Parameter vcs has illegal value. Only \"git\" is supported for now.");
             }
-            if (factoryUrl.getVcsUrl() == null || factoryUrl.getVcsUrl().isEmpty()) {
+            if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
                 throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
             }
-            if (factoryUrl.getCommitId() == null || factoryUrl.getCommitId().isEmpty()) {
+            if (factoryUrl.getCommitid() == null || factoryUrl.getCommitid().isEmpty()) {
                 throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
             }
 
-            SimpleFactoryUrlFormat.checkRepository(factoryUrl.getVcsUrl());
+            SimpleFactoryUrlFormat.checkRepository(factoryUrl.getVcsurl());
 
             return factoryUrl;
         } catch (IOException e) {

@@ -17,8 +17,8 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.FactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.SimpleFactoryUrl;
 
 import java.net.URL;
 
@@ -37,5 +37,5 @@ public interface FactoryUrlFormat {
      * @throws FactoryUrlException
      *         - if other exceptions occurs
      */
-    public FactoryUrl parse(URL url) throws FactoryUrlException;
+    public SimpleFactoryUrl parse(URL url) throws FactoryUrlException;
 }

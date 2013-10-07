@@ -68,7 +68,7 @@ public class MongoDBFactoryStore implements FactoryStore {
 
 
         BasicDBObjectBuilder attributes = new BasicDBObjectBuilder();
-        for (Map.Entry<String, String> attribute : factoryUrl.getProjectAttributes().entrySet()) {
+        for (Map.Entry<String, String> attribute : factoryUrl.getProjectattributes().entrySet()) {
             attributes.add(attribute.getKey(), attribute.getValue());
         }
 
@@ -82,16 +82,17 @@ public class MongoDBFactoryStore implements FactoryStore {
         BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
         factoryURLbuilder.add("v", factoryUrl.getVersion())
                 .add("vcs", factoryUrl.getVcs())
-                .add("vcsurl", factoryUrl.getVcsUrl())
-                .add("commitid", factoryUrl.getCommitId())
+                .add("vcsurl", factoryUrl.getVcsurl())
+                .add("commitid", factoryUrl.getCommitid())
                 .add("action", factoryUrl.getAction())
+                .add("openfile", factoryUrl.getOpenfile())
+                .add("keepvcsinfo", factoryUrl.getKeepvcsinfo())
                 .add("style", factoryUrl.getStyle())
                 .add("description", factoryUrl.getDescription())
-                .add("contactmail", factoryUrl.getContactMail())
+                .add("contactmail", factoryUrl.getContactmail())
                 .add("author", factoryUrl.getAuthor())
-                .add("openfile", factoryUrl.getOpenFile())
-                .add("orgid", factoryUrl.getOrgId())
-                .add("affiliateid", factoryUrl.getAffiliateId())
+                .add("orgid", factoryUrl.getOrgid())
+                .add("affiliateid", factoryUrl.getAffiliateid())
                 .add("projectattributes", attributes.get());
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
@@ -130,11 +131,12 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setVcsurl((String)factoryAsDbObject.get("vcsurl"));
         factoryUrl.setCommitid((String)factoryAsDbObject.get("commitid"));
         factoryUrl.setAction((String)factoryAsDbObject.get("action"));
+        factoryUrl.setKeepvcsinfo((boolean)factoryAsDbObject.get("keepvcsinfo"));
+        factoryUrl.setOpenfile((String)factoryAsDbObject.get("openfile"));
         factoryUrl.setStyle((String)factoryAsDbObject.get("style"));
         factoryUrl.setDescription((String)factoryAsDbObject.get("description"));
         factoryUrl.setContactmail((String)factoryAsDbObject.get("contactmail"));
         factoryUrl.setAuthor((String)factoryAsDbObject.get("author"));
-        factoryUrl.setOpenfile((String)factoryAsDbObject.get("openfile"));
         factoryUrl.setOrgid((String)factoryAsDbObject.get("orgid"));
         factoryUrl.setAffiliateid((String)factoryAsDbObject.get("affiliateid"));
 

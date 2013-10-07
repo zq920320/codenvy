@@ -17,8 +17,8 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.FactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.SimpleFactoryUrl;
 import com.codenvy.commons.lang.ZipUtils;
 
 import org.testng.annotations.DataProvider;
@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Collections;
 
 import static org.testng.Assert.assertEquals;
 
@@ -42,12 +43,14 @@ public class FactoryUrlParserTest {
         ZipUtils.unzip(new File(Thread.currentThread().getContextClassLoader().getResource("testrepository.zip").toURI()), testRepository);
 
         SimpleFactoryUrl expectedFactoryUrl =
-                new SimpleFactoryUrl("1.0", "git", "file://" + testRepository + "/testrepository", "1234567", "eee", "ttt");
+                new SimpleFactoryUrl("1.0", "git", "file://" + testRepository + "/testrepository", "1234567", null, null, false, Collections
+                        .singletonMap("pname", "eee"));
 
         //when
-        FactoryUrl factoryUrl =
+        SimpleFactoryUrl factoryUrl =
                 FactoryUrlParser.parse(new URL("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt" +
-                                               "&vcsurl=" + SimpleFactoryUrlFormatTest.enc("file://" + testRepository + "/testrepository")));
+                                               "&vcsurl=" +
+                                               SimpleFactoryUrlFormatTest.enc("file://" + testRepository + "/testrepository")));
 
         //then
         assertEquals(factoryUrl, expectedFactoryUrl);

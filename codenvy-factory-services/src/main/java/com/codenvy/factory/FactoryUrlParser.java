@@ -17,8 +17,8 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.FactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.SimpleFactoryUrl;
 import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class FactoryUrlParser {
      * @throws FactoryUrlException
      *         - if other exceptions occurs
      */
-    public static FactoryUrl parse(URL factoryUrl) throws FactoryUrlException {
+    public static SimpleFactoryUrl parse(URL factoryUrl) throws FactoryUrlException {
         try {
             Map<String, List<String>> params = UrlUtils.getQueryParameters(factoryUrl);
 
@@ -56,9 +56,7 @@ public class FactoryUrlParser {
                 factoryUrlFormat = new SimpleFactoryUrlFormat();
             }
 
-            FactoryUrl factoryUrlParams = factoryUrlFormat.parse(factoryUrl);
-
-            return factoryUrlParams;
+            return factoryUrlFormat.parse(factoryUrl);
         } catch (UnsupportedEncodingException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new FactoryUrlException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);

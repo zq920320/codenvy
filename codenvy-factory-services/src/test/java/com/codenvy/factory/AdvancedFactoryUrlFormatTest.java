@@ -19,10 +19,6 @@ package com.codenvy.factory;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.commons.lang.ZipUtils;
-import com.codenvy.factory.AdvancedFactoryUrlFormat;
-import com.codenvy.factory.FactoryClient;
-import com.codenvy.factory.FactoryUrlInvalidArgumentException;
-import com.codenvy.factory.FactoryUrlInvalidFormatException;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -58,7 +54,8 @@ public class AdvancedFactoryUrlFormatTest {
         ZipUtils.unzip(new File(Thread.currentThread().getContextClassLoader().getResource("testrepository.zip").toURI()), testRepository);
 
         AdvancedFactoryUrl expectedFactoryUrl =
-                new AdvancedFactoryUrl("1.1", "git", "file://" + testRepository + "/testrepository", "commit123456789");
+                new AdvancedFactoryUrl("1.1", "git", "file://" + testRepository + "/testrepository", "commit123456789", null, null, false,
+                                       null);
         expectedFactoryUrl.setId("123456789");
 
         URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
@@ -98,11 +95,13 @@ public class AdvancedFactoryUrlFormatTest {
 
     @DataProvider(name = "badAdvancedFactoryUrlProvider")
     public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
-        return new Object[][]{{new AdvancedFactoryUrl("1.1", "notagit", "file://testRepository/testrepository", "commit123456789")},
-                              {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789")},
-                              {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789")},
-                              {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", "")},
-                              {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", null)}
+        return new Object[][]{
+                {new AdvancedFactoryUrl("1.1", "notagit", "file://testRepository/testrepository", "commit123456789", null, null, false,
+                                        null)},
+                {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null)},
+                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null)},
+                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", "", null, null, false, null)},
+                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", null, null, null, false, null)}
         };
     }
 }

@@ -17,8 +17,8 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.FactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.SimpleFactoryUrl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public abstract class FactoryServlet extends HttpServlet {
         try {
             URL currentUrl = UriBuilder.fromUri(req.getRequestURL().toString()).replaceQuery(req.getQueryString()).build().toURL();
 
-            FactoryUrl factoryUrl = FactoryUrlParser.parse(currentUrl);
+            SimpleFactoryUrl factoryUrl = FactoryUrlParser.parse(currentUrl);
 
             createTempWorkspaceAndRedirect(req, resp, factoryUrl);
         } catch (FactoryUrlException e) {
@@ -61,6 +61,6 @@ public abstract class FactoryServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    protected abstract void createTempWorkspaceAndRedirect(HttpServletRequest req, HttpServletResponse resp, FactoryUrl factoryUrl)
+    protected abstract void createTempWorkspaceAndRedirect(HttpServletRequest req, HttpServletResponse resp, SimpleFactoryUrl factoryUrl)
             throws ServletException, IOException;
 }
