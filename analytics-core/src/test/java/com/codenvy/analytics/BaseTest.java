@@ -24,6 +24,7 @@ import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
 
 import org.apache.pig.data.TupleFactory;
+import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.testng.annotations.BeforeClass;
 
 import java.io.File;
