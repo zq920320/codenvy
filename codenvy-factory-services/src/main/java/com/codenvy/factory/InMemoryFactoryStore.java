@@ -19,9 +19,8 @@ package com.codenvy.factory;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryImage;
+import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.store.FactoryStore;
-import com.codenvy.api.factory.store.SavedFactoryData;
 import com.codenvy.commons.lang.NameGenerator;
 
 import java.util.HashMap;
@@ -31,11 +30,12 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class InMemoryFactoryStore implements FactoryStore {
-    private              Map<String, SavedFactoryData> factories = new HashMap<>();
+    private              Map<String, Set<FactoryImage>>  images    = new HashMap<>();
+    private              Map<String, AdvancedFactoryUrl> factories = new HashMap<>();
     private static final ReentrantReadWriteLock        lock      = new ReentrantReadWriteLock();
 
     @Override
-    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
+    public String saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
         lock.writeLock().lock();
         try {
             factoryUrl.setId(NameGenerator.generate("", 16));
@@ -45,9 +45,10 @@ public class InMemoryFactoryStore implements FactoryStore {
                 newImages.add(image);
             }
 
-            SavedFactoryData factoryData = new SavedFactoryData(factoryUrl, newImages);
-            factories.put(factoryUrl.getId(), factoryData);
-            return factoryData;
+            factories.put(factoryUrl.getId(), factoryUrl);
+            this.images.put(factoryUrl.getId(), images);
+
+            return factoryUrl.getId();
         } finally {
             lock.writeLock().unlock();
         }
@@ -64,10 +65,20 @@ public class InMemoryFactoryStore implements FactoryStore {
     }
 
     @Override
-    public SavedFactoryData getFactory(String id) throws FactoryUrlException {
+    public AdvancedFactoryUrl getFactory(String id) throws FactoryUrlException {
         lock.readLock().lock();
         try {
             return factories.get(id);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public Set<FactoryImage> getFactoryImages(String id) throws FactoryUrlException {
+        lock.readLock().lock();
+        try {
+            return images.get(id);
         } finally {
             lock.readLock().unlock();
         }

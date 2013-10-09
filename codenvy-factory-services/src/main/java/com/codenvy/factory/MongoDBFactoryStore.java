@@ -19,9 +19,8 @@ package com.codenvy.factory;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryImage;
+import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.store.FactoryStore;
-import com.codenvy.api.factory.store.SavedFactoryData;
 import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.*;
 
@@ -60,8 +59,7 @@ public class MongoDBFactoryStore implements FactoryStore {
 
 
     @Override
-    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images)
-            throws FactoryUrlException {
+    public String saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
 
         factoryUrl.setId(NameGenerator.generate("", 16));
         Set<FactoryImage> newImages = new HashSet<>();
@@ -69,8 +67,6 @@ public class MongoDBFactoryStore implements FactoryStore {
             image.setName(NameGenerator.generate("", 16) + image.getName());
             newImages.add(image);
         }
-        SavedFactoryData factoryData = new SavedFactoryData(factoryUrl, newImages);
-
 
         BasicDBObjectBuilder attributes = new BasicDBObjectBuilder();
         for (Map.Entry<String, String> attribute : factoryUrl.getProjectattributes().entrySet()) {
@@ -105,7 +101,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryDatabuilder.add("images", imageList);
 
         factories.save(factoryDatabuilder.get());
-        return factoryData;
+        return factoryUrl.getId();
     }
 
     @Override
@@ -116,7 +112,7 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public SavedFactoryData getFactory(String id) throws FactoryUrlException {
+    public AdvancedFactoryUrl getFactory(String id) throws FactoryUrlException {
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
         Set<FactoryImage> images = new HashSet<>();
 
@@ -148,6 +144,17 @@ public class MongoDBFactoryStore implements FactoryStore {
 //        }
         factoryUrl.setProjectattributes(((BasicDBObject)factoryAsDbObject.get("projectattributes")).toMap());
 
+        return factoryUrl;
+    }
+
+    @Override
+    public Set<FactoryImage> getFactoryImages(String id) throws FactoryUrlException {
+        Set<FactoryImage> images = new HashSet<>();
+
+        DBObject query = new BasicDBObject();
+        query.put("_id", id);
+        DBObject res = factories.findOne(query);
+
         BasicDBList linksAsDbObject = (BasicDBList)res.get("images");
         for (Object obj : linksAsDbObject) {
             BasicDBObject dbobj = (BasicDBObject)obj;
@@ -162,6 +169,6 @@ public class MongoDBFactoryStore implements FactoryStore {
             }
         }
 
-        return new SavedFactoryData(factoryUrl, images);
+        return images;
     }
 }
