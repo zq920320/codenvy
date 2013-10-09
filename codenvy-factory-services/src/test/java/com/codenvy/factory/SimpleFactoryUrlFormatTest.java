@@ -48,9 +48,8 @@ public class SimpleFactoryUrlFormatTest {
         ZipUtils.unzip(new File(Thread.currentThread().getContextClassLoader().getResource("testrepository.zip").toURI()), testRepository);
 
         SimpleFactoryUrl expectedFactoryUrl =
-                new SimpleFactoryUrl("1.0", "git", "file://" + testRepository + "/testrepository", "1234567", null, null, false,
-                                     Collections.singletonMap(
-                                             "pname", "eee"));
+                new SimpleFactoryUrl("1.0", "git", "file://" + testRepository + "/testrepository", "1234567", null, null, false, null, null,
+                                     Collections.singletonMap("pname", "eee"));
 
         //when
         SimpleFactoryUrl factoryUrl =

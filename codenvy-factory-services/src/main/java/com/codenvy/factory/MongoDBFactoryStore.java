@@ -18,14 +18,12 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.FactoryImage;
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.Image;
-import com.codenvy.api.factory.Link;
 import com.codenvy.api.factory.store.FactoryStore;
 import com.codenvy.api.factory.store.SavedFactoryData;
 import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.*;
-import com.mongodb.util.JSON;
 
 import java.net.UnknownHostException;
 import java.util.*;
@@ -56,11 +54,11 @@ public class MongoDBFactoryStore implements FactoryStore {
 
 
     @Override
-    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<Image> images) throws FactoryUrlException {
+    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
 
         factoryUrl.setId(NameGenerator.generate("", 16));
-        Set<Image> newImages = new HashSet<>();
-        for (Image image : images) {
+        Set<FactoryImage> newImages = new HashSet<>();
+        for (FactoryImage image : images) {
             image.setName(NameGenerator.generate("", 16) + image.getName());
             newImages.add(image);
         }
@@ -72,28 +70,27 @@ public class MongoDBFactoryStore implements FactoryStore {
             attributes.add(attribute.getKey(), attribute.getValue());
         }
 
-        List<DBObject>  imageList = new ArrayList<>();
-        for (Image one : newImages) {
+        List<DBObject> imageList = new ArrayList<>();
+        for (FactoryImage one : newImages) {
             imageList.add(new BasicDBObjectBuilder().add("name", one.getName()).add("type", one.getMediaType())
                                                     .add("data", one.getImageData()).get());
         }
 
-
         BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
-        factoryURLbuilder.add("v", factoryUrl.getVersion())
-                .add("vcs", factoryUrl.getVcs())
-                .add("vcsurl", factoryUrl.getVcsurl())
-                .add("commitid", factoryUrl.getCommitid())
-                .add("action", factoryUrl.getAction())
-                .add("openfile", factoryUrl.getOpenfile())
-                .add("keepvcsinfo", factoryUrl.getKeepvcsinfo())
-                .add("style", factoryUrl.getStyle())
-                .add("description", factoryUrl.getDescription())
-                .add("contactmail", factoryUrl.getContactmail())
-                .add("author", factoryUrl.getAuthor())
-                .add("orgid", factoryUrl.getOrgid())
-                .add("affiliateid", factoryUrl.getAffiliateid())
-                .add("projectattributes", attributes.get());
+        factoryURLbuilder.add("v", factoryUrl.getV())
+                         .add("vcs", factoryUrl.getVcs())
+                         .add("vcsurl", factoryUrl.getVcsurl())
+                         .add("commitid", factoryUrl.getCommitid())
+                         .add("action", factoryUrl.getAction())
+                         .add("openfile", factoryUrl.getOpenfile())
+                         .add("keepvcsinfo", factoryUrl.getKeepvcsinfo())
+                         .add("style", factoryUrl.getStyle())
+                         .add("description", factoryUrl.getDescription())
+                         .add("contactmail", factoryUrl.getContactmail())
+                         .add("author", factoryUrl.getAuthor())
+                         .add("orgid", factoryUrl.getOrgid())
+                         .add("affiliateid", factoryUrl.getAffiliateid())
+                         .add("projectattributes", attributes.get());
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", factoryUrl.getId());
@@ -102,7 +99,6 @@ public class MongoDBFactoryStore implements FactoryStore {
 
         factories.save(factoryDatabuilder.get());
         return factoryData;
-
     }
 
     @Override
@@ -114,14 +110,12 @@ public class MongoDBFactoryStore implements FactoryStore {
 
     @Override
     public SavedFactoryData getFactory(String id) throws FactoryUrlException {
-
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
-        Set<Image> images = new HashSet<>();
+        Set<FactoryImage> images = new HashSet<>();
 
         DBObject query = new BasicDBObject();
         query.put("_id", id);
         DBObject res = factories.findOne(query);
-
 
         // Processing factory
         factoryUrl.setId((String)res.get("_id"));
@@ -149,6 +143,6 @@ public class MongoDBFactoryStore implements FactoryStore {
 
         BasicDBList linksAsDbObject = (BasicDBList)res.get("images");
 
-     return new SavedFactoryData(factoryUrl,images);
+        return new SavedFactoryData(factoryUrl, images);
     }
 }

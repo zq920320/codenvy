@@ -64,7 +64,7 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
             }
 
             // check mandatory parameters
-            if (!"1.1".equals(factoryUrl.getVersion())) {
+            if (!"1.1".equals(factoryUrl.getV())) {
                 throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
             }
             // check that vcs value is correct (only git is supported for now)

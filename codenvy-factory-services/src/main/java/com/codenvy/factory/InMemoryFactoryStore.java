@@ -18,8 +18,8 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.FactoryImage;
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.Image;
 import com.codenvy.api.factory.store.FactoryStore;
 import com.codenvy.api.factory.store.SavedFactoryData;
 import com.codenvy.commons.lang.NameGenerator;
@@ -31,17 +31,16 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class InMemoryFactoryStore implements FactoryStore {
-    //private              Map<String, Image>            images    = new HashMap<>();
     private              Map<String, SavedFactoryData> factories = new HashMap<>();
     private static final ReentrantReadWriteLock        lock      = new ReentrantReadWriteLock();
 
     @Override
-    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<Image> images) throws FactoryUrlException {
+    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
         lock.writeLock().lock();
         try {
             factoryUrl.setId(NameGenerator.generate("", 16));
-            Set<Image> newImages = new HashSet<>();
-            for (Image image : images) {
+            Set<FactoryImage> newImages = new HashSet<>();
+            for (FactoryImage image : images) {
                 image.setName(NameGenerator.generate("", 16) + image.getName());
                 newImages.add(image);
             }

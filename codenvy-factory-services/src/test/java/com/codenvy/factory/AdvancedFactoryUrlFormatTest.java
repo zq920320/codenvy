@@ -55,6 +55,7 @@ public class AdvancedFactoryUrlFormatTest {
 
         AdvancedFactoryUrl expectedFactoryUrl =
                 new AdvancedFactoryUrl("1.1", "git", "file://" + testRepository + "/testrepository", "commit123456789", null, null, false,
+                                       null, null,
                                        null);
         expectedFactoryUrl.setId("123456789");
 
@@ -97,11 +98,12 @@ public class AdvancedFactoryUrlFormatTest {
     public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
         return new Object[][]{
                 {new AdvancedFactoryUrl("1.1", "notagit", "file://testRepository/testrepository", "commit123456789", null, null, false,
+                                        null, null,
                                         null)},
-                {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null)},
-                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null)},
-                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", "", null, null, false, null)},
-                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", null, null, null, false, null)}
+                {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null, null, null)},
+                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, null)},
+                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", "", null, null, false, null, null, null)},
+                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", null, null, null, false, null, null, null)}
         };
     }
 }
