@@ -25,6 +25,10 @@ import com.codenvy.api.factory.store.SavedFactoryData;
 import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.*;
 
@@ -35,12 +39,14 @@ public class MongoDBFactoryStore implements FactoryStore {
 
     DBCollection factories;
 
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDBFactoryStore.class);
+
     public MongoDBFactoryStore() {
         MongoClient mongoClient = null;
         try {
             mongoClient = new MongoClient("localhost", 27017);
         } catch (UnknownHostException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            LOG.error(e.getMessage());
         }
         DB db;
         if (mongoClient != null) {
@@ -54,7 +60,8 @@ public class MongoDBFactoryStore implements FactoryStore {
 
 
     @Override
-    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
+    public SavedFactoryData saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images)
+            throws FactoryUrlException {
 
         factoryUrl.setId(NameGenerator.generate("", 16));
         Set<FactoryImage> newImages = new HashSet<>();
@@ -142,6 +149,18 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setProjectattributes(((BasicDBObject)factoryAsDbObject.get("projectattributes")).toMap());
 
         BasicDBList linksAsDbObject = (BasicDBList)res.get("images");
+        for (Object obj : linksAsDbObject) {
+            BasicDBObject dbobj = (BasicDBObject)obj;
+            try {
+                FactoryImage image = new FactoryImage();
+                image.setName((String)dbobj.get("name"));
+                image.setMediaType((String)dbobj.get("type"));
+                image.setImageData((byte[])dbobj.get("data"));
+                images.add(image);
+            } catch (IOException e) {
+                LOG.error("Wrong image data found for image " + dbobj.get("name"), e);
+            }
+        }
 
         return new SavedFactoryData(factoryUrl, images);
     }
