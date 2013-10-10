@@ -18,6 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.AdvancedFactoryUrlValidator;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.commons.lang.UrlUtils;
 
@@ -32,7 +33,7 @@ import java.util.List;
  * Advanced version of <code>FactoryUrlFormat</code>.
  * This implementation suggest that factory url contain version and id
  */
-public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
+public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFactoryUrlValidator {
     private static final Logger LOG = LoggerFactory.getLogger(AdvancedFactoryUrlFormat.class);
     // client for retrieving factory parameters from storage
     private final FactoryClient factoryClient;
@@ -63,23 +64,7 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
                 throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
             }
 
-            // check mandatory parameters
-            if (!"1.1".equals(factoryUrl.getV())) {
-                throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-            }
-            // check that vcs value is correct (only git is supported for now)
-            if (!"git".equals(factoryUrl.getVcs())) {
-                throw new FactoryUrlInvalidArgumentException(
-                        "Parameter vcs has illegal value. Only \"git\" is supported for now.");
-            }
-            if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
-                throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-            }
-            if (factoryUrl.getCommitid() == null || factoryUrl.getCommitid().isEmpty()) {
-                throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-            }
-
-            SimpleFactoryUrlFormat.checkRepository(factoryUrl.getVcsurl());
+            validate(factoryUrl);
 
             return factoryUrl;
         } catch (IOException e) {
@@ -88,4 +73,24 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat {
         }
     }
 
+    @Override
+    public void validate(AdvancedFactoryUrl factoryUrl) throws FactoryUrlException {
+        // check mandatory parameters
+        if (!"1.1".equals(factoryUrl.getV())) {
+            throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+        }
+        // check that vcs value is correct (only git is supported for now)
+        if (!"git".equals(factoryUrl.getVcs())) {
+            throw new FactoryUrlInvalidArgumentException(
+                    "Parameter vcs has illegal value. Only \"git\" is supported for now.");
+        }
+        if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
+            throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+        }
+        if (factoryUrl.getCommitid() == null || factoryUrl.getCommitid().isEmpty()) {
+            throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+        }
+
+        SimpleFactoryUrlFormat.checkRepository(factoryUrl.getVcsurl());
+    }
 }

@@ -18,7 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.SimpleFactoryUrl;
+import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /** Servlet to handle factory URL's. */
 public abstract class FactoryServlet extends HttpServlet {
@@ -39,11 +42,19 @@ public abstract class FactoryServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             URL currentUrl = UriBuilder.fromUri(req.getRequestURL().toString()).replaceQuery(req.getQueryString()).build().toURL();
+            Map<String, List<String>> params = UrlUtils.getQueryParameters(currentUrl);
 
-            SimpleFactoryUrl factoryUrl = FactoryUrlParser.parse(currentUrl);
+            FactoryUrlFormat factoryUrlFormat;
+            if (params.get("id") != null) {
+                factoryUrlFormat = new AdvancedFactoryUrlFormat();
+            } else {
+                factoryUrlFormat = new SimpleFactoryUrlFormat();
+            }
 
-            createTempWorkspaceAndRedirect(req, resp, factoryUrl);
-        } catch (FactoryUrlException e) {
+            factoryUrlFormat.parse(currentUrl);
+
+            createTempWorkspaceAndRedirect(req, resp);
+        } catch (UnsupportedEncodingException | FactoryUrlException e) {
             LOG.warn(e.getLocalizedMessage(), e);
             throw new ServletException(e.getLocalizedMessage(), e);
         }
@@ -56,11 +67,9 @@ public abstract class FactoryServlet extends HttpServlet {
      *         - an HttpServletRequest object that contains the request the client has made of the servlet
      * @param resp
      *         - an HttpServletResponse object that contains the response the servlet sends to the client
-     * @param factoryUrl
-     *         - factory URL for temporary workspace creation
      * @throws ServletException
      * @throws IOException
      */
-    protected abstract void createTempWorkspaceAndRedirect(HttpServletRequest req, HttpServletResponse resp, SimpleFactoryUrl factoryUrl)
+    protected abstract void createTempWorkspaceAndRedirect(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException;
 }
