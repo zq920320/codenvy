@@ -257,5 +257,6 @@
         <module>analytics-web-portal</module>
         <module>analytics-rest-service</module>
         <module>analytics-tomcat-pkg</module>
+        <module>analytics-wso2bam-pkg</module>
     </modules>
 </project>
