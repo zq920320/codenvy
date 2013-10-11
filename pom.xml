@@ -254,6 +254,7 @@
 
     <modules>
         <module>analytics-core</module>
+        <module>analytics-modules</module>
         <module>analytics-rest-service</module>
         <module>analytics-wso2bam-pkg</module>
     </modules>
