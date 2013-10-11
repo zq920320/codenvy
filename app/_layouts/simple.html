@@ -20,15 +20,15 @@
         <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource}}"></script>
     </head>
     <body class="responsive simple">
+        {% include act-on.html %}
+        {% include google-analytics.html %}
+        {% include uservoice.html %}
+        {% include application-script.html %}
         {{ content }}
 
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
         <![endif]-->
 
-        {% include uservoice.html %}
-        {% include google-analytics.html %}
-        {% include application-script.html %}
-        {% include act-on.html %}
 </body>
 </html>
