@@ -170,9 +170,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
                 while ((line = br.readLine()) != null) {
                     LOG.error(line);
                 }
-                throw new FactoryUrlInvalidArgumentException(
-                        String.format("We cannot clone the git repository for your project. Please try again or contact %s.",
-                                      SUPPORT_EMAIL));
+                throw new FactoryUrlInvalidArgumentException(DEFAULT_MESSAGE);
             } else {
                 LOG.debug("Repository check finished successfully.");
             }

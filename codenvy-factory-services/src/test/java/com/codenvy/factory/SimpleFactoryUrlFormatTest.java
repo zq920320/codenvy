@@ -25,7 +25,9 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
@@ -35,6 +37,17 @@ import static org.testng.Assert.assertEquals;
 
 public class SimpleFactoryUrlFormatTest {
     private SimpleFactoryUrlFormat factoryUrlFormat;
+    private static  String                 VALID_REPOSITORY_URL;
+
+    public SimpleFactoryUrlFormatTest() throws IOException, URISyntaxException {
+        VALID_REPOSITORY_URL = initLocalRepo();
+    }
+
+    static String initLocalRepo() throws IOException, URISyntaxException {
+        File testRepository = Files.createTempDirectory("testrepository").toFile();
+        ZipUtils.unzip(new File(Thread.currentThread().getContextClassLoader().getResource("testrepository.zip").toURI()), testRepository);
+        return "file://" + testRepository.getAbsolutePath() + "/testrepository";
+    }
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -42,20 +55,16 @@ public class SimpleFactoryUrlFormatTest {
     }
 
     @Test
-    public void shouldParseGoodUrl() throws Exception {
+    public void shouldBeAbleToParseValidFactoryUrl() throws Exception {
         //given
-        File testRepository = Files.createTempDirectory("testrepository").toFile();
-        ZipUtils.unzip(new File(Thread.currentThread().getContextClassLoader().getResource("testrepository.zip").toURI()), testRepository);
-
         SimpleFactoryUrl expectedFactoryUrl =
-                new SimpleFactoryUrl("1.0", "git", "file://" + testRepository + "/testrepository", "1234567", null, null, false, null, null,
+                new SimpleFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, "1234567", null, null, false, null, null,
                                      Collections.singletonMap("pname", "eee"));
 
         //when
-        SimpleFactoryUrl factoryUrl =
-                factoryUrlFormat
-                        .parse(new URL("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" + enc(
-                                "file://" + testRepository + "/testrepository")));
+        SimpleFactoryUrl factoryUrl = factoryUrlFormat.parse(
+                new URL("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
+                        enc(VALID_REPOSITORY_URL)));
 
         //then
         assertEquals(factoryUrl, expectedFactoryUrl);
@@ -67,12 +76,12 @@ public class SimpleFactoryUrlFormatTest {
     }
 
     @DataProvider(name = "badUrlProvider-InvalidFormat")
-    public Object[][] missingParametersFactoryUrlProvider() throws UnsupportedEncodingException {
-        return new Object[][]{// there is no format to satisfy that version
-                              {"http://codenvy.com/factory?v=2.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},
-                              {"http://codenvy.com/factory?vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// v par is missing
+    public Object[][] invalidFormatBadUrlProvider() throws UnsupportedEncodingException {
+        return new Object[][]{
+                {"http://codenvy.com/factory?v=2.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" + enc(VALID_REPOSITORY_URL)},
+                // unsupported version
+                {"http://codenvy.com/factory?vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" + enc(VALID_REPOSITORY_URL)},
+                // v par is missing
         };
     }
 
@@ -82,24 +91,26 @@ public class SimpleFactoryUrlFormatTest {
     }
 
     @DataProvider(name = "badUrlProvider-InvalidArgument")
-    public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
+    public Object[][] invalidArgumentBadUrlProvider() throws UnsupportedEncodingException {
         return new Object[][]{{"http://codenvy.com/factory?v=1.0&v=2.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// v par has is duplicated
+                               enc(VALID_REPOSITORY_URL)}, // v par has is duplicated
                               {"http://codenvy.com/factory?v=1.0&vcs=git&vcs=notagit&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// vcs par is duplicated
-                              {"http://codenvy.com/factory?v=1.0&vcs=&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" + enc(
-                                      "http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// vcs par has empty value
+                               enc(VALID_REPOSITORY_URL)}, // vcs par is duplicated
+                              {"http://codenvy.com/factory?v=1.0&vcs=&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
+                               enc(VALID_REPOSITORY_URL)}, // vcs par has empty value
                               {"http://codenvy.com/factory?v=1.0&vcs=mercurial&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" + enc(
-                                      "http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// vcs par has illegal value
+                                      VALID_REPOSITORY_URL)}, // vcs par has illegal value
                               {"http://codenvy.com/factory?v=1.0&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// vcs par is missing
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&pname=eee&wname=ttt&vcsurl=" + enc(
-                                      "http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// idcommit par is missing
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&wname=ttt&vcsurl=" + enc(
-                                      "http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// pname par is missing
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&vcsurl=" + enc(
-                                      "http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")},// wname par is missing
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt"} // vcsurl par is missing
+                               enc(VALID_REPOSITORY_URL)}, // vcs par is missing
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&pname=eee&wname=ttt&vcsurl=" + enc(VALID_REPOSITORY_URL)},
+                              // idcommit par is missing
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&pname=eee&wname=ttt&vcsurl=" + enc(VALID_REPOSITORY_URL)},
+                              // idcommit par is duplicated
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt"}, // vcsurl par is missing
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
+                               enc(VALID_REPOSITORY_URL) + "&vcsurl=" + enc(VALID_REPOSITORY_URL)}, // vcsurl par is duplicated
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
+                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")} // vcsurl par is duplicated
         };
     }
 

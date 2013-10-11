@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * Advanced version of <code>FactoryUrlFormat</code>.
- * This implementation suggest that factory url contain version and id
+ * This implementation suggest that factory url contain id
  */
 public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFactoryUrlValidator {
     private static final Logger LOG = LoggerFactory.getLogger(AdvancedFactoryUrlFormat.class);
@@ -69,7 +69,7 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFacto
             return factoryUrl;
         } catch (IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
-            throw new FactoryUrlException("We cannot locate your project. Please try again or contact us.");
+            throw new FactoryUrlException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
         }
     }
 
@@ -77,7 +77,7 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFacto
     public void validate(AdvancedFactoryUrl factoryUrl) throws FactoryUrlException {
         // check mandatory parameters
         if (!"1.1".equals(factoryUrl.getV())) {
-            throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            throw new FactoryUrlInvalidFormatException("Version has illegal value. Version must be equal to '1.1'");
         }
         // check that vcs value is correct (only git is supported for now)
         if (!"git".equals(factoryUrl.getVcs())) {
@@ -85,10 +85,10 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFacto
                     "Parameter vcs has illegal value. Only \"git\" is supported for now.");
         }
         if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
-            throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            throw new FactoryUrlInvalidArgumentException("Commitid is null or empty.");
         }
         if (factoryUrl.getCommitid() == null || factoryUrl.getCommitid().isEmpty()) {
-            throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+            throw new FactoryUrlInvalidArgumentException("Vcsurl is null or empty.");
         }
 
         SimpleFactoryUrlFormat.checkRepository(factoryUrl.getVcsurl());
