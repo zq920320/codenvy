@@ -54,8 +54,10 @@ public abstract class FactoryServlet extends HttpServlet {
             factoryUrlFormat.parse(currentUrl);
 
             createTempWorkspaceAndRedirect(req, resp);
-        } catch (UnsupportedEncodingException | FactoryUrlException e) {
-            LOG.warn(e.getLocalizedMessage(), e);
+        } catch (UnsupportedEncodingException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServletException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE, e);
+        } catch (FactoryUrlException e) {
             throw new ServletException(e.getLocalizedMessage(), e);
         }
     }
