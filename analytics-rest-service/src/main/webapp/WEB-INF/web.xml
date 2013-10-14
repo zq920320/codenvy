@@ -33,6 +33,11 @@
         <listener-class>org.everrest.core.servlet.EverrestInitializedListener</listener-class>
     </listener>
 
+    <listener>
+        <listener-class>com.codenvy.analytics.services.FileBasedMetricHandlerBootstrap</listener-class>
+    </listener>
+
+
     <servlet>
         <servlet-name>EverrestServlet</servlet-name>
         <servlet-class>org.everrest.core.servlet.EverrestServlet</servlet-class>

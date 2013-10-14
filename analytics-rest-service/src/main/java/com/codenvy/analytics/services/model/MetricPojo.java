@@ -18,6 +18,7 @@
 
 package com.codenvy.analytics.services.model;
 
+/** @author <a href="mailto:dkuleshov@codenvy.com">Dmitry Kuleshov</a> */
 public class MetricPojo {
     private String name;
     private String description;
@@ -54,5 +55,36 @@ public class MetricPojo {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MetricPojo that = (MetricPojo)o;
+
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (link != null ? !link.equals(that.link) : that.link != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (link != null ? link.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "MetricPojo{" +
+               "name='" + name + '\'' +
+               ", description='" + description + '\'' +
+               ", link='" + link + '\'' +
+               '}';
     }
 }

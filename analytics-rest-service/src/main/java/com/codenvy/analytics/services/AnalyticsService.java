@@ -18,79 +18,93 @@
 
 package com.codenvy.analytics.services;
 
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.services.model.MetricPojo;
-import com.codenvy.api.analytics.server.MetricService;
+import com.codenvy.api.core.rest.Service;
+import com.codenvy.api.core.rest.annotations.GenerateLink;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@Path("{" + MetricService.PATH_PARAM_NAME + "}")
-public class CacheBasedMetricService implements MetricService {
+@Path("analytics")
+public class AnalyticsService extends Service {
 
-    private static final Set<MetricParameter> sampleParameterSet = new LinkedHashSet<>();
+    @Inject
+    private MetricHandler metricHandler;
 
-    static {
-        sampleParameterSet.add(MetricParameter.FROM_DATE);
-        sampleParameterSet.add(MetricParameter.TO_DATE);
-    }
-
-    /** {@inheritDoc} */
+    @GenerateLink(rel = "metric value")
     @GET
+    @Path("metric/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getValue(@PathParam(PATH_PARAM_NAME) String metricName, @Context UriInfo uriInfo) {
+    public Response getValue(@PathParam("name") String metricName, @QueryParam("page") String page, @QueryParam("per_page") String perPage,
+                             @Context UriInfo uriInfo) {
         try {
-            Metric metric = MetricFactory.createMetric(metricName);
-            String value = metric.getValue(extractContext(uriInfo)).getAsString();
-
-            return Response.status(Response.Status.OK).entity(value).build();
+            String value = metricHandler.getMetricValue(metricName, extractContext(uriInfo));
+            if (value != null) {
+                return Response.status(Response.Status.OK).entity(value).build();
+            }
+            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
     }
 
-    /** {@inheritDoc} */
+    @GenerateLink(rel = "metric info")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("info")
-    public Response getInfo(@PathParam(PATH_PARAM_NAME) String metricName, @Context UriInfo uriInfo) {
+    @Path("metricinfo/{name}")
+    public Response getInfo(@PathParam("name") String metricName, @QueryParam("page") String page, @QueryParam("per_page") String perPage,
+                            @Context UriInfo uriInfo) {
         try {
+            MetricPojo metricPojo = metricHandler.getMetricInfo(metricName);
 
-            List<MetricPojo> metricPojos = new ArrayList<>();
-            if (MetricService.ALL_PATH_ELEMENT.equalsIgnoreCase(metricName)) {
-                for (MetricType metricType : MetricType.values()) {
-                    Metric metric = MetricFactory.createMetric(metricType);
-                    if (sampleParameterSet.equals(metric.getParams())) {
-                        metricPojos.add(generateMetricPojo(uriInfo, metricType.name(), metric));
-                    }
-                }
+            if (metricPojo == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
             } else {
-                Metric metric = MetricFactory.createMetric(metricName);
-                if (sampleParameterSet.equals(metric.getParams())) {
-                    metricPojos.add(generateMetricPojo(uriInfo, metricName, metric));
-                }
+                injectRefLink(uriInfo, metricPojo);
+                return Response.status(Response.Status.OK).entity(metricPojo).build();
             }
+
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    @GenerateLink(rel = "all metric info")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("metricinfo")
+    public Response getAllInfo(@Context UriInfo uriInfo, @QueryParam("page") String page, @QueryParam("per_page") String perPage) {
+        try {
+            List<MetricPojo> metricPojos = metricHandler.getAllMetricsInfo();
+            injectRefLinks(uriInfo, metricPojos);
             return Response.status(Response.Status.OK).entity(metricPojos).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
+    }
+
+    private void injectRefLinks(UriInfo uriInfo, List<MetricPojo> metricPojos) {
+        for (MetricPojo metricPojo : metricPojos) {
+            injectRefLink(uriInfo, metricPojo);
+        }
+    }
+
+    private void injectRefLink(UriInfo uriInfo, MetricPojo metricPojo) {
+        metricPojo.setLink(uriInfo.getBaseUri() + "/analytics/metric/" + metricPojo.getName());
     }
 
     /** Extract the execution context from passed query parameters. */
@@ -111,14 +125,5 @@ public class CacheBasedMetricService implements MetricService {
         }
 
         return context;
-    }
-
-    private MetricPojo generateMetricPojo(UriInfo uriInfo, String metricName, Metric metric) {
-        MetricPojo metricPojo = new MetricPojo();
-        metricPojo.setName(metricName);
-        metricPojo.setDescription(metric.getDescription());
-        metricPojo.setLink(uriInfo.getBaseUri() + "/" + metricName);
-
-        return metricPojo;
     }
 }

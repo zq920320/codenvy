@@ -18,7 +18,7 @@
 
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.services.CacheBasedMetricService;
+import com.codenvy.analytics.services.AnalyticsService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +34,7 @@ public class AnalyticsApplication extends Application {
     public AnalyticsApplication() {
         singletons = new HashSet<Object>();
         classes = new HashSet<Class<?>>();
-        classes.add(CacheBasedMetricService.class);
+        classes.add(AnalyticsService.class);
     }
 
     /** {@inheritDoc} */

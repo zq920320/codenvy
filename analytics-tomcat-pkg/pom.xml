@@ -142,8 +142,8 @@
                                         <copy file="${project.build.directory}/packager-conf/jar/mail-${javax.mail.version}.jar"
                                               tofile="${project.build.directory}/tomcat-analytics/lib/mail.jar"/>
 
-                                        <copy file="${project.build.directory}/packager-conf/war/analytics-rest-service.war"
-                                              tofile="${project.build.directory}/tomcat-analytics/webapps/metrics.war"/>
+                                        <copy file="${project.build.directory}/packager-conf/war/api.war"
+                                              tofile="${project.build.directory}/tomcat-analytics/webapps/api.war"/>
                                         <copy file="${project.build.directory}/packager-conf/war/analytics-web-portal.war"
                                               tofile="${project.build.directory}/tomcat-analytics/webapps/analytics.war"/>
                                         <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x"/>
