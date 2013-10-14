@@ -50,10 +50,13 @@ define(["jquery","underscore",
                 $(this.el).removeClass("loading");
 
                 _.each(tenants,function(tenant){
-                    // if user has workspace
+                    // if user has at least one workspace 
                     if (user.attributes.accounts[0]) {
-
-                        if (tenant.attributes.owner === user.attributes.accounts[0].id) {
+                        // userAccountIDs contains all WS id owned by the user
+                        var userAccountIDs = _.map(user.attributes.accounts,function(account){
+                            return account.id;});
+                        // if the user owns the WS -> Then append managed by you section
+                        if (_.indexOf(userAccountIDs, tenant.attributes.owner)>=0) {
                             this.$(".domain-list").append(
                                 this.tenantTemplate(tenant.toJSON())
                             );
@@ -62,7 +65,7 @@ define(["jquery","underscore",
                                 this.tenantTemplate(tenant.toJSON())
                             );                            
                         }
-                    } else {// if user has not workspace
+                    } else {// hide "Managed by you:" section if user not has the own workspace
                             $(".selectws-section")[0].innerHTML = "";
                             this.$(".shared-list").append(
                                 this.tenantTemplate(tenant.toJSON())
