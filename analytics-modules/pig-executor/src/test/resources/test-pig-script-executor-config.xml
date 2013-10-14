@@ -1,0 +1,57 @@
+<!--
+         CODENVY CONFIDENTIAL
+         ________________
+
+         [2012] - [2013] Codenvy, S.A.
+         All Rights Reserved.
+         NOTICE: All information contained herein is, and remains
+         the property of Codenvy S.A. and its suppliers,
+         if any. The intellectual and technical concepts contained
+         herein are proprietary to Codenvy S.A.
+         and its suppliers and may be covered by U.S. and Foreign Patents,
+         patents in process, and are protected by trade secret or copyright law.
+         Dissemination of this information or reproduction of this material
+         is strictly forbidden unless prior written permission is obtained
+         from Codenvy S.A..
+-->
+<pig-scripts-executor>
+	<executions>
+		<execution schedule="0 15 10 ? * *"> <!-- Execution at 10:15am every day -->
+			<scripts>
+				<script name="action.pig">
+					<parameters>
+						<parameter name="LOG" value="..." />
+						<parameter name="FROM_DATE" value="..." />
+						<parameter name="TO_DATE" value="..." />
+						<parameter name="USER" value="*" />
+						<parameter name="WS" value="*" />
+					</parameters>
+				</script>
+				<script name="set_active_by_users.pig">
+					<parameters>
+						<parameter name="LOG" value="..." />
+						<parameter name="FROM_DATE" value="..." />
+						<parameter name="TO_DATE" value="..." />
+						<parameter name="USER" value="*" />
+						<parameter name="WS" value="*" />
+						<parameter name="EVENT" value="build" />
+						<parameter name="FIELD" value="field_value" />
+					</parameters>
+				</script>
+			</scripts>
+		</execution>
+		<execution schedule="0 15 10 ? * 6L"> <!-- Execution at 10:15am on the last Friday of every month -->
+			<scripts>
+				<script name="product_usage_time_domains.pig">
+					<parameters>
+						<parameter name="LOG" value="..." />
+						<parameter name="FROM_DATE" value="..." />
+						<parameter name="TO_DATE" value="..." />
+						<parameter name="USER" value="*" />
+						<parameter name="WS" value="*" />
+					</parameters>
+				</script>
+			</scripts>
+		</execution>
+	</executions>
+</pig-scripts-executor>

@@ -1,0 +1,26 @@
+<binding>
+  <mapping name="pig-scripts-executor" class="com.codenvy.analytics.modules.pigexecutor.config.PigScriptsExecutorConfiguration">
+    <collection name="executions" field="executions"
+      item-type="com.codenvy.analytics.modules.pigexecutor.config.ExecutionEntry"
+      factory="org.jibx.runtime.Utility.arrayListFactory" />
+  </mapping>
+
+  <mapping name="execution" class="com.codenvy.analytics.modules.pigexecutor.config.ExecutionEntry">
+    <value name="schedule" field="schedule" style="attribute" />
+    <collection name="scripts" field="scripts"
+        item-type="com.codenvy.analytics.modules.pigexecutor.config.ScriptEntry"
+        factory="org.jibx.runtime.Utility.arrayListFactory" />
+  </mapping>
+  
+  <mapping name="script" class="com.codenvy.analytics.modules.pigexecutor.config.ScriptEntry">
+    <value name="name" field="name" style="attribute" />
+    <collection name="parameters" field="parameters"
+        item-type="com.codenvy.analytics.modules.pigexecutor.config.SimpleParameterEntry"
+        factory="org.jibx.runtime.Utility.arrayListFactory" />
+  </mapping>
+  
+  <mapping name="parameter" class="com.codenvy.analytics.modules.pigexecutor.config.SimpleParameterEntry">
+    <value name="name" field="name" style="attribute" />
+    <value name="value" field="value" style="attribute" />  
+  </mapping>
+</binding>

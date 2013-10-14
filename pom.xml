@@ -48,6 +48,7 @@
         <!-- Third parties -->
         <everrest.version>1.0.10</everrest.version>
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
+        <jixb.version>1.2.5</jixb.version>
 
         <!-- GWT -->
         <gwt.version>2.5.0</gwt.version>
@@ -208,11 +209,16 @@
                 <artifactId>commons-net</artifactId>
                 <version>${commons.net.version}</version>
             </dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-			    <version>${commons.io}</version>
-			</dependency>            
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jibx</groupId>
+                <artifactId>jibx-run</artifactId>
+                <version>${jixb.version}</version>
+            </dependency>
 
             <!-- Loggers -->
             <dependency>
