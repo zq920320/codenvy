@@ -67,4 +67,15 @@ public class SimpleParameterEntry {
     public void setValue(String value) {
         this.value = value;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer(50);
+        sb.append("{").append(name).append("=").append(value).append("}");
+        
+        return sb.toString();
+    }
 }

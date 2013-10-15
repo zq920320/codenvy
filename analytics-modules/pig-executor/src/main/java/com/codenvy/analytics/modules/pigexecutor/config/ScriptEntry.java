@@ -59,4 +59,21 @@ public class ScriptEntry {
     public void setParameters(ArrayList<SimpleParameterEntry> parameters) {
         this.parameters = parameters;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer(50);
+        sb.append(" {ScriptEntry : ").append(name).append(" : ");
+        
+        for (SimpleParameterEntry parameterEntry : parameters) {
+            sb.append(parameterEntry.toString());
+        }
+        
+        sb.append("}");
+        
+        return sb.toString();
+    }
 }

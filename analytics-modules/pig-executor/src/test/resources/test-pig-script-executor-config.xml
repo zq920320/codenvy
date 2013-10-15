@@ -16,7 +16,7 @@
 -->
 <pig-scripts-executor>
 	<executions>
-		<execution schedule="0 15 10 ? * *"> <!-- Execution at 10:15am every day -->
+		<execution schedule="0/10 * * * * ?"> <!-- Execution every 10 seconds -->
 			<scripts>
 				<script name="action.pig">
 					<parameters>
@@ -40,7 +40,7 @@
 				</script>
 			</scripts>
 		</execution>
-		<execution schedule="0 15 10 ? * 6L"> <!-- Execution at 10:15am on the last Friday of every month -->
+		<execution schedule="0/5 * * * * ?"> <!-- Execution every 5 seconds -->
 			<scripts>
 				<script name="product_usage_time_domains.pig">
 					<parameters>

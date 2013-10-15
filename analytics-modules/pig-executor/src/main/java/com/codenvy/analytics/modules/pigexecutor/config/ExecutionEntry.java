@@ -59,5 +59,22 @@ public class ExecutionEntry {
     public void setScripts(ArrayList<ScriptEntry> scripts) {
         this.scripts = scripts;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer(200);
+        sb.append("{ExecutionEntry : ").append(schedule).append(" : \n");
+        
+        for (ScriptEntry scriptEntry : scripts) {
+            sb.append(scriptEntry.toString()).append("\n");
+        }
+        
+        sb.append("}");
+        
+        return sb.toString();
+    }
 
 }

@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.net.URL;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertNotNull;
 
 import org.jibx.runtime.BindingDirectory;
@@ -51,7 +50,7 @@ public class TestPigSciptsExecutorConfig {
         
         ExecutionEntry executionEntry = conf.getExecutions().get(0);
         assertNotNull(executionEntry);
-        assertEquals("0 15 10 ? * *", executionEntry.getSchedule());
+        assertEquals("0/10 * * * * ?", executionEntry.getSchedule());
         assertEquals(2, executionEntry.getScripts().size());
         
         ScriptEntry scriptEntry = executionEntry.getScripts().get(0);
@@ -91,7 +90,7 @@ public class TestPigSciptsExecutorConfig {
         
         executionEntry = conf.getExecutions().get(1);
         assertNotNull(executionEntry);
-        assertEquals("0 15 10 ? * 6L", executionEntry.getSchedule());
+        assertEquals("0/5 * * * * ?", executionEntry.getSchedule());
         assertEquals(1, executionEntry.getScripts().size());
         
         scriptEntry = executionEntry.getScripts().get(0);
@@ -109,6 +108,4 @@ public class TestPigSciptsExecutorConfig {
         assertEquals("WS", scriptEntry.getParameters().get(4).getName());
         assertEquals("*", scriptEntry.getParameters().get(4).getValue());
     }
-    
-    
 }
