@@ -117,8 +117,8 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
                 factoryUrl.setOpenfile(values.iterator().next());
             }
 
-            if ((values = params.get("keepvcsinfo")) != null && !values.isEmpty()) {
-                factoryUrl.setKeepvcsinfo(Boolean.parseBoolean(values.iterator().next()));
+            if ((values = params.get("vcsinfo")) != null && !values.isEmpty()) {
+                factoryUrl.setVcsinfo(Boolean.parseBoolean(values.iterator().next()));
             }
 
             Map<String, String> projectAttributes = new HashMap<>();

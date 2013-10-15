@@ -86,7 +86,7 @@ public class MongoDBFactoryStore implements FactoryStore {
                          .add("commitid", factoryUrl.getCommitid())
                          .add("action", factoryUrl.getAction())
                          .add("openfile", factoryUrl.getOpenfile())
-                         .add("keepvcsinfo", factoryUrl.getKeepvcsinfo())
+                         .add("vcsinfo", factoryUrl.getVcsinfo())
                          .add("style", factoryUrl.getStyle())
                          .add("description", factoryUrl.getDescription())
                          .add("contactmail", factoryUrl.getContactmail())
@@ -128,7 +128,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setVcsurl((String)factoryAsDbObject.get("vcsurl"));
         factoryUrl.setCommitid((String)factoryAsDbObject.get("commitid"));
         factoryUrl.setAction((String)factoryAsDbObject.get("action"));
-        factoryUrl.setKeepvcsinfo((boolean)factoryAsDbObject.get("keepvcsinfo"));
+        factoryUrl.setVcsinfo((boolean)factoryAsDbObject.get("vcsinfo"));
         factoryUrl.setOpenfile((String)factoryAsDbObject.get("openfile"));
         factoryUrl.setStyle((String)factoryAsDbObject.get("style"));
         factoryUrl.setDescription((String)factoryAsDbObject.get("description"));
