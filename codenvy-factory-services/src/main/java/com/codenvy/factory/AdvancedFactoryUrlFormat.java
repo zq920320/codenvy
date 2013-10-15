@@ -85,9 +85,6 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFacto
                     "Parameter vcs has illegal value. Only \"git\" is supported for now.");
         }
         if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
-            throw new FactoryUrlInvalidArgumentException("Commitid is null or empty.");
-        }
-        if (factoryUrl.getCommitid() == null || factoryUrl.getCommitid().isEmpty()) {
             throw new FactoryUrlInvalidArgumentException("Vcsurl is null or empty.");
         }
 

@@ -93,6 +93,7 @@ public class MongoDBFactoryStore implements FactoryStore {
                          .add("author", factoryUrl.getAuthor())
                          .add("orgid", factoryUrl.getOrgid())
                          .add("affiliateid", factoryUrl.getAffiliateid())
+                         .add("vcsbranch", factoryUrl.getVcsbranch())
                          .add("projectattributes", attributes.get());
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
@@ -136,6 +137,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setAuthor((String)factoryAsDbObject.get("author"));
         factoryUrl.setOrgid((String)factoryAsDbObject.get("orgid"));
         factoryUrl.setAffiliateid((String)factoryAsDbObject.get("affiliateid"));
+        factoryUrl.setVcsbranch((String)factoryAsDbObject.get("vcsbranch"));
 
         // Attributes
 //        BasicDBList attributesAsDbObject = (BasicDBList)factoryAsDbObject.get("projectattributes");
