@@ -59,7 +59,6 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
         // v parameter should be checked in another way to satisfy v 1.1 url schema
         mandatoryParameters.add("vcs");
         mandatoryParameters.add("vcsurl");
-        mandatoryParameters.add("idcommit");
     }
 
     @Override
@@ -103,7 +102,6 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             checkRepository(params.get("vcsurl").iterator().next());
 
             SimpleFactoryUrl factoryUrl = new SimpleFactoryUrl();
-            factoryUrl.setCommitid(params.get("idcommit").iterator().next());
             factoryUrl.setV(params.get("v").iterator().next());
             factoryUrl.setVcs(params.get("vcs").iterator().next());
             factoryUrl.setVcsurl(params.get("vcsurl").iterator().next());
@@ -117,8 +115,16 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
                 factoryUrl.setOpenfile(values.iterator().next());
             }
 
-            if ((values = params.get("keepvcsinfo")) != null && !values.isEmpty()) {
-                factoryUrl.setKeepvcsinfo(Boolean.parseBoolean(values.iterator().next()));
+            if ((values = params.get("vcsinfo")) != null && !values.isEmpty()) {
+                factoryUrl.setVcsinfo(Boolean.parseBoolean(values.iterator().next()));
+            }
+
+            if ((values = params.get("idcommit")) != null && !values.isEmpty()) {
+                factoryUrl.setCommitid(values.iterator().next());
+            }
+
+            if ((values = params.get("vcsbranch")) != null && !values.isEmpty()) {
+                factoryUrl.setVcsbranch(values.iterator().next());
             }
 
             Map<String, String> projectAttributes = new HashMap<>();

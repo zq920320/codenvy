@@ -36,8 +36,8 @@ import java.util.Collections;
 import static org.testng.Assert.assertEquals;
 
 public class SimpleFactoryUrlFormatTest {
-    private SimpleFactoryUrlFormat factoryUrlFormat;
-    private static  String                 VALID_REPOSITORY_URL;
+    private        SimpleFactoryUrlFormat factoryUrlFormat;
+    private static String                 VALID_REPOSITORY_URL;
 
     public SimpleFactoryUrlFormatTest() throws IOException, URISyntaxException {
         VALID_REPOSITORY_URL = initLocalRepo();
@@ -58,12 +58,12 @@ public class SimpleFactoryUrlFormatTest {
     public void shouldBeAbleToParseValidFactoryUrl() throws Exception {
         //given
         SimpleFactoryUrl expectedFactoryUrl =
-                new SimpleFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, "1234567", null, null, false, null, null,
+                new SimpleFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, "1234567", null, null, false, null, null, "newBranch",
                                      Collections.singletonMap("pname", "eee"));
 
         //when
         SimpleFactoryUrl factoryUrl = factoryUrlFormat.parse(
-                new URL("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
+                new URL("http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&vcsbranch=newBranch&pname=eee&wname=ttt&vcsurl=" +
                         enc(VALID_REPOSITORY_URL)));
 
         //then
@@ -102,10 +102,6 @@ public class SimpleFactoryUrlFormatTest {
                                       VALID_REPOSITORY_URL)}, // vcs par has illegal value
                               {"http://codenvy.com/factory?v=1.0&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
                                enc(VALID_REPOSITORY_URL)}, // vcs par is missing
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&pname=eee&wname=ttt&vcsurl=" + enc(VALID_REPOSITORY_URL)},
-                              // idcommit par is missing
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&pname=eee&wname=ttt&vcsurl=" + enc(VALID_REPOSITORY_URL)},
-                              // idcommit par is duplicated
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt"}, // vcsurl par is missing
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
                                enc(VALID_REPOSITORY_URL) + "&vcsurl=" + enc(VALID_REPOSITORY_URL)}, // vcsurl par is duplicated

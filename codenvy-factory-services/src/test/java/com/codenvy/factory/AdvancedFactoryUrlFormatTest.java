@@ -57,7 +57,8 @@ public class AdvancedFactoryUrlFormatTest {
     public void shouldBeAbleToParseValidUrl() throws Exception {
         //given
         AdvancedFactoryUrl expectedFactoryUrl =
-                new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null, null);
+                new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null, "newBranch",
+                                       null);
         expectedFactoryUrl.setId("123456789");
 
         URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
@@ -80,7 +81,8 @@ public class AdvancedFactoryUrlFormatTest {
         //given
         URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
         AdvancedFactoryUrl storedFactoryUrl =
-                new AdvancedFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null, null);
+                new AdvancedFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null, "newBranch",
+                                       null);
         when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(storedFactoryUrl);
         //when
         factoryUrlFormat.parse(factoryUrl);
@@ -109,13 +111,15 @@ public class AdvancedFactoryUrlFormatTest {
     @DataProvider(name = "badAdvancedFactoryUrlProvider")
     public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
         return new Object[][]{
-                {new AdvancedFactoryUrl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null, null)},
+                {new AdvancedFactoryUrl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
+                                        "newBranch", null)},
                 // invalid vcs
-                {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null, null, null)}, // invalid vcsurl
-                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, null)}, // invalid vcsurl
-                {new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "", null, null, false, null, null, null)}, // invalid commitid
-                {new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, null, null, null, false, null, null, null)}, // invalid commitid
-                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", "commit123456789", null, null, false, null,
+                {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null)},
+                // invalid vcsurl
+                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null)},
+                // invalid vcsurl
+                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", "commit123456789", null, null, false,
+                                        "newBranch", null,
                                         null, null)} // invalid vcsurl
         };
     }
@@ -123,7 +127,9 @@ public class AdvancedFactoryUrlFormatTest {
     @Test
     public void shouldBeAbleToValidateAdvancedFactoryUrlObject() throws FactoryUrlException {
         new AdvancedFactoryUrlFormat()
-                .validate(new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "123456789", null, null, false, null, null, null));
+                .validate(
+                        new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "123456789", null, null, false, null, null, "newBranch",
+                                               null));
     }
 
     @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
