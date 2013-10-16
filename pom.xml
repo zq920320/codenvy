@@ -70,7 +70,7 @@
         <javax.mail.version>1.4.2</javax.mail.version>
         
         <!-- Platrofm API-->
-        <analytics.api.version>1.0-SNAPSHOT</analytics.api.version>        
+        <analytics.api.version>1.0.0-SNAPSHOT</analytics.api.version>        
     </properties>
 
     <dependencyManagement>
@@ -147,7 +147,7 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy.platform-api</groupId>
-                <artifactId>codenvy-api-analytic</artifactId>
+                <artifactId>codenvy-api-analytics</artifactId>
                 <version>${analytics.api.version}</version>
             </dependency>
             
