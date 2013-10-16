@@ -49,7 +49,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
 
     // do not inline into pattern, it's used by IDE and they have no Pattern class
     public static final String WSO_2_URL_STRING = "(http|https):\\/\\/((([0-9a-fA-F]{32}(:x-oauth-basic){0,1})|([0-9a-zA-Z-_.]+))@){0,1}" +
-                                                  "gitblit\\.codeenvy.com(:[0-9]{1,5}){0,1}/.*\\.git";
+                                                  "git\\.cloudpreview\\.wso2\\.com(:[0-9]{1,5}){0,1}/.*\\.git";
 
     public static final Pattern WSO_2_URL_PATTERN = Pattern.compile(WSO_2_URL_STRING);
 
