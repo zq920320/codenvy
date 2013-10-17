@@ -29,6 +29,7 @@ import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryImage;
 import com.codenvy.api.factory.FactoryStore;
+import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.*;
 
 import org.testng.annotations.AfterMethod;
@@ -42,6 +43,7 @@ import java.util.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 
 /**
@@ -121,10 +123,11 @@ public class MongoDBFactoryStoreTest {
         DBObject query = new BasicDBObject();
         query.put("_id", id);
         DBObject res = collection.findOne(query);
+        BasicDBObject props =  (BasicDBObject)((BasicDBObject)res.get("factoryurl")).get("projectattributes");
+
         assertNotNull(res);
         assertEquals(((BasicDBObject)res.get("factoryurl")).get("author"), "someAuthor");
         assertEquals(((BasicDBObject)res.get("factoryurl")).get("commitid"), "commit12345");
-        BasicDBObject props =  (BasicDBObject)((BasicDBObject)res.get("factoryurl")).get("projectattributes");
         assertEquals(props.toMap(), attrs);
 
     }
@@ -147,10 +150,54 @@ public class MongoDBFactoryStoreTest {
     @Test
     public void testGetFactory() throws Exception {
 
+        String id = "testid1234";
+
+        Map<String, String> attrs = new HashMap<>();
+        attrs.put("testattr1", "testVaue1");
+        attrs.put("testattr2", "testVaue2");
+        attrs.put("testattr3", "testVaue3");
+
+        byte[] b = new byte[4096];
+        new Random().nextBytes(b);
+
+        BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(attrs);
+
+        List<DBObject> imageList = new ArrayList<>();
+
+        BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
+        factoryURLbuilder.add("v", "1.1")
+                         .add("vcs", "git")
+                         .add("vcsurl", "http://vcsurl")
+                         .add("commitid", "commit123456")
+                         .add("action", "openfile")
+                         .add("openfile", "true")
+                         .add("vcsinfo", true)
+//                         .add("style", factoryUrl.getStyle())
+//                         .add("description", factoryUrl.getDescription())
+//                         .add("contactmail", factoryUrl.getContactmail())
+//                         .add("author", factoryUrl.getAuthor())
+//                         .add("orgid", factoryUrl.getOrgid())
+//                         .add("affiliateid", factoryUrl.getAffiliateid())
+//                         .add("vcsbranch", factoryUrl.getVcsbranch())
+                         .add("projectattributes", attributes.get());
+
+        BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
+        factoryDatabuilder.add("_id", id);
+        factoryDatabuilder.add("factoryurl", factoryURLbuilder.get());
+        factoryDatabuilder.add("images", imageList);
+
+        collection.save(factoryDatabuilder.get());
+
+        AdvancedFactoryUrl factoryUrl = store.getFactory(id);
+        assertNotNull(factoryUrl);
+        assertEquals(factoryUrl.getProjectattributes(), attrs);
+
     }
 
     @Test
     public void testGetFactoryImages() throws Exception {
+
+        String id = "testid1234314";
 
         Set<FactoryImage> images = new HashSet<>();
         FactoryImage image = new FactoryImage();
@@ -161,22 +208,30 @@ public class MongoDBFactoryStoreTest {
         image.setImageData(b);
         images.add(image);
 
-        AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
+        List<DBObject> imageList = new ArrayList<>();
+        for (FactoryImage one : images) {
+            imageList.add(new BasicDBObjectBuilder().add("name", NameGenerator.generate("", 16) + one.getName())
+                                                    .add("type", one.getMediaType())
+                                                    .add("data", one.getImageData()).get());
+        }
 
-        String id = store.saveFactory(factoryUrl, images);
+        BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
+
+        BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
+        factoryDatabuilder.add("_id", id);
+        factoryDatabuilder.add("factoryurl", factoryURLbuilder.get());
+        factoryDatabuilder.add("images", imageList);
+
+        collection.save(factoryDatabuilder.get());
 
         DBObject query = new BasicDBObject();
         query.put("_id", id);
-        DBObject res = collection.findOne(query);
-        assertNotNull(res);
-        BasicDBList imagesAsDbObject = (BasicDBList)res.get("images");
-        assertNotNull(imagesAsDbObject);
-        for (Object obj : imagesAsDbObject) {
-            BasicDBObject dbobj = (BasicDBObject)obj;
-            // Names are different
-            assertEquals((String)dbobj.get("type"), image.getMediaType());
-            assertEquals((byte[])dbobj.get("data"), image.getImageData());
-        }
+        Set<FactoryImage> newImages =  store.getFactoryImages(id);
+        assertNotNull(newImages);
+        FactoryImage newImage = newImages.iterator().next();
 
+        assertTrue(newImage.getName().endsWith(image.getName()));
+        assertEquals(newImage.getMediaType(), image.getMediaType());
+        assertEquals(newImage.getImageData(), image.getImageData());
     }
 }
