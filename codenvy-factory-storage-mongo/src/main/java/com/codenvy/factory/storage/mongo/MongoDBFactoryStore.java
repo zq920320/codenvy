@@ -74,7 +74,7 @@ public class MongoDBFactoryStore implements FactoryStore {
 
         List<DBObject> imageList = new ArrayList<>();
         for (FactoryImage one : images) {
-            imageList.add(new BasicDBObjectBuilder().add("name", NameGenerator.generate("", 16) + one.getName())
+            imageList.add(new BasicDBObjectBuilder().add("name", one.getName())
                                                     .add("type", one.getMediaType())
                                                     .add("data", one.getImageData()).get());
         }
@@ -142,22 +142,24 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public Set<FactoryImage> getFactoryImages(String id) throws FactoryUrlException {
+    public Set<FactoryImage> getFactoryImages(String factoryId, String imageId) throws FactoryUrlException {
         Set<FactoryImage> images = new HashSet<>();
 
         DBObject query = new BasicDBObject();
-        query.put("_id", id);
+        query.put("_id", factoryId);
         DBObject res = factories.findOne(query);
 
         BasicDBList imagesAsDbObject = (BasicDBList)res.get("images");
         for (Object obj : imagesAsDbObject) {
             BasicDBObject dbobj = (BasicDBObject)obj;
             try {
-                FactoryImage image = new FactoryImage();
-                image.setName((String)dbobj.get("name"));
-                image.setMediaType((String)dbobj.get("type"));
-                image.setImageData((byte[])dbobj.get("data"));
-                images.add(image);
+                if (imageId == null || dbobj.get("name").equals(imageId)) {
+                    FactoryImage image = new FactoryImage();
+                    image.setName((String)dbobj.get("name"));
+                    image.setMediaType((String)dbobj.get("type"));
+                    image.setImageData((byte[])dbobj.get("data"));
+                    images.add(image);
+                }
             } catch (IOException e) {
                 LOG.error("Wrong image data found for image " + dbobj.get("name"), e);
             }

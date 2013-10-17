@@ -226,7 +226,7 @@ public class MongoDBFactoryStoreTest {
 
         DBObject query = new BasicDBObject();
         query.put("_id", id);
-        Set<FactoryImage> newImages =  store.getFactoryImages(id);
+        Set<FactoryImage> newImages =  store.getFactoryImages(id, null);
         assertNotNull(newImages);
         FactoryImage newImage = newImages.iterator().next();
 

@@ -23,10 +23,7 @@ import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.commons.lang.NameGenerator;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class InMemoryFactoryStore implements FactoryStore {
@@ -39,11 +36,11 @@ public class InMemoryFactoryStore implements FactoryStore {
         lock.writeLock().lock();
         try {
             factoryUrl.setId(NameGenerator.generate("", 16));
-            Set<FactoryImage> newImages = new HashSet<>();
-            for (FactoryImage image : images) {
-                image.setName(NameGenerator.generate("", 16) + image.getName());
-                newImages.add(image);
-            }
+//            Set<FactoryImage> newImages = new HashSet<>();
+//            for (FactoryImage image : images) {
+//                image.setName(NameGenerator.generate("", 16) + image.getName());
+//                newImages.add(image);
+//            }
 
             factories.put(factoryUrl.getId(), factoryUrl);
             this.images.put(factoryUrl.getId(), images);
@@ -75,10 +72,16 @@ public class InMemoryFactoryStore implements FactoryStore {
     }
 
     @Override
-    public Set<FactoryImage> getFactoryImages(String id) throws FactoryUrlException {
+    public Set<FactoryImage> getFactoryImages(String factoryId, String imageId) throws FactoryUrlException {
         lock.readLock().lock();
         try {
-            return images.get(id);
+            if (imageId == null)
+                return images.get(factoryId);
+            for (FactoryImage one : images.get(factoryId)) {
+                if (one.getName().equals(imageId))
+                    return new HashSet<>(java.util.Arrays.asList(one));
+            }
+            return Collections.emptySet();
         } finally {
             lock.readLock().unlock();
         }
