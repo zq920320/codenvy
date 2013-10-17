@@ -17,106 +17,115 @@
          from Codenvy S.A..
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.codenvy.analytics</groupId>
-		<artifactId>analytics-modules</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
-	</parent>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.codenvy.analytics</groupId>
+        <artifactId>analytics-modules</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>pig-executor</artifactId>
-	<name>Codenvy :: Analytics :: Analytics Modules :: Pig Executor</name>
+    <artifactId>pig-executor</artifactId>
+    <name>Codenvy :: Analytics :: Analytics Modules :: Pig Executor</name>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.pig</groupId>
-			<artifactId>pig</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.pig</groupId>
+            <artifactId>pig</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
 
-		<!-- Third parties -->
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jibx</groupId>
-			<artifactId>jibx-run</artifactId>
-		</dependency>
+        <!-- Third parties -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jibx</groupId>
+            <artifactId>jibx-run</artifactId>
+        </dependency>
 
-		<!-- Loggers -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-	</dependencies>
+        <!-- Loggers -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/main/java</directory>
-			</resource>
-		</resources>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+            </resource>
+        </resources>
 
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
-			</testResource>
-		</testResources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
 
-		<plugins>
-			<plugin>
-				<groupId>org.jibx</groupId>
-				<artifactId>maven-jibx-plugin</artifactId>
-                                <version>1.2.5</version> <!-- TODO in http://jira.codehaus.org/browse/JIBX-465  in maven-paarent-pom vesrion is 1.2.4.5 -->
-				<configuration>
-					<directory>src/main/resources</directory>
-					<includes>
-						<includes>binding.xml</includes>
-					</includes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>bind</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemProperties>
-						<property>
-							<name>analytics.scripts.directory</name>
-							<value>scripts</value>
-						</property>
-						<property>
-							<name>analytics.result.directory</name>
-							<value>${project.build.directory}</value>
-						</property>
-					</systemProperties>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+        <plugins>
+            <plugin>
+                <groupId>org.jibx</groupId>
+                <artifactId>maven-jibx-plugin</artifactId>
+                <version>1.2.5</version> <!-- TODO in http://jira.codehaus.org/browse/JIBX-465 in maven-paarent-pom 
+                    vesrion is 1.2.4.5 -->
+                <configuration>
+                    <directory>src/main/resources</directory>
+                    <includes>
+                        <includes>binding.xml</includes>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>bind</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>analytics.scripts.directory</name>
+                            <value>scripts</value>
+                        </property>
+                        <property>
+                            <name>analytics.result.directory</name>
+                            <value>${project.build.directory}</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

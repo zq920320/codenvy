@@ -43,4 +43,21 @@ public class PigScriptsExecutorConfiguration {
     public void setExecutions(ArrayList<ExecutionEntry> executions) {
         this.executions = executions;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer(500);
+        sb.append("{PigScriptsExecutorConfiguration : ").append("\n");
+        
+        for (ExecutionEntry executionEntry : executions) {
+            sb.append(executionEntry.toString()).append("\n");
+        }
+        
+        sb.append("}");
+        
+        return sb.toString();
+    }
 }

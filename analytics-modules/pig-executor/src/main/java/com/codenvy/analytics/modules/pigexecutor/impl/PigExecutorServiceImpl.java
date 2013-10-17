@@ -96,13 +96,13 @@ public class PigExecutorServiceImpl implements PigExecutorService {
     {
         try {
             if (PIG_EXECUTOR_CONFIG == null)
-                throw new PigExecutorServiceConfigurationException("The system property with configuration not congigured :"
+                throw new PigExecutorServiceConfigurationException("The system property with configuration not found: "
                                                                    + ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY);
             
             URL configURL = getClass().getClassLoader().getResource(PIG_EXECUTOR_CONFIG);
             
             if (configURL == null)
-                throw new PigExecutorServiceConfigurationException("Can not found the configuration of PigExecutorService :"
+                throw new PigExecutorServiceConfigurationException("Can not found the configuration of PigExecutorService: "
                     + PIG_EXECUTOR_CONFIG);
             
             IBindingFactory factory = BindingDirectory.getFactory(PigScriptsExecutorConfiguration.class);
@@ -113,10 +113,10 @@ public class PigExecutorServiceImpl implements PigExecutorService {
                                                                                     null);
 
         } catch (JiBXException e) {
-            throw new PigExecutorServiceConfigurationException("Can not read the configuration of PigExecutorService :"
+            throw new PigExecutorServiceConfigurationException("Can not read the configuration of PigExecutorService: "
                                                                + PIG_EXECUTOR_CONFIG, e);
         } catch (FileNotFoundException e) {
-            throw new PigExecutorServiceConfigurationException("Can not found the configuration of PigExecutorService :"
+            throw new PigExecutorServiceConfigurationException("Can not found the configuration of PigExecutorService: "
                                                                + PIG_EXECUTOR_CONFIG, e);
         }
 
@@ -125,7 +125,7 @@ public class PigExecutorServiceImpl implements PigExecutorService {
             this.scheduler = sf.getScheduler();
         } catch (SchedulerException e) {
             LOG.error("Can not get Quartz sheduler : ", e);
-            throw new PigExecutorServiceConfigurationException("Can not get Quartz sheduler : ", e);
+            throw new PigExecutorServiceConfigurationException("Can not get Quartz sheduler: ", e);
         }
 
         this.executionEntryMap = new LinkedHashMap<String, ExecutionEntry>();
@@ -141,7 +141,8 @@ public class PigExecutorServiceImpl implements PigExecutorService {
             throw new PigExecutorServiceConfigurationException("Can not start Quartz sheduler.", e);
         }
 
-        LOG.info("PigExecutorServiceImpl was started with configuration : " + PIG_EXECUTOR_CONFIG);
+        LOG.info("PigExecutorServiceImpl was started with configuration: " + PIG_EXECUTOR_CONFIG);
+        LOG.info("PigExecutorServiceImpl was scheduled tasks :\n" + configuration.toString());
     }
 
     /**
@@ -168,9 +169,9 @@ public class PigExecutorServiceImpl implements PigExecutorService {
                                           .build();
 
         try {
-            Date ft = scheduler.scheduleJob(job, trigger);
+            scheduler.scheduleJob(job, trigger);
         } catch (SchedulerException e) {
-            throw new ShedulingExecutionEntryException("Can not schedule task for ExecutionEntry : " + executionEntry, e);
+            throw new ShedulingExecutionEntryException("Can not schedule task for ExecutionEntry: " + executionEntry, e);
         }
 
         String key = job.getKey().toString() + "_" + trigger.getKey().toString();
@@ -184,6 +185,9 @@ public class PigExecutorServiceImpl implements PigExecutorService {
     @Override
     public void execute(ScriptEntry scriptEntry) {
         //TODO  will be executed pig script, thanks PigScriptExecutor
+        
+        LOG.info("Executing script:" + scriptEntry.toString());
+        
         numberOfScriptsExecuted.incrementAndGet();
     }
 
@@ -195,12 +199,13 @@ public class PigExecutorServiceImpl implements PigExecutorService {
         if (executionEntryMap.containsKey(key))
             return executionEntryMap.get(key);
         else
-            throw new ShedulingExecutionEntryException("PigExecutorServiceImpl has not ExecutionEntry with KEY = " + key);
+            throw new ShedulingExecutionEntryException("PigExecutorServiceImpl has not found ExecutionEntry with KEY = " + key);
     }
-
-    /*
-     * TODO START STOP
+    
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void shutdown() {
         try {
             scheduler.shutdown(true);

@@ -54,6 +54,10 @@
                                             <fileset dir="${basedir}/src/main/resources/"/>
                                         </copy>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
+
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps" overwrite="true">
+                                            <fileset dir="${basedir}/../analytics-modules/pig-executor-webapp/target/" includes="pig-executor-webapp-${project.version}.war"/>
+                                        </copy>
                                     </tasks>
                                 </configuration>
                                 <goals>

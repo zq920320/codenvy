@@ -66,13 +66,13 @@ public class ExecutionEntry {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(200);
-        sb.append("{ExecutionEntry : ").append(schedule).append(" : \n");
+        sb.append(" {ExecutionEntry : ").append(schedule).append(" : \n");
         
         for (ScriptEntry scriptEntry : scripts) {
             sb.append(scriptEntry.toString()).append("\n");
         }
         
-        sb.append("}");
+        sb.append(" }");
         
         return sb.toString();
     }

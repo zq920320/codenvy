@@ -66,7 +66,7 @@ public class ScriptEntry {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(50);
-        sb.append(" {ScriptEntry : ").append(name).append(" : ");
+        sb.append("  {ScriptEntry : ").append(name).append(" : ");
         
         for (SimpleParameterEntry parameterEntry : parameters) {
             sb.append(parameterEntry.toString());

@@ -65,4 +65,9 @@ public interface PigExecutorService {
      * @return PigScriptsExecutorConfiguration
      */
     PigScriptsExecutorConfiguration getConfiguration();
+    
+    /**
+     * All scheduled tasks will be shutdown. 
+     */
+    void shutdown();
 }
