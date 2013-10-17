@@ -26,7 +26,7 @@ import com.codenvy.analytics.modules.pigexecutor.config.ScriptEntry;
 public interface PigExecutorService {
     
     /** Runtime parameter name. Contains the configuration of PigExecutorService. */
-    public static final String ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY = "analytics.pig.executor.service.congif";
+    public static final String ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY = "analytics.pig.executor.service.config";
 
     /** The value of {@value #ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY} runtime parameter. */
     public static final String PIG_EXECUTOR_CONFIG = System.getProperty(ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY);
