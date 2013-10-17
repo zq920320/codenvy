@@ -32,7 +32,7 @@ public class PigExecutorServiceInitializedListener implements ServletContextList
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        PigExecutorService service = PigExecutorServiceImpl.getInstance();
+        PigExecutorServiceImpl.getInstance();
     }
 
     /**
