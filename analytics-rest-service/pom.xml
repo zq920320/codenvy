@@ -36,10 +36,12 @@
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
+            <version>${javax.ws.rs.version}</version>
         </dependency>
         <dependency>
             <groupId>org.everrest</groupId>
             <artifactId>everrest-core</artifactId>
+            <version>${everrest.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.analytics</groupId>
@@ -49,6 +51,7 @@
         <dependency>
             <groupId>com.codenvy.platform-api</groupId>
             <artifactId>codenvy-api-analytics</artifactId>
+            <version>${platform.api.version}</version>
         </dependency>
     </dependencies>
 
@@ -64,7 +67,7 @@
                             <addClasspath>false</addClasspath>
                         </manifest>
                     </archive>
-                  	<packagingExcludes>**/lib/servlet-api*,**/lib/jsp*</packagingExcludes>
+                    <packagingExcludes>**/lib/servlet-api*,**/lib/jsp*</packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>

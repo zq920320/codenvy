@@ -19,8 +19,6 @@
 
 package com.codenvy.analytics.metrics.value;
 
-import com.codenvy.analytics.scripts.executor.ScriptExecutor;
-
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
 

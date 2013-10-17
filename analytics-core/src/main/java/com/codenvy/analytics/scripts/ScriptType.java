@@ -29,6 +29,36 @@ import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum ScriptType {
+    NUMBER_OF_EVENTS {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.EVENT);
+            return params;
+        }
+    },
+    NUMBER_OF_EVENTS_BY_TYPES {
+        @Override
+        public Set<MetricParameter> getParams() {
+            Set<MetricParameter> params = super.getParams();
+            params.add(MetricParameter.EVENT);
+            params.add(MetricParameter.PARAM);
+            return params;
+        }
+    },
+    NUMBER_OF_USERS_FROM_FACTORY,
+    PRODUCT_USAGE_SESSIONS,
+
+    /** Script for testing purpose. */
+    TEST_EXTRACT_USER,
+    TEST_EXTRACT_WS,
+    TEST_EXTRACT_QUERY_PARAM,
+    TEST_COMBINE_SMALL_SESSIONS,
+    TEST_TIME_BETWEEN_PAIRS_OF_EVENTS,
+
+
+    // TODO
+
     USER_CREATED_FROM_FACTORY {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
@@ -224,12 +254,6 @@ public enum ScriptType {
             Set<MetricParameter> params = super.getParams();
             params.add(MetricParameter.LOAD_DIR);
             return params;
-        }
-    },
-    PRODUCT_USAGE_SESSIONS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
         }
     },
     PRODUCT_USAGE_SESSIONS_FACTORY {
@@ -862,41 +886,6 @@ public enum ScriptType {
         public MetricParameter[] getKeyScheme() {
             return new MetricParameter[]{MetricParameter.FILTER};
         }
-    },
-    /** Script for testing purpose. */
-    TEST_EXTRACT_USER {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListStringValueData.class;
-        }
-    },
-    /** Script for testing purpose. */
-    TEST_EXTRACT_QUERY_PARAM {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapStringSetValueData.class;
-        }
-    },
-    /** Script for testing purpose. */
-    TEST_EXTRACT_WS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListStringValueData.class;
-        }
-    },
-    /** Script for testing purpose. */
-    TEST_COMBINE_SMALL_SESSIONS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
-    },
-    /** Script for testing purpose. */
-    TEST_TIME_BETWEEN_PAIRS_OF_EVENTS {
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListListStringValueData.class;
-        }
     };
 
 
@@ -906,7 +895,9 @@ public enum ScriptType {
                 Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
                                                     MetricParameter.TO_DATE,
                                                     MetricParameter.USER,
-                                                    MetricParameter.WS}));
+                                                    MetricParameter.WS,
+                                                    MetricParameter.CASSANDRA_STORAGE,
+                                                    MetricParameter.CASSANDRA_COLUMN_FAMILY}));
     }
 
     /**
@@ -922,6 +913,10 @@ public enum ScriptType {
         return true;
     }
 
+    // TODO get description ?
+
     /** @return what date type is represented in result */
-    public abstract Class<? extends ValueData> getValueDataClass();
+    public Class<? extends ValueData> getValueDataClass() {
+        return null; // TODO remove
+    }
 }

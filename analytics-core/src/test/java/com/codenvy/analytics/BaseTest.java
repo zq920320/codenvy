@@ -18,44 +18,13 @@
 
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.pig.PigScriptExecutor;
-
 import org.apache.pig.data.TupleFactory;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
-import org.testng.annotations.BeforeClass;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
 
-    /** Relative path to temporary files. */
     public static final String BASE_DIR = "target";
 
-    protected TupleFactory                  tupleFactory;
-    protected LinkedHashMap<String, String> uuid;
+    public static final TupleFactory tupleFactory = TupleFactory.getInstance();
 
-    @BeforeClass
-    public void setUp() throws Exception {
-        tupleFactory = TupleFactory.getInstance();
-
-        uuid = new LinkedHashMap<>();
-        uuid.put(MetricParameter.FROM_DATE.name(), "20130520");
-        uuid.put(MetricParameter.TO_DATE.name(), "20130520");
-    }
-
-    protected ValueData executeAndReturnResult(ScriptType type, File log, Map<String, String> executionParams)
-            throws IOException {
-        MetricParameter.LOG.put(executionParams, log.getAbsolutePath());
-        PigScriptExecutor scriptExecutor = new PigScriptExecutor();
-
-        return scriptExecutor.executeAndReturn(type, executionParams);
-    }
 }

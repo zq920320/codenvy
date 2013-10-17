@@ -18,6 +18,7 @@
 
 IMPORT 'macros.pig';
 
-a1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-a2 = FOREACH a1 GENERATE user;
-result = DISTINCT a2;
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+
+a = FOREACH l GENERATE user;
+result = DISTINCT a;

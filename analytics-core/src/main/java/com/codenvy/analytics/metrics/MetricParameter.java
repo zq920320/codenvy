@@ -26,14 +26,16 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricParameter {
+    // TODO rename on ScriptParameter
+
+    CASSANDRA_STORAGE, // TODO
+    CASSANDRA_COLUMN_FAMILY, // TODO
+
     EVENT,
-    FACTORY_URL,
-    REFERRER_URL,
     FIELD,
     PARAM,
-    ALIAS,
     LOG,
-    LOAD_DIR, // TODO pass only baseDir
+    LOAD_DIR,
     STORE_DIR,
     USER {
         @Override

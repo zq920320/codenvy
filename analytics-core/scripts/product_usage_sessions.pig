@@ -18,8 +18,9 @@
 
 IMPORT 'macros.pig';
 
-t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-j = combineSmallSessions(t, 'session-started', 'session-finished');
-result = FOREACH j GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
+a = combineSmallSessions(l, 'session-started', 'session-finished');
 
+result = FOREACH a GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('user', user), TOTUPLE('value', delta);
+STORE result INTO '$CASSANDRA_STORAGE/$CASSANDRA_COLUMN_FAMILY' USING CassandraStorage();

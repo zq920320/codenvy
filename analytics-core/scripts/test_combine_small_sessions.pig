@@ -18,7 +18,9 @@
 
 IMPORT 'macros.pig';
 
-t1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-t2 = combineSmallSessions(t1, 'session-started', 'session-finished');
-result = FOREACH t2 GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+
+a = combineSmallSessions(l, 'session-started', 'session-finished');
+
+result = FOREACH a GENERATE user, delta;
 

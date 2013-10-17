@@ -21,30 +21,23 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.metrics.value.ListListStringValueData;
-import com.codenvy.analytics.metrics.value.ListStringValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.MapStringLongValueData;
+import com.codenvy.analytics.scripts.executor.pig.PigExecutor;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
+import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestTimeBetweenEvents extends BaseTest {
 
-    private File                log;
-    private Map<String, String> context;
+    private Map<String, String> context = new HashMap<>();
 
     @BeforeTest
     public void setUp() throws Exception {
@@ -85,76 +78,33 @@ public class TestTimeBetweenEvents extends BaseTest {
                      .withTime("19:13:00").build());
 
 
-        log = LogGenerator.generateLog(events);
+        File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
         MetricParameter.FROM_DATE.put(context, "20130101");
         MetricParameter.TO_DATE.put(context, "20130101");
         MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
         MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
+        MetricParameter.LOG.put(context, log.getAbsolutePath());
+        MetricParameter.CASSANDRA_STORAGE.put(context, "fake");
+        MetricParameter.CASSANDRA_COLUMN_FAMILY.put(context, "fake");
     }
 
     @Test
     public void testExecuteTestScript() throws Exception {
-        ListListStringValueData valueData =
-                (ListListStringValueData)executeAndReturnResult(ScriptType.TEST_TIME_BETWEEN_PAIRS_OF_EVENTS,
-                                                                log,
-                                                                context);
+        Set<String> actual = new HashSet<>();
 
-        assertEquals(valueData.size(), 3);
-
-        int sessions = 0;
-
-        for (ListStringValueData listValueData : valueData.getAll()) {
-            List<String> items = listValueData.getAll();
-
-            if (items.get(3).equals("60")) {
-                assertTrue(items.get(2).contains("19:11:00"));
-                sessions |= 0b1;
-            } else if (items.get(3).equals("120")) {
-                assertTrue(items.get(2).contains("19:08:00"));
-                sessions |= 0b10;
-            } else if (items.get(3).equals("360")) {
-                assertTrue(items.get(2).contains("19:00:00"));
-                sessions |= 0b100;
-            }
+        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_TIME_BETWEEN_PAIRS_OF_EVENTS, context);
+        while (iterator.hasNext()) {
+            actual.add(iterator.next().toString());
         }
 
-        assertEquals(sessions, 0b111);
-    }
+        Set<String> expected = new HashSet<>();
+        expected.add("(60)");
+        expected.add("(120)");
+        expected.add("(360)");
 
-    @Test
-    public void testTimeBetweenEvents() throws Exception {
-        MetricParameter.EVENT.put(context, "run");
-        LongValueData valueData = (LongValueData)executeAndReturnResult(ScriptType.TIME_BETWEEN_EVENTS,
-                                                                        log,
-                                                                        context);
-
-        assertEquals(valueData.getAsLong(), 540L);
-    }
-
-    @Test
-    public void testTimeBetweenEventsByUsers() throws Exception {
-        MetricParameter.EVENT.put(context, "run");
-        MapStringLongValueData valueData =
-                (MapStringLongValueData)executeAndReturnResult(ScriptType.TIME_BETWEEN_EVENTS_BY_USERS,
-                                                               log,
-                                                               context);
-
-        assertEquals(valueData.size(), 1);
-        assertEquals(valueData.getAll().get("user1@gmail.com").longValue(), 540L);
-    }
-
-    @Test
-    public void testTimeBetweenEventsByDomains() throws Exception {
-        MetricParameter.EVENT.put(context, "run");
-        MapStringLongValueData valueData =
-                (MapStringLongValueData)executeAndReturnResult(ScriptType.TIME_BETWEEN_EVENTS_BY_DOMAINS,
-                                                               log,
-                                                               context);
-
-        assertEquals(valueData.size(), 1);
-        assertEquals(valueData.getAll().get("gmail.com").longValue(), 540L);
+        assertEquals(expected, actual);
     }
 }
 

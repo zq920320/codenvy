@@ -49,15 +49,18 @@
                                         <copy todir="${project.build.directory}/wso2bam-analytics/" overwrite="true">
                                             <fileset dir="${settings.localRepository}/../${wso2bam.version}"/>
                                         </copy>
-
                                         <copy todir="${project.build.directory}/wso2bam-analytics/" overwrite="true">
-                                            <fileset dir="${basedir}/src/main/resources/"/>
+                                            <fileset dir="${basedir}/src/main/resources/server"/>
                                         </copy>
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/bin" overwrite="true">
+                                            <fileset dir="${basedir}/../analytics-core/bin/"/>
+                                        </copy>
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/pigscripts" overwrite="true">
+                                            <fileset dir="${basedir}/../analytics-core/scripts/"/>
+                                        </copy>
 
-                                        <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps" overwrite="true">
-                                            <fileset dir="${basedir}/../analytics-modules/pig-executor-webapp/target/" includes="pig-executor-webapp-${project.version}.war"/>
-                                        </copy>
+                                        <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
+                                        <chmod file="${project.build.directory}/wso2bam-analytics/*.sh" perm="+x"/>
                                     </tasks>
                                 </configuration>
                                 <goals>

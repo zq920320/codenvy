@@ -18,8 +18,9 @@
 
 IMPORT 'macros.pig';
 
-t1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-t2 = FOREACH t1 GENERATE *, '' AS id; -- it is required 'id' field to be in scheme
-t = combineClosestEvents(t2, 'run-started', 'run-finished');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-result = FOREACH t GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
+a1 = FOREACH l GENERATE *, '' AS id; -- it is required 'id' field to be in scheme
+a = combineClosestEvents(a1, 'run-started', 'run-finished');
+
+result = FOREACH a GENERATE delta;
