@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.factory;
+package com.codenvy.factory.storage.mongo;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryImage;
@@ -32,29 +32,37 @@ import java.net.UnknownHostException;
 import java.util.*;
 
 /**
+ * Implementation of the MongoDB factory storage.
  *
  */
 public class MongoDBFactoryStore implements FactoryStore {
+
+    private static String DEFAULT_DB_NAME = "test";
+    private static String DEFAULT_COLLECTION_NAME = "factories";
 
     DBCollection factories;
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBFactoryStore.class);
 
     public MongoDBFactoryStore() {
+       this("localhost", 27017, null, null);
+    }
+
+    public MongoDBFactoryStore(String host, int port, String dbName, String collectionName) {
         MongoClient mongoClient = null;
         try {
-            mongoClient = new MongoClient("localhost", 27017);
+            mongoClient = new MongoClient(host, port);
         } catch (UnknownHostException e) {
             LOG.error(e.getMessage());
         }
         DB db;
         if (mongoClient != null) {
-            db = mongoClient.getDB("test");
+            db = mongoClient.getDB(dbName != null && !dbName.isEmpty() ? dbName : DEFAULT_DB_NAME);
         } else {
-            throw new RuntimeException("Cannot connect to mongo DB");
+            throw new RuntimeException("Cannot connect to mongo DB.");
         }
-
-        factories = db.getCollection("factories");
+        factories = db.getCollection(
+                collectionName != null && !collectionName.isEmpty() ? collectionName : DEFAULT_COLLECTION_NAME);
     }
 
 
@@ -62,20 +70,12 @@ public class MongoDBFactoryStore implements FactoryStore {
     public String saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
 
         factoryUrl.setId(NameGenerator.generate("", 16));
-        Set<FactoryImage> newImages = new HashSet<>();
-        for (FactoryImage image : images) {
-            image.setName(NameGenerator.generate("", 16) + image.getName());
-            newImages.add(image);
-        }
-
-        BasicDBObjectBuilder attributes = new BasicDBObjectBuilder();
-        for (Map.Entry<String, String> attribute : factoryUrl.getProjectattributes().entrySet()) {
-            attributes.add(attribute.getKey(), attribute.getValue());
-        }
+        BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(factoryUrl.getProjectattributes());
 
         List<DBObject> imageList = new ArrayList<>();
-        for (FactoryImage one : newImages) {
-            imageList.add(new BasicDBObjectBuilder().add("name", one.getName()).add("type", one.getMediaType())
+        for (FactoryImage one : images) {
+            imageList.add(new BasicDBObjectBuilder().add("name", NameGenerator.generate("", 16) + one.getName())
+                                                    .add("type", one.getMediaType())
                                                     .add("data", one.getImageData()).get());
         }
 
@@ -115,8 +115,6 @@ public class MongoDBFactoryStore implements FactoryStore {
     @Override
     public AdvancedFactoryUrl getFactory(String id) throws FactoryUrlException {
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
-        Set<FactoryImage> images = new HashSet<>();
-
         DBObject query = new BasicDBObject();
         query.put("_id", id);
         DBObject res = factories.findOne(query);
@@ -138,12 +136,6 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setOrgid((String)factoryAsDbObject.get("orgid"));
         factoryUrl.setAffiliateid((String)factoryAsDbObject.get("affiliateid"));
         factoryUrl.setVcsbranch((String)factoryAsDbObject.get("vcsbranch"));
-
-        // Attributes
-//        BasicDBList attributesAsDbObject = (BasicDBList)factoryAsDbObject.get("projectattributes");
-//        for (Object obj : attributesAsDbObject) {
-//            factoryUrl.setProjectattributes(((BasicDBObject)obj).toMap());
-//        }
         factoryUrl.setProjectattributes(((BasicDBObject)factoryAsDbObject.get("projectattributes")).toMap());
 
         return factoryUrl;
@@ -157,8 +149,8 @@ public class MongoDBFactoryStore implements FactoryStore {
         query.put("_id", id);
         DBObject res = factories.findOne(query);
 
-        BasicDBList linksAsDbObject = (BasicDBList)res.get("images");
-        for (Object obj : linksAsDbObject) {
+        BasicDBList imagesAsDbObject = (BasicDBList)res.get("images");
+        for (Object obj : imagesAsDbObject) {
             BasicDBObject dbobj = (BasicDBObject)obj;
             try {
                 FactoryImage image = new FactoryImage();
