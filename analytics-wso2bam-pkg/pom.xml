@@ -50,7 +50,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <scripts>
+                        <executions>
                             <execution>
                                 <id>copy-dependencies-war</id>
                                 <phase>process-resources</phase>
@@ -63,11 +63,11 @@
                                     <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
                                 </configuration>
                             </execution>
-                        </scripts>
+                        </executions>
                     </plugin>
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
-                        <scripts>
+                        <executions>
                             <execution>
                                 <id>copy-clear-wso2bam-server</id>
                                 <phase>process-resources</phase>
@@ -100,7 +100,7 @@
                                     <goal>run</goal>
                                 </goals>
                             </execution>
-                        </scripts>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
