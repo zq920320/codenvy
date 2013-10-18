@@ -1,0 +1,44 @@
+<!--
+
+         CODENVY CONFIDENTIAL
+         ________________
+
+         [2012] - [2013] Codenvy, S.A.
+         All Rights Reserved.
+         NOTICE: All information contained herein is, and remains
+         the property of Codenvy S.A. and its suppliers,
+         if any. The intellectual and technical concepts contained
+         herein are proprietary to Codenvy S.A.
+         and its suppliers and may be covered by U.S. and Foreign Patents,
+         patents in process, and are protected by trade secret or copyright law.
+         Dissemination of this information or reproduction of this material
+         is strictly forbidden unless prior written permission is obtained
+         from Codenvy S.A..
+-->
+
+<binding>
+  <mapping name="pig-scripts-executor" class="PigScriptsExecutorConfiguration">
+    <collection name="scripts" field="scripts"
+      item-type="ExecutionEntry"
+      factory="org.jibx.runtime.Utility.arrayListFactory" />
+  </mapping>
+
+  <mapping name="execution" class="ExecutionEntry">
+    <value name="schedule" field="schedule" style="attribute" />
+    <collection name="scripts" field="scripts"
+        item-type="ScriptEntry"
+        factory="org.jibx.runtime.Utility.arrayListFactory" />
+  </mapping>
+  
+  <mapping name="script" class="ScriptEntry">
+    <value name="name" field="name" style="attribute" />
+    <collection name="parameters" field="parameters"
+        item-type="SimpleParameterEntry"
+        factory="org.jibx.runtime.Utility.arrayListFactory" />
+  </mapping>
+  
+  <mapping name="parameter" class="SimpleParameterEntry">
+    <value name="name" field="name" style="attribute" />
+    <value name="value" field="value" style="attribute" />  
+  </mapping>
+</binding>
