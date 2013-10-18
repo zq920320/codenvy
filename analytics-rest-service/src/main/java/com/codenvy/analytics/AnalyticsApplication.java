@@ -18,17 +18,17 @@
 
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.services.AnalyticsService;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.codenvy.api.analytics.AnalyticsService;
 
 import javax.ws.rs.core.Application;
+import java.util.HashSet;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class AnalyticsApplication extends Application {
     private final Set<Class<?>> classes;
-    private final Set<Object> singletons;
+    private final Set<Object>   singletons;
 
     /** {@link AnalyticsApplication} constructor. */
     public AnalyticsApplication() {

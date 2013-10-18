@@ -127,11 +127,6 @@
                 <version>${everrest.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.codenvy.platform-api</groupId>
-                <artifactId>codenvy-api-analytic</artifactId>
-                <version>${analytics.api.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet-api.version}</version>
@@ -141,6 +136,23 @@
                 <groupId>com.codenvy.platform-api</groupId>
                 <artifactId>codenvy-api-core</artifactId>
                 <version>${codenvy-rest-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.platform-api</groupId>
+                <artifactId>codenvy-dto</artifactId>
+                <version>${codenvy-rest-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.platform-api</groupId>
+                <artifactId>codenvy-api-analytics</artifactId>
+                <version>${codenvy-rest-api-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.codenvy.analytics</groupId>
+                        <artifactId>analytics-core</artifactId>
+                    </exclusion>
+                </exclusions>
+
             </dependency>
             
             <!-- GWT -->
