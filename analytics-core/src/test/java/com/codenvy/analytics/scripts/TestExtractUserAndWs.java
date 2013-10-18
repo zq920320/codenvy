@@ -20,7 +20,7 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.scripts.executor.pig.PigExecutor;
+import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -73,7 +73,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -98,7 +98,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -117,7 +117,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -140,7 +140,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -164,7 +164,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -184,7 +184,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -205,7 +205,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_WS, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
@@ -219,7 +219,7 @@ public class TestExtractUserAndWs extends BaseTest {
 
         actual = new HashSet<>();
 
-        iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
+        iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_USER, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }

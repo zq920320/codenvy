@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>analytics-core</artifactId>
-    <name>Codenvy :: Analytics :: Analytics Core</name>
+    <name>Codenvy :: Analytics :: Core</name>
 
     <dependencies>
         <!-- Apache pig dependencies -->
@@ -116,7 +116,12 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		    <version>${commons.io.version}</version>
-		</dependency>            
+		</dependency>
+        <dependency>
+            <groupId>org.jibx</groupId>
+            <artifactId>jibx-run</artifactId>
+            <version>${jixb.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>

@@ -20,7 +20,7 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.scripts.executor.pig.PigExecutor;
+import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -79,7 +79,7 @@ public class TestExtractQueryParam extends BaseTest {
     public void testExtractQueryParam() throws Exception {
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_EXTRACT_QUERY_PARAM, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_EXTRACT_QUERY_PARAM, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }

@@ -21,7 +21,7 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.scripts.executor.pig.PigExecutor;
+import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -94,7 +94,7 @@ public class TestTimeBetweenEvents extends BaseTest {
     public void testExecuteTestScript() throws Exception {
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.TEST_TIME_BETWEEN_PAIRS_OF_EVENTS, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_TIME_BETWEEN_PAIRS_OF_EVENTS, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }

@@ -15,7 +15,7 @@
          from Codenvy S.A..
 -->
 <pig-scripts-executor>
-    <executions>
+    <scripts>
         <execution schedule="0/10 * * * * ?"> <!-- Execution every 10 seconds -->
             <scripts>
                 <script name="action.pig">
@@ -53,5 +53,5 @@
                 </script>
             </scripts>
         </execution>
-    </executions>
+    </scripts>
 </pig-scripts-executor>

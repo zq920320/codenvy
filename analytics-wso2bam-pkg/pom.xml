@@ -26,8 +26,17 @@
     </parent>
 
     <artifactId>analytics-wso2bam-pkg</artifactId>
-    <name>Codenvy :: Analytics :: Analytics WSo2 BAM assembly</name>
+    <name>Codenvy :: Analytics :: WSo2 BAM assembly</name>
     <packaging>pom</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.codenvy.analytics</groupId>
+            <artifactId>analytics-application</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <profile>
@@ -39,8 +48,26 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <scripts>
+                            <execution>
+                                <id>copy-dependencies-war</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeTypes>war</includeTypes>
+                                    <stripVersion>true</stripVersion>
+                                    <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </scripts>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
+                        <scripts>
                             <execution>
                                 <id>copy-clear-wso2bam-server</id>
                                 <phase>process-resources</phase>
@@ -58,6 +85,12 @@
                                         <copy todir="${project.build.directory}/wso2bam-analytics/pigscripts" overwrite="true">
                                             <fileset dir="${basedir}/../analytics-core/scripts/"/>
                                         </copy>
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/pigscripts" overwrite="true">
+                                            <fileset dir="${basedir}/../analytics-core/scripts/"/>
+                                        </copy>
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/" overwrite="true">
+                                            <fileset dir="${project.build.directory}/packager-conf/war"/>
+                                        </copy>
 
                                         <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/*.sh" perm="+x"/>
@@ -67,7 +100,7 @@
                                     <goal>run</goal>
                                 </goals>
                             </execution>
-                        </executions>
+                        </scripts>
                     </plugin>
                 </plugins>
             </build>

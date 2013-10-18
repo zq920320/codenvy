@@ -19,7 +19,7 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.scripts.executor.pig.PigExecutor;
+import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -77,7 +77,7 @@ public class TestProductUsageSessions extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
 
         Set<String> expected = new HashSet<>();
         expected.add("(user,user@gmail.com),(value,300)");

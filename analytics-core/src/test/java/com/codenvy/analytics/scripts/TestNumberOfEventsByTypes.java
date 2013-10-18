@@ -19,7 +19,7 @@ package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.MetricParameter;
-import com.codenvy.analytics.scripts.executor.pig.PigExecutor;
+import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
@@ -59,7 +59,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigExecutor.executeAndReturn(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
 
         assertTrue(iterator.hasNext());
 
