@@ -17,29 +17,31 @@
  */
 package com.codenvy.analytics.services.pig.impl;
 
+import java.io.IOException;
+
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class PigExecutorServiceConfigurationException extends Exception {
+public class PigScriptRunnerConfigurationException extends IOException {
 
     /**
-     *  Constructor for PigExecutorServiceConfigurationException
-     * 
+     * Constructor for PigScriptRunnerConfigurationException
+     *
      * @param string
-     *           message 
+     *         message
      * @param e
-     *          the cause of exception
+     *         the cause of exception
      */
-    public PigExecutorServiceConfigurationException(String string, Exception e) {
+    public PigScriptRunnerConfigurationException(String string, Exception e) {
         super(string, e);
     }
-    
+
     /**
-     *  Constructor for PigExecutorServiceConfigurationException
-     * 
+     * Constructor for PigScriptRunnerConfigurationException
+     *
      * @param string
-     *           message 
+     *         message
      */
-    public PigExecutorServiceConfigurationException(String string) {
+    public PigScriptRunnerConfigurationException(String string) {
         super(string);
     }
-    
+
 }

@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.services.pig.impl;
 
-import com.codenvy.analytics.services.pig.PigExecutorService;
 import com.codenvy.analytics.services.pig.PigScriptRunner;
 import com.codenvy.analytics.services.pig.config.ScriptEntry;
 

@@ -19,126 +19,74 @@ package com.codenvy.analytics.services.pig;
 
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.pig.config.PigScriptRunnerConfiguration;
-import com.codenvy.analytics.services.pig.config.ScriptEntry;
-import com.codenvy.analytics.services.pig.impl.PigExecutorServiceConfigurationException;
+import com.codenvy.analytics.services.pig.impl.PigScriptRunnerConfigurationException;
 
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class PigScriptRunner implements PigExecutorService, Feature {
+public class PigScriptRunner implements Feature {
 
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PigScriptRunner.class);
 
-    private PigScriptRunnerConfiguration configuration;
+    /** Runtime parameter name. Contains the configuration of PigExecutorService. */
+    public static final String ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY = "analytics.pig.runner.config";
+
+    /** The value of {@value #ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY} runtime parameter. */
+    public static final String PIG_EXECUTOR_CONFIG = System.getProperty(ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY);
 
     private Scheduler scheduler;
 
     /**
      * The private constructor.
      *
-     * @throws com.codenvy.analytics.services.pig.impl.PigExecutorServiceConfigurationException
+     * @throws com.codenvy.analytics.services.pig.impl.PigScriptRunnerConfigurationException
      *
      * @throws ShedulingExecutionEntryException
      *
      */
-    public PigScriptRunner() throws PigExecutorServiceConfigurationException, ShedulingExecutionEntryException {
-        try {
-            if (PIG_EXECUTOR_CONFIG == null)
-                throw new PigExecutorServiceConfigurationException("The system property with configuration not found: "
-                                                                   + ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY);
+    public PigScriptRunner() throws PigScriptRunnerConfigurationException, ShedulingExecutionEntryException {
 
-            URL configURL = getClass().getClassLoader().getResource(PIG_EXECUTOR_CONFIG);
+//        LOG.info("PigScriptRunner was started with configuration: " + PIG_EXECUTOR_CONFIG);
+//        LOG.info("PigScriptRunner was scheduled tasks :\n" + configuration.toString());
+    }
 
-            if (configURL == null)
-                throw new PigExecutorServiceConfigurationException(
-                        "Can not found the configuration of PigExecutorService: "
-                        + PIG_EXECUTOR_CONFIG);
-
+    protected PigScriptRunnerConfiguration readConfiguration() throws PigScriptRunnerConfigurationException {
+        try (InputStream in = openConfigurationResource()) {
             IBindingFactory factory = BindingDirectory.getFactory(PigScriptRunnerConfiguration.class);
             IUnmarshallingContext uctx = factory.createUnmarshallingContext();
 
-            configuration =
-                    (PigScriptRunnerConfiguration)uctx
-                            .unmarshalDocument(new FileInputStream(new File(configURL.getPath())),
-                                               null);
+            PigScriptRunnerConfiguration configuration =
+                    (PigScriptRunnerConfiguration)uctx.unmarshalDocument(new InputStreamReader(in));
 
-        } catch (JiBXException e) {
-            throw new PigExecutorServiceConfigurationException("Can not read the configuration of PigExecutorService: "
-                                                               + PIG_EXECUTOR_CONFIG, e);
-        } catch (FileNotFoundException e) {
-            throw new PigExecutorServiceConfigurationException("Can not found the configuration of PigExecutorService: "
-                                                               + PIG_EXECUTOR_CONFIG, e);
+            return configuration;
+        } catch (JiBXException | IOException e) {
+            throw new PigScriptRunnerConfigurationException("Can not read the configuration of PigExecutorService: "
+                                                            + PIG_EXECUTOR_CONFIG, e);
+        }
+    }
+
+    protected InputStream openConfigurationResource() throws PigScriptRunnerConfigurationException {
+        InputStream in = getClass().getClassLoader().getResourceAsStream(PIG_EXECUTOR_CONFIG);
+
+        if (in == null) {
+            throw new PigScriptRunnerConfigurationException("Resource " + PIG_EXECUTOR_CONFIG + " not found");
         }
 
-        try {
-            SchedulerFactory sf = new StdSchedulerFactory();
-            this.scheduler = sf.getScheduler();
-        } catch (SchedulerException e) {
-            LOG.error("Can not get Quartz sheduler : ", e);
-            throw new PigExecutorServiceConfigurationException("Can not get Quartz sheduler: ", e);
-        }
-
-
-        for (ExecutionEntry executionEntry : configuration.getScripts()) {
-            this.schedule(executionEntry);
-        }
-
-        try {
-            scheduler.start();
-        } catch (SchedulerException e) {
-            throw new PigExecutorServiceConfigurationException("Can not start Quartz sheduler.", e);
-        }
-
-        LOG.info("PigScriptRunner was started with configuration: " + PIG_EXECUTOR_CONFIG);
-        LOG.info("PigScriptRunner was scheduled tasks :\n" + configuration.toString());
-    }
-
-    protected PigScriptRunnerConfiguration readConfiguration() {
-        return null;
-    }
-
-    @Override
-    public void schedule(ExecutionEntry executionEntry) throws ShedulingExecutionEntryException {
-
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void execute(ScriptEntry scriptEntry) {
-        //TODO  will be executed pig script, thanks PigScriptExecutor
-//        PigServer.execute(null, null);
-
-        LOG.info("Executing script:" + scriptEntry.toString());
-    }
-
-    @Override
-    public ExecutionEntry getScheduledTask(String key) throws ShedulingExecutionEntryException {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public PigScriptRunnerConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    @Override
-    public void shutdown() {
-
+        return in;
     }
 
     /** {@inheritDoc} */
