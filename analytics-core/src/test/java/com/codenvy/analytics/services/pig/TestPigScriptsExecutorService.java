@@ -22,10 +22,10 @@ public class TestPigScriptsExecutorService {
 
     //    @Test
     public void testExecution() throws Exception {
-//        System.setProperty(PigExecutorService.ANALYTICS_PIG_EXECUTOR_CONFIG_PROPERTY,
+//        System.setProperty(PigExecutorService.ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY,
 //                           "pig-script-runner-config.xml");
 
-//        PigScriptRunner executorService = PigScriptRunner.getInstance();
+//        PigRunner executorService = PigRunner.getInstance();
 
 //        assertEquals(executorService.getConfiguration().getScripts().size(), 2);
 //

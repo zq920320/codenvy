@@ -1,0 +1,48 @@
+/*
+ *
+ * CODENVY CONFIDENTIAL
+ * ________________
+ *
+ * [2012] - [2013] Codenvy, S.A.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
+package com.codenvy.analytics.services.pig;
+
+import java.io.IOException;
+
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public interface ConfigurationManager {
+
+    /** Runtime parameter name It contains the destination for configuration. */
+    public static final String ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY = "analytics.pig.runner.config";
+
+    /** The value of {@value #ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY}. */
+    public static final String PIG_RUNNER_CONFIG = System.getProperty(ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY);
+
+
+    /**
+     * Loads a configuration.
+     *
+     * @return {@link PigRunnerConfiguration}
+     * @throws IOException
+     *         if an error occurred during reading
+     */
+    PigRunnerConfiguration loadConfiguration() throws IOException;
+
+    /**
+     * Stores a configuration.
+     *
+     * @throws IOException
+     *         if an error occurred during storing
+     */
+    void storeConfiguration() throws IOException;
+}

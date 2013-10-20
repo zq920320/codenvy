@@ -17,23 +17,24 @@
  */
 package com.codenvy.analytics.services.pig;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class ShedulingExecutionEntryException extends Exception {
+@XmlRootElement(name = "scripts")
+public class PigRunnerConfiguration {
 
-    /**
-     * @param string
-     * @param e
-     */
-    public ShedulingExecutionEntryException(String string, Exception e) {
-        super(string, e);
+    private List<ScriptConfiguration> scripts;
+
+    /** Getter for {@link #scripts} */
+    public List<ScriptConfiguration> getScripts() {
+        return scripts;
     }
 
-    /**
-     * @param string
-     */
-    public ShedulingExecutionEntryException(String string) {
-        super(string);
+    /** Setter for {@link #scripts} */
+    @XmlElement(name = "script")
+    public void setScripts(List<ScriptConfiguration> scripts) {
+        this.scripts = scripts;
     }
-
 }

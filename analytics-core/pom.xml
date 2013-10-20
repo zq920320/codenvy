@@ -118,9 +118,9 @@
 		    <version>${commons.io.version}</version>
 		</dependency>
         <dependency>
-            <groupId>org.jibx</groupId>
-            <artifactId>jibx-run</artifactId>
-            <version>${jixb.version}</version>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb.version}</version>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>

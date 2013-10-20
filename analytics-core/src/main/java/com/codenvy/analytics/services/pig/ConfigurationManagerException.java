@@ -15,32 +15,32 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.pig.impl;
+package com.codenvy.analytics.services.pig;
 
 import java.io.IOException;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class PigScriptRunnerConfigurationException extends IOException {
+public class ConfigurationManagerException extends IOException {
 
     /**
-     * Constructor for PigScriptRunnerConfigurationException
+     * Constructor for ConfigurationManagerException
      *
      * @param string
      *         message
      * @param e
      *         the cause of exception
      */
-    public PigScriptRunnerConfigurationException(String string, Exception e) {
+    public ConfigurationManagerException(String string, Exception e) {
         super(string, e);
     }
 
     /**
-     * Constructor for PigScriptRunnerConfigurationException
+     * Constructor for ConfigurationManagerException
      *
      * @param string
      *         message
      */
-    public PigScriptRunnerConfigurationException(String string) {
+    public ConfigurationManagerException(String string) {
         super(string);
     }
 

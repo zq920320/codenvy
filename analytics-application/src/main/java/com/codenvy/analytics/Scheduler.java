@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.MetricParameter;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.pig.PigScriptRunner;
+import com.codenvy.analytics.services.pig.PigRunner;
 
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
@@ -160,7 +160,7 @@ public class Scheduler implements ServletContextListener {
 
             List<JobDetail> jobDetails = new ArrayList<>(6);
 
-            addJobDetail(PigScriptRunner.class, jobDetails);
+            addJobDetail(PigRunner.class, jobDetails);
 
             scheduleJobs(jobDetails);
             ensureRunOrder(jobDetails);

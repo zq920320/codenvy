@@ -17,44 +17,47 @@
  */
 package com.codenvy.analytics.services.pig;
 
-import com.codenvy.analytics.services.pig.config.PigScriptRunnerConfiguration;
-
 import org.testng.annotations.Test;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class TestPigScriptsRunnerConfiguration {
+public class TestXmlReaderConfiguration {
 
-    private static final String RESOUCE = "<scripts>" +
-                                          "    <script name=\"test1.pig\">" +
-                                          "        <parameters>" +
-                                          "            <parameter name=\"USER\" value=\"ANY\"/>" +
-                                          "            <parameter name=\"WS\" value=\"ANY\"/>" +
-                                          "        </parameters>" +
-                                          "    </script>" +
-                                          "    <script name=\"test2.pig\">" +
-                                          "        <parameters>" +
-                                          "            <parameter name=\"USER\" value=\"PERSISTENT\"/>" +
-                                          "            <parameter name=\"WS\" value=\"REGISTERED\"/>" +
-                                          "            <parameter name=\"EVENT\" value=\"event_value\"/>" +
-                                          "            <parameter name=\"FIELD\" value=\"filed_value\"/>" +
-                                          "        </parameters>" +
-                                          "    </script>" +
-                                          "</scripts>";
-
-    public File testConfig;
+    private static final String RESOURCE = "<scripts>" +
+                                           "    <script name=\"test1.pig\">" +
+                                           "        <parameters>" +
+                                           "            <entry>" +
+                                           "                <key>USER</key>" +
+                                           "                <value>ANY</value>" +
+                                           "            </entry>" +
+//                                           "            <parameter name=\"USER\" value=\"ANY\"/>" +
+//                                           "            <parameter name=\"WS\" value=\"ANY\"/>" +
+                                           "        </parameters>" +
+                                           "    </script>" +
+//                                           "    <script name=\"test2.pig\">" +
+//                                           "        <parameters>" +
+//                                           "            <parameter name=\"USER\" value=\"PERSISTENT\"/>" +
+//                                           "            <parameter name=\"WS\" value=\"REGISTERED\"/>" +
+//                                           "            <parameter name=\"EVENT\" value=\"event_value\"/>" +
+//                                           "            <parameter name=\"FIELD\" value=\"filed_value\"/>" +
+//                                           "        </parameters>" +
+//                                           "    </script>" +
+                                           "</scripts>";
 
     @Test
     public void testParsingConfig() throws Exception {
-        PigScriptRunner service = new PigScriptRunner();
+        XmlConfigurationManager confReader = new XmlConfigurationManager();
+        XmlConfigurationManager spyService = spy(confReader);
 
-        mock(service);
+        doReturn(new ByteArrayInputStream(RESOURCE.getBytes("UTF-8"))).when(spyService).openResource();
 
-        PigScriptRunnerConfiguration conf = service.getConfiguration();
+        PigRunnerConfiguration configuration = spyService.loadConfiguration();
+
 
 //        assertNotNull(conf);
 //        assertEquals(2, conf.getScripts().size());
@@ -64,7 +67,7 @@ public class TestPigScriptsRunnerConfiguration {
 //        assertEquals("0/10 * * * * ?", executionEntry.getSchedule());
 //        assertEquals(2, executionEntry.getScripts().size());
 //
-//        ScriptEntry scriptEntry = executionEntry.getScripts().get(0);
+//        ScriptConfiguration scriptEntry = executionEntry.getScripts().get(0);
 //        assertNotNull(scriptEntry);
 //        assertEquals("action.pig", scriptEntry.getName());
 //        assertEquals(5, scriptEntry.getParameters().size());
