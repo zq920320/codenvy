@@ -20,6 +20,7 @@
 package com.codenvy.analytics.services;
 
 import org.quartz.Job;
+import org.quartz.JobExecutionException;
 
 import java.util.Map;
 
@@ -37,5 +38,5 @@ public interface Feature extends Job {
      */
     boolean isAvailable();
 
-    void forceRun(Map<String, String> context);
+    void forceExecute(Map<String, String> context) throws JobExecutionException;
 }

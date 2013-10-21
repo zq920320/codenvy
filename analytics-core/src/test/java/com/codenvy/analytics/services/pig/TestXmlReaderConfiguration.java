@@ -20,33 +20,30 @@ package com.codenvy.analytics.services.pig;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestXmlReaderConfiguration {
 
     private static final String RESOURCE = "<scripts>" +
-                                           "    <script name=\"test1.pig\">" +
+                                           "    <script name=\"test1\">" +
                                            "        <parameters>" +
                                            "            <entry>" +
                                            "                <key>USER</key>" +
-                                           "                <value>ANY</value>" +
+                                           "                <value>REGISTERED</value>" +
                                            "            </entry>" +
-//                                           "            <parameter name=\"USER\" value=\"ANY\"/>" +
-//                                           "            <parameter name=\"WS\" value=\"ANY\"/>" +
+                                           "            <entry>" +
+                                           "                <key>WS</key>" +
+                                           "                <value>PERSISTENT</value>" +
+                                           "            </entry>" +
                                            "        </parameters>" +
                                            "    </script>" +
-//                                           "    <script name=\"test2.pig\">" +
-//                                           "        <parameters>" +
-//                                           "            <parameter name=\"USER\" value=\"PERSISTENT\"/>" +
-//                                           "            <parameter name=\"WS\" value=\"REGISTERED\"/>" +
-//                                           "            <parameter name=\"EVENT\" value=\"event_value\"/>" +
-//                                           "            <parameter name=\"FIELD\" value=\"filed_value\"/>" +
-//                                           "        </parameters>" +
-//                                           "    </script>" +
                                            "</scripts>";
 
     @Test
@@ -58,68 +55,15 @@ public class TestXmlReaderConfiguration {
 
         PigRunnerConfiguration configuration = spyService.loadConfiguration();
 
+        assertNotNull(configuration);
+        assertEquals(1, configuration.getScripts().size());
 
-//        assertNotNull(conf);
-//        assertEquals(2, conf.getScripts().size());
-//
-//        ExecutionEntry executionEntry = conf.getScripts().get(0);
-//        assertNotNull(executionEntry);
-//        assertEquals("0/10 * * * * ?", executionEntry.getSchedule());
-//        assertEquals(2, executionEntry.getScripts().size());
-//
-//        ScriptConfiguration scriptEntry = executionEntry.getScripts().get(0);
-//        assertNotNull(scriptEntry);
-//        assertEquals("action.pig", scriptEntry.getName());
-//        assertEquals(5, scriptEntry.getParameters().size());
-//        assertEquals("LOG", scriptEntry.getParameters().get(0).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(0).getValue());
-//        assertEquals("FROM_DATE", scriptEntry.getParameters().get(1).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(1).getValue());
-//        assertEquals("TO_DATE", scriptEntry.getParameters().get(2).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(2).getValue());
-//        assertEquals("USER", scriptEntry.getParameters().get(3).getName());
-//        assertEquals("*", scriptEntry.getParameters().get(3).getValue());
-//        assertEquals("WS", scriptEntry.getParameters().get(4).getName());
-//        assertEquals("*", scriptEntry.getParameters().get(4).getValue());
-//
-//
-//        scriptEntry = executionEntry.getScripts().get(1);
-//        assertNotNull(scriptEntry);
-//        assertEquals("set_active_by_users.pig", scriptEntry.getName());
-//        assertEquals(7, scriptEntry.getParameters().size());
-//        assertEquals("LOG", scriptEntry.getParameters().get(0).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(0).getValue());
-//        assertEquals("FROM_DATE", scriptEntry.getParameters().get(1).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(1).getValue());
-//        assertEquals("TO_DATE", scriptEntry.getParameters().get(2).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(2).getValue());
-//        assertEquals("USER", scriptEntry.getParameters().get(3).getName());
-//        assertEquals("*", scriptEntry.getParameters().get(3).getValue());
-//        assertEquals("WS", scriptEntry.getParameters().get(4).getName());
-//        assertEquals("*", scriptEntry.getParameters().get(4).getValue());
-//        assertEquals("EVENT", scriptEntry.getParameters().get(5).getName());
-//        assertEquals("build", scriptEntry.getParameters().get(5).getValue());
-//        assertEquals("FIELD", scriptEntry.getParameters().get(6).getName());
-//        assertEquals("field_value", scriptEntry.getParameters().get(6).getValue());
-//
-//        executionEntry = conf.getScripts().get(1);
-//        assertNotNull(executionEntry);
-//        assertEquals("0/5 * * * * ?", executionEntry.getSchedule());
-//        assertEquals(1, executionEntry.getScripts().size());
-//
-//        scriptEntry = executionEntry.getScripts().get(0);
-//        assertNotNull(scriptEntry);
-//        assertEquals("product_usage_time_domains.pig", scriptEntry.getName());
-//        assertEquals(5, scriptEntry.getParameters().size());
-//        assertEquals("LOG", scriptEntry.getParameters().get(0).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(0).getValue());
-//        assertEquals("FROM_DATE", scriptEntry.getParameters().get(1).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(1).getValue());
-//        assertEquals("TO_DATE", scriptEntry.getParameters().get(2).getName());
-//        assertEquals("...", scriptEntry.getParameters().get(2).getValue());
-//        assertEquals("USER", scriptEntry.getParameters().get(3).getName());
-//        assertEquals("*", scriptEntry.getParameters().get(3).getValue());
-//        assertEquals("WS", scriptEntry.getParameters().get(4).getName());
-//        assertEquals("*", scriptEntry.getParameters().get(4).getValue());
+        ScriptConfiguration scriptConfiguration = configuration.getScripts().get(0);
+        assertEquals("test1.pig", scriptConfiguration.getName());
+
+        Map<String, String> parameters = scriptConfiguration.getParameters();
+        assertEquals(2, parameters.size());
+        assertEquals("REGISTERED", parameters.get("USER"));
+        assertEquals("PERSISTENT", parameters.get("WS"));
     }
 }

@@ -43,17 +43,13 @@ public class Utils {
      * @throws IOException
      *         if exception is occurred
      */
-    public static Calendar parseDate(String date) throws IOException {
-        try {
-            DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+    public static Calendar parseDate(String date) throws ParseException {
+        DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(df.parse(date));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(df.parse(date));
 
-            return calendar;
-        } catch (ParseException e) {
-            throw new IOException(e);
-        }
+        return calendar;
     }
 
     /** Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}. */
@@ -68,12 +64,12 @@ public class Utils {
     }
 
     /** @return fromDate value */
-    public static Calendar getFromDate(Map<String, String> context) throws IOException {
+    public static Calendar getFromDate(Map<String, String> context) throws ParseException {
         return parseDate(MetricParameter.FROM_DATE.get(context));
     }
 
     /** @return toDate value */
-    public static Calendar getToDate(Map<String, String> context) throws IOException {
+    public static Calendar getToDate(Map<String, String> context) throws ParseException {
         return parseDate(MetricParameter.TO_DATE.get(context));
     }
 
@@ -120,7 +116,7 @@ public class Utils {
     }
 
     /** Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT} */
-    public static void initDateInterval(Calendar date, Map<String, String> context) throws IOException {
+    public static void initDateInterval(Calendar date, Map<String, String> context) throws ParseException {
         TimeUnit timeUnit = getTimeUnit(context);
 
         switch (timeUnit) {
@@ -174,7 +170,7 @@ public class Utils {
     }
 
     /** Shift date interval forward depending on {@link TimeUnit}. Should also be placed in context. */
-    public static Map<String, String> nextDateInterval(Map<String, String> context) throws IOException {
+    public static Map<String, String> nextDateInterval(Map<String, String> context) throws ParseException {
         Map<String, String> resultContext = new HashMap<>(context);
 
         Calendar fromDate = getFromDate(context);
@@ -199,7 +195,7 @@ public class Utils {
     }
 
     /** Shift date interval backward depending on {@link TimeUnit}. Should also be placed in context. */
-    public static Map<String, String> prevDateInterval(Map<String, String> context) throws IOException {
+    public static Map<String, String> prevDateInterval(Map<String, String> context) throws ParseException {
         Map<String, String> resultContext = new HashMap<>(context);
 
         Calendar fromDate = getFromDate(context);
@@ -267,14 +263,14 @@ public class Utils {
         putToDate(context, toDate);
     }
 
-    private static void nextDay(Calendar toDate, Map<String, String> context) throws IOException {
+    private static void nextDay(Calendar toDate, Map<String, String> context) throws ParseException {
         toDate.add(Calendar.DAY_OF_MONTH, 1);
 
         putFromDate(context, toDate);
         putToDate(context, toDate);
     }
 
-    public static Map<String, String> initializeContext(TimeUnit timeUnit) throws IOException {
+    public static Map<String, String> initializeContext(TimeUnit timeUnit) throws ParseException {
         Calendar cal = Calendar.getInstance();
 
         Map<String, String> context = newContext();

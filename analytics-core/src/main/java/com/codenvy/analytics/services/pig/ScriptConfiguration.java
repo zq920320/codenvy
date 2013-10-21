@@ -18,13 +18,9 @@
 package com.codenvy.analytics.services.pig;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 @XmlRootElement(name = "script")
@@ -32,7 +28,7 @@ public class ScriptConfiguration {
 
     private String name;
 
-    private java.util.Map parameters = new HashMap<>();
+    private Map<String, String> parameters = new HashMap<>();
 
     /** Setter for {@link #name} */
     @XmlAttribute
@@ -41,9 +37,7 @@ public class ScriptConfiguration {
     }
 
     /** Setter for {@link #parameters} */
-    @XmlElement
-    @XmlJavaTypeAdapter(HashMapAdapter.class)
-    public void setParameters(java.util.Map parameters) {
+    public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
 
@@ -53,39 +47,7 @@ public class ScriptConfiguration {
     }
 
     /** Getter for {@link #parameters} */
-    public java.util.Map getParameters() {
+    public Map<String, String> getParameters() {
         return parameters;
-    }
-
-    public static class HashMapAdapter extends XmlAdapter<Map, java.util.Map> {
-        @Override
-        public Map marshal(java.util.Map map) {
-            Map mapType = new Map();
-            for (Entry<String, String> entry : map.entrySet()) {
-                Entry mapEntry = new Entry();
-                mapEntry.key = entry.getKey();
-                mapEntry.value = entry.getValue();
-                mapType.entry.add(mapEntry);
-            }
-            return mapType;
-        }
-
-        @Override
-        public java.util.Map unmarshal(Map type) throws Exception {
-            java.util.Map map = new HashMap<>();
-            for (Entry entry : type.entry) {
-                map.put(entry.key, entry.value);
-            }
-            return map;
-        }
-    }
-
-    public static class Map {
-        public List<Entry> entry = new ArrayList<>();
-    }
-
-    public static class Entry {
-        public String key;
-        public String value;
     }
 }

@@ -94,7 +94,7 @@ public class Scheduler implements ServletContextListener {
                             break;
 
                         case FORCE_RUN_CONDITION_RERUN:
-                            ((Feature)job).forceRun(Utils.newContext());
+                            ((Feature)job).forceExecute(Utils.newContext());
                             break;
 
                         default:
@@ -141,7 +141,7 @@ public class Scheduler implements ServletContextListener {
             MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
 
             do {
-                ((Feature)job).forceRun(context);
+                ((Feature)job).forceExecute(context);
                 context = Utils.nextDateInterval(context);
             } while (!Utils.getFromDate(context).after(toDate));
         }
