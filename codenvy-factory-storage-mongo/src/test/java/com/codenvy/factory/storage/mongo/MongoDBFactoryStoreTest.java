@@ -32,13 +32,18 @@ import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.*;
 
+import org.everrest.core.impl.provider.json.JsonParser;
+import org.everrest.core.impl.provider.json.JsonValue;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
+
+import org.everrest.core.impl.provider.json.ObjectBuilder;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -53,13 +58,6 @@ public class MongoDBFactoryStoreTest {
 
     private static final String DB_NAME   = "test1";
     private static final String COLL_NAME = "factory1";
-//    private MongodExecutable mongodExe;
-//    private MongodProcess    mongod;
-//    FactoryStore store;
-//    private Mongo        mongo;
-//    private DB           db;
-//    private DBCollection collection;
-
     private DBCollection collection;
     private MongoClient  client;
     private MongoServer  server;
@@ -67,16 +65,6 @@ public class MongoDBFactoryStoreTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-
-//        MongoDBRuntime runtime = MongoDBRuntime.getDefaultInstance();
-//        mongodExe = runtime.prepare(new MongodConfig(Version.V2_1_0, 12345,
-//                                                     Network.localhostIsIPv6()));
-//        mongod = mongodExe.start();
-//
-//        mongo = new Mongo("localhost", 12345);
-//        db = mongo.getDB(DB_NAME);
-//        collection = db.getCollection(COLL_NAME);
-
         server = new MongoServer(new MemoryBackend());
 
         // bind on a random local port
@@ -90,8 +78,6 @@ public class MongoDBFactoryStoreTest {
 
     @AfterMethod
     public void tearDown() throws Exception {
-//        mongod.stop();
-//        mongodExe.cleanup();
         client.close();
         server.shutdownNow();
     }
@@ -101,9 +87,9 @@ public class MongoDBFactoryStoreTest {
 
         Set<FactoryImage> images = new HashSet<>();
         Map<String, String> attrs = new HashMap<>();
-        attrs.put("testattr1", "testVaue1");
-        attrs.put("testattr2", "testVaue2");
-        attrs.put("testattr3", "testVaue3");
+        attrs.put("testattr1", "testValue1");
+        attrs.put("testattr2", "testValue2");
+        attrs.put("testattr3", "testValue3");
 
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
         factoryUrl.setAuthor("someAuthor");
@@ -112,23 +98,28 @@ public class MongoDBFactoryStoreTest {
         factoryUrl.setProjectattributes(attrs);
         factoryUrl.setStyle("testStyle");
         factoryUrl.setAction("openfile");
+        factoryUrl.setOrgid("org123456");
         factoryUrl.setAffiliateid("testaffiliate123");
         factoryUrl.setCommitid("commit12345");
         factoryUrl.setVcsinfo(true);
         factoryUrl.setV("1.1");
         factoryUrl.setVcs("http://testvscurl.com");
+        factoryUrl.setOpenfile("index.php");
+        factoryUrl.setVcsbranch("master");
+        factoryUrl.setVcsurl("http://testvscurl.com");
 
         String id = store.saveFactory(factoryUrl, images);
 
         DBObject query = new BasicDBObject();
         query.put("_id", id);
-        DBObject res = collection.findOne(query);
-        BasicDBObject props =  (BasicDBObject)((BasicDBObject)res.get("factoryurl")).get("projectattributes");
-
-        assertNotNull(res);
-        assertEquals(((BasicDBObject)res.get("factoryurl")).get("author"), "someAuthor");
-        assertEquals(((BasicDBObject)res.get("factoryurl")).get("commitid"), "commit12345");
-        assertEquals(props.toMap(), attrs);
+        DBObject res = (DBObject)collection.findOne(query).get("factoryurl");
+        JsonParser jsonParser = new JsonParser();
+        jsonParser.parse(new ByteArrayInputStream(res.toString().getBytes("UTF-8")));
+        JsonValue jsonValue = jsonParser.getJsonObject();
+        AdvancedFactoryUrl result = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
+        result.setId(id);
+        factoryUrl.setId(id);
+        assertEquals(result, factoryUrl);
 
     }
 
@@ -153,9 +144,9 @@ public class MongoDBFactoryStoreTest {
         String id = "testid1234";
 
         Map<String, String> attrs = new HashMap<>();
-        attrs.put("testattr1", "testVaue1");
-        attrs.put("testattr2", "testVaue2");
-        attrs.put("testattr3", "testVaue3");
+        attrs.put("testattr1", "testValue1");
+        attrs.put("testattr2", "testValue2");
+        attrs.put("testattr3", "testValue3");
 
         byte[] b = new byte[4096];
         new Random().nextBytes(b);
@@ -172,13 +163,13 @@ public class MongoDBFactoryStoreTest {
                          .add("action", "openfile")
                          .add("openfile", "true")
                          .add("vcsinfo", true)
-//                         .add("style", factoryUrl.getStyle())
-//                         .add("description", factoryUrl.getDescription())
-//                         .add("contactmail", factoryUrl.getContactmail())
-//                         .add("author", factoryUrl.getAuthor())
-//                         .add("orgid", factoryUrl.getOrgid())
-//                         .add("affiliateid", factoryUrl.getAffiliateid())
-//                         .add("vcsbranch", factoryUrl.getVcsbranch())
+                         .add("style", "testStyle")
+                         .add("description", "testDescription")
+                         .add("contactmail", "test@test.com")
+                         .add("author", "someAuthor")
+                         .add("orgid", "org123456")
+                         .add("affiliateid", "testaffiliate123")
+                         .add("vcsbranch", "master")
                          .add("projectattributes", attributes.get());
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
@@ -188,9 +179,15 @@ public class MongoDBFactoryStoreTest {
 
         collection.save(factoryDatabuilder.get());
 
-        AdvancedFactoryUrl factoryUrl = store.getFactory(id);
-        assertNotNull(factoryUrl);
-        assertEquals(factoryUrl.getProjectattributes(), attrs);
+        AdvancedFactoryUrl result = store.getFactory(id);
+        assertNotNull(result);
+
+        JsonParser jsonParser = new JsonParser();
+        jsonParser.parse(new ByteArrayInputStream(factoryURLbuilder.get().toString().getBytes("UTF-8")));
+        JsonValue jsonValue = jsonParser.getJsonObject();
+        AdvancedFactoryUrl source = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
+        source.setId(id);
+        assertEquals(result, source);
 
     }
 
@@ -224,8 +221,6 @@ public class MongoDBFactoryStoreTest {
 
         collection.save(factoryDatabuilder.get());
 
-        DBObject query = new BasicDBObject();
-        query.put("_id", id);
         Set<FactoryImage> newImages =  store.getFactoryImages(id, null);
         assertNotNull(newImages);
         FactoryImage newImage = newImages.iterator().next();

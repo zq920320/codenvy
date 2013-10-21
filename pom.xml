@@ -57,6 +57,7 @@
         <everrest.assured.version>0.6</everrest.assured.version>
         <logback.version>1.0.0</logback.version>
         <mongodb.version>2.11.3</mongodb.version>
+        <mongo-java-server.version>1.1.1</mongo-java-server.version>
         <commons.fileupload.version>1.0</commons.fileupload.version>
     </properties>
     <modules>
