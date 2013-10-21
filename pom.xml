@@ -75,7 +75,6 @@
 
     <modules>
         <module>analytics-core</module>
-        <module>analytics-rest-service</module>
         <module>analytics-application</module>
         <module>analytics-wso2bam-pkg</module>
     </modules>
