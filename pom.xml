@@ -34,7 +34,7 @@
 
     <properties>
         <!-- Apache Pig dependencies -->
-        <pig.version>0.11.1</pig.version>
+        <pig.version>0.12.0</pig.version>
         <hadoop.version>0.20.2</hadoop.version>
         <jline.version>0.9.94</jline.version>
         <antlr.version>3.4</antlr.version>
@@ -43,7 +43,7 @@
         <joda-time.version>2.2</joda-time.version>
         <cassandra.driver.version>1.0.3</cassandra.driver.version>
         <cassandra.unit.version>1.2.0.1</cassandra.unit.version>
-        <avro.version>1.4.0</avro.version>
+        <avro.version>1.7.4</avro.version>
         
         <!-- Third parties -->
         <everrest.version>1.0.10</everrest.version>
