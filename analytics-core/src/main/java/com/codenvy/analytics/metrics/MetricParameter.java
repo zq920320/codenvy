@@ -18,8 +18,8 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
@@ -80,7 +80,7 @@ public enum MetricParameter {
                                                        + Utils.formatDate(minDate)
                                                        + "'");
                 }
-            } catch (IOException e) {
+            } catch (ParseException e) {
                 throw new IllegalArgumentException("FROM_DATE parameter has illegal format '" + value
                                                    + "' The only supported format is '" + PARAM_DATE_FORMAT + "'");
             }
@@ -129,7 +129,7 @@ public enum MetricParameter {
                     }
                 }
 
-            } catch (IOException e) {
+            } catch (ParseException e) {
                 throw new IllegalArgumentException("TO_DATE parameter has illegal format '" + value
                                                    + "'. The only supported format is 'yyyyMMdd'");
             }

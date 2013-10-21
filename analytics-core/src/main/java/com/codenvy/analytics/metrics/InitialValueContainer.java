@@ -28,51 +28,52 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class InitialValueContainer {
 
     /** Runtime parameter name. Contains the directory where script are located. */
-    public static final String                      ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY =
-                                                                                                "analytics.metrics.initial.values";
+    public static final String ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY =
+            "analytics.metrics.initial.values";
 
     /** The value of {@value #ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY} runtime parameter. */
-    private static final String                     METRICS_INITIAL_VALUES                    =
-                                                                                                System.getProperty(ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY);
+    private static final String METRICS_INITIAL_VALUES =
+            System.getProperty(ANALYTICS_METRICS_INITIAL_VALUES_PROPERTY);
 
     private Map<MetricType, Map<String, ValueData>> initialValues;
     private Map<String, Map<String, String>>        uuids;
-    private static final InitialValueContainer      INSTANCE                                  = new InitialValueContainer();
+    private static final InitialValueContainer INSTANCE = new InitialValueContainer();
 
     private InitialValueContainer() {
     }
 
-    /**
-     * Factory method. Returns singleton instance.
-     */
+    /** Factory method. Returns singleton instance. */
     public static InitialValueContainer getInstance() {
         return INSTANCE;
     }
 
     /**
      * Gets initial value for give metric and context.
-     * 
+     *
      * @return initial value
-     * @throws InitialValueNotFoundException if initial value not found
-     * @throws IOException if another something gone wrong
+     * @throws InitialValueNotFoundException
+     *         if initial value not found
+     * @throws IOException
+     *         if another something gone wrong
      */
-    public ValueData getInitalValue(MetricType metricType, String uuid) throws InitialValueNotFoundException, IOException {
+    public ValueData getInitalValue(MetricType metricType, String uuid)
+            throws InitialValueNotFoundException, IOException {
         initialize();
         Map<String, ValueData> values = getValues(metricType);
 
         ValueData valueData = values.get(uuid);
         if (valueData == null) {
-            throw new InitialValueNotFoundException("Initial value not found for " + metricType + " and context " + uuid);
+            throw new InitialValueNotFoundException(
+                    "Initial value not found for " + metricType + " and context " + uuid);
         }
 
         return valueData;
@@ -80,11 +81,12 @@ public class InitialValueContainer {
 
     /**
      * Checks if container contains initial value for given metric below or equal to the give date from context.
-     * 
+     *
      * @throws InitialValueNotFoundException
      */
-    public void validateExistenceInitialValueBefore(MetricType metricType, Map<String, String> context) throws InitialValueNotFoundException,
-                                                                                                      IOException {
+    public void validateExistenceInitialValueBefore(MetricType metricType, Map<String, String> context)
+            throws InitialValueNotFoundException, ParseException {
+
         initialize();
         Map<String, ValueData> values = getValues(metricType);
 
@@ -102,8 +104,9 @@ public class InitialValueContainer {
 
     /**
      * Get all initial values for give metric
-     * 
-     * @throws InitialValueNotFoundException if there are no values
+     *
+     * @throws InitialValueNotFoundException
+     *         if there are no values
      */
     private Map<String, ValueData> getValues(MetricType metricType) throws InitialValueNotFoundException {
         Map<String, ValueData> values = initialValues.get(metricType);
@@ -115,15 +118,15 @@ public class InitialValueContainer {
     }
 
     protected void readInitialValues() throws ParserConfigurationException,
-                                      SAXException,
-                                      IOException,
-                                      IllegalArgumentException,
-                                      NoSuchMethodException,
-                                      SecurityException,
-                                      InstantiationException,
-                                      IllegalAccessException,
-                                      InvocationTargetException,
-                                      DOMException {
+                                              SAXException,
+                                              IOException,
+                                              IllegalArgumentException,
+                                              NoSuchMethodException,
+                                              SecurityException,
+                                              InstantiationException,
+                                              IllegalAccessException,
+                                              InvocationTargetException,
+                                              DOMException {
 
         initialValues = new HashMap<>();
         uuids = new HashMap<>();
@@ -159,13 +162,13 @@ public class InitialValueContainer {
     }
 
     private void extractInitialValues(MetricType metricType, NodeList nodes) throws IOException,
-                                                                            NoSuchMethodException,
-                                                                            SecurityException,
-                                                                            InstantiationException,
-                                                                            IllegalAccessException,
-                                                                            IllegalArgumentException,
-                                                                            InvocationTargetException,
-                                                                            DOMException {
+                                                                                    NoSuchMethodException,
+                                                                                    SecurityException,
+                                                                                    InstantiationException,
+                                                                                    IllegalAccessException,
+                                                                                    IllegalArgumentException,
+                                                                                    InvocationTargetException,
+                                                                                    DOMException {
         for (int j = 0; j < nodes.getLength(); j++) {
             Node node = nodes.item(j);
 

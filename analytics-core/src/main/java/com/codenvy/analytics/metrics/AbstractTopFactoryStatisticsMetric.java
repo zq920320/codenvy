@@ -17,8 +17,9 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.*;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 abstract public class AbstractTopFactoryStatisticsMetric extends CalculatedMetric {
@@ -36,7 +37,7 @@ abstract public class AbstractTopFactoryStatisticsMetric extends CalculatedMetri
      * Set date period accordingly to given period. For instance, if period is equal to 7, then
      * context will cover last 7 days.
      */
-    protected Map<String, String> getContextWithDatePeriod(Map<String, String> context) throws IOException {
+    protected Map<String, String> getContextWithDatePeriod(Map<String, String> context) throws ParseException {
         context = Utils.clone(context);
         MetricParameter.TO_DATE.putDefaultValue(context);
 

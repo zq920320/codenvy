@@ -23,6 +23,7 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,37 +59,43 @@ public abstract class CumulativeMetric extends AbstractMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws InitialValueNotFoundException, IOException {
-        context = Utils.clone(context);
-        MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.get(context));
-        MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
-
-        validateExistenceInitialValueBefore(context);
-
         try {
-            ValueData initalValue = iValueContainer.getInitalValue(metricType, makeUUID(context).toString());
 
-            if (!Utils.getAvailableFilters(context).isEmpty()) {
-                return ValueDataFactory.createDefaultValue(getValueDataClass());
-            } else {
-                return initalValue;
+            context = Utils.clone(context);
+            MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.get(context));
+            MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
+
+            validateExistenceInitialValueBefore(context);
+
+            try {
+                ValueData initalValue = iValueContainer.getInitalValue(metricType, makeUUID(context).toString());
+
+                if (!Utils.getAvailableFilters(context).isEmpty()) {
+                    return ValueDataFactory.createDefaultValue(getValueDataClass());
+                } else {
+                    return initalValue;
+                }
+            } catch (InitialValueNotFoundException e) {
+                // ignoring, may be next time lucky
             }
-        } catch (InitialValueNotFoundException e) {
-            // ignoring, may be next time lucky
+
+            LongValueData addedEntities = (LongValueData)addedMetric.getValue(context);
+            LongValueData removedEntities = (LongValueData)removedMetric.getValue(context);
+
+            Map<String, String> prevDayContext = Utils.prevDateInterval(context);
+
+            LongValueData previousEntities = (LongValueData)getValue(prevDayContext);
+
+            return new LongValueData(
+                    previousEntities.getAsLong() + addedEntities.getAsLong() - removedEntities.getAsLong());
+        } catch (ParseException e) {
+            throw new IOException(e);
         }
 
-        LongValueData addedEntities = (LongValueData)addedMetric.getValue(context);
-        LongValueData removedEntities = (LongValueData)removedMetric.getValue(context);
-
-        Map<String, String> prevDayContext = Utils.prevDateInterval(context);
-
-        LongValueData previousEntities = (LongValueData)getValue(prevDayContext);
-
-        return new LongValueData(
-                previousEntities.getAsLong() + addedEntities.getAsLong() - removedEntities.getAsLong());
     }
 
     protected void validateExistenceInitialValueBefore(Map<String, String> context)
-            throws InitialValueNotFoundException, IOException {
+            throws InitialValueNotFoundException, ParseException {
         iValueContainer.validateExistenceInitialValueBefore(metricType, context);
     }
 

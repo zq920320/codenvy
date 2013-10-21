@@ -21,6 +21,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.*;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -70,20 +71,25 @@ public abstract class AbstractUsersSegmentAnalysis extends CalculatedMetric {
     private Map<String, FixedListLongValueData> getUsageByPeriod(Map<String, String> context, int period)
             throws IOException {
 
-        context = Utils.clone(context);
+        try {
 
-        Calendar fromDate = Utils.getFromDate(context);
-        Calendar toDate = Utils.getToDate(context);
+            context = Utils.clone(context);
 
-        toDate.add(Calendar.DAY_OF_MONTH, 1 - period);
+            Calendar fromDate = Utils.getFromDate(context);
+            Calendar toDate = Utils.getToDate(context);
 
-        if (fromDate.after(toDate)) {
-            Utils.putToDate(context, fromDate);
-        } else {
-            Utils.putToDate(context, toDate);
+            toDate.add(Calendar.DAY_OF_MONTH, 1 - period);
+
+            if (fromDate.after(toDate)) {
+                Utils.putToDate(context, fromDate);
+            } else {
+                Utils.putToDate(context, toDate);
+            }
+
+            return ((MapStringFixedLongListValueData)super.getValue(context)).getAll();
+        } catch (ParseException e) {
+            throw new IOException(e);
         }
-
-        return ((MapStringFixedLongListValueData)super.getValue(context)).getAll();
     }
 
     /** {@inheritDoc} */

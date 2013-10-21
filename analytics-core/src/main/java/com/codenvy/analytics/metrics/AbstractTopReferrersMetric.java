@@ -6,6 +6,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.*;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -18,7 +19,12 @@ public abstract class AbstractTopReferrersMetric extends AbstractTopFactoryStati
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        context = getContextWithDatePeriod(context);
+        try {
+            context = getContextWithDatePeriod(context);
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
+
 
         MapStringFixedLongListValueData referrers = (MapStringFixedLongListValueData)super.getValue(context);
 

@@ -9,6 +9,7 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -21,31 +22,35 @@ public class FactorySessionFirstMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Calendar fromDate = Utils.getFromDate(context);
-        Calendar toDate = Utils.getToDate(context);
+        try {
+            Calendar fromDate = Utils.getFromDate(context);
+            Calendar toDate = Utils.getToDate(context);
 
-        Map<String, String> dayContext = Utils.clone(context);
-        MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
-        Utils.putFromDate(dayContext, fromDate);
-        Utils.putToDate(dayContext, fromDate);
+            Map<String, String> dayContext = Utils.clone(context);
+            MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
+            Utils.putFromDate(dayContext, fromDate);
+            Utils.putToDate(dayContext, fromDate);
 
-        do {
-            ListListStringValueData result = (ListListStringValueData)super.getValue(dayContext);
-            if (result.size() != 0) {
-                List<ListStringValueData> sessions = new ArrayList<>(result.getAll());
-                Collections.sort(sessions, new Comparator<ListStringValueData>() {
-                    @Override
-                    public int compare(ListStringValueData o1, ListStringValueData o2) {
-                        return o1.getAll().get(2).compareTo(o2.getAll().get(2));
-                    }
-                });
+            do {
+                ListListStringValueData result = (ListListStringValueData)super.getValue(dayContext);
+                if (result.size() != 0) {
+                    List<ListStringValueData> sessions = new ArrayList<>(result.getAll());
+                    Collections.sort(sessions, new Comparator<ListStringValueData>() {
+                        @Override
+                        public int compare(ListStringValueData o1, ListStringValueData o2) {
+                            return o1.getAll().get(2).compareTo(o2.getAll().get(2));
+                        }
+                    });
 
-                return sessions.get(0);
-            }
-            dayContext = Utils.nextDateInterval(dayContext);
-        } while (!Utils.getFromDate(dayContext).after(toDate));
+                    return sessions.get(0);
+                }
+                dayContext = Utils.nextDateInterval(dayContext);
+            } while (!Utils.getFromDate(dayContext).after(toDate));
 
-        return ValueDataFactory.createDefaultValue(getValueDataClass());
+            return ValueDataFactory.createDefaultValue(getValueDataClass());
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
     }
 
     /** @return the date of the sessions */

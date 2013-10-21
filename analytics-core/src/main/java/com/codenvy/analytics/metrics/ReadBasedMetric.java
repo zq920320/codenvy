@@ -24,6 +24,7 @@ import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,24 +44,28 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Calendar fromDate = Utils.getFromDate(context);
-        Calendar toDate = Utils.getToDate(context);
+        try {
+            Calendar fromDate = Utils.getFromDate(context);
+            Calendar toDate = Utils.getToDate(context);
 
-        ValueData total = createEmptyValueData();
+            ValueData total = createEmptyValueData();
 
-        Map<String, String> dayContext = Utils.clone(context);
-        while (!fromDate.after(toDate)) {
-            Utils.putFromDate(dayContext, fromDate);
-            Utils.putToDate(dayContext, fromDate);
-            MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
+            Map<String, String> dayContext = Utils.clone(context);
+            while (!fromDate.after(toDate)) {
+                Utils.putFromDate(dayContext, fromDate);
+                Utils.putToDate(dayContext, fromDate);
+                MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
 
-            ValueData dayValue = evaluate(dayContext);
-            total = total.union(dayValue);
+                ValueData dayValue = evaluate(dayContext);
+                total = total.union(dayValue);
 
-            fromDate.add(Calendar.DAY_OF_MONTH, 1);
+                fromDate.add(Calendar.DAY_OF_MONTH, 1);
+            }
+
+            return total;
+        } catch (ParseException e) {
+            throw new IOException(e);
         }
-
-        return total;
     }
 
     /** @return {@link com.codenvy.analytics.metrics.value.ValueData} */

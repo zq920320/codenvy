@@ -59,7 +59,7 @@ public class TestXmlReaderConfiguration {
         assertEquals(1, configuration.getScripts().size());
 
         ScriptConfiguration scriptConfiguration = configuration.getScripts().get(0);
-        assertEquals("test1.pig", scriptConfiguration.getName());
+        assertEquals("test1", scriptConfiguration.getName());
 
         Map<String, String> parameters = scriptConfiguration.getParameters();
         assertEquals(2, parameters.size());

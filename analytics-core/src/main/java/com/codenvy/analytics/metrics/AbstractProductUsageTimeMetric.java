@@ -6,6 +6,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.metrics.value.*;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -76,16 +77,20 @@ public abstract class AbstractProductUsageTimeMetric extends CalculatedMetric {
 
     private Map<String, FixedListLongValueData> getUsageByPeriod(Map<String, String> context, int period)
             throws IOException {
-        Calendar date = Utils.getToDate(context);
-        date.add(Calendar.DAY_OF_MONTH, 1 - period);
+        try {
+            Calendar date = Utils.getToDate(context);
+            date.add(Calendar.DAY_OF_MONTH, 1 - period);
 
-        if (period == LIFE_TIME_PERIOD) {
-            MetricParameter.FROM_DATE.putDefaultValue(context);
-        } else {
-            Utils.putFromDate(context, date);
+            if (period == LIFE_TIME_PERIOD) {
+                MetricParameter.FROM_DATE.putDefaultValue(context);
+            } else {
+                Utils.putFromDate(context, date);
+            }
+
+            return ((MapStringFixedLongListValueData)super.getValue(context)).getAll();
+        } catch (ParseException e) {
+            throw new IOException(e);
         }
-
-        return ((MapStringFixedLongListValueData)super.getValue(context)).getAll();
     }
 
     /** {@inheritDoc} */

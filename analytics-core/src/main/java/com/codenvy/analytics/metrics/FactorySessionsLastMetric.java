@@ -9,6 +9,7 @@ import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -22,24 +23,28 @@ public class FactorySessionsLastMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Calendar fromDate = Utils.getFromDate(context);
-        Calendar toDate = Utils.getToDate(context);
+        try {
+            Calendar fromDate = Utils.getFromDate(context);
+            Calendar toDate = Utils.getToDate(context);
 
-        Map<String, String> dayContext = Utils.clone(context);
-        MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
-        Utils.putFromDate(dayContext, toDate);
-        Utils.putToDate(dayContext, toDate);
+            Map<String, String> dayContext = Utils.clone(context);
+            MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
+            Utils.putFromDate(dayContext, toDate);
+            Utils.putToDate(dayContext, toDate);
 
-        do {
-            ListListStringValueData result = (ListListStringValueData)super.getValue(dayContext);
-            if (result.size() != 0) {
-                return result.getAll().get(result.size() - 1);
-            }
+            do {
+                ListListStringValueData result = (ListListStringValueData)super.getValue(dayContext);
+                if (result.size() != 0) {
+                    return result.getAll().get(result.size() - 1);
+                }
 
-            dayContext = Utils.prevDateInterval(dayContext);
-        } while (!Utils.getToDate(dayContext).before(fromDate));
+                dayContext = Utils.prevDateInterval(dayContext);
+            } while (!Utils.getToDate(dayContext).before(fromDate));
 
-        return ValueDataFactory.createDefaultValue(getValueDataClass());
+            return ValueDataFactory.createDefaultValue(getValueDataClass());
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
     }
 
     /** @return the date of the sessions */

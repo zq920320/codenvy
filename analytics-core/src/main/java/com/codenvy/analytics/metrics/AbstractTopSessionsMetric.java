@@ -8,6 +8,7 @@ import com.codenvy.analytics.metrics.value.ListStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -20,25 +21,29 @@ public abstract class AbstractTopSessionsMetric extends AbstractTopFactoryStatis
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        context = getContextWithDatePeriod(context);
+        try {
+            context = getContextWithDatePeriod(context);
 
-        Calendar fromDate = Utils.getFromDate(context);
-        Calendar toDate = Utils.getToDate(context);
+            Calendar fromDate = Utils.getFromDate(context);
+            Calendar toDate = Utils.getToDate(context);
 
-        List<ListStringValueData> top = new ArrayList<>();
-        Map<String, String> dayContext = Utils.clone(context);
-        do {
-            Utils.putFromDate(dayContext, fromDate);
-            Utils.putToDate(dayContext, fromDate);
+            List<ListStringValueData> top = new ArrayList<>();
+            Map<String, String> dayContext = Utils.clone(context);
+            do {
+                Utils.putFromDate(dayContext, fromDate);
+                Utils.putToDate(dayContext, fromDate);
 
-            ListListStringValueData sessions = (ListListStringValueData)super.getValue(dayContext);
-            top.addAll(sessions.getAll());
-            top = keepTopItems(top);
+                ListListStringValueData sessions = (ListListStringValueData)super.getValue(dayContext);
+                top.addAll(sessions.getAll());
+                top = keepTopItems(top);
 
-            fromDate.add(Calendar.DAY_OF_MONTH, 1);
-        } while (!fromDate.after(toDate));
+                fromDate.add(Calendar.DAY_OF_MONTH, 1);
+            } while (!fromDate.after(toDate));
 
-        return new ListListStringValueData(top);
+            return new ListListStringValueData(top);
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
     }
 
     private List<ListStringValueData> keepTopItems(List<ListStringValueData> top) {

@@ -8,6 +8,7 @@ import com.codenvy.analytics.metrics.value.LongValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -28,17 +29,21 @@ public abstract class ToDateValueReadBasedMetric extends ReadBasedMetric {
     public ValueData getValue(Map<String, String> context) throws IOException {
         context = Utils.clone(context);
 
-        Calendar lastDay = Utils.parseDate(MetricParameter.TO_DATE.getDefaultValue());
-        Calendar toDate = Utils.getToDate(context);
+        try {
+            Calendar lastDay = Utils.parseDate(MetricParameter.TO_DATE.getDefaultValue());
+            Calendar toDate = Utils.getToDate(context);
 
-        if (toDate.after(lastDay)) {
-            MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.getDefaultValue());
-            MetricParameter.TO_DATE.putDefaultValue(context);
-        } else {
-            MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.get(context));
+            if (toDate.after(lastDay)) {
+                MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.getDefaultValue());
+                MetricParameter.TO_DATE.putDefaultValue(context);
+            } else {
+                MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.get(context));
+            }
+
+            return super.getValue(context);
+        } catch (ParseException e) {
+            throw new IOException(e);
         }
-
-        return super.getValue(context);
     }
 
     /** {@inheritDoc} */

@@ -9,6 +9,7 @@ import com.codenvy.analytics.metrics.value.SetStringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -21,16 +22,25 @@ public abstract class AbstractTopFactoriesMetric extends AbstractTopFactoryStati
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        context = getContextWithDatePeriod(context);
+        try {
+            context = getContextWithDatePeriod(context);
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
 
         SetStringValueData activeFactories = (SetStringValueData)super.getValue(context);
         Map<String, Long> factoryByTime = getFactoryTimeUsage(context, activeFactories);
 
         List<Map.Entry<String, Long>> top = new ArrayList<>(factoryByTime.entrySet());
+
         keepTopItems(top);
 
         List<ListStringValueData> result = new ArrayList<>(100);
-        for (int i = 0; i < Math.min(TOP, top.size()); i++) {
+        for (
+                int i = 0;
+                i < Math.min(TOP, top.size()); i++)
+
+        {
             String factoryUrl = top.get(i).getKey();
 
             context = Utils.cloneAndClearFilters(context);
