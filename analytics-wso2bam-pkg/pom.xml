@@ -73,9 +73,15 @@
                                 <phase>process-resources</phase>
                                 <configuration>
                                     <tasks>
-                                        <copy todir="${project.build.directory}/wso2bam-analytics/" overwrite="true">
-                                            <fileset dir="${settings.localRepository}/../${wso2bam.version}"/>
-                                        </copy>
+                                        <!-- Downloading WSo2 BAM server -->
+                                        <get src="http://dist.wso2.org/maven2/org/wso2/bam/wso2bam/${wso2.bam.version}/wso2bam-${wso2.bam.version}.zip" 
+                                            dest="${project.build.directory}/wso2bam-${wso2.bam.version}.zip"/>
+                                        <unzip src="${project.build.directory}/wso2bam-${wso2.bam.version}.zip" dest="${project.build.directory}/"/>
+                                        <move todir="${project.build.directory}/wso2bam-analytics">
+                                            <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}"/>
+                                        </move>
+
+                                        <!-- Coping resources -->
                                         <copy todir="${project.build.directory}/wso2bam-analytics/" overwrite="true">
                                             <fileset dir="${basedir}/src/main/resources/server"/>
                                         </copy>
@@ -94,6 +100,10 @@
 
                                         <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/*.sh" perm="+x"/>
+
+                                        <exec executable="zip" dir="${project.build.directory}">
+                                            <arg line="-r wso2bam-analytics.zip wso2bam-analytics"/>
+                                        </exec>
                                     </tasks>
                                 </configuration>
                                 <goals>

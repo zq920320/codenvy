@@ -49,10 +49,6 @@
         <everrest.version>1.0.10</everrest.version>
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
 
-        <!-- GWT -->
-        <gwt.version>2.5.0</gwt.version>
-        <javax.validation.version>1.0.0.GA</javax.validation.version>
-
         <!-- Third parties -->
         <testng.version>6.3.1</testng.version>
         <junit.version>4.10</junit.version>
@@ -71,6 +67,9 @@
         
         <!-- Platrofm API-->
         <platform.api.version>1.0.0-SNAPSHOT</platform.api.version>
+
+        <!-- WSo2 Server -->
+        <wso2.bam.version>2.3.0</wso2.bam.version>
     </properties>
 
     <modules>
