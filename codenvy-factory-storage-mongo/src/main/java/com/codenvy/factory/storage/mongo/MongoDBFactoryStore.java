@@ -45,24 +45,27 @@ public class MongoDBFactoryStore implements FactoryStore {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBFactoryStore.class);
 
     public MongoDBFactoryStore() {
-       this("localhost", 27017, null, null);
+       this("localhost", 27017, null, null, null, null);
     }
 
-    public MongoDBFactoryStore(String host, int port, String dbName, String collectionName) {
-        MongoClient mongoClient = null;
+    public MongoDBFactoryStore(String host, int port, String dbName, String collectionName, String username, String password) {
+        MongoClient mongoClient;
+        DB db;
         try {
             mongoClient = new MongoClient(host, port);
+            db = mongoClient.getDB(dbName != null && !dbName.isEmpty() ? dbName : DEFAULT_DB_NAME);
+
+            if (username != null && password != null) {
+                if (!db.authenticate(username, password.toCharArray()))
+                    throw new RuntimeException("Wrong MongoDB credentians, authentication failed.");
+
+            }
+            factories = db.getCollection(
+                    collectionName != null && !collectionName.isEmpty() ? collectionName : DEFAULT_COLLECTION_NAME);
+
         } catch (UnknownHostException e) {
             LOG.error(e.getMessage());
         }
-        DB db;
-        if (mongoClient != null) {
-            db = mongoClient.getDB(dbName != null && !dbName.isEmpty() ? dbName : DEFAULT_DB_NAME);
-        } else {
-            throw new RuntimeException("Cannot connect to mongo DB.");
-        }
-        factories = db.getCollection(
-                collectionName != null && !collectionName.isEmpty() ? collectionName : DEFAULT_COLLECTION_NAME);
     }
 
 

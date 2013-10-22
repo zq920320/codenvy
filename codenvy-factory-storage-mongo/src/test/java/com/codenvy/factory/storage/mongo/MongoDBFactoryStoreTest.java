@@ -67,7 +67,7 @@ public class MongoDBFactoryStoreTest {
         client = new MongoClient(new ServerAddress(serverAddress));
         collection = client.getDB(DB_NAME).getCollection(COLL_NAME);
 
-        store = new MongoDBFactoryStore(serverAddress.getHostName(), serverAddress.getPort(), DB_NAME, COLL_NAME);
+        store = new MongoDBFactoryStore(serverAddress.getHostName(), serverAddress.getPort(), DB_NAME, COLL_NAME, null, null);
     }
 
     @AfterMethod
