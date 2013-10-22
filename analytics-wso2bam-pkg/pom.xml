@@ -97,18 +97,31 @@
                                         <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/" overwrite="true">
                                             <fileset dir="${project.build.directory}/packager-conf/war"/>
                                         </copy>
-
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/*.sh" perm="+x"/>
-
-                                        <exec executable="zip" dir="${project.build.directory}">
-                                            <arg line="-r wso2bam-analytics.zip wso2bam-analytics"/>
-                                        </exec>
                                     </tasks>
                                 </configuration>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <!-- Create the distribution zip and attach it to maven -->
+                            <execution>
+                                <id>tomcat-zip</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <updateOnly>false</updateOnly>
+                                    <descriptors>
+                                        <descriptor>${project.basedir}/src/main/resources/assembly.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
