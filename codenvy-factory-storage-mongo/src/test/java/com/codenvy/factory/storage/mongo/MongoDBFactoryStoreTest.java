@@ -19,12 +19,6 @@ package com.codenvy.factory.storage.mongo;
 
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-//import de.flapdoodle.embedmongo.MongoDBRuntime;
-//import de.flapdoodle.embedmongo.MongodExecutable;
-//import de.flapdoodle.embedmongo.MongodProcess;
-//import de.flapdoodle.embedmongo.config.MongodConfig;
-//import de.flapdoodle.embedmongo.distribution.Version;
-//import de.flapdoodle.embedmongo.runtime.Network;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryImage;
