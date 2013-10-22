@@ -41,6 +41,10 @@ var _acceptedURL;
 // Element which contains the number requests to create factory service 
 var _accepted;
 
+// Counter value
+var _counterValue = 0;
+
+
 /*
  *
  */
@@ -97,12 +101,18 @@ function getLink(rel) {
 }
 
 function factoryButtonClickHandler() {
+	if (_accepted != null && _accepted != undefined) {
+		_counterValue++;
+		showAccepted();
+	}
+	/*
 	var url = getLink("create-project");
 	if (url == null || url == undefined || url.trim() == "") {
 		return;
 	}
 	
-	window.open(url, "_blank");	
+	window.open(url, "_blank");
+	*/
 }
 
 function embedWhite() {
@@ -314,6 +324,8 @@ function embedAdvancedWithCounter() {
 }
 
 function showAccepted() {
+	_accepted.innerHTML = "" + _counterValue;
+	/*
 	_accepted.innerHTML = "...";
 	try {
 		var acceptedURL = getLink("accepted");
@@ -338,6 +350,7 @@ function showAccepted() {
 	} catch (e) {
 		console.log("" + e.message);
 	}
+	*/
 }
 
 function embedFactoryButton() {
@@ -388,6 +401,7 @@ function embedFactoryButton() {
 	}
 	
 	if (_accepted != null && _accepted != undefined) {
+		_counterValue = 0;
 		showAccepted();
 	}
 	
