@@ -101,18 +101,19 @@ function getLink(rel) {
 }
 
 function factoryButtonClickHandler() {
+	/*
 	if (_accepted != null && _accepted != undefined) {
 		_counterValue++;
 		showAccepted();
 	}
-	/*
+	*/
+	
 	var url = getLink("create-project");
 	if (url == null || url == undefined || url.trim() == "") {
 		return;
 	}
 	
 	window.open(url, "_blank");
-	*/
 }
 
 function embedWhite() {
@@ -323,10 +324,13 @@ function embedAdvancedWithCounter() {
 	}	    
 }
 
+function isDigits(s) {
+	var r=/^\d+$/;
+	return r.test(s);
+}
+
 function showAccepted() {
-	_accepted.innerHTML = "" + _counterValue;
-	/*
-	_accepted.innerHTML = "...";
+	_accepted.innerHTML = "0";
 	try {
 		var acceptedURL = getLink("accepted");
 		if (acceptedURL == null || acceptedURL == undefined) {
@@ -336,12 +340,11 @@ function showAccepted() {
 		var request = new XMLHttpRequest();
 		request.onreadystatechange  = function() {
 			if (request.readyState == 4 && request.status == 200) {
-				var value = request.responseText;
-				if (value.length > 4) {
-					value = value.substring(0, 4);
-				}
-				
-				_accepted.innerHTML = value;
+				if (isDigits(request.responseText)) {
+					_accepted.innerHTML = request.responseText;
+				} else {
+					_accepted.innerHTML = "0";
+				}				
 		    }
 		}
 
@@ -350,7 +353,6 @@ function showAccepted() {
 	} catch (e) {
 		console.log("" + e.message);
 	}
-	*/
 }
 
 function embedFactoryButton() {
