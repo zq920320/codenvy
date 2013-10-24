@@ -46,10 +46,10 @@ public class InMemoryFactoryStore implements FactoryStore {
                 newImages.add(newImage);
             }
 
-            factories.put(factoryUrl.getId(), factoryUrl);
-            this.images.put(factoryUrl.getId(), newImages);
+            factories.put(newFactoryUrl.getId(), newFactoryUrl);
+            this.images.put(newFactoryUrl.getId(), newImages);
 
-            return factoryUrl.getId();
+            return newFactoryUrl.getId();
         } catch (IOException e) {
             throw new FactoryUrlException(e.getLocalizedMessage(), e);
         } finally {
