@@ -87,7 +87,5 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFacto
         if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
             throw new FactoryUrlInvalidArgumentException("Vcsurl is null or empty.");
         }
-
-        SimpleFactoryUrlFormat.checkRepository(factoryUrl.getVcsurl());
     }
 }

@@ -23,29 +23,35 @@ import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.commons.lang.NameGenerator;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class InMemoryFactoryStore implements FactoryStore {
     private              Map<String, Set<FactoryImage>>  images    = new HashMap<>();
     private              Map<String, AdvancedFactoryUrl> factories = new HashMap<>();
-    private static final ReentrantReadWriteLock        lock      = new ReentrantReadWriteLock();
+    private static final ReentrantReadWriteLock          lock      = new ReentrantReadWriteLock();
 
     @Override
     public String saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
         lock.writeLock().lock();
         try {
-            factoryUrl.setId(NameGenerator.generate("", 16));
-//            Set<FactoryImage> newImages = new HashSet<>();
-//            for (FactoryImage image : images) {
-//                image.setName(NameGenerator.generate("", 16) + image.getName());
-//                newImages.add(image);
-//            }
+            AdvancedFactoryUrl newFactoryUrl = new AdvancedFactoryUrl(factoryUrl, null);
+            newFactoryUrl.setId(NameGenerator.generate("", 16));
+            Set<FactoryImage> newImages = new HashSet<>();
+            for (FactoryImage image : images) {
+                FactoryImage newImage =
+                        new FactoryImage(Arrays.copyOf(image.getImageData(), image.getImageData().length), image.getMediaType(),
+                                         image.getName());
+                newImages.add(newImage);
+            }
 
             factories.put(factoryUrl.getId(), factoryUrl);
-            this.images.put(factoryUrl.getId(), images);
+            this.images.put(factoryUrl.getId(), newImages);
 
             return factoryUrl.getId();
+        } catch (IOException e) {
+            throw new FactoryUrlException(e.getLocalizedMessage(), e);
         } finally {
             lock.writeLock().unlock();
         }

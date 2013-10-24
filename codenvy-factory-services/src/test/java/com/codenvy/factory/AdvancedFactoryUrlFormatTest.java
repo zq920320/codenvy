@@ -20,16 +20,14 @@ package com.codenvy.factory;
 import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
 
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import static org.mockito.Mockito.when;
@@ -37,21 +35,13 @@ import static org.testng.Assert.assertEquals;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class AdvancedFactoryUrlFormatTest {
-    static String VALID_REPOSITORY_URL;
+    static String VALID_REPOSITORY_URL = "http://github.com/codenvy/cloudide";
 
     @Mock
     private FactoryClient factoryClient;
 
+    @InjectMocks
     private AdvancedFactoryUrlFormat factoryUrlFormat;
-
-    public AdvancedFactoryUrlFormatTest() throws IOException, URISyntaxException {
-        VALID_REPOSITORY_URL = SimpleFactoryUrlFormatTest.initLocalRepo();
-    }
-
-    @BeforeMethod
-    public void setUp() throws Exception {
-        this.factoryUrlFormat = new AdvancedFactoryUrlFormat(factoryClient);
-    }
 
     @Test
     public void shouldBeAbleToParseValidUrl() throws Exception {
@@ -116,11 +106,8 @@ public class AdvancedFactoryUrlFormatTest {
                 // invalid vcs
                 {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null)},
                 // invalid vcsurl
-                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null)},
+                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null)}
                 // invalid vcsurl
-                {new AdvancedFactoryUrl("1.1", "git", "file://testRepository/testrepository", "commit123456789", null, null, false,
-                                        "newBranch", null,
-                                        null, null)} // invalid vcsurl
         };
     }
 

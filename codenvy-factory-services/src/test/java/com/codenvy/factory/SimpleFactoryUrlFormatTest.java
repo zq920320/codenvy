@@ -18,36 +18,21 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.SimpleFactoryUrl;
-import com.codenvy.commons.lang.ZipUtils;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.util.Collections;
 
 import static org.testng.Assert.assertEquals;
 
 public class SimpleFactoryUrlFormatTest {
-    private        SimpleFactoryUrlFormat factoryUrlFormat;
-    private static String                 VALID_REPOSITORY_URL;
-
-    public SimpleFactoryUrlFormatTest() throws IOException, URISyntaxException {
-        VALID_REPOSITORY_URL = initLocalRepo();
-    }
-
-    static String initLocalRepo() throws IOException, URISyntaxException {
-        File testRepository = Files.createTempDirectory("testrepository").toFile();
-        ZipUtils.unzip(new File(Thread.currentThread().getContextClassLoader().getResource("testrepository.zip").toURI()), testRepository);
-        return "file://" + testRepository.getAbsolutePath() + "/testrepository";
-    }
+    private SimpleFactoryUrlFormat factoryUrlFormat;
+    private static String VALID_REPOSITORY_URL = "http://github.com/codenvy/cloudide";
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -104,9 +89,7 @@ public class SimpleFactoryUrlFormatTest {
                                enc(VALID_REPOSITORY_URL)}, // vcs par is missing
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt"}, // vcsurl par is missing
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc(VALID_REPOSITORY_URL) + "&vcsurl=" + enc(VALID_REPOSITORY_URL)}, // vcsurl par is duplicated
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc("http://github/some/path?somequery=qwe&somequery=sss&somequery=rty")} // vcsurl par is duplicated
+                               enc(VALID_REPOSITORY_URL) + "&vcsurl=" + enc(VALID_REPOSITORY_URL)} // vcsurl par is duplicated
         };
     }
 
