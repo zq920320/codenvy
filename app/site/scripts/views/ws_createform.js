@@ -43,9 +43,10 @@
 
                 __validationRules : function(){
                     return {
-                        password : {
-                            required: true
-                        },
+                        domain: {
+                        required : true,
+                        validDomain : true
+                    },
                         email: {
                             required: true,
                             checkEmail : true,
