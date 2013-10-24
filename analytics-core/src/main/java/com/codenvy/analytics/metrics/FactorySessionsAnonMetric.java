@@ -34,7 +34,7 @@ public class FactorySessionsAnonMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "false");
+        Parameters.PARAM.put(context, "false");
         return super.getValue(context);
     }
 

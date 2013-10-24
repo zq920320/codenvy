@@ -18,7 +18,7 @@ public class UserLoginGithubMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "github");
+        Parameters.PARAM.put(context, "github");
         return super.getValue(context);
     }
 

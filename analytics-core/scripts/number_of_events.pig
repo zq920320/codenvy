@@ -25,4 +25,4 @@ a2 = FOREACH a1 GENERATE event;
 a = countAll(a2);
 
 result = FOREACH a GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('value', countAll);
-STORE result INTO '$CASSANDRA_STORAGE/$CASSANDRA_COLUMN_FAMILY' USING CassandraStorage();
+STORE result INTO '$CASSANDRA_STORAGE/$METRIC' USING CassandraStorage();

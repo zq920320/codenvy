@@ -66,8 +66,8 @@ public abstract class AbstractTopReferrersMetric extends AbstractTopFactoryStati
 
     private void addFirstLastSessionsOccurrence(List<String> item, Map<String, String> context) throws IOException {
         context = Utils.clone(context);
-        MetricParameter.FROM_DATE.putDefaultValue(context);
-        MetricParameter.TO_DATE.putDefaultValue(context);
+        Parameters.FROM_DATE.putDefaultValue(context);
+        Parameters.TO_DATE.putDefaultValue(context);
 
         FactorySessionFirstMetric sessionFirstMetric =
                 (FactorySessionFirstMetric)MetricFactory.createMetric(MetricType.FACTORY_SESSION_FIRST);

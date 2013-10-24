@@ -36,7 +36,7 @@ public class ProjectCreatedSpringMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "Spring");
+        Parameters.PARAM.put(context, "Spring");
         return super.getValue(context);
     }
 

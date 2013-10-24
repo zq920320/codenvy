@@ -15,26 +15,27 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.scripts;
+package com.codenvy.analytics.cassandra;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.scripts.ScriptType;
 import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-
-import static org.testng.Assert.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestNumberOfEventsByTypes extends BaseTest {
+public class TestStoreDataToCassandra extends BaseTest {
 
     private Map<String, String> params = new HashMap<>();
 
@@ -50,26 +51,13 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.PARAM.put(params, "USER");
-        Parameters.CASSANDRA_STORAGE.put(params, "fake");
-        Parameters.METRIC.put(params, "fake");
+        Parameters.CASSANDRA_STORAGE.put(params, CASSANDRA_URL);
+        Parameters.METRIC.put(params, CASSANDRA_KEY_SPACE);
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
 
     @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
-
-        assertTrue(iterator.hasNext());
-
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 4);
-        assertNotEquals(tuple.get(0).toString(), "()");
-        assertEquals(tuple.get(1).toString(), "(date,20130101)");
-        assertEquals(tuple.get(2).toString(), "(type,user1)");
-        assertEquals(tuple.get(3).toString(), "(value,2)");
-
-        assertFalse(iterator.hasNext());
+    public void testStore() throws Exception {
+        PigServer.executeAndReturn(ScriptType.TEST_CASSANDRA_STORE, params);
     }
 }

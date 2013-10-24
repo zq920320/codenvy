@@ -55,7 +55,7 @@ public abstract class NumberReadBasedMetric extends ReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
+    public Set<Parameters> getParams() {
         return MetricFactory.createMetric(basedMetric).getParams();
     }
 }

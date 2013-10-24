@@ -1,3 +1,3 @@
 rm wso2carbon.pid 
-JAVA_OPTS="$JAVA_OPTS -Ddisable.cassandra.server.startup=true"
+export ANALYTICS_LOGS_DIR=
 sh ./bin/wso2server.sh  start

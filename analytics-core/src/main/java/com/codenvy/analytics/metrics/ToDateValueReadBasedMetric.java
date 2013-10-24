@@ -30,14 +30,14 @@ public abstract class ToDateValueReadBasedMetric extends ReadBasedMetric {
         context = Utils.clone(context);
 
         try {
-            Calendar lastDay = Utils.parseDate(MetricParameter.TO_DATE.getDefaultValue());
+            Calendar lastDay = Utils.parseDate(Parameters.TO_DATE.getDefaultValue());
             Calendar toDate = Utils.getToDate(context);
 
             if (toDate.after(lastDay)) {
-                MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.getDefaultValue());
-                MetricParameter.TO_DATE.putDefaultValue(context);
+                Parameters.FROM_DATE.put(context, Parameters.TO_DATE.getDefaultValue());
+                Parameters.TO_DATE.putDefaultValue(context);
             } else {
-                MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.get(context));
+                Parameters.FROM_DATE.put(context, Parameters.TO_DATE.get(context));
             }
 
             return super.getValue(context);
@@ -48,9 +48,9 @@ public abstract class ToDateValueReadBasedMetric extends ReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
+    public Set<Parameters> getParams() {
         return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE, MetricParameter.TO_DATE}));
+                Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
     }
 
     /** {@inheritDoc} */

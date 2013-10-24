@@ -36,7 +36,7 @@ public class ProjectCreatedPythonMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "Python");
+        Parameters.PARAM.put(context, "Python");
         return super.getValue(context);
     }
 

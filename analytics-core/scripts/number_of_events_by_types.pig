@@ -28,4 +28,4 @@ b1 = GROUP a BY param;
 b = FOREACH b1 GENERATE group, COUNT(a) AS countAll;
 
 result = FOREACH b GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('type', group), TOTUPLE('value', countAll);
-STORE result INTO '$CASSANDRA_STORAGE/$CASSANDRA_COLUMN_FAMILY' USING CassandraStorage();
+STORE result INTO '$CASSANDRA_STORAGE/$METRIC' USING CassandraStorage();

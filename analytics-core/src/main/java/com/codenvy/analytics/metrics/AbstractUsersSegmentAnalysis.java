@@ -35,8 +35,8 @@ public abstract class AbstractUsersSegmentAnalysis extends CalculatedMetric {
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         context = Utils.newContext();
-        MetricParameter.FROM_DATE.putDefaultValue(context);
-        MetricParameter.TO_DATE.putDefaultValue(context);
+        Parameters.FROM_DATE.putDefaultValue(context);
+        Parameters.TO_DATE.putDefaultValue(context);
 
         Map<String, FixedListLongValueData> by1day = getUsageByPeriod(context, 1);
         Map<String, FixedListLongValueData> by7day = getUsageByPeriod(context, 7);

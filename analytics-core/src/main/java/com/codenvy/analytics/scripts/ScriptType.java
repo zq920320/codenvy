@@ -19,7 +19,7 @@
 package com.codenvy.analytics.scripts;
 
 
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.value.*;
 
 import java.util.Arrays;
@@ -31,18 +31,18 @@ import java.util.Set;
 public enum ScriptType {
     NUMBER_OF_EVENTS {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
     },
     NUMBER_OF_EVENTS_BY_TYPES {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
-            params.add(MetricParameter.PARAM);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            params.add(Parameters.PARAM);
             return params;
         }
     },
@@ -55,6 +55,7 @@ public enum ScriptType {
     TEST_EXTRACT_QUERY_PARAM,
     TEST_COMBINE_SMALL_SESSIONS,
     TEST_TIME_BETWEEN_PAIRS_OF_EVENTS,
+    TEST_CASSANDRA_STORE,
 
 
     // TODO
@@ -72,8 +73,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     SET_USER_CREATED_FROM_FACTORY_BY_FACTORY_URL {
@@ -83,8 +84,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     SET_USER_CREATED_FROM_FACTORY {
@@ -100,8 +101,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     USER_CREATED_FROM_FACTORY_BY_WS {
@@ -111,8 +112,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     USERS_COMPLETED_PROFILE {
@@ -122,9 +123,9 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = new HashSet<>();
-            params.add(MetricParameter.LOAD_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = new HashSet<>();
+            params.add(Parameters.LOAD_DIR);
             return params;
         }
     },
@@ -135,11 +136,11 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
-            params.add(MetricParameter.STORE_DIR);
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.LOAD_DIR);
+            params.add(Parameters.STORE_DIR);
+            params.add(Parameters.EVENT);
             return params;
         }
     },
@@ -168,9 +169,9 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
     },
@@ -181,15 +182,15 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     JREBEL_USER_PROFILE_INFO {
@@ -205,8 +206,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM};
         }
     },
     PROJECT_DEPLOYED_BY_USERS {
@@ -216,8 +217,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM, Parameters.FILTER};
         }
     },
     PROJECT_DEPLOYED_BY_DOMAINS {
@@ -227,8 +228,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM, Parameters.FILTER};
         }
     },
     PRODUCT_USAGE_TIME_USERS {
@@ -250,9 +251,9 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.LOAD_DIR);
             return params;
         }
     },
@@ -269,8 +270,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     PRODUCT_USAGE_TIME_FACTORY {
@@ -286,14 +287,14 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     PRODUCT_USAGE_SESSIONS_BY_USERS {
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
 
         @Override
@@ -303,8 +304,8 @@ public enum ScriptType {
     },
     PRODUCT_USAGE_SESSIONS_BY_DOMAINS {
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
 
         @Override
@@ -319,10 +320,10 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.FIELD);
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.FIELD);
+            params.add(Parameters.EVENT);
             return params;
         }
     },
@@ -333,15 +334,15 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.FIELD);
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.FIELD);
+            params.add(Parameters.EVENT);
             return params;
         }
     },
@@ -352,15 +353,15 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.FIELD);
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.FIELD);
+            params.add(Parameters.EVENT);
             return params;
         }
     },
@@ -371,15 +372,15 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.FIELD);
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.FIELD);
+            params.add(Parameters.EVENT);
             return params;
         }
     },
@@ -390,9 +391,9 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.LOAD_DIR);
             return params;
         }
     },
@@ -403,14 +404,14 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.LOAD_DIR);
             return params;
         }
     },
@@ -421,8 +422,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     FACTORY_URL_ACCEPTED_BY_REFERRER_URL {
@@ -432,8 +433,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     FACTORY_URL_ACCEPTED_BY_ORG_ID {
@@ -443,8 +444,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     FACTORY_URL_ACCEPTED_BY_AFFILIATE_ID {
@@ -454,8 +455,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     NUMBER_EVENTS {
@@ -465,9 +466,9 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
     },
@@ -478,8 +479,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM};
         }
     },
     FACTORY_SESSIONS_TYPE_BY_WS {
@@ -489,8 +490,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM, Parameters.FILTER};
         }
     },
     NUMBER_EVENTS_WITH_TYPE {
@@ -500,16 +501,16 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
-            params.add(MetricParameter.PARAM);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            params.add(Parameters.PARAM);
             return params;
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM};
         }
     },
     NUMBER_EVENTS_BY_USERS {
@@ -519,15 +520,15 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     NUMBER_EVENTS_BY_WS {
@@ -537,15 +538,15 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     NUMBER_EVENTS_WITH_TYPE_BY_USERS {
@@ -555,16 +556,16 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
-            params.add(MetricParameter.PARAM);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            params.add(Parameters.PARAM);
             return params;
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM, Parameters.FILTER};
         }
     },
     NUMBER_EVENTS_WITH_TYPE_BY_WS {
@@ -574,16 +575,16 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
-            params.add(MetricParameter.PARAM);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            params.add(Parameters.PARAM);
             return params;
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM, Parameters.FILTER};
         }
     },
     NUMBER_EVENTS_WITH_TYPE_BY_DOMAINS {
@@ -593,16 +594,16 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
-            params.add(MetricParameter.PARAM);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            params.add(Parameters.PARAM);
             return params;
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.PARAM, MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.PARAM, Parameters.FILTER};
         }
     },
     NUMBER_EVENTS_BY_DOMAINS {
@@ -612,15 +613,15 @@ public enum ScriptType {
         }
 
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     ACTIVITY_BY_USERS {
@@ -630,16 +631,16 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     UPDATE_PROFILE_BY_USERS {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
-            params.add(MetricParameter.STORE_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.LOAD_DIR);
+            params.add(Parameters.STORE_DIR);
             return params;
         }
 
@@ -649,16 +650,16 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     USERS_BY_COMPANY {
         @Override
-        public Set<MetricParameter> getParams() {
-            return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{
-                    MetricParameter.LOAD_DIR,
-                    MetricParameter.PARAM}));
+        public Set<Parameters> getParams() {
+            return new LinkedHashSet<>(Arrays.asList(new Parameters[]{
+                    Parameters.LOAD_DIR,
+                    Parameters.PARAM}));
         }
 
         @Override
@@ -673,10 +674,10 @@ public enum ScriptType {
     },
     ERROR_TYPES {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.remove(MetricParameter.USER);
-            params.remove(MetricParameter.WS);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.remove(Parameters.USER);
+            params.remove(Parameters.WS);
             return params;
         }
 
@@ -687,9 +688,9 @@ public enum ScriptType {
     },
     TIME_BETWEEN_EVENTS {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
 
@@ -700,9 +701,9 @@ public enum ScriptType {
     },
     TIME_BETWEEN_EVENTS_BY_USERS {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
 
@@ -712,15 +713,15 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     TIME_BETWEEN_EVENTS_BY_DOMAINS {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.EVENT);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
             return params;
         }
 
@@ -730,8 +731,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     /**
@@ -753,10 +754,10 @@ public enum ScriptType {
     },
     FACTORY_URL_ACCEPTED {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = super.getParams();
-            params.add(MetricParameter.LOAD_DIR);
-            params.add(MetricParameter.STORE_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.LOAD_DIR);
+            params.add(Parameters.STORE_DIR);
             return params;
         }
 
@@ -778,8 +779,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     SET_FACTORY_CREATED {
@@ -795,8 +796,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     SET_FACTORY_CREATED_BY_PROJECT_TYPE {
@@ -806,8 +807,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     SET_FACTORY_CREATED_BY_REPOSITORY_URL {
@@ -817,8 +818,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     SET_FACTORY_CREATED_BY_USERS {
@@ -828,8 +829,8 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     },
     ACTON {
@@ -840,9 +841,9 @@ public enum ScriptType {
     },
     USERS_PROFILES {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = new HashSet<>();
-            params.add(MetricParameter.LOAD_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = new HashSet<>();
+            params.add(Parameters.LOAD_DIR);
             return params;
         }
 
@@ -858,9 +859,9 @@ public enum ScriptType {
     },
     REFERRERS {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = new HashSet<>();
-            params.add(MetricParameter.LOAD_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = new HashSet<>();
+            params.add(Parameters.LOAD_DIR);
             return params;
         }
 
@@ -871,9 +872,9 @@ public enum ScriptType {
     },
     REFERRERS_BY_WS {
         @Override
-        public Set<MetricParameter> getParams() {
-            Set<MetricParameter> params = new HashSet<>();
-            params.add(MetricParameter.LOAD_DIR);
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = new HashSet<>();
+            params.add(Parameters.LOAD_DIR);
             return params;
         }
 
@@ -883,32 +884,32 @@ public enum ScriptType {
         }
 
         @Override
-        public MetricParameter[] getKeyScheme() {
-            return new MetricParameter[]{MetricParameter.FILTER};
+        public Parameters[] getKeyScheme() {
+            return new Parameters[]{Parameters.FILTER};
         }
     };
 
 
     /** @return list of mandatory parameters required to be passed to the script */
-    public Set<MetricParameter> getParams() {
+    public Set<Parameters> getParams() {
         return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                    MetricParameter.TO_DATE,
-                                                    MetricParameter.USER,
-                                                    MetricParameter.WS,
-                                                    MetricParameter.CASSANDRA_STORAGE,
-                                                    MetricParameter.CASSANDRA_COLUMN_FAMILY}));
+                Arrays.asList(new Parameters[]{Parameters.FROM_DATE,
+                                               Parameters.TO_DATE,
+                                               Parameters.USER,
+                                               Parameters.WS,
+                                               Parameters.CASSANDRA_STORAGE,
+                                               Parameters.METRIC}));
     }
 
     /**
      * If script returns {@link MapValueData} result type, then it is necessary to provide also the scheme of keys.
      * In a word, it provides additional information for building unique keys sequences for result.
      */
-    public MetricParameter[] getKeyScheme() {
-        return new MetricParameter[0];
+    public Parameters[] getKeyScheme() {
+        return new Parameters[0];
     }
 
-    /** @return true if script requires {@link MetricParameter#LOG} being  executed. */
+    /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */
     public boolean isLogRequired() {
         return true;
     }

@@ -42,8 +42,8 @@ abstract class ListMetric extends AbstractMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
-        Set<MetricParameter> params = new HashSet<>();
+    public Set<Parameters> getParams() {
+        Set<Parameters> params = new HashSet<>();
         for (Metric metric : metrics) {
             params.addAll(metric.getParams());
         }

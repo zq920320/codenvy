@@ -41,7 +41,7 @@ public interface Metric {
     Class<? extends ValueData> getValueDataClass();
 
     /** @return list of mandatory parameters that have to be passed to the script */
-    Set<MetricParameter> getParams();
+    Set<Parameters> getParams();
 
     /** @return the description of the metric */
     String getDescription();

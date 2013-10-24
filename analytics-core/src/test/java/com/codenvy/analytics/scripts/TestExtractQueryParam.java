@@ -19,7 +19,7 @@
 package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -66,13 +66,13 @@ public class TestExtractQueryParam extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
-        MetricParameter.LOG.put(context, log.getAbsolutePath());
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
-        MetricParameter.FROM_DATE.put(context, "20130101");
-        MetricParameter.TO_DATE.put(context, "20130101");
-        MetricParameter.CASSANDRA_COLUMN_FAMILY.put(context, "fake");
-        MetricParameter.CASSANDRA_STORAGE.put(context, "fake");
+        Parameters.LOG.put(context, log.getAbsolutePath());
+        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.METRIC.put(context, "fake");
+        Parameters.CASSANDRA_STORAGE.put(context, "fake");
     }
 
     @Test

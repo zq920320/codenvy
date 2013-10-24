@@ -25,11 +25,11 @@ import java.util.Calendar;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public enum MetricParameter {
+public enum Parameters {
     // TODO rename on ScriptParameter
 
     CASSANDRA_STORAGE, // TODO
-    CASSANDRA_COLUMN_FAMILY, // TODO
+    METRIC, // TODO
 
     EVENT,
     FIELD,
@@ -99,7 +99,7 @@ public enum MetricParameter {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_MONTH, -1);
 
-            DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+            DateFormat df = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT);
             return df.format(calendar.getTime());
         }
 
@@ -118,7 +118,7 @@ public enum MetricParameter {
 
                 }
 
-                if (MetricParameter.FROM_DATE.exists(context)) {
+                if (Parameters.FROM_DATE.exists(context)) {
                     Calendar fromDate = Utils.getFromDate(context);
                     if (fromDate.after(toDate)) {
                         throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"

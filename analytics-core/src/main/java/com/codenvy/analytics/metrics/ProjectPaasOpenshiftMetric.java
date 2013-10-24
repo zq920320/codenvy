@@ -35,7 +35,7 @@ public class ProjectPaasOpenshiftMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "OpenShift");
+        Parameters.PARAM.put(context, "OpenShift");
         return super.getValue(context);
     }
 

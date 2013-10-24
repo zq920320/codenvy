@@ -34,10 +34,10 @@ public class ProjectCreatedWarNumber extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "War");
+        Parameters.PARAM.put(context, "War");
         ValueData value = super.getValue(context);
 
-        MetricParameter.PARAM.put(context, "Java");
+        Parameters.PARAM.put(context, "Java");
         return value.union(super.getValue(context));
     }
 

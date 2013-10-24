@@ -18,7 +18,7 @@ public class UserAddedToWsInviteMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "invite");
+        Parameters.PARAM.put(context, "invite");
         return super.getValue(context);
     }
 

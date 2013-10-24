@@ -42,7 +42,7 @@ public class UserUpdateProfileMetric extends ValueReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
+    public Set<Parameters> getParams() {
         return new LinkedHashSet<>();
     }
 

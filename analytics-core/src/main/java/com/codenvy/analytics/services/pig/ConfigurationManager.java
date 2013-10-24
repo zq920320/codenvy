@@ -22,13 +22,6 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface ConfigurationManager {
 
-    /** Runtime parameter name It contains the destination for configuration. */
-    public static final String ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY = "analytics.pig.runner.config";
-
-    /** The value of {@value #ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY}. */
-    public static final String PIG_RUNNER_CONFIG = System.getProperty(ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY);
-
-
     /**
      * Loads a configuration.
      *

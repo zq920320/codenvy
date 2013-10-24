@@ -24,7 +24,7 @@ public abstract class AbstractProductUsageTimeMetric extends CalculatedMetric {
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         context = Utils.newContext();
-        MetricParameter.TO_DATE.putDefaultValue(context);
+        Parameters.TO_DATE.putDefaultValue(context);
 
         Map<String, FixedListLongValueData> byTopDay = getUsageByPeriod(context, topPeriod);
         Map<String, FixedListLongValueData> by1day = getUsageByPeriod(context, 1);
@@ -82,7 +82,7 @@ public abstract class AbstractProductUsageTimeMetric extends CalculatedMetric {
             date.add(Calendar.DAY_OF_MONTH, 1 - period);
 
             if (period == LIFE_TIME_PERIOD) {
-                MetricParameter.FROM_DATE.putDefaultValue(context);
+                Parameters.FROM_DATE.putDefaultValue(context);
             } else {
                 Utils.putFromDate(context, date);
             }

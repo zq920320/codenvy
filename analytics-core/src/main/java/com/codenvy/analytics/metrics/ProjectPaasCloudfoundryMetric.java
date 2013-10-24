@@ -35,7 +35,7 @@ public class ProjectPaasCloudfoundryMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "CloudFoundry");
+        Parameters.PARAM.put(context, "CloudFoundry");
         return super.getValue(context);
     }
 

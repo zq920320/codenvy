@@ -34,7 +34,7 @@ public class ProjectCreatedMMPMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "Maven Multi-module");
+        Parameters.PARAM.put(context, "Maven Multi-module");
         return super.getValue(context);
     }
 

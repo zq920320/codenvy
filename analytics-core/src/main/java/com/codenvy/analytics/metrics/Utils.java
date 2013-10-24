@@ -37,14 +37,14 @@ public class Utils {
     }
 
     /**
-     * Parse date represented by give string using {@link MetricParameter#PARAM_DATE_FORMAT} format. Wraps {@link
+     * Parse date represented by give string using {@link Parameters#PARAM_DATE_FORMAT} format. Wraps {@link
      * ParseException} into {@link IOException}.
      *
      * @throws IOException
      *         if exception is occurred
      */
     public static Calendar parseDate(String date) throws ParseException {
-        DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+        DateFormat df = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(df.parse(date));
@@ -52,35 +52,35 @@ public class Utils {
         return calendar;
     }
 
-    /** Formats date using {@link MetricParameter#PARAM_DATE_FORMAT}. */
+    /** Formats date using {@link Parameters#PARAM_DATE_FORMAT}. */
     public static String formatDate(Calendar date) {
-        DateFormat df = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+        DateFormat df = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT);
         return df.format(date.getTime());
     }
 
-    /** Extracts {@link MetricParameter#TIME_UNIT} parameter value from context. */
+    /** Extracts {@link Parameters#TIME_UNIT} parameter value from context. */
     public static TimeUnit getTimeUnit(Map<String, String> context) {
-        return TimeUnit.valueOf(MetricParameter.TIME_UNIT.get(context));
+        return TimeUnit.valueOf(Parameters.TIME_UNIT.get(context));
     }
 
     /** @return fromDate value */
     public static Calendar getFromDate(Map<String, String> context) throws ParseException {
-        return parseDate(MetricParameter.FROM_DATE.get(context));
+        return parseDate(Parameters.FROM_DATE.get(context));
     }
 
     /** @return toDate value */
     public static Calendar getToDate(Map<String, String> context) throws ParseException {
-        return parseDate(MetricParameter.TO_DATE.get(context));
+        return parseDate(Parameters.TO_DATE.get(context));
     }
 
-    /** Puts {@link MetricParameter#FROM_DATE} parameter into context. */
+    /** Puts {@link Parameters#FROM_DATE} parameter into context. */
     public static void putFromDate(Map<String, String> context, Calendar fromDate) {
-        MetricParameter.FROM_DATE.put(context, formatDate(fromDate));
+        Parameters.FROM_DATE.put(context, formatDate(fromDate));
     }
 
-    /** Puts {@link MetricParameter#TO_DATE} parameter into context. */
+    /** Puts {@link Parameters#TO_DATE} parameter into context. */
     public static void putToDate(Map<String, String> context, Calendar toDate) {
-        MetricParameter.TO_DATE.put(context, formatDate(toDate));
+        Parameters.TO_DATE.put(context, formatDate(toDate));
     }
 
     public static String getLoadDirFor(MetricType metricType) {
@@ -93,10 +93,10 @@ public class Utils {
 
     /** Prepares load and store directories for Pig script execution */
     public static void initLoadStoreDirectories(Map<String, String> context) throws IOException {
-        if (MetricParameter.LOAD_DIR.exists(context) && MetricParameter.STORE_DIR.exists(context)) {
+        if (Parameters.LOAD_DIR.exists(context) && Parameters.STORE_DIR.exists(context)) {
 
-            File loadDir = new File(MetricParameter.LOAD_DIR.get(context));
-            File storeDir = new File(MetricParameter.STORE_DIR.get(context));
+            File loadDir = new File(Parameters.LOAD_DIR.get(context));
+            File storeDir = new File(Parameters.STORE_DIR.get(context));
 
             if (storeDir.exists()) {
                 if (loadDir.exists()) {
@@ -115,7 +115,7 @@ public class Utils {
         }
     }
 
-    /** Initialize date interval accordingly to passed {@link MetricParameter#TIME_UNIT} */
+    /** Initialize date interval accordingly to passed {@link Parameters#TIME_UNIT} */
     public static void initDateInterval(Calendar date, Map<String, String> context) throws ParseException {
         TimeUnit timeUnit = getTimeUnit(context);
 
@@ -136,8 +136,8 @@ public class Utils {
     }
 
     private static void initByLifeTime(Map<String, String> context) {
-        MetricParameter.FROM_DATE.putDefaultValue(context);
-        MetricParameter.TO_DATE.putDefaultValue(context);
+        Parameters.FROM_DATE.putDefaultValue(context);
+        Parameters.TO_DATE.putDefaultValue(context);
     }
 
     private static void initByWeek(Calendar date, Map<String, String> context) {
@@ -275,7 +275,7 @@ public class Utils {
 
         Map<String, String> context = newContext();
 
-        MetricParameter.TIME_UNIT.put(context, timeUnit.name());
+        Parameters.TIME_UNIT.put(context, timeUnit.name());
         initDateInterval(cal, context);
 
         return timeUnit == TimeUnit.DAY ? Utils.prevDateInterval(context) : context;

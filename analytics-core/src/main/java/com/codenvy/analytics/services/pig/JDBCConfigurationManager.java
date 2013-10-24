@@ -15,37 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics;
+package com.codenvy.analytics.services.pig;
 
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
-
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserCodeRefactorMetric extends ValueReadBasedMetric {
+public class JDBCConfigurationManager implements ConfigurationManager {
 
-    UserCodeRefactorMetric() {
-        super(MetricType.USER_CODE_REFACTOR);
+    /** {@inheritDoc} */
+    @Override
+    public PigRunnerConfiguration loadConfiguration() throws IOException {
+        return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<Parameters> getParams() {
-        return new LinkedHashSet<>(
-                Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
-    }
-
-    @Override
-    public String getDescription() {
-        return "The number of refactoring feature usage";
+    public void storeConfiguration() throws IOException {
     }
 }

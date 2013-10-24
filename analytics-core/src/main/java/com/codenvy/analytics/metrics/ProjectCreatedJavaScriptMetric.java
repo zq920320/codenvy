@@ -36,7 +36,7 @@ public class ProjectCreatedJavaScriptMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "JavaScript");
+        Parameters.PARAM.put(context, "JavaScript");
         return super.getValue(context);
     }
 

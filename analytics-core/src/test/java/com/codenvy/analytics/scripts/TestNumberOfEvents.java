@@ -18,7 +18,7 @@
 package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -46,14 +46,14 @@ public class TestNumberOfEvents extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        MetricParameter.FROM_DATE.put(params, "20130101");
-        MetricParameter.TO_DATE.put(params, "20130101");
-        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.REGISTERED.name());
-        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.PERSISTENT.name());
-        MetricParameter.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        MetricParameter.CASSANDRA_STORAGE.put(params, "fake");
-        MetricParameter.CASSANDRA_COLUMN_FAMILY.put(params, "fake");
-        MetricParameter.LOG.put(params, log.getAbsolutePath());
+        Parameters.FROM_DATE.put(params, "20130101");
+        Parameters.TO_DATE.put(params, "20130101");
+        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
+        Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
+        Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
+        Parameters.CASSANDRA_STORAGE.put(params, "fake");
+        Parameters.METRIC.put(params, "fake");
+        Parameters.LOG.put(params, log.getAbsolutePath());
     }
 
     @Test

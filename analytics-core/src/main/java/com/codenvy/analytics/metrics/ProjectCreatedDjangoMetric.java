@@ -36,7 +36,7 @@ public class ProjectCreatedDjangoMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "Django");
+        Parameters.PARAM.put(context, "Django");
         return super.getValue(context);
     }
 

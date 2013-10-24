@@ -34,10 +34,10 @@ public class ProjectCreatedRubyMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "Rails");
+        Parameters.PARAM.put(context, "Rails");
         ValueData value = super.getValue(context);
 
-        MetricParameter.PARAM.put(context, "Ruby");
+        Parameters.PARAM.put(context, "Ruby");
         return value.union(super.getValue(context));
     }
 

@@ -44,9 +44,9 @@ abstract class PercentMetric extends AbstractMetric {
      * */
     @Override
     @SuppressWarnings("unchecked")
-    public Set<MetricParameter> getParams() {
-        Set<MetricParameter> params =
-                (Set<MetricParameter>)((HashSet<MetricParameter>)numberMetric.getParams()).clone();
+    public Set<Parameters> getParams() {
+        Set<Parameters> params =
+                (Set<Parameters>)((HashSet<Parameters>)numberMetric.getParams()).clone();
         params.addAll(totalMetric.getParams());
 
         return params;

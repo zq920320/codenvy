@@ -48,10 +48,10 @@ public abstract class CumulativeMetric extends AbstractMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
-        Set<MetricParameter> params = addedMetric.getParams();
+    public Set<Parameters> getParams() {
+        Set<Parameters> params = addedMetric.getParams();
         params.addAll(removedMetric.getParams());
-        params.remove(MetricParameter.FROM_DATE);
+        params.remove(Parameters.FROM_DATE);
 
         return params;
     }
@@ -62,8 +62,8 @@ public abstract class CumulativeMetric extends AbstractMetric {
         try {
 
             context = Utils.clone(context);
-            MetricParameter.FROM_DATE.put(context, MetricParameter.TO_DATE.get(context));
-            MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
+            Parameters.FROM_DATE.put(context, Parameters.TO_DATE.get(context));
+            Parameters.TIME_UNIT.put(context, TimeUnit.DAY.name());
 
             validateExistenceInitialValueBefore(context);
 

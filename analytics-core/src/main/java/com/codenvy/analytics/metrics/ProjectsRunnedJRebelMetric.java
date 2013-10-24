@@ -39,10 +39,10 @@ public class ProjectsRunnedJRebelMetric extends ValueReadBasedMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
+    public Set<Parameters> getParams() {
         return new LinkedHashSet<>(
-                Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                    MetricParameter.TO_DATE}));
+                Arrays.asList(new Parameters[]{Parameters.FROM_DATE,
+                                                    Parameters.TO_DATE}));
     }
 
     /** {@inheritDoc} */

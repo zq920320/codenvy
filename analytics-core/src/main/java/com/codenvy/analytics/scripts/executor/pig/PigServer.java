@@ -19,10 +19,11 @@
 
 package com.codenvy.analytics.scripts.executor.pig;
 
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.scripts.ScriptType;
 
+import org.apache.cassandra.hadoop.pig.CassandraStorage;
 import org.apache.pig.ExecType;
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
@@ -75,20 +76,24 @@ public class PigServer {
     private static final Set<String> importedMacros = new HashSet<>();
 
     static {
-        System.setProperty("udf.import.list", "com.codenvy.analytics.pig");
+        System.setProperty("udf.import.list", "org.apache.cassandra.hadoop.pig:com.codenvy.analytics.pig");
 
         try {
             server = new org.apache.pig.PigServer(ExecType.LOCAL);
+            server.registerJar(CassandraStorage.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new IllegalStateException("Pig server can't be instantiated", e);
         }
 
+        LOGGER.info("Pig server is started");
+
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 server.shutdown();
+                LOGGER.info("Pig server is shutdown");
             }
         });
     }
@@ -103,7 +108,7 @@ public class PigServer {
         validateParameters(scriptType, context);
 
         LOGGER.info("Script execution " + scriptType + " is started with data located: " +
-                    MetricParameter.LOG.get(context));
+                    Parameters.LOG.get(context));
 
         try {
             String command = prepareRunCommand(scriptType, context);
@@ -178,7 +183,7 @@ public class PigServer {
         validateParameters(scriptType, context);
 
         LOGGER.info("Script execution " + scriptType + " is started with data located: " +
-                    MetricParameter.LOG.get(context));
+                    Parameters.LOG.get(context));
 
         try (InputStream scriptContent = readScriptContent(scriptType)) {
             server.registerScript(scriptContent, context);
@@ -190,7 +195,7 @@ public class PigServer {
 
     /** Checks if all parameters that are needed to script execution are added to context; */
     private static void validateParameters(ScriptType scriptType, Map<String, String> context) throws IOException {
-        for (MetricParameter param : scriptType.getParams()) {
+        for (Parameters param : scriptType.getParams()) {
             if (!param.exists(context)) {
                 throw new IOException("Key field " + param + " is absent in execution context");
             }
@@ -198,10 +203,10 @@ public class PigServer {
             param.validate(param.get(context), context);
         }
 
-        if (!MetricParameter.LOG.exists(context)) {
-            if (!MetricParameter.TO_DATE.exists(context) || !MetricParameter.FROM_DATE.exists(context)) {
+        if (!Parameters.LOG.exists(context)) {
+            if (!Parameters.TO_DATE.exists(context) || !Parameters.FROM_DATE.exists(context)) {
                 throw new IllegalStateException("Date parameters are absent in context");
-            } else if (!MetricParameter.TO_DATE.get(context).equals(MetricParameter.FROM_DATE.get(context))) {
+            } else if (!Parameters.TO_DATE.get(context).equals(Parameters.FROM_DATE.get(context))) {
                 throw new IllegalStateException("The date params are different");
             }
 
@@ -225,9 +230,9 @@ public class PigServer {
     private static void setOptimizedPaths(Map<String, String> context) throws IOException {
         try {
             String path = LogLocationOptimizer.generatePaths(LOGS_DIRECTORY,
-                                                             MetricParameter.FROM_DATE.get(context),
-                                                             MetricParameter.TO_DATE.get(context));
-            MetricParameter.LOG.put(context, path);
+                                                             Parameters.FROM_DATE.get(context),
+                                                             Parameters.TO_DATE.get(context));
+            Parameters.LOG.put(context, path);
         } catch (ParseException e) {
             throw new IOException(e);
         }

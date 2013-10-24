@@ -36,7 +36,7 @@ public class FactorySessionsAuthMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "true");
+        Parameters.PARAM.put(context, "true");
         return super.getValue(context);
     }
 

@@ -44,9 +44,9 @@ public class FactoryUrlAcceptedNumberMetric extends CalculatedMetric {
 
     /** {@inheritDoc} */
     @Override
-    public Set<MetricParameter> getParams() {
-        return new LinkedHashSet<>(Arrays.asList(new MetricParameter[]{MetricParameter.FROM_DATE,
-                                                                       MetricParameter.TO_DATE}));
+    public Set<Parameters> getParams() {
+        return new LinkedHashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE,
+                                                                       Parameters.TO_DATE}));
     }
 
     @Override

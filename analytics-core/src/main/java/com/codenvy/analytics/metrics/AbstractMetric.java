@@ -39,7 +39,7 @@ public abstract class AbstractMetric implements Metric {
     protected LinkedHashMap<String, String> makeUUID(Map<String, String> context) throws IOException {
         LinkedHashMap<String, String> keys = new LinkedHashMap<>();
 
-        for (MetricParameter param : getParams()) {
+        for (Parameters param : getParams()) {
             String paramKey = param.name();
             String paramValue = context.get(paramKey);
 

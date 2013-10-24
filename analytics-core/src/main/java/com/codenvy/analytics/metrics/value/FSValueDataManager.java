@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics.value;
 
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.MetricType;
 
 import org.slf4j.Logger;
@@ -142,7 +142,7 @@ public class FSValueDataManager {
         for (Entry<String, String> entry : uuid.entrySet()) {
             String element = entry.getValue().toLowerCase();
 
-            if (MetricParameter.TO_DATE.isParam(entry.getKey())) {
+            if (Parameters.TO_DATE.isParam(entry.getKey())) {
                 element = translateDateToRelativePath(entry.getValue());
             } else {
                 for (MetricFilter metricFilter : MetricFilter.values()) {
@@ -193,19 +193,19 @@ public class FSValueDataManager {
 
 
     /**
-     * Makes sure that {@link com.codenvy.analytics.metrics.MetricParameter#TO_DATE} and {@link
-     * com.codenvy.analytics.metrics.MetricParameter#FROM_DATE} are the same, otherwise {@link IllegalStateException}
+     * Makes sure that {@link com.codenvy.analytics.metrics.Parameters#TO_DATE} and {@link
+     * com.codenvy.analytics.metrics.Parameters#FROM_DATE} are the same, otherwise {@link IllegalStateException}
      * will be thrown. It condition is satisfied, then it allows to avoid creation subdirectory with name like {@link
-     * com.codenvy.analytics.metrics.MetricParameter#FROM_DATE}
+     * com.codenvy.analytics.metrics.Parameters#FROM_DATE}
      */
     private static void validateDateParams(LinkedHashMap<String, String> uuid) throws IllegalStateException {
-        if (MetricParameter.TO_DATE.exists(uuid) && MetricParameter.FROM_DATE.exists(uuid) &&
-            !MetricParameter.TO_DATE.get(uuid).equals(MetricParameter.FROM_DATE.get(uuid))) {
+        if (Parameters.TO_DATE.exists(uuid) && Parameters.FROM_DATE.exists(uuid) &&
+            !Parameters.TO_DATE.get(uuid).equals(Parameters.FROM_DATE.get(uuid))) {
 
             throw new IllegalStateException("The date params are different");
         }
 
-        uuid.remove(MetricParameter.FROM_DATE.name());
+        uuid.remove(Parameters.FROM_DATE.name());
     }
 
 

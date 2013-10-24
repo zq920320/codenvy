@@ -27,7 +27,7 @@ public class FactorySessionFirstMetric extends CalculatedMetric {
             Calendar toDate = Utils.getToDate(context);
 
             Map<String, String> dayContext = Utils.clone(context);
-            MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
+            Parameters.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
             Utils.putFromDate(dayContext, fromDate);
             Utils.putToDate(dayContext, fromDate);
 

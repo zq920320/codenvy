@@ -16,13 +16,13 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.analytics.scripts.executor.pig;
-
-import static org.junit.Assert.assertEquals;
+package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.scripts.executor.pig.LogLocationOptimizer;
 
+import org.junit.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -31,6 +31,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -51,8 +53,8 @@ public class TestLogLocationOptimizer extends BaseTest {
         File dir2 = new File(baseDir, "2013" + File.separator + "10");
         File dir3 = new File(baseDir, "2013" + File.separator + "11" + File.separator + "01");
 
-        assertEquals(dir1.getPath() + "," + dir2.getPath() + "," + dir3.getPath(),
-                     LogLocationOptimizer.generatePaths(baseDir, "20130930", "20131101"));
+        Assert.assertEquals(dir1.getPath() + "," + dir2.getPath() + "," + dir3.getPath(),
+                            LogLocationOptimizer.generatePaths(baseDir, "20130930", "20131101"));
     }
 
     @Test
@@ -94,7 +96,7 @@ public class TestLogLocationOptimizer extends BaseTest {
     }
 
     private void generateDirs(String fromDate, String toDate) throws Exception {
-        DateFormat dateFormat = new SimpleDateFormat(MetricParameter.PARAM_DATE_FORMAT);
+        DateFormat dateFormat = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT);
 
         Calendar from = Calendar.getInstance();
         from.setTime(dateFormat.parse(fromDate));

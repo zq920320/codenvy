@@ -20,10 +20,10 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a1 = usersCreatedFromFactory(l);
-a2 = FOREACH a1 GENERATE user;
-a3 = DISTINCT a2;
-a = countAll(a3);
+a1 = countAll(l);
+a = FOREACH a1 GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('value', countAll);
 
-result = FOREACH a GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('value', countAll);
-STORE result INTO '$CASSANDRA_STORAGE/$METRIC' USING CassandraStorage();
+STORE a INTO '$CASSANDRA_STORAGE/$METRIC' USING CassandraStorage();
+
+result = a;
+

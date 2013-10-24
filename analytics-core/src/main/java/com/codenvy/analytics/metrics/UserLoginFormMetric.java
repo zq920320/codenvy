@@ -19,7 +19,7 @@ public class UserLoginFormMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "jaas");
+        Parameters.PARAM.put(context, "jaas");
         return super.getValue(context);
     }
 

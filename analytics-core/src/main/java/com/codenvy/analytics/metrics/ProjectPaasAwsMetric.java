@@ -35,7 +35,7 @@ public class ProjectPaasAwsMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "AWS:BeansTalk");
+        Parameters.PARAM.put(context, "AWS:BeansTalk");
         return super.getValue(context);
     }
 

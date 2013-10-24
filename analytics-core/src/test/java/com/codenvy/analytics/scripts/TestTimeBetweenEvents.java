@@ -20,7 +20,7 @@ package com.codenvy.analytics.scripts;
 
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -81,13 +81,13 @@ public class TestTimeBetweenEvents extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
-        MetricParameter.FROM_DATE.put(context, "20130101");
-        MetricParameter.TO_DATE.put(context, "20130101");
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
-        MetricParameter.LOG.put(context, log.getAbsolutePath());
-        MetricParameter.CASSANDRA_STORAGE.put(context, "fake");
-        MetricParameter.CASSANDRA_COLUMN_FAMILY.put(context, "fake");
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
+        Parameters.LOG.put(context, log.getAbsolutePath());
+        Parameters.CASSANDRA_STORAGE.put(context, "fake");
+        Parameters.METRIC.put(context, "fake");
     }
 
     @Test

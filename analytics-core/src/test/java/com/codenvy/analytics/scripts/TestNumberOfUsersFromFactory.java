@@ -18,7 +18,7 @@
 package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -61,13 +61,13 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
 
         File log = LogGenerator.generateLog(events);
 
-        MetricParameter.LOG.put(params, log.getAbsolutePath());
-        MetricParameter.FROM_DATE.put(params, "20130101");
-        MetricParameter.TO_DATE.put(params, "20130101");
-        MetricParameter.USER.put(params, MetricParameter.USER_TYPES.ANY.name());
-        MetricParameter.WS.put(params, MetricParameter.WS_TYPES.ANY.name());
-        MetricParameter.CASSANDRA_STORAGE.put(params, "fake");
-        MetricParameter.CASSANDRA_COLUMN_FAMILY.put(params, "fake");
+        Parameters.LOG.put(params, log.getAbsolutePath());
+        Parameters.FROM_DATE.put(params, "20130101");
+        Parameters.TO_DATE.put(params, "20130101");
+        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
+        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
+        Parameters.CASSANDRA_STORAGE.put(params, "fake");
+        Parameters.METRIC.put(params, "fake");
     }
 
     @Test

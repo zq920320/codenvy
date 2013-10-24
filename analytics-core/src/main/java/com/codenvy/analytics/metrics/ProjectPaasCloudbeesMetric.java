@@ -35,7 +35,7 @@ public class ProjectPaasCloudbeesMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "CloudBees");
+        Parameters.PARAM.put(context, "CloudBees");
         return super.getValue(context);
     }
 

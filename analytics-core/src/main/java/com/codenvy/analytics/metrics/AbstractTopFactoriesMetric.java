@@ -70,8 +70,8 @@ public abstract class AbstractTopFactoriesMetric extends AbstractTopFactoryStati
             item.add(top.get(i).getValue().toString()); // mins
 
             Map<String, String> fullContext = Utils.clone(context);
-            MetricParameter.FROM_DATE.putDefaultValue(fullContext);
-            MetricParameter.TO_DATE.putDefaultValue(fullContext);
+            Parameters.FROM_DATE.putDefaultValue(fullContext);
+            Parameters.TO_DATE.putDefaultValue(fullContext);
 
             FactorySessionFirstMetric sessionFirstMetric =
                     (FactorySessionFirstMetric)MetricFactory.createMetric(MetricType.FACTORY_SESSION_FIRST);

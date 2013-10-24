@@ -39,10 +39,10 @@ abstract public class AbstractTopFactoryStatisticsMetric extends CalculatedMetri
      */
     protected Map<String, String> getContextWithDatePeriod(Map<String, String> context) throws ParseException {
         context = Utils.clone(context);
-        MetricParameter.TO_DATE.putDefaultValue(context);
+        Parameters.TO_DATE.putDefaultValue(context);
 
         if (period == LIFE_TIME_PERIOD) {
-            MetricParameter.FROM_DATE.putDefaultValue(context);
+            Parameters.FROM_DATE.putDefaultValue(context);
         } else {
             Calendar date = Utils.getToDate(context);
             date.add(Calendar.DAY_OF_MONTH, 1 - period);

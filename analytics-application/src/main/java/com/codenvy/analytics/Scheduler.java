@@ -19,7 +19,7 @@
 
 package com.codenvy.analytics;
 
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.TimeUnit;
 import com.codenvy.analytics.metrics.Utils;
 import com.codenvy.analytics.services.Feature;
@@ -121,7 +121,7 @@ public class Scheduler implements ServletContextListener {
 
     private void executeAllTime(Job job) throws Exception {
         if (job instanceof Feature) {
-            execute(job, MetricParameter.FROM_DATE.getDefaultValue(), MetricParameter.TO_DATE.getDefaultValue());
+            execute(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
         }
     }
 
@@ -133,12 +133,12 @@ public class Scheduler implements ServletContextListener {
             Calendar toDate = Utils.parseDate(toDateParam);
 
             if (fromDate.after(toDate)) {
-                throw new IllegalStateException("FROM_DATE parameter is bigger than TO_DATE parameter");
+                throw new IllegalStateException("FROM_DATE Parameters is bigger than TO_DATE Parameters");
             }
 
             Utils.putFromDate(context, fromDate);
             Utils.putToDate(context, fromDate);
-            MetricParameter.TIME_UNIT.put(context, TimeUnit.DAY.name());
+            Parameters.TIME_UNIT.put(context, TimeUnit.DAY.name());
 
             do {
                 ((Feature)job).forceExecute(context);
@@ -149,7 +149,7 @@ public class Scheduler implements ServletContextListener {
 
     private void executeLastDay(Job job) throws Exception {
         if (job instanceof Feature) {
-            execute(job, MetricParameter.TO_DATE.getDefaultValue(), MetricParameter.TO_DATE.getDefaultValue());
+            execute(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
         }
     }
 

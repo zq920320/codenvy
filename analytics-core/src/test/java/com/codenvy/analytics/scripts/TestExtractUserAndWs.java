@@ -19,7 +19,7 @@
 package com.codenvy.analytics.scripts;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.MetricParameter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.scripts.executor.pig.PigServer;
 import com.codenvy.analytics.scripts.util.Event;
 import com.codenvy.analytics.scripts.util.LogGenerator;
@@ -59,17 +59,17 @@ public class TestExtractUserAndWs extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         context = new HashMap<>();
-        MetricParameter.FROM_DATE.put(context, "20130101");
-        MetricParameter.TO_DATE.put(context, "20130101");
-        MetricParameter.LOG.put(context, log.getAbsolutePath());
-        MetricParameter.CASSANDRA_STORAGE.put(context, "fake");
-        MetricParameter.CASSANDRA_COLUMN_FAMILY.put(context, "fake");
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.LOG.put(context, log.getAbsolutePath());
+        Parameters.CASSANDRA_STORAGE.put(context, "fake");
+        Parameters.METRIC.put(context, "fake");
     }
 
     @Test
     public void testExtractAllUsers() throws Exception {
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();
 
@@ -93,8 +93,8 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractAnonymousUsers() throws Exception {
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANTONYMOUS.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANTONYMOUS.name());
 
         Set<String> actual = new HashSet<>();
 
@@ -112,8 +112,8 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractRegisteredUsers() throws Exception {
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
+        Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.name());
 
         Set<String> actual = new HashSet<>();
 
@@ -135,8 +135,8 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractAllWs() throws Exception {
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.ANY.name());
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();
 
@@ -159,8 +159,8 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractTmpWs() throws Exception {
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.TEMPORARY.name());
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.TEMPORARY.name());
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();
 
@@ -179,8 +179,8 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractPersistentWs() throws Exception {
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.ANY.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.name());
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
 
         Set<String> actual = new HashSet<>();
 
@@ -200,8 +200,8 @@ public class TestExtractUserAndWs extends BaseTest {
 
     @Test
     public void testExtractRegisteredUsersInPersistentWs() throws Exception {
-        MetricParameter.WS.put(context, MetricParameter.WS_TYPES.PERSISTENT.name());
-        MetricParameter.USER.put(context, MetricParameter.USER_TYPES.REGISTERED.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.name());
+        Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.name());
 
         Set<String> actual = new HashSet<>();
 

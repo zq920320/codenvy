@@ -36,7 +36,7 @@ public class ProjectCreatedNodejsMetric extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "nodejs");
+        Parameters.PARAM.put(context, "nodejs");
         return super.getValue(context);
     }
 

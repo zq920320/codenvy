@@ -35,7 +35,7 @@ public class ProjectPaasHerokuMetric extends CalculatedMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricParameter.PARAM.put(context, "Heroku");
+        Parameters.PARAM.put(context, "Heroku");
         return super.getValue(context);
     }
 

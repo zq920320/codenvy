@@ -25,6 +25,13 @@ import java.io.InputStream;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class XmlConfigurationManager implements ConfigurationManager {
 
+    /** Runtime parameter name. It contains the destination for configuration. */
+    public static final String ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY = "analytics.pig.runner.config";
+
+    /** The value of {@value #ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY}. */
+    public static final String PIG_RUNNER_CONFIG = System.getProperty(ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY);
+
+
     /** {@inheritDoc} */
     @Override
     public PigRunnerConfiguration loadConfiguration() throws ConfigurationManagerException {

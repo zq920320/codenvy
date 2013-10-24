@@ -54,7 +54,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             while (!fromDate.after(toDate)) {
                 Utils.putFromDate(dayContext, fromDate);
                 Utils.putToDate(dayContext, fromDate);
-                MetricParameter.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
+                Parameters.TIME_UNIT.put(dayContext, TimeUnit.DAY.name());
 
                 ValueData dayValue = evaluate(dayContext);
                 total = total.union(dayValue);
@@ -103,7 +103,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     private void putFilterValue(MetricFilter filterKey, String filterValue, LinkedHashMap<String, String> uuid) {
-        MetricParameter.FILTER.put(uuid, filterKey.name());
+        Parameters.FILTER.put(uuid, filterKey.name());
         filterKey.put(uuid, filterValue);
     }
 

@@ -41,10 +41,14 @@
         <jackson.version>1.7.4</jackson.version>
         <guava.version>13.0.1</guava.version>
         <joda-time.version>2.2</joda-time.version>
+
         <cassandra.driver.version>1.0.3</cassandra.driver.version>
         <cassandra.unit.version>1.2.0.1</cassandra.unit.version>
-        <avro.version>1.7.4</avro.version>
-        
+        <cassandra.version>1.2.9</cassandra.version>
+        <prettyprint.version>1.0-5</prettyprint.version>
+
+        <avro.version>1.4.1</avro.version>
+
         <!-- Third parties -->
         <everrest.version>1.0.10</everrest.version>
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
