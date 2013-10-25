@@ -55,23 +55,23 @@ public class FactoryFallBackServletContextListener implements ServletContextList
     }
 
     private FactoryStore getFactoryStore() {
-        FactoryStore factoryStore;
 
-        File dbSettings = new File(new File(System.getProperty("codenvy.local.conf.dir")), "factory-storage-configuration.json");
-        if (dbSettings.exists() && !dbSettings.isDirectory()) {
-            try (InputStream is = new FileInputStream(dbSettings)) {
-                MongoDbConfiguration mConf = JsonHelper.fromJson(is, MongoDbConfiguration.class, null);
-                factoryStore = new MongoDBFactoryStore(mConf);
-            } catch (IOException | JsonParseException e) {
-                LOG.error(e.getLocalizedMessage(), e);
-                throw new RuntimeException("Invalid mongo database configuration : " + dbSettings.getAbsolutePath());
+        if (System.getProperty("codenvy.local.conf.dir") == null) {
+            File dbSettings =
+                    new File(System.getProperty("codenvy.local.conf.dir"), "factory-storage-configuration.json");
+            if (dbSettings.exists() && !dbSettings.isDirectory()) {
+                try (InputStream is = new FileInputStream(dbSettings)) {
+                    MongoDbConfiguration mConf = JsonHelper.fromJson(is, MongoDbConfiguration.class, null);
+                    return new MongoDBFactoryStore(mConf);
+                } catch (IOException | JsonParseException e) {
+                    LOG.error(e.getLocalizedMessage(), e);
+                    throw new RuntimeException(
+                            "Invalid mongo database configuration : " + dbSettings.getAbsolutePath());
+                }
+
             }
-        } else {
-            factoryStore = new InMemoryFactoryStore();
         }
-
-        LOG.info("{} backend for factory storage loaded.", factoryStore.getClass().getName());
-
-        return factoryStore;
+        LOG.warn("Persistent storage configuration not found, inmemory impl will be used.");
+        return new InMemoryFactoryStore();
     }
 }
