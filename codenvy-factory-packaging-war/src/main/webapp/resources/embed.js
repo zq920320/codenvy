@@ -70,7 +70,7 @@
 	 */
 	function addIFrame(url) {
 		var _iframe = document.createElement("iframe");
-		_iframe.id = "factory-" + _factory;
+		_iframe.factory = _factory;
 		_iframe.src = url;
 		
 		// Dimensions. 0px * 0px by default
@@ -89,31 +89,48 @@
 		_iframe.allowtransparency = "true"		
 
 	    _parent.appendChild(_iframe);
+		
+		try {			
+			window["codenvy-factories"].push(_iframe);
+		} catch (e) {
+			console.log(e.message);
+		}
 	}
 	
 	/*
 	 * Adds handler to window object to handle "message" events.
 	 */
-	function handleWindowMessages() {
-		window.addEventListener("message", function(event) {
-			try {
-				// Get message.
-				var message = event.data;
-				
-				// It must be the request for resize Factory button.
-				if (message.indexOf("resize-factory-button:") != 0) {
-					return;				
-				}
-				
-				// Parse message and resize Factory Button.
-				var parts = message.split(':');			
-				var iframe = document.getElementById("factory-" + parts[1]);
-				iframe.style.width = "" + parts[2] + "px";
-				iframe.style.height = "" + parts[3] + "px";
-			} catch (e) {
-				console.log(e.message);
-			}			
-		}, false);
+	function ensureResizeHandlerSet() {
+		if (window["codenvy-factories"] == null || window["codenvy-factories"] == undefined) {
+			window["codenvy-factories"] = new Array();
+			
+			window.addEventListener("message", function(event) {
+				try {
+					// Get message.
+					var message = event.data;
+					
+					// It must be the request for resize Factory button.
+					if (message.indexOf("resize-factory-button:") != 0) {
+						return;				
+					}
+					
+					// Parse message and resize Factory Button.
+					var parts = message.split(':');
+					
+					// resize all, which ID is equal to required
+					for (var i = 0; i < window["codenvy-factories"].length; i++) {
+						var iframe = window["codenvy-factories"][i];
+						if (iframe.factory == parts[1]) {
+							iframe.style.width = "" + parts[2] + "px";
+							iframe.style.height = "" + parts[3] + "px";
+						}
+					}
+				} catch (e) {
+					console.log(e.message);
+				}			
+			}, false);
+			
+		}
 	}
 	
 	// Takes IFrame's URL
@@ -124,7 +141,7 @@
 
 	// If IFrame URL is Ok, register handler and add IFrame.
 	if (!(iframeURL == null || iframeURL == undefined)) {
-		handleWindowMessages();
+		ensureResizeHandlerSet();
 		addIFrame(iframeURL);
 	}
 })();

@@ -324,34 +324,44 @@ function embedAdvancedWithCounter() {
 	}	    
 }
 
-function isDigits(s) {
-	var r=/^\d+$/;
-	return r.test(s);
+function isDigitsOnly(s) {
+	var digMask=/^\d+$/;
+	return digMask.test(s);
 }
 
 function showAccepted() {
-	_accepted.innerHTML = "0";
 	try {
 		var acceptedURL = getLink("accepted");
 		if (acceptedURL == null || acceptedURL == undefined) {
 			return;
 		}
+		
+		setTimeout(showAccepted, 30000);
 
 		var request = new XMLHttpRequest();
 		request.onreadystatechange  = function() {
 			if (request.readyState == 4 && request.status == 200) {
-				if (isDigits(request.responseText)) {
-					_accepted.innerHTML = request.responseText;
-				} else {
-					_accepted.innerHTML = "0";
-				}				
+				updateAccepted(request.responseText);
 		    }
 		}
 
 		request.open("GET", acceptedURL, true);
 		request.send();	
 	} catch (e) {
-		console.log("" + e.message);
+		console.log(e.message);
+	}
+}
+
+function updateAccepted(text) {
+	try {
+		var value = JSON.parse(text).value;
+		if (isDigitsOnly(value)) {
+			_accepted.innerHTML = value;
+		} else {
+			_accepted.innerHTML = "?";
+		}
+	} catch (e) {
+		console.log(e.message);
 	}
 }
 
@@ -404,6 +414,7 @@ function embedFactoryButton() {
 	
 	if (_accepted != null && _accepted != undefined) {
 		_counterValue = 0;
+		_accepted.innerHTML = "0";
 		showAccepted();
 	}
 	
