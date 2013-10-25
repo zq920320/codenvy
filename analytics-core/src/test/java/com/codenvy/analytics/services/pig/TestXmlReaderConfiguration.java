@@ -33,6 +33,7 @@ public class TestXmlReaderConfiguration {
 
     private static final String RESOURCE = "<scripts>" +
                                            "    <script name=\"test1\">" +
+                                           "        <description>desc</description>" +
                                            "        <parameters>" +
                                            "            <entry>" +
                                            "                <key>USER</key>" +
@@ -60,6 +61,7 @@ public class TestXmlReaderConfiguration {
 
         ScriptConfiguration scriptConfiguration = configuration.getScripts().get(0);
         assertEquals("test1", scriptConfiguration.getName());
+        assertEquals("desc", scriptConfiguration.getDescription());
 
         Map<String, String> parameters = scriptConfiguration.getParameters();
         assertEquals(2, parameters.size());

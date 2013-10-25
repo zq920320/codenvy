@@ -269,8 +269,10 @@ do
     -javaagent:"$CARBON_HOME/repository/components/plugins/jamm_0.2.5.wso2v2.jar" \
     $JAVA_OPTS \
     -Danalytics.logs.directory=$ANALYTICS_LOGS_DIR \
-    -Danalytics.scripts.directory=$CARBON_HOME/scripts \
-    -Danalytics.pig.runner.config=$CARBON_HOME/scripts/config.xml \
+    -Danalytics.scripts.directory=$CARBON_HOME/pigscripts \
+    -Danalytics.bin.directory=$CARBON_HOME/bin \
+    -Danalytics.pig.runner.config=$CARBON_HOME/pigscripts/config.xml \
+    -Danalytics.cassandra.keyspace=analytics_data \
     -Ddisable.cassandra.server.startup=true \
     -Dcom.sun.management.jmxremote \
     -classpath "$CARBON_CLASSPATH" \

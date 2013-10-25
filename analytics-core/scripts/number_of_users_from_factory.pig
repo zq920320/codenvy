@@ -26,4 +26,4 @@ a3 = DISTINCT a2;
 a = countAll(a3);
 
 result = FOREACH a GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('value', countAll);
-STORE result INTO '$CASSANDRA_STORAGE/$METRIC' USING CassandraStorage();
+STORE result INTO 'cassandra://$CASSANDRA_STORAGE/$METRIC' USING CassandraStorage();

@@ -26,12 +26,10 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum Parameters {
-    // TODO rename on ScriptParameter
-
-    CASSANDRA_STORAGE, // TODO
-    METRIC, // TODO
-
+    CASSANDRA_STORAGE,
+    METRIC,
     EVENT,
+
     FIELD,
     PARAM,
     LOG,

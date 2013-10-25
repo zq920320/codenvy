@@ -40,8 +40,6 @@ public class BaseTest {
 
     public static final String CASSANDRA_HOST = "localhost:9171";
 
-    public static final String CASSANDRA_URL = "cassandra://" + CASSANDRA_KEY_SPACE;
-
     @BeforeSuite
     public void startCassandraCluster() throws Exception {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();

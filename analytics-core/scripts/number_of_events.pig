@@ -24,5 +24,5 @@ a1 = filterByEvent(l, '$EVENT');
 a2 = FOREACH a1 GENERATE event;
 a = countAll(a2);
 
-result = FOREACH a GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('value', countAll);
+result = FOREACH a GENERATE '$TO_DATE', TOTUPLE('$TO_DATE', countAll);
 STORE result INTO '$CASSANDRA_STORAGE/$METRIC' USING CassandraStorage();

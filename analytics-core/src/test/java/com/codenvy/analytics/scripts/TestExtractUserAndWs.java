@@ -62,7 +62,6 @@ public class TestExtractUserAndWs extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
         Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.CASSANDRA_STORAGE.put(context, "fake");
         Parameters.METRIC.put(context, "fake");
     }
 

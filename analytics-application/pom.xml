@@ -44,7 +44,7 @@
     </dependencies>
 
     <build>
-        <finalName>analytics-scheduler</finalName>
+        <finalName>analytics-application</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>

@@ -89,7 +89,6 @@ public class TestCombineSmallSessions extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
         Parameters.METRIC.put(context, "fake");
-        Parameters.CASSANDRA_STORAGE.put(context, "fake");
     }
 
     @Test

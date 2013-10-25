@@ -19,8 +19,7 @@ package com.codenvy.analytics.services.pig;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class XmlConfigurationManager implements ConfigurationManager {
@@ -49,11 +48,18 @@ public class XmlConfigurationManager implements ConfigurationManager {
         throw new UnsupportedOperationException();
     }
 
-    protected InputStream openResource() throws ConfigurationManagerException {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(PIG_RUNNER_CONFIG);
+    protected InputStream openResource() throws ConfigurationManagerException, FileNotFoundException {
+        InputStream in;
 
-        if (in == null) {
-            throw new ConfigurationManagerException("Resource " + PIG_RUNNER_CONFIG + " not found");
+        File file = new File(PIG_RUNNER_CONFIG);
+        if (file.exists()) {
+            in = new FileInputStream(file);
+        } else {
+            in = getClass().getClassLoader().getResourceAsStream(PIG_RUNNER_CONFIG);
+
+            if (in == null) {
+                throw new ConfigurationManagerException("Resource " + PIG_RUNNER_CONFIG + " not found");
+            }
         }
 
         return in;

@@ -1,3 +1,4 @@
-rm wso2carbon.pid 
+rm wso2carbon.pid
 export ANALYTICS_LOGS_DIR=
-sh ./bin/wso2server.sh  start
+export JAVA_OPTS="$JAVA_OPTS"
+sh ./bin/wso2server.sh start

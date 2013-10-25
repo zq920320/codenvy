@@ -51,7 +51,6 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.CASSANDRA_STORAGE.put(params, "fake");
         Parameters.METRIC.put(params, "fake");
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
@@ -62,8 +61,8 @@ public class TestNumberOfEvents extends BaseTest {
 
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();
-        assertEquals(tuple.get(1).toString(), "(date,20130101)");
-        assertEquals(tuple.get(2).toString(), "(value,2)");
+        assertEquals(tuple.get(0).toString(), "20130101");
+        assertEquals(tuple.get(1).toString(), "(20130101,2)");
 
         assertFalse(iterator.hasNext());
     }

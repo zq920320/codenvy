@@ -60,6 +60,9 @@ public class PigServer {
     /** System property. Contains the directory where logs are located. */
     public static final String ANALYTICS_LOGS_DIRECTORY_PROPERTY = "analytics.logs.directory";
 
+    /** System property. Contains the Cassandra keyspace where analytics data will be stored. */
+    public static final String ANALYTICS_CASSANDRA_KEYSPACE_PROPERTY = "analytics.cassandra.keyspace";
+
     /** The value of {@value #ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY}. */
     public static final String SCRIPTS_DIRECTORY = System.getProperty(ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY);
 
@@ -68,6 +71,9 @@ public class PigServer {
 
     /** The value of {@value #ANALYTICS_LOGS_DIRECTORY_PROPERTY}. */
     public static final String LOGS_DIRECTORY = System.getProperty(ANALYTICS_LOGS_DIRECTORY_PROPERTY);
+
+    /** The value of {@value #ANALYTICS_CASSANDRA_KEYSPACE_PROPERTY}. */
+    public static final String CASSANDRA_KEYSPACE = System.getProperty(ANALYTICS_CASSANDRA_KEYSPACE_PROPERTY);
 
     /** Pig relation containing execution result. */
     private static final String FINAL_RELATION = "result";
@@ -107,8 +113,7 @@ public class PigServer {
         context = Utils.clone(context);
         validateParameters(scriptType, context);
 
-        LOGGER.info("Script execution " + scriptType + " is started with data located: " +
-                    Parameters.LOG.get(context));
+        LOGGER.info("Script execution " + scriptType + " is started: " + context.toString());
 
         try {
             String command = prepareRunCommand(scriptType, context);
@@ -182,8 +187,7 @@ public class PigServer {
         context = Utils.clone(context);
         validateParameters(scriptType, context);
 
-        LOGGER.info("Script execution " + scriptType + " is started with data located: " +
-                    Parameters.LOG.get(context));
+        LOGGER.info("Script execution " + scriptType + " is started: " + context.toString());
 
         try (InputStream scriptContent = readScriptContent(scriptType)) {
             server.registerScript(scriptContent, context);
@@ -195,6 +199,10 @@ public class PigServer {
 
     /** Checks if all parameters that are needed to script execution are added to context; */
     private static void validateParameters(ScriptType scriptType, Map<String, String> context) throws IOException {
+        if (!Parameters.CASSANDRA_STORAGE.exists(context)) {
+            Parameters.CASSANDRA_STORAGE.put(context, CASSANDRA_KEYSPACE);
+        }
+
         for (Parameters param : scriptType.getParams()) {
             if (!param.exists(context)) {
                 throw new IOException("Key field " + param + " is absent in execution context");
@@ -214,6 +222,7 @@ public class PigServer {
                 setOptimizedPaths(context);
             }
         }
+
     }
 
     /** @return the script file name */

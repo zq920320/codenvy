@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.pig;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,8 @@ import java.util.Map;
 public class ScriptConfiguration {
 
     private String name;
+
+    private String description;
 
     private Map<String, String> parameters = new HashMap<>();
 
@@ -39,6 +42,17 @@ public class ScriptConfiguration {
     /** Setter for {@link #parameters} */
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    /** Setter for {@link #description} */
+    @XmlElement
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /** Getter for {@link #description} */
+    public String getDescription() {
+        return description;
     }
 
     /** Getter for {@link #name} */
