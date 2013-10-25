@@ -22,6 +22,7 @@ import com.codenvy.api.factory.FactoryImage;
 import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.commons.lang.NameGenerator;
+import com.codenvy.factory.MongoDbConfiguration;
 import com.mongodb.*;
 
 import org.slf4j.Logger;
@@ -31,41 +32,38 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.*;
 
-/**
- * Implementation of the MongoDB factory storage.
- *
- */
+/** Implementation of the MongoDB factory storage. */
 public class MongoDBFactoryStore implements FactoryStore {
-
-    private static String DEFAULT_DB_NAME = "test";
-    private static String DEFAULT_COLLECTION_NAME = "factories";
-
-    DBCollection factories;
-
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBFactoryStore.class);
 
-    public MongoDBFactoryStore() {
-       this("localhost", 27017, null, null, null, null);
-    }
+    DBCollection factories;
 
     public MongoDBFactoryStore(String host, int port, String dbName, String collectionName, String username, String password) {
         MongoClient mongoClient;
         DB db;
+        if (dbName == null || dbName.isEmpty() || collectionName == null || collectionName.isEmpty()) {
+            throw new RuntimeException("Parameters 'database' and 'collection' can't be null or empty.");
+        }
+
         try {
             mongoClient = new MongoClient(host, port);
-            db = mongoClient.getDB(dbName != null && !dbName.isEmpty() ? dbName : DEFAULT_DB_NAME);
+            db = mongoClient.getDB(dbName);
 
             if (username != null && password != null) {
                 if (!db.authenticate(username, password.toCharArray()))
                     throw new RuntimeException("Wrong MongoDB credentians, authentication failed.");
 
             }
-            factories = db.getCollection(
-                    collectionName != null && !collectionName.isEmpty() ? collectionName : DEFAULT_COLLECTION_NAME);
+            factories = db.getCollection(collectionName);
 
         } catch (UnknownHostException e) {
-            LOG.error(e.getMessage());
+            throw new RuntimeException("Can't connect to MongoDB.");
         }
+    }
+
+    public MongoDBFactoryStore(MongoDbConfiguration dbConf) {
+        this(dbConf.getHost(), dbConf.getPort(), dbConf.getDatabase(), dbConf.getCollectionname(), dbConf.getUsername(),
+             dbConf.getPassword());
     }
 
 
@@ -121,6 +119,9 @@ public class MongoDBFactoryStore implements FactoryStore {
         DBObject query = new BasicDBObject();
         query.put("_id", id);
         DBObject res = factories.findOne(query);
+        if (res == null) {
+            return null;
+        }
 
         // Processing factory
         factoryUrl.setId((String)res.get("_id"));
@@ -151,6 +152,9 @@ public class MongoDBFactoryStore implements FactoryStore {
         DBObject query = new BasicDBObject();
         query.put("_id", factoryId);
         DBObject res = factories.findOne(query);
+        if (res == null) {
+            return Collections.EMPTY_SET;
+        }
 
         BasicDBList imagesAsDbObject = (BasicDBList)res.get("images");
         for (Object obj : imagesAsDbObject) {
