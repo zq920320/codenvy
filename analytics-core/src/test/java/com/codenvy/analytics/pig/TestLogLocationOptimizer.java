@@ -20,7 +20,6 @@ package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.scripts.executor.pig.LogLocationOptimizer;
 
 import org.junit.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -74,7 +73,8 @@ public class TestLogLocationOptimizer extends BaseTest {
         dir1.mkdirs();
         dir2.mkdirs();
 
-        assertEquals(dir1.getPath() + "," + dir2.getPath(), LogLocationOptimizer.generatePaths(baseDir, "20131231", "20140103"));
+        assertEquals(dir1.getPath() + "," + dir2.getPath(),
+                     LogLocationOptimizer.generatePaths(baseDir, "20131231", "20140103"));
     }
 
     @Test

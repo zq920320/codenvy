@@ -165,7 +165,7 @@ DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extracQueryParam(X, url, paramName, messageParam, expectedFieldName) RETURNS Y {
   x1 = extractParam($X, '$messageParam', 'param1');
-  x2 = FOREACH x1 GENERATE *, com.codenvy.analytics.pig.GetQueryValue($url, '$paramName') AS param2;
+  x2 = FOREACH x1 GENERATE *, GetQueryValue($url, '$paramName') AS param2;
   $Y = FOREACH x2 GENERATE *, (param1 IS NOT NULL ? param1 : param2) AS $expectedFieldName;
 };
 
@@ -176,12 +176,12 @@ DEFINE extracQueryParam(X, url, paramName, messageParam, expectedFieldName) RETU
 -- @return  {..., $paramFieldNameParam : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractUrlParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
-  $Y = FOREACH $X GENERATE *, ('$paramNameParam' == 'FACTORY-URL' ? com.codenvy.analytics.pig.CutQueryParam(
-                                                                        com.codenvy.analytics.pig.URLDecode(
-                                                                            com.codenvy.analytics.pig.URLDecode(
+  $Y = FOREACH $X GENERATE *, ('$paramNameParam' == 'FACTORY-URL' ? CutQueryParam(
+                                                                        URLDecode(
+                                                                            URLDecode(
                                                                                 REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))), 'ptype')
-                                                                  :  com.codenvy.analytics.pig.URLDecode(
-                                                                        com.codenvy.analytics.pig.URLDecode(
+                                                                  :  URLDecode(
+                                                                        URLDecode(
                                                                             REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))))
                                 AS $paramFieldNameParam;
 };

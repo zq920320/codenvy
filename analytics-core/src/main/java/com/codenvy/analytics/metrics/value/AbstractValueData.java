@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.metrics.value;
 
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractValueData implements ValueData {
 
@@ -44,20 +45,9 @@ public abstract class AbstractValueData implements ValueData {
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object object) {
-        return getClass() == object.getClass() && doEquals(object);
+        return getClass() == object.getClass() && doEquals((ValueData)object);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public long getAsLong() {
-        throw new UnsupportedOperationException();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getAsDouble() {
-        throw new UnsupportedOperationException();
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -66,11 +56,14 @@ public abstract class AbstractValueData implements ValueData {
             hash = doHashCode();
         }
 
-        return hash;
+        return hash.intValue();
     }
 
-    /** @see #equals(Object) */
-    abstract protected boolean doEquals(Object object);
+    /**
+     * @param valueData
+     * @see #equals(Object)
+     */
+    abstract protected boolean doEquals(ValueData valueData);
 
     /** @see #hashCode() */
     abstract protected int doHashCode();

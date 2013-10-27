@@ -39,5 +39,5 @@ fi
 CLASSPATH=$CLASSPATH:$PIG_JAR
 
 export PIG_CLASSPATH=$PIG_CLASSPATH:$CLASSPATH
-export PIG_OPTS="$PIG_OPTS -Dudf.import.list=org.apache.cassandra.hadoop.pig:com.codenvy.analytics.pig"
+export PIG_OPTS="$PIG_OPTS -Dudf.import.list=org.apache.cassandra.hadoop.pig:com.codenvy.analytics.pig.udf"
 $PIG_HOME/bin/pig -x local $*

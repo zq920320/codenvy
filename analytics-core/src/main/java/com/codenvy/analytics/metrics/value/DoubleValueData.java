@@ -20,19 +20,18 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class DoubleValueData extends AbstractValueData {
 
-    public static final DoubleValueData DEFAULT = new DoubleValueData(Double.valueOf("0"));
+    public static final DoubleValueData DEFAULT = new DoubleValueData(0);
 
-    private final double value;
+    private double value;
 
-    public DoubleValueData(ObjectInputStream in) throws IOException {
-        value = readFrom(in);
+    /** For serialization one. */
+    public DoubleValueData() {
     }
 
     public DoubleValueData(double value) {
@@ -47,36 +46,31 @@ public class DoubleValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
-    protected DoubleValueData doUnion(ValueData valueData) {
-        return new DoubleValueData(value + valueData.getAsDouble());
+    protected boolean doEquals(ValueData valueData) {
+        return value == ((DoubleValueData)valueData).value;
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getAsDouble() {
-        return value;
+    protected int doHashCode() {
+        return (int)Double.doubleToLongBits(value);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void writeTo(ObjectOutputStream out) throws IOException {
+    protected ValueData doUnion(ValueData valueData) {
+        return new DoubleValueData(value + ((DoubleValueData)valueData).value);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
         out.writeDouble(value);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doEquals(Object object) {
-        return value == ((DoubleValueData)object).value;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int doHashCode() {
-        return (int)value;
-    }
-
-    /** Deserialization. */
-    private double readFrom(ObjectInputStream in) throws IOException {
-        return in.readDouble();
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        value = in.readDouble();
     }
 }

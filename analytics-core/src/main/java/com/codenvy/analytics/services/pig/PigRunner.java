@@ -17,10 +17,10 @@
  */
 package com.codenvy.analytics.services.pig;
 
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
-import com.codenvy.analytics.scripts.ScriptType;
-import com.codenvy.analytics.scripts.executor.pig.PigServer;
+import com.codenvy.analytics.old_metrics.TimeUnit;
+import com.codenvy.analytics.old_metrics.Utils;
+import com.codenvy.analytics.pig.PigServer;
+import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.Feature;
 
 import org.quartz.JobExecutionContext;

@@ -20,7 +20,8 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,45 +29,37 @@ import java.util.List;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class ListValueData<T> extends AbstractValueData implements CollectionableValueData {
+public class ListValueData extends AbstractValueData {
 
-    private List<T> value;
+    public static final ListValueData DEFAULT = new ListValueData(Collections.<RowValueData>emptyList());
 
-    public ListValueData(Collection<T> value) {
+    private List<RowValueData> value;
+
+    public ListValueData() {
+    }
+
+    public ListValueData(Collection<RowValueData> value) {
         this.value = new ArrayList<>(value);
     }
 
-    public List<T> getAll() {
+    public List<RowValueData> getAll() {
         return Collections.unmodifiableList(value);
     }
 
-    /** {@inheritDoc} */
-    @Override
     public int size() {
         return value.size();
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     protected ValueData doUnion(ValueData valueData) {
-        List<T> value1 = this.value;
-        List<T> value2 = ((ListValueData<T>)valueData).getAll();
+        ListValueData object = (ListValueData)valueData;
 
-        List<T> newValue = new ArrayList<>(value1.size() + value2.size());
-        newValue.addAll(value1);
-        newValue.addAll(value2);
+        List<RowValueData> result = new ArrayList<>(this.value.size() + object.size());
+        result.addAll(this.value);
+        result.addAll(object.value);
 
-        return createInstance(newValue);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void writeTo(ObjectOutputStream out) throws IOException {
-        out.writeInt(value.size());
-        for (T item : value) {
-            writeItem(out, item);
-        }
+        return new ListValueData(result);
     }
 
     /** {@inheritDoc} */
@@ -74,13 +67,13 @@ public abstract class ListValueData<T> extends AbstractValueData implements Coll
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
 
-        for (T valueData : value) {
+        for (RowValueData valueData : value) {
             if (builder.length() != 0) {
                 builder.append(',');
             }
 
             builder.append(' ');
-            builder.append(valueData.toString());
+            builder.append(valueData.getAsString());
         }
 
         if (builder.length() != 0) {
@@ -95,36 +88,33 @@ public abstract class ListValueData<T> extends AbstractValueData implements Coll
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doEquals(Object object) {
-        ListValueData<?> valueData = (ListValueData<?>)object;
-
-        if (this.value.size() != valueData.value.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < this.value.size(); i++) {
-            if (!this.value.get(i).equals(valueData.value.get(i))) {
-                return false;
-            }
-        }
-
-        return true;
+    protected boolean doEquals(ValueData valueData) {
+        return this.value.equals(((ListValueData)valueData).value);
     }
-
 
     /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
-        int hash = 0;
-
-        for (T t : value) {
-            hash = hash * 31 + t.hashCode();
-        }
-
-        return hash;
+        return value.hashCode();
     }
 
-    abstract protected ValueData createInstance(List<T> value);
+    /** {@inheritDoc} */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(value.size());
+        for (RowValueData item : value) {
+            out.writeObject(item);
+        }
+    }
 
-    abstract protected void writeItem(ObjectOutputStream out, T item) throws IOException;
+    /** {@inheritDoc} */
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int size = in.readInt();
+
+        value = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            value.add((RowValueData)in.readObject());
+        }
+    }
 }

@@ -18,6 +18,10 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.old_metrics.MetricFilter;
+import com.codenvy.analytics.old_metrics.TimeUnit;
+import com.codenvy.analytics.old_metrics.Utils;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,6 +34,7 @@ public enum Parameters {
     METRIC,
     EVENT,
 
+    // TODO
     FIELD,
     PARAM,
     LOG,

@@ -20,18 +20,18 @@
 package com.codenvy.analytics.metrics.value;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class LongValueData extends AbstractValueData {
 
     public static final LongValueData DEFAULT = new LongValueData(0);
 
-    private final long value;
+    private long value;
 
-    public LongValueData(ObjectInputStream in) throws IOException {
-        value = readFrom(in);
+    /** For serialization one. */
+    public LongValueData() {
     }
 
     public LongValueData(long value) {
@@ -46,42 +46,31 @@ public class LongValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
-    protected LongValueData doUnion(ValueData valueData) {
-        return new LongValueData(value + valueData.getAsLong());
+    protected boolean doEquals(ValueData valueData) {
+        return value == ((LongValueData)valueData).value;
     }
 
     /** {@inheritDoc} */
     @Override
-    public long getAsLong() {
-        return value;
+    protected int doHashCode() {
+        return (int)value;
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getAsDouble() {
-        return value;
+    protected ValueData doUnion(ValueData valueData) {
+        return new LongValueData(value + ((LongValueData)valueData).value);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void writeTo(ObjectOutputStream out) throws IOException {
+    public void writeExternal(ObjectOutput out) throws IOException {
         out.writeLong(value);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doEquals(Object object) {
-        return value == ((LongValueData)object).value;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int doHashCode() {
-        return (int)value;
-    }
-
-    /** Deserialization. */
-    private long readFrom(ObjectInputStream in) throws IOException {
-        return in.readLong();
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        value = in.readLong();
     }
 }

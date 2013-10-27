@@ -20,8 +20,8 @@
 package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.TimeUnit;
-import com.codenvy.analytics.metrics.Utils;
+import com.codenvy.analytics.old_metrics.TimeUnit;
+import com.codenvy.analytics.old_metrics.Utils;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.pig.PigRunner;
 

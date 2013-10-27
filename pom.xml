@@ -23,7 +23,7 @@
         <groupId>com.codenvy</groupId>
         <artifactId>maven-parent-pom</artifactId>
         <version>2.0.0</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>com.codenvy.analytics</groupId>
@@ -42,12 +42,11 @@
         <guava.version>13.0.1</guava.version>
         <joda-time.version>2.2</joda-time.version>
 
-        <cassandra.driver.version>1.0.3</cassandra.driver.version>
+        <cassandra.driver.version>1.0.4</cassandra.driver.version>
         <cassandra.unit.version>1.2.0.1</cassandra.unit.version>
         <cassandra.version>1.2.9</cassandra.version>
-        <prettyprint.version>1.0-5</prettyprint.version>
 
-        <avro.version>1.4.1</avro.version>
+        <!--<avro.version>1.5.0</avro.version>-->
 
         <!-- Third parties -->
         <everrest.version>1.0.10</everrest.version>
@@ -57,6 +56,7 @@
         <testng.version>6.3.1</testng.version>
         <junit.version>4.10</junit.version>
         <mockito.version>1.9.0</mockito.version>
+        <powermock.version>1.5.1</powermock.version>
         <quartz.version>2.1.7</quartz.version>
         <jaxb.version>2.2.11</jaxb.version>
         <commons.lang.version>2.6</commons.lang.version>
@@ -68,7 +68,7 @@
         <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
         <log4j.version>1.2.16</log4j.version>
         <javax.mail.version>1.4.2</javax.mail.version>
-        
+
         <!-- Platrofm API-->
         <platform.api.version>1.0.0-SNAPSHOT</platform.api.version>
 

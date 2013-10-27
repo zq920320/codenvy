@@ -18,7 +18,7 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.old_metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
@@ -28,19 +28,19 @@ import java.util.Set;
 public interface Metric {
 
     /**
-     * Returns value metric for given context.
+     * Returns the value of metric for given context.
      *
      * @param context
-     *         execution context
+     *         the execution context
      * @throws IOException
      *         if any errors are occurred
      */
     ValueData getValue(Map<String, String> context) throws IOException;
 
-    /** @return what data type is represented in result */
+    /** @return which data type is returned by metric */
     Class<? extends ValueData> getValueDataClass();
 
-    /** @return list of mandatory parameters that have to be passed to the script */
+    /** @return the mandatory parameters have to be existed in the context */
     Set<Parameters> getParams();
 
     /** @return the description of the metric */
