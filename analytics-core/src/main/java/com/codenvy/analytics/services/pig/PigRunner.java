@@ -17,8 +17,8 @@
  */
 package com.codenvy.analytics.services.pig;
 
-import com.codenvy.analytics.old_metrics.TimeUnit;
-import com.codenvy.analytics.old_metrics.Utils;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.Feature;
@@ -64,7 +64,7 @@ public class PigRunner implements Feature {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
-            doExecute(Utils.initializeContext(TimeUnit.DAY));
+            doExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
         } catch (IOException | ParseException e) {
             throw new JobExecutionException(e);
         }

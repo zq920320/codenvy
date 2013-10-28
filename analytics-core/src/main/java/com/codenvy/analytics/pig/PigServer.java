@@ -19,8 +19,10 @@
 
 package com.codenvy.analytics.pig;
 
+import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.old_metrics.Utils;
+import com.codenvy.analytics.metrics.value.CassandraDataManager;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 
 import org.apache.cassandra.hadoop.pig.CassandraStorage;
@@ -46,7 +48,7 @@ import java.util.regex.Pattern;
 public class PigServer {
 
     /** Logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PigServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PigServer.class);
 
     /** Embedded Pig server */
     private static org.apache.pig.PigServer server;
@@ -60,9 +62,6 @@ public class PigServer {
     /** System property. Contains the directory where logs are located. */
     public static final String ANALYTICS_LOGS_DIRECTORY_PROPERTY = "analytics.logs.directory";
 
-    /** System property. Contains the Cassandra keyspace where analytics data will be stored. */
-    public static final String ANALYTICS_CASSANDRA_KEYSPACE_PROPERTY = "analytics.cassandra.keyspace";
-
     /** The value of {@value #ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY}. */
     public static final String SCRIPTS_DIRECTORY = System.getProperty(ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY);
 
@@ -71,9 +70,6 @@ public class PigServer {
 
     /** The value of {@value #ANALYTICS_LOGS_DIRECTORY_PROPERTY}. */
     public static final String LOGS_DIRECTORY = System.getProperty(ANALYTICS_LOGS_DIRECTORY_PROPERTY);
-
-    /** The value of {@value #ANALYTICS_CASSANDRA_KEYSPACE_PROPERTY}. */
-    public static final String CASSANDRA_KEYSPACE = System.getProperty(ANALYTICS_CASSANDRA_KEYSPACE_PROPERTY);
 
     /** Pig relation containing execution result. */
     private static final String FINAL_RELATION = "result";
@@ -89,17 +85,17 @@ public class PigServer {
             server.registerJar(CassandraStorage.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
             throw new IllegalStateException("Pig server can't be instantiated", e);
         }
 
-        LOGGER.info("Pig server is started");
+        LOG.info("Pig server is started");
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 server.shutdown();
-                LOGGER.info("Pig server is shutdown");
+                LOG.info("Pig server is shutdown");
             }
         });
     }
@@ -110,10 +106,9 @@ public class PigServer {
      * @see #executeAndReturn(com.codenvy.analytics.pig.scripts.ScriptType, java.util.Map)
      */
     public static synchronized void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
-        context = Utils.clone(context);
-        validateParameters(scriptType, context);
+        LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
-        LOGGER.info("Script execution " + scriptType + " is started: " + context.toString());
+        context = validateAndAdjustContext(scriptType, context);
 
         try {
             String command = prepareRunCommand(scriptType, context);
@@ -130,7 +125,7 @@ public class PigServer {
                 throw new IOException(e);
             }
         } finally {
-            LOGGER.info("Execution " + scriptType + " has finished");
+            LOG.info("Execution " + scriptType + " has finished");
         }
     }
 
@@ -142,9 +137,9 @@ public class PigServer {
                 String errLine = err.readLine();
 
                 if (inLine != null) {
-                    LOGGER.info(inLine);
+                    LOG.info(inLine);
                 } else if (errLine != null) {
-                    LOGGER.info(errLine);
+                    LOG.info(errLine);
                 } else {
                     break;
                 }
@@ -182,25 +177,33 @@ public class PigServer {
      * @throws IOException
      *         if something gone wrong or if a required parameter is absent
      */
-    public static Iterator<Tuple> executeAndReturn(ScriptType scriptType, Map<String, String> context)
-            throws IOException {
-        context = Utils.clone(context);
-        validateParameters(scriptType, context);
+    public static Iterator<Tuple> executeAndReturn(ScriptType scriptType,
+                                                   Map<String, String> context) throws IOException {
+        LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
-        LOGGER.info("Script execution " + scriptType + " is started: " + context.toString());
+        context = validateAndAdjustContext(scriptType, context);
 
         try (InputStream scriptContent = readScriptContent(scriptType)) {
             server.registerScript(scriptContent, context);
             return server.openIterator(FINAL_RELATION);
         } finally {
-            LOGGER.info("Execution " + scriptType + " has finished");
+            LOG.info("Execution " + scriptType + " has finished");
         }
     }
 
     /** Checks if all parameters that are needed to script execution are added to context; */
-    private static void validateParameters(ScriptType scriptType, Map<String, String> context) throws IOException {
-        if (!Parameters.CASSANDRA_STORAGE.exists(context)) {
-            Parameters.CASSANDRA_STORAGE.put(context, CASSANDRA_KEYSPACE);
+    private static Map<String, String> validateAndAdjustContext(ScriptType scriptType,
+                                                                Map<String, String> context) throws IOException {
+        context = Utils.clone(context);
+
+        Parameters.CASSANDRA_USER.put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_USER));
+        Parameters.CASSANDRA_PASSWORD
+                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_PASSWORD));
+        Parameters.CASSANDRA_COLUMN_FAMILY
+                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_KEYSPACE));
+
+        if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {
+            setOptimizedPaths(context);
         }
 
         for (Parameters param : scriptType.getParams()) {
@@ -211,19 +214,9 @@ public class PigServer {
             param.validate(param.get(context), context);
         }
 
-        if (!Parameters.LOG.exists(context)) {
-            if (!Parameters.TO_DATE.exists(context) || !Parameters.FROM_DATE.exists(context)) {
-                throw new IllegalStateException("Date parameters are absent in context");
-            } else if (!Parameters.TO_DATE.get(context).equals(Parameters.FROM_DATE.get(context))) {
-                throw new IllegalStateException("The date params are different");
-            }
-
-            if (scriptType.isLogRequired()) {
-                setOptimizedPaths(context);
-            }
-        }
-
+        return context;
     }
+
 
     /** @return the script file name */
     private static File getScriptFileName(ScriptType scriptType) {

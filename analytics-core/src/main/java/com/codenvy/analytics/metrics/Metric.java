@@ -18,7 +18,7 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.old_metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
@@ -42,6 +42,9 @@ public interface Metric {
 
     /** @return the mandatory parameters have to be existed in the context */
     Set<Parameters> getParams();
+
+    /** @return the name of the metric */
+    String getName();
 
     /** @return the description of the metric */
     String getDescription();

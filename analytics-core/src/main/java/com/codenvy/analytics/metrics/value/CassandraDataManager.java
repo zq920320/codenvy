@@ -19,14 +19,16 @@
 
 package com.codenvy.analytics.metrics.value;
 
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.old_metrics.value.ValueData;
+import com.datastax.driver.core.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -35,58 +37,97 @@ public class CassandraDataManager {
     /** Logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDataManager.class);
 
+    public static final String CASSANDRA_ANALYTICS_HOST = "cassandra.analytics.host";
+
+    public static final String CASSANDRA_ANALYTICS_PORT = "cassandra.analytics.port";
+
+    public static final String CASSANDRA_ANALYTICS_KEYSPACE = "cassandra.analytics.keyspace";
+
+    public static final String CASSANDRA_ANALYTICS_USER = "cassandra.analytics.user";
+
+    public static final String CASSANDRA_ANALYTICS_PASSWORD = "cassandra.analytics.password";
+
+    private static final String KEYSPACE = Configurator.getString(CASSANDRA_ANALYTICS_KEYSPACE);
+
+    private static Cluster cluster;
+
+    static {
+        Cluster.Builder builder = Cluster.builder();
+        for (String node : Configurator.getArray(CASSANDRA_ANALYTICS_HOST)) {
+            builder.addContactPoint(node);
+        }
+        builder.withPort(Configurator.getInt(CASSANDRA_ANALYTICS_PORT));
+        builder.withCredentials(Configurator.getString(CASSANDRA_ANALYTICS_USER),
+                                Configurator.getString(CASSANDRA_ANALYTICS_PASSWORD));
+
+        cluster = builder.build();
+
+        LOGGER.info("Cassandra driver is started");
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                cluster.shutdown();
+                LOGGER.info("Cassandra driver is shutdown");
+            }
+        });
+    }
+
     /** {@inheritDoc} */
-    public static ValueData loadValue(String columnFamily, Map<String, String> clauses) throws IOException {
+    public static ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException {
         validateDateParams(clauses);
 
+        Session session = cluster.connect(KEYSPACE);
+        try {
+            String query = prepareQuery(metric, clauses);
+            ResultSet rows = session.execute(query);
+            return buildValueData(metric.getValueDataClass(), rows);
+        } finally {
+            session.shutdown();
+        }
+    }
+
+    private static ValueData buildValueData(Class<? extends ValueData> valueDataClass, ResultSet rows) {
+        Iterator<Row> iterator = rows.iterator();
+        while (iterator.hasNext()) {
+            Row row = iterator.next();
+
+            ColumnDefinitions definitions = row.getColumnDefinitions();
+            for (int i = 0; i < definitions.size(); i++) {
+                row.getString(i);
+
+                // TODO
+            }
+        }
+
         return null;
-        // TODO
     }
 
-    public static void test() {
+    private static String prepareQuery(Metric metric, Map<String, String> clauses) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("SELECT * FROM");
+        builder.append(' ');
+        builder.append(metric.getName().toLowerCase());
+        builder.append(' ');
+        builder.append("WHERE");
+        builder.append(' ');
+
+        for (Map.Entry<String, String> entry : clauses.entrySet()) {
+            String param = entry.getKey();
+
+            if (Parameters.FROM_DATE.toString().equals(param)) {
+                continue;
+            } else if (Parameters.TO_DATE.toString().equals(param)) {
+                builder.append("key=");
+                builder.append('\'');
+                builder.append(entry.getValue());
+                builder.append('\'');
+            }
+        }
+
+        return builder.toString();
     }
-
-    /** Returns the file to store in or load value from. */
-//    protected static File getFile(MetricType metricType, String fileName, LinkedHashMap<String, String> uuid)
-//            throws IOException {
-//        File dir = new File(RESULT_DIRECTORY);
-//
-//        validateDateParams(uuid);
-//
-//        StringBuilder builder = new StringBuilder();
-//        builder.append(metricType.toString().toLowerCase());
-//        builder.append(File.separatorChar);
-//
-//        for (Entry<String, String> entry : uuid.entrySet()) {
-//            String element = entry.getValue().toLowerCase();
-//
-//            if (Parameters.TO_DATE.isParam(entry.getKey())) {
-//                element = translateDateToRelativePath(entry.getValue());
-//            } else {
-//                for (MetricFilter metricFilter : MetricFilter.values()) {
-//                    if (metricFilter.name().equals(entry.getKey())) {
-//                        switch (metricFilter) {
-//                            case REFERRER_URL:
-//                            case REPOSITORY_URL:
-//                            case FACTORY_URL:
-//                                element = getRelativePath("" + entry.getValue().hashCode());
-//                                break;
-//                            default:
-//                                element = getRelativePath(entry.getValue());
-//                        }
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            builder.append(element);
-//            builder.append(File.separatorChar);
-//        }
-//
-//        builder.append(fileName);
-//        return new File(dir, builder.toString());
-//    }
-
 
     /**
      * Makes sure that {@link com.codenvy.analytics.metrics.Parameters#TO_DATE} and {@link
@@ -99,23 +140,5 @@ public class CassandraDataManager {
 
             throw new IllegalStateException("The date params are different or absent in context");
         }
-    }
-
-
-    /**
-     * Translate date from format yyyyMMdd into format like yyyy/MM/dd and {@link java.io.File#separatorChar} is used
-     * as
-     * delimiter.
-     */
-    private static String translateDateToRelativePath(String date) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(date.substring(0, 4));
-        builder.append(File.separatorChar);
-        builder.append(date.substring(4, 6));
-        builder.append(File.separatorChar);
-        builder.append(date.substring(6, 8));
-
-        return builder.toString();
     }
 }

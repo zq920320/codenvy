@@ -20,7 +20,7 @@
 package com.codenvy.analytics.pig;
 
 
-import com.codenvy.analytics.old_metrics.Utils;
+import com.codenvy.analytics.Utils;
 
 import java.io.File;
 import java.io.IOException;

@@ -20,8 +20,6 @@
 package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.old_metrics.TimeUnit;
-import com.codenvy.analytics.old_metrics.Utils;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.pig.PigRunner;
 
@@ -138,7 +136,7 @@ public class Scheduler implements ServletContextListener {
 
             Utils.putFromDate(context, fromDate);
             Utils.putToDate(context, fromDate);
-            Parameters.TIME_UNIT.put(context, TimeUnit.DAY.name());
+            Parameters.TIME_UNIT.put(context, Parameters.TimeUnit.DAY.name());
 
             do {
                 ((Feature)job).forceExecute(context);

@@ -202,14 +202,6 @@
                             <name>analytics.bin.directory</name>
                             <value>bin</value>
                         </property>
-                        <property>
-                            <name>analytics.result.directory</name>
-                            <value>${project.build.directory}</value>
-                        </property>
-                        <property>
-                            <name>analytics.cassandra.keyspace</name>
-                            <value>analytics_data</value>
-                        </property>
                     </systemProperties>
                     <excludes>
                         <exclude>com/codenvy/analytics/**/TestLogCollector.java</exclude>

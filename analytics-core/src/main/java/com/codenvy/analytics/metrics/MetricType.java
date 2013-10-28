@@ -16,16 +16,9 @@
  * from Codenvy S.A..
  */
 
-IMPORT 'macros.pig';
+package com.codenvy.analytics.metrics;
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public enum MetricType {
+}
 
-a1 = filterByEvent(l, '$EVENT');
-a2 = extractParam(a1, '$PARAM', param);
-a = FOREACH a2 GENERATE param, event;
-
-b1 = GROUP a BY param;
-b = FOREACH b1 GENERATE group, COUNT(a) AS countAll;
-
-result = FOREACH b GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('type', group), TOTUPLE('value', countAll);
-STORE result INTO 'cassandra://$CASSANDRA_USER:CASSANDRA_PASSWORD@$CASSANDRA_COLUMN_FAMILY/$METRIC' USING CassandraStorage();

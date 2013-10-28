@@ -18,9 +18,7 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.old_metrics.MetricFilter;
-import com.codenvy.analytics.old_metrics.TimeUnit;
-import com.codenvy.analytics.old_metrics.Utils;
+import com.codenvy.analytics.Utils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -30,7 +28,9 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum Parameters {
-    CASSANDRA_STORAGE,
+    CASSANDRA_COLUMN_FAMILY,
+    CASSANDRA_USER,
+    CASSANDRA_PASSWORD,
     METRIC,
     EVENT,
 
@@ -74,6 +74,7 @@ public enum Parameters {
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
             try {
                 Calendar fromDate = Utils.parseDate(value);
+
                 Calendar minDate = Utils.parseDate(getDefaultValue());
 
                 if (fromDate.before(minDate)) {
@@ -83,6 +84,7 @@ public enum Parameters {
                                                        + Utils.formatDate(minDate)
                                                        + "'");
                 }
+                // TODO validate equals to to_data
             } catch (ParseException e) {
                 throw new IllegalArgumentException("FROM_DATE parameter has illegal format '" + value
                                                    + "' The only supported format is '" + PARAM_DATE_FORMAT + "'");
@@ -93,7 +95,8 @@ public enum Parameters {
     FILTER {
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            MetricFilter.valueOf(value);
+//            MetricFilter.valueOf(value);
+            // TODO
         }
     },
     TO_DATE {
@@ -132,6 +135,7 @@ public enum Parameters {
                     }
                 }
 
+                // TODO validate equals to from_data
             } catch (ParseException e) {
                 throw new IllegalArgumentException("TO_DATE parameter has illegal format '" + value
                                                    + "'. The only supported format is 'yyyyMMdd'");
@@ -185,5 +189,12 @@ public enum Parameters {
 
     public enum USER_TYPES {
         ANY, REGISTERED, ANTONYMOUS
+    }
+
+    public static enum TimeUnit {
+        DAY,
+        WEEK,
+        MONTH,
+        LIFETIME
     }
 }
