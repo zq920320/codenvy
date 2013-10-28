@@ -22,13 +22,14 @@ package com.codenvy.analytics.metrics.value;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.datastax.driver.core.*;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -81,26 +82,10 @@ public class CassandraDataManager {
         try {
             String query = prepareQuery(metric, clauses);
             ResultSet rows = session.execute(query);
-            return buildValueData(metric.getValueDataClass(), rows);
+            return ValueDataFactory.createdValueData(metric.getValueDataClass(), rows);
         } finally {
             session.shutdown();
         }
-    }
-
-    private static ValueData buildValueData(Class<? extends ValueData> valueDataClass, ResultSet rows) {
-        Iterator<Row> iterator = rows.iterator();
-        while (iterator.hasNext()) {
-            Row row = iterator.next();
-
-            ColumnDefinitions definitions = row.getColumnDefinitions();
-            for (int i = 0; i < definitions.size(); i++) {
-                row.getString(i);
-
-                // TODO
-            }
-        }
-
-        return null;
     }
 
     private static String prepareQuery(Metric metric, Map<String, String> clauses) {

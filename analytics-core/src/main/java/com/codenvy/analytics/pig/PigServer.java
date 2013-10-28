@@ -20,9 +20,9 @@
 package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.value.CassandraDataManager;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 
 import org.apache.cassandra.hadoop.pig.CassandraStorage;
@@ -260,7 +260,7 @@ public class PigServer {
     private static String removeRedundantCode(String script) throws IOException {
         int pos = script.indexOf(FINAL_RELATION);
         if (pos < 0) {
-            throw new IOException("");
+            return script;
         }
 
         int endLine = script.indexOf(";", pos);

@@ -20,7 +20,6 @@ package com.codenvy.analytics.pig.scripts;
 
 
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -70,12 +69,5 @@ public enum ScriptType {
     /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */
     public boolean isLogRequired() {
         return true;
-    }
-
-    // TODO get description ?
-
-    /** @return what date type is represented in result */
-    public Class<? extends ValueData> getValueDataClass() {
-        return null; // TODO remove
     }
 }

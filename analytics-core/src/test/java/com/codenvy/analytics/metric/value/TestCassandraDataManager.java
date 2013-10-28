@@ -19,35 +19,95 @@
 package com.codenvy.analytics.metric.value;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.value.CassandraDataManager;
+import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 
+import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestCassandraDataManager extends BaseTest {
 
-//    @BeforeClass
-//    public void startCassandraCluster() throws Exception {
-//        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-//    }
-//
-//    @AfterClass
-//    public void stopCassandraCluster() throws Exception {
-//        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-//    }
+    private Cluster cluster;
+
+    @BeforeClass
+    public void startCassandraCluster() throws Exception {
+        EmbeddedCassandraServerHelper.startEmbeddedCassandra();
+
+        Cluster.Builder builder = Cluster.builder();
+        for (String node : Configurator.getArray(CassandraDataManager.CASSANDRA_ANALYTICS_HOST)) {
+            builder.addContactPoint(node);
+        }
+        builder.withPort(Configurator.getInt(CassandraDataManager.CASSANDRA_ANALYTICS_PORT));
+        builder.withCredentials(Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_USER),
+                                Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_PASSWORD));
+
+        cluster = builder.build();
+
+        Session session = cluster.connect();
+        try {
+            session.execute(
+                    "CREATE KEYSPACE " + Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_KEYSPACE) +
+                    " WITH replication = {'class':'SimpleStrategy', 'replication_factor':1}");
+            session.execute("use " + Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_KEYSPACE));
+            session.execute("CREATE COLUMNFAMILY test (key varchar PRIMARY KEY, value bigint)");
+            session.execute("INSERT INTO test (key, value) VALUES('20130910', 100)");
+        } finally {
+            session.shutdown();
+        }
+
+        cluster.shutdown();
+    }
+
+    @AfterClass
+    public void stopCassandraCluster() throws Exception {
+        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
+    }
 
     @Test
     public void test() throws Exception {
-//        CassandraDataManager.loadValue();
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130910");
+        Parameters.TO_DATE.put(context, "20130910");
+        ValueData valueData = CassandraDataManager.loadValue(new TestMetric(), context);
 
-//        Cluster cluster = Cluster.builder().addContactPoint(node).build();
-//
-//        Session session = cluster.connect("analytics_data");
-//        ResultSet results = session.execute("SELECT * FROM test where key='20131010'");
-//
-//        for (Row row : results) {
-//            System.out.println(row.getLong("value"));
-//        }
-//
-//        session.shutdown();
+        assertEquals(new LongValueData(100), valueData);
+    }
+
+    private class TestMetric extends ReadBasedMetric {
+
+        private TestMetric() {
+            super("test");
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
+        public Set<Parameters> getParams() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
     }
 }
