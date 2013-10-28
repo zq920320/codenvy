@@ -52,7 +52,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
         Parameters.PARAM.put(params, "USER");
-        Parameters.METRIC.put(params, "fake");
+        Parameters.CASSANDRA_COLUMNFAMILY.put(params, "fake");
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
 

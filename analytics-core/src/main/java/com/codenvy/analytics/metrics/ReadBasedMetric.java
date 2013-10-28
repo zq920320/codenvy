@@ -20,7 +20,7 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.value.CassandraDataManager;
+import com.codenvy.analytics.cassandra.CassandraDataManager;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.metrics.value.ValueDataFactory;
 
@@ -38,6 +38,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     public ReadBasedMetric(String metricName) {
         super(metricName);
+    }
+
+    public ReadBasedMetric(MetricType metricType) {
+        super(metricType);
     }
 
     /** {@inheritDoc} */

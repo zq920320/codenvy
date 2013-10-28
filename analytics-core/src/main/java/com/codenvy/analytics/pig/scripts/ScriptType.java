@@ -62,8 +62,10 @@ public enum ScriptType {
                                                Parameters.TO_DATE,
                                                Parameters.USER,
                                                Parameters.WS,
-                                               Parameters.CASSANDRA_COLUMN_FAMILY,
-                                               Parameters.METRIC}));
+                                               Parameters.CASSANDRA_KEYSPACE,
+                                               Parameters.CASSANDRA_COLUMNFAMILY,
+                                               Parameters.CASSANDRA_PASSWORD,
+                                               Parameters.CASSANDRA_USER}));
     }
 
     /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */

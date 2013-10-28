@@ -23,4 +23,4 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 a = combineSmallSessions(l, 'session-started', 'session-finished');
 
 result = FOREACH a GENERATE UUID(), TOTUPLE('date', '$TO_DATE'), TOTUPLE('user', user), TOTUPLE('value', delta);
-STORE result INTO 'cassandra://$CASSANDRA_USER:CASSANDRA_PASSWORD@$CASSANDRA_COLUMN_FAMILY/$METRIC' USING CassandraStorage();
+STORE result INTO 'cassandra://$CASSANDRA_USER:CASSANDRA_PASSWORD@$CASSANDRA_KEYSPACE/$CASSANDRA_COLUMNFAMILY' USING CassandraStorage();

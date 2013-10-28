@@ -56,13 +56,10 @@ public abstract class AbstractValueData implements ValueData {
             hash = doHashCode();
         }
 
-        return hash.intValue();
+        return hash;
     }
 
-    /**
-     * @param valueData
-     * @see #equals(Object)
-     */
+    /** @see #equals(Object) */
     abstract protected boolean doEquals(ValueData valueData);
 
     /** @see #hashCode() */

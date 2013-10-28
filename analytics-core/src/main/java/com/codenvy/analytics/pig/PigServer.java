@@ -21,8 +21,8 @@ package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.cassandra.CassandraDataManager;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.value.CassandraDataManager;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 
 import org.apache.cassandra.hadoop.pig.CassandraStorage;
@@ -199,7 +199,7 @@ public class PigServer {
         Parameters.CASSANDRA_USER.put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_USER));
         Parameters.CASSANDRA_PASSWORD
                   .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_PASSWORD));
-        Parameters.CASSANDRA_COLUMN_FAMILY
+        Parameters.CASSANDRA_KEYSPACE
                   .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_KEYSPACE));
 
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {

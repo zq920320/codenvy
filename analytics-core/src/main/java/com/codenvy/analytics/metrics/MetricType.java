@@ -18,7 +18,13 @@
 
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * Predefined metrics.
+ *
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public enum MetricType {
+    WORKSPACE_CREATED,
+    WORKSPACE_DESTROYED
 }
 

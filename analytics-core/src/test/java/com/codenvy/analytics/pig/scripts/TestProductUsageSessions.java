@@ -70,8 +70,7 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.CASSANDRA_COLUMN_FAMILY.put(params, "fake");
-        Parameters.METRIC.put(params, "fake");
+        Parameters.CASSANDRA_COLUMNFAMILY.put(params, "fake");
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
 

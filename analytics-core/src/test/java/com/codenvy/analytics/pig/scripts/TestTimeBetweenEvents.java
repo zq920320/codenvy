@@ -86,7 +86,7 @@ public class TestTimeBetweenEvents extends BaseTest {
         Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
         Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.METRIC.put(context, "fake");
+        Parameters.CASSANDRA_COLUMNFAMILY.put(context, "fake");
     }
 
     @Test

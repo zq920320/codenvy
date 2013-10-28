@@ -66,7 +66,7 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.METRIC.put(params, "fake");
+        Parameters.CASSANDRA_COLUMNFAMILY.put(params, "fake");
     }
 
     @Test
