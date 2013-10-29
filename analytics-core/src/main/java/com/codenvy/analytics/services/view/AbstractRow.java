@@ -19,8 +19,14 @@
 
 package com.codenvy.analytics.services.view;
 
+import java.util.Map;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractRow implements Row {
 
+    protected final Map<String, String> parameters;
 
+    protected AbstractRow(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
 }

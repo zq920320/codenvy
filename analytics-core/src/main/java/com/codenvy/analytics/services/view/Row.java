@@ -35,5 +35,5 @@ public interface Row {
      * @param context
      *         the execution context
      */
-    List<ValueData> retrieveData(Map<String, String> context) throws IOException;
+    ValueData retrieveData(Map<String, String> context) throws IOException;
 }
