@@ -19,6 +19,8 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.jdbc.H2DataManager;
+import com.codenvy.analytics.jdbc.JdbcDataManager;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.services.ConfigurationManager;
@@ -32,6 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,8 +52,11 @@ public class ViewBuilder implements Feature {
 
     private final ConfigurationManager<ViewConfiguration> configurationManager;
 
+    private final JdbcDataManager dataManager;
+
     public ViewBuilder() {
         this.configurationManager = new XmlConfigurationManager<>(ViewConfiguration.class);
+        this.dataManager = new H2DataManager();
     }
 
     /** {@inheritDoc} */
@@ -116,11 +123,22 @@ public class ViewBuilder implements Feature {
                 sectionData.add(rowData);
             }
 
-            retain(sectionData, sectionConfiguration);
+            retain(sectionConfiguration, sectionData);
         }
     }
 
-    private void retain(List<List<ValueData>> sectionData, SectionConfiguration sectionConfiguration) {
-        // TODO preserve
+    private void retain(SectionConfiguration sectionConfiguration, List<List<ValueData>> sectionData)
+            throws SQLException {
+
+        Connection connection = dataManager.openConnection();
+        try {
+            List<ValueData> fields = sectionData.get(0);
+            List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
+
+            dataManager.createTable(connection, sectionConfiguration.getName(), fields);
+            dataManager.retainData(connection, data);
+        } finally {
+            connection.close();
+        }
     }
 }
