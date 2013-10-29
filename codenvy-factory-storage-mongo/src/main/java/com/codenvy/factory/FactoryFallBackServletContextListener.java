@@ -56,7 +56,7 @@ public class FactoryFallBackServletContextListener implements ServletContextList
 
     private FactoryStore getFactoryStore() {
 
-        if (System.getProperty("codenvy.local.conf.dir") == null) {
+        if (System.getProperty("codenvy.local.conf.dir") != null) {
             File dbSettings =
                     new File(System.getProperty("codenvy.local.conf.dir"), "factory-storage-configuration.json");
             if (dbSettings.exists() && !dbSettings.isDirectory()) {
