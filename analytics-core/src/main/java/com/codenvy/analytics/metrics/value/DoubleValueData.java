@@ -73,4 +73,8 @@ public class DoubleValueData extends AbstractValueData {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         value = in.readDouble();
     }
+
+    public double getAsDouble() {
+        return value;
+    }
 }

@@ -21,7 +21,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @XmlRootElement(name = "row")
@@ -36,7 +38,7 @@ public class RowConfiguration {
         this.clazz = clazz;
     }
 
-    @XmlElement (name = "parameter")
+    @XmlElement(name = "parameter")
     public void setParameters(List<ParameterConfiguration> parameters) {
         this.parameters = parameters;
     }
@@ -47,5 +49,14 @@ public class RowConfiguration {
 
     public List<ParameterConfiguration> getParameters() {
         return parameters;
+    }
+
+    public Map<String, String> getParamsAsMap() {
+        Map<String, String> result = new HashMap<>(parameters.size());
+        for (ParameterConfiguration parameter : parameters) {
+            result.put(parameter.getKey(), parameter.getValue());
+        }
+
+        return result;
     }
 }

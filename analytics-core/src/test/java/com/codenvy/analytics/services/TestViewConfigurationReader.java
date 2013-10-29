@@ -38,7 +38,7 @@ public class TestViewConfigurationReader {
     private static final String RESOURCE = "<view>" +
                                            "    <section name=\"workspaces\" length=\"20\">" +
                                            "        <row class=\"Date.class\">" +
-                                           "            <parameter key=\"format\" value=\"dd MMMM\"/>" +
+                                           "            <parameter key=\"format\" value=\"dd MMM\"/>" +
                                            "        </row>" +
                                            "        <row class=\"Empty.class\" />" +
                                            "    </section>" +
@@ -66,7 +66,7 @@ public class TestViewConfigurationReader {
         assertEquals("Date.class", rowConfiguration.getClazz());
         assertEquals(1, rowConfiguration.getParameters().size());
         assertEquals("format", rowConfiguration.getParameters().get(0).getKey());
-        assertEquals("dd MMMM", rowConfiguration.getParameters().get(0).getValue());
+        assertEquals("dd MMM", rowConfiguration.getParameters().get(0).getValue());
 
         rowConfiguration = sectionConfiguration.getRows().get(1);
         assertEquals("Empty.class", rowConfiguration.getClazz());

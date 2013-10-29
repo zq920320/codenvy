@@ -73,4 +73,8 @@ public class LongValueData extends AbstractValueData {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         value = in.readLong();
     }
+
+    public long getAsLong() {
+        return value;
+    }
 }

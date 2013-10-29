@@ -16,28 +16,19 @@
  * from Codenvy S.A..
  */
 
-
-package com.codenvy.analytics.services.view;
-
-
-import com.codenvy.analytics.metrics.value.ValueData;
+package com.codenvy.analytics.metrics;
 
 import java.io.IOException;
-import java.util.Map;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface Row {
+/**
+ * Is thrown when cumulative metric can be evaluated since there is no initial value.
+ * 
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
+@SuppressWarnings("serial")
+public class InitialValueNotFoundException extends IOException {
 
-    /**
-     * @return the row data description, it will be treated as the first column in the sequences
-     * @throws IOException
-     */
-    ValueData getDescription() throws IOException;
-
-    /**
-     * @return row data depending on execution context
-     * @throws IOException
-     */
-    ValueData getData(Map<String, String> context) throws IOException;
-
+    public InitialValueNotFoundException(String message) {
+        super(message);
+    }
 }

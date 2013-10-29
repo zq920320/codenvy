@@ -19,43 +19,28 @@
 
 package com.codenvy.analytics.services.view;
 
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-class DateRow extends AbstractRow {
+class EmptyRow extends AbstractRow {
 
-    private static final String FORMAT = "format";
-
-    private final DateFormat dateFormat;
-
-    public DateRow(Map<String, String> parameters) {
+    public EmptyRow(Map<String, String> parameters) {
         super(parameters);
-        dateFormat = new SimpleDateFormat(parameters.get(FORMAT));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ValueData getData(Map<String, String> context) throws IOException {
+        return StringValueData.DEFAULT;
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getDescription() throws IOException {
         return StringValueData.DEFAULT;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ValueData getData(Map<String, String> context) throws IOException {
-        try {
-            Calendar toDate = Utils.getToDate(context);
-            return new StringValueData(dateFormat.format(toDate.getTime()));
-        } catch (ParseException e) {
-            throw new IOException(e);
-        }
     }
 }

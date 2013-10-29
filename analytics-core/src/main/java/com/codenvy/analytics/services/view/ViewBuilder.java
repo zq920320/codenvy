@@ -20,8 +20,7 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.value.ListValueData;
-import com.codenvy.analytics.metrics.value.RowValueData;
+import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.services.ConfigurationManager;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.XmlConfigurationManager;
@@ -32,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +43,7 @@ public class ViewBuilder implements Feature {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ViewBuilder.class);
 
-    /** The directory in where views are stored. */
+    /** The directory where views are stored in. */
     public static final String VIEW_DIR = "view";
 
     private final ConfigurationManager<ViewConfiguration> configurationManager;
@@ -64,7 +63,7 @@ public class ViewBuilder implements Feature {
     public void forceExecute(Map<String, String> context) throws JobExecutionException {
         try {
             doExecute();
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             throw new JobExecutionException(e);
         }
     }
@@ -74,40 +73,54 @@ public class ViewBuilder implements Feature {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             doExecute();
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             throw new JobExecutionException(e);
         }
     }
 
-    protected void doExecute() throws IOException, ParseException {
+    protected void doExecute() throws Exception {
         LOG.info("ViewBuilder is started");
         long start = System.currentTimeMillis();
 
         try {
-            File[] views = new File(Configurator.CONFIGURATION_DIRECTORY, VIEW_DIR).listFiles();
-            for (File view : views) {
-                ListValueData<RowValueData> valueData = retrieveData(view);
+            String[] views = new File(Configurator.CONFIGURATION_DIRECTORY, VIEW_DIR).list();
+
+            for (String view : views) {
+                ViewConfiguration viewConfiguration = configurationManager.loadConfiguration(view);
+                build(viewConfiguration);
             }
         } finally {
             LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
-    protected ListValueData<RowValueData> retrieveData(File view) throws IOException, ParseException {
-        List<RowValueData> rows = new ArrayList<>();
-        ViewConfiguration viewConfiguration = configurationManager.loadConfiguration(view.getAbsolutePath());
+    protected void build(ViewConfiguration viewConfiguration) throws Exception {
+        for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
+            List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
 
-        for (SectionConfiguration section : viewConfiguration.getSections()) {
-            for (RowConfiguration row : section.getRows()) {
+            for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
+                List<ValueData> rowData = new ArrayList<>(sectionConfiguration.getLength() + 1);
+
+                Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
+                Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
 
                 Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
-                for (int i = 0; i < section.getLength(); i++) {
 
+                for (int i = 0; i < sectionConfiguration.getLength(); i++) {
+                    rowData.add(row.getData(context));
                     context = Utils.nextDateInterval(context);
                 }
-            }
-        }
+                rowData.add(row.getDescription());
 
-        return new ListValueData<>(rows);
+                Collections.reverse(rowData);
+                sectionData.add(rowData);
+            }
+
+            retain(sectionData, sectionConfiguration);
+        }
+    }
+
+    private void retain(List<List<ValueData>> sectionData, SectionConfiguration sectionConfiguration) {
+        // TODO preserve
     }
 }
