@@ -37,8 +37,7 @@ public class Configurator {
     private static final String ANALYTICS_CONFIGURATION_DIRECTORY_PROPERTY = "analytics.configuration.dir";
 
     /** The value of {@value #ANALYTICS_CONFIGURATION_DIRECTORY_PROPERTY}. */
-    private static final String CONFIGURATION_DIRECTORY =
-            System.getProperty(ANALYTICS_CONFIGURATION_DIRECTORY_PROPERTY);
+    public static final String CONFIGURATION_DIRECTORY = System.getProperty(ANALYTICS_CONFIGURATION_DIRECTORY_PROPERTY);
 
     private static final String RESOURCE = "analytics.conf";
 

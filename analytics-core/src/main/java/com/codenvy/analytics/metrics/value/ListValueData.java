@@ -23,26 +23,25 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ListValueData extends AbstractValueData {
+public class ListValueData<T extends ValueData> extends AbstractValueData {
 
-    public static final ListValueData DEFAULT = new ListValueData(Collections.<RowValueData>emptyList());
+    private List<T> value;
 
-    private List<RowValueData> value;
+    public static ListValueData DEFAULT = new ListValueData(Collections.EMPTY_LIST);
 
     public ListValueData() {
     }
 
-    public ListValueData(Collection<RowValueData> value) {
+    public ListValueData(List<T> value) {
         this.value = new ArrayList<>(value);
     }
 
-    public List<RowValueData> getAll() {
+    public List<T> getAll() {
         return Collections.unmodifiableList(value);
     }
 
@@ -55,7 +54,7 @@ public class ListValueData extends AbstractValueData {
     protected ValueData doUnion(ValueData valueData) {
         ListValueData object = (ListValueData)valueData;
 
-        List<RowValueData> result = new ArrayList<>(this.value.size() + object.size());
+        List<ValueData> result = new ArrayList<>(this.value.size() + object.size());
         result.addAll(this.value);
         result.addAll(object.value);
 
@@ -67,7 +66,7 @@ public class ListValueData extends AbstractValueData {
     public String getAsString() {
         StringBuilder builder = new StringBuilder();
 
-        for (RowValueData valueData : value) {
+        for (ValueData valueData : value) {
             if (builder.length() != 0) {
                 builder.append(',');
             }
@@ -102,7 +101,7 @@ public class ListValueData extends AbstractValueData {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(value.size());
-        for (RowValueData item : value) {
+        for (ValueData item : value) {
             out.writeObject(item);
         }
     }
@@ -114,7 +113,7 @@ public class ListValueData extends AbstractValueData {
 
         value = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            value.add((RowValueData)in.readObject());
+            value.add((T)in.readObject());
         }
     }
 }

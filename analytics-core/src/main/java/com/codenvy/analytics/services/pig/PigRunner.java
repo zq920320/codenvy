@@ -17,11 +17,13 @@
  */
 package com.codenvy.analytics.services.pig;
 
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
+import com.codenvy.analytics.services.ConfigurationManager;
 import com.codenvy.analytics.services.Feature;
+import com.codenvy.analytics.services.XmlConfigurationManager;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -38,11 +40,18 @@ public class PigRunner implements Feature {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PigRunner.class);
 
-    private final ConfigurationManager configurationManager;
+    /** Runtime parameter name. It contains the destination for configuration. */
+    public static final String ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY = "analytics.pig.runner.config";
+
+    /** The value of {@value #ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY}. */
+    public static final String PIG_RUNNER_CONFIG = System.getProperty(ANALYTICS_PIG_RUNNER_CONFIG_PROPERTY);
+
+    private final ConfigurationManager<PigRunnerConfiguration> configurationManager;
 
     public PigRunner() {
-        this.configurationManager = new XmlConfigurationManager();
+        this.configurationManager = new XmlConfigurationManager(PigRunnerConfiguration.class);
     }
+
 
     /** {@inheritDoc} */
     @Override
@@ -75,7 +84,7 @@ public class PigRunner implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            PigRunnerConfiguration configuration = configurationManager.loadConfiguration();
+            PigRunnerConfiguration configuration = configurationManager.loadConfiguration(PIG_RUNNER_CONFIG);
 
             for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {
                 String scriptName = scriptConfiguration.getName();

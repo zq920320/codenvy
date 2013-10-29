@@ -15,21 +15,24 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.pig;
+package com.codenvy.analytics.services.view;
 
-import java.io.IOException;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class JDBCConfigurationManager implements ConfigurationManager {
+/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+@XmlRootElement(name = "view")
+public class ViewConfiguration {
 
-    /** {@inheritDoc} */
-    @Override
-    public PigRunnerConfiguration loadConfiguration() throws IOException {
-        return null;
+    private List<SectionConfiguration> sections;
+
+    public List<SectionConfiguration> getSections() {
+        return sections;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void storeConfiguration() throws IOException {
+    @XmlElement(name = "section")
+    public void setSections(List<SectionConfiguration> sections) {
+        this.sections = sections;
     }
 }

@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.pig;
+package com.codenvy.analytics.services;
 
 import java.io.IOException;
 

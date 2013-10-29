@@ -15,21 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.pig;
+package com.codenvy.analytics.services;
+
+import com.codenvy.analytics.services.pig.PigRunnerConfiguration;
+import com.codenvy.analytics.services.pig.ScriptConfiguration;
 
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
 
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class TestXmlReaderConfiguration {
+public class TestPigRunnerConfiguration {
 
     private static final String RESOURCE = "<scripts>" +
                                            "    <script name=\"test1\">" +
@@ -49,12 +53,12 @@ public class TestXmlReaderConfiguration {
 
     @Test
     public void testParsingConfig() throws Exception {
-        XmlConfigurationManager confReader = new XmlConfigurationManager();
-        XmlConfigurationManager spyService = spy(confReader);
+        XmlConfigurationManager<PigRunnerConfiguration> spyService =
+                spy(new XmlConfigurationManager<>(PigRunnerConfiguration.class));
 
-        doReturn(new ByteArrayInputStream(RESOURCE.getBytes("UTF-8"))).when(spyService).openResource();
+        doReturn(new ByteArrayInputStream(RESOURCE.getBytes("UTF-8"))).when(spyService).openResource(anyString());
 
-        PigRunnerConfiguration configuration = spyService.loadConfiguration();
+        PigRunnerConfiguration configuration = spyService.loadConfiguration(anyString());
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getScripts().size());

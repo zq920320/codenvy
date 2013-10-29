@@ -22,14 +22,17 @@ package com.codenvy.analytics.cassandra;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.value.*;
-import com.datastax.driver.core.*;
+import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.metrics.value.ValueDataFactory;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class CassandraDataManager {
@@ -81,9 +84,8 @@ public class CassandraDataManager {
         try {
             String query = prepareQuery(metric, clauses);
             ResultSet resultSet = session.execute(query);
-            List<RowValueData> rows = readRows(resultSet);
 
-            return createdValueData(metric.getValueDataClass(), rows);
+            return ValueDataFactory.createdValueData(metric.getValueDataClass(), resultSet);
         } finally {
             session.shutdown();
         }
@@ -124,78 +126,5 @@ public class CassandraDataManager {
 
             throw new IllegalStateException("The date params are different or absent in context");
         }
-    }
-
-    private static ValueData createdValueData(Class<? extends ValueData> clazz, List<RowValueData> rows) {
-        if (clazz == LongValueData.class || clazz == DoubleValueData.class || clazz == StringValueData.class) {
-            if (rows.size() == 1) {
-                if (rows.get(0).size() == 1) {
-                    ValueData valueData = rows.get(0).getAll().values().iterator().next();
-
-                    if (valueData.getClass() == clazz) {
-                        return valueData;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Row contains " + valueData.getClass() + " instead of " + clazz);
-                    }
-                } else {
-                    throw new IllegalArgumentException(
-                            "Wrong data format for " + clazz.getName() + ". The number of columns is greater than 1");
-                }
-            } else {
-                throw new IllegalArgumentException(
-                        "Wrong data format for " + clazz.getName() + ". The number of rows is greater than 1");
-            }
-
-        } else if (clazz == RowValueData.class) {
-            if (rows.size() == 1) {
-                return rows.get(0);
-            } else {
-                throw new IllegalArgumentException(
-                        "Wrong data format for " + clazz.getName() + ". The number of rows is greater than 1");
-            }
-
-        } else if (clazz == ListValueData.class) {
-            return new ListValueData(rows);
-        }
-
-        throw new IllegalArgumentException("Unknown class " + clazz.getName());
-    }
-
-    private static List<RowValueData> readRows(ResultSet resultSet) {
-        List<RowValueData> rows = new ArrayList<>();
-
-        Iterator<Row> iterator = resultSet.iterator();
-        while (iterator.hasNext()) {
-            Row row = iterator.next();
-            ColumnDefinitions definitions = row.getColumnDefinitions();
-
-            Map<String, ValueData> map = new HashMap<>(definitions.size());
-
-            for (int i = 1; i < definitions.size(); i++) {
-                ValueData valueData;
-
-                DataType type = definitions.getType(i);
-                switch (type.getName()) {
-                    case BIGINT:
-                        valueData = new LongValueData(row.getLong(i));
-                        break;
-                    case DOUBLE:
-                        valueData = new DoubleValueData(row.getDouble(i));
-                        break;
-                    case TEXT:
-                        valueData = new StringValueData(row.getString(i));
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unsupported data type " + type.getName());
-                }
-
-                map.put(definitions.getName(i), valueData);
-            }
-
-            rows.add(new RowValueData(map));
-        }
-
-        return rows;
     }
 }

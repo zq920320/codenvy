@@ -15,27 +15,12 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.pig;
 
-import java.io.IOException;
+
+package com.codenvy.analytics.services.view;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface ConfigurationManager {
+public abstract class AbstractRow implements Row {
 
-    /**
-     * Loads a configuration.
-     *
-     * @return {@link PigRunnerConfiguration}
-     * @throws IOException
-     *         if an error occurred during reading
-     */
-    PigRunnerConfiguration loadConfiguration() throws IOException;
 
-    /**
-     * Stores a configuration.
-     *
-     * @throws IOException
-     *         if an error occurred during storing
-     */
-    void storeConfiguration() throws IOException;
 }
