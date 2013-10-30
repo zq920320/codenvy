@@ -70,7 +70,7 @@ public class InitialValueContainer {
     }
 
     /** Checks if container contains initial value for given metric below or equal to the given date. */
-    public static void validateExistenceInitialValueBefore(String metricName, Map<String, String> context)
+    public static void validateExistenceInitialValueBefore(Map<String, String> context)
             throws InitialValueNotFoundException {
 
         try {

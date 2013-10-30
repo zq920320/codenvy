@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -127,18 +126,21 @@ public class ViewBuilder implements Feature {
         }
     }
 
-    private void retain(SectionConfiguration sectionConfiguration, List<List<ValueData>> sectionData)
+    protected void retain(SectionConfiguration sectionConfiguration, List<List<ValueData>> sectionData)
             throws SQLException {
 
-        Connection connection = dataManager.openConnection();
-        try {
-            List<ValueData> fields = sectionData.get(0);
-            List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
-
-            dataManager.createTable(connection, sectionConfiguration.getName(), fields);
-            dataManager.retainData(connection, data);
-        } finally {
-            connection.close();
-        }
+//        Connection connection = dataManager.openConnection();
+//        try {
+//            List<ValueData> fields = sectionData.get(0);
+//            List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
+//
+//            dataManager.createTable(connection, sectionConfiguration.getName(), fields);
+//            dataManager.retainData(connection, data);
+//            connection.commit();
+//        } catch (SQLException e) {
+//            connection.rollback();
+//        } finally {
+//            connection.close();
+//        }
     }
 }

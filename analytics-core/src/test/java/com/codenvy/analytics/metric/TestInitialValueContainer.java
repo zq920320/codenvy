@@ -52,7 +52,7 @@ public class TestInitialValueContainer {
         Map<String, String> context = Utils.newContext();
         Parameters.TO_DATE.put(context, "20111231");
 
-        InitialValueContainer.validateExistenceInitialValueBefore("total_users", context);
+        InitialValueContainer.validateExistenceInitialValueBefore(context);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class TestInitialValueContainer {
         Map<String, String> context = Utils.newContext();
         Parameters.TO_DATE.put(context, "201120101");
 
-        InitialValueContainer.validateExistenceInitialValueBefore("total_users", context);
+        InitialValueContainer.validateExistenceInitialValueBefore(context);
     }
 
     @Test
@@ -68,6 +68,6 @@ public class TestInitialValueContainer {
         Map<String, String> context = Utils.newContext();
         Parameters.TO_DATE.put(context, "201120102");
 
-        InitialValueContainer.validateExistenceInitialValueBefore("total_users", context);
+        InitialValueContainer.validateExistenceInitialValueBefore(context);
     }
 }
