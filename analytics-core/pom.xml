@@ -200,11 +200,11 @@
                 <configuration>
                     <systemProperties>
                         <property>
-                            <name>analytics.scripts.directory</name>
+                            <name>analytics.scripts.dir</name>
                             <value>scripts</value>
                         </property>
                         <property>
-                            <name>analytics.bin.directory</name>
+                            <name>analytics.bin.dir</name>
                             <value>bin</value>
                         </property>
                     </systemProperties>

@@ -54,16 +54,16 @@ public class PigServer {
     private static org.apache.pig.PigServer server;
 
     /** System property. The directory name with Pig-script files. */
-    private static final String ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY = "analytics.scripts.directory";
+    private static final String ANALYTICS_SCRIPTS_DIR_PROPERTY = "analytics.scripts.dir";
 
     /** System property. The directory name with binary files. */
-    private static final String ANALYTICS_BIN_DIRECTORY_PROPERTY = "analytics.bin.directory";
+    private static final String ANALYTICS_BIN_DIR_PROPERTY = "analytics.bin.dir";
 
-    /** The value of {@value #ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY}. */
-    public static final String SCRIPTS_DIRECTORY = System.getProperty(ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY);
+    /** The value of {@value #ANALYTICS_SCRIPTS_DIR_PROPERTY}. */
+    public static final String SCRIPTS_DIR = System.getProperty(ANALYTICS_SCRIPTS_DIR_PROPERTY);
 
-    /** The value of {@value #ANALYTICS_BIN_DIRECTORY_PROPERTY}. */
-    public static final String BIN_DIRECTORY = System.getProperty(ANALYTICS_BIN_DIRECTORY_PROPERTY);
+    /** The value of {@value #ANALYTICS_BIN_DIR_PROPERTY}. */
+    public static final String BIN_DIR = System.getProperty(ANALYTICS_BIN_DIR_PROPERTY);
 
     public static final String ANALYTICS_LOGS_DIRECTORY = "analytics.logs.directory";
 
@@ -148,7 +148,7 @@ public class PigServer {
     private static String prepareRunCommand(ScriptType scriptType, Map<String, String> context) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(new File(BIN_DIRECTORY, "pig_cassandra.sh").getAbsolutePath());
+        builder.append(new File(BIN_DIR, "pig_cassandra.sh").getAbsolutePath());
 
         for (Map.Entry<String, String> entry : context.entrySet()) {
             builder.append(' ');
@@ -219,7 +219,7 @@ public class PigServer {
 
     /** @return the script file name */
     private static File getScriptFileName(ScriptType scriptType) {
-        return new File(SCRIPTS_DIRECTORY, scriptType.toString().toLowerCase() + ".pig");
+        return new File(SCRIPTS_DIR, scriptType.toString().toLowerCase() + ".pig");
     }
 
     /**
@@ -304,7 +304,7 @@ public class PigServer {
         String importCommand = scriptContent.substring(matcher.start(), matcher.end());
         String importFileName = importCommand.replaceAll(regex, "$1");
 
-        File importFile = new File(SCRIPTS_DIRECTORY, importFileName);
+        File importFile = new File(SCRIPTS_DIR, importFileName);
         if (!importFile.exists()) {
             throw new IOException("Resource " + importFile + " not found");
         }

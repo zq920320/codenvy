@@ -267,8 +267,9 @@ do
     -XX:HeapDumpPath="$CARBON_HOME/repository/logs/heap-dump.hprof" \
     -javaagent:"$CARBON_HOME/repository/components/plugins/jamm_0.2.5.wso2v2.jar" \
     $JAVA_OPTS \
-    -Danalytics.scripts.directory=$CARBON_HOME/pigscripts \
-    -Danalytics.bin.directory=$CARBON_HOME/bin \
+    -Danalytics.bin.dir=$CARBON_HOME/bin \
+    -Danalytics.scripts.dir=$CARBON_HOME/pigscripts \
+    -Danalytics.configuration.dir=$CARBON_HOME/repository/conf
     -Danalytics.pig.runner.config=$CARBON_HOME/pigscripts/config.xml \
     -Ddisable.cassandra.server.startup=true \
     -Dcom.sun.management.jmxremote \
