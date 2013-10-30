@@ -14,7 +14,7 @@
             <definition type="RDBMS">
                 <configuration>
                     <url>jdbc:h2:repository/database/WSO2CARBON_DB;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=60000</url>
-                    <username>wso2carbon</username>
+                    <username>admin</username>
                     <password>wso2carbon</password>
                     <driverClassName>org.h2.Driver</driverClassName>
                     <maxActive>50</maxActive>
@@ -31,7 +31,7 @@
            <description>The datasource used for analyzer data</description>
            <definition type="RDBMS">
                <configuration>
-                   <url>jdbc:h2:repository/database/samples/BAM_STATS_DB;AUTO_SERVER=TRUE</url>
+                   <url>jdbc:h2:repository/database/BAM_STATS_DB;AUTO_SERVER=TRUE</url>
                    <username>wso2carbon</username>
                    <password>wso2carbon</password>
                    <driverClassName>org.h2.Driver</driverClassName>
