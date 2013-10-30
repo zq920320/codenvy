@@ -40,28 +40,28 @@ public class CassandraDataManager {
     /** Logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDataManager.class);
 
-    public static final String CASSANDRA_ANALYTICS_HOST = "cassandra.analytics.host";
+    public static final String CASSANDRA_DATA_MANAGER_HOST = "cassandra.data-manager.host";
 
-    public static final String CASSANDRA_ANALYTICS_PORT = "cassandra.analytics.port";
+    public static final String CASSANDRA_DATA_MANAGER_PORT = "cassandra.data-manager.port";
 
-    public static final String CASSANDRA_ANALYTICS_KEYSPACE = "cassandra.analytics.keyspace";
+    public static final String CASSANDRA_DATA_MANAGER_KEYSPACE = "cassandra.data-manager.keyspace";
 
-    public static final String CASSANDRA_ANALYTICS_USER = "cassandra.analytics.user";
+    public static final String CASSANDRA_DATA_MANAGER_USER = "cassandra.data-manager.user";
 
-    public static final String CASSANDRA_ANALYTICS_PASSWORD = "cassandra.analytics.password";
+    public static final String CASSANDRA_DATA_MANAGER_PASSWORD = "cassandra.data-manager.password";
 
-    private static final String KEYSPACE = Configurator.getString(CASSANDRA_ANALYTICS_KEYSPACE);
+    private static final String KEYSPACE = Configurator.getString(CASSANDRA_DATA_MANAGER_KEYSPACE);
 
     private static Cluster cluster;
 
     static {
         Cluster.Builder builder = Cluster.builder();
-        for (String node : Configurator.getArray(CASSANDRA_ANALYTICS_HOST)) {
+        for (String node : Configurator.getArray(CASSANDRA_DATA_MANAGER_HOST)) {
             builder.addContactPoint(node);
         }
-        builder.withPort(Configurator.getInt(CASSANDRA_ANALYTICS_PORT));
-        builder.withCredentials(Configurator.getString(CASSANDRA_ANALYTICS_USER),
-                                Configurator.getString(CASSANDRA_ANALYTICS_PASSWORD));
+        builder.withPort(Configurator.getInt(CASSANDRA_DATA_MANAGER_PORT));
+        builder.withCredentials(Configurator.getString(CASSANDRA_DATA_MANAGER_USER),
+                                Configurator.getString(CASSANDRA_DATA_MANAGER_PASSWORD));
 
         cluster = builder.build();
 

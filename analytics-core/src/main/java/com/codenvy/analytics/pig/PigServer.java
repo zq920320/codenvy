@@ -59,17 +59,15 @@ public class PigServer {
     /** System property. The directory name with binary files. */
     private static final String ANALYTICS_BIN_DIRECTORY_PROPERTY = "analytics.bin.directory";
 
-    /** System property. Contains the directory where logs are located. */
-    public static final String ANALYTICS_LOGS_DIRECTORY_PROPERTY = "analytics.logs.directory";
-
     /** The value of {@value #ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY}. */
     public static final String SCRIPTS_DIRECTORY = System.getProperty(ANALYTICS_SCRIPTS_DIRECTORY_PROPERTY);
 
     /** The value of {@value #ANALYTICS_BIN_DIRECTORY_PROPERTY}. */
     public static final String BIN_DIRECTORY = System.getProperty(ANALYTICS_BIN_DIRECTORY_PROPERTY);
 
-    /** The value of {@value #ANALYTICS_LOGS_DIRECTORY_PROPERTY}. */
-    public static final String LOGS_DIRECTORY = System.getProperty(ANALYTICS_LOGS_DIRECTORY_PROPERTY);
+    public static final String ANALYTICS_LOGS_DIRECTORY = "analytics.logs.directory";
+
+    public static final String LOGS_DIRECTORY = Configurator.getString(ANALYTICS_LOGS_DIRECTORY);
 
     /** Pig relation containing execution result. */
     private static final String FINAL_RELATION = "result";
@@ -196,11 +194,12 @@ public class PigServer {
                                                                 Map<String, String> context) throws IOException {
         context = Utils.clone(context);
 
-        Parameters.CASSANDRA_USER.put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_USER));
+        Parameters.CASSANDRA_USER
+                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_USER));
         Parameters.CASSANDRA_PASSWORD
-                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_PASSWORD));
+                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_PASSWORD));
         Parameters.CASSANDRA_KEYSPACE
-                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_KEYSPACE));
+                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_KEYSPACE));
 
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {
             setOptimizedPaths(context);

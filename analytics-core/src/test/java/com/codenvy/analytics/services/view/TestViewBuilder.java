@@ -50,7 +50,7 @@ public class TestViewBuilder extends BaseTest {
     private String RESOURCE = "<view>\n" +
                               "    <section name=\"workspaces\" length=\"2\">\n" +
                               "        <row class=\"com.codenvy.analytics.services.view.DateRow\">\n" +
-                              "            <parameter key=\"format\" value=\"dd MMM\"/>\n" +
+                              "            <parameter key=\"format\" value=\"MMM dd\"/>\n" +
                               "        </row>\n" +
                               "        <row class=\"com.codenvy.analytics.services.view" +
                               ".TestViewBuilder$TestMetricRow\">\n" +
@@ -76,7 +76,9 @@ public class TestViewBuilder extends BaseTest {
 
     @Test
     public void testParsingConfig() throws Exception {
-        ViewBuilder spyBuilder = spy(new ViewBuilder());
+        ViewBuilder viewBuilder = new ViewBuilder();
+
+        ViewBuilder spyBuilder = spy(viewBuilder);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -85,24 +87,26 @@ public class TestViewBuilder extends BaseTest {
 
                 return null;
             }
-        }).when(spyBuilder).retain(Matchers.<SectionConfiguration>any(), anyList());
+        }).when(spyBuilder).retainData(Matchers.<SectionConfiguration>any(), anyList());
 
         spyBuilder.build(viewConfiguration);
+        viewBuilder.build(viewConfiguration);
     }
 
     private void assertValueData(List<List<ValueData>> data) {
-        Calendar today = Calendar.getInstance();
+        Calendar day1 = Calendar.getInstance();
+        day1.add(Calendar.DAY_OF_MONTH, -1);
 
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DAY_OF_MONTH, -1);
+        Calendar day2 = Calendar.getInstance();
+        day2.add(Calendar.DAY_OF_MONTH, -2);
 
         assertEquals(3, data.size());
 
         List<ValueData> dateRow = data.get(0);
         assertEquals(3, dateRow.size());
-        assertEquals(StringValueData.DEFAULT, dateRow.get(0));
-        assertTrue(dateRow.get(1).getAsString().contains("" + today.get(Calendar.DAY_OF_MONTH)));
-        assertTrue(dateRow.get(2).getAsString().contains("" + yesterday.get(Calendar.DAY_OF_MONTH)));
+        assertEquals(new StringValueData("Date"), dateRow.get(0));
+        assertTrue(dateRow.get(1).getAsString().contains("" + day1.get(Calendar.DAY_OF_MONTH)));
+        assertTrue(dateRow.get(2).getAsString().contains("" + day2.get(Calendar.DAY_OF_MONTH)));
 
         List<ValueData> metricRow = data.get(1);
         assertEquals(3, metricRow.size());

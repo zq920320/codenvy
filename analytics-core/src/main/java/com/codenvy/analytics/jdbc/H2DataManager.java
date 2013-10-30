@@ -17,27 +17,10 @@
  */
 package com.codenvy.analytics.jdbc;
 
-import com.codenvy.analytics.metrics.value.ValueData;
-
-import java.sql.Connection;
-import java.util.List;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class H2DataManager implements JdbcDataManager {
+public class H2DataManager extends AbstractDataManager {
 
-    /** {@inheritDoc} */
-    @Override
-    public Connection openConnection() {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void createTable(Connection connection, String name, List<ValueData> fields) {
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void retainData(Connection connection, List<List<ValueData>> data) {
+    public H2DataManager(String url, String user, String password) {
+        super(url, user, password);
     }
 }

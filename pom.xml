@@ -45,6 +45,7 @@
         <cassandra.driver.version>1.0.4</cassandra.driver.version>
         <cassandra.unit.version>1.2.0.1</cassandra.unit.version>
         <cassandra.version>1.2.9</cassandra.version>
+        <h2.version>1.2.140</h2.version>
 
         <!--<avro.version>1.5.0</avro.version>-->
 

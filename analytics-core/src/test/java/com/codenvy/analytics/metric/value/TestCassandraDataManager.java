@@ -50,21 +50,21 @@ public class TestCassandraDataManager extends BaseTest {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
 
         Cluster.Builder builder = Cluster.builder();
-        for (String node : Configurator.getArray(CassandraDataManager.CASSANDRA_ANALYTICS_HOST)) {
+        for (String node : Configurator.getArray(CassandraDataManager.CASSANDRA_DATA_MANAGER_HOST)) {
             builder.addContactPoint(node);
         }
-        builder.withPort(Configurator.getInt(CassandraDataManager.CASSANDRA_ANALYTICS_PORT));
-        builder.withCredentials(Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_USER),
-                                Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_PASSWORD));
+        builder.withPort(Configurator.getInt(CassandraDataManager.CASSANDRA_DATA_MANAGER_PORT));
+        builder.withCredentials(Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_USER),
+                                Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_PASSWORD));
 
         cluster = builder.build();
 
         Session session = cluster.connect();
         try {
             session.execute(
-                    "CREATE KEYSPACE " + Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_KEYSPACE) +
+                    "CREATE KEYSPACE " + Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_KEYSPACE) +
                     " WITH replication = {'class':'SimpleStrategy', 'replication_factor':1}");
-            session.execute("use " + Configurator.getString(CassandraDataManager.CASSANDRA_ANALYTICS_KEYSPACE));
+            session.execute("use " + Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_KEYSPACE));
             session.execute("CREATE COLUMNFAMILY test (key varchar PRIMARY KEY, value bigint)");
             session.execute("INSERT INTO test (key, value) VALUES('20130910', 100)");
         } finally {

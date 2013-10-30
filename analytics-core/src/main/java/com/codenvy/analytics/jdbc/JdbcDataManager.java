@@ -19,16 +19,12 @@ package com.codenvy.analytics.jdbc;
 
 import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface JdbcDataManager {
 
-    Connection openConnection();
-
-    void createTable(Connection connection, String name, List<ValueData> fields);
-
-    void retainData(Connection connection, List<List<ValueData>> data);
+    void retainData(String tableName, List<ValueData> fields, List<List<ValueData>> data) throws SQLException;
 
 }

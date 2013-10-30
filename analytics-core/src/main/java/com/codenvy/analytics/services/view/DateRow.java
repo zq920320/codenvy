@@ -45,7 +45,7 @@ class DateRow extends AbstractRow {
     /** {@inheritDoc} */
     @Override
     public ValueData getDescription() throws IOException {
-        return StringValueData.DEFAULT;
+        return new StringValueData("Date");
     }
 
     /** {@inheritDoc} */

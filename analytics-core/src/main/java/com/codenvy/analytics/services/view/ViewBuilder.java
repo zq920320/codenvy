@@ -19,8 +19,8 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.jdbc.H2DataManager;
 import com.codenvy.analytics.jdbc.JdbcDataManager;
+import com.codenvy.analytics.jdbc.JdbcDataManagerFactory;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.services.ConfigurationManager;
@@ -36,7 +36,6 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class ViewBuilder implements Feature {
 
     public ViewBuilder() {
         this.configurationManager = new XmlConfigurationManager<>(ViewConfiguration.class);
-        this.dataManager = new H2DataManager();
+        this.dataManager = JdbcDataManagerFactory.getDataManager();
     }
 
     /** {@inheritDoc} */
@@ -100,6 +99,7 @@ public class ViewBuilder implements Feature {
         }
     }
 
+    // TODO multi-threading
     protected void build(ViewConfiguration viewConfiguration) throws Exception {
         for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
             List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
@@ -112,35 +112,25 @@ public class ViewBuilder implements Feature {
 
                 Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
 
+                rowData.add(row.getDescription());
                 for (int i = 0; i < sectionConfiguration.getLength(); i++) {
                     rowData.add(row.getData(context));
-                    context = Utils.nextDateInterval(context);
+                    context = Utils.prevDateInterval(context);
                 }
-                rowData.add(row.getDescription());
 
-                Collections.reverse(rowData);
                 sectionData.add(rowData);
             }
 
-            retain(sectionConfiguration, sectionData);
+            retainData(sectionConfiguration, sectionData);
         }
     }
 
-    protected void retain(SectionConfiguration sectionConfiguration, List<List<ValueData>> sectionData)
+    protected void retainData(SectionConfiguration sectionConfiguration, List<List<ValueData>> sectionData)
             throws SQLException {
 
-//        Connection connection = dataManager.openConnection();
-//        try {
-//            List<ValueData> fields = sectionData.get(0);
-//            List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
-//
-//            dataManager.createTable(connection, sectionConfiguration.getName(), fields);
-//            dataManager.retainData(connection, data);
-//            connection.commit();
-//        } catch (SQLException e) {
-//            connection.rollback();
-//        } finally {
-//            connection.close();
-//        }
+        List<ValueData> fields = sectionData.get(0);
+        List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
+
+        dataManager.retainData(sectionConfiguration.getName(), fields, data);
     }
 }
