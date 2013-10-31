@@ -34,14 +34,10 @@ import java.util.Map;
 public class InitialValueContainer {
 
     private static final String INITIAL_VALUE_METRICS = "initial.value.metrics";
-
     private static final String INITIAL_VALUE_METRIC = "initial.value.metric.";
-
     private static final String INITIAL_VALUE_DATE = "initial.value.date";
-
-    private static final Map<String, ValueData> initialValues = new HashMap<>();
-
     private static final Calendar initialValueDate = Calendar.getInstance();
+    private static final Map<String, ValueData> initialValues = new HashMap<>();
 
     static {
         for (String name : Configurator.getArray(INITIAL_VALUE_METRICS)) {
@@ -59,11 +55,12 @@ public class InitialValueContainer {
         }
     }
 
-    /** @return initial value for give metric */
-    public static ValueData getInitialValue(String metricName) {
-        ValueData valueData = initialValues.get(metricName.toLowerCase());
-        if (valueData == null) {
-            throw new IllegalArgumentException("There is no initial value for " + metricName);
+    /** @return initial value for give metric or null */
+    public static ValueData getInitialValue(String metricName, Map<String, String> context) throws ParseException {
+        ValueData valueData = null;
+
+        if (Utils.getToDate(context).equals(initialValueDate)) {
+            valueData = initialValues.get(metricName.toLowerCase());
         }
 
         return valueData;

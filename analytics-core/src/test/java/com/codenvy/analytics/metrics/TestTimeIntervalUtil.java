@@ -17,11 +17,10 @@
  */
 
 
-package com.codenvy.analytics.metric;
+package com.codenvy.analytics.metrics;
 
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.Parameters;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

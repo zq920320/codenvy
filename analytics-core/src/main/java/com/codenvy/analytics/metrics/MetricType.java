@@ -25,6 +25,7 @@ package com.codenvy.analytics.metrics;
  */
 public enum MetricType {
     WORKSPACE_CREATED,
-    WORKSPACE_DESTROYED
+    WORKSPACE_DESTROYED,
+    TOTAL_WORKSPACES
 }
 

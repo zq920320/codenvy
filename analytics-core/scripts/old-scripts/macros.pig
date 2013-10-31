@@ -247,7 +247,7 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     u1 = UNION S, F;
     u2 = combineClosestEvents(u1, '$startEvent', '$finishEvent');
 
-    -- considering sessions less than 1 min as 1 min length
+    -- considering sessions less than 1 min as 1 min columns
     $Y = FOREACH u2 GENERATE ws, user, dt, (delta < 60 ? 60 : delta) AS delta, id;
 };
 

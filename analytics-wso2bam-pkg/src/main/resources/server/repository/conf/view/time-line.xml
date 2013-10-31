@@ -17,7 +17,7 @@
          from Codenvy S.A..
 -->
 <view>
-    <section name="workspaces" length="20">
+    <section name="workspaces" columns="20">
         <row class="com.codenvy.analytics.services.view.DateRow">
             <parameter key="format" value="MMM dd"/>
         </row>

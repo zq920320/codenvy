@@ -17,34 +17,41 @@
  */
 
 
-package com.codenvy.analytics.metric;
+package com.codenvy.analytics.metrics;
 
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.InitialValueContainer;
-import com.codenvy.analytics.metrics.InitialValueNotFoundException;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.value.LongValueData;
 
 import org.testng.annotations.Test;
 
+import java.text.ParseException;
 import java.util.Map;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNull;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestInitialValueContainer {
 
     @Test
     public void testInitialValue() throws Exception {
-        assertEquals(new LongValueData(10), InitialValueContainer.getInitialValue("total_workspaces"));
-        assertEquals(new LongValueData(20), InitialValueContainer.getInitialValue("total_users"));
-        assertEquals(new LongValueData(30), InitialValueContainer.getInitialValue("total_projects"));
+        Map<String, String> context = Utils.newContext();
+        Parameters.TO_DATE.put(context, "20120101");
+        Parameters.FROM_DATE.put(context, "20120101");
+
+        assertEquals(new LongValueData(10), InitialValueContainer.getInitialValue("total_workspaces", context));
+        assertEquals(new LongValueData(20), InitialValueContainer.getInitialValue("total_users", context));
+        assertEquals(new LongValueData(30), InitialValueContainer.getInitialValue("total_projects", context));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void shouldThrowExceptionIfMetricUnknown() {
-        InitialValueContainer.getInitialValue("bla-bla");
+    @Test
+    public void shouldThrowExceptionIfMetricUnknown() throws ParseException {
+        Map<String, String> context = Utils.newContext();
+        Parameters.TO_DATE.put(context, "20120101");
+        Parameters.FROM_DATE.put(context, "20120101");
+
+        assertNull(InitialValueContainer.getInitialValue("bla-bla", context));
     }
 
     @Test(expectedExceptions = InitialValueNotFoundException.class)
@@ -56,17 +63,19 @@ public class TestInitialValueContainer {
     }
 
     @Test
-    public void shouldThrowExceptionIfToDateEquals() throws Exception {
+    public void shouldNotThrowExceptionIfToDateEquals() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.TO_DATE.put(context, "201120101");
+        Parameters.FROM_DATE.put(context, "20120101");
 
         InitialValueContainer.validateExistenceInitialValueBefore(context);
     }
 
     @Test
-    public void shouldThrowExceptionIfToDateAfter() throws Exception {
+    public void shouldNotThrowExceptionIfToDateAfter() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.TO_DATE.put(context, "201120102");
+        Parameters.FROM_DATE.put(context, "20120102");
 
         InitialValueContainer.validateExistenceInitialValueBefore(context);
     }

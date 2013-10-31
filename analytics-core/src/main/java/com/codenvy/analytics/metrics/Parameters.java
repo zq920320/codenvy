@@ -33,25 +33,7 @@ public enum Parameters {
     CASSANDRA_PASSWORD,
     CASSANDRA_COLUMNFAMILY,
     EVENT,
-
-    // TODO
-    FIELD,
-    PARAM,
     LOG,
-    LOAD_DIR,
-    STORE_DIR,
-    USER {
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            USER_TYPES.valueOf(value);
-        }
-    },
-    WS {
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-            WS_TYPES.valueOf(value);
-        }
-    },
     TIME_UNIT {
         @Override
         public String getDefaultValue() {
@@ -63,7 +45,6 @@ public enum Parameters {
             TimeUnit.valueOf(value.toUpperCase());
         }
     },
-
     FROM_DATE {
         @Override
         public String getDefaultValue() {
@@ -94,14 +75,6 @@ public enum Parameters {
                 throw new IllegalArgumentException("FROM_DATE parameter has illegal format '" + value
                                                    + "' The only supported format is '" + PARAM_DATE_FORMAT + "'");
             }
-        }
-    },
-
-    FILTER {
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
-//            MetricFilter.valueOf(value);
-            // TODO
         }
     },
     TO_DATE {
@@ -148,7 +121,20 @@ public enum Parameters {
                                                    + "'. The only supported format is 'yyyyMMdd'");
             }
         }
-    };
+    },
+    USER {
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            USER_TYPES.valueOf(value);
+        }
+    },
+    WS {
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+            WS_TYPES.valueOf(value);
+        }
+    },
+    PARAM; // TODO
 
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {

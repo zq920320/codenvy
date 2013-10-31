@@ -27,14 +27,12 @@ import java.util.List;
 public class SectionConfiguration {
 
     private String name;
-
-    private int length;
-
+    private int columns;
     private List<RowConfiguration> rows;
 
     @XmlAttribute
-    public void setLength(int length) {
-        this.length = length;
+    public void setColumns(int columns) {
+        this.columns = columns;
     }
 
     @XmlAttribute
@@ -42,7 +40,7 @@ public class SectionConfiguration {
         this.name = name;
     }
 
-    @XmlElement (name = "row")
+    @XmlElement(name = "row")
     public void setRows(List<RowConfiguration> rows) {
         this.rows = rows;
     }
@@ -51,8 +49,8 @@ public class SectionConfiguration {
         return name;
     }
 
-    public int getLength() {
-        return length;
+    public int getColumns() {
+        return columns;
     }
 
     public List<RowConfiguration> getRows() {

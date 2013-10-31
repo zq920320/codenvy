@@ -17,10 +17,9 @@
  */
 
 
-package com.codenvy.analytics.metric.value;
+package com.codenvy.analytics.metrics.value;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.*;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

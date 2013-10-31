@@ -16,7 +16,7 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.analytics.metric.value;
+package com.codenvy.analytics.metrics.value;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
@@ -24,8 +24,6 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.cassandra.CassandraDataManager;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 

@@ -23,7 +23,6 @@ import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 import com.codenvy.analytics.services.XmlConfigurationManager;
 
-import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
@@ -38,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertTrue;
@@ -47,8 +47,8 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestViewBuilder extends BaseTest {
 
-    private String RESOURCE = "<view time-unit=\"day,week,month,lifetime\">\n" +
-                              "    <section name=\"workspaces\" length=\"2\">\n" +
+    private String RESOURCE = "<view time-unit=\"day\">\n" +
+                              "    <section name=\"workspaces\" columns=\"2\">\n" +
                               "        <row class=\"com.codenvy.analytics.services.view.DateRow\"/>\n" +
                               "        <row class=\"com.codenvy.analytics.services.view" +
                               ".TestViewBuilder$TestMetricRow\">\n" +
@@ -85,7 +85,7 @@ public class TestViewBuilder extends BaseTest {
 
                 return null;
             }
-        }).when(spyBuilder).retainData(Matchers.<SectionConfiguration>any(), timeUnit, anyList());
+        }).when(spyBuilder).retainData(anyString(), anyList());
 
         spyBuilder.build(viewConfiguration);
         viewBuilder.build(viewConfiguration);

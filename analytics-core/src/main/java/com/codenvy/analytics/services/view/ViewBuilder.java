@@ -108,7 +108,7 @@ public class ViewBuilder implements Feature {
                 List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
 
                 for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
-                    List<ValueData> rowData = new ArrayList<>(sectionConfiguration.getLength() + 1);
+                    List<ValueData> rowData = new ArrayList<>(sectionConfiguration.getColumns() + 1);
 
                     Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
                     Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
@@ -116,7 +116,7 @@ public class ViewBuilder implements Feature {
                     Map<String, String> context = Utils.initializeContext(timeUnit);
 
                     rowData.add(row.getDescription());
-                    for (int i = 0; i < sectionConfiguration.getLength(); i++) {
+                    for (int i = 0; i < sectionConfiguration.getColumns(); i++) {
                         rowData.add(row.getData(context));
                         context = Utils.prevDateInterval(context);
                     }
@@ -124,16 +124,13 @@ public class ViewBuilder implements Feature {
                     sectionData.add(rowData);
                 }
 
-                retainData(sectionConfiguration, timeUnitParam, sectionData);
+                String tableName = sectionConfiguration.getName() + "_" + timeUnitParam;
+                retainData(tableName, sectionData);
             }
         }
     }
 
-    protected void retainData(SectionConfiguration sectionConfiguration,
-                              String timeUnitParam,
-                              List<List<ValueData>> sectionData) throws SQLException {
-
-        String tableName = sectionConfiguration.getName() + "_" + timeUnitParam;
+    protected void retainData(String tableName, List<List<ValueData>> sectionData) throws SQLException {
         List<ValueData> fields = sectionData.get(0);
         List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
 
