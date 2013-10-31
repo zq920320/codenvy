@@ -1,2 +1,3 @@
 com.codenvy.analytics.metrics.WorkspaceCreatedMetric
 com.codenvy.analytics.metrics.WorkspaceDestroyedMetric
+com.codenvy.analytics.metrics.TotalWorkspacesMetric

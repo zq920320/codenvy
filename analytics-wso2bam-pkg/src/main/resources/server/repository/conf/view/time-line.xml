@@ -25,5 +25,13 @@
             <parameter key="name" value="workspace_created"/>
             <parameter key="description" value="Created Workspaces"/>
         </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="workspace_destroyed"/>
+            <parameter key="description" value="Destroyed Workspaces"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="total_workspaces"/>
+            <parameter key="description" value="Total Workspaces"/>
+        </row>
     </section>
 </view>

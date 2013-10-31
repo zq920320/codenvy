@@ -33,6 +33,7 @@ public enum Parameters {
     CASSANDRA_PASSWORD,
     CASSANDRA_COLUMNFAMILY,
     EVENT,
+    PARAM,
     LOG,
     TIME_UNIT {
         @Override
@@ -133,8 +134,7 @@ public enum Parameters {
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
             WS_TYPES.valueOf(value);
         }
-    },
-    PARAM; // TODO
+    };
 
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {
@@ -154,11 +154,6 @@ public enum Parameters {
     /** @return true if context contains given parameter */
     public boolean exists(Map<String, String> context) {
         return context.get(name()) != null;
-    }
-
-    /** @return true if name is the name of current parameter */
-    public boolean isParam(String name) {
-        return this.name().equals(name);
     }
 
     /** @return the default value for given parameter. */

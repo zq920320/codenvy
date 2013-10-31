@@ -38,23 +38,27 @@
             </entry>
         </parameters>
     </script>
-    <!--<script name="number_of_events">-->
-        <!--<description>The number of destroyed persistent workspaces</description>-->
-        <!--<parameters>-->
-            <!--<entry>-->
-                <!--<key>USER</key>-->
-                <!--<value>ANY</value>-->
-            <!--</entry>-->
-            <!--<entry>-->
-                <!--<key>WS</key>-->
-                <!--<value>PERSISTENT</value>-->
-            <!--</entry>-->
-            <!--<entry>-->
-                <!--<key>EVENT</key>-->
-                <!--<value>tenant-destroyed</value>-->
-            <!--</entry>-->
-        <!--</parameters>-->
-    <!--</script>-->
+    <script name="number_of_events">
+        <description>The number of destroyed persistent workspaces</description>
+        <parameters>
+            <entry>
+                <key>USER</key>
+                <value>ANY</value>
+            </entry>
+            <entry>
+                <key>WS</key>
+                <value>PERSISTENT</value>
+            </entry>
+            <entry>
+                <key>EVENT</key>
+                <value>tenant-destroyed</value>
+            </entry>
+            <entry>
+                <key>CASSANDRA_COLUMNFAMILY</key>
+                <value>workspace_destroyed</value>
+            </entry>
+        </parameters>
+    </script>
 </scripts>
 
 

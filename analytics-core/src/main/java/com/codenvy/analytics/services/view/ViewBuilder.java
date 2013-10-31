@@ -38,6 +38,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.TimeUnit;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class ViewBuilder implements Feature {
@@ -90,7 +93,7 @@ public class ViewBuilder implements Feature {
         try {
             File[] views = new File(Configurator.CONFIGURATION_DIRECTORY, VIEW_DIR).listFiles();
 
-            for (File view : views) {
+            for (File view : views != null ? views : new File[0]) {
                 ViewConfiguration viewConfiguration = configurationManager.loadConfiguration(view.getAbsolutePath());
                 build(viewConfiguration);
             }
@@ -99,12 +102,43 @@ public class ViewBuilder implements Feature {
         }
     }
 
-    // TODO multi-threading
     protected void build(ViewConfiguration viewConfiguration) throws Exception {
+        ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 2);
+
         for (String timeUnitParam : viewConfiguration.getTimeUnit().split(",")) {
             Parameters.TimeUnit timeUnit = Parameters.TimeUnit.valueOf(timeUnitParam.toUpperCase());
 
             for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
+                ComputeSectionData task = new ComputeSectionData(sectionConfiguration, timeUnit);
+                forkJoinPool.submit(task);
+            }
+        }
+
+        forkJoinPool.shutdown();
+        forkJoinPool.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+    }
+
+    protected void retainData(String tableName, List<List<ValueData>> sectionData) throws SQLException {
+        List<ValueData> fields = sectionData.get(0);
+        List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
+
+        dataManager.retainData(tableName, fields, data);
+    }
+
+    private class ComputeSectionData extends RecursiveAction {
+
+        private final SectionConfiguration sectionConfiguration;
+
+        private final Parameters.TimeUnit timeUnit;
+
+        private ComputeSectionData(SectionConfiguration sectionConfiguration, Parameters.TimeUnit timeUnit) {
+            this.sectionConfiguration = sectionConfiguration;
+            this.timeUnit = timeUnit;
+        }
+
+        @Override
+        protected void compute() {
+            try {
                 List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
 
                 for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
@@ -124,16 +158,11 @@ public class ViewBuilder implements Feature {
                     sectionData.add(rowData);
                 }
 
-                String tableName = sectionConfiguration.getName() + "_" + timeUnitParam;
+                String tableName = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
                 retainData(tableName, sectionData);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
             }
         }
-    }
-
-    protected void retainData(String tableName, List<List<ValueData>> sectionData) throws SQLException {
-        List<ValueData> fields = sectionData.get(0);
-        List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
-
-        dataManager.retainData(tableName, fields, data);
     }
 }

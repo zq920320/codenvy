@@ -54,7 +54,7 @@ public class TestReadBasedMetric extends BaseTest {
         assertEquals(spyMetric.getValue(contextCurrentDate), new LongValueData(50L));
     }
 
-    private class TestMetric extends ReadBasedMetric {
+    public class TestMetric extends ReadBasedMetric {
 
         private TestMetric() {
             super("test");
