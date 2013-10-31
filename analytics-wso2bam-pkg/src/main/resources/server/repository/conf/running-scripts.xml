@@ -34,7 +34,7 @@
             </entry>
             <entry>
                 <key>CASSANDRA_COLUMNFAMILY</key>
-                <value>tenant_created</value>
+                <value>workspace_created</value>
             </entry>
         </parameters>
     </script>

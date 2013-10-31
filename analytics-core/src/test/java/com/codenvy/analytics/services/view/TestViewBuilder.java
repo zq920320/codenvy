@@ -47,11 +47,9 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestViewBuilder extends BaseTest {
 
-    private String RESOURCE = "<view>\n" +
+    private String RESOURCE = "<view time-unit=\"day,week,month,lifetime\">\n" +
                               "    <section name=\"workspaces\" length=\"2\">\n" +
-                              "        <row class=\"com.codenvy.analytics.services.view.DateRow\">\n" +
-                              "            <parameter key=\"format\" value=\"MMM dd\"/>\n" +
-                              "        </row>\n" +
+                              "        <row class=\"com.codenvy.analytics.services.view.DateRow\"/>\n" +
                               "        <row class=\"com.codenvy.analytics.services.view" +
                               ".TestViewBuilder$TestMetricRow\">\n" +
                               "            <parameter key=\"name\" value=\"WORKSPACE_CREATED\"/>\n" +
@@ -87,7 +85,7 @@ public class TestViewBuilder extends BaseTest {
 
                 return null;
             }
-        }).when(spyBuilder).retainData(Matchers.<SectionConfiguration>any(), anyList());
+        }).when(spyBuilder).retainData(Matchers.<SectionConfiguration>any(), timeUnit, anyList());
 
         spyBuilder.build(viewConfiguration);
         viewBuilder.build(viewConfiguration);

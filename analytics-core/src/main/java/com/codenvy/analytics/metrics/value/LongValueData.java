@@ -77,4 +77,8 @@ public class LongValueData extends AbstractValueData {
     public long getAsLong() {
         return value;
     }
+
+    public double getAsDouble() {
+        return value;
+    }
 }

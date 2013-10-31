@@ -97,7 +97,7 @@ public class Scheduler implements ServletContextListener {
                             break;
 
                         default:
-                            executeSpecificPeriod(job, featureClass);
+                            executeSpecificPeriod(job, runCondition);
                             break;
                     }
                 }
@@ -107,13 +107,13 @@ public class Scheduler implements ServletContextListener {
         }
     }
 
-    private void executeSpecificPeriod(Job job, String forceRunCondition) throws Exception {
+    private void executeSpecificPeriod(Job job, String runCondition) throws Exception {
         if (job instanceof Feature) {
-            if (forceRunCondition.contains(",")) {
-                String[] dates = forceRunCondition.split(",");
+            if (runCondition.contains(",")) {
+                String[] dates = runCondition.split(",");
                 execute(job, dates[0], dates[1]);
             } else {
-                execute(job, forceRunCondition, forceRunCondition);
+                execute(job, runCondition, runCondition);
             }
         }
     }

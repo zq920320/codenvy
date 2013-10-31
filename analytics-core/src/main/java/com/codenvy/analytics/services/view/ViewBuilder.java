@@ -88,10 +88,10 @@ public class ViewBuilder implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            String[] views = new File(Configurator.CONFIGURATION_DIRECTORY, VIEW_DIR).list();
+            File[] views = new File(Configurator.CONFIGURATION_DIRECTORY, VIEW_DIR).listFiles();
 
-            for (String view : views) {
-                ViewConfiguration viewConfiguration = configurationManager.loadConfiguration(view);
+            for (File view : views) {
+                ViewConfiguration viewConfiguration = configurationManager.loadConfiguration(view.getAbsolutePath());
                 build(viewConfiguration);
             }
         } finally {
@@ -101,36 +101,42 @@ public class ViewBuilder implements Feature {
 
     // TODO multi-threading
     protected void build(ViewConfiguration viewConfiguration) throws Exception {
-        for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
-            List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
+        for (String timeUnitParam : viewConfiguration.getTimeUnit().split(",")) {
+            Parameters.TimeUnit timeUnit = Parameters.TimeUnit.valueOf(timeUnitParam.toUpperCase());
 
-            for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
-                List<ValueData> rowData = new ArrayList<>(sectionConfiguration.getLength() + 1);
+            for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
+                List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
 
-                Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
-                Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
+                for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
+                    List<ValueData> rowData = new ArrayList<>(sectionConfiguration.getLength() + 1);
 
-                Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+                    Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
+                    Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
 
-                rowData.add(row.getDescription());
-                for (int i = 0; i < sectionConfiguration.getLength(); i++) {
-                    rowData.add(row.getData(context));
-                    context = Utils.prevDateInterval(context);
+                    Map<String, String> context = Utils.initializeContext(timeUnit);
+
+                    rowData.add(row.getDescription());
+                    for (int i = 0; i < sectionConfiguration.getLength(); i++) {
+                        rowData.add(row.getData(context));
+                        context = Utils.prevDateInterval(context);
+                    }
+
+                    sectionData.add(rowData);
                 }
 
-                sectionData.add(rowData);
+                retainData(sectionConfiguration, timeUnitParam, sectionData);
             }
-
-            retainData(sectionConfiguration, sectionData);
         }
     }
 
-    protected void retainData(SectionConfiguration sectionConfiguration, List<List<ValueData>> sectionData)
-            throws SQLException {
+    protected void retainData(SectionConfiguration sectionConfiguration,
+                              String timeUnitParam,
+                              List<List<ValueData>> sectionData) throws SQLException {
 
+        String tableName = sectionConfiguration.getName() + "_" + timeUnitParam;
         List<ValueData> fields = sectionData.get(0);
         List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
 
-        dataManager.retainData(sectionConfiguration.getName(), fields, data);
+        dataManager.retainData(tableName, fields, data);
     }
 }

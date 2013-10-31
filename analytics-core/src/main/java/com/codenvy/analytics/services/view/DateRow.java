@@ -20,6 +20,7 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.value.StringValueData;
 import com.codenvy.analytics.metrics.value.ValueData;
 
@@ -28,18 +29,48 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 class DateRow extends AbstractRow {
 
-    private static final String FORMAT = "format";
+    private static final String DAY_FORMAT_PARAM = "dayFormat";
 
-    private final DateFormat dateFormat;
+    private static final String WEEK_FORMAT_PARAM = "weekFormat";
+
+    private static final String MONTH_FORMAT_PARAM = "monthFormat";
+
+    private static final String LIFE_TIME_FORMAT_PARAM = "lifeTimeFormat";
+
+    private static final String DAY_FORMAT_DEFAULT = "MMM dd";
+
+    private static final String WEEK_FORMAT_DEFAULT = "MMM dd";
+
+    private static final String MONTH_FORMAT_DEFAULT = "MMM";
+
+    private static final String LIFE_TIME_FORMAT_DEFAULT = "MMM dd";
+
+    private final Map<Parameters.TimeUnit, String> format = new HashMap<>(4);
 
     public DateRow(Map<String, String> parameters) {
         super(parameters);
-        dateFormat = new SimpleDateFormat(parameters.get(FORMAT));
+        format.put(Parameters.TimeUnit.DAY,
+                   parameters.containsKey(DAY_FORMAT_PARAM) ? parameters.get(DAY_FORMAT_PARAM)
+                                                            : DAY_FORMAT_DEFAULT);
+        format.put(Parameters.TimeUnit.WEEK,
+                   parameters.containsKey(WEEK_FORMAT_PARAM) ? parameters.get(WEEK_FORMAT_PARAM)
+                                                             : WEEK_FORMAT_DEFAULT);
+        format.put(Parameters.TimeUnit.MONTH,
+                   parameters.containsKey(MONTH_FORMAT_PARAM) ? parameters.get(MONTH_FORMAT_PARAM)
+                                                              : MONTH_FORMAT_DEFAULT);
+        format.put(Parameters.TimeUnit.LIFETIME,
+                   parameters.containsKey(LIFE_TIME_FORMAT_PARAM) ? parameters.get(LIFE_TIME_FORMAT_PARAM)
+                                                                  : LIFE_TIME_FORMAT_DEFAULT);
+    }
+
+    private DateFormat getDateFormat() {
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -52,6 +83,8 @@ class DateRow extends AbstractRow {
     @Override
     public ValueData getData(Map<String, String> context) throws IOException {
         try {
+            DateFormat dateFormat = new SimpleDateFormat(format.get(Utils.getTimeUnit(context)));
+
             Calendar toDate = Utils.getToDate(context);
             return new StringValueData(dateFormat.format(toDate.getTime()));
         } catch (ParseException e) {

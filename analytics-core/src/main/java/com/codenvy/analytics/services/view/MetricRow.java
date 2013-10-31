@@ -69,7 +69,7 @@ public class MetricRow extends AbstractRow {
             return valueData;
 
         } else if (clazz == LongValueData.class) {
-            long value = ((LongValueData)valueData).getAsLong();
+            double value = ((LongValueData)valueData).getAsDouble();
             String formattedValue = value == 0 ? "" : String.format(format, value);
 
             return new StringValueData(formattedValue);

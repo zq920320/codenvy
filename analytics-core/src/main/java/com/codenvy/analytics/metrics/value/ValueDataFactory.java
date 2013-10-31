@@ -24,10 +24,15 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ValueDataFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ValueDataFactory.class);
 
     /** Instantiates default {@link com.codenvy.analytics.metrics.value.ValueData}. */
     public static ValueData createDefaultValue(Class<? extends ValueData> clazz)
@@ -54,7 +59,10 @@ public class ValueDataFactory {
     public static ValueData createdValueData(Class<? extends ValueData> clazz, ResultSet resultSet) {
         List<RowValueData> rows = readRows(resultSet);
 
-        if (clazz == LongValueData.class || clazz == DoubleValueData.class || clazz == StringValueData.class) {
+        if (rows.isEmpty()) {
+            return createDefaultValue(clazz);
+            
+        } else if (clazz == LongValueData.class || clazz == DoubleValueData.class || clazz == StringValueData.class) {
             return createSimpleValueData(clazz, rows);
 
         } else if (clazz == RowValueData.class) {

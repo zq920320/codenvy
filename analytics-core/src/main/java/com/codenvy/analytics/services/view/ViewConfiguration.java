@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.services.view;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
@@ -27,6 +28,8 @@ public class ViewConfiguration {
 
     private List<SectionConfiguration> sections;
 
+    private String timeUnit;
+
     public List<SectionConfiguration> getSections() {
         return sections;
     }
@@ -34,5 +37,14 @@ public class ViewConfiguration {
     @XmlElement(name = "section")
     public void setSections(List<SectionConfiguration> sections) {
         this.sections = sections;
+    }
+
+    @XmlAttribute (name = "time-unit")
+    public void setTimeUnit(String timeUnit) {
+        this.timeUnit = timeUnit;
+    }
+
+    public String getTimeUnit() {
+        return timeUnit;
     }
 }

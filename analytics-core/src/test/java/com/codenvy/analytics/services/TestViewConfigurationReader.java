@@ -35,8 +35,8 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestViewConfigurationReader {
 
-    private static final String RESOURCE = "<view>" +
-                                           "    <section name=\"workspaces\" length=\"20\">" +
+    private static final String RESOURCE = "<view columns=\"20\" time-unit=\"day,week\">" +
+                                           "    <section name=\"workspaces\">" +
                                            "        <row class=\"Date.class\">" +
                                            "            <parameter key=\"format\" value=\"dd MMM\"/>" +
                                            "        </row>" +
@@ -54,11 +54,12 @@ public class TestViewConfigurationReader {
         ViewConfiguration configuration = spyService.loadConfiguration(anyString());
 
         assertNotNull(configuration);
+        assertEquals("day,week", configuration.getTimeUnit());
+        assertEquals(20, configuration.getLength());
         assertEquals(1, configuration.getSections().size());
 
         SectionConfiguration sectionConfiguration = configuration.getSections().get(0);
         assertEquals("workspaces", sectionConfiguration.getName());
-        assertEquals(20, sectionConfiguration.getLength());
 
         assertEquals(2, sectionConfiguration.getRows().size());
 
