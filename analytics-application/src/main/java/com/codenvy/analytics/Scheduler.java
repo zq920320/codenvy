@@ -41,10 +41,10 @@ import java.util.Calendar;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class Scheduler implements ServletContextListener {
 
-    private static final Logger LOGGER                             = LoggerFactory.getLogger(Scheduler.class);
-    private static final String ANALYTICS_FORCE_RUN_JOBS_CONDITION = "analytics.force.run.jobs.condition";
-    private static final String ANALYTICS_FORCE_RUN_JOBS_CLASS     = "analytics.force.run.jobs.class";
-    private static final String CRON_TIMETABLE                     = "0 0 1 ? * *";
+    private static final Logger LOGGER                      = LoggerFactory.getLogger(Scheduler.class);
+    private static final String FEATURE_FORCE_RUN_CONDITION = "feature.force.run.condition";
+    private static final String FEATURE_FORCE_RUN_CLASS     = "feature.force.run.class";
+    private static final String CRON_TIMETABLE              = "0 0 1 ? * *";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
     private static final String FORCE_RUN_CONDITION_RERUN   = "RERUN";
@@ -67,23 +67,23 @@ public class Scheduler implements ServletContextListener {
     public void contextInitialized(ServletContextEvent context) {
         initializeScheduler();
 
-        String forceRunCondition = System.getProperty(ANALYTICS_FORCE_RUN_JOBS_CONDITION);
-        if (forceRunCondition != null) {
-            forceRunJobs(forceRunCondition);
+        String featureClass = Configurator.getString(FEATURE_FORCE_RUN_CLASS);
+        if (featureClass != null) {
+            forceRunJobs(featureClass);
         }
     }
 
-    private void forceRunJobs(String forceRunCondition) {
+    private void forceRunJobs(String featureClass) {
         try {
+            String runCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
             Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(org.quartz.Scheduler.DEFAULT_GROUP));
 
-            String forceRunClass = System.getProperty(ANALYTICS_FORCE_RUN_JOBS_CLASS);
             for (JobKey key : jobKeys) {
                 Class<? extends Job> jobClass = scheduler.getJobDetail(key).getJobClass();
                 Job job = jobClass.getConstructor().newInstance();
 
-                if (forceRunClass == null || forceRunClass.equals(jobClass.getName())) {
-                    switch (forceRunCondition.toUpperCase()) {
+                if (featureClass.equals(jobClass.getName())) {
+                    switch (runCondition.toUpperCase()) {
                         case FORCE_RUN_CONDITION_LASTDAY:
                             executeLastDay(job);
                             break;
@@ -97,7 +97,7 @@ public class Scheduler implements ServletContextListener {
                             break;
 
                         default:
-                            executeSpecificPeriod(job, forceRunCondition);
+                            executeSpecificPeriod(job, featureClass);
                             break;
                     }
                 }

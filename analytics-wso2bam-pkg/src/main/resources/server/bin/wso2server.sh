@@ -269,7 +269,7 @@ do
     $JAVA_OPTS \
     -Danalytics.bin.dir=$CARBON_HOME/bin \
     -Danalytics.scripts.dir=$CARBON_HOME/pigscripts \
-    -Danalytics.configuration.dir=$CARBON_HOME/repository/conf
+    -Danalytics.configuration.dir=$CARBON_HOME/repository/conf \
     -Ddisable.cassandra.server.startup=true \
     -Dcom.sun.management.jmxremote \
     -classpath "$CARBON_CLASSPATH" \

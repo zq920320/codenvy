@@ -24,5 +24,5 @@ a1 = filterByEvent(l, '$EVENT');
 a2 = FOREACH a1 GENERATE event;
 a = countAll(a2);
 
-result = FOREACH a GENERATE '$TO_DATE', TOTUPLE('$TO_DATE', countAll);
+result = FOREACH a GENERATE '$TO_DATE', TOTUPLE('value', countAll);
 STORE result INTO 'cassandra://$CASSANDRA_USER:CASSANDRA_PASSWORD@$CASSANDRA_KEYSPACE/$CASSANDRA_COLUMNFAMILY' USING CassandraStorage();

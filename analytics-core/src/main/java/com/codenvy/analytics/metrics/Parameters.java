@@ -74,7 +74,7 @@ public enum Parameters {
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
             try {
                 Calendar fromDate = Utils.parseDate(value);
-
+                Calendar toDate = Utils.getToDate(context);
                 Calendar minDate = Utils.parseDate(getDefaultValue());
 
                 if (fromDate.before(minDate)) {
@@ -83,8 +83,13 @@ public enum Parameters {
                                                        + "' The lowest allowed date is '"
                                                        + Utils.formatDate(minDate)
                                                        + "'");
+                } else if (!fromDate.equals(toDate)) {
+                    throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
+                                                       + Utils.formatDate(toDate)
+                                                       + "'. Should be the same as FROM_DATE parameter value: '"
+                                                       + Utils.formatDate(fromDate)
+                                                       + "'");
                 }
-                // TODO validate equals to to_data
             } catch (ParseException e) {
                 throw new IllegalArgumentException("FROM_DATE parameter has illegal format '" + value
                                                    + "' The only supported format is '" + PARAM_DATE_FORMAT + "'");
@@ -114,28 +119,30 @@ public enum Parameters {
             try {
                 Calendar toDate = Utils.parseDate(value);
                 Calendar maxDate = Utils.parseDate(getDefaultValue());
+                Calendar fromDate = Utils.getFromDate(context);
 
                 if (toDate.after(maxDate)) {
                     throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
                                                        + Utils.formatDate(toDate)
-                                                       + "' The higest allowed date is '"
+                                                       + "' The highest allowed date is '"
                                                        + Utils.formatDate(maxDate)
                                                        + "'");
 
                 }
 
-                if (Parameters.FROM_DATE.exists(context)) {
-                    Calendar fromDate = Utils.getFromDate(context);
-                    if (fromDate.after(toDate)) {
-                        throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
-                                                           + Utils.formatDate(toDate)
-                                                           + "'. Should be higher than fromDate parameter value: '"
-                                                           + Utils.formatDate(fromDate)
-                                                           + "'");
-                    }
+                if (fromDate.after(toDate)) {
+                    throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
+                                                       + Utils.formatDate(toDate)
+                                                       + "'. Should be higher than FROM_DATE parameter value: '"
+                                                       + Utils.formatDate(fromDate)
+                                                       + "'");
+                } else if (!fromDate.equals(toDate)) {
+                    throw new IllegalArgumentException("The illegal TO_DATE parameter value: '"
+                                                       + Utils.formatDate(toDate)
+                                                       + "'. Should be the same as FROM_DATE parameter value: '"
+                                                       + Utils.formatDate(fromDate)
+                                                       + "'");
                 }
-
-                // TODO validate equals to from_data
             } catch (ParseException e) {
                 throw new IllegalArgumentException("TO_DATE parameter has illegal format '" + value
                                                    + "'. The only supported format is 'yyyyMMdd'");

@@ -32,6 +32,10 @@
                 <key>EVENT</key>
                 <value>tenant-created</value>
             </entry>
+            <entry>
+                <key>CASSANDRA_COLUMNFAMILY</key>
+                <value>tenant_created</value>
+            </entry>
         </parameters>
     </script>
     <!--<script name="number_of_events">-->

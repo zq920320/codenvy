@@ -73,6 +73,10 @@ public class Configurator {
 
     private static void loadFromResource() throws IOException {
         try (InputStream in = Configurator.class.getClassLoader().getResourceAsStream(RESOURCE)) {
+            if (in == null) {
+                throw new FileNotFoundException("Resource not found " + RESOURCE);
+            }
+
             properties.load(in);
             LOG.info("Configuration has been read from resource " + RESOURCE);
         }

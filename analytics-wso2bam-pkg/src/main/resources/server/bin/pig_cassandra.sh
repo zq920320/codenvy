@@ -26,6 +26,16 @@ if [ "x$PIG_HOME" = "x" ]; then
     exit 1
 fi
 
+# analytics jar.
+for jar in $(find repository/deployment/server/webapps -name 'analytics-core*.jar');  do
+   ANALYTICS_JAR=$jar
+done
+echo "Using $ANALYTICS_JAR."
+if [ ! -e $ANALYTICS_JAR ]; then
+    echo "Unable to locate Analytics jar" >&2
+    exit 1
+fi
+
 # pig jar.
 for jar in $PIG_HOME/*.jar; do
    PIG_JAR=$jar
@@ -36,7 +46,7 @@ if [ ! -e $PIG_JAR ]; then
     exit 1
 fi
 
-CLASSPATH=$CLASSPATH:$PIG_JAR
+CLASSPATH=$CLASSPATH:$PIG_JAR:$ANALYTICS_JAR
 
 export PIG_CLASSPATH=$PIG_CLASSPATH:$CLASSPATH
 export PIG_OPTS="$PIG_OPTS -Dudf.import.list=org.apache.cassandra.hadoop.pig:com.codenvy.analytics.pig.udf"

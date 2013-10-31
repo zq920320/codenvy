@@ -85,12 +85,6 @@
                                         <copy todir="${project.build.directory}/wso2bam-analytics/" overwrite="true">
                                             <fileset dir="${basedir}/src/main/resources/server"/>
                                         </copy>
-                                        <copy todir="${project.build.directory}/wso2bam-analytics/bin" overwrite="true">
-                                            <fileset dir="${basedir}/../analytics-core/bin/"/>
-                                        </copy>
-                                        <copy todir="${project.build.directory}/wso2bam-analytics/pigscripts" overwrite="true">
-                                            <fileset dir="${basedir}/../analytics-core/scripts/"/>
-                                        </copy>
                                         <copy todir="${project.build.directory}/wso2bam-analytics/pigscripts" overwrite="true">
                                             <fileset dir="${basedir}/../analytics-core/scripts/"/>
                                         </copy>
