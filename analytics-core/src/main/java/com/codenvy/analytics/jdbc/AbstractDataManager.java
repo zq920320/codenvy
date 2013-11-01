@@ -57,11 +57,12 @@ public abstract class AbstractDataManager implements JdbcDataManager {
             insertData(connection, tableName, data);
 
             connection.commit();
+            LOG.info("Data have been stored in " + tableName);
         } catch (SQLException e) {
             try {
                 connection.rollback();
             } catch (SQLException e1) {
-                LOG.info("Can't rollback connection: " + e1.getMessage(), e1);
+                LOG.error("Can't rollback connection: " + e1.getMessage(), e1);
             }
 
             throw e;
@@ -69,7 +70,7 @@ public abstract class AbstractDataManager implements JdbcDataManager {
             try {
                 connection.close();
             } catch (SQLException e) {
-                LOG.info("Can't close connection: " + e.getMessage(), e);
+                LOG.error("Can't close connection: " + e.getMessage(), e);
             }
         }
     }

@@ -110,13 +110,12 @@ public class PigServer {
 
         try {
             String command = prepareRunCommand(scriptType, context);
-
             Process process = Runtime.getRuntime().exec(command);
-            logProcessOutput(process);
 
             try {
                 int exitCode = process.waitFor();
                 if (exitCode != 0) {
+                    logProcessOutput(process);
                     throw new IOException("The process has finished with wrong code " + exitCode);
                 }
             } catch (InterruptedException e) {

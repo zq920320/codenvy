@@ -103,7 +103,7 @@ public class ViewBuilder implements Feature {
     }
 
     protected void build(ViewConfiguration viewConfiguration) throws Exception {
-        ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 2);
+        ForkJoinPool forkJoinPool = new ForkJoinPool(4);
 
         for (String timeUnitParam : viewConfiguration.getTimeUnit().split(",")) {
             Parameters.TimeUnit timeUnit = Parameters.TimeUnit.valueOf(timeUnitParam.toUpperCase());
@@ -161,6 +161,7 @@ public class ViewBuilder implements Feature {
                 String tableName = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
                 retainData(tableName, sectionData);
             } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }

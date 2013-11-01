@@ -20,6 +20,7 @@
 package com.codenvy.analytics.services.view;
 
 
+import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.value.DoubleValueData;
@@ -58,7 +59,13 @@ public class MetricRow extends AbstractRow {
     /** {@inheritDoc} */
     @Override
     public ValueData getData(Map<String, String> context) throws IOException {
-        ValueData valueData = getMetricValue(context);
+        ValueData valueData;
+        try {
+            valueData = getMetricValue(context);
+        } catch (InitialValueNotFoundException e) {
+            valueData = StringValueData.DEFAULT;
+        }
+
         return format(valueData);
     }
 

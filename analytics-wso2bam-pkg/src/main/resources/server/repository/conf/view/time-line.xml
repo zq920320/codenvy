@@ -16,8 +16,8 @@
          is strictly forbidden unless prior written permission is obtained
          from Codenvy S.A..
 -->
-<view>
-    <section name="workspaces" columns="20">
+<view time-unit="day,week,month,lifetime">
+    <section name="workspaces" columns="10">
         <row class="com.codenvy.analytics.services.view.DateRow">
             <parameter key="format" value="MMM dd"/>
         </row>
