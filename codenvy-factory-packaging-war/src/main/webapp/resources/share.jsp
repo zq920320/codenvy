@@ -15,59 +15,74 @@
     is strictly forbidden unless prior written permission is obtained
     from Codenvy S.A..
 */ %>
+<%@ page 
+	language="java"
+	contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"
 
-<%@page language="java"%>
-
-<%@ page import="java.util.*" %>
-<%@ page import="java.net.*" %>
-<%@ page import="java.io.*" %>
-
-<%@page import="com.google.gson.*"%>
-
-<%!
-
-public String getFactoryJSON(String factoryURL) throws Exception {
-    URL url = new URL(factoryURL);
-	URLConnection conn = url.openConnection();
-
-	BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	String inputLine;
-	StringBuffer html = new StringBuffer();
-
-	while ((inputLine = in.readLine()) != null) {
-		html.append(inputLine);
-	}
-	in.close();
-
-	return html.toString();
-}
-
-public String getLink(JsonObject factoryObj, String rel) {
-    JsonArray linksArr = factoryObj.get("links").getAsJsonArray();
-    for (int i = 0; i < linksArr.size(); i++) {
-        JsonObject linkObj = linksArr.get(i).getAsJsonObject();
-        if (rel.equals(linkObj.get("rel").getAsString())) {
-            return linkObj.get("href").getAsString();
-        }
-    }
-    
-    return null;
-}
-
+	import="java.util.*"
+	import="java.net.*"
+	import="java.io.*"
+	import="com.google.gson.*"
 %>
-
+<%!
+	public String getFactoryJSON(String factoryURL) throws Exception {
+	    URL url = new URL(factoryURL);
+		URLConnection conn = url.openConnection();
+	
+		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		String inputLine;
+		StringBuffer html = new StringBuffer();
+	
+		while ((inputLine = in.readLine()) != null) {
+			html.append(inputLine);
+		}
+		in.close();
+	
+		return html.toString();
+	}
+	
+	public String getLink(JsonObject factoryObj, String rel) {
+	    JsonArray linksArr = factoryObj.get("links").getAsJsonArray();
+	    for (int i = 0; i < linksArr.size(); i++) {
+	        JsonObject linkObj = linksArr.get(i).getAsJsonObject();
+	        if (rel.equals(linkObj.get("rel").getAsString())) {
+	            return linkObj.get("href").getAsString();
+	        }
+	    }
+	    
+	    return null;
+	}
+%>
 <%
+String _error_message = null;
 
+String _server = "";
+String _factory_id = "";
+String _share_page_url = "";
 String _title = "";
 String _description = "";
 String _image_url = "";
 String _create_project_url = "";
 
 try {
-    String factoryURL = request.getScheme() + "://" + request.getServerName() +
-        (request.getServerPort() == 80 ? "" : ":" + request.getServerPort()) +
-        "/api/factory/" + request.getParameter("factory");
+    _factory_id = request.getPathInfo();
+
+    if (_factory_id == null || _factory_id.trim().isEmpty() || "/".equals(_factory_id.trim())) {
+        _error_message = "Factory is not specified";
+        throw new Exception();
+    }
+
+    if (_factory_id.startsWith("/")) {
+        _factory_id = _factory_id.substring(1);
+    }
     
+    _server = request.getScheme() + "://" + request.getServerName() +
+        (request.getServerPort() == 80 ? "" : ":" + request.getServerPort());
+    
+    _share_page_url = _server + "/factory/share/" + _factory_id;
+    
+    String factoryURL = _server + "/api/factory/" + _factory_id;
     String jsonText = getFactoryJSON(factoryURL);
     
     Gson g = new Gson();
@@ -77,29 +92,46 @@ try {
     _title = json.get("projectattributes").getAsJsonObject().get("pname").getAsString() + " - Codenvy";
     _description = json.get("description").getAsString();
     
-    _image_url = getLink(json, "image");
-    if (_image_url == null) {
-        _image_url = request.getScheme() + "://" + request.getServerName() +
-            (request.getServerPort() == 80 ? "" : ":" + request.getServerPort()) +
-            "/factory/resources/codenvy.png";
+    if (_description == null || _description.trim().isEmpty()) {
+        _description = json.get("projectattributes").getAsJsonObject().get("ptype").getAsString();
     }
     
+    _image_url = getLink(json, "image");
+    if (_image_url == null) {
+        _image_url = _server + "/factory/resources/codenvy.png";
+    }
+
     _create_project_url = getLink(json, "create-project");
 %>
-<html>
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title><%=_title%></title>
+	<meta name="title" content="<%=_title%>" />
 	<meta property="og:title" content="<%=_title%>"/>
+		
+	<meta name="description" content="<%=_description%>" />
 	<meta property="og:description" content="<%=_description%>"/>
-	<meta property="og:image" content="<%=_image_url%>"/>	
+	
+	<link rel="image_src" href="<%=_image_url%>" />
+	<meta property="og:image" content="<%=_image_url%>"/>
 </head>
+
 <body></body>
+
 <script>
   setTimeout(function() { window.location.href = "<%=_create_project_url%>"; }, 1);
 </script>
+
 </html>
 <%    
 } catch (Exception e) {
-    response.sendError(500, e.getMessage());
+    if (_error_message != null) {
+        response.sendError(404, _error_message);
+    } else {
+    	response.sendError(500, e.getMessage());
+    }
 }
 %>

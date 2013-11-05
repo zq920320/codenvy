@@ -25,5 +25,15 @@
          version="3.0"
          metadata-complete="true">
     <display-name>Factory Service</display-name>
-</web-app>
 
+    <servlet>
+        <servlet-name>share</servlet-name>
+        <jsp-file>/resources/share.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>share</servlet-name>
+        <url-pattern>/share/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>
