@@ -34,22 +34,11 @@ public class MongoStorage extends StoreFunc {
      */
     public static final String SERVER_URL_PARAM = "server.url";
 
-    /**
-     * Job parameter where script type value is stored. Every Pig-latin
-     * script has its own resulted format to be stored. So, it is needed
-     * to use special {@link TupleTransformer} then.
-     */
-    public static final String SCRIPT_TYPE_PARAM = "script.type";
-
     /** Writer to mongo storage. */
     private RecordWriter writer;
 
-    /** Contains Pig-latin script type {@link ScriptType}. */
-    private final String scriptType;
-
     /** {@link MongoStorage} constructor. */
-    public MongoStorage(String scriptType) {
-        this.scriptType = scriptType;
+    public MongoStorage() {
     }
 
     /** {@inheritedDoc) */
@@ -62,7 +51,6 @@ public class MongoStorage extends StoreFunc {
     @Override
     public void setStoreLocation(String location, Job job) throws IOException {
         job.getConfiguration().set(SERVER_URL_PARAM, location);
-        job.getConfiguration().set(SCRIPT_TYPE_PARAM, scriptType);
     }
 
     /** {@inheritedDoc) */

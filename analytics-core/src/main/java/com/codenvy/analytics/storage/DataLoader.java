@@ -26,5 +26,7 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface DataLoader {
 
-    public ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException;
+    ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException;
+
+    String getStorageUrl(Map<String, String> context);
 }

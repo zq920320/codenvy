@@ -17,8 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
-import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
+import com.mongodb.*;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.RecordWriter;
@@ -34,39 +33,40 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
     protected DBCollection dbCollection;
 
     /** Mongo client. Have to be closed. */
-    protected Mongo mongo;
+    protected MongoClient mongoClient;
 
-//    /** MongoDbRecordWriter constructor. */
-//    MongoDbRecordWriter(String serverUrl, TupleTransformer transformer) throws IOException {
-//        MongoURI uri = new MongoURI(serverUrl);
-//
-//        this.mongo = new Mongo(uri);
-//        DB db = mongo.getDB(uri.getDatabase());
-//
-//        if (uri.getUsername() != null) {
-//            db.authenticate(uri.getUsername(), uri.getPassword());
-//        }
-//
-//        db.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-//
-//        this.dbCollection = db.getCollection(uri.getCollection());
-//        this.transformer = transformer;
-//    }
+    /** MongoDbRecordWriter constructor. */
+    MongoDbRecordWriter(String serverUrl) throws IOException {
+        MongoClientURI uri = new MongoClientURI(serverUrl);
+        mongoClient = new MongoClient(uri);
+
+        DB db = mongoClient.getDB(uri.getDatabase());
+        if (uri.getUsername() != null) {
+            db.authenticate(uri.getUsername(), uri.getPassword());
+        }
+
+        db.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+
+        this.dbCollection = db.getCollection(uri.getCollection());
+    }
 
     /** {@inheritedDoc) */
     @Override
     public void write(WritableComparable key, Tuple value) throws IOException, InterruptedException {
-//        try {
-//            DBObject dbObject = transformer.transform(value);
-//            dbCollection.save(dbObject);
-//        } catch (ExecException e) {
-//            throw new IOException(e);
-//        }
+        DBObject dbObject = new BasicDBObject();
+
+        dbObject.put("_id", value.get(0));
+        for (int i = 1; i < value.size(); i++) {
+            Tuple tuple = (Tuple)value.get(i);
+            dbObject.put(tuple.get(0).toString(), tuple.get(1));
+        }
+
+        dbCollection.save(dbObject);
     }
 
     /** {@inheritedDoc) */
     @Override
     public void close(TaskAttemptContext context) throws IOException, InterruptedException {
-        mongo.close();
+        mongoClient.close();
     }
 }

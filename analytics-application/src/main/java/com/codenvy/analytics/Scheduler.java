@@ -44,7 +44,7 @@ public class Scheduler implements ServletContextListener {
     private static final Logger LOGGER                      = LoggerFactory.getLogger(Scheduler.class);
     private static final String FEATURE_FORCE_RUN_CONDITION = "feature.force.run.condition";
     private static final String FEATURE_FORCE_RUN_CLASS     = "feature.force.run.class";
-    private static final String CRON_TIMETABLE              = "0 0 1 ? * *";
+    private static final String FEATURES_CRON_TIMETABLE     = "features.cron.timetable";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
     private static final String FORCE_RUN_CONDITION_RERUN   = "RERUN";
@@ -192,7 +192,8 @@ public class Scheduler implements ServletContextListener {
     }
 
     private CronTrigger createTrigger() {
-        return TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(CRON_TIMETABLE)).build();
+        return TriggerBuilder.newTrigger().withSchedule(
+                CronScheduleBuilder.cronSchedule(Configurator.getString(FEATURES_CRON_TIMETABLE))).build();
     }
 
     private void addJobDetail(Class<? extends Feature> clazz, List<JobDetail> jobDetails) {

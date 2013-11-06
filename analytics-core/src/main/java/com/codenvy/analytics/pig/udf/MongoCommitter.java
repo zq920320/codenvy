@@ -26,33 +26,33 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoCommitter extends OutputCommitter {
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc) */
     @Override
     public void setupJob(JobContext jobContext) throws IOException {
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc) */
     @Override
     public void cleanupJob(JobContext jobContext) throws IOException {
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc) */
     @Override
     public void setupTask(TaskAttemptContext taskContext) throws IOException {
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc) */
     @Override
     public boolean needsTaskCommit(TaskAttemptContext taskContext) throws IOException {
         return false;
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc) */
     @Override
     public void commitTask(TaskAttemptContext taskContext) throws IOException {
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc) */
     @Override
     public void abortTask(TaskAttemptContext taskContext) throws IOException {
     }

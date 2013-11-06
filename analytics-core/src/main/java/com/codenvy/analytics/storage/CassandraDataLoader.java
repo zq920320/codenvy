@@ -50,9 +50,6 @@ public class CassandraDataLoader implements DataLoader {
 
     private final Cluster cluster;
 
-//    cassandra://$CASSANDRA_USER:$CASSANDRA_PASSWORD@$CASSANDRA_KEYSPACE/$CASSANDRA_COLUMNFAMILY
-    // TODO
-
     public CassandraDataLoader() {
         Cluster.Builder builder = Cluster.builder();
         for (String node : Configurator.getArray(CASSANDRA_DATA_LOADER_HOST)) {
@@ -79,6 +76,21 @@ public class CassandraDataLoader implements DataLoader {
         } finally {
             session.shutdown();
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getStorageUrl(Map<String, String> context) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("cassandra://");
+        stringBuilder.append(Configurator.getString(CASSANDRA_DATA_LOADER_USER));
+        stringBuilder.append(":");
+        stringBuilder.append(Configurator.getString(CASSANDRA_DATA_LOADER_PASSWORD));
+        stringBuilder.append("@");
+        stringBuilder.append(Configurator.getString(CASSANDRA_DATA_LOADER_KEYSPACE));
+        stringBuilder.append("/");
+
+        return stringBuilder.toString();
     }
 
     private String prepareQuery(Metric metric, Map<String, String> clauses) throws ParseException {

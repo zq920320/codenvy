@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class DataLoaderFactory {
 
-    private static final String DATA_LOADER = "data.loader";
+    private static final String ANALYTICS_DATA_LOADER = "analytics.data.loader";
 
     private static AtomicReference<DataLoader> dataLoaderRef = new AtomicReference<>();
 
@@ -36,7 +36,7 @@ public class DataLoaderFactory {
             if (dataLoaderRef.get() == null) {
                 synchronized (dataLoaderRef) {
                     if (dataLoaderRef.get() == null) {
-                        String clazz = Configurator.getString(DATA_LOADER);
+                        String clazz = Configurator.getString(ANALYTICS_DATA_LOADER);
                         Constructor<?> constructor = Class.forName(clazz).getConstructor();
                         DataLoader dataLoader = (DataLoader)constructor.newInstance();
 

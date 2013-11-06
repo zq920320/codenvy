@@ -33,7 +33,7 @@
                 <value>tenant-created</value>
             </entry>
             <entry>
-                <key>CASSANDRA_COLUMNFAMILY</key>
+                <key>METRIC</key>
                 <value>workspace_created</value>
             </entry>
         </parameters>
@@ -54,7 +54,7 @@
                 <value>tenant-destroyed</value>
             </entry>
             <entry>
-                <key>CASSANDRA_COLUMNFAMILY</key>
+                <key>METRIC</key>
                 <value>workspace_destroyed</value>
             </entry>
         </parameters>

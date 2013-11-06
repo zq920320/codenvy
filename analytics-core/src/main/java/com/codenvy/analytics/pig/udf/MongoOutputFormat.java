@@ -17,8 +17,6 @@
  */
 package com.codenvy.analytics.pig.udf;
 
-import com.codenvy.analytics.pig.scripts.ScriptType;
-
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.pig.data.Tuple;
@@ -28,32 +26,23 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoOutputFormat extends OutputFormat<WritableComparable, Tuple> {
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc} */
     @Override
     public RecordWriter<WritableComparable, Tuple> getRecordWriter(TaskAttemptContext context) throws IOException,
                                                                                                       InterruptedException {
-        ScriptType type =
-                ScriptType.valueOf(context.getConfiguration().get(MongoStorage.SCRIPT_TYPE_PARAM).toUpperCase());
-        return  null;
-//        TupleTransformer transformer = TupleTransformerFactory.createTupleTransformer(type);
-//
-//        String serverUrl = context.getConfiguration().get(MongoStorage.SERVER_URL_PARAM);
-//
-//        return new MongoDbRecordWriter(serverUrl, transformer);
+        String serverUrl = context.getConfiguration().get(MongoStorage.SERVER_URL_PARAM);
+        return new MongoDbRecordWriter(serverUrl);
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc} */
     @Override
     public void checkOutputSpecs(JobContext context) throws IOException, InterruptedException {
-        // TODO Auto-generated method stub
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc} */
     @Override
     public OutputCommitter getOutputCommitter(TaskAttemptContext context) throws IOException, InterruptedException {
-        // TODO Auto-generated method stub
         return new MongoCommitter();
     }
-
 }
 

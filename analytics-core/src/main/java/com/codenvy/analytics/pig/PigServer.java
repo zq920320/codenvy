@@ -21,7 +21,6 @@ package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.storage.CassandraDataLoader;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.storage.DataLoader;
@@ -78,7 +77,7 @@ public class PigServer {
     private static final Set<String> importedMacros = new HashSet<>();
 
     static {
-        System.setProperty("udf.import.list", "org.apache.cassandra.hadoop.pig:com.codenvy.analytics.pig.udf");
+        System.setProperty("udf.import.list", "com.codenvy.analytics.pig.udf");
 
         try {
             server = new org.apache.pig.PigServer(ExecType.LOCAL);
@@ -101,11 +100,12 @@ public class PigServer {
     }
 
     /**
-     * Run the script and returns no result.
+     * Run the script directly on Pig server.
      *
      * @see #executeAndReturn(com.codenvy.analytics.pig.scripts.ScriptType, java.util.Map)
      */
-    public static synchronized void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
+    public static synchronized void executeOnServer(ScriptType scriptType, Map<String, String> context)
+            throws IOException {
         LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
         context = validateAndAdjustContext(scriptType, context);
@@ -149,7 +149,7 @@ public class PigServer {
     private static String prepareRunCommand(ScriptType scriptType, Map<String, String> context) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(new File(BIN_DIR, "pig_cassandra.sh").getAbsolutePath());
+        builder.append(new File(BIN_DIR, "run_pig.sh").getAbsolutePath());
 
         for (Map.Entry<String, String> entry : context.entrySet()) {
             builder.append(' ');
@@ -182,9 +182,36 @@ public class PigServer {
 
         context = validateAndAdjustContext(scriptType, context);
 
-        try (InputStream scriptContent = readScriptContent(scriptType)) {
+        String script = readScriptContent(scriptType);
+        script = removeRedundantCode(script);
+
+        try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
             server.registerScript(scriptContent, context);
             return server.openIterator(FINAL_RELATION);
+        } finally {
+            LOG.info("Execution " + scriptType + " has finished");
+        }
+    }
+
+    /**
+     * Run the script. Mostly for testing purpose.
+     *
+     * @param scriptType
+     *         specific script type to execute
+     * @param context
+     *         contains all necessary value parameters required by given {@link com.codenvy.analytics.pig.scripts
+     *         .ScriptType}
+     * @throws IOException
+     *         if something gone wrong or if a required parameter is absent
+     */
+    public static void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
+        LOG.info("Script execution " + scriptType + " is started: " + context.toString());
+
+        context = validateAndAdjustContext(scriptType, context);
+
+        String script = readScriptContent(scriptType);
+        try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
+            server.registerScript(scriptContent, context);
         } finally {
             LOG.info("Execution " + scriptType + " has finished");
         }
@@ -196,13 +223,7 @@ public class PigServer {
         context = Utils.clone(context);
 
         DataLoader dataLoader = DataLoaderFactory.createDataLoader();
-
-        Parameters.CASSANDRA_USER
-                  .put(context, Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_USER));
-        Parameters.CASSANDRA_PASSWORD
-                  .put(context, Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_PASSWORD));
-        Parameters.CASSANDRA_KEYSPACE
-                  .put(context, Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_KEYSPACE));
+        Parameters.STORAGE_URL.put(context, dataLoader.getStorageUrl(context));
 
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {
             setOptimizedPaths(context);
@@ -243,7 +264,7 @@ public class PigServer {
     }
 
     /** Reads script from file. */
-    private static InputStream readScriptContent(ScriptType scriptType) throws IOException {
+    private static String readScriptContent(ScriptType scriptType) throws IOException {
         File scriptFile = getScriptFileName(scriptType);
         if (!scriptFile.exists()) {
             throw new IOException("Resource " + scriptFile.getAbsolutePath() + " not found");
@@ -252,9 +273,8 @@ public class PigServer {
         try (InputStream scriptContent = new BufferedInputStream(new FileInputStream(scriptFile))) {
             String script = getStreamContentAsString(scriptContent);
             script = fixImport(script);
-            script = removeRedundantCode(script);
 
-            return new ByteArrayInputStream(script.getBytes("UTF-8"));
+            return script;
         }
     }
 

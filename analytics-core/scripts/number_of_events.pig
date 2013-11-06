@@ -25,4 +25,4 @@ a2 = FOREACH a1 GENERATE event;
 a = countAll(a2);
 
 result = FOREACH a GENERATE (long)'$TO_DATE', TOTUPLE('value', countAll);
-STORE result INTO '$STORAGE_URL' USING CassandraStorage();
+STORE result INTO '$STORAGE_URL$METRIC' USING MongoStorage();

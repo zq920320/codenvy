@@ -72,6 +72,26 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getStorageUrl(Map<String, String> context) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("mongodb://");
+        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_USER));
+        stringBuilder.append(":");
+        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PASSWORD));
+        stringBuilder.append("@");
+        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_HOST));
+        stringBuilder.append(":");
+        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PORT));
+        stringBuilder.append("/");
+        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_DB));
+        stringBuilder.append(".");
+
+        return stringBuilder.toString();
+    }
+
+
     private DBObject getMatcher(Map<String, String> clauses) throws ParseException {
         BasicDBObject dbObject = new BasicDBObject();
 

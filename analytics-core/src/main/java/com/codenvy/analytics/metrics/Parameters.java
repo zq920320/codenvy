@@ -32,9 +32,15 @@ public enum Parameters {
     PARAM,
     EVENT,
     STORAGE_URL,
+    METRIC {
+        @Override
+        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
+            MetricFactory.getMetric(value);
+        }
+    },
     TIME_UNIT {
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
             TimeUnit.valueOf(value.toUpperCase());
         }
     },
@@ -45,7 +51,7 @@ public enum Parameters {
         }
 
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
             try {
                 Calendar fromDate = Utils.parseDate(value);
                 Calendar toDate = Utils.getToDate(context);
@@ -81,7 +87,7 @@ public enum Parameters {
         }
 
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
             try {
                 Calendar toDate = Utils.parseDate(value);
                 Calendar maxDate = Utils.parseDate(getDefaultValue());
@@ -117,13 +123,13 @@ public enum Parameters {
     },
     USER {
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
             USER_TYPES.valueOf(value);
         }
     },
     WS {
         @Override
-        public void validate(String value, Map<String, String> context) throws IllegalStateException {
+        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
             WS_TYPES.valueOf(value);
         }
     };
@@ -154,7 +160,7 @@ public enum Parameters {
     }
 
     /** Validates the value of parameter. Throws {@link IllegalArgumentException} if something wrong. */
-    public void validate(String value, Map<String, String> context) throws IllegalStateException {
+    public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException(this.name() + " parameter is null or empty");
         }
