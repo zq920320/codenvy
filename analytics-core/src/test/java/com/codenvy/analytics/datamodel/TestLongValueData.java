@@ -17,7 +17,7 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.datamodel;
 
 import com.codenvy.analytics.BaseTest;
 
@@ -30,9 +30,9 @@ import static org.testng.AssertJUnit.assertEquals;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestStringValueData extends BaseTest {
+public class TestLongValueData extends BaseTest {
 
-    private final ValueData valueData = new StringValueData("hello");
+    private final ValueData valueData = new LongValueData(10L);
 
     @Test
     public void testSerialization() throws Exception {
@@ -42,7 +42,7 @@ public class TestStringValueData extends BaseTest {
             valueData.writeExternal(out);
         }
 
-        StringValueData newValueData = new StringValueData();
+        LongValueData newValueData = new LongValueData();
         try (ObjectInput in = new ObjectInputStream(new FileInputStream(file))) {
             newValueData.readExternal(in);
         }
@@ -53,21 +53,21 @@ public class TestStringValueData extends BaseTest {
 
     @Test
     public void testEquals() {
-        assertEquals(valueData, new StringValueData("hello"));
+        assertEquals(valueData, new LongValueData(10L));
     }
 
     @Test
     public void testNotEquals() {
-        assertNotEquals(valueData, new StringValueData("hello world"));
+        assertNotEquals(valueData, new LongValueData(100L));
     }
 
     @Test
     public void testGetAsString() {
-        assertEquals("hello", valueData.getAsString());
+        assertEquals("10", valueData.getAsString());
     }
 
     @Test
     public void testUnion() {
-        assertEquals(new StringValueData("hello\nhello"), valueData.union(valueData));
+        assertEquals(new LongValueData(20L), valueData.union(valueData));
     }
 }

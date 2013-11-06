@@ -19,13 +19,12 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,16 +35,14 @@ import java.util.Set;
  */
 public abstract class CumulativeMetric extends AbstractMetric {
 
-    private final Metric                 addedMetric;
-    private final Metric                 removedMetric;
-    private final Map<String, ValueData> cachedValues;
+    private final Metric addedMetric;
+    private final Metric removedMetric;
 
-    CumulativeMetric(MetricType metricType, Metric addedMetric, Metric removedMetric) {
+    CumulativeMetric(MetricType metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
         super(metricType);
 
         this.addedMetric = addedMetric;
         this.removedMetric = removedMetric;
-        this.cachedValues = new HashMap<>();
     }
 
     /** {@inheritDoc} */
@@ -61,17 +58,18 @@ public abstract class CumulativeMetric extends AbstractMetric {
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws InitialValueNotFoundException, IOException {
+        InitialValueContainer.validateExistenceInitialValueBefore(context);
+
+        Calendar fromDate = (Calendar)InitialValueContainer.getInitialValueDate().clone();
+        fromDate.add(Calendar.DAY_OF_MONTH, 1);
+
         context = Utils.clone(context);
-        Parameters.FROM_DATE.put(context, Parameters.TO_DATE.get(context));
-        Parameters.TIME_UNIT.put(context, Parameters.TimeUnit.DAY.name());
+        Utils.putFromDate(context, fromDate);
 
         // TODO getAvailableFilters return ???
 
         try {
-            InitialValueContainer.validateExistenceInitialValueBefore(context);
             ValueData valueData = doGetValue(context);
-
-            putInCache(valueData, context);
 
             return valueData;
         } catch (ParseException e) {
@@ -79,31 +77,12 @@ public abstract class CumulativeMetric extends AbstractMetric {
         }
     }
 
-    private void putInCache(ValueData valueData, Map<String, String> context) throws ParseException {
-        if (Utils.getToDate(context).get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            cachedValues.put(Parameters.TO_DATE.get(context), valueData);
-        }
-    }
-
-    private ValueData getFromCache(Map<String, String> context) {
-        return cachedValues.get(Parameters.TO_DATE.get(context));
-    }
-
     private ValueData doGetValue(Map<String, String> context) throws IOException, ParseException {
-        ValueData valueData = getFromCache(context);
-        if (valueData == null) {
-            valueData = InitialValueContainer.getInitialValue(metricName, context);
-        }
-
-        if (valueData != null) {
-            return valueData;
-        }
-
         LongValueData addedEntity = (LongValueData)addedMetric.getValue(context);
         LongValueData removedEntity = (LongValueData)removedMetric.getValue(context);
-        LongValueData previousEntity = (LongValueData)getValue(Utils.prevDateInterval(context));
+        LongValueData initialValue = (LongValueData)InitialValueContainer.getInitialValue(metricName);
 
-        return new LongValueData(previousEntity.getAsLong() + addedEntity.getAsLong() - removedEntity.getAsLong());
+        return new LongValueData(initialValue.getAsLong() + addedEntity.getAsLong() - removedEntity.getAsLong());
     }
 
     /** {@inheritDoc} */

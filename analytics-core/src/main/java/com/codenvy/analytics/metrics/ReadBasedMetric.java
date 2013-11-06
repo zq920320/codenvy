@@ -19,65 +19,39 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.cassandra.CassandraDataManager;
-import com.codenvy.analytics.metrics.value.ValueData;
-import com.codenvy.analytics.metrics.value.ValueDataFactory;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.storage.DataLoader;
+import com.codenvy.analytics.storage.DataLoaderFactory;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Map;
 
 /**
- * It is supposed to loadValue calculated {@link com.codenvy.analytics.metrics.value.ValueData} from the storage.
+ * It is supposed to loadValue calculated {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
 
+    private final DataLoader dataLoader;
+
     public ReadBasedMetric(String metricName) {
         super(metricName);
+        this.dataLoader = DataLoaderFactory.createDataLoader();
     }
 
     public ReadBasedMetric(MetricType metricType) {
-        super(metricType);
+        this(metricType.toString());
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        try {
-            Calendar fromDate = Utils.getFromDate(context);
-            Calendar toDate = Utils.getToDate(context);
-
-            ValueData total = ValueDataFactory.createDefaultValue(getValueDataClass());
-
-            Map<String, String> dailyContext = Utils.clone(context);
-            while (!fromDate.after(toDate)) {
-                Utils.putFromDate(dailyContext, fromDate);
-                Utils.putToDate(dailyContext, fromDate);
-                Parameters.TIME_UNIT.put(dailyContext, Parameters.TimeUnit.DAY.name());
-
-                ValueData dailyValue = evaluate(dailyContext);
-                total = total.union(dailyValue);
-
-                fromDate.add(Calendar.DAY_OF_MONTH, 1);
-            }
-
-            return total;
-        } catch (ParseException e) {
-            throw new IOException(e);
-        }
+        return loadValue(context);
     }
 
-    /** @return {@link com.codenvy.analytics.metrics.value.ValueData} */
-    protected ValueData evaluate(Map<String, String> dailyContext) throws IOException {
-        return loadValue(dailyContext);
-    }
-
-    private ValueData loadValue(Map<String, String> dailyContext) throws IOException {
-        return CassandraDataManager.loadValue(this, dailyContext);
+    protected ValueData loadValue(Map<String, String> dailyContext) throws IOException {
+        return dataLoader.loadValue(this, dailyContext);
     }
 }
 

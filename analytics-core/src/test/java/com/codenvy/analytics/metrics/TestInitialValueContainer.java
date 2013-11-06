@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 
 import org.testng.annotations.Test;
 
@@ -36,22 +36,14 @@ public class TestInitialValueContainer {
 
     @Test
     public void testInitialValue() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.TO_DATE.put(context, "20120101");
-        Parameters.FROM_DATE.put(context, "20120101");
-
-        assertEquals(new LongValueData(10), InitialValueContainer.getInitialValue("total_workspaces", context));
-        assertEquals(new LongValueData(20), InitialValueContainer.getInitialValue("total_users", context));
-        assertEquals(new LongValueData(30), InitialValueContainer.getInitialValue("total_projects", context));
+        assertEquals(new LongValueData(10), InitialValueContainer.getInitialValue("total_workspaces"));
+        assertEquals(new LongValueData(20), InitialValueContainer.getInitialValue("total_users"));
+        assertEquals(new LongValueData(30), InitialValueContainer.getInitialValue("total_projects"));
     }
 
     @Test
     public void shouldThrowExceptionIfMetricUnknown() throws ParseException {
-        Map<String, String> context = Utils.newContext();
-        Parameters.TO_DATE.put(context, "20120101");
-        Parameters.FROM_DATE.put(context, "20120101");
-
-        assertNull(InitialValueContainer.getInitialValue("bla-bla", context));
+        assertNull(InitialValueContainer.getInitialValue("bla-bla"));
     }
 
     @Test(expectedExceptions = InitialValueNotFoundException.class)

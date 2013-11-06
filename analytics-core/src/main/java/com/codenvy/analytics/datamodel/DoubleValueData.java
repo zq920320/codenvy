@@ -17,65 +17,61 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.datamodel;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class LongValueData extends AbstractValueData {
+public class DoubleValueData extends AbstractValueData {
 
-    public static final LongValueData DEFAULT = new LongValueData(0);
+    public static final DoubleValueData DEFAULT = new DoubleValueData(0);
 
-    private long value;
+    private double value;
 
     /** For serialization one. */
-    public LongValueData() {
+    public DoubleValueData() {
     }
 
-    public LongValueData(long value) {
+    public DoubleValueData(double value) {
         this.value = value;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getAsString() {
-        return Long.toString(value);
+        return Double.toString(value);
     }
 
     /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
-        return value == ((LongValueData)valueData).value;
+        return value == ((DoubleValueData)valueData).value;
     }
 
     /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
-        return (int)value;
+        return (int)Double.doubleToLongBits(value);
     }
 
     /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
-        return new LongValueData(value + ((LongValueData)valueData).value);
+        return new DoubleValueData(value + ((DoubleValueData)valueData).value);
     }
 
     /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeLong(value);
+        out.writeDouble(value);
     }
 
     /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        value = in.readLong();
-    }
-
-    public long getAsLong() {
-        return value;
+        value = in.readDouble();
     }
 
     public double getAsDouble() {

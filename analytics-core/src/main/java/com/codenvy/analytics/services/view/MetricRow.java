@@ -23,10 +23,10 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.value.DoubleValueData;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.StringValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
 import java.util.Map;

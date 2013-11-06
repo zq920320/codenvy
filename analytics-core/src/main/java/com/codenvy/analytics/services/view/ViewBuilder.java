@@ -19,10 +19,10 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.jdbc.JdbcDataManager;
-import com.codenvy.analytics.jdbc.JdbcDataManagerFactory;
+import com.codenvy.analytics.storage.JdbcDataManager;
+import com.codenvy.analytics.storage.JdbcDataManagerFactory;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.services.ConfigurationManager;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.XmlConfigurationManager;

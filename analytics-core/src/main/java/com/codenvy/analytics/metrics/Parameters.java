@@ -28,19 +28,11 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum Parameters {
-    CASSANDRA_KEYSPACE,
-    CASSANDRA_USER,
-    CASSANDRA_PASSWORD,
-    CASSANDRA_COLUMNFAMILY,
-    EVENT,
-    PARAM,
     LOG,
+    PARAM,
+    EVENT,
+    STORAGE_URL,
     TIME_UNIT {
-        @Override
-        public String getDefaultValue() {
-            return TimeUnit.DAY.toString();
-        }
-
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalStateException {
             TimeUnit.valueOf(value.toUpperCase());

@@ -15,22 +15,16 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.storage;
 
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Metric;
 
-package com.codenvy.analytics.metrics.value;
-
-import java.io.Externalizable;
-
+import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface ValueData extends Externalizable {
+public interface DataLoader {
 
-    /**
-     * Unions two {@link com.codenvy.analytics.metrics.value.ValueData} into one single. The passed and current {@link
-     * com.codenvy.analytics.metrics.value.ValueData} will not be modified.
-     */
-    ValueData union(ValueData valueData);
-
-    /** Represents {@link com.codenvy.analytics.metrics.value.ValueData} as {@link String}. */
-    String getAsString();
+    public ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException;
 }

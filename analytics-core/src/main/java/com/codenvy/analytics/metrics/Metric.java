@@ -18,7 +18,7 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
 import java.util.Map;

@@ -17,7 +17,7 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.datamodel;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */

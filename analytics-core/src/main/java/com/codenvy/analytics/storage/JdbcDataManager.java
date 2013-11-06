@@ -15,22 +15,16 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.storage;
 
+import com.codenvy.analytics.datamodel.ValueData;
 
-package com.codenvy.analytics.metrics;
-
+import java.sql.SQLException;
+import java.util.List;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TotalWorkspacesMetric extends CumulativeMetric {
+public interface JdbcDataManager {
 
-    public TotalWorkspacesMetric() {
-        super(MetricType.TOTAL_WORKSPACES,
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.WORKSPACE_CREATED),
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.WORKSPACE_DESTROYED));
-    }
+    void retainData(String tableName, List<ValueData> fields, List<List<ValueData>> data) throws SQLException;
 
-    @Override
-    public String getDescription() {
-        return "The total number of workspaces";
-    }
 }

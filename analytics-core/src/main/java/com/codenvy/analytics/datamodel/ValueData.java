@@ -15,16 +15,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.jdbc;
 
-import com.codenvy.analytics.metrics.value.ValueData;
 
-import java.sql.SQLException;
-import java.util.List;
+package com.codenvy.analytics.datamodel;
+
+import java.io.Externalizable;
+
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface JdbcDataManager {
+public interface ValueData extends Externalizable {
 
-    void retainData(String tableName, List<ValueData> fields, List<List<ValueData>> data) throws SQLException;
+    /**
+     * Unions two {@link com.codenvy.analytics.datamodel.ValueData} into one single. The passed and current {@link
+     * com.codenvy.analytics.datamodel.ValueData} will not be modified.
+     */
+    ValueData union(ValueData valueData);
 
+    /** Represents {@link com.codenvy.analytics.datamodel.ValueData} as {@link String}. */
+    String getAsString();
 }

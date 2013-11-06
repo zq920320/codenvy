@@ -20,8 +20,8 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,14 +30,27 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * Container for initial values of some metrics. It is used in case when statistics had been started collecting not
+ * from very beginning. The configuration has to be placed in analytics.conf and defines the date and initial values of
+ * metrics. The example belows explains that statistic had been started collecting from 2012-01-01 but the day before
+ * (on 2011-12-31) 10 workspaces, 20 users and 30 projects already had been created.
+ * <p/>
+ * initial.value.date=2011-12-31
+ * initial.value.metrics=total_workspaces,total_users,total_projects
+ * initial.value.metric.total_workspaces=10
+ * initial.value.metric.total_users=20
+ * initial.value.metric.total_projects=30
+ *
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public class InitialValueContainer {
 
-    private static final String INITIAL_VALUE_METRICS = "initial.value.metrics";
-    private static final String INITIAL_VALUE_METRIC = "initial.value.metric.";
-    private static final String INITIAL_VALUE_DATE = "initial.value.date";
-    private static final Calendar initialValueDate = Calendar.getInstance();
-    private static final Map<String, ValueData> initialValues = new HashMap<>();
+    private static final String                 INITIAL_VALUE_METRICS = "initial.value.metrics";
+    private static final String                 INITIAL_VALUE_METRIC  = "initial.value.metric.";
+    private static final String                 INITIAL_VALUE_DATE    = "initial.value.date";
+    private static final Calendar               initialValueDate      = Calendar.getInstance();
+    private static final Map<String, ValueData> initialValues         = new HashMap<>();
 
     static {
         for (String name : Configurator.getArray(INITIAL_VALUE_METRICS)) {
@@ -55,15 +68,14 @@ public class InitialValueContainer {
         }
     }
 
+    /** @return the date for initial values */
+    public static Calendar getInitialValueDate() {
+        return initialValueDate;
+    }
+
     /** @return initial value for give metric or null */
-    public static ValueData getInitialValue(String metricName, Map<String, String> context) throws ParseException {
-        ValueData valueData = null;
-
-        if (Utils.getToDate(context).equals(initialValueDate)) {
-            valueData = initialValues.get(metricName.toLowerCase());
-        }
-
-        return valueData;
+    public static ValueData getInitialValue(String metricName) throws ParseException {
+        return initialValues.get(metricName.toLowerCase());
     }
 
     /** Checks if container contains initial value for given metric below or equal to the given date. */

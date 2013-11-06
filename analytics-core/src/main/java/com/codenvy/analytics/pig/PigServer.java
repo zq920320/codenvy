@@ -21,9 +21,11 @@ package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.cassandra.CassandraDataManager;
+import com.codenvy.analytics.storage.CassandraDataLoader;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
+import com.codenvy.analytics.storage.DataLoader;
+import com.codenvy.analytics.storage.DataLoaderFactory;
 
 import org.apache.cassandra.hadoop.pig.CassandraStorage;
 import org.apache.pig.ExecType;
@@ -193,12 +195,14 @@ public class PigServer {
                                                                 Map<String, String> context) throws IOException {
         context = Utils.clone(context);
 
+        DataLoader dataLoader = DataLoaderFactory.createDataLoader();
+
         Parameters.CASSANDRA_USER
-                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_USER));
+                  .put(context, Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_USER));
         Parameters.CASSANDRA_PASSWORD
-                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_PASSWORD));
+                  .put(context, Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_PASSWORD));
         Parameters.CASSANDRA_KEYSPACE
-                  .put(context, Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_KEYSPACE));
+                  .put(context, Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_KEYSPACE));
 
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {
             setOptimizedPaths(context);

@@ -20,7 +20,7 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.LongValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 
 import org.testng.annotations.Test;
 
@@ -44,11 +44,11 @@ public class TestCumulativeMetric extends BaseTest {
         contextCurrentDate.put(Parameters.TO_DATE.name(), "20120105");
         contextCurrentDate.put(Parameters.TIME_UNIT.name(), Parameters.TimeUnit.DAY.toString());
 
-        Metric mockedAddedMetric = mock(Metric.class);
-        Metric mockedRemovedMetric = mock(Metric.class);
+        ReadBasedMetric mockedAddedMetric = mock(ReadBasedMetric.class);
+        ReadBasedMetric mockedRemovedMetric = mock(ReadBasedMetric.class);
 
-        doReturn(new LongValueData(10L)).when(mockedAddedMetric).getValue(anyMap());
-        doReturn(new LongValueData(5L)).when(mockedRemovedMetric).getValue(anyMap());
+        doReturn(new LongValueData(40L)).when(mockedAddedMetric).getValue(anyMap());
+        doReturn(new LongValueData(20L)).when(mockedRemovedMetric).getValue(anyMap());
 
         TestedMetric testedMetric = new TestedMetric(MetricType.TOTAL_WORKSPACES,
                                                      mockedAddedMetric,
@@ -58,7 +58,8 @@ public class TestCumulativeMetric extends BaseTest {
     }
 
     class TestedMetric extends CumulativeMetric {
-        TestedMetric(MetricType metricType, Metric addedMetric, Metric removedMetric) throws IOException {
+        TestedMetric(MetricType metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric)
+                throws IOException {
             super(metricType, addedMetric, removedMetric);
         }
 

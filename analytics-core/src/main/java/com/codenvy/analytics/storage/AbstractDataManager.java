@@ -15,9 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.jdbc;
+package com.codenvy.analytics.storage;
 
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

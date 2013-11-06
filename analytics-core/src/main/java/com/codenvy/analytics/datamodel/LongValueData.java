@@ -17,60 +17,68 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.datamodel;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class StringValueData extends AbstractValueData {
+public class LongValueData extends AbstractValueData {
 
-    public static final StringValueData DEFAULT = new StringValueData("");
+    public static final LongValueData DEFAULT = new LongValueData(0);
 
-    private String value;
+    private long value;
 
     /** For serialization one. */
-    public StringValueData() {
+    public LongValueData() {
     }
 
-    public StringValueData(String value) {
+    public LongValueData(long value) {
         this.value = value;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getAsString() {
-        return value;
+        return Long.toString(value);
     }
 
     /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
-        return value.equals(((StringValueData)valueData).value);
+        return value == ((LongValueData)valueData).value;
     }
 
     /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
-        return value.hashCode();
+        return (int)value;
     }
 
     /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
-        return new StringValueData(value + "\n" + valueData.getAsString());
+        return new LongValueData(value + ((LongValueData)valueData).value);
     }
 
     /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(value);
+        out.writeLong(value);
     }
 
     /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        value = in.readUTF();
+        value = in.readLong();
+    }
+
+    public long getAsLong() {
+        return value;
+    }
+
+    public double getAsDouble() {
+        return value;
     }
 }

@@ -21,8 +21,8 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.value.StringValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
 import java.text.DateFormat;

@@ -20,8 +20,8 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.metrics.value.LongValueData;
-import com.codenvy.analytics.metrics.value.ValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 import org.testng.annotations.Test;
 
@@ -49,9 +49,9 @@ public class TestReadBasedMetric extends BaseTest {
         TestMetric metric = new TestMetric();
 
         TestMetric spyMetric = spy(metric);
-        doReturn(new LongValueData(10)).when(spyMetric).evaluate(anyMap());
+        doReturn(new LongValueData(10)).when(spyMetric).loadValue(anyMap());
 
-        assertEquals(spyMetric.getValue(contextCurrentDate), new LongValueData(50L));
+        assertEquals(spyMetric.getValue(contextCurrentDate), new LongValueData(10L));
     }
 
     public class TestMetric extends ReadBasedMetric {

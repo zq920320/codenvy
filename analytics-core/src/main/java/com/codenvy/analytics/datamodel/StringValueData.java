@@ -17,64 +17,60 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.datamodel;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class DoubleValueData extends AbstractValueData {
+public class StringValueData extends AbstractValueData {
 
-    public static final DoubleValueData DEFAULT = new DoubleValueData(0);
+    public static final StringValueData DEFAULT = new StringValueData("");
 
-    private double value;
+    private String value;
 
     /** For serialization one. */
-    public DoubleValueData() {
+    public StringValueData() {
     }
 
-    public DoubleValueData(double value) {
+    public StringValueData(String value) {
         this.value = value;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getAsString() {
-        return Double.toString(value);
+        return value;
     }
 
     /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
-        return value == ((DoubleValueData)valueData).value;
+        return value.equals(((StringValueData)valueData).value);
     }
 
     /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
-        return (int)Double.doubleToLongBits(value);
+        return value.hashCode();
     }
 
     /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
-        return new DoubleValueData(value + ((DoubleValueData)valueData).value);
+        return new StringValueData(value + "\n" + valueData.getAsString());
     }
 
     /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeDouble(value);
+        out.writeUTF(value);
     }
 
     /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        value = in.readDouble();
-    }
-
-    public double getAsDouble() {
-        return value;
+        value = in.readUTF();
     }
 }

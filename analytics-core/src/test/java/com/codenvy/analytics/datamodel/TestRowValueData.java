@@ -17,7 +17,7 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.datamodel;
 
 import com.codenvy.analytics.BaseTest;
 

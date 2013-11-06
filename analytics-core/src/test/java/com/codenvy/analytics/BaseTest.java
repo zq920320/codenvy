@@ -19,9 +19,14 @@
 package com.codenvy.analytics;
 
 import org.apache.pig.data.TupleFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
+
+    /** Logger. */
+    protected static final Logger LOG = LoggerFactory.getLogger(BaseTest.class);
 
     public static final String BASE_DIR = "target";
 

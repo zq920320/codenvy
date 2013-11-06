@@ -17,7 +17,7 @@
  */
 
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.datamodel;
 
 import java.io.IOException;
 import java.io.ObjectInput;

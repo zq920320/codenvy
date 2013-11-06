@@ -16,18 +16,20 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.analytics.metrics.value;
+package com.codenvy.analytics.storage;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.cassandra.CassandraDataManager;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
+import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -39,37 +41,42 @@ import java.util.Set;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestCassandraDataManager extends BaseTest {
+public class TestCassandraDataLoader extends BaseTest {
 
     private Cluster cluster;
+
+    private CassandraDataLoader dataLoader;
 
     @BeforeClass
     public void startCassandraCluster() throws Exception {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
 
         Cluster.Builder builder = Cluster.builder();
-        for (String node : Configurator.getArray(CassandraDataManager.CASSANDRA_DATA_MANAGER_HOST)) {
+        for (String node : Configurator.getArray(CassandraDataLoader.CASSANDRA_DATA_LOADER_HOST)) {
             builder.addContactPoint(node);
         }
-        builder.withPort(Configurator.getInt(CassandraDataManager.CASSANDRA_DATA_MANAGER_PORT));
-        builder.withCredentials(Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_USER),
-                                Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_PASSWORD));
+        builder.withPort(Configurator.getInt(CassandraDataLoader.CASSANDRA_DATA_LOADER_PORT));
+        builder.withCredentials(Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_USER),
+                                Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_PASSWORD));
 
         cluster = builder.build();
 
         Session session = cluster.connect();
         try {
             session.execute(
-                    "CREATE KEYSPACE " + Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_KEYSPACE) +
+                    "CREATE KEYSPACE " + Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_KEYSPACE) +
                     " WITH replication = {'class':'SimpleStrategy', 'replication_factor':1}");
-            session.execute("use " + Configurator.getString(CassandraDataManager.CASSANDRA_DATA_MANAGER_KEYSPACE));
-            session.execute("CREATE COLUMNFAMILY test (key varchar PRIMARY KEY, value bigint)");
+            session.execute("use " + Configurator.getString(CassandraDataLoader.CASSANDRA_DATA_LOADER_KEYSPACE));
+            session.execute("CREATE TABLE test (key varchar PRIMARY KEY, value bigint)");
             session.execute("INSERT INTO test (key, value) VALUES('20130910', 100)");
+            session.execute("INSERT INTO test (key, value) VALUES('20130911', 100)");
         } finally {
             session.shutdown();
         }
 
         cluster.shutdown();
+
+        dataLoader = new CassandraDataLoader();
     }
 
     @AfterClass
@@ -78,13 +85,23 @@ public class TestCassandraDataManager extends BaseTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void testSingleDay() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130910");
         Parameters.TO_DATE.put(context, "20130910");
-        ValueData valueData = CassandraDataManager.loadValue(new TestMetric(), context);
+        ValueData valueData = dataLoader.loadValue(new TestMetric(), context);
 
-        assertEquals(new LongValueData(100), valueData);
+        AssertJUnit.assertEquals(new LongValueData(100), valueData);
+    }
+
+    @Test
+    public void testPeriod() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130910");
+        Parameters.TO_DATE.put(context, "20130911");
+        ValueData valueData = dataLoader.loadValue(new TestMetric(), context);
+
+        assertEquals(new LongValueData(200), valueData);
     }
 
     private class TestMetric extends ReadBasedMetric {
