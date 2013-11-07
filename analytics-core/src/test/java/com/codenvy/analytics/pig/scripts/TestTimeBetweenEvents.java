@@ -26,7 +26,7 @@ import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
 import org.apache.pig.data.Tuple;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -39,8 +39,8 @@ public class TestTimeBetweenEvents extends BaseTest {
 
     private Map<String, String> context = new HashMap<>();
 
-    @BeforeTest
-    public void setUp() throws Exception {
+    @BeforeClass
+    public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
         // 6m
@@ -86,7 +86,7 @@ public class TestTimeBetweenEvents extends BaseTest {
         Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
         Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.CASSANDRA_COLUMNFAMILY.put(context, "fake");
+        Parameters.METRIC.put(context, "fake");
     }
 
     @Test

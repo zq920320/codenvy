@@ -31,13 +31,8 @@ public enum Parameters {
     LOG,
     PARAM,
     EVENT,
+    METRIC,
     STORAGE_URL,
-    METRIC {
-        @Override
-        public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
-            MetricFactory.getMetric(value);
-        }
-    },
     TIME_UNIT {
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalArgumentException {

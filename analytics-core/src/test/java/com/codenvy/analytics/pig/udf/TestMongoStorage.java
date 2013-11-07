@@ -15,26 +15,31 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.pig.scripts;
+package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
+import com.codenvy.analytics.pig.scripts.EventType;
+import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.mongodb.*;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.testng.Assert.*;
+import static com.mongodb.util.MyAsserts.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestNumberOfEvents extends BaseTest {
+public class TestMongoStorage extends BaseTest {
 
     private Map<String, String> params = new HashMap<>();
 
@@ -51,19 +56,27 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.METRIC.put(params, "fake");
+        Parameters.METRIC.put(params, "test");
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
 
-        assertTrue(iterator.hasNext());
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0).toString(), "20130101");
-        assertEquals(tuple.get(1).toString(), "(value,2)");
+        MongoClient mongoClient = new MongoClient(MONGO_CLIENT_URI);
+        DB db = mongoClient.getDB(MONGO_CLIENT_URI.getDatabase());
+        DBCollection dbCollection = db.getCollection(MONGO_CLIENT_URI.getCollection());
 
-        assertFalse(iterator.hasNext());
+        BasicDBObject dbObject = new BasicDBObject();
+        dbObject.put("_id", 20130101);
+
+        DBCursor dbCursor = dbCollection.find(dbObject);
+        assertEquals(dbCursor.size(), 1);
+
+        DBObject next = dbCursor.next();
+        assertEquals(next.get("value"), 2L);
+
+        mongoClient.close();
     }
 }

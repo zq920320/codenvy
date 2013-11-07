@@ -18,18 +18,47 @@
 
 package com.codenvy.analytics;
 
+import de.flapdoodle.embed.mongo.MongodExecutable;
+import de.flapdoodle.embed.mongo.MongodProcess;
+import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
+import de.flapdoodle.embed.mongo.config.RuntimeConfig;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.io.directories.FixedPath;
+
+import com.mongodb.MongoClientURI;
+
 import org.apache.pig.data.TupleFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
+
+import java.io.File;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
 
-    /** Logger. */
-    protected static final Logger LOG = LoggerFactory.getLogger(BaseTest.class);
+    protected final TupleFactory tupleFactory = TupleFactory.getInstance();
 
-    public static final String BASE_DIR = "target";
+    public static final String         BASE_DIR         = "target";
+    public static final MongoClientURI MONGO_CLIENT_URI = new MongoClientURI("mongodb://localhost:12345/test.test");
 
-    public static final TupleFactory tupleFactory = TupleFactory.getInstance();
+    protected MongodProcess mongoProcess;
 
+    @BeforeSuite
+    public void setUp() throws Exception {
+        File dir = new File(BASE_DIR + File.separator + "embeddedMongo");
+        dir.mkdirs();
+
+        RuntimeConfig config = new RuntimeConfig();
+        config.setTempDirFactory(new FixedPath(dir.getAbsolutePath()));
+
+        MongodStarter starter = MongodStarter.getInstance(config);
+        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, 12345, false));
+        mongoProcess = mongoExe.start();
+    }
+
+    @AfterSuite
+    public void tearDown() throws Exception {
+        mongoProcess.stop();
+    }
 }

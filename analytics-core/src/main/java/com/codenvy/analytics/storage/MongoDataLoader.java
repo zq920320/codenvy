@@ -77,10 +77,14 @@ public class MongoDataLoader implements DataLoader {
     public String getStorageUrl(Map<String, String> context) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("mongodb://");
-        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_USER));
-        stringBuilder.append(":");
-        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PASSWORD));
-        stringBuilder.append("@");
+
+        if (!Configurator.getString(MONGO_DATA_LOADER_USER).isEmpty()) {
+            stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_USER));
+            stringBuilder.append(":");
+            stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PASSWORD));
+            stringBuilder.append("@");
+        }
+        
         stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_HOST));
         stringBuilder.append(":");
         stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PORT));

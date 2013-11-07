@@ -18,12 +18,6 @@
 
 package com.codenvy.analytics.storage;
 
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.distribution.Version;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
@@ -33,7 +27,6 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.*;
 
 import org.testng.AssertJUnit;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -48,18 +41,11 @@ public class TestMongoDataLoader extends BaseTest {
 
     private DataLoader dataLoader;
 
-    private MongodProcess mongoProcess;
-
     @BeforeClass
-    public void startMongo() throws Exception {
-        MongodStarter starter = MongodStarter.getDefaultInstance();
-        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, 12345, false));
-        mongoProcess = mongoExe.start();
-
-        MongoClientURI uri = new MongoClientURI("mongodb://localhost:12345/test.test");
-        MongoClient mongoClient = new MongoClient(uri);
-        DB db = mongoClient.getDB(uri.getDatabase());
-        DBCollection dbCollection = db.getCollection(uri.getCollection());
+    public void prepare() throws Exception {
+        MongoClient mongoClient = new MongoClient(MONGO_CLIENT_URI);
+        DB db = mongoClient.getDB(MONGO_CLIENT_URI.getDatabase());
+        DBCollection dbCollection = db.getCollection(MONGO_CLIENT_URI.getCollection());
 
         BasicDBObject dbObject = new BasicDBObject();
         dbObject.put("_id", 20130910);
@@ -72,11 +58,6 @@ public class TestMongoDataLoader extends BaseTest {
         mongoClient.close();
 
         dataLoader = DataLoaderFactory.createDataLoader();
-    }
-
-    @AfterClass
-    public void stopMongo() throws Exception {
-        mongoProcess.stop();
     }
 
     @Test

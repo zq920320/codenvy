@@ -25,7 +25,7 @@ import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
 import org.apache.pig.data.Tuple;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -38,8 +38,8 @@ public class TestExtractQueryParam extends BaseTest {
 
     private HashMap<String, String> context = new HashMap<>();
 
-    @BeforeTest
-    public void setUp() throws Exception {
+    @BeforeClass
+    public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
         events.add(new Event.Builder().withParam("EVENT", "event1")
@@ -71,7 +71,7 @@ public class TestExtractQueryParam extends BaseTest {
         Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
-        Parameters.CASSANDRA_COLUMNFAMILY.put(context, "fake");
+        Parameters.METRIC.put(context, "fake");
     }
 
     @Test

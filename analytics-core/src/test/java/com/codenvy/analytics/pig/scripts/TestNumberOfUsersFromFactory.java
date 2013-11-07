@@ -39,7 +39,7 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
     private Map<String, String> params = new HashMap<>();
 
     @BeforeClass
-    public void setUp() throws IOException {
+    public void prepare() throws IOException {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-1", "Anonymoususer_1", "website")
                         .withDate("2013-01-01").build());
@@ -66,7 +66,7 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.CASSANDRA_COLUMNFAMILY.put(params, "fake");
+        Parameters.METRIC.put(params, "fake");
     }
 
     @Test

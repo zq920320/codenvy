@@ -39,7 +39,7 @@ public class TestProductUsageSessions extends BaseTest {
     private Map<String, String> params = new HashMap<>();
 
     @BeforeClass
-    public void setUp() throws IOException {
+    public void prepare() throws IOException {
         List<Event> events = new ArrayList<>();
 
         // sessions #1 - 300s
@@ -70,7 +70,7 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.CASSANDRA_COLUMNFAMILY.put(params, "fake");
+        Parameters.METRIC.put(params, "fake");
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
 

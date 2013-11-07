@@ -62,7 +62,7 @@ public class TestViewBuilder extends BaseTest {
     private ViewConfiguration viewConfiguration;
 
     @BeforeClass
-    public void setUp() throws Exception {
+    public void prepare() throws Exception {
         File view = new File(BASE_DIR, "view.xml");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(view))) {
             out.write(RESOURCE);

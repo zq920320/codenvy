@@ -40,7 +40,7 @@ public class TestLogLocationOptimizer extends BaseTest {
     private String baseDir;
 
     @BeforeMethod
-    public void setUp() {
+    public void prepare() {
         baseDir = BASE_DIR + File.separator + UUID.randomUUID();
     }
 

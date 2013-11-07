@@ -39,7 +39,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
     private Map<String, String> params = new HashMap<>();
 
     @BeforeClass
-    public void setUp() throws IOException {
+    public void prepare() throws IOException {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2013-01-01").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1").withDate("2013-01-01").build());
@@ -52,7 +52,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
         Parameters.PARAM.put(params, "USER");
-        Parameters.CASSANDRA_COLUMNFAMILY.put(params, "fake");
+        Parameters.METRIC.put(params, "fake");
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
 

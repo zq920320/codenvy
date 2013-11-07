@@ -36,12 +36,12 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
     protected MongoClient mongoClient;
 
     /** MongoDbRecordWriter constructor. */
-    MongoDbRecordWriter(String serverUrl) throws IOException {
+    public MongoDbRecordWriter(String serverUrl) throws IOException {
         MongoClientURI uri = new MongoClientURI(serverUrl);
         mongoClient = new MongoClient(uri);
 
         DB db = mongoClient.getDB(uri.getDatabase());
-        if (uri.getUsername() != null) {
+        if (uri.getUsername() != null && !uri.getUsername().isEmpty()) {
             db.authenticate(uri.getUsername(), uri.getPassword());
         }
 
@@ -50,7 +50,7 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
         this.dbCollection = db.getCollection(uri.getCollection());
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc) */
     @Override
     public void write(WritableComparable key, Tuple value) throws IOException, InterruptedException {
         DBObject dbObject = new BasicDBObject();
@@ -64,7 +64,7 @@ public class MongoDbRecordWriter extends RecordWriter<WritableComparable, Tuple>
         dbCollection.save(dbObject);
     }
 
-    /** {@inheritedDoc) */
+    /** {@inheritDoc) */
     @Override
     public void close(TaskAttemptContext context) throws IOException, InterruptedException {
         mongoClient.close();
