@@ -25,7 +25,8 @@ define(function(){
         // e.g. codenvy.con/contact?o=pricing-page
         originTrackerUrlParameterName : "o",
 
-        placeholderPolyfillUrl : "site/scripts/vendor/jquery.placeholder.min.js"
+        placeholderPolyfillUrl : "site/scripts/vendor/jquery.placeholder.min.js",
+        
 
 	};
 
