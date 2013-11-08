@@ -48,6 +48,13 @@ public enum ScriptType {
     PRODUCT_USAGE_SESSIONS,
 
     /** Script for testing purpose. */
+    TEST_MONGO_LOADER {
+        public Set<Parameters> getParams() {
+            return new LinkedHashSet<>(
+                    Arrays.asList(new Parameters[]{Parameters.STORAGE_URL,
+                                                   Parameters.METRIC}));
+        }
+    },
     TEST_EXTRACT_USER,
     TEST_EXTRACT_WS,
     TEST_EXTRACT_QUERY_PARAM,
