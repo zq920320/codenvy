@@ -267,6 +267,8 @@ do
     -XX:HeapDumpPath="$CARBON_HOME/repository/logs/heap-dump.hprof" \
     -javaagent:"$CARBON_HOME/repository/components/plugins/jamm_0.2.5.wso2v2.jar" \
     $JAVA_OPTS \
+    -Dmail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory \
+    -Dmail.smtp.socketFactory.port=465 \
     -Danalytics.bin.dir=$CARBON_HOME/bin \
     -Danalytics.scripts.dir=$CARBON_HOME/pigscripts \
     -Danalytics.configuration.dir=$CARBON_HOME/repository/conf \
