@@ -20,12 +20,12 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Matchers.anyMap;
@@ -39,10 +39,10 @@ public class TestCumulativeMetric extends BaseTest {
 
     @Test
     public void testEvaluateValue() throws Exception {
-        Map<String, String> contextCurrentDate = new HashMap<>();
-        contextCurrentDate.put(Parameters.FROM_DATE.name(), "20120105");
-        contextCurrentDate.put(Parameters.TO_DATE.name(), "20120105");
-        contextCurrentDate.put(Parameters.TIME_UNIT.name(), Parameters.TimeUnit.DAY.toString());
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20120105");
+        Parameters.TO_DATE.put(context, "20120105");
+        Parameters.TIME_UNIT.put(context, "20120105");
 
         ReadBasedMetric mockedAddedMetric = mock(ReadBasedMetric.class);
         ReadBasedMetric mockedRemovedMetric = mock(ReadBasedMetric.class);
@@ -54,7 +54,28 @@ public class TestCumulativeMetric extends BaseTest {
                                                      mockedAddedMetric,
                                                      mockedRemovedMetric);
 
-        assertEquals(testedMetric.getValue(contextCurrentDate), new LongValueData(30L));
+        assertEquals(testedMetric.getValue(context), new LongValueData(30L));
+    }
+
+    @Test
+    public void testReturnDefaultValueIfFilterExists() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER.put(context, "user");
+        Parameters.FROM_DATE.put(context, "20120105");
+        Parameters.TO_DATE.put(context, "20120105");
+        Parameters.TIME_UNIT.put(context, "20120105");
+
+        ReadBasedMetric mockedAddedMetric = mock(ReadBasedMetric.class);
+        ReadBasedMetric mockedRemovedMetric = mock(ReadBasedMetric.class);
+
+        doReturn(new LongValueData(40L)).when(mockedAddedMetric).getValue(anyMap());
+        doReturn(new LongValueData(20L)).when(mockedRemovedMetric).getValue(anyMap());
+
+        TestedMetric testedMetric = new TestedMetric(MetricType.TOTAL_WORKSPACES,
+                                                     mockedAddedMetric,
+                                                     mockedRemovedMetric);
+
+        assertEquals(testedMetric.getValue(context), LongValueData.DEFAULT);
     }
 
     class TestedMetric extends CumulativeMetric {

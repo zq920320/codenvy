@@ -21,6 +21,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -60,13 +61,15 @@ public abstract class CumulativeMetric extends AbstractMetric {
     public ValueData getValue(Map<String, String> context) throws InitialValueNotFoundException, IOException {
         InitialValueContainer.validateExistenceInitialValueBefore(context);
 
+        if (!Utils.getFilters(context).isEmpty()) {
+            return ValueDataFactory.createDefaultValue(getValueDataClass());
+        }
+
         Calendar fromDate = (Calendar)InitialValueContainer.getInitialValueDate().clone();
         fromDate.add(Calendar.DAY_OF_MONTH, 1);
 
         context = Utils.clone(context);
         Utils.putFromDate(context, fromDate);
-
-        // TODO getAvailableFilters return ???
 
         try {
             ValueData valueData = doGetValue(context);

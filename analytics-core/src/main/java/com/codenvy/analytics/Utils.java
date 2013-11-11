@@ -19,15 +19,14 @@
 
 package com.codenvy.analytics;
 
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -264,10 +263,22 @@ public class Utils {
         return new HashMap<>();
     }
 
-    public static String removeBracket(String value) {
-        int beginIndex = value.startsWith("[") ? 1 : 0;
-        int endIndex = value.endsWith("]") ? value.length() - 1 : value.length();
 
-        return value.substring(beginIndex, endIndex);
+    /**
+     * Returns all filters existed in context.
+     *
+     * @param context
+     * @return
+     */
+    public static Set<MetricFilter> getFilters(Map<String, String> context) {
+        Set<MetricFilter> result  = new HashSet<>();
+
+        for (MetricFilter filter : MetricFilter.values()) {
+            if (filter.exists(context)) {
+                result.add(filter);
+            }
+        }
+
+        return result;
     }
 }
