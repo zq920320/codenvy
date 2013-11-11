@@ -18,9 +18,11 @@
 package com.codenvy.analytics.storage;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.*;
 
@@ -37,7 +39,11 @@ public class MongoDataLoader implements DataLoader {
     public static final String MONGO_DATA_LOADER_USER     = "mongo.data.loader.user";
     public static final String MONGO_DATA_LOADER_PASSWORD = "mongo.data.loader.password";
     public static final String MONGO_DATA_LOADER_DB       = "mongo.data.loader.db";
-    public static final String VALUE_KEY                  = "value";
+
+    public static final String VALUE_KEY              = "value";
+    public static final String COLLECTION_NAME_SUFFIX = "-raw";
+
+    private static final long DAY_IN_MILLISECONDS = 86400000L;
 
     private final DB db;
 
@@ -59,7 +65,7 @@ public class MongoDataLoader implements DataLoader {
     /** {@inheritDoc} */
     @Override
     public ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException {
-        DBCollection dbCollection = db.getCollection(metric.getName().toLowerCase());
+        DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
 
         try {
             DBObject matcher = getMatcher(clauses);
@@ -69,6 +75,14 @@ public class MongoDataLoader implements DataLoader {
             return createdValueData(metric.getValueDataClass(), aggregation.results().iterator());
         } catch (ParseException e) {
             throw new IOException(e);
+        }
+    }
+
+    private String getCollectionName(Metric metric, Map<String, String> clauses) {
+        if (Utils.getFilters(clauses).isEmpty()) {
+            return metric.getName().toLowerCase();
+        } else {
+            return metric.getName().toLowerCase() + COLLECTION_NAME_SUFFIX;
         }
     }
 
@@ -84,38 +98,33 @@ public class MongoDataLoader implements DataLoader {
             stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PASSWORD));
             stringBuilder.append("@");
         }
-        
+
         stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_HOST));
         stringBuilder.append(":");
         stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PORT));
         stringBuilder.append("/");
         stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_DB));
-        stringBuilder.append(".");
 
         return stringBuilder.toString();
     }
 
 
     private DBObject getMatcher(Map<String, String> clauses) throws ParseException {
-        BasicDBObject dbObject = new BasicDBObject();
+        BasicDBObject match = new BasicDBObject();
 
-        for (Map.Entry<String, String> entry : clauses.entrySet()) {
-            String param = entry.getKey();
+        if (Parameters.TO_DATE.exists(clauses) && Parameters.FROM_DATE.exists(clauses)) {
+            DBObject range = new BasicDBObject();
+            range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
+            range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
 
-            if (Parameters.TO_DATE.toString().equals(param)) {
-                if (Parameters.TO_DATE.get(clauses).equals(Parameters.FROM_DATE.get(clauses))) {
-                    dbObject.put("$match", new BasicDBObject("_id", Long.parseLong(entry.getValue())));
-                } else {
-                    DBObject range = new BasicDBObject();
-                    range.put("$gte", Long.parseLong(Parameters.FROM_DATE.get(clauses)));
-                    range.put("$lte", Long.parseLong(Parameters.TO_DATE.get(clauses)));
-
-                    dbObject.put("$match", new BasicDBObject("_id", range));
-                }
-            }
+            match.put("_id", range);
         }
 
-        return dbObject;
+        for (MetricFilter filter : Utils.getFilters(clauses)) {
+            match.put(filter.name().toLowerCase(), filter.get(clauses));
+        }
+
+        return new BasicDBObject("$match", match);
     }
 
     private DBObject getAggregator() throws ParseException {

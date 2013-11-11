@@ -16,17 +16,4 @@
  * from Codenvy S.A..
  */
 
-IMPORT 'macros.pig';
-
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = filterByEvent(l, '$EVENT');
-
-a1 = FOREACH f GENERATE event;
-a = countAll(a1);
-
-result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
-STORE result INTO '$STORAGE_URL.$METRIC' USING MongoStorage();
-
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1L);
-STORE r INTO '$STORAGE_URL.$METRIC-raw' USING MongoStorage();
+result = LOAD '$STORAGE_URL.$METRIC' USING MongoLoader();

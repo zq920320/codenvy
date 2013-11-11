@@ -26,57 +26,82 @@ import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.mongodb.*;
 
+import org.apache.pig.data.Tuple;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static com.mongodb.util.MyAsserts.assertEquals;
+import static com.mongodb.util.MyAsserts.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestMongoStorage extends BaseTest {
 
     private Map<String, String> params = new HashMap<>();
+    private MongoClient  mongoClient;
+    private DBCollection dbCollection;
+    private DBCollection dbCollectionRaw;
 
     @BeforeClass
     public void prepare() throws IOException {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2013-01-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1").withDate("2013-01-01").build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com").withDate("2013-01-02").build());
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130101");
-        Parameters.TO_DATE.put(params, "20130101");
+        Parameters.FROM_DATE.put(params, "20130102");
+        Parameters.TO_DATE.put(params, "20130102");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.METRIC.put(params, "test");
+        Parameters.METRIC.put(params, "TestMongoStorage");
         Parameters.LOG.put(params, log.getAbsolutePath());
+
+        mongoClient = new MongoClient(MONGO_CLIENT_URI);
+        DB db = mongoClient.getDB(MONGO_CLIENT_URI.getDatabase());
+        dbCollection = db.getCollection("TestMongoStorage");
+        dbCollectionRaw = db.getCollection("TestMongoStorage-raw");
+    }
+
+    @AfterClass
+    public void cleanup() throws IOException {
+        mongoClient.close();
     }
 
     @Test
     public void testExecute() throws Exception {
         PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
 
-        MongoClient mongoClient = new MongoClient(MONGO_CLIENT_URI);
-        DB db = mongoClient.getDB(MONGO_CLIENT_URI.getDatabase());
-        DBCollection dbCollection = db.getCollection(MONGO_CLIENT_URI.getCollection());
-
         BasicDBObject dbObject = new BasicDBObject();
-        dbObject.put("_id", 20130101);
+        dbObject.put("_id", 20130102);
 
         DBCursor dbCursor = dbCollection.find(dbObject);
         assertEquals(dbCursor.size(), 1);
 
         DBObject next = dbCursor.next();
-        assertEquals(next.get("value"), 2L);
+        assertEquals(next.get("value"), 1L);
 
-        mongoClient.close();
+        dbCursor = dbCollectionRaw.find(dbObject);
+        assertEquals(dbCursor.size(), 1);
+
+        next = dbCursor.next();
+        assertEquals(next.get("ws"), "ws1");
+        assertEquals(next.get("user"), "user1@gmail.com");
+        assertEquals(next.get("domain"), "gmail.com");
+        assertEquals(next.get("value"), 1L);
+
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_MONGO_LOADER, params);
+        assertTrue(iterator.hasNext());
+
+        Tuple tuple = iterator.next();
+        assertEquals(tuple.get(0), 20130102L);
+
+        Tuple innerTuple = (Tuple)tuple.get(1);
+        assertEquals(innerTuple.get(0), "value");
+        assertEquals(innerTuple.get(1), 1L);
     }
 }
