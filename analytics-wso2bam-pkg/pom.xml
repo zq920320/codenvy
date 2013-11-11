@@ -36,6 +36,11 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -63,6 +68,18 @@
                                     <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>copy-dependencies-jar1</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeTypes>jar</includeTypes>
+                                    <stripVersion>false</stripVersion>
+                                    <outputDirectory>${project.build.directory}/packager-conf/jar</outputDirectory>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -74,12 +91,20 @@
                                 <configuration>
                                     <tasks>
                                         <!-- Downloading WSo2 BAM server -->
-                                        <get src="http://dist.wso2.org/maven2/org/wso2/bam/wso2bam/${wso2.bam.version}/wso2bam-${wso2.bam.version}.zip" 
+                                        <get src="http://dist.wso2.org/maven2/org/wso2/bam/wso2bam/${wso2.bam.version}/wso2bam-${wso2.bam.version}.zip"
                                             dest="${project.build.directory}/wso2bam-${wso2.bam.version}.zip"/>
                                         <unzip src="${project.build.directory}/wso2bam-${wso2.bam.version}.zip" dest="${project.build.directory}/"/>
                                         <move todir="${project.build.directory}/wso2bam-analytics">
                                             <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}"/>
                                         </move>
+
+                                        <!--Repacking-->
+                                        <jar destfile="${project.build.directory}/wso2bam-analytics/lib/org.wso2.carbon.logging-4.1.0.jar" update="true">
+                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar"/>
+                                        </jar>
+                                        <jar destfile="${project.build.directory}/wso2bam-analytics/repository/components/plugins/org.wso2.carbon.logging_4.1.0.jar" update="true">
+                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar"/>
+                                        </jar>
 
                                         <!-- Coping resources -->
                                         <copy todir="${project.build.directory}/wso2bam-analytics/" overwrite="true">
