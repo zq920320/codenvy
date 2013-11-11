@@ -121,7 +121,8 @@ public class MongoDataLoader implements DataLoader {
         }
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
-            match.put(filter.name().toLowerCase(), filter.get(clauses));
+            String[] values = filter.get(clauses).split(",");
+            match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
         }
 
         return new BasicDBObject("$match", match);

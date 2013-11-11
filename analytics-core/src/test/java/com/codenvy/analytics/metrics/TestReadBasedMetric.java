@@ -162,7 +162,7 @@ public class TestReadBasedMetric extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
         MetricFilter.WS.put(context, "ws2");
 
-        assertEquals(metric.getValue(context), new LongValueData(1L));
+        assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
     public class TestMetric extends ReadBasedMetric {
