@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.storage.DataLoader;
-import com.codenvy.analytics.storage.DataLoaderFactory;
+import com.codenvy.analytics.storage.DataStorageContainer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -37,7 +37,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     public ReadBasedMetric(String metricName) {
         super(metricName);
-        this.dataLoader = DataLoaderFactory.createDataLoader();
+        this.dataLoader = DataStorageContainer.createDataLoader();
     }
 
     public ReadBasedMetric(MetricType metricType) {

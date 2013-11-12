@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# general jars.
+for jar in $CASSANDRA_HOME/lib/*.jar $CASSANDRA_HOME/build/lib/jars/*.jar $CASSANDRA_HOME/build/apache-cassandra*.jar; do
+    CLASSPATH=$CLASSPATH:$jar
+done
+
+if [ "x$PIG_HOME" = "x" ]; then
+    echo "PIG_HOME not set: requires Pig >= 0.7.0" >&2
+    exit 1
+fi
+
+# analytics jar.
+for jar in $(find repository/deployment/server/webapps -name 'analytics-core*.jar');  do
+   ANALYTICS_JAR=$jar
+done
+echo "Using $ANALYTICS_JAR."
+if [ ! -e $ANALYTICS_JAR ]; then
+    echo "Unable to locate Analytics jar" >&2
+    exit 1
+fi
+
+# pig jar.
+for jar in $PIG_HOME/*.jar; do
+   PIG_JAR=$jar
+done
+echo "Using $PIG_JAR."
+if [ ! -e $PIG_JAR ]; then
+    echo "Unable to locate Pig jar" >&2
+    exit 1
+fi
+
+CLASSPATH=$CLASSPATH:$PIG_JAR:$ANALYTICS_JAR
+
+export PIG_CLASSPATH=$PIG_CLASSPATH:$CLASSPATH
+export PIG_OPTS="$PIG_OPTS -Dudf.import.list=org.apache.cassandra.hadoop.pig:com.codenvy.analytics.pig.udf"
+$PIG_HOME/bin/pig -x local $*

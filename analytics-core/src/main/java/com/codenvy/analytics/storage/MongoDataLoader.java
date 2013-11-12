@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.storage;
 
-import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -25,6 +24,9 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -34,32 +36,26 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoDataLoader implements DataLoader {
 
-    public static final String MONGO_DATA_LOADER_HOST     = "mongo.data.loader.host";
-    public static final String MONGO_DATA_LOADER_PORT     = "mongo.data.loader.port";
-    public static final String MONGO_DATA_LOADER_USER     = "mongo.data.loader.user";
-    public static final String MONGO_DATA_LOADER_PASSWORD = "mongo.data.loader.password";
-    public static final String MONGO_DATA_LOADER_DB       = "mongo.data.loader.db";
+    /** Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDataLoader.class);
 
-    public static final String VALUE_KEY              = "value";
-    public static final String COLLECTION_NAME_SUFFIX = "-raw";
-
-    private static final long DAY_IN_MILLISECONDS = 86400000L;
+    public static final  String VALUE_KEY              = "value";
+    public static final  String COLLECTION_NAME_SUFFIX = "-raw";
+    private static final long   DAY_IN_MILLISECONDS    = 86400000L;
 
     private final DB db;
 
-    public MongoDataLoader() throws IOException {
-        StringBuilder serverUrl = new StringBuilder();
-        serverUrl.append(Configurator.getString(MONGO_DATA_LOADER_HOST));
-        serverUrl.append(":");
-        serverUrl.append(Configurator.getString(MONGO_DATA_LOADER_PORT));
+    MongoDataLoader(MongoClientURI clientURI) throws IOException {
+        MongoClient mongoClient = new MongoClient(clientURI);
+        db = mongoClient.getDB(clientURI.getDatabase());
 
-        MongoClient mongoClient = new MongoClient(serverUrl.toString());
-        db = mongoClient.getDB(Configurator.getString(MONGO_DATA_LOADER_DB));
-
-        if (!Configurator.getString(MONGO_DATA_LOADER_USER).isEmpty()) {
-            db.authenticate(Configurator.getString(MONGO_DATA_LOADER_USER),
-                            Configurator.getString(MONGO_DATA_LOADER_PASSWORD).toCharArray());
+        if (isAuthRequired(clientURI)) {
+            db.authenticate(clientURI.getUsername(), clientURI.getPassword());
         }
+    }
+
+    private boolean isAuthRequired(MongoClientURI clientURI) {
+        return clientURI.getUsername() != null && !clientURI.getUsername().isEmpty();
     }
 
     /** {@inheritDoc} */
@@ -103,29 +99,6 @@ public class MongoDataLoader implements DataLoader {
             return metric.getName().toLowerCase() + COLLECTION_NAME_SUFFIX;
         }
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getStorageUrl(Map<String, String> context) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("mongodb://");
-
-        if (!Configurator.getString(MONGO_DATA_LOADER_USER).isEmpty()) {
-            stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_USER));
-            stringBuilder.append(":");
-            stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PASSWORD));
-            stringBuilder.append("@");
-        }
-
-        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_HOST));
-        stringBuilder.append(":");
-        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_PORT));
-        stringBuilder.append("/");
-        stringBuilder.append(Configurator.getString(MONGO_DATA_LOADER_DB));
-
-        return stringBuilder.toString();
-    }
-
 
     private DBObject getMatcher(Map<String, String> clauses) throws ParseException {
         BasicDBObject match = new BasicDBObject();

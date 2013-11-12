@@ -17,18 +17,14 @@
  */
 package com.codenvy.analytics.storage;
 
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
-
 import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface DataLoader {
+public interface DataStorage {
 
-    /** Loads value from the storage. */
-    ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException;
+    String getStorageUrl();
 
-    /** Loads parametrized value from the storage. */
-    ValueData loadParamValue(Metric metric, Map<String, String> clauses) throws IOException;
+    void initEmbeddedStorage();
+
+    DataLoader createDataLoader() throws IOException;
 }

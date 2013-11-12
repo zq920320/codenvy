@@ -42,9 +42,6 @@
         <guava.version>13.0.1</guava.version>
         <joda-time.version>2.2</joda-time.version>
 
-        <cassandra.driver.version>1.0.4</cassandra.driver.version>
-        <cassandra.unit.version>1.2.0.1</cassandra.unit.version>
-        <cassandra.version>1.2.9</cassandra.version>
         <h2.version>1.2.140</h2.version>
         <mongo.driver.version>2.10.1</mongo.driver.version>
         <embedded.mongo.version>1.28</embedded.mongo.version>
@@ -57,7 +54,6 @@
         <testng.version>6.3.1</testng.version>
         <junit.version>4.10</junit.version>
         <mockito.version>1.9.0</mockito.version>
-        <powermock.version>1.5.1</powermock.version>
         <quartz.version>2.1.7</quartz.version>
         <jaxb.version>2.2.11</jaxb.version>
         <commons.lang.version>2.6</commons.lang.version>
@@ -81,5 +77,6 @@
         <module>analytics-core</module>
         <module>analytics-application</module>
         <module>analytics-wso2bam-pkg</module>
+        <module>analytics-wso2bam-local-pkg</module>
     </modules>
 </project>

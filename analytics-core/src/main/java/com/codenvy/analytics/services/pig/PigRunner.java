@@ -45,7 +45,7 @@ public class PigRunner implements Feature {
     private final ConfigurationManager<PigRunnerConfiguration> configurationManager;
 
     public PigRunner() {
-        this.configurationManager = new XmlConfigurationManager(PigRunnerConfiguration.class);
+        this.configurationManager = new XmlConfigurationManager<>(PigRunnerConfiguration.class);
     }
 
     /** {@inheritDoc} */
@@ -79,7 +79,7 @@ public class PigRunner implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            String resource = Configurator.CONFIGURATION_DIRECTORY + File.separator + "running-scripts.xml";
+            String resource = Configurator.ANALYTICS_CONF_DIR + File.separator + "running-scripts.xml";
             PigRunnerConfiguration configuration = configurationManager.loadConfiguration(resource);
 
             for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {

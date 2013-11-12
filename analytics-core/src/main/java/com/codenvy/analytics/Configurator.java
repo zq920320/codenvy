@@ -33,11 +33,8 @@ public class Configurator {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
 
-    /** System property. Contains the Cassandra keyspace where analytics data will be stored. */
-    private static final String ANALYTICS_CONFIGURATION_DIRECTORY_PROPERTY = "analytics.configuration.dir";
-
-    /** The value of {@value #ANALYTICS_CONFIGURATION_DIRECTORY_PROPERTY}. */
-    public static final String CONFIGURATION_DIRECTORY = System.getProperty(ANALYTICS_CONFIGURATION_DIRECTORY_PROPERTY);
+    public static final String ANALYTICS_CONF_DIR      = System.getProperty("analytics.conf.dir");
+    public static final String ANALYTICS_TMP_DIRECTORY = System.getProperty("analytics.tmp.dir");
 
     private static final String RESOURCE = "analytics.conf";
 
@@ -66,9 +63,20 @@ public class Configurator {
         return (String)properties.get(key);
     }
 
+    /** @return value of the property of the boolean type */
+    public static boolean getBoolean(String key) {
+        return Boolean.parseBoolean(getString(key));
+    }
+
+
     /** @return value of the property of the int type */
     public static int getInt(String key) {
         return Integer.parseInt(getString(key));
+    }
+
+    /** {@link Properties#containsKey(Object)} */
+    public static boolean exists(String key) {
+        return properties.containsKey(key);
     }
 
     private static void loadFromResource() throws IOException {
@@ -83,7 +91,7 @@ public class Configurator {
     }
 
     private static void loadFromFile() throws IOException {
-        File file = new File(CONFIGURATION_DIRECTORY, RESOURCE);
+        File file = new File(ANALYTICS_CONF_DIR, RESOURCE);
 
         try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
             properties.load(in);

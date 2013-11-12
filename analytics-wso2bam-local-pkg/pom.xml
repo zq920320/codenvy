@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+         CODENVY CONFIDENTIAL
+         ________________
+
+         [2012] - [2013] Codenvy, S.A.
+         All Rights Reserved.
+         NOTICE: All information contained herein is, and remains
+         the property of Codenvy S.A. and its suppliers,
+         if any. The intellectual and technical concepts contained
+         herein are proprietary to Codenvy S.A.
+         and its suppliers and may be covered by U.S. and Foreign Patents,
+         patents in process, and are protected by trade secret or copyright law.
+         Dissemination of this information or reproduction of this material
+         is strictly forbidden unless prior written permission is obtained
+         from Codenvy S.A..
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.codenvy.analytics</groupId>
+        <artifactId>analytics-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>analytics-wso2bam-pkg-local</artifactId>
+    <name>Codenvy :: Analytics :: WSo2 BAM local assembly</name>
+    <packaging>pom</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.codenvy.analytics</groupId>
+            <artifactId>analytics-application</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies-war</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeTypes>war</includeTypes>
+                                    <stripVersion>true</stripVersion>
+                                    <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-dependencies-jar1</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeTypes>jar</includeTypes>
+                                    <stripVersion>false</stripVersion>
+                                    <outputDirectory>${project.build.directory}/packager-conf/jar</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-clear-wso2bam-server</id>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <!-- Downloading WSo2 BAM server -->
+                                        <get src="http://dist.wso2.org/maven2/org/wso2/bam/wso2bam/${wso2.bam.version}/wso2bam-${wso2.bam.version}.zip"
+                                            dest="${project.build.directory}/wso2bam-${wso2.bam.version}.zip"/>
+                                        <unzip src="${project.build.directory}/wso2bam-${wso2.bam.version}.zip" dest="${project.build.directory}/"/>
+                                        <move todir="${project.build.directory}/wso2bam-analytics">
+                                            <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}"/>
+                                        </move>
+
+                                        <!--Repacking-->
+                                        <jar destfile="${project.build.directory}/wso2bam-analytics/lib/org.wso2.carbon.logging-4.1.0.jar" update="true">
+                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar"/>
+                                        </jar>
+                                        <jar destfile="${project.build.directory}/wso2bam-analytics/repository/components/plugins/org.wso2.carbon.logging_4.1.0.jar" update="true">
+                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar"/>
+                                        </jar>
+
+                                        <!-- Coping resources -->
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/" overwrite="true">
+                                            <fileset dir="${basedir}/src/main/resources/server"/>
+                                        </copy>
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/pigscripts" overwrite="true">
+                                            <fileset dir="${basedir}/../analytics-core/scripts/"/>
+                                        </copy>
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/" overwrite="true">
+                                            <fileset dir="${project.build.directory}/packager-conf/war"/>
+                                        </copy>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <!-- Create the distribution zip and attach it to maven -->
+                            <execution>
+                                <id>tomcat-zip</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <updateOnly>false</updateOnly>
+                                    <descriptors>
+                                        <descriptor>${project.basedir}/src/main/resources/assembly.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

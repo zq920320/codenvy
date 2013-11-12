@@ -91,7 +91,7 @@ public class ViewBuilder implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            File[] views = new File(Configurator.CONFIGURATION_DIRECTORY, VIEW_DIR).listFiles();
+            File[] views = new File(Configurator.ANALYTICS_CONF_DIR, VIEW_DIR).listFiles();
 
             for (File view : views != null ? views : new File[0]) {
                 ViewConfiguration viewConfiguration = configurationManager.loadConfiguration(view.getAbsolutePath());

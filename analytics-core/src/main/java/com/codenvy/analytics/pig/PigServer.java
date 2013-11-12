@@ -23,10 +23,8 @@ import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.storage.DataLoader;
-import com.codenvy.analytics.storage.DataLoaderFactory;
+import com.codenvy.analytics.storage.DataStorageContainer;
 
-import org.apache.cassandra.hadoop.pig.CassandraStorage;
 import org.apache.pig.ExecType;
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
@@ -81,7 +79,6 @@ public class PigServer {
 
         try {
             server = new org.apache.pig.PigServer(ExecType.LOCAL);
-            server.registerJar(CassandraStorage.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
@@ -222,9 +219,7 @@ public class PigServer {
                                                                 Map<String, String> context) throws IOException {
         context = Utils.clone(context);
 
-        DataLoader dataLoader = DataLoaderFactory.createDataLoader();
-        Parameters.STORAGE_URL.put(context, dataLoader.getStorageUrl(context));
-
+        Parameters.STORAGE_URL.put(context, DataStorageContainer.getStorageUrl());
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {
             setOptimizedPaths(context);
         }
