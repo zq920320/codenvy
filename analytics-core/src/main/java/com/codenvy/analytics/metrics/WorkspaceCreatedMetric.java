@@ -23,7 +23,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -42,7 +42,7 @@ public class WorkspaceCreatedMetric extends ReadBasedMetric {
     /** {@inheritDoc} */
     @Override
     public Set<Parameters> getParams() {
-        return new LinkedHashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
+        return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
     }
 
     /** {@inheritDoc} */

@@ -33,9 +33,7 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -96,7 +94,7 @@ public class TestMongoDataLoader extends BaseTest {
 
         @Override
         public Set<Parameters> getParams() {
-            return Collections.emptySet();
+            return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
         }
 
         @Override

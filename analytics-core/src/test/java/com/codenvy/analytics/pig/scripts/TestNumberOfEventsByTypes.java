@@ -18,7 +18,11 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -36,14 +40,23 @@ import static org.testng.Assert.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfEventsByTypes extends BaseTest {
 
-    private Map<String, String> params = new HashMap<>();
+    private Map<String, String> params;
+    private TestMetric          metric;
 
     @BeforeClass
-    public void prepare() throws IOException {
-        List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withDate("2013-01-01").build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1").withDate("2013-01-01").build());
+    public void init() throws IOException {
+        params = Utils.newContext();
+        metric = new TestMetric();
 
+        List<Event> events = new ArrayList<>();
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
+                        .withDate("2013-01-01")
+                        .withTime("10:00:00")
+                        .build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@yahoo.com")
+                        .withDate("2013-01-01")
+                        .withTime("10:00:01")
+                        .build());
         File log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130101");
@@ -51,9 +64,27 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.PARAM.put(params, "USER");
-        Parameters.METRIC.put(params, "fake");
+        Parameters.METRIC.put(params, "testnumberofeventsbytypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
+
+        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
+
+        events = new ArrayList<>();
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@gmail.com")
+                        .withDate("2013-01-02")
+                        .withTime("10:00:00")
+                        .build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@yahoo.com")
+                        .withDate("2013-01-02")
+                        .withTime("10:00:01")
+                        .build());
+        log = LogGenerator.generateLog(events);
+
+        Parameters.FROM_DATE.put(params, "20130102");
+        Parameters.TO_DATE.put(params, "20130102");
+        Parameters.LOG.put(params, log.getAbsolutePath());
+
+        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
     }
 
     @Test
@@ -64,11 +95,33 @@ public class TestNumberOfEventsByTypes extends BaseTest {
 
         Tuple tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertNotEquals(tuple.get(0).toString(), "()");
-        assertEquals(tuple.get(1).toString(), "(date,20130101)");
-        assertEquals(tuple.get(2).toString(), "(type,user1)");
-        assertEquals(tuple.get(3).toString(), "(value,2)");
+        assertEquals(tuple.get(0), dateFormat.parse("20130102").getTime());
+        assertEquals(tuple.get(1).toString(), "(param,user1)");
+        assertEquals(tuple.get(2).toString(), "(value,2)");
 
         assertFalse(iterator.hasNext());
+    }
+
+    public class TestMetric extends ReadBasedMetric {
+
+        private TestMetric() {
+            super("testnumberofeventsbytypes");
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
+        public Set<Parameters> getParams() {
+            return new HashSet<>(
+                    Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE, Parameters.PARAM}));
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
     }
 }

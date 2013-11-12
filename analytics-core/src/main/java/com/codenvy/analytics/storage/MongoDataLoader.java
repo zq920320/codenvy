@@ -64,25 +64,7 @@ public class MongoDataLoader implements DataLoader {
         DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
 
         try {
-            DBObject matcher = getMatcher(clauses);
-            DBObject aggregator = getAggregator();
-            AggregationOutput aggregation = dbCollection.aggregate(matcher, aggregator);
-
-            return createdValueData(metric.getValueDataClass(), aggregation.results().iterator());
-        } catch (ParseException e) {
-            throw new IOException(e);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ValueData loadParamValue(Metric metric, Map<String, String> clauses) throws IOException {
-        // TODO
-
-        DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
-
-        try {
-            DBObject matcher = getMatcher(clauses);
+            DBObject matcher = getMatcher(metric, clauses);
             DBObject aggregator = getAggregator();
             AggregationOutput aggregation = dbCollection.aggregate(matcher, aggregator);
 
@@ -100,21 +82,31 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
-    private DBObject getMatcher(Map<String, String> clauses) throws ParseException {
+    private DBObject getMatcher(Metric metric, Map<String, String> clauses) throws ParseException {
         BasicDBObject match = new BasicDBObject();
 
-        if (Parameters.TO_DATE.exists(clauses) && Parameters.FROM_DATE.exists(clauses)) {
-            DBObject range = new BasicDBObject();
-            range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
-            range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
+        for (Parameters param : metric.getParams()) {
+            if (param.exists(clauses)) {
+                if (param == Parameters.TO_DATE) {
+                    DBObject range = new BasicDBObject();
+                    range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
+                    range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
 
-            match.put("_id", range);
+                    match.put("_id", range);
+                } else if (param == Parameters.FROM_DATE) {
+                    // do nothing
+                } else  {
+                    String[] values = param.get(clauses).split(",");
+                    match.put(param.name().toLowerCase(), new BasicDBObject("$in", values));
+                }
+            }
         }
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values = filter.get(clauses).split(",");
             match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
         }
+
         return new BasicDBObject("$match", match);
     }
 

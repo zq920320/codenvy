@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * It is supposed to loadValue calculated {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
+ * It is supposed to load calculated value {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */

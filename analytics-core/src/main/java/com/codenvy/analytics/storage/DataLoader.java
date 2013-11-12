@@ -28,7 +28,4 @@ public interface DataLoader {
 
     /** Loads value from the storage. */
     ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException;
-
-    /** Loads parametrized value from the storage. */
-    ValueData loadParamValue(Metric metric, Map<String, String> clauses) throws IOException;
 }
