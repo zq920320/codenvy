@@ -41,13 +41,19 @@
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2</groupId>
+            <artifactId>bam</artifactId>
+            <version>${wso2.bam.version}</version>
+            <type>zip</type>
+        </dependency>
     </dependencies>
 
     <profiles>
         <profile>
             <id>deploy</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
 
             <build>
@@ -69,7 +75,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>copy-dependencies-jar1</id>
+                                <id>copy-dependencies-jar</id>
                                 <phase>process-resources</phase>
                                 <goals>
                                     <goal>copy-dependencies</goal>
@@ -78,6 +84,18 @@
                                     <includeTypes>jar</includeTypes>
                                     <stripVersion>false</stripVersion>
                                     <outputDirectory>${project.build.directory}/packager-conf/jar</outputDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-dependencies-zip</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeTypes>zip</includeTypes>
+                                    <stripVersion>true</stripVersion>
+                                    <outputDirectory>${project.build.directory}/packager-conf/zip</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>
@@ -90,10 +108,7 @@
                                 <phase>process-resources</phase>
                                 <configuration>
                                     <tasks>
-                                        <!-- Downloading WSo2 BAM server -->
-                                        <get src="http://dist.wso2.org/maven2/org/wso2/bam/wso2bam/${wso2.bam.version}/wso2bam-${wso2.bam.version}.zip"
-                                            dest="${project.build.directory}/wso2bam-${wso2.bam.version}.zip"/>
-                                        <unzip src="${project.build.directory}/wso2bam-${wso2.bam.version}.zip" dest="${project.build.directory}/"/>
+                                        <unzip src="${project.build.directory}/packager-conf/zip/bam.zip" dest="${project.build.directory}/"/>
                                         <move todir="${project.build.directory}/wso2bam-analytics">
                                             <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}"/>
                                         </move>
@@ -127,7 +142,6 @@
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
-                            <!-- Create the distribution zip and attach it to maven -->
                             <execution>
                                 <id>tomcat-zip</id>
                                 <phase>package</phase>
