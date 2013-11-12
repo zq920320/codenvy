@@ -78,6 +78,24 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public ValueData loadParamValue(Metric metric, Map<String, String> clauses) throws IOException {
+        // TODO
+
+        DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
+
+        try {
+            DBObject matcher = getMatcher(clauses);
+            DBObject aggregator = getAggregator();
+            AggregationOutput aggregation = dbCollection.aggregate(matcher, aggregator);
+
+            return createdValueData(metric.getValueDataClass(), aggregation.results().iterator());
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
+    }
+
     private String getCollectionName(Metric metric, Map<String, String> clauses) {
         if (Utils.getFilters(clauses).isEmpty()) {
             return metric.getName().toLowerCase();
@@ -124,7 +142,6 @@ public class MongoDataLoader implements DataLoader {
             String[] values = filter.get(clauses).split(",");
             match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
         }
-
         return new BasicDBObject("$match", match);
     }
 

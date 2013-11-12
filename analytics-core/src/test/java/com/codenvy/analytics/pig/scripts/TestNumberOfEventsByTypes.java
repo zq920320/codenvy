@@ -63,7 +63,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         assertTrue(iterator.hasNext());
 
         Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 4);
+        assertEquals(tuple.size(), 3);
         assertNotEquals(tuple.get(0).toString(), "()");
         assertEquals(tuple.get(1).toString(), "(date,20130101)");
         assertEquals(tuple.get(2).toString(), "(type,user1)");

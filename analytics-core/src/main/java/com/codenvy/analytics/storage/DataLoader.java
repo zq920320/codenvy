@@ -28,5 +28,7 @@ public interface DataLoader {
 
     ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException;
 
+    ValueData loadParamValue(Metric metric, Map<String, String> clauses) throws IOException;
+
     String getStorageUrl(Map<String, String> context);
 }

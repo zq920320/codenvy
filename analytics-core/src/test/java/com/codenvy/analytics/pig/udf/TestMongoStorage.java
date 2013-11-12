@@ -49,7 +49,10 @@ public class TestMongoStorage extends BaseTest {
     @BeforeClass
     public void prepare() throws IOException {
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com").withDate("2013-01-02").build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
+                        .withDate("2013-01-02")
+                        .withTime("00:00:00")
+                        .build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -58,13 +61,13 @@ public class TestMongoStorage extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.METRIC.put(params, "TestMongoStorage");
+        Parameters.METRIC.put(params, "testmongostorage");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         mongoClient = new MongoClient(MONGO_CLIENT_URI);
         DB db = mongoClient.getDB(MONGO_CLIENT_URI.getDatabase());
-        dbCollection = db.getCollection("TestMongoStorage");
-        dbCollectionRaw = db.getCollection("TestMongoStorage-raw");
+        dbCollection = db.getCollection("testmongostorage");
+        dbCollectionRaw = db.getCollection("testmongostorage-raw");
     }
 
     @AfterClass
@@ -77,7 +80,7 @@ public class TestMongoStorage extends BaseTest {
         PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
 
         BasicDBObject dbObject = new BasicDBObject();
-        dbObject.put("_id", 20130102);
+        dbObject.put("_id", dateFormat.parse("20130102").getTime());
 
         DBCursor dbCursor = dbCollection.find(dbObject);
         assertEquals(dbCursor.size(), 1);
@@ -98,7 +101,7 @@ public class TestMongoStorage extends BaseTest {
         assertTrue(iterator.hasNext());
 
         Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0), 20130102L);
+        assertEquals(tuple.get(0), dateFormat.parse("20130102").getTime());
 
         Tuple innerTuple = (Tuple)tuple.get(1);
         assertEquals(innerTuple.get(0), "value");

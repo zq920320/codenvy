@@ -61,7 +61,7 @@ public class TestNumberOfEvents extends BaseTest {
 
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0).toString(), "20130101");
+        assertEquals(tuple.get(0), dateFormat.parse("20130101").getTime());
         assertEquals(tuple.get(1).toString(), "(value,2)");
 
         assertFalse(iterator.hasNext());

@@ -24,7 +24,10 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
 
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
@@ -48,11 +51,11 @@ public class TestMongoDataLoader extends BaseTest {
         DBCollection dbCollection = db.getCollection(MONGO_CLIENT_URI.getCollection());
 
         BasicDBObject dbObject = new BasicDBObject();
-        dbObject.put("_id", 20130910);
+        dbObject.put("_id", dateFormat.parse("20130910").getTime());
         dbObject.put("value", 100L);
         dbCollection.save(dbObject);
 
-        dbObject.put("_id", 20130911);
+        dbObject.put("_id", dateFormat.parse("20130911").getTime());
         dbCollection.save(dbObject);
 
         mongoClient.close();

@@ -80,6 +80,12 @@ public class CassandraDataLoader implements DataLoader {
 
     /** {@inheritDoc} */
     @Override
+    public ValueData loadParamValue(Metric metric, Map<String, String> clauses) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String getStorageUrl(Map<String, String> context) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("cassandra://");

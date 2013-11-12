@@ -33,11 +33,15 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
 
     protected final TupleFactory tupleFactory = TupleFactory.getInstance();
+    protected final DateFormat   dateFormat   = new SimpleDateFormat("yyyyMMdd");
+
 
     public static final String         BASE_DIR         = "target";
     public static final MongoClientURI MONGO_CLIENT_URI = new MongoClientURI("mongodb://localhost:12345/test.test");
