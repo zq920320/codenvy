@@ -38,11 +38,35 @@ public class ValueDataFactory {
         } else if (clazz == StringValueData.class) {
             return StringValueData.DEFAULT;
 
-        } else if (clazz == RowValueData.class) {
-            return RowValueData.DEFAULT;
+        } else if (clazz == MapValueData.class) {
+            return MapValueData.DEFAULT;
 
         } else if (clazz == ListValueData.class) {
             return ListValueData.DEFAULT;
+        }
+
+        throw new IllegalArgumentException("Unknown class " + clazz.getName());
+    }
+
+
+    /**
+     * Creates appropriate {@link ValueData} based on given value.
+     *
+     * @param value
+     * @return {@link ValueData}
+     */
+    public static ValueData createValueData(Object value) {
+        Class<?> clazz = value.getClass();
+
+        if (clazz == String.class) {
+            return new StringValueData((String)value);
+
+        } else if (clazz == LongValueData.class) {
+            return new LongValueData((Long)value);
+
+        }
+        if (clazz == DoubleValueData.class) {
+            return new DoubleValueData((Double)value);
         }
 
         throw new IllegalArgumentException("Unknown class " + clazz.getName());

@@ -43,11 +43,11 @@ public class TestListValueData extends BaseTest {
     public void init() {
         Map<String, ValueData> value = new HashMap<>();
         value.put("key1", new LongValueData(10));
-        RowValueData rowValueData1 = new RowValueData(value);
+        MapValueData rowValueData1 = new MapValueData(value);
 
         value = new HashMap<>();
         value.put("key1", new DoubleValueData(20));
-        RowValueData rowValueData2 = new RowValueData(value);
+        MapValueData rowValueData2 = new MapValueData(value);
 
         valueData = new ListValueData(Arrays.asList(rowValueData1, rowValueData2));
     }
@@ -73,11 +73,11 @@ public class TestListValueData extends BaseTest {
     public void testEquals() {
         Map<String, ValueData> value = new HashMap<>();
         value.put("key1", new LongValueData(10));
-        RowValueData rowValueData1 = new RowValueData(value);
+        MapValueData rowValueData1 = new MapValueData(value);
 
         value = new HashMap<>();
         value.put("key1", new DoubleValueData(20));
-        RowValueData rowValueData2 = new RowValueData(value);
+        MapValueData rowValueData2 = new MapValueData(value);
 
         ListValueData newValueData = new ListValueData(Arrays.asList(rowValueData1, rowValueData2));
 
@@ -88,11 +88,11 @@ public class TestListValueData extends BaseTest {
     public void testNotEquals() {
         Map<String, ValueData> value = new HashMap<>();
         value.put("key1", new LongValueData(10));
-        RowValueData rowValueData1 = new RowValueData(value);
+        MapValueData rowValueData1 = new MapValueData(value);
 
         value = new HashMap<>();
         value.put("key1", new DoubleValueData(20));
-        RowValueData rowValueData2 = new RowValueData(value);
+        MapValueData rowValueData2 = new MapValueData(value);
 
         ListValueData newValueData = new ListValueData(Arrays.asList(rowValueData2, rowValueData1));
 
@@ -110,21 +110,21 @@ public class TestListValueData extends BaseTest {
     public void testUnion() {
         Map<String, ValueData> value = new HashMap<>();
         value.put("key1", new StringValueData("hello"));
-        RowValueData rowValueData1 = new RowValueData(value);
+        MapValueData rowValueData1 = new MapValueData(value);
 
         ListValueData newValueData = new ListValueData(Arrays.asList(rowValueData1));
 
         value = new HashMap<>();
         value.put("key1", new LongValueData(10));
-        rowValueData1 = new RowValueData(value);
+        rowValueData1 = new MapValueData(value);
 
         value = new HashMap<>();
         value.put("key1", new DoubleValueData(20));
-        RowValueData rowValueData2 = new RowValueData(value);
+        MapValueData rowValueData2 = new MapValueData(value);
 
         value = new HashMap<>();
         value.put("key1", new StringValueData("hello"));
-        RowValueData rowValueData3 = new RowValueData(value);
+        MapValueData rowValueData3 = new MapValueData(value);
 
         ListValueData sumValueData = new ListValueData(Arrays.asList(rowValueData1, rowValueData2, rowValueData3));
 

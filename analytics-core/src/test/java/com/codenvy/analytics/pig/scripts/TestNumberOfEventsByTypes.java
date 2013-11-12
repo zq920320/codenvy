@@ -20,6 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
@@ -97,7 +98,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Tuple tuple = iterator.next();
         assertEquals(tuple.size(), 2);
         assertEquals(tuple.get(0), dateFormat.parse("20130102").getTime());
-        assertEquals(tuple.get(1).toString(), "(ws2,2)");
+        assertEquals(tuple.get(1).toString(), "(value,{(ws1,1),(ws2,1)})");
 
         assertFalse(iterator.hasNext());
     }
@@ -109,6 +110,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Parameters.TO_DATE.put(context, "20130102");
         Parameters.PARAM.put(context, "ws1");
 
+        assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
     public class TestMetric extends ReadBasedMetric {
@@ -119,7 +121,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
 
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return MapValueData.class;
         }
 
         @Override

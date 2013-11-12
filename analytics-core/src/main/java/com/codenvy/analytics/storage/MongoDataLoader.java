@@ -19,10 +19,10 @@ package com.codenvy.analytics.storage;
 
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.*;
 
 import org.slf4j.Logger;
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -85,20 +86,10 @@ public class MongoDataLoader implements DataLoader {
     private DBObject getMatcher(Metric metric, Map<String, String> clauses) throws ParseException {
         BasicDBObject match = new BasicDBObject();
 
-        for (Parameters param : metric.getParams()) {
-            if (param == Parameters.TO_DATE) {
-                DBObject range = new BasicDBObject();
-                range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
-                range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
-
-                match.put("_id", range);
-            } else if (param == Parameters.FROM_DATE) {
-                continue;
-            } else {
-                String[] values = param.get(clauses).split(",");
-                match.put(param.name().toLowerCase(), new BasicDBObject("$in", values));
-            }
-        }
+        DBObject range = new BasicDBObject();
+        range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
+        range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
+        match.put("_id", range);
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values = filter.get(clauses).split(",");
@@ -119,9 +110,20 @@ public class MongoDataLoader implements DataLoader {
     private ValueData createdValueData(Class<? extends ValueData> clazz, Iterator<DBObject> iterator) {
         if (clazz == LongValueData.class) {
             return createLongValueData(iterator);
+        } else if (clazz == MapValueData.class) {
+            return createMapValueData(iterator);
         }
 
         throw new IllegalArgumentException("Unknown class " + clazz.getName());
+    }
+
+    private ValueData createMapValueData(Iterator<DBObject> iterator) {
+        Map<String, ValueData> result = new HashMap<>();
+        while (iterator.hasNext()) {
+            iterator.next();
+        }
+
+        return new MapValueData(result);
     }
 
     private ValueData createLongValueData(Iterator<DBObject> iterator) {

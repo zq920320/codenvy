@@ -25,9 +25,11 @@ f = extractParam(f1, '$PARAM', param);
 
 a1 = FOREACH f GENERATE LOWER(param) AS param, event;
 a2 = GROUP a1 BY param;
-a = FOREACH a2 GENERATE group AS param, COUNT(a1) AS countAll;
+a3 = FOREACH a2 GENERATE group AS param, COUNT(a1) AS countAll;
+a4 = GROUP a3 ALL;
+a = FOREACH a4 GENERATE a3 AS value;
 
-result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE(param, countAll);
+result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', value);
 STORE result INTO '$STORAGE_URL.$METRIC' USING MongoStorage();
 
 r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, LOWER(param) AS param;

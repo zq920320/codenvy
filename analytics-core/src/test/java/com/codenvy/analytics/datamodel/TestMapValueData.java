@@ -34,7 +34,7 @@ import static org.testng.AssertJUnit.assertEquals;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestRowValueData extends BaseTest {
+public class TestMapValueData extends BaseTest {
 
     private ValueData valueData;
 
@@ -45,7 +45,7 @@ public class TestRowValueData extends BaseTest {
         value.put("key2", new DoubleValueData(10.1));
         value.put("key3", new LongValueData(10));
 
-        valueData = new RowValueData(value);
+        valueData = new MapValueData(value);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class TestRowValueData extends BaseTest {
             valueData.writeExternal(out);
         }
 
-        RowValueData newValueData = new RowValueData();
+        MapValueData newValueData = new MapValueData();
         try (ObjectInput in = new ObjectInputStream(new FileInputStream(file))) {
             newValueData.readExternal(in);
         }
@@ -72,7 +72,7 @@ public class TestRowValueData extends BaseTest {
         value.put("key1", new StringValueData("value"));
         value.put("key2", new DoubleValueData(10.1));
 
-        RowValueData newValueData = new RowValueData(value);
+        MapValueData newValueData = new MapValueData(value);
 
         assertEquals(valueData, newValueData);
     }
@@ -83,7 +83,7 @@ public class TestRowValueData extends BaseTest {
         value.put("key1", new StringValueData("value"));
         value.put("key2", new DoubleValueData(10.1));
 
-        RowValueData newValueData = new RowValueData(value);
+        MapValueData newValueData = new MapValueData(value);
 
         assertNotEquals(valueData, newValueData);
     }
@@ -102,14 +102,14 @@ public class TestRowValueData extends BaseTest {
         value.put("key3", new LongValueData(10));
         value.put("key2", new DoubleValueData(10.1));
 
-        RowValueData newValueData = new RowValueData(value);
+        MapValueData newValueData = new MapValueData(value);
 
         value = new HashMap<>();
         value.put("key3", new LongValueData(20));
         value.put("key1", new StringValueData("value"));
         value.put("key2", new DoubleValueData(20.2));
 
-        RowValueData sumValueData = new RowValueData(value);
+        MapValueData sumValueData = new MapValueData(value);
 
         assertEquals(sumValueData, valueData.union(newValueData));
     }

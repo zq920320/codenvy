@@ -28,17 +28,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class RowValueData extends AbstractValueData {
+public class MapValueData extends AbstractValueData {
 
-    public static final RowValueData DEFAULT = new RowValueData(Collections.<String, ValueData>emptyMap());
+    public static final MapValueData DEFAULT = new MapValueData(Collections.<String, ValueData>emptyMap());
 
     protected Map<String, ValueData> value;
 
     /** For serialization one. */
-    public RowValueData() {
+    public MapValueData() {
     }
 
-    public RowValueData(Map<String, ValueData> value) {
+    public MapValueData(Map<String, ValueData> value) {
         this.value = new HashMap<>(value);
     }
 
@@ -81,7 +81,7 @@ public class RowValueData extends AbstractValueData {
     /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
-        RowValueData object = (RowValueData)valueData;
+        MapValueData object = (MapValueData)valueData;
         Map<String, ValueData> result = new HashMap<>(this.value);
 
         for (Entry<String, ValueData> entry : object.value.entrySet()) {
@@ -94,13 +94,13 @@ public class RowValueData extends AbstractValueData {
             }
         }
 
-        return new RowValueData(result);
+        return new MapValueData(result);
     }
 
     /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
-        return value.equals(((RowValueData)valueData).value);
+        return value.equals(((MapValueData)valueData).value);
     }
 
     /** {@inheritDoc} */
