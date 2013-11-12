@@ -123,6 +123,8 @@ public class TestNumberOfEvents extends BaseTest {
     @Test
     public void testSingleUserFilter() throws Exception {
         Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
         assertEquals(metric.getValue(context), new LongValueData(2L));
@@ -131,6 +133,8 @@ public class TestNumberOfEvents extends BaseTest {
     @Test
     public void testDoubleUserFilter() throws Exception {
         Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
 
         assertEquals(metric.getValue(context), new LongValueData(4L));
@@ -139,6 +143,8 @@ public class TestNumberOfEvents extends BaseTest {
     @Test
     public void testSeveralFilter() throws Exception {
         Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com");
         MetricFilter.WS.put(context, "ws2");
 

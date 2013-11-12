@@ -53,7 +53,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
                         .withDate("2013-01-01")
                         .withTime("10:00:00")
                         .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@yahoo.com")
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@yahoo.com")
                         .withDate("2013-01-01")
                         .withTime("10:00:01")
                         .build());
@@ -61,16 +61,17 @@ public class TestNumberOfEventsByTypes extends BaseTest {
 
         Parameters.FROM_DATE.put(params, "20130101");
         Parameters.TO_DATE.put(params, "20130101");
+        Parameters.PARAM.put(params, "WS");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
         Parameters.METRIC.put(params, "testnumberofeventsbytypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
 
         events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@gmail.com")
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
                         .withDate("2013-01-02")
                         .withTime("10:00:00")
                         .build());
@@ -84,7 +85,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
     }
 
     @Test
@@ -94,12 +95,20 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         assertTrue(iterator.hasNext());
 
         Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
+        assertEquals(tuple.size(), 2);
         assertEquals(tuple.get(0), dateFormat.parse("20130102").getTime());
-        assertEquals(tuple.get(1).toString(), "(param,user1)");
-        assertEquals(tuple.get(2).toString(), "(value,2)");
+        assertEquals(tuple.get(1).toString(), "(ws2,2)");
 
         assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void testSingleDateFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130102");
+        Parameters.PARAM.put(context, "ws1");
+
     }
 
     public class TestMetric extends ReadBasedMetric {

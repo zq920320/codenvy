@@ -86,19 +86,17 @@ public class MongoDataLoader implements DataLoader {
         BasicDBObject match = new BasicDBObject();
 
         for (Parameters param : metric.getParams()) {
-            if (param.exists(clauses)) {
-                if (param == Parameters.TO_DATE) {
-                    DBObject range = new BasicDBObject();
-                    range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
-                    range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
+            if (param == Parameters.TO_DATE) {
+                DBObject range = new BasicDBObject();
+                range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
+                range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
 
-                    match.put("_id", range);
-                } else if (param == Parameters.FROM_DATE) {
-                    // do nothing
-                } else  {
-                    String[] values = param.get(clauses).split(",");
-                    match.put(param.name().toLowerCase(), new BasicDBObject("$in", values));
-                }
+                match.put("_id", range);
+            } else if (param == Parameters.FROM_DATE) {
+                continue;
+            } else {
+                String[] values = param.get(clauses).split(",");
+                match.put(param.name().toLowerCase(), new BasicDBObject("$in", values));
             }
         }
 
