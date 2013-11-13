@@ -33,7 +33,11 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -85,6 +89,16 @@ public class TestMongoDataLoader extends BaseTest {
 
         private TestMetric() {
             super("test");
+        }
+
+        @Override
+        public ValueData getValue(Map<String, String> context) throws IOException {
+            return null;
+        }
+
+        @Override
+        protected ValueData loadValue(Map<String, String> context) throws IOException {
+            return null;
         }
 
         @Override

@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class WorkspaceCreatedMetric extends ReadBasedMetric {
+public class WorkspaceCreatedMetric extends SimpleReadBasedMetric {
 
     public WorkspaceCreatedMetric() {
         super(MetricType.WORKSPACE_CREATED);

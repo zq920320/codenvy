@@ -48,7 +48,7 @@ public class TestReadBasedMetric extends BaseTest {
     }
 
 
-    public class TestMetric extends ReadBasedMetric {
+    public class TestMetric extends SimpleReadBasedMetric {
 
         private TestMetric() {
             super("TestReadBasedMetric");

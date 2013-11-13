@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
 
-    private final DataLoader dataLoader;
+    protected final DataLoader dataLoader;
 
     public ReadBasedMetric(String metricName) {
         super(metricName);
@@ -50,8 +50,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return loadValue(context);
     }
 
-    protected ValueData loadValue(Map<String, String> dailyContext) throws IOException {
-        return dataLoader.loadValue(this, dailyContext);
-    }
+    abstract protected ValueData loadValue(Map<String, String> context) throws IOException;
 }
 

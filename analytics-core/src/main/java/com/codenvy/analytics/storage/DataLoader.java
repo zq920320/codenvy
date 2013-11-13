@@ -18,7 +18,7 @@
 package com.codenvy.analytics.storage;
 
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 
 import java.io.IOException;
 import java.util.Map;
@@ -27,5 +27,5 @@ import java.util.Map;
 public interface DataLoader {
 
     /** Loads value from the storage. */
-    ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException;
+    ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException;
 }

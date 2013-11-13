@@ -19,30 +19,23 @@ package com.codenvy.analytics.storage;
 
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoDataLoader implements DataLoader {
 
-    /** Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDataLoader.class);
-
-    public static final  String VALUE_KEY              = "value";
-    public static final  String COLLECTION_NAME_SUFFIX = "-raw";
-    private static final long   DAY_IN_MILLISECONDS    = 86400000L;
+    public static final  String VALUE_KEY                  = "value";
+    public static final  String EXT_COLLECTION_NAME_SUFFIX = "-raw";
+    private static final long   DAY_IN_MILLISECONDS        = 86400000L;
 
     private final DB db;
 
@@ -61,29 +54,33 @@ public class MongoDataLoader implements DataLoader {
 
     /** {@inheritDoc} */
     @Override
-    public ValueData loadValue(Metric metric, Map<String, String> clauses) throws IOException {
+    public ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException {
         DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
 
         try {
             DBObject matcher = getMatcher(metric, clauses);
-            DBObject aggregator = getAggregator();
+            DBObject aggregator = getAggregator(metric, clauses);
             AggregationOutput aggregation = dbCollection.aggregate(matcher, aggregator);
 
-            return createdValueData(metric.getValueDataClass(), aggregation.results().iterator());
+            return createdValueData(metric, aggregation.results().iterator());
         } catch (ParseException e) {
             throw new IOException(e);
         }
     }
 
-    private String getCollectionName(Metric metric, Map<String, String> clauses) {
-        if (Utils.getFilters(clauses).isEmpty()) {
-            return metric.getName().toLowerCase();
+    private String getCollectionName(ReadBasedMetric metric, Map<String, String> clauses) {
+        if (isExtendedCollection(clauses)) {
+            return metric.getName().toLowerCase() + EXT_COLLECTION_NAME_SUFFIX;
         } else {
-            return metric.getName().toLowerCase() + COLLECTION_NAME_SUFFIX;
+            return metric.getName().toLowerCase();
         }
     }
 
-    private DBObject getMatcher(Metric metric, Map<String, String> clauses) throws ParseException {
+    private boolean isExtendedCollection(Map<String, String> clauses) {
+        return !Utils.getFilters(clauses).isEmpty();
+    }
+
+    private DBObject getMatcher(ReadBasedMetric metric, Map<String, String> clauses) throws ParseException {
         BasicDBObject match = new BasicDBObject();
 
         DBObject range = new BasicDBObject();
@@ -96,42 +93,56 @@ public class MongoDataLoader implements DataLoader {
             match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
         }
 
+        if (isExtendedCollection(clauses)) {
+            for (Parameters param : metric.getParams()) {
+                if (param != Parameters.FROM_DATE && param != Parameters.TO_DATE) {
+                    String[] values = param.get(clauses).split(",");
+                    match.put(param.name().toLowerCase(), new BasicDBObject("$in", values));
+                }
+            }
+        }
+
         return new BasicDBObject("$match", match);
     }
 
-    private DBObject getAggregator() throws ParseException {
+    private DBObject getAggregator(ReadBasedMetric metric, Map<String, String> clauses) throws ParseException {
         DBObject group = new BasicDBObject();
         group.put("_id", null);
+
         group.put(VALUE_KEY, new BasicDBObject("$sum", "$" + VALUE_KEY));
+
+        if (!isExtendedCollection(clauses)) {
+            for (Parameters param : metric.getParams()) {
+                if (param != Parameters.FROM_DATE && param != Parameters.TO_DATE) {
+                    for (String field : param.get(clauses).split(",")) {
+                        group.put(field, new BasicDBObject("$sum", "$" + field));
+                    }
+                }
+            }
+        }
 
         return new BasicDBObject("$group", group);
     }
 
-    private ValueData createdValueData(Class<? extends ValueData> clazz, Iterator<DBObject> iterator) {
-        if (clazz == LongValueData.class) {
+    private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
+        if (metric.getValueDataClass() == LongValueData.class) {
             return createLongValueData(iterator);
-        } else if (clazz == MapValueData.class) {
-            return createMapValueData(iterator);
         }
 
-        throw new IllegalArgumentException("Unknown class " + clazz.getName());
+        throw new IllegalArgumentException("Unknown class " + metric.getValueDataClass().getName());
     }
 
-    private ValueData createMapValueData(Iterator<DBObject> iterator) {
-        Map<String, ValueData> result = new HashMap<>();
-        while (iterator.hasNext()) {
-            iterator.next();
-        }
-
-        return new MapValueData(result);
-    }
 
     private ValueData createLongValueData(Iterator<DBObject> iterator) {
         long value = 0;
 
         while (iterator.hasNext()) {
             DBObject dbObject = iterator.next();
-            value += (Long)dbObject.get(VALUE_KEY);
+            for (String key : dbObject.keySet()) {
+                if (!key.equals("_id")) {
+                    value += ((Number)dbObject.get(key)).longValue();
+                }
+            }
         }
 
         return new LongValueData(value);

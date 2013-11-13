@@ -58,7 +58,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
 
     /** {@inheritDoc} */
     @Override
-    public ValueData getValue(Map<String, String> context) throws InitialValueNotFoundException, IOException {
+    public ValueData getValue(Map<String, String> context) throws IOException {
         InitialValueContainer.validateExistenceInitialValueBefore(context);
 
         if (!Utils.getFilters(context).isEmpty()) {
@@ -72,9 +72,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
         Utils.putFromDate(context, fromDate);
 
         try {
-            ValueData valueData = doGetValue(context);
-
-            return valueData;
+            return doGetValue(context);
         } catch (ParseException e) {
             throw new IOException(e);
         }

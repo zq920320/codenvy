@@ -15,39 +15,27 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class WorkspaceDestroyedMetric extends SimpleReadBasedMetric {
+public abstract class ParametrizedReadBasedMetric extends ReadBasedMetric {
 
-    public WorkspaceDestroyedMetric() {
-        super(MetricType.WORKSPACE_DESTROYED);
+    protected ParametrizedReadBasedMetric(String metricName) {
+        super(metricName);
+    }
+
+    protected ParametrizedReadBasedMetric(MetricType metricType) {
+        super(metricType);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<Parameters> getParams() {
-        return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getDescription() {
-        return "The number of destroyed persistent workspaces";
+    protected ValueData loadValue(Map<String, String> context) throws IOException {
+        return dataLoader.loadValue(this, context);
     }
 }

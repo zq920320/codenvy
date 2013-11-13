@@ -23,7 +23,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+import com.codenvy.analytics.metrics.SimpleReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -36,9 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfEvents extends BaseTest {
@@ -172,7 +170,7 @@ public class TestNumberOfEvents extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
-    public class TestMetric extends ReadBasedMetric {
+    public class TestMetric extends SimpleReadBasedMetric {
 
         private TestMetric() {
             super("testnumberofevents");
