@@ -27,7 +27,6 @@ import com.codenvy.analytics.services.view.ViewBuilder;
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.listeners.JobChainingJobListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +34,10 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class Scheduler implements ServletContextListener {
@@ -47,10 +48,11 @@ public class Scheduler implements ServletContextListener {
     private static final String FEATURES_CRON_TIMETABLE     = "features.cron.timetable";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
-    private static final String FORCE_RUN_CONDITION_RERUN   = "RERUN";
     private static final String FORCE_RUN_CONDITION_LASTDAY = "LASTDAY";
 
     private org.quartz.Scheduler scheduler;
+
+    private static final Class[] features = new Class[]{PigRunner.class, ViewBuilder.class};
 
     /** {@inheritDoc} */
     @Override
@@ -67,23 +69,22 @@ public class Scheduler implements ServletContextListener {
     public void contextInitialized(ServletContextEvent context) {
         initializeScheduler();
 
-        String featureClass = Configurator.getString(FEATURE_FORCE_RUN_CLASS);
-        if (featureClass != null) {
-            forceRunJobs(featureClass);
+        String forceRunCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
+        if (forceRunCondition != null) {
+            forceRunJobs();
         }
     }
 
-    private void forceRunJobs(String featureClass) {
+    private void forceRunJobs() {
         try {
-            String runCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
-            Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(org.quartz.Scheduler.DEFAULT_GROUP));
+            String forceRunCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
+            String forceRunFeature = Configurator.getString(FEATURE_FORCE_RUN_CLASS);
 
-            for (JobKey key : jobKeys) {
-                Class<? extends Job> jobClass = scheduler.getJobDetail(key).getJobClass();
-                Job job = jobClass.getConstructor().newInstance();
+            for (Class jobClass : features) {
+                Feature job = (Feature)jobClass.getConstructor().newInstance();
 
-                if (featureClass.equals(jobClass.getName())) {
-                    switch (runCondition.toUpperCase()) {
+                if (forceRunFeature == null || forceRunFeature.equals(job.getClass().getName())) {
+                    switch (forceRunCondition.toUpperCase()) {
                         case FORCE_RUN_CONDITION_LASTDAY:
                             executeLastDay(job);
                             break;
@@ -92,12 +93,8 @@ public class Scheduler implements ServletContextListener {
                             executeAllTime(job);
                             break;
 
-                        case FORCE_RUN_CONDITION_RERUN:
-                            ((Feature)job).forceExecute(Utils.newContext());
-                            break;
-
                         default:
-                            executeSpecificPeriod(job, runCondition);
+                            executeSpecificPeriod(job, forceRunCondition);
                             break;
                     }
                 }
@@ -107,49 +104,41 @@ public class Scheduler implements ServletContextListener {
         }
     }
 
-    private void executeSpecificPeriod(Job job, String runCondition) throws Exception {
-        if (job instanceof Feature) {
-            if (runCondition.contains(",")) {
-                String[] dates = runCondition.split(",");
-                execute(job, dates[0], dates[1]);
-            } else {
-                execute(job, runCondition, runCondition);
-            }
+    private void executeSpecificPeriod(Feature job, String runCondition) throws Exception {
+        if (runCondition.contains(",")) {
+            String[] dates = runCondition.split(",");
+            execute(job, dates[0], dates[1]);
+        } else {
+            execute(job, runCondition, runCondition);
         }
     }
 
-    private void executeAllTime(Job job) throws Exception {
-        if (job instanceof Feature) {
-            execute(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
-        }
+    private void executeAllTime(Feature job) throws Exception {
+        execute(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
     }
 
-    private void execute(Job job, String fromDateParam, String toDateParam) throws Exception {
-        if (job instanceof Feature) {
-            Map<String, String> context = Utils.newContext();
+    private void execute(Feature job, String fromDateParam, String toDateParam) throws Exception {
+        Map<String, String> context = Utils.newContext();
 
-            Calendar fromDate = Utils.parseDate(fromDateParam);
-            Calendar toDate = Utils.parseDate(toDateParam);
+        Calendar fromDate = Utils.parseDate(fromDateParam);
+        Calendar toDate = Utils.parseDate(toDateParam);
 
-            if (fromDate.after(toDate)) {
-                throw new IllegalStateException("FROM_DATE Parameters is bigger than TO_DATE Parameters");
-            }
-
-            Utils.putFromDate(context, fromDate);
-            Utils.putToDate(context, fromDate);
-            Parameters.TIME_UNIT.put(context, Parameters.TimeUnit.DAY.name());
-
-            do {
-                ((Feature)job).forceExecute(context);
-                context = Utils.nextDateInterval(context);
-            } while (!Utils.getFromDate(context).after(toDate));
+        if (fromDate.after(toDate)) {
+            throw new IllegalStateException("FROM_DATE Parameters is bigger than TO_DATE Parameters");
         }
+
+        Utils.putFromDate(context, fromDate);
+        Utils.putToDate(context, fromDate);
+        Parameters.TIME_UNIT.put(context, Parameters.TimeUnit.DAY.name());
+
+        do {
+            job.forceExecute(context);
+            context = Utils.nextDateInterval(context);
+        } while (!Utils.getFromDate(context).after(toDate));
     }
 
-    private void executeLastDay(Job job) throws Exception {
-        if (job instanceof Feature) {
-            execute(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
-        }
+    private void executeLastDay(Feature job) throws Exception {
+        execute(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
     }
 
     /** Creates scheduler and adds available jobs. */
@@ -159,8 +148,9 @@ public class Scheduler implements ServletContextListener {
 
             List<JobDetail> jobDetails = new ArrayList<>(2);
 
-            addJobDetail(PigRunner.class, jobDetails);
-            addJobDetail(ViewBuilder.class, jobDetails);
+            for (Class feature : features) {
+                addJobDetail(feature, jobDetails);
+            }
 
             scheduleJobs(jobDetails);
             ensureRunOrder(jobDetails);
@@ -210,7 +200,7 @@ public class Scheduler implements ServletContextListener {
     /**
      * @throws IllegalStateException
      *         if class can't be instantiated
-     * @see Feature
+     * @see com.codenvy.analytics.services.Feature#isAvailable()
      */
     private boolean isAvailable(Class<? extends Feature> clazz) throws IllegalStateException {
         try {

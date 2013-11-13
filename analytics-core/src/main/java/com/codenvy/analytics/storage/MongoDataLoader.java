@@ -77,7 +77,7 @@ public class MongoDataLoader implements DataLoader {
     }
 
     private boolean isExtendedCollection(Map<String, String> clauses) {
-        return !Utils.getFilters(clauses).isEmpty();
+        return Utils.getFilters(clauses).size() > 0;
     }
 
     private DBObject getMatcher(ReadBasedMetric metric, Map<String, String> clauses) throws ParseException {
