@@ -43,6 +43,12 @@ public class Configurator {
     private static Properties properties = new Properties();
 
     static {
+        if (System.getenv().containsKey(CODENVY_LOCAL_CONF_DIR)) {
+            ANALYTICS_CONF_DIR = System.getenv(CODENVY_LOCAL_CONF_DIR);
+        } else {
+            ANALYTICS_CONF_DIR = System.getProperty("analytics.conf.dir");
+        }
+
         try {
             loadFromResource();
         } catch (IOException e) {
@@ -52,12 +58,6 @@ public class Configurator {
                 throw new IllegalStateException(
                         "Configurator can't be instantiated. There is no configuration to read from");
             }
-        }
-
-        if (System.getenv().containsKey(CODENVY_LOCAL_CONF_DIR)) {
-            ANALYTICS_CONF_DIR = System.getenv(CODENVY_LOCAL_CONF_DIR);
-        } else {
-            ANALYTICS_CONF_DIR = System.getProperty("analytics.conf.dir");
         }
     }
 

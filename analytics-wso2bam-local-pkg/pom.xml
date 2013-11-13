@@ -137,7 +137,7 @@
                                         <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/" overwrite="true">
                                             <fileset dir="${project.build.directory}/packager-conf/war"/>
                                         </copy><rename src="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/analytics-rest-service.war" dest="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/api.war"/>
-                                        <chmod dir="${project.build.directory}/wso2bam-analytics/bin" perm="ugo+rx" includes="**/*.sh"/>
+                                        <chmod file="${project.build.directory}/wso2bam-analytics/*.sh" perm="+x"/>
                                     </target>
                                 </configuration>
                                 <goals>
