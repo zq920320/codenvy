@@ -84,7 +84,7 @@ public class MongoDataStorage implements DataStorage {
     @Override
     public void initEmbeddedStorage() {
         File dir = new File(Configurator.ANALYTICS_TMP_DIRECTORY, "embedded-mongoDb");
-        if (!dir.mkdirs()) {
+        if (!dir.exists() && !dir.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + dir.getAbsolutePath());
         }
 

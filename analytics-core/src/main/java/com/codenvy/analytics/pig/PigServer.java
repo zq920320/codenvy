@@ -32,10 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,6 +103,10 @@ public class PigServer {
         LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
         context = validateAndAdjustContext(scriptType, context);
+
+        if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
+            return;
+        }
 
         try {
             String command = prepareRunCommand(scriptType, context);
@@ -178,6 +179,9 @@ public class PigServer {
         LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
         context = validateAndAdjustContext(scriptType, context);
+        if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
+            return Collections.emptyIterator();
+        }
 
         String script = readScriptContent(scriptType);
         script = removeRedundantCode(script);
@@ -205,6 +209,9 @@ public class PigServer {
         LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
         context = validateAndAdjustContext(scriptType, context);
+        if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
+            return;
+        }
 
         String script = readScriptContent(scriptType);
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
@@ -249,7 +256,7 @@ public class PigServer {
      */
     private static void setOptimizedPaths(Map<String, String> context) throws IOException {
         try {
-            String path = LogLocationOptimizer.generatePaths(LOGS_DIRECTORY,
+            String path = LogLocationOptimizer.generatePaths(new File(LOGS_DIRECTORY).getAbsolutePath(),
                                                              Parameters.FROM_DATE.get(context),
                                                              Parameters.TO_DATE.get(context));
             Parameters.LOG.put(context, path);
