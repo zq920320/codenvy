@@ -87,6 +87,12 @@ public class ListValueData<T extends ValueData> extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
+    public String getType() {
+        return ValueDataTypes.LIST.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected boolean doEquals(ValueData valueData) {
         return this.value.equals(((ListValueData)valueData).value);
     }

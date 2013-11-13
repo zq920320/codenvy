@@ -46,6 +46,12 @@ public class LongValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
+    public String getType() {
+        return ValueDataTypes.LONG.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected boolean doEquals(ValueData valueData) {
         return value == ((LongValueData)valueData).value;
     }

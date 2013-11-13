@@ -80,6 +80,12 @@ public class MapValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
+    public String getType() {
+        return ValueDataTypes.ROW.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected ValueData doUnion(ValueData valueData) {
         MapValueData object = (MapValueData)valueData;
         Map<String, ValueData> result = new HashMap<>(this.value);

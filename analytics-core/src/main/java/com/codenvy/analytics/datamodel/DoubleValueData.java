@@ -46,6 +46,12 @@ public class DoubleValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
+    public String getType() {
+        return ValueDataTypes.DOUBLE.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected boolean doEquals(ValueData valueData) {
         return value == ((DoubleValueData)valueData).value;
     }

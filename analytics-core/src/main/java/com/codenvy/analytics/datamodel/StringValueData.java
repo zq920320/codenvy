@@ -46,6 +46,12 @@ public class StringValueData extends AbstractValueData {
 
     /** {@inheritDoc} */
     @Override
+    public String getType() {
+        return ValueDataTypes.STRING.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected boolean doEquals(ValueData valueData) {
         return value.equals(((StringValueData)valueData).value);
     }

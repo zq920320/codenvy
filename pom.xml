@@ -49,6 +49,7 @@
         <!-- Third parties -->
         <everrest.version>1.0.10</everrest.version>
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
+        <servlet-api.version>3.0.1</servlet-api.version>
 
         <!-- Third parties -->
         <testng.version>6.3.1</testng.version>
@@ -67,6 +68,8 @@
         <javax.mail.version>1.4.2</javax.mail.version>
 
         <!-- Platrofm API-->
+        <!--<analytics.api.version>1.0.0-beta1</analytics.api.version>-->
+        <analytics.api.version>1.0.0-SNAPSHOT</analytics.api.version>
         <platform.api.version>1.0.0-SNAPSHOT</platform.api.version>
 
         <!-- WSo2 Server -->
@@ -76,6 +79,7 @@
     <modules>
         <module>analytics-core</module>
         <module>analytics-application</module>
+        <module>analytics-rest-service</module>
         <module>analytics-wso2bam-pkg</module>
         <module>analytics-wso2bam-local-pkg</module>
     </modules>

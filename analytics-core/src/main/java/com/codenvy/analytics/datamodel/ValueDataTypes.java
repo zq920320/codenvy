@@ -15,25 +15,13 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.datamodel;
 
-import java.io.Externalizable;
-
-
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface ValueData extends Externalizable {
-
-    /**
-     * Unions two {@link com.codenvy.analytics.datamodel.ValueData} into one single. The passed and current {@link
-     * com.codenvy.analytics.datamodel.ValueData} will not be modified.
-     */
-    ValueData union(ValueData valueData);
-
-    /** Represents {@link com.codenvy.analytics.datamodel.ValueData} as {@link String}. */
-    String getAsString();
-
-    /** @return type of value as {@link String} */
-    String getType();
+/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+public enum ValueDataTypes {
+    DOUBLE,
+    LONG,
+    STRING,
+    ROW,
+    LIST
 }
