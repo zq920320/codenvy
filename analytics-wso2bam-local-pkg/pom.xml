@@ -113,7 +113,7 @@
                                 <id>copy-clear-wso2bam-server</id>
                                 <phase>process-resources</phase>
                                 <configuration>
-                                    <target>
+                                    <tasks>
                                         <unzip src="${project.build.directory}/packager-conf/zip/bam.zip" dest="${project.build.directory}/"/>
                                         <move todir="${project.build.directory}/wso2bam-analytics">
                                             <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}"/>
@@ -138,8 +138,8 @@
                                             <fileset dir="${project.build.directory}/packager-conf/war"/>
                                         </copy><rename src="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/analytics-rest-service.war" dest="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/api.war"/>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/*.sh" perm="+x"/>
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
-                                    </target>
+                                        <chmod dir="${project.build.directory}/wso2bam-analytics/bin" perm="ugo+rx" includes="**/*.sh"/>
+                                    </tasks>
                                 </configuration>
                                 <goals>
                                     <goal>run</goal>
