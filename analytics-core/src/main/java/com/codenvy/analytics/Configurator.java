@@ -33,7 +33,9 @@ public class Configurator {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
 
-    public static final String ANALYTICS_CONF_DIR      = System.getProperty("analytics.conf.dir");
+    private static final String CODENVY_LOCAL_CONF_DIR = "CODENVY_LOCAL_CONF_DIR";
+
+    public static final String ANALYTICS_CONF_DIR;
     public static final String ANALYTICS_TMP_DIRECTORY = System.getProperty("analytics.tmp.dir");
 
     private static final String RESOURCE = "analytics.conf";
@@ -50,6 +52,12 @@ public class Configurator {
                 throw new IllegalStateException(
                         "Configurator can't be instantiated. There is no configuration to read from");
             }
+        }
+
+        if (System.getenv().containsKey(CODENVY_LOCAL_CONF_DIR)) {
+            ANALYTICS_CONF_DIR = System.getenv(CODENVY_LOCAL_CONF_DIR);
+        } else {
+            ANALYTICS_CONF_DIR = System.getProperty("analytics.conf.dir");
         }
     }
 
