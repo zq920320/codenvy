@@ -18,7 +18,6 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.SimpleFactoryUrl;
 import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
@@ -29,14 +28,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /** Servlet to handle factory URL's. */
 public abstract class FactoryServlet extends HttpServlet {
@@ -45,9 +41,6 @@ public abstract class FactoryServlet extends HttpServlet {
     public static final String WSO_2_URL_STRING =
             "(http|https)://((([0-9a-fA-F]{32}(:x-oauth-basic)?)|([0-9a-zA-Z-_.]+))@)?git\\.cloudpreview\\.wso2\\.com" +
             "(:[0-9]{1,5})?/.+\\.git";
-
-    public static final Pattern WSO_2_URL_PATTERN = Pattern.compile(WSO_2_URL_STRING);
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -61,9 +54,7 @@ public abstract class FactoryServlet extends HttpServlet {
                 factoryUrlFormat = new SimpleFactoryUrlFormat();
             }
 
-            SimpleFactoryUrl factory = factoryUrlFormat.parse(currentUrl);
-            checkRepository(factory.getVcsurl());
-
+            factoryUrlFormat.parse(currentUrl);
 
             createTempWorkspaceAndRedirect(req, resp);
         } catch (UnsupportedEncodingException e) {
@@ -86,46 +77,4 @@ public abstract class FactoryServlet extends HttpServlet {
      */
     protected abstract void createTempWorkspaceAndRedirect(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException;
-
-    /**
-     * Check git repository for a project existence and availability
-     *
-     * @param vcsUrl
-     *         - git repository url
-     * @throws FactoryUrlInvalidArgumentException
-     *         - if repository isn't accessible
-     * @throws FactoryUrlException
-     *         - if other exceptions occurs
-     */
-    protected static void checkRepository(String vcsUrl) throws FactoryUrlException {
-        try {
-            //Temporary case, to check if we have git url from wso2.
-            //For private repository "git ls-remote" will be frozen to prompt user credentials.
-            if (WSO_2_URL_PATTERN.matcher(vcsUrl).matches()) {
-                LOG.debug("WSO2 repository found. Checked finished.");
-                return;
-            }
-
-            // To avoid repository cloning use git ls-remote util for repository check
-            // Call git ls-remote is much faster than cloning
-            Process process = Runtime.getRuntime().exec("/usr/bin/git ls-remote " + vcsUrl);
-
-            // check return value of process.
-            if (process.waitFor() != 0) {
-                LOG.error("Can't check repository {}. Exit value is {}", new Object[][]{{vcsUrl, process.exitValue()}});
-                BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-
-                String line;
-                while ((line = br.readLine()) != null) {
-                    LOG.error(line);
-                }
-                throw new FactoryUrlInvalidArgumentException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
-            } else {
-                LOG.debug("Repository check finished successfully.");
-            }
-        } catch (InterruptedException | IOException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-            throw new FactoryUrlException(e.getLocalizedMessage(), e);
-        }
-    }
 }
