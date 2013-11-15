@@ -19,13 +19,13 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.storage.JdbcDataManager;
-import com.codenvy.analytics.storage.JdbcDataManagerFactory;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.ConfigurationManager;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.XmlConfigurationManager;
+import com.codenvy.analytics.storage.JdbcDataManager;
+import com.codenvy.analytics.storage.JdbcDataManagerFactory;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -139,6 +139,8 @@ public class ViewBuilder implements Feature {
         @Override
         protected void compute() {
             try {
+                int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 1 : sectionConfiguration.getColumns();
+
                 List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
 
                 for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
@@ -150,7 +152,7 @@ public class ViewBuilder implements Feature {
                     Map<String, String> context = Utils.initializeContext(timeUnit);
 
                     rowData.add(row.getDescription());
-                    for (int i = 0; i < sectionConfiguration.getColumns(); i++) {
+                    for (int i = 0; i < rowCount; i++) {
                         rowData.add(row.getData(context));
                         context = Utils.prevDateInterval(context);
                     }

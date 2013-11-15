@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Business Activity Monitor Dashboard</title>
+    <title>Analytics</title>
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-responsive.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/bam-dashboard-common-styles.css"/>

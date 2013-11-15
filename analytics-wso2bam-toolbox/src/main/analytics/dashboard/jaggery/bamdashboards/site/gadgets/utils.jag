@@ -1,0 +1,62 @@
+<%
+function queryResults(q) {
+    var db = new Database("WSO2BAM_DATASOURCE");
+    var result;
+    try {
+        result = db.query(q);
+    }
+    catch (e) {
+        print("unable to query result :" + e);
+    }
+    finally {
+        db.close();
+    }
+
+    return result;
+}
+
+function createTable(result) {
+    var rows = [];
+    var columnNames = []
+
+    for (var i = 0; i < result.length; i++) {
+        var obj = result[i];
+        var row = []
+        for (var k in obj) {
+            if (i == 0) {
+                columnNames.push(k);
+            }
+            row.push(obj[k]);
+        }
+        rows.push(row);
+    }
+
+    return {rows: rows, columns: columnNames};
+}
+
+function printTable(table) {
+    print('<table>');
+
+    print('<tr>');
+    for (var i = 0; i < table.columns.length; i++) {
+        print('<td>');
+        print(table.columns[i]);
+        print('</td>');
+    }
+    print('</tr>');
+
+    for (var i = 0; i < table.rows.length; i++) {
+        print('<tr>');
+
+        for (var j = 0; j < table.columns.length; j++) {
+            print('<td>');
+            print(table.rows[i][j]);
+            print('</td>');
+        }
+
+        print('</tr>');
+    }
+    print('</table>');
+}
+
+%>

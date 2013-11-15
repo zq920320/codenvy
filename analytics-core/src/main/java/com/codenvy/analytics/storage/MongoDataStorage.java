@@ -26,6 +26,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.Configurator;
+import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
@@ -34,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoDataStorage implements DataStorage {
@@ -120,8 +120,14 @@ public class MongoDataStorage implements DataStorage {
 
     private boolean isStarted() {
         try {
-            new MongoClient(mongoClientURI).close();
-        } catch (UnknownHostException e) {
+            MongoClient mongoClient = new MongoClient(mongoClientURI);
+            try {
+                DB db = mongoClient.getDB(mongoClientURI.getDatabase());
+                db.getCollectionNames();
+            } finally {
+                mongoClient.close();
+            }
+        } catch (Throwable e) {
             return false;
         }
 
