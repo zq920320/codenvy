@@ -26,6 +26,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.Configurator;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoDataStorage implements DataStorage {
@@ -83,10 +85,16 @@ public class MongoDataStorage implements DataStorage {
     /** {@inheritDoc} */
     @Override
     public void initEmbeddedStorage() {
+        if (isStarted()) {
+            return;
+        }
+
         File dir = new File(Configurator.ANALYTICS_TMP_DIRECTORY, "embedded-mongoDb");
         if (!dir.exists() && !dir.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + dir.getAbsolutePath());
         }
+
+        LOG.info("Embedded MongoDB is starting up");
 
         RuntimeConfig config = new RuntimeConfig();
         config.setTempDirFactory(new FixedPath(dir.getAbsolutePath()));
@@ -108,6 +116,16 @@ public class MongoDataStorage implements DataStorage {
                 mongodProcess.stop();
             }
         });
+    }
+
+    private boolean isStarted() {
+        try {
+            new MongoClient(mongoClientURI).close();
+        } catch (UnknownHostException e) {
+            return false;
+        }
+
+        return true;
     }
 
     /** {@inheritDoc} */

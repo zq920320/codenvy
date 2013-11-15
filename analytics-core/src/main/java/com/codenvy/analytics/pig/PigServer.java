@@ -49,21 +49,15 @@ public class PigServer {
     /** Embedded Pig server */
     private static org.apache.pig.PigServer server;
 
-    /** System property. The directory name with Pig-script files. */
     private static final String ANALYTICS_SCRIPTS_DIR_PROPERTY = "analytics.scripts.dir";
+    private static final String ANALYTICS_BIN_DIR_PROPERTY     = "analytics.bin.dir";
+    public static final  String ANALYTICS_LOGS_DIRECTORY       = "analytics.logs.directory";
 
-    /** System property. The directory name with binary files. */
-    private static final String ANALYTICS_BIN_DIR_PROPERTY = "analytics.bin.dir";
-
-    /** The value of {@value #ANALYTICS_SCRIPTS_DIR_PROPERTY}. */
-    public static final String SCRIPTS_DIR = System.getProperty(ANALYTICS_SCRIPTS_DIR_PROPERTY);
-
-    /** The value of {@value #ANALYTICS_BIN_DIR_PROPERTY}. */
-    public static final String BIN_DIR = System.getProperty(ANALYTICS_BIN_DIR_PROPERTY);
-
-    public static final String ANALYTICS_LOGS_DIRECTORY = "analytics.logs.directory";
-
+    public static final String SCRIPTS_DIR    = System.getProperty(ANALYTICS_SCRIPTS_DIR_PROPERTY);
+    public static final String BIN_DIR        = System.getProperty(ANALYTICS_BIN_DIR_PROPERTY);
     public static final String LOGS_DIRECTORY = Configurator.getString(ANALYTICS_LOGS_DIRECTORY);
+
+    private static final String PIG_SERVER_EMBEDDED = "pig.server.embedded";
 
     /** Pig relation containing execution result. */
     private static final String FINAL_RELATION = "result";
@@ -94,20 +88,42 @@ public class PigServer {
     }
 
     /**
-     * Run the script directly on Pig server.
+     * Run the script. Mostly for testing purpose.
      *
-     * @see #executeAndReturn(com.codenvy.analytics.pig.scripts.ScriptType, java.util.Map)
+     * @param scriptType
+     *         specific script type to execute
+     * @param context
+     *         contains all necessary value parameters required by given {@link com.codenvy.analytics.pig.scripts
+     *         .ScriptType}
+     * @throws IOException
+     *         if something gone wrong or if a required parameter is absent
      */
-    public static synchronized void executeOnServer(ScriptType scriptType, Map<String, String> context)
-            throws IOException {
+    public static void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
         LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
         context = validateAndAdjustContext(scriptType, context);
-
         if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
             return;
         }
 
+        if (Configurator.getBoolean(PIG_SERVER_EMBEDDED)) {
+            executeOnEmbeddedServer(scriptType, context);
+        } else {
+            executeOnDedicatedServer(scriptType, context);
+        }
+    }
+
+    private static void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context) throws IOException {
+        String script = readScriptContent(scriptType);
+        try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
+            server.registerScript(scriptContent, context);
+        } finally {
+            LOG.info("Execution " + scriptType + " has finished");
+        }
+    }
+
+    private static synchronized void executeOnDedicatedServer(ScriptType scriptType, Map<String, String> context)
+            throws IOException {
         try {
             String command = prepareRunCommand(scriptType, context);
             Process process = Runtime.getRuntime().exec(command);
@@ -189,33 +205,6 @@ public class PigServer {
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
             server.registerScript(scriptContent, context);
             return server.openIterator(FINAL_RELATION);
-        } finally {
-            LOG.info("Execution " + scriptType + " has finished");
-        }
-    }
-
-    /**
-     * Run the script. Mostly for testing purpose.
-     *
-     * @param scriptType
-     *         specific script type to execute
-     * @param context
-     *         contains all necessary value parameters required by given {@link com.codenvy.analytics.pig.scripts
-     *         .ScriptType}
-     * @throws IOException
-     *         if something gone wrong or if a required parameter is absent
-     */
-    public static void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
-        LOG.info("Script execution " + scriptType + " is started: " + context.toString());
-
-        context = validateAndAdjustContext(scriptType, context);
-        if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
-            return;
-        }
-
-        String script = readScriptContent(scriptType);
-        try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
-            server.registerScript(scriptContent, context);
         } finally {
             LOG.info("Execution " + scriptType + " has finished");
         }

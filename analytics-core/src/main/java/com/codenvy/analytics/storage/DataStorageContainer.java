@@ -31,7 +31,11 @@ public class DataStorageContainer {
     private static final String ANALYTICS_STORAGE          = "analytics.storage";
     private static final String ANALYTICS_STORAGE_EMBEDDED = "analytics.storage.embedded";
 
-    private static final AtomicReference<DataStorage> dataStorageRef = new AtomicReference<>();
+    private static final AtomicReference<DataStorage> dataStorageRef;
+
+    static {
+        dataStorageRef = new AtomicReference<>();
+    }
 
     /** {@link com.codenvy.analytics.storage.DataStorage#createDataLoader()} */
     public static DataLoader createDataLoader() {
