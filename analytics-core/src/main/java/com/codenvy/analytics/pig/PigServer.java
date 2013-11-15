@@ -66,7 +66,9 @@ public class PigServer {
     private static final Set<String> importedMacros = new HashSet<>();
 
     static {
-        System.setProperty("udf.import.list", "com.codenvy.analytics.pig.udf");
+        for (Map.Entry<String, String> entry : Configurator.getAll("pig.server.property").entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
+        }
 
         try {
             server = new org.apache.pig.PigServer(ExecType.LOCAL);

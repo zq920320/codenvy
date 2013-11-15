@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -33,7 +35,7 @@ public class Configurator {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
 
-    public static final String ANALYTICS_CONF_DIR = System.getProperty("codenvy.local.conf.dir");
+    public static final String ANALYTICS_CONF_DIR      = System.getProperty("codenvy.local.conf.dir");
     public static final String ANALYTICS_TMP_DIRECTORY = System.getProperty("analytics.tmp.dir");
 
     private static final String RESOURCE = "analytics.conf";
@@ -77,6 +79,20 @@ public class Configurator {
     /** {@link Properties#containsKey(Object)} */
     public static boolean exists(String key) {
         return properties.containsKey(key);
+    }
+
+    public static Map<String, String> getAll(String keyPrefix) {
+        Map<String, String> result = new HashMap<>();
+
+        for (Object obj : properties.keySet()) {
+            String key = (String)obj;
+
+            if (key.startsWith(keyPrefix)) {
+                result.put(key.substring(keyPrefix.length() + 1), getString(key));
+            }
+        }
+
+        return result;
     }
 
     private static void loadFromResource() throws IOException {
