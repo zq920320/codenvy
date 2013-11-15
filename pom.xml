@@ -80,6 +80,7 @@
         <module>analytics-core</module>
         <module>analytics-application</module>
         <module>analytics-rest-service</module>
+        <module>analytics-wso2bam-toolbox</module>
         <module>analytics-wso2bam-pkg</module>
         <module>analytics-wso2bam-local-pkg</module>
     </modules>
