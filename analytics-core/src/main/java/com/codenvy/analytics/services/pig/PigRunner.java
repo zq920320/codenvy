@@ -89,7 +89,9 @@ public class PigRunner implements Feature {
                 ScriptType scriptType = ScriptType.valueOf(scriptName.toUpperCase());
                 parameters.putAll(context);
 
-                PigServer.executeOnServer(scriptType, parameters);
+//              PigServer.executeOnServer(scriptType, parameters);
+                PigServer.execute(scriptType, parameters);
+
             }
         } finally {
             LOG.info("PigRunner is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
