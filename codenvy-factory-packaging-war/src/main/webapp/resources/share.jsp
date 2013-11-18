@@ -90,15 +90,15 @@ try {
     JsonObject json = parser.parse(jsonText).getAsJsonObject();    
     
     _title = json.get("projectattributes").getAsJsonObject().get("pname").getAsString() + " - Codenvy";
-    _description = json.get("description").getAsString();
     
+    _description = json.get("description").getAsString();
     if (_description == null || _description.trim().isEmpty()) {
-        _description = json.get("projectattributes").getAsJsonObject().get("ptype").getAsString();
+    	_description = "Code, Build, Test and Deploy instantly using Codenvy.";
     }
     
     _image_url = getLink(json, "image");
     if (_image_url == null) {
-        _image_url = _server + "/factory/resources/codenvy.png";
+        _image_url = _server + "/factory/resources/codenvy-square.png";
     }
 
     _create_project_url = getLink(json, "create-project");
@@ -117,6 +117,9 @@ try {
 	
 	<link rel="image_src" href="<%=_image_url%>" />
 	<meta property="og:image" content="<%=_image_url%>"/>
+	
+	<meta property="og:url" content="<%=_share_page_url%>">
+	<meta property="og:type" content="website" />
 </head>
 
 <body></body>
