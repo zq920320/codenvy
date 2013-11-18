@@ -98,7 +98,7 @@ try {
     
     _image_url = getLink(json, "image");
     if (_image_url == null) {
-        _image_url = _server + "/factory/resources/codenvy-square.png";
+        _image_url = _server + "/factory/resources/codenvy.png";
     }
 
     _create_project_url = getLink(json, "create-project");
