@@ -173,14 +173,12 @@
             loginWithGithub : loginWithGithub,
 
             createTenant : function(email,domain,success,error){
-
-                var tenantServiceUrl = "/cloud-admin/rest/cloud-admin/public-tenant-service/create-with-confirm/" +
-                 encodeURIComponent(domain.toLowerCase()) + "/" + encodeURIComponent(email.toLowerCase()) + 
-                 "?" + window.location.search.substring(1);
+                var data = {email: email.toLowerCase(), workspace: domain.toLowerCase()};
+                var emailValidateUrl = "/site/rest/email/validate" + window.location.search.substring(1);
                 $.ajax({
-                    url : tenantServiceUrl,
+                    url : emailValidateUrl,
                     type : "POST",
-                    data: {},
+                    data: data,
                     success : function(){
                         success({url: '../site/thank-you'});
                     },
