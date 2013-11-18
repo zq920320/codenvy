@@ -84,7 +84,7 @@
         var loginWithGoogle = function(page,callback){
             if (isWebsocketEnabled()) {
                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/site/sso/server/gen?authType=oauth&oauth_provider=google" +
+                var url = "/site/api/user/authenticate?authType=oauth&oauth_provider=google" +
                    "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email"+
                    "&" + window.location.search.substring(1);
 
@@ -97,7 +97,7 @@
         var loginWithGithub = function(page,callback){
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/site/sso/server/gen?authType=oauth&oauth_provider=github&scope=user&scope=repo" +
+                var url = "/site/api/user/authenticate?authType=oauth&oauth_provider=github&scope=user&scope=repo" +
                 "&" + window.location.search.substring(1);
 
                 if(typeof callback !== 'undefined'){
@@ -160,7 +160,7 @@
             login : function(form){
 
                 if (isWebsocketEnabled()){
-                    var loginUrl = "/site/sso/server/gen?" + window.location.search.substring(1);
+                    var loginUrl = "/site/api/user/authenticate?" + window.location.search.substring(1);
                     if (getQueryParameterByName("authType")!=="jaas"){
                         loginUrl += "&authType=jaas";
                     }
