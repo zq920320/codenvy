@@ -17,10 +17,7 @@
  */
 package com.codenvy.factory.storage.mongo;
 
-import com.codenvy.api.factory.AdvancedFactoryUrl;
-import com.codenvy.api.factory.FactoryImage;
-import com.codenvy.api.factory.FactoryStore;
-import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.*;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.factory.MongoDbConfiguration;
 import com.mongodb.*;
@@ -95,7 +92,11 @@ public class MongoDBFactoryStore implements FactoryStore {
                          .add("orgid", factoryUrl.getOrgid())
                          .add("affiliateid", factoryUrl.getAffiliateid())
                          .add("vcsbranch", factoryUrl.getVcsbranch())
-                         .add("projectattributes", attributes.get());
+                         .add("projectattributes", attributes.get())
+                         .add("userid", factoryUrl.getUserid())
+                         .add("validsince", factoryUrl.getValidsince())
+                         .add("validuntil", factoryUrl.getValiduntil())
+                         .add("created", factoryUrl.getCreated());
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", factoryUrl.getId());
@@ -141,6 +142,10 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setAffiliateid((String)factoryAsDbObject.get("affiliateid"));
         factoryUrl.setVcsbranch((String)factoryAsDbObject.get("vcsbranch"));
         factoryUrl.setProjectattributes(((BasicDBObject)factoryAsDbObject.get("projectattributes")).toMap());
+        factoryUrl.setUserid((String)factoryAsDbObject.get("userid"));
+        factoryUrl.setValidsince((long)factoryAsDbObject.get("validsince"));
+        factoryUrl.setValiduntil((long)factoryAsDbObject.get("validuntil"));
+        factoryUrl.setCreated((long)factoryAsDbObject.get("created"));
 
         return factoryUrl;
     }

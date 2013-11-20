@@ -20,29 +20,18 @@ package com.codenvy.factory.storage.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
-import com.codenvy.api.factory.AdvancedFactoryUrl;
-import com.codenvy.api.factory.FactoryImage;
-import com.codenvy.api.factory.FactoryStore;
+import com.codenvy.api.factory.*;
 import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.*;
 
-import org.everrest.core.impl.provider.json.JsonParser;
-import org.everrest.core.impl.provider.json.JsonValue;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.everrest.core.impl.provider.json.*;
+import org.testng.annotations.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
 
-import org.everrest.core.impl.provider.json.ObjectBuilder;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 
 /**
@@ -164,6 +153,10 @@ public class MongoDBFactoryStoreTest {
                          .add("orgid", "org123456")
                          .add("affiliateid", "testaffiliate123")
                          .add("vcsbranch", "master")
+                         .add("userid", "123456798")
+                         .add("validsince", 123645L)
+                         .add("validuntil", 123645L)
+                         .add("created", 123645L)
                          .add("projectattributes", attributes.get());
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
@@ -181,8 +174,8 @@ public class MongoDBFactoryStoreTest {
         JsonValue jsonValue = jsonParser.getJsonObject();
         AdvancedFactoryUrl source = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
         source.setId(id);
-        assertEquals(result, source);
 
+        assertEquals(result, source);
     }
 
     @Test
@@ -215,7 +208,7 @@ public class MongoDBFactoryStoreTest {
 
         collection.save(factoryDatabuilder.get());
 
-        Set<FactoryImage> newImages =  store.getFactoryImages(id, null);
+        Set<FactoryImage> newImages = store.getFactoryImages(id, null);
         assertNotNull(newImages);
         FactoryImage newImage = newImages.iterator().next();
 
