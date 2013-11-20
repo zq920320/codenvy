@@ -59,7 +59,7 @@
             </entry>
         </parameters>
     </script>
-    <script name="set_of_active_entities">
+    <script name="active_entities_list">
         <description>Active workspaces</description>
         <parameters>
             <entry>

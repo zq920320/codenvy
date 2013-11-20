@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -30,6 +31,8 @@ public abstract class AbstractDataManager implements JdbcDataManager {
 
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDataManager.class);
+
+    private final DecimalFormat colFormat;
 
     private final String password;
     private final String url;
@@ -39,6 +42,7 @@ public abstract class AbstractDataManager implements JdbcDataManager {
         this.url = url;
         this.user = user;
         this.password = password;
+        this.colFormat = new DecimalFormat("00");
     }
 
     protected Connection openConnection() throws SQLException {
@@ -130,7 +134,8 @@ public abstract class AbstractDataManager implements JdbcDataManager {
         builder.append(tableName);
         builder.append(" (");
         for (int i = 0; i < fields.size(); i++) {
-            builder.append("COL_").append(i);
+            builder.append("COL_");
+            builder.append(colFormat.format(i));
             builder.append(" VARCHAR(");
             builder.append(getMaxLength(fields, data, i));
             builder.append(")");

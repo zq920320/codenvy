@@ -17,25 +17,35 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveWorkspacesList extends SimpleReadBasedMetric {
+import java.io.IOException;
+import java.util.Map;
 
-    public ActiveWorkspacesList() {
-        super(MetricType.ACTIVE_WORKSPACES_LIST);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class NonActiveWorkspaces extends CalculatedMetric {
+
+    public NonActiveWorkspaces() {
+        super(MetricType.NON_ACTIVE_WORKSPACES, new MetricType[]{MetricType.ACTIVE_WORKSPACES,
+                                                                 MetricType.TOTAL_WORKSPACES});
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        LongValueData active = (LongValueData)basedMetric[0].getValue(context);
+        LongValueData total = (LongValueData)basedMetric[1].getValue(context);
+
+        return new LongValueData(total.getAsLong() - active.getAsLong());
+    }
+
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return SetValueData.class;
+        return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Active workspaces list";
+        return "Non-active workspaces";
     }
 }

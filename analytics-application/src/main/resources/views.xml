@@ -31,7 +31,29 @@
         </row>
         <row class="com.codenvy.analytics.services.view.MetricRow">
             <parameter key="name" value="total_workspaces"/>
-            <parameter key="description" value="Total Workspaces"/>
+            <parameter key="description" value="Total"/>
+        </row>
+    </section>
+
+    <section name="workspaces_usage" columns="20">
+        <row class="com.codenvy.analytics.services.view.DateRow">
+            <parameter key="format" value="MMM dd"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="total_workspaces"/>
+            <parameter key="description" value="Total"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="new_active_workspaces"/>
+            <parameter key="description" value="New Active Workspaces"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="returning_active_workspaces"/>
+            <parameter key="description" value="Returning Active Workspaces"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="non_active_workspaces"/>
+            <parameter key="description" value="Non-Active Workspaces"/>
         </row>
     </section>
 </view>

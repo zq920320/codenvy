@@ -24,8 +24,6 @@ $(function () {
     $("#operation-dd").change(function () {
         triggerCollect();
     });
-    //$("#service-dd").ufd({log:true});
-    //$("#operation-dd").ufd({log:true});
     $("#clearSelectionBtn").click(function () {
         $("#server-dd option:first-child").attr("selected", "selected");
         $("#service-dd").find('option').remove();
@@ -42,28 +40,17 @@ $(function () {
     });
 });
 function triggerCollect() {
-    var selectedServer = $("#server-dd").find('option:selected').text();
-    var selectedService = $("#service-dd").find('option:selected').text();
-    var selectedOperation = $("#operation-dd").find('option:selected').text();
     var timeGrouping = $("#timely-dd button.btn-primary").text();
-    reloadIFrame({server: selectedServer,
-        service: selectedService, operation: selectedOperation, timeGroup: timeGrouping});
+    reloadIFrame({timeGroup: timeGrouping});
 };
 function reloadIFrame(param) {
-    var params = param || {};
-    var server = param.server || "";
-    var service = param.service || "";
-    var operation = param.operation || "";
-    var t = param.timeGroup || "";
     $("iframe").each(function () {
-        //var id = $(this).attr('id');
         var currentUrl = $(this).attr('src');
         if (currentUrl.indexOf('?')) {
             var absUrl = currentUrl.split('?');
             currentUrl = absUrl[0];
         }
-        var newUrl = currentUrl + "?server=" + encodeURI(server) + "&service=" +
-            encodeURI(service) + "&opr=" + encodeURI(operation) + "&t=" + t;
+        var newUrl = currentUrl + "?timeGrouping=" + param.timeGroup;
         $(this).attr('src', newUrl);
     });
 };
@@ -85,7 +72,6 @@ $(document).ready(function () {
             }
             $("#server-dd").find('option').remove();
             $("#server-dd").append(options);
-            //$("#server-dd").ufd({log:true,addEmphasis: true});
         }
 
     });
@@ -102,10 +88,6 @@ $(document).ready(function () {
         setWinTimeout();
     });
     setWinTimeout();
-    /*$.getJSON("populate_combos_ajaxprocessor.jag?server=10.150.3.174:9443",
-     function(data){
-     alert(data);
-     });*/
 });
 function populateServicesCombo(server) {
     $.ajax({
@@ -149,9 +131,7 @@ function populateOperationsCombo(server, service) {
             $("#operation-dd").append(options);
             triggerCollect();    //$("#operation-dd").ufd({log:true,addEmphasis: true});
         }
-
     });
-
 };
 
 

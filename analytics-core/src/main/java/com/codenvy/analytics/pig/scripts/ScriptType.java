@@ -46,7 +46,7 @@ public enum ScriptType {
     },
     NUMBER_OF_USERS_FROM_FACTORY,
     PRODUCT_USAGE_SESSIONS,
-    SET_OF_ACTIVE_ENTITIES {
+    ACTIVE_ENTITIES_LIST {
         @Override
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();

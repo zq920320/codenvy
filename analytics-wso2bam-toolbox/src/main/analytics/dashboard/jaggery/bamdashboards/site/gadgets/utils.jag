@@ -17,18 +17,24 @@ function queryResults(q) {
 
 function createTable(result) {
     var rows = [];
+    var columns = []
     var columns2display = []
 
     for (var key in result[0]) {
-        columns2display.push(result[0][key]);
+        columns.push(key);
+    }
+    columns.sort();
+
+    for (var col in columns) {
+        columns2display.push(result[0][columns[col]]);
     }
 
     for (var i = 1; i < result.length; i++) {
         var row = []
         var obj = result[i];
 
-        for (var key in obj) {
-            row.push(obj[key]);
+        for (var col in columns) {
+            row.push(obj[columns[col]]);
         }
         rows.push(row);
     }
@@ -37,7 +43,7 @@ function createTable(result) {
 }
 
 function printTable(table) {
-    print('<table>');
+    print('<table border="1">');
 
     print('<tr>');
     for (var i = 0; i < table.columns.length; i++) {

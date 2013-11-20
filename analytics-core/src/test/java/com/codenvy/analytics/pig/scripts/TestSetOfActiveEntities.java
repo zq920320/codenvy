@@ -74,7 +74,7 @@ public class TestSetOfActiveEntities extends BaseTest {
         Parameters.METRIC.put(params, "testsetofactiveentities");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.SET_OF_ACTIVE_ENTITIES, params);
+        PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, params);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
@@ -95,12 +95,12 @@ public class TestSetOfActiveEntities extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.SET_OF_ACTIVE_ENTITIES, params);
+        PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, params);
     }
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.SET_OF_ACTIVE_ENTITIES, params);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.ACTIVE_ENTITIES_LIST, params);
 
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();

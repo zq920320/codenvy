@@ -3,7 +3,7 @@
 include_once("utils.jag");
 
 var timeGrouping = request.getParameter('timeGrouping');
-var tableNames = ['workspaces'];
+var tableNames = ['workspaces', 'workspaces_usage'];
 
 for (var i = 0; i < tableNames.length; i++) {
     var result = queryResults('select * from ' + tableNames[i] + '_' + timeGrouping);
