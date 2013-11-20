@@ -23,5 +23,6 @@ public enum ValueDataTypes {
     LONG,
     STRING,
     ROW,
-    LIST
+    LIST,
+    SET
 }

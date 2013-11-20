@@ -19,18 +19,25 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TotalWorkspacesMetric extends CumulativeMetric {
+public class CreatedWorkspaces extends SimpleReadBasedMetric {
 
-    public TotalWorkspacesMetric() {
-        super(MetricType.TOTAL_WORKSPACES,
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.WORKSPACE_CREATED),
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.WORKSPACE_DESTROYED));
+    public CreatedWorkspaces() {
+        super(MetricType.CREATED_WORKSPACES);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The total number of workspaces";
+        return "The number of created persistent workspaces";
     }
 }

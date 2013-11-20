@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.services.pig;
 
-import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
@@ -31,7 +30,6 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
@@ -79,8 +77,7 @@ public class PigRunner implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            String resource = Configurator.ANALYTICS_CONF_DIR + File.separator + "running-scripts.xml";
-            PigRunnerConfiguration configuration = configurationManager.loadConfiguration(resource);
+            PigRunnerConfiguration configuration = configurationManager.loadConfiguration("running-scripts.xml");
 
             for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {
                 String scriptName = scriptConfiguration.getName();

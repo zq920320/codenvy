@@ -54,7 +54,7 @@ public abstract class AbstractDataManager implements JdbcDataManager {
         try {
             dropTableIfExists(connection, tableName);
             createTable(connection, tableName, fields, data);
-            insertData(connection, tableName, data);
+            insertData(connection, tableName, fields, data);
 
             connection.commit();
             LOG.info("Data have been stored in " + tableName);
@@ -75,8 +75,17 @@ public abstract class AbstractDataManager implements JdbcDataManager {
         }
     }
 
-    private void insertData(Connection connection, String tableName, List<List<ValueData>> data) throws SQLException {
+    private void insertData(Connection connection,
+                            String tableName,
+                            List<ValueData> fields,
+                            List<List<ValueData>> data) throws SQLException {
+
         PreparedStatement statement = connection.prepareStatement(getInsertQuery(tableName, data.get(0).size()));
+
+        for (int i = 0; i < fields.size(); i++) {
+            statement.setString(i + 1, fields.get(i).getAsString());
+        }
+        statement.execute();
 
         for (List<ValueData> rowData : data) {
             statement.clearParameters();
@@ -121,9 +130,9 @@ public abstract class AbstractDataManager implements JdbcDataManager {
         builder.append(tableName);
         builder.append(" (");
         for (int i = 0; i < fields.size(); i++) {
-            builder.append(fields.get(i).getAsString().replace(" ", "_"));
+            builder.append("COL_").append(i);
             builder.append(" VARCHAR(");
-            builder.append(getMaxLength(data, i));
+            builder.append(getMaxLength(fields, data, i));
             builder.append(")");
 
             if (i != fields.size() - 1) {
@@ -135,8 +144,9 @@ public abstract class AbstractDataManager implements JdbcDataManager {
         return builder.toString();
     }
 
-    private int getMaxLength(List<List<ValueData>> data, int column) {
-        int length = 0;
+    private int getMaxLength(List<ValueData> fields, List<List<ValueData>> data, int column) {
+        int length = fields.get(column).getAsString().length();
+
         for (List<ValueData> rowData : data) {
             length = Math.max(length, rowData.get(column).getAsString().length());
         }

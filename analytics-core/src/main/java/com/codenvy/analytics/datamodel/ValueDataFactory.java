@@ -19,13 +19,8 @@
 
 package com.codenvy.analytics.datamodel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ValueDataFactory {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ValueDataFactory.class);
 
     /** Instantiates default {@link com.codenvy.analytics.datamodel.ValueData}. */
     public static ValueData createDefaultValue(Class<? extends ValueData> clazz) throws IllegalArgumentException {
@@ -43,29 +38,26 @@ public class ValueDataFactory {
 
         } else if (clazz == ListValueData.class) {
             return ListValueData.DEFAULT;
+
+        } else if (clazz == SetValueData.class) {
+            return SetValueData.DEFAULT;
         }
 
         throw new IllegalArgumentException("Unknown class " + clazz.getName());
     }
 
 
-    /**
-     * Creates appropriate {@link ValueData} based on given value.
-     *
-     * @param value
-     * @return {@link ValueData}
-     */
+    /** Creates appropriate {@link ValueData} based on given value. */
     public static ValueData createValueData(Object value) {
         Class<?> clazz = value.getClass();
 
         if (clazz == String.class) {
             return new StringValueData((String)value);
 
-        } else if (clazz == LongValueData.class) {
-            return new LongValueData((Long)value);
+        } else if (clazz == Long.class || clazz == Integer.class || clazz == Byte.class) {
+            return new LongValueData(((Number)value).longValue());
 
-        }
-        if (clazz == DoubleValueData.class) {
+        } else if (clazz == Double.class) {
             return new DoubleValueData((Double)value);
         }
 

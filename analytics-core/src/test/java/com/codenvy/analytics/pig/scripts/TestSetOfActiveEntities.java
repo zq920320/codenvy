@@ -19,7 +19,8 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
@@ -34,15 +35,12 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestNumberOfEvents extends BaseTest {
+public class TestSetOfActiveEntities extends BaseTest {
 
     private Map<String, String> params;
     private TestMetric          metric;
@@ -57,9 +55,13 @@ public class TestNumberOfEvents extends BaseTest {
                         .withDate("2013-01-01")
                         .withTime("10:00:00")
                         .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@yahoo.com")
+        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
                         .withDate("2013-01-01")
                         .withTime("10:00:01")
+                        .build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
+                        .withDate("2013-01-01")
+                        .withTime("10:00:02")
                         .build());
         File log = LogGenerator.generateLog(events);
 
@@ -68,19 +70,24 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.METRIC.put(params, "testnumberofevents");
+        Parameters.PARAM.put(params, "ws");
+        Parameters.METRIC.put(params, "testsetofactiveentities");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.execute(ScriptType.SET_OF_ACTIVE_ENTITIES, params);
 
         events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@gmail.com")
+        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
                         .withDate("2013-01-02")
                         .withTime("10:00:00")
                         .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@yahoo.com")
+        events.add(Event.Builder.createTenantCreatedEvent("ws3", "user1@gmail.com")
                         .withDate("2013-01-02")
                         .withTime("10:00:01")
+                        .build());
+        events.add(Event.Builder.createTenantCreatedEvent("ws4", "user4@gmail.com")
+                        .withDate("2013-01-02")
+                        .withTime("10:00:02")
                         .build());
         log = LogGenerator.generateLog(events);
 
@@ -88,17 +95,27 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.execute(ScriptType.SET_OF_ACTIVE_ENTITIES, params);
     }
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.NUMBER_OF_EVENTS, params);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.SET_OF_ACTIVE_ENTITIES, params);
 
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0), dateFormat.parse("20130102").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,2)");
+        assertEquals(tuple.get(0), timeFormat.parse("20130102 10:00:00").getTime());
+        assertEquals(tuple.get(1).toString(), "(value,ws2)");
+
+        assertTrue(iterator.hasNext());
+        tuple = iterator.next();
+        assertEquals(tuple.get(0), timeFormat.parse("20130102 10:00:01").getTime());
+        assertEquals(tuple.get(1).toString(), "(value,ws3)");
+
+        assertTrue(iterator.hasNext());
+        tuple = iterator.next();
+        assertEquals(tuple.get(0), timeFormat.parse("20130102 10:00:02").getTime());
+        assertEquals(tuple.get(1).toString(), "(value,ws4)");
 
         assertFalse(iterator.hasNext());
     }
@@ -109,7 +126,8 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
-        assertEquals(metric.getValue(context), new LongValueData(2L));
+        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
+                                                                                         new StringValueData("ws2"))));
     }
 
     @Test
@@ -118,7 +136,10 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
 
-        assertEquals(metric.getValue(context), new LongValueData(4L));
+        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
+                                                                                         new StringValueData("ws2"),
+                                                                                         new StringValueData("ws3"),
+                                                                                         new StringValueData("ws4"))));
     }
 
     @Test
@@ -128,7 +149,8 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
-        assertEquals(metric.getValue(context), new LongValueData(2L));
+        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
+                                                                                         new StringValueData("ws3"))));
     }
 
     @Test
@@ -136,9 +158,11 @@ public class TestNumberOfEvents extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
+        MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
 
-        assertEquals(metric.getValue(context), new LongValueData(4L));
+        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
+                                                                                         new StringValueData("ws2"),
+                                                                                         new StringValueData("ws3"))));
     }
 
     @Test
@@ -146,42 +170,21 @@ public class TestNumberOfEvents extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
         MetricFilter.WS.put(context, "ws2");
 
-        assertEquals(metric.getValue(context), new LongValueData(1L));
-    }
-
-    @Test
-    public void testSingleUserFilterAndDatePeriod() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com");
-
-        assertEquals(metric.getValue(context), new LongValueData(2L));
-    }
-
-    @Test
-    public void testComplexFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
-        MetricFilter.WS.put(context, "ws2");
-
-        assertEquals(metric.getValue(context), new LongValueData(2L));
+        assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws2"))));
     }
 
     public class TestMetric extends SimpleReadBasedMetric {
 
         private TestMetric() {
-            super("testnumberofevents");
+            super("testsetofactiveentities");
         }
 
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
+            return SetValueData.class;
         }
 
         @Override

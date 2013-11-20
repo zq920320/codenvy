@@ -17,16 +17,16 @@
          from Codenvy S.A..
 -->
 <view time-unit="day,week,month,lifetime">
-    <section name="workspaces" columns="10">
+    <section name="workspaces" columns="20">
         <row class="com.codenvy.analytics.services.view.DateRow">
             <parameter key="format" value="MMM dd"/>
         </row>
         <row class="com.codenvy.analytics.services.view.MetricRow">
-            <parameter key="name" value="workspace_created"/>
+            <parameter key="name" value="created_workspaces"/>
             <parameter key="description" value="Created Workspaces"/>
         </row>
         <row class="com.codenvy.analytics.services.view.MetricRow">
-            <parameter key="name" value="workspace_destroyed"/>
+            <parameter key="name" value="destroyed_workspaces"/>
             <parameter key="description" value="Destroyed Workspaces"/>
         </row>
         <row class="com.codenvy.analytics.services.view.MetricRow">

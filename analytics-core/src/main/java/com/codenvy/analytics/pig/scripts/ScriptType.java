@@ -46,6 +46,15 @@ public enum ScriptType {
     },
     NUMBER_OF_USERS_FROM_FACTORY,
     PRODUCT_USAGE_SESSIONS,
+    SET_OF_ACTIVE_ENTITIES {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            params.add(Parameters.PARAM);
+            return params;
+        }
+    },
 
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {

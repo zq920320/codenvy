@@ -20,7 +20,10 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class ParametrizedReadBasedMetric extends ReadBasedMetric {
@@ -37,5 +40,11 @@ public abstract class ParametrizedReadBasedMetric extends ReadBasedMetric {
     @Override
     protected ValueData loadValue(Map<String, String> context) throws IOException {
         return dataLoader.loadValue(this, context);
+    }
+
+    @Override
+    public Set<Parameters> getParams() {
+        return new HashSet<>(
+                Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE, Parameters.PARAM}));
     }
 }

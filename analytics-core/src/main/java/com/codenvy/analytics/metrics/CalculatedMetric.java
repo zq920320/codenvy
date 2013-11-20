@@ -15,39 +15,27 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class WorkspaceCreatedMetric extends SimpleReadBasedMetric {
+public abstract class CalculatedMetric extends AbstractMetric {
 
-    public WorkspaceCreatedMetric() {
-        super(MetricType.WORKSPACE_CREATED);
+    protected final Metric basedMetric;
+
+    protected CalculatedMetric(String metricName, String basedMetric) {
+        super(metricName);
+        this.basedMetric = MetricFactory.getMetric(basedMetric);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+    protected CalculatedMetric(MetricType metricType, MetricType basedMetric) {
+        this(metricType.name(), basedMetric.name());
     }
 
     /** {@inheritDoc} */
     @Override
     public Set<Parameters> getParams() {
-        return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getDescription() {
-        return "The number of created persistent workspaces";
+        return basedMetric.getParams();
     }
 }

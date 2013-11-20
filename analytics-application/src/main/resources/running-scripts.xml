@@ -34,7 +34,7 @@
             </entry>
             <entry>
                 <key>METRIC</key>
-                <value>workspace_created</value>
+                <value>created_workspaces</value>
             </entry>
         </parameters>
     </script>
@@ -55,7 +55,57 @@
             </entry>
             <entry>
                 <key>METRIC</key>
-                <value>workspace_destroyed</value>
+                <value>destroyed_workspaces</value>
+            </entry>
+        </parameters>
+    </script>
+    <script name="set_of_active_entities">
+        <description>Active workspaces</description>
+        <parameters>
+            <entry>
+                <key>USER</key>
+                <value>ANY</value>
+            </entry>
+            <entry>
+                <key>WS</key>
+                <value>PERSISTENT</value>
+            </entry>
+            <entry>
+                <key>EVENT</key>
+                <value>*</value>
+            </entry>
+            <entry>
+                <key>PARAM</key>
+                <value>ws</value>
+            </entry>
+            <entry>
+                <key>METRIC</key>
+                <value>active_workspaces_list</value>
+            </entry>
+        </parameters>
+    </script>
+    <script name="number_of_events_by_types">
+        <description>Project created by types</description>
+        <parameters>
+            <entry>
+                <key>USER</key>
+                <value>REGISTERED</value>
+            </entry>
+            <entry>
+                <key>WS</key>
+                <value>PERSISTENT</value>
+            </entry>
+            <entry>
+                <key>EVENT</key>
+                <value>project-created</value>
+            </entry>
+            <entry>
+                <key>PARAM</key>
+                <value>TYPE</value>
+            </entry>
+            <entry>
+                <key>METRIC</key>
+                <value>project_created_types</value>
             </entry>
         </parameters>
     </script>

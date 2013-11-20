@@ -17,33 +17,25 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class SimpleReadBasedMetric extends ReadBasedMetric {
+public class ActiveWorkspacesList extends SimpleReadBasedMetric {
 
-    protected SimpleReadBasedMetric(String metricName) {
-        super(metricName);
-    }
-
-    public SimpleReadBasedMetric(MetricType metricType) {
-        super(metricType);
+    public ActiveWorkspacesList() {
+        super(MetricType.ACTIVE_WORKSPACES_LIST);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ValueData loadValue(Map<String, String> context) throws IOException {
-        return dataLoader.loadValue(this, context);
+    public Class<? extends ValueData> getValueDataClass() {
+        return SetValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
-    public Set<Parameters> getParams() {
-        return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
+    public String getDescription() {
+        return "Active workspaces";
     }
 }

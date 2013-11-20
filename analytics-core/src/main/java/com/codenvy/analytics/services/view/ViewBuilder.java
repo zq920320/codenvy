@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.services.view;
 
-import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
@@ -32,7 +31,6 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -91,12 +89,8 @@ public class ViewBuilder implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            File[] views = new File(Configurator.ANALYTICS_CONF_DIR, VIEW_DIR).listFiles();
-
-            for (File view : views != null ? views : new File[0]) {
-                ViewConfiguration viewConfiguration = configurationManager.loadConfiguration(view.getAbsolutePath());
-                build(viewConfiguration);
-            }
+            ViewConfiguration viewConfiguration = configurationManager.loadConfiguration("views.xml");
+            build(viewConfiguration);
         } finally {
             LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

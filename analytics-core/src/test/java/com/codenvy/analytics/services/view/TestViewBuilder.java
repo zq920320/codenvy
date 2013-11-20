@@ -52,7 +52,7 @@ public class TestViewBuilder extends BaseTest {
                               "        <row class=\"com.codenvy.analytics.services.view.DateRow\"/>\n" +
                               "        <row class=\"com.codenvy.analytics.services.view" +
                               ".TestViewBuilder$TestMetricRow\">\n" +
-                              "            <parameter key=\"name\" value=\"WORKSPACE_CREATED\"/>\n" +
+                              "            <parameter key=\"name\" value=\"CREATED_WORKSPACES\"/>\n" +
                               "            <parameter key=\"description\" value=\"Created Workspaces\"/>\n" +
                               "        </row>\n" +
                               "        <row class=\"com.codenvy.analytics.services.view.EmptyRow\"/>\n" +

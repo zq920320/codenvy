@@ -17,33 +17,25 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class SimpleReadBasedMetric extends ReadBasedMetric {
+public class ProjectCreatedTypes extends SimpleReadBasedMetric {
 
-    protected SimpleReadBasedMetric(String metricName) {
-        super(metricName);
-    }
-
-    public SimpleReadBasedMetric(MetricType metricType) {
-        super(metricType);
+    public ProjectCreatedTypes() {
+        super(MetricType.PROJECT_CREATED_TYPES);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected ValueData loadValue(Map<String, String> context) throws IOException {
-        return dataLoader.loadValue(this, context);
+    public Class<? extends ValueData> getValueDataClass() {
+        return MapValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
-    public Set<Parameters> getParams() {
-        return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
+    public String getDescription() {
+        return "Created projects by types";
     }
 }

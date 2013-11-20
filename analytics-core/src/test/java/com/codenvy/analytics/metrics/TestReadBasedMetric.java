@@ -26,10 +26,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -57,11 +53,6 @@ public class TestReadBasedMetric extends BaseTest {
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return LongValueData.class;
-        }
-
-        @Override
-        public Set<Parameters> getParams() {
-            return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
         }
 
         @Override

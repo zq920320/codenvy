@@ -49,7 +49,7 @@ public class TestListValueData extends BaseTest {
         value.put("key1", new DoubleValueData(20));
         MapValueData rowValueData2 = new MapValueData(value);
 
-        valueData = new ListValueData(Arrays.asList(rowValueData1, rowValueData2));
+        valueData = new ListValueData(Arrays.<ValueData>asList(rowValueData1, rowValueData2));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class TestListValueData extends BaseTest {
         value.put("key1", new DoubleValueData(20));
         MapValueData rowValueData2 = new MapValueData(value);
 
-        ListValueData newValueData = new ListValueData(Arrays.asList(rowValueData1, rowValueData2));
+        ListValueData newValueData = new ListValueData(Arrays.<ValueData>asList(rowValueData1, rowValueData2));
 
         assertEquals(valueData, newValueData);
     }
@@ -94,7 +94,7 @@ public class TestListValueData extends BaseTest {
         value.put("key1", new DoubleValueData(20));
         MapValueData rowValueData2 = new MapValueData(value);
 
-        ListValueData newValueData = new ListValueData(Arrays.asList(rowValueData2, rowValueData1));
+        ListValueData newValueData = new ListValueData(Arrays.<ValueData>asList(rowValueData2, rowValueData1));
 
         assertNotEquals(valueData, newValueData);
     }
@@ -112,7 +112,7 @@ public class TestListValueData extends BaseTest {
         value.put("key1", new StringValueData("hello"));
         MapValueData rowValueData1 = new MapValueData(value);
 
-        ListValueData newValueData = new ListValueData(Arrays.asList(rowValueData1));
+        ListValueData newValueData = new ListValueData(Arrays.<ValueData>asList(rowValueData1));
 
         value = new HashMap<>();
         value.put("key1", new LongValueData(10));
@@ -126,7 +126,8 @@ public class TestListValueData extends BaseTest {
         value.put("key1", new StringValueData("hello"));
         MapValueData rowValueData3 = new MapValueData(value);
 
-        ListValueData sumValueData = new ListValueData(Arrays.asList(rowValueData1, rowValueData2, rowValueData3));
+        ListValueData sumValueData =
+                new ListValueData(Arrays.<ValueData>asList(rowValueData1, rowValueData2, rowValueData3));
 
         assertEquals(sumValueData, valueData.union(newValueData));
     }

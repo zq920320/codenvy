@@ -19,17 +19,14 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+f = filterByEvent(l, '$EVENT');
 
-f1 = filterByEvent(l, '$EVENT');
-f = extractParam(f1, '$PARAM', param);
+a1 = FOREACH f GENERATE dt, $PARAM AS param;
+a = removeEmptyField(a1, 'param');
 
-a1 = FOREACH f GENERATE LOWER(param) AS param, event;
-a2 = GROUP a1 BY param;
-a = FOREACH a2 GENERATE group AS param, COUNT(a1) AS countAll;
-
-result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE(param, countAll);
+result = FOREACH a GENERATE ToMilliSeconds(dt), TOTUPLE('value', param);
 STORE result INTO '$STORAGE_URL.$METRIC' USING MongoStorage();
 
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, LOWER(param) AS param;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE(param, 1L);
+r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, $PARAM AS param;
+r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', param);
 STORE r INTO '$STORAGE_URL.$METRIC-raw' USING MongoStorage();

@@ -18,8 +18,7 @@
 package com.codenvy.analytics.storage;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
@@ -27,8 +26,7 @@ import com.mongodb.*;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoDataLoader implements DataLoader {
@@ -37,7 +35,8 @@ public class MongoDataLoader implements DataLoader {
     public static final  String EXT_COLLECTION_NAME_SUFFIX = "-raw";
     private static final long   DAY_IN_MILLISECONDS        = 86400000L;
 
-    private final DB db;
+    private final DB          db;
+    private final Set<String> filters;
 
     MongoDataLoader(MongoClientURI clientURI) throws IOException {
         MongoClient mongoClient = new MongoClient(clientURI);
@@ -45,6 +44,11 @@ public class MongoDataLoader implements DataLoader {
 
         if (isAuthRequired(clientURI)) {
             db.authenticate(clientURI.getUsername(), clientURI.getPassword());
+        }
+
+        filters = new HashSet<>();
+        for (MetricFilter filter : MetricFilter.values()) {
+            filters.add(filter.name().toLowerCase());
         }
     }
 
@@ -59,10 +63,19 @@ public class MongoDataLoader implements DataLoader {
 
         try {
             DBObject matcher = getMatcher(metric, clauses);
-            DBObject aggregator = getAggregator(metric, clauses);
-            AggregationOutput aggregation = dbCollection.aggregate(matcher, aggregator);
 
-            return createdValueData(metric, aggregation.results().iterator());
+            Class<? extends ValueData> clazz = metric.getValueDataClass();
+            if (clazz == LongValueData.class || clazz == DoubleValueData.class || clazz == StringValueData.class) {
+                DBObject aggregator = getAggregator(metric, clauses);
+                AggregationOutput aggregation = dbCollection.aggregate(matcher, aggregator);
+
+                return createdValueData(metric, aggregation.results().iterator());
+
+            } else {
+                DBCursor dbCursor = dbCollection.find((DBObject)matcher.get("$match"));
+                return createdValueData(metric, dbCursor);
+            }
+
         } catch (ParseException e) {
             throw new IOException(e);
         }
@@ -93,30 +106,19 @@ public class MongoDataLoader implements DataLoader {
             match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
         }
 
-        if (isExtendedCollection(clauses)) {
-            for (Parameters param : metric.getParams()) {
-                if (param != Parameters.FROM_DATE && param != Parameters.TO_DATE) {
-                    String[] values = param.get(clauses).split(",");
-                    match.put(param.name().toLowerCase(), new BasicDBObject("$in", values));
-                }
-            }
-        }
-
         return new BasicDBObject("$match", match);
     }
 
     private DBObject getAggregator(ReadBasedMetric metric, Map<String, String> clauses) throws ParseException {
         DBObject group = new BasicDBObject();
-        group.put("_id", null);
 
+        group.put("_id", null);
         group.put(VALUE_KEY, new BasicDBObject("$sum", "$" + VALUE_KEY));
 
-        if (!isExtendedCollection(clauses)) {
-            for (Parameters param : metric.getParams()) {
-                if (param != Parameters.FROM_DATE && param != Parameters.TO_DATE) {
-                    for (String field : param.get(clauses).split(",")) {
-                        group.put(field, new BasicDBObject("$sum", "$" + field));
-                    }
+        for (Parameters param : metric.getParams()) {
+            if (param != Parameters.FROM_DATE && param != Parameters.TO_DATE) {
+                for (String field : param.get(clauses).split(",")) {
+                    group.put(field, new BasicDBObject("$sum", "$" + field));
                 }
             }
         }
@@ -125,11 +127,57 @@ public class MongoDataLoader implements DataLoader {
     }
 
     private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
-        if (metric.getValueDataClass() == LongValueData.class) {
+        Class<? extends ValueData> clazz = metric.getValueDataClass();
+
+        if (clazz == LongValueData.class) {
             return createLongValueData(iterator);
+
+        } else if (clazz == MapValueData.class) {
+            return createMapValueData(iterator);
+
+        } else if (clazz == SetValueData.class) {
+            return createSetValueData(iterator);
         }
 
-        throw new IllegalArgumentException("Unknown class " + metric.getValueDataClass().getName());
+        throw new IllegalArgumentException("Unknown class " + clazz.getName());
+    }
+
+    private ValueData createSetValueData(Iterator<DBObject> iterator) {
+        ValueData result = ValueDataFactory.createDefaultValue(SetValueData.class);
+
+        while (iterator.hasNext()) {
+            Set<ValueData> values = new HashSet<>();
+
+            DBObject dbObject = iterator.next();
+            for (String key : dbObject.keySet()) {
+                if (!key.equals("_id") && !filters.contains(key)) {
+                    values.add(ValueDataFactory.createValueData(dbObject.get("value")));
+                }
+            }
+
+            result = result.union(new SetValueData(values));
+        }
+
+        return result;
+    }
+
+    private ValueData createMapValueData(Iterator<DBObject> iterator) {
+        ValueData result = ValueDataFactory.createDefaultValue(MapValueData.class);
+
+        while (iterator.hasNext()) {
+            Map<String, ValueData> values = new HashMap<>();
+
+            DBObject dbObject = iterator.next();
+            for (String key : dbObject.keySet()) {
+                if (!key.equals("_id") && !filters.contains(key)) {
+                    values.put(key, ValueDataFactory.createValueData(dbObject.get(key)));
+                }
+            }
+
+            result = result.union(new MapValueData(values));
+        }
+
+        return result;
     }
 
 
@@ -139,7 +187,7 @@ public class MongoDataLoader implements DataLoader {
         while (iterator.hasNext()) {
             DBObject dbObject = iterator.next();
             for (String key : dbObject.keySet()) {
-                if (!key.equals("_id")) {
+                if (!key.equals("_id") && !filters.contains(key)) {
                     value += ((Number)dbObject.get(key)).longValue();
                 }
             }

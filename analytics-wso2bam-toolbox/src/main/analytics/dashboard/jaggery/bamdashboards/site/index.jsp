@@ -33,6 +33,12 @@
     </div>
 </div>
 
+<script>
+    function reload(timeGrouping) {
+        document.getElementById("dashboardWidget-1").src = "gadgets/timeline.jag?timeGrouping=" + timeGrouping;
+    }
+</script>
+
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span2">
@@ -46,23 +52,23 @@
             </div>
             <div class="navbar timelySwitch" style="overflow: hidden;">
                 <div id="timely-dd" class="btn-group timely-dd-btns">
-                    <button class="btn btn-primary">Day</button>
-                    <button class="btn">Week</button>
-                    <button class="btn">Month</button>
-                    <button class="btn">All</button>
+                    <button class="btn btn-primary" onclick="reload('day');">Day</button>
+                    <button class="btn" onclick="reload('week')">Week</button>
+                    <button class="btn" onclick="reload('month')">Month</button>
+                    <button class="btn" onclick="reload('lifetime')">All</button>
                 </div>
             </div>
             <div class="hero-unit">
                 <iframe id="dashboardWidget-1" class="single-column-gadget"
-                        src="gadgets/timeline.jag?server=&service&opr&t=Now"></iframe>
+                        src="gadgets/timeline.jag?timeGrouping=day"></iframe>
             </div>
         </div>
     </div>
 </div>
 
-<script type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
-<script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>
+<%--<script type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>--%>
+<%--<script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>--%>
+<%--<script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>--%>
 <script type="text/javascript" src="../navigation.populator.js"></script>
 </body>
 </html>

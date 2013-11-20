@@ -17,21 +17,23 @@ function queryResults(q) {
 
 function createTable(result) {
     var rows = [];
-    var columnNames = []
+    var columns2display = []
 
-    for (var i = 0; i < result.length; i++) {
-        var obj = result[i];
+    for (var key in result[0]) {
+        columns2display.push(result[0][key]);
+    }
+
+    for (var i = 1; i < result.length; i++) {
         var row = []
-        for (var k in obj) {
-            if (i == 0) {
-                columnNames.push(k);
-            }
-            row.push(obj[k]);
+        var obj = result[i];
+
+        for (var key in obj) {
+            row.push(obj[key]);
         }
         rows.push(row);
     }
 
-    return {rows: rows, columns: columnNames};
+    return {rows: rows, columns: columns2display};
 }
 
 function printTable(table) {

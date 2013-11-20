@@ -41,7 +41,7 @@ public class BaseTest {
 
     protected final TupleFactory tupleFactory = TupleFactory.getInstance();
     protected final DateFormat   dateFormat   = new SimpleDateFormat("yyyyMMdd");
-
+    protected final DateFormat   timeFormat   = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
 
     public static final String         BASE_DIR         = "target";
     public static final MongoClientURI MONGO_CLIENT_URI = new MongoClientURI("mongodb://localhost:12345/test.test");

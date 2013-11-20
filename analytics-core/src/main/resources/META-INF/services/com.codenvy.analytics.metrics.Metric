@@ -1,4 +1,6 @@
-com.codenvy.analytics.metrics.WorkspaceCreatedMetric
-com.codenvy.analytics.metrics.WorkspaceDestroyedMetric
-com.codenvy.analytics.metrics.TotalWorkspacesMetric
+com.codenvy.analytics.metrics.CreatedWorkspaces
+com.codenvy.analytics.metrics.DestroyedWorkspaces
+com.codenvy.analytics.metrics.TotalWorkspaces
+com.codenvy.analytics.metrics.ActiveWorkspacesList
+com.codenvy.analytics.metrics.ProjectCreatedTypes
 

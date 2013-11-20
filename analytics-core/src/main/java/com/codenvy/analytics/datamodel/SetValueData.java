@@ -22,27 +22,28 @@ package com.codenvy.analytics.datamodel;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ListValueData extends AbstractValueData {
+public class SetValueData extends AbstractValueData {
 
-    private List<ValueData> value;
+    private Set<ValueData> value;
 
-    public static ListValueData DEFAULT = new ListValueData(Collections.<ValueData>emptyList());
+    public static SetValueData DEFAULT = new SetValueData(Collections.<ValueData>emptySet());
 
-    public ListValueData() {
+    public SetValueData() {
     }
 
-    public ListValueData(List<ValueData> value) {
-        this.value = new ArrayList<>(value);
+    public SetValueData(Collection<ValueData> value) {
+        this.value = new HashSet<>(value);
     }
 
-    public List<ValueData> getAll() {
-        return Collections.unmodifiableList(value);
+    public Set<ValueData> getAll() {
+        return Collections.unmodifiableSet(value);
     }
 
     public int size() {
@@ -52,13 +53,13 @@ public class ListValueData extends AbstractValueData {
     /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
-        ListValueData object = (ListValueData)valueData;
+        SetValueData object = (SetValueData)valueData;
 
-        List<ValueData> result = new ArrayList<>(this.value.size() + object.size());
+        Set<ValueData> result = new HashSet<>();
         result.addAll(this.value);
         result.addAll(object.value);
 
-        return new ListValueData(result);
+        return new SetValueData(result);
     }
 
     /** {@inheritDoc} */
@@ -88,13 +89,13 @@ public class ListValueData extends AbstractValueData {
     /** {@inheritDoc} */
     @Override
     public String getType() {
-        return ValueDataTypes.LIST.toString();
+        return ValueDataTypes.SET.toString();
     }
 
     /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
-        return this.value.equals(((ListValueData)valueData).value);
+        return this.value.equals(((SetValueData)valueData).value);
     }
 
     /** {@inheritDoc} */
@@ -117,7 +118,7 @@ public class ListValueData extends AbstractValueData {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int size = in.readInt();
 
-        value = new ArrayList<>(size);
+        value = new HashSet<>(size);
         for (int i = 0; i < size; i++) {
             value.add((ValueData)in.readObject());
         }

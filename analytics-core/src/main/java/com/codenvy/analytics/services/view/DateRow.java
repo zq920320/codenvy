@@ -20,9 +20,9 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Parameters;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -35,21 +35,15 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 class DateRow extends AbstractRow {
 
-    private static final String DAY_FORMAT_PARAM = "dayFormat";
-
-    private static final String WEEK_FORMAT_PARAM = "weekFormat";
-
-    private static final String MONTH_FORMAT_PARAM = "monthFormat";
-
+    private static final String DAY_FORMAT_PARAM       = "dayFormat";
+    private static final String WEEK_FORMAT_PARAM      = "weekFormat";
+    private static final String MONTH_FORMAT_PARAM     = "monthFormat";
     private static final String LIFE_TIME_FORMAT_PARAM = "lifeTimeFormat";
 
-    private static final String DAY_FORMAT_DEFAULT = "MMM dd";
-
-    private static final String WEEK_FORMAT_DEFAULT = "MMM dd";
-
-    private static final String MONTH_FORMAT_DEFAULT = "MMM";
-
-    private static final String LIFE_TIME_FORMAT_DEFAULT = "MMM dd";
+    private static final String DAY_FORMAT_DEFAULT       = "dd MMM";
+    private static final String WEEK_FORMAT_DEFAULT      = "dd MMM";
+    private static final String MONTH_FORMAT_DEFAULT     = "MMM";
+    private static final String LIFE_TIME_FORMAT_DEFAULT = "dd MMM";
 
     private final Map<Parameters.TimeUnit, String> format = new HashMap<>(4);
 
@@ -69,14 +63,10 @@ class DateRow extends AbstractRow {
                                                                   : LIFE_TIME_FORMAT_DEFAULT);
     }
 
-    private DateFormat getDateFormat() {
-        return null;
-    }
-
     /** {@inheritDoc} */
     @Override
     public ValueData getDescription() throws IOException {
-        return new StringValueData("Date");
+        return StringValueData.DEFAULT;
     }
 
     /** {@inheritDoc} */

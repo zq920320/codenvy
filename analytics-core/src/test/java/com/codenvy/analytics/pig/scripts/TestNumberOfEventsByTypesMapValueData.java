@@ -20,10 +20,11 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ParametrizedReadBasedMetric;
+import com.codenvy.analytics.metrics.SimpleReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -34,12 +35,15 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestNumberOfEventsByTypes extends BaseTest {
+public class TestNumberOfEventsByTypesMapValueData extends BaseTest {
 
     private Map<String, String> params;
     private TestMetric          metric;
@@ -66,7 +70,7 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.METRIC.put(params, "testnumberofeventsbytypes");
+        Parameters.METRIC.put(params, "testnumberofeventsbytypesmapvaluedata");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
@@ -113,19 +117,11 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130102");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
 
-        assertEquals(metric.getValue(context), new LongValueData(1L));
-    }
-
-    @Test
-    public void testSingleDateFilterDoubleParam() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1,ws2");
-
-        assertEquals(metric.getValue(context), new LongValueData(2L));
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        assertEquals(values.size(), 2);
+        assertEquals(values.get("ws1"), new LongValueData(1));
+        assertEquals(values.get("ws2"), new LongValueData(1));
     }
 
 
@@ -134,9 +130,12 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
 
-        assertEquals(metric.getValue(context), new LongValueData(2L));
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        assertEquals(values.size(), 2);
+        assertEquals(values.get("ws1"), new LongValueData(2));
+        assertEquals(values.get("ws2"), new LongValueData(2));
+
     }
 
     @Test
@@ -144,10 +143,11 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
-        assertEquals(metric.getValue(context), new LongValueData(2L));
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        assertEquals(values.size(), 1);
+        assertEquals(values.get("ws1"), new LongValueData(2));
     }
 
     @Test
@@ -155,10 +155,10 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
         MetricFilter.USER.put(context, "user2@gmail.com");
 
-        assertEquals(metric.getValue(context), new LongValueData(0L));
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        assertEquals(values.size(), 0);
     }
 
     @Test
@@ -166,10 +166,12 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
 
-        assertEquals(metric.getValue(context), new LongValueData(2L));
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        assertEquals(values.size(), 2);
+        assertEquals(values.get("ws1"), new LongValueData(2));
+        assertEquals(values.get("ws2"), new LongValueData(2));
     }
 
 
@@ -178,40 +180,24 @@ public class TestNumberOfEventsByTypes extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
         MetricFilter.WS.put(context, "ws1,ws2");
 
-        assertEquals(metric.getValue(context), new LongValueData(2L));
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        assertEquals(values.size(), 2);
+        assertEquals(values.get("ws1"), new LongValueData(2));
+        assertEquals(values.get("ws2"), new LongValueData(2));
     }
 
-    @Test
-    public void testComplexFilterDoubleParam() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1,ws2");
-        MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
-        MetricFilter.WS.put(context, "ws1,ws2");
-
-        assertEquals(metric.getValue(context), new LongValueData(4L));
-    }
-
-    public class TestMetric extends ParametrizedReadBasedMetric {
+    public class TestMetric extends SimpleReadBasedMetric {
 
         private TestMetric() {
-            super("testnumberofeventsbytypes");
+            super("testnumberofeventsbytypesmapvaluedata");
         }
 
         @Override
         public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
-        }
-
-        @Override
-        public Set<Parameters> getParams() {
-            return new HashSet<>(
-                    Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE, Parameters.PARAM}));
+            return MapValueData.class;
         }
 
         @Override

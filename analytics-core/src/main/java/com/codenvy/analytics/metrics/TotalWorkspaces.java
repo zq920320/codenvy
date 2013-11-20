@@ -16,20 +16,21 @@
  * from Codenvy S.A..
  */
 
+
 package com.codenvy.analytics.metrics;
 
-/**
- * Predefined metrics.
- *
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public enum MetricType {
-    CREATED_WORKSPACES,
-    DESTROYED_WORKSPACES,
-    TOTAL_WORKSPACES,
-    ACTIVE_WORKSPACES,
-    ACTIVE_WORKSPACES_LIST,
 
-    PROJECT_CREATED_TYPES
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TotalWorkspaces extends CumulativeMetric {
+
+    public TotalWorkspaces() {
+        super(MetricType.TOTAL_WORKSPACES,
+              (ReadBasedMetric)MetricFactory.getMetric(MetricType.CREATED_WORKSPACES),
+              (ReadBasedMetric)MetricFactory.getMetric(MetricType.DESTROYED_WORKSPACES));
+    }
+
+    @Override
+    public String getDescription() {
+        return "The total number of workspaces";
+    }
 }
-
