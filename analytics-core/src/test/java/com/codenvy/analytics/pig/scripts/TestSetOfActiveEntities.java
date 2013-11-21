@@ -23,8 +23,8 @@ import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.NonAggregatedResultMetric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.SimpleReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -176,7 +176,7 @@ public class TestSetOfActiveEntities extends BaseTest {
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws2"))));
     }
 
-    public class TestMetric extends SimpleReadBasedMetric {
+    public class TestMetric extends NonAggregatedResultMetric {
 
         private TestMetric() {
             super("testsetofactiveentities");

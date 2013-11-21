@@ -17,34 +17,34 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.ValueData;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class ParametrizedReadBasedMetric extends ReadBasedMetric {
+public abstract class AggregatedResultMetric extends ReadBasedMetric {
 
-    protected ParametrizedReadBasedMetric(String metricName) {
+    protected AggregatedResultMetric(String metricName) {
         super(metricName);
     }
 
-    protected ParametrizedReadBasedMetric(MetricType metricType) {
+    public AggregatedResultMetric(MetricType metricType) {
         super(metricType);
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected ValueData loadValue(Map<String, String> context) throws IOException {
-        return dataLoader.loadValue(this, context);
+    public boolean isAggregationSupport() {
+        return true;
     }
 
     @Override
-    public Set<Parameters> getParams() {
-        return new HashSet<>(
-                Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE, Parameters.PARAM}));
+    public DBObject getAggregator(Map<String, String> clauses) {
+        DBObject group = new BasicDBObject();
+
+        group.put("_id", null);
+        group.put("value", new BasicDBObject("$sum", "$value"));
+
+        return new BasicDBObject("$group", group);
     }
 }

@@ -23,7 +23,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class DestroyedWorkspaces extends SimpleReadBasedMetric {
+public class DestroyedWorkspaces extends AggregatedResultMetric {
 
     public DestroyedWorkspaces() {
         super(MetricType.DESTROYED_WORKSPACES);

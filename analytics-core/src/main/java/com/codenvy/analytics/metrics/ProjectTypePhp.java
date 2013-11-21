@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypePhp extends ParametrizedReadBasedMetric {
+public class ProjectTypePhp extends AggregatedParametrizedResultMetric {
 
     public ProjectTypePhp() {
         super(MetricType.PROJECT_TYPE_PHP);

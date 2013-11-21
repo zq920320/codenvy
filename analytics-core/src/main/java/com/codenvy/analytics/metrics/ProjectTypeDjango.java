@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypeDjango extends ParametrizedReadBasedMetric {
+public class ProjectTypeDjango extends AggregatedParametrizedResultMetric {
 
     public ProjectTypeDjango() {
         super(MetricType.PROJECT_TYPE_DJANGO);

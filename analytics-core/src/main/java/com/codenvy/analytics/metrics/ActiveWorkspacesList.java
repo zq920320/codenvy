@@ -21,7 +21,7 @@ import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveWorkspacesList extends SimpleReadBasedMetric {
+public class ActiveWorkspacesList extends NonAggregatedResultMetric {
 
     public ActiveWorkspacesList() {
         super(MetricType.ACTIVE_WORKSPACES_LIST);

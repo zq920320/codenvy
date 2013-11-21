@@ -19,12 +19,19 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.storage.DataLoader;
 import com.codenvy.analytics.storage.DataStorageContainer;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * It is supposed to load calculated value {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
@@ -32,6 +39,8 @@ import java.util.Map;
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
+
+    private static final long DAY_IN_MILLISECONDS = 86400000L;
 
     protected final DataLoader dataLoader;
 
@@ -44,12 +53,52 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         this(metricType.toString());
     }
 
-    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        return loadValue(context);
+        return dataLoader.loadValue(this, context);
     }
 
-    abstract protected ValueData loadValue(Map<String, String> context) throws IOException;
+    @Override
+    public Set<Parameters> getParams() {
+        return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
+    }
+
+    // --------------------------------------------------------
+
+    /** Indicates if query result have to be aggregated before computation {@link ValueData} */
+    public abstract boolean isAggregationSupport();
+
+    /**
+     * Returns aggregation rule. See mongoDB documentation for more information.
+     *
+     * @param clauses
+     *         execution context
+     * @return {@link DBObject}
+     */
+    public abstract DBObject getAggregator(Map<String, String> clauses);
+
+    /**
+     * Returns matching rule. See mongoDB documentation for more information.
+     *
+     * @param clauses
+     *         execution context
+     * @return {@link DBObject}
+     */
+    public DBObject getMatcher(Map<String, String> clauses) throws ParseException {
+        BasicDBObject match = new BasicDBObject();
+
+        DBObject range = new BasicDBObject();
+        range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
+        range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
+        match.put("_id", range);
+
+        for (MetricFilter filter : Utils.getFilters(clauses)) {
+            String[] values = filter.get(clauses).split(",");
+            match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
+        }
+
+        return new BasicDBObject("$match", match);
+    }
+
 }
 

@@ -21,7 +21,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class RemovedUsers extends SimpleReadBasedMetric {
+public class RemovedUsers extends AggregatedResultMetric {
 
     public RemovedUsers() {
         super(MetricType.REMOVED_USERS);

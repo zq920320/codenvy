@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeMMP extends ParametrizedReadBasedMetric {
+public class ProjectTypeMMP extends AggregatedParametrizedResultMetric {
 
     public ProjectTypeMMP() {
         super(MetricType.PROJECT_TYPE_MMP);

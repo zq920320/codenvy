@@ -17,33 +17,28 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.ValueData;
+import com.mongodb.DBObject;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class SimpleReadBasedMetric extends ReadBasedMetric {
+public abstract class NonAggregatedResultMetric extends ReadBasedMetric {
 
-    protected SimpleReadBasedMetric(String metricName) {
+    protected NonAggregatedResultMetric(String metricName) {
         super(metricName);
     }
 
-    public SimpleReadBasedMetric(MetricType metricType) {
+    public NonAggregatedResultMetric(MetricType metricType) {
         super(metricType);
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected ValueData loadValue(Map<String, String> context) throws IOException {
-        return dataLoader.loadValue(this, context);
+    public boolean isAggregationSupport() {
+        return false;
     }
 
     @Override
-    public Set<Parameters> getParams() {
-        return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
+    public DBObject getAggregator(Map<String, String> clauses) {
+        throw new UnsupportedOperationException();
     }
 }

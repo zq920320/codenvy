@@ -21,9 +21,9 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AggregatedParametrizedResultMetric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ParametrizedReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -175,7 +175,6 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
-
     @Test
     public void testComplexFilterSingleParam() throws Exception {
         Map<String, String> context = Utils.newContext();
@@ -200,7 +199,7 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(4L));
     }
 
-    public class TestMetric extends ParametrizedReadBasedMetric {
+    public class TestMetric extends AggregatedParametrizedResultMetric {
 
         private TestMetric() {
             super("testnumberofeventsbytypessimplevaluedata");

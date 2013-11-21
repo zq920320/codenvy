@@ -24,7 +24,6 @@ f = combineSmallSessions(l, 'session-started', 'session-finished');
 result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('value', delta);
 STORE result INTO '$STORAGE_URL.$METRIC' USING MongoStorage();
 
-
 r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1L);
 STORE r INTO '$STORAGE_URL.$METRIC-raw' USING MongoStorage();

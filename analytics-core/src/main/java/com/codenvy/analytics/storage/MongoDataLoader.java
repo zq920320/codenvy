@@ -20,7 +20,6 @@ package com.codenvy.analytics.storage;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.*;
 
@@ -31,9 +30,7 @@ import java.util.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoDataLoader implements DataLoader {
 
-    public static final  String VALUE_KEY                  = "value";
-    public static final  String EXT_COLLECTION_NAME_SUFFIX = "-raw";
-    private static final long   DAY_IN_MILLISECONDS        = 86400000L;
+    public static final String EXT_COLLECTION_NAME_SUFFIX = "-raw";
 
     private final DB          db;
     private final Set<String> filters;
@@ -62,19 +59,18 @@ public class MongoDataLoader implements DataLoader {
         DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
 
         try {
-            DBObject matcher = getMatcher(metric, clauses);
+            DBObject matcher = metric.getMatcher(clauses);
 
-            Class<? extends ValueData> clazz = metric.getValueDataClass();
-            if (clazz == LongValueData.class || clazz == DoubleValueData.class || clazz == StringValueData.class) {
-                DBObject aggregator = getAggregator(metric, clauses);
+            if (metric.isAggregationSupport()) {
+                DBObject aggregator = metric.getAggregator(clauses);
                 AggregationOutput aggregation = dbCollection.aggregate(matcher, aggregator);
 
                 return createdValueData(metric, aggregation.results().iterator());
-
             } else {
                 DBCursor dbCursor = dbCollection.find((DBObject)matcher.get("$match"));
                 return createdValueData(metric, dbCursor);
             }
+
 
         } catch (ParseException e) {
             throw new IOException(e);
@@ -91,39 +87,6 @@ public class MongoDataLoader implements DataLoader {
 
     private boolean isExtendedCollection(Map<String, String> clauses) {
         return Utils.getFilters(clauses).size() > 0;
-    }
-
-    private DBObject getMatcher(ReadBasedMetric metric, Map<String, String> clauses) throws ParseException {
-        BasicDBObject match = new BasicDBObject();
-
-        DBObject range = new BasicDBObject();
-        range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
-        range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
-        match.put("_id", range);
-
-        for (MetricFilter filter : Utils.getFilters(clauses)) {
-            String[] values = filter.get(clauses).split(",");
-            match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
-        }
-
-        return new BasicDBObject("$match", match);
-    }
-
-    private DBObject getAggregator(ReadBasedMetric metric, Map<String, String> clauses) throws ParseException {
-        DBObject group = new BasicDBObject();
-
-        group.put("_id", null);
-        group.put(VALUE_KEY, new BasicDBObject("$sum", "$" + VALUE_KEY));
-
-        for (Parameters param : metric.getParams()) {
-            if (param != Parameters.FROM_DATE && param != Parameters.TO_DATE) {
-                for (String field : param.get(clauses).split(",")) {
-                    group.put(field, new BasicDBObject("$sum", "$" + field));
-                }
-            }
-        }
-
-        return new BasicDBObject("$group", group);
     }
 
     private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {

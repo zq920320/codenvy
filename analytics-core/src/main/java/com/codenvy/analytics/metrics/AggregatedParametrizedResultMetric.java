@@ -15,36 +15,38 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
-import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeWar extends AggregatedParametrizedResultMetric {
+public abstract class AggregatedParametrizedResultMetric extends ReadBasedMetric {
 
-    public ProjectTypeWar() {
-        super(MetricType.PROJECT_TYPE_WAR);
+    protected AggregatedParametrizedResultMetric(String metricName) {
+        super(metricName);
+    }
+
+    protected AggregatedParametrizedResultMetric(MetricType metricType) {
+        super(metricType);
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "War,Java");
-        return super.getValue(context);
+    public boolean isAggregationSupport() {
+        return true;
     }
 
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
-    }
+    public DBObject getAggregator(Map<String, String> clauses) {
+        DBObject group = new BasicDBObject();
 
-    @Override
-    public String getDescription() {
-        return "The number of War projects";
+        group.put("_id", null);
+        for (String field : Parameters.PARAM.get(clauses).split(",")) {
+            group.put(field, new BasicDBObject("$sum", "$" + field));
+        }
+
+        return new BasicDBObject("$group", group);
     }
 }

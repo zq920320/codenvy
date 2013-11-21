@@ -21,7 +21,11 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypes extends SimpleReadBasedMetric {
+public class ProjectTypes extends NonAggregatedResultMetric {
+
+    public ProjectTypes(String metricName) {
+        super(metricName);
+    }
 
     public ProjectTypes() {
         super(MetricType.PROJECT_TYPES);

@@ -22,8 +22,8 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AggregatedResultMetric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -33,11 +33,7 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -85,30 +81,15 @@ public class TestMongoDataLoader extends BaseTest {
         assertEquals(new LongValueData(200), valueData);
     }
 
-    private class TestMetric extends ReadBasedMetric {
+    private class TestMetric extends AggregatedResultMetric {
 
         private TestMetric() {
             super("test");
         }
 
         @Override
-        public ValueData getValue(Map<String, String> context) throws IOException {
-            return null;
-        }
-
-        @Override
-        protected ValueData loadValue(Map<String, String> context) throws IOException {
-            return null;
-        }
-
-        @Override
         public Class<? extends ValueData> getValueDataClass() {
             return LongValueData.class;
-        }
-
-        @Override
-        public Set<Parameters> getParams() {
-            return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
         }
 
         @Override

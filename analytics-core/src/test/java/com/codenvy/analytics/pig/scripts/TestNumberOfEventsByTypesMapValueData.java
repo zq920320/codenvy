@@ -23,8 +23,8 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.NonAggregatedResultMetric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.SimpleReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -189,7 +189,7 @@ public class TestNumberOfEventsByTypesMapValueData extends BaseTest {
         assertEquals(values.get("ws2"), new LongValueData(2));
     }
 
-    public class TestMetric extends SimpleReadBasedMetric {
+    public class TestMetric extends NonAggregatedResultMetric {
 
         private TestMetric() {
             super("testnumberofeventsbytypesmapvaluedata");

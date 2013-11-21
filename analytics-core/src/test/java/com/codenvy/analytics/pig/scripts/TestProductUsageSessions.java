@@ -21,8 +21,8 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AggregatedResultMetric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.SimpleReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -120,7 +120,7 @@ public class TestProductUsageSessions extends BaseTest {
 //        assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
-    public class TestMetric extends SimpleReadBasedMetric {
+    public class TestMetric extends AggregatedResultMetric {
 
         private TestMetric() {
             super("testproductusagesessions");

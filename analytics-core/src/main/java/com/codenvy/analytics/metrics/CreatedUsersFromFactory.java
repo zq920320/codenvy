@@ -21,7 +21,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CreatedUsersFromFactory extends SimpleReadBasedMetric {
+public class CreatedUsersFromFactory extends AggregatedResultMetric {
 
     public CreatedUsersFromFactory() {
         super(MetricType.CREATED_USERS_FROM_FACTORY);

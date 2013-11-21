@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypeJar extends ParametrizedReadBasedMetric {
+public class ProjectTypeJar extends AggregatedParametrizedResultMetric {
 
     public ProjectTypeJar() {
         super(MetricType.PROJECT_TYPE_JAR);

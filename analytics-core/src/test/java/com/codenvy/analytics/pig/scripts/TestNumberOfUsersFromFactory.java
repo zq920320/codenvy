@@ -21,9 +21,9 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AggregatedResultMetric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.SimpleReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -144,7 +144,7 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(0L));
     }
 
-    public class TestMetric extends SimpleReadBasedMetric {
+    public class TestMetric extends AggregatedResultMetric {
 
         private TestMetric() {
             super("testnumberofusersfromfactory");

@@ -21,7 +21,7 @@ import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveUsersList extends SimpleReadBasedMetric {
+public class ActiveUsersList extends NonAggregatedResultMetric {
 
     public ActiveUsersList() {
         super(MetricType.ACTIVE_USERS_LIST);

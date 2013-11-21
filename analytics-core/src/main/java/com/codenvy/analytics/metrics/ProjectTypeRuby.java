@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeRuby extends ParametrizedReadBasedMetric {
+public class ProjectTypeRuby extends AggregatedParametrizedResultMetric {
 
     public ProjectTypeRuby() {
         super(MetricType.PROJECT_TYPE_RUBY);

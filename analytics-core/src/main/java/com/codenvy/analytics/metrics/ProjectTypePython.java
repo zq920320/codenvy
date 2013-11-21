@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypePython extends ParametrizedReadBasedMetric {
+public class ProjectTypePython extends AggregatedParametrizedResultMetric {
 
     public ProjectTypePython() {
         super(MetricType.PROJECT_TYPE_PYTHON);
