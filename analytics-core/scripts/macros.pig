@@ -308,14 +308,14 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     k2 = FILTER k1 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
     k = FOREACH k2 GENERATE dt, user;
 
-    -- finds which created users worked as anomymous
+    -- finds which created users worked as anonymous
     y1 = JOIN k BY user, t BY user;
     y = FOREACH y1 GENERATE k::dt AS dt, k::user AS user, t::tmpUser AS tmpUser;
 
     -- finds in which temporary workspaces registered users have worked
     z1 = JOIN y BY tmpUser, x BY tmpUser;
     z2 = FILTER z1 BY MilliSecondsBetween(y::dt, x::dt) >= 0;
-    z = FOREACH z2 GENERATE y::user AS user, x::tmpWs AS tmpWs;
+    z = FOREACH z2 GENERATE y::dt AS dt, y::user AS user, x::tmpWs AS tmpWs;
 
     $Y = DISTINCT z;
 };

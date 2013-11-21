@@ -18,7 +18,12 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.SimpleReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -29,17 +34,24 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfUsersFromFactory extends BaseTest {
 
-    private Map<String, String> params = new HashMap<>();
+    private TestMetric          metric;
+    private Map<String, String> params;
 
     @BeforeClass
     public void prepare() throws IOException {
+        metric = new TestMetric();
+        params = Utils.newContext();
+
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-1", "Anonymoususer_1", "website")
                         .withDate("2013-01-01").build());
@@ -66,7 +78,9 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.METRIC.put(params, "fake");
+        Parameters.METRIC.put(params, "testnumberofusersfromfactory");
+
+        PigServer.execute(ScriptType.NUMBER_OF_USERS_FROM_FACTORY, params);
     }
 
     @Test
@@ -76,9 +90,74 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
         assertTrue(iterator.hasNext());
 
         Tuple tuple = iterator.next();
-        assertEquals(tuple.get(1).toString(), "(date,20130101)");
-        assertEquals(tuple.get(2).toString(), "(value,1)");
+        assertEquals(tuple.get(0), dateFormat.parse("20130101").getTime());
+        assertEquals(tuple.get(1).toString(), "(value,1)");
 
         assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void testSingleDateFilterSingleParam() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+
+        assertEquals(metric.getValue(context), new LongValueData(1L));
+    }
+
+    @Test
+    public void testSingleDateFilterDoubleParam() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130102");
+        Parameters.TO_DATE.put(context, "20130102");
+
+        assertEquals(metric.getValue(context), new LongValueData(0L));
+    }
+
+    @Test
+    public void testSingleUserFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130102");
+        MetricFilter.USER.put(context, "user4@gmail.com");
+
+        assertEquals(metric.getValue(context), new LongValueData(1L));
+    }
+
+    @Test
+    public void testSingleUserFilterShouldReturnZero() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130102");
+        MetricFilter.USER.put(context, "user2@gmail.com");
+
+        assertEquals(metric.getValue(context), new LongValueData(0L));
+    }
+
+    @Test
+    public void testNonExistedFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+        MetricFilter.WS.put(context, "ws1");
+
+        assertEquals(metric.getValue(context), new LongValueData(0L));
+    }
+
+    public class TestMetric extends SimpleReadBasedMetric {
+
+        private TestMetric() {
+            super("testnumberofusersfromfactory");
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return LongValueData.class;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
     }
 }

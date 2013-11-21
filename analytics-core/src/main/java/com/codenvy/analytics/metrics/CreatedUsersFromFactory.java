@@ -15,34 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.view;
+package com.codenvy.analytics.metrics;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@XmlRootElement(name = "parameter")
-public class ParameterConfiguration {
+public class CreatedUsersFromFactory extends SimpleReadBasedMetric {
 
-    private String key;
-
-    private String value;
-
-    @XmlAttribute
-    public void setKey(String key) {
-        this.key = key;
+    public CreatedUsersFromFactory() {
+        super(MetricType.CREATED_USERS_FROM_FACTORY);
     }
 
-    @XmlAttribute
-    public void setValue(String value) {
-        this.value = value;
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
+    @Override
+    public String getDescription() {
+        return "The number of registered users from factories";
     }
 }

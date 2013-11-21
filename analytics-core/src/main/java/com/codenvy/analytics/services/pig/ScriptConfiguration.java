@@ -17,10 +17,14 @@
  */
 package com.codenvy.analytics.services.pig;
 
+import com.codenvy.analytics.services.ParameterConfiguration;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
@@ -28,40 +32,42 @@ import java.util.Map;
 public class ScriptConfiguration {
 
     private String name;
-
     private String description;
+    private List<ParameterConfiguration> parameters = new ArrayList<>();
 
-    private Map<String, String> parameters = new HashMap<>();
-
-    /** Setter for {@link #name} */
-    @XmlAttribute
+    @XmlAttribute(name = "name")
     public void setName(String name) {
         this.name = name;
     }
 
-    /** Setter for {@link #parameters} */
-    public void setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
-    }
-
-    /** Setter for {@link #description} */
-    @XmlElement
+    @XmlElement(name = "description")
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /** Getter for {@link #description} */
     public String getDescription() {
         return description;
     }
 
-    /** Getter for {@link #name} */
+    @XmlElement(name = "parameter")
+    public void setParameters(List<ParameterConfiguration> parameters) {
+        this.parameters = parameters;
+    }
+
     public String getName() {
         return name;
     }
 
-    /** Getter for {@link #parameters} */
-    public Map<String, String> getParameters() {
+    public List<ParameterConfiguration> getParameters() {
         return parameters;
+    }
+
+    public Map<String, String> getParamsAsMap() {
+        Map<String, String> result = new HashMap<>(parameters.size());
+        for (ParameterConfiguration parameter : parameters) {
+            result.put(parameter.getKey(), parameter.getValue());
+        }
+
+        return result;
     }
 }

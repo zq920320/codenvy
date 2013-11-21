@@ -15,19 +15,34 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.services;
 
-IMPORT 'macros.pig';
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = usersCreatedFromFactory(l);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@XmlRootElement(name = "parameter")
+public class ParameterConfiguration {
 
-a1 = FOREACH f GENERATE user;
-a2 = DISTINCT a1;
-a = countAll(a2);
+    private String key;
 
-result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
-STORE result INTO '$STORAGE_URL.$METRIC' USING MongoStorage();
+    private String value;
 
-r1 = FOREACH f GENERATE dt, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1L);
-STORE r INTO '$STORAGE_URL.$METRIC-raw' USING MongoStorage();
+    @XmlAttribute
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @XmlAttribute
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+}

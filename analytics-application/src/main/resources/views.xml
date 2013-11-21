@@ -56,4 +56,58 @@
             <parameter key="description" value="Non-Active Workspaces"/>
         </row>
     </section>
+
+    <section name="users" columns="20">
+        <row class="com.codenvy.analytics.services.view.DateRow">
+            <parameter key="format" value="MMM dd"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="created_users"/>
+            <parameter key="description" value="Total Created"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="created_users_from_factory"/>
+            <parameter key="description" value="Created From Factory"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="created_users_from_auth"/>
+            <parameter key="description" value="Created From Form / oAuth"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="total_users"/>
+            <parameter key="description" value="Total"/>
+        </row>
+    </section>
+
+    <section name="users_usage" columns="20">
+        <row class="com.codenvy.analytics.services.view.DateRow">
+            <parameter key="format" value="MMM dd"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="total_users"/>
+            <parameter key="description" value="Total"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="new_active_users"/>
+            <parameter key="description" value="New Active Users"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="returning_active_users"/>
+            <parameter key="description" value="Returning Active Users"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="non_active_users"/>
+            <parameter key="description" value="Non-Active Users"/>
+        </row>
+    </section>
+
+    <section name="users_engagement" columns="20">
+        <row class="com.codenvy.analytics.services.view.DateRow">
+            <parameter key="format" value="MMM dd"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="total_users"/>
+            <parameter key="description" value="Total"/>
+        </row>
+    </section>
 </view>

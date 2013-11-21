@@ -15,22 +15,35 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TotalWorkspaces extends CumulativeMetric {
+public class ActiveUsers extends CalculatedMetric {
 
-    public TotalWorkspaces() {
-        super(MetricType.TOTAL_WORKSPACES,
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.CREATED_WORKSPACES),
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.DESTROYED_WORKSPACES));
+    public ActiveUsers() {
+        super(MetricType.ACTIVE_USERS, new MetricType[]{MetricType.ACTIVE_USERS_LIST});
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        SetValueData value = (SetValueData)basedMetric[0].getValue(context);
+        return new LongValueData(value.size());
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     @Override
     public String getDescription() {
-        return "The total number of persistent workspaces";
+        return "Active users";
     }
 }

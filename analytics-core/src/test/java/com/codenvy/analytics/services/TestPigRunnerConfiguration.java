@@ -38,16 +38,8 @@ public class TestPigRunnerConfiguration {
     private static final String RESOURCE = "<scripts>" +
                                            "    <script name=\"test1\">" +
                                            "        <description>desc</description>" +
-                                           "        <parameters>" +
-                                           "            <entry>" +
-                                           "                <key>USER</key>" +
-                                           "                <value>REGISTERED</value>" +
-                                           "            </entry>" +
-                                           "            <entry>" +
-                                           "                <key>WS</key>" +
-                                           "                <value>PERSISTENT</value>" +
-                                           "            </entry>" +
-                                           "        </parameters>" +
+                                           "        <parameter key=\"USER\" value=\"REGISTERED\" />" +
+                                           "        <parameter key=\"WS\" value=\"PERSISTENT\" />" +
                                            "    </script>" +
                                            "</scripts>";
 
@@ -67,7 +59,7 @@ public class TestPigRunnerConfiguration {
         assertEquals("test1", scriptConfiguration.getName());
         assertEquals("desc", scriptConfiguration.getDescription());
 
-        Map<String, String> parameters = scriptConfiguration.getParameters();
+        Map<String, String> parameters = scriptConfiguration.getParamsAsMap();
         assertEquals(2, parameters.size());
         assertEquals("REGISTERED", parameters.get("USER"));
         assertEquals("PERSISTENT", parameters.get("WS"));

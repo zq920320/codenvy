@@ -15,19 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = usersCreatedFromFactory(l);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class RemovedUsers extends SimpleReadBasedMetric {
 
-a1 = FOREACH f GENERATE user;
-a2 = DISTINCT a1;
-a = countAll(a2);
+    public RemovedUsers() {
+        super(MetricType.REMOVED_USERS);
+    }
 
-result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
-STORE result INTO '$STORAGE_URL.$METRIC' USING MongoStorage();
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
+    }
 
-r1 = FOREACH f GENERATE dt, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1L);
-STORE r INTO '$STORAGE_URL.$METRIC-raw' USING MongoStorage();
+    @Override
+    public String getDescription() {
+        return "The number of removed users";
+    }
+}

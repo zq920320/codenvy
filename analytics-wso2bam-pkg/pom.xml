@@ -48,6 +48,12 @@
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.analytics</groupId>
+            <artifactId>analytics-wso2bam-toolbox</artifactId>
+            <version>${project.version}</version>
+            <type>tbox</type>
+        </dependency>
+        <dependency>
             <groupId>org.wso2</groupId>
             <artifactId>bam</artifactId>
             <version>${wso2.bam.version}</version>
@@ -104,6 +110,18 @@
                                     <outputDirectory>${project.build.directory}/packager-conf/zip</outputDirectory>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>copy-dependencies-tbox</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeTypes>tbox</includeTypes>
+                                    <stripVersion>false</stripVersion>
+                                    <outputDirectory>${project.build.directory}/packager-conf/tbox</outputDirectory>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -136,6 +154,9 @@
                                         </copy>
                                         <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/" overwrite="true">
                                             <fileset dir="${project.build.directory}/packager-conf/war"/>
+                                        </copy>
+                                        <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/bam-toolbox/" overwrite="true">
+                                            <fileset dir="${project.build.directory}/packager-conf/tbox"/>
                                         </copy>
                                         <move file="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/analytics-rest-service.war" tofile="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/api.war"/>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/*.sh" perm="+x"/>

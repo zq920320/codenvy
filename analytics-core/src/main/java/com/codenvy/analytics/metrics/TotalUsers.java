@@ -16,18 +16,21 @@
  * from Codenvy S.A..
  */
 
-IMPORT 'macros.pig';
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = usersCreatedFromFactory(l);
+package com.codenvy.analytics.metrics;
 
-a1 = FOREACH f GENERATE user;
-a2 = DISTINCT a1;
-a = countAll(a2);
 
-result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
-STORE result INTO '$STORAGE_URL.$METRIC' USING MongoStorage();
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TotalUsers extends CumulativeMetric {
 
-r1 = FOREACH f GENERATE dt, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1L);
-STORE r INTO '$STORAGE_URL.$METRIC-raw' USING MongoStorage();
+    public TotalUsers() {
+        super(MetricType.TOTAL_USERS,
+              (ReadBasedMetric)MetricFactory.getMetric(MetricType.CREATED_USERS),
+              (ReadBasedMetric)MetricFactory.getMetric(MetricType.REMOVED_USERS));
+    }
+
+    @Override
+    public String getDescription() {
+        return "The total number of registered users";
+    }
+}

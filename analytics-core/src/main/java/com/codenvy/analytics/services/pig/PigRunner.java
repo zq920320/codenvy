@@ -81,7 +81,7 @@ public class PigRunner implements Feature {
 
             for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {
                 String scriptName = scriptConfiguration.getName();
-                Map<String, String> parameters = scriptConfiguration.getParameters();
+                Map<String, String> parameters = scriptConfiguration.getParamsAsMap();
 
                 ScriptType scriptType = ScriptType.valueOf(scriptName.toUpperCase());
                 parameters.putAll(context);

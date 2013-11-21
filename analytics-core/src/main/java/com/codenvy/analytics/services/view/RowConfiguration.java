@@ -17,6 +17,8 @@
  */
 package com.codenvy.analytics.services.view;
 
+import com.codenvy.analytics.services.ParameterConfiguration;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,7 +32,6 @@ import java.util.Map;
 public class RowConfiguration {
 
     private String clazz;
-
     private List<ParameterConfiguration> parameters = new ArrayList<>();
 
     @XmlAttribute(name = "class")

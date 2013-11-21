@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+         CODENVY CONFIDENTIAL
+         ________________
+
+         [2012] - [2013] Codenvy, S.A.
+         All Rights Reserved.
+         NOTICE: All information contained herein is, and remains
+         the property of Codenvy S.A. and its suppliers,
+         if any. The intellectual and technical concepts contained
+         herein are proprietary to Codenvy S.A.
+         and its suppliers and may be covered by U.S. and Foreign Patents,
+         patents in process, and are protected by trade secret or copyright law.
+         Dissemination of this information or reproduction of this material
+         is strictly forbidden unless prior written permission is obtained
+         from Codenvy S.A..
+-->
+<scripts>
+    <script name="number_of_events">
+        <description>The number of created persistent workspaces</description>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="tenant-created"/>
+        <parameter key="METRIC" value="created_workspaces"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of destroyed persistent workspaces</description>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="tenant-destroyed"/>
+        <parameter key="METRIC" value="destroyed_workspaces"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of created registered users</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="user-created"/>
+        <parameter key="METRIC" value="created_users"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of removed registered users</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="user-removed"/>
+        <parameter key="METRIC" value="removed_users"/>
+    </script>
+    <script name="active_entities_list">
+        <description>Active workspaces</description>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="*"/>
+        <parameter key="PARAM" value="ws"/>
+        <parameter key="METRIC" value="active_workspaces_list"/>
+    </script>
+    <script name="active_entities_list">
+        <description>Active users</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="*"/>
+        <parameter key="PARAM" value="user"/>
+        <parameter key="METRIC" value="active_users_list"/>
+    </script>
+    <script name="number_of_events_by_types">
+        <description>Project created by types</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="project-created"/>
+        <parameter key="PARAM" value="TYPE"/>
+        <parameter key="METRIC" value="project_created_types"/>
+    </script>
+    <script name="number_of_users_from_factory">
+        <description>The number of created users from factory</description>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="METRIC" value="created_users_from_factory"/>
+    </script>
+</scripts>
+
+
