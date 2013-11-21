@@ -19,4 +19,16 @@ com.codenvy.analytics.metrics.NewActiveUsers
 com.codenvy.analytics.metrics.ReturningActiveUsers
 
 com.codenvy.analytics.metrics.ProjectCreatedTypes
-
+com.codenvy.analytics.metrics.ProjectCreatedAndroid
+com.codenvy.analytics.metrics.ProjectCreatedDjango
+com.codenvy.analytics.metrics.ProjectCreatedJar
+com.codenvy.analytics.metrics.ProjectCreatedJavaScript
+com.codenvy.analytics.metrics.ProjectCreatedJsp
+com.codenvy.analytics.metrics.ProjectCreatedMMP
+com.codenvy.analytics.metrics.ProjectCreatedNodejs
+com.codenvy.analytics.metrics.ProjectCreatedOthers
+com.codenvy.analytics.metrics.ProjectCreatedPhp
+com.codenvy.analytics.metrics.ProjectCreatedPython
+com.codenvy.analytics.metrics.ProjectCreatedRuby
+com.codenvy.analytics.metrics.ProjectCreatedSpring
+com.codenvy.analytics.metrics.ProjectCreatedWar

@@ -57,6 +57,64 @@
         </row>
     </section>
 
+    <section name="projects_types" columns="20">
+        <row class="com.codenvy.analytics.services.view.DateRow">
+            <parameter key="format" value="MMM dd"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_jar"/>
+            <parameter key="description" value="Java Jar"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_war"/>
+            <parameter key="description" value="Java War"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_jsp"/>
+            <parameter key="description" value="Java JSP"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_spring"/>
+            <parameter key="description" value="Java Spring"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_php"/>
+            <parameter key="description" value="PHP"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_python"/>
+            <parameter key="description" value="Python"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_javascript"/>
+            <parameter key="description" value="JavaScript"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_ruby"/>
+            <parameter key="description" value="Ruby"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_mmp"/>
+            <parameter key="description" value="Maven Multi Project"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_nodejs"/>
+            <parameter key="description" value="Node.js"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_android"/>
+            <parameter key="description" value="Android"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_django"/>
+            <parameter key="description" value="Django"/>
+        </row>
+        <row class="com.codenvy.analytics.services.view.MetricRow">
+            <parameter key="name" value="project_type_others"/>
+            <parameter key="description" value="Others"/>
+        </row>
+    </section> 
+
     <section name="users" columns="20">
         <row class="com.codenvy.analytics.services.view.DateRow">
             <parameter key="format" value="MMM dd"/>
