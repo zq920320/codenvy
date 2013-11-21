@@ -22,22 +22,13 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypeNodejs extends AggregatedParametrizedResultMetric {
+public class ProjectTypeNodejs extends AbstractProjectType {
 
     public ProjectTypeNodejs() {
-        super(MetricType.PROJECT_TYPE_NODEJS);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "nodejs");
-        return super.getValue(context);
+        super(MetricType.PROJECT_TYPE_NODEJS, new String[]{"NodeJs"});
     }
 
     @Override

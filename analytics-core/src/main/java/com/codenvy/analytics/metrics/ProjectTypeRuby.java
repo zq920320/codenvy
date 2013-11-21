@@ -22,20 +22,11 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeRuby extends AggregatedParametrizedResultMetric {
+public class ProjectTypeRuby extends AbstractProjectType {
 
     public ProjectTypeRuby() {
-        super(MetricType.PROJECT_TYPE_RUBY);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Rails,Ruby");
-        return super.getValue(context);
+        super(MetricType.PROJECT_TYPE_RUBY, new String[]{"Rails", "Ruby"});
     }
 
     @Override

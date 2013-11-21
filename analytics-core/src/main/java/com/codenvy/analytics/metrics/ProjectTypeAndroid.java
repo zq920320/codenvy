@@ -22,29 +22,20 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypeAndroid extends AggregatedParametrizedResultMetric {
+public class ProjectTypeAndroid extends AbstractProjectType {
     
     public ProjectTypeAndroid() {
-        super(MetricType.PROJECT_TYPE_ANDROID);
+        super(MetricType.PROJECT_TYPE_ANDROID, new String[]{"Android", "google-mbs-client-android"});
     }
     
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
-        
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Android,google-mbs-client-android");
-        return super.getValue(context);
-    }
-    
+
     @Override
     public String getDescription() {
         return "The number of Android projects";

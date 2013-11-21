@@ -22,22 +22,13 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypePython extends AggregatedParametrizedResultMetric {
+public class ProjectTypePython extends AbstractProjectType {
 
     public ProjectTypePython() {
-        super(MetricType.PROJECT_TYPE_PYTHON);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Python");
-        return super.getValue(context);
+        super(MetricType.PROJECT_TYPE_PYTHON, new String[]{"Python"});
     }
 
     @Override

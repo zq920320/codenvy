@@ -19,9 +19,10 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AggregatedResultMetric;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.metrics.AbstractSessionsNumber;
+import com.codenvy.analytics.metrics.AbstractUsageTime;
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -44,20 +45,18 @@ import static org.testng.Assert.*;
 public class TestProductUsageSessions extends BaseTest {
 
     private Map<String, String> params;
-    private TestMetric          metric;
 
     @BeforeClass
     public void prepare() throws IOException {
         params = Utils.newContext();
-        metric = new TestMetric();
 
         List<Event> events = new ArrayList<>();
 
         // sessions #1 - 300s
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                        .withDate("2013-01-01").withTime("20:00:00").build());
+                        .withDate("2013-01-01").withTime("19:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                        .withDate("2013-01-01").withTime("20:05:00").build());
+                        .withDate("2013-01-01").withTime("19:04:00").build());
 
         // sessions #2 - 300s
         events.add(Event.Builder.createSessionStartedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
@@ -103,32 +102,94 @@ public class TestProductUsageSessions extends BaseTest {
 
         tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:00:00").getTime());
+        assertEquals(tuple.get(0), timeFormat.parse("20130101 19:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(value,300)");
+        assertEquals(tuple.get(2).toString(), "(value,240)");
 
         assertFalse(iterator.hasNext());
     }
 
     @Test
-    public void testSingleDateFilter() throws Exception {
+    public void testDateFilterMinIncludeMaxInclude() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
-//        metric.getValue(context);
-//        assertEquals(metric.getValue(context), new LongValueData(2L));
+        Metric metric = new TestUsageTimeMetric(240, 300, true, true);
+        assertEquals(metric.getValue(context), new LongValueData(540L));
+
+        metric = new TestSessionNumberMetric(240, 300, true, true);
+        assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
-    public class TestMetric extends AggregatedResultMetric {
+    @Test
+    public void testDateFilterMinIncludeMaxExclude() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
 
-        private TestMetric() {
-            super("testproductusagesessions");
+        Metric metric = new TestUsageTimeMetric(240, 300, true, false);
+        assertEquals(metric.getValue(context), new LongValueData(240L));
+
+        metric = new TestSessionNumberMetric(240, 300, true, false);
+        assertEquals(metric.getValue(context), new LongValueData(1L));
+    }
+
+    @Test
+    public void testDateFilterMinExcludeMaxExclude() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+
+        Metric metric = new TestUsageTimeMetric(240, 300, false, false);
+        assertEquals(metric.getValue(context), new LongValueData(0L));
+
+        metric = new TestSessionNumberMetric(240, 300, false, false);
+        assertEquals(metric.getValue(context), new LongValueData(0L));
+    }
+
+    @Test
+    public void testDateFilterMinExcludeMaxInclude() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+
+        Metric metric = new TestUsageTimeMetric(240, 300, false, true);
+        assertEquals(metric.getValue(context), new LongValueData(300L));
+
+        metric = new TestSessionNumberMetric(240, 300, false, true);
+        assertEquals(metric.getValue(context), new LongValueData(1L));
+    }
+
+    @Test
+    public void testDateFilterMinIncludeMaxIncludeNoData() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130102");
+        Parameters.TO_DATE.put(context, "20130102");
+
+        Metric metric = new TestUsageTimeMetric(240, 300, true, true);
+        assertEquals(metric.getValue(context), new LongValueData(0L));
+
+        metric = new TestSessionNumberMetric(240, 300, true, true);
+        assertEquals(metric.getValue(context), new LongValueData(0L));
+    }
+
+    public class TestUsageTimeMetric extends AbstractUsageTime {
+
+        public TestUsageTimeMetric(long min, long max, boolean includeMin, boolean includeMax) {
+            super("testproductusagesessions", min, max, includeMin, includeMax);
         }
 
         @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return ListValueData.class;
+        public String getDescription() {
+            return null;
+        }
+    }
+
+    public class TestSessionNumberMetric extends AbstractSessionsNumber {
+
+        public TestSessionNumberMetric(long min, long max, boolean includeMin, boolean includeMax) {
+            super("testproductusagesessions", min, max, includeMin, includeMax);
         }
 
         @Override

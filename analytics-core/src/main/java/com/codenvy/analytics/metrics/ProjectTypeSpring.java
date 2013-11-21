@@ -22,22 +22,13 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypeSpring extends AggregatedParametrizedResultMetric {
+public class ProjectTypeSpring extends AbstractProjectType {
 
     public ProjectTypeSpring() {
-        super(MetricType.PROJECT_TYPE_SPRING);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Spring");
-        return super.getValue(context);
+        super(MetricType.PROJECT_TYPE_SPRING, new String[]{"Spring"});
     }
 
     @Override

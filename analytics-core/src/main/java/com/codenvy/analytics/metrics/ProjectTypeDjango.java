@@ -22,22 +22,13 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectTypeDjango extends AggregatedParametrizedResultMetric {
+public class ProjectTypeDjango extends AbstractProjectType {
 
     public ProjectTypeDjango() {
-        super(MetricType.PROJECT_TYPE_DJANGO);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Django");
-        return super.getValue(context);
+        super(MetricType.PROJECT_TYPE_DJANGO, new String[]{"Django"});
     }
 
     @Override

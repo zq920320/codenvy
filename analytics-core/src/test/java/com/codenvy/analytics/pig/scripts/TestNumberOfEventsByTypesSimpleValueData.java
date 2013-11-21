@@ -21,7 +21,8 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AggregatedParametrizedResultMetric;
+import com.codenvy.analytics.metrics.AbstractProjectType;
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
@@ -45,12 +46,10 @@ import static org.testng.Assert.*;
 public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
 
     private Map<String, String> params;
-    private TestMetric          metric;
 
     @BeforeClass
     public void init() throws IOException {
         params = Utils.newContext();
-        metric = new TestMetric();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
@@ -116,8 +115,8 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130102");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
 
+        Metric metric = new TestMetric(new String[]{"ws1"});
         assertEquals(metric.getValue(context), new LongValueData(1L));
     }
 
@@ -126,8 +125,8 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130102");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1,ws2");
 
+        Metric metric = new TestMetric(new String[]{"ws1", "ws2"});
         assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
@@ -137,8 +136,8 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
 
+        Metric metric = new TestMetric(new String[]{"ws1"});
         assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
@@ -147,9 +146,9 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
+        Metric metric = new TestMetric(new String[]{"ws1"});
         assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
@@ -158,9 +157,9 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
         MetricFilter.USER.put(context, "user2@gmail.com");
 
+        Metric metric = new TestMetric(new String[]{"ws1"});
         assertEquals(metric.getValue(context), new LongValueData(0L));
     }
 
@@ -169,9 +168,9 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
 
+        Metric metric = new TestMetric(new String[]{"ws1"});
         assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
@@ -180,10 +179,10 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1");
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
         MetricFilter.WS.put(context, "ws1,ws2");
 
+        Metric metric = new TestMetric(new String[]{"ws1"});
         assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
@@ -192,17 +191,17 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
-        Parameters.PARAM.put(context, "ws1,ws2");
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
         MetricFilter.WS.put(context, "ws1,ws2");
 
+        Metric metric = new TestMetric(new String[]{"ws1", "ws2"});
         assertEquals(metric.getValue(context), new LongValueData(4L));
     }
 
-    public class TestMetric extends AggregatedParametrizedResultMetric {
+    public class TestMetric extends AbstractProjectType {
 
-        private TestMetric() {
-            super("testnumberofeventsbytypessimplevaluedata");
+        private TestMetric(String[] types) {
+            super("testnumberofeventsbytypessimplevaluedata", types);
         }
 
         @Override

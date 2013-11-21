@@ -22,20 +22,11 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeMMP extends AggregatedParametrizedResultMetric {
+public class ProjectTypeMMP extends AbstractProjectType {
 
     public ProjectTypeMMP() {
-        super(MetricType.PROJECT_TYPE_MMP);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Maven Multi-module");
-        return super.getValue(context);
+        super(MetricType.PROJECT_TYPE_MMP, new String[]{"Maven Multi-module"});
     }
 
     @Override

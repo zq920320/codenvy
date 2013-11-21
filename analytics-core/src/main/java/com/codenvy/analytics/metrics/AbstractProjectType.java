@@ -23,14 +23,17 @@ import com.mongodb.DBObject;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AggregatedParametrizedResultMetric extends ReadBasedMetric {
+public abstract class AbstractProjectType extends ReadBasedMetric {
 
-    protected AggregatedParametrizedResultMetric(String metricName) {
+    private final String[] types;
+
+    protected AbstractProjectType(String metricName, String[] types) {
         super(metricName);
+        this.types = types;
     }
 
-    protected AggregatedParametrizedResultMetric(MetricType metricType) {
-        super(metricType);
+    protected AbstractProjectType(MetricType metricType, String[] types) {
+        this(metricType.name(), types);
     }
 
     @Override
@@ -43,7 +46,8 @@ public abstract class AggregatedParametrizedResultMetric extends ReadBasedMetric
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);
-        for (String field : Parameters.PARAM.get(clauses).split(",")) {
+        for (String type : types) {
+            String field = type.toLowerCase();
             group.put(field, new BasicDBObject("$sum", "$" + field));
         }
 
