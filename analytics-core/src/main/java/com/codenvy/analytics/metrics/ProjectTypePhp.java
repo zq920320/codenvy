@@ -19,18 +19,18 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedPhp extends ParametrizedReadBasedMetric {
+public class ProjectTypePhp extends ParametrizedReadBasedMetric {
 
-    public ProjectCreatedPhp() {
+    public ProjectTypePhp() {
         super(MetricType.PROJECT_TYPE_PHP);
     }
 

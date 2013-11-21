@@ -19,22 +19,24 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectCreatedRuby extends ParametrizedReadBasedMetric {
+import java.io.IOException;
+import java.util.Map;
 
-    public ProjectCreatedRuby() {
-        super(MetricType.PROJECT_TYPE_RUBY);
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
+public class ProjectTypeJar extends ParametrizedReadBasedMetric {
+
+    public ProjectTypeJar() {
+        super(MetricType.PROJECT_TYPE_JAR);
     }
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Rails,Ruby");
+        Parameters.PARAM.put(context, "Jar");
         return super.getValue(context);
     }
 
@@ -45,6 +47,6 @@ public class ProjectCreatedRuby extends ParametrizedReadBasedMetric {
 
     @Override
     public String getDescription() {
-        return "The number of Ruby projects";
+        return "The number of Java Jar projects";
     }
 }

@@ -18,9 +18,7 @@
 -->
 <view time-unit="day,week,month,lifetime">
     <section name="workspaces" columns="20">
-        <row class="com.codenvy.analytics.services.view.DateRow">
-            <parameter key="format" value="MMM dd"/>
-        </row>
+        <row class="com.codenvy.analytics.services.view.DateRow"/>
         <row class="com.codenvy.analytics.services.view.MetricRow">
             <parameter key="name" value="created_workspaces"/>
             <parameter key="description" value="Created Workspaces"/>
@@ -36,9 +34,7 @@
     </section>
 
     <section name="workspaces_usage" columns="20">
-        <row class="com.codenvy.analytics.services.view.DateRow">
-            <parameter key="format" value="MMM dd"/>
-        </row>
+        <row class="com.codenvy.analytics.services.view.DateRow"/>
         <row class="com.codenvy.analytics.services.view.MetricRow">
             <parameter key="name" value="total_workspaces"/>
             <parameter key="description" value="Total"/>
@@ -58,9 +54,7 @@
     </section>
 
     <section name="projects_types" columns="20">
-        <row class="com.codenvy.analytics.services.view.DateRow">
-            <parameter key="format" value="MMM dd"/>
-        </row>
+        <row class="com.codenvy.analytics.services.view.DateRow"/>
         <row class="com.codenvy.analytics.services.view.MetricRow">
             <parameter key="name" value="project_type_jar"/>
             <parameter key="description" value="Java Jar"/>
@@ -116,9 +110,7 @@
     </section> 
 
     <section name="users" columns="20">
-        <row class="com.codenvy.analytics.services.view.DateRow">
-            <parameter key="format" value="MMM dd"/>
-        </row>
+        <row class="com.codenvy.analytics.services.view.DateRow"/>
         <row class="com.codenvy.analytics.services.view.MetricRow">
             <parameter key="name" value="created_users"/>
             <parameter key="description" value="Total Created"/>
@@ -138,9 +130,7 @@
     </section>
 
     <section name="users_usage" columns="20">
-        <row class="com.codenvy.analytics.services.view.DateRow">
-            <parameter key="format" value="MMM dd"/>
-        </row>
+        <row class="com.codenvy.analytics.services.view.DateRow"/>
         <row class="com.codenvy.analytics.services.view.MetricRow">
             <parameter key="name" value="total_users"/>
             <parameter key="description" value="Total"/>
@@ -160,9 +150,7 @@
     </section>
 
     <section name="users_engagement" columns="20">
-        <row class="com.codenvy.analytics.services.view.DateRow">
-            <parameter key="format" value="MMM dd"/>
-        </row>
+        <row class="com.codenvy.analytics.services.view.DateRow"/>
         <row class="com.codenvy.analytics.services.view.MetricRow">
             <parameter key="name" value="total_users"/>
             <parameter key="description" value="Total"/>

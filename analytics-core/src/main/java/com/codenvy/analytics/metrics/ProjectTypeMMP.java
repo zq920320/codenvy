@@ -19,24 +19,22 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ProjectCreatedDjango extends ParametrizedReadBasedMetric {
+import java.io.IOException;
+import java.util.Map;
 
-    public ProjectCreatedDjango() {
-        super(MetricType.PROJECT_TYPE_DJANGO);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class ProjectTypeMMP extends ParametrizedReadBasedMetric {
+
+    public ProjectTypeMMP() {
+        super(MetricType.PROJECT_TYPE_MMP);
     }
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Django");
+        Parameters.PARAM.put(context, "Maven Multi-module");
         return super.getValue(context);
     }
 
@@ -47,6 +45,6 @@ public class ProjectCreatedDjango extends ParametrizedReadBasedMetric {
 
     @Override
     public String getDescription() {
-        return "The number of Django projects";
+        return "The number of Maven Multi-module projects";
     }
 }

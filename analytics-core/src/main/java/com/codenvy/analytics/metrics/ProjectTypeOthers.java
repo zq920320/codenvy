@@ -19,37 +19,32 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ProjectCreatedAndroid extends ParametrizedReadBasedMetric {
-    
-    public ProjectCreatedAndroid() {
-        super(MetricType.PROJECT_TYPE_ANDROID);
+import java.io.IOException;
+import java.util.Map;
+
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class ProjectTypeOthers extends ParametrizedReadBasedMetric {
+
+    public ProjectTypeOthers() {
+        super(MetricType.PROJECT_TYPE_OTHERS);
     }
-    
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Parameters.PARAM.put(context, "null,default,Serv,eXo");
+        return super.getValue(context);
+    }
+
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
-        
-    @Override
-    protected ValueData loadValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Android,google-mbs-client-android");
-        return super.getValue(context);
-    }
-    
+
     @Override
     public String getDescription() {
-        return "The number of Android projects";
+        return "The number of undefined projects types";
     }
 }

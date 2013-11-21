@@ -19,22 +19,24 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectCreatedMMP extends ParametrizedReadBasedMetric {
+import java.io.IOException;
+import java.util.Map;
 
-    public ProjectCreatedMMP() {
-        super(MetricType.PROJECT_TYPE_MMP);
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
+public class ProjectTypeJsp extends ParametrizedReadBasedMetric {
+
+    public ProjectTypeJsp() {
+        super(MetricType.PROJECT_TYPE_JSP);
     }
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Maven Multi-module");
+        Parameters.PARAM.put(context, "Servlet/JSP");
         return super.getValue(context);
     }
 
@@ -45,6 +47,6 @@ public class ProjectCreatedMMP extends ParametrizedReadBasedMetric {
 
     @Override
     public String getDescription() {
-        return "The number of Maven Multi-module projects";
+        return "The number of JSP projects";
     }
 }

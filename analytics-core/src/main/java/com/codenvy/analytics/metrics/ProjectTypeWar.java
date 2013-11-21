@@ -15,27 +15,36 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
+
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectCreatedTypes extends SimpleReadBasedMetric {
+import java.io.IOException;
+import java.util.Map;
 
-    public ProjectCreatedTypes() {
-        super(MetricType.PROJECT_CREATED_TYPES);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class ProjectTypeWar extends ParametrizedReadBasedMetric {
+
+    public ProjectTypeWar() {
+        super(MetricType.PROJECT_TYPE_WAR);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Parameters.PARAM.put(context, "War,Java");
+        return super.getValue(context);
+    }
+
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return MapValueData.class;
+        return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Created projects by types";
+        return "The number of War projects";
     }
 }

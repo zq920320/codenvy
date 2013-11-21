@@ -19,32 +19,34 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectCreatedWar extends ParametrizedReadBasedMetric {
+import java.io.IOException;
+import java.util.Map;
 
-    public ProjectCreatedWar() {
-        super(MetricType.PROJECT_TYPE_WAR);
+/**
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
+public class ProjectTypeAndroid extends ParametrizedReadBasedMetric {
+    
+    public ProjectTypeAndroid() {
+        super(MetricType.PROJECT_TYPE_ANDROID);
     }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "War,Java");
-        return super.getValue(context);
-    }
-
+    
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
-
+        
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        Parameters.PARAM.put(context, "Android,google-mbs-client-android");
+        return super.getValue(context);
+    }
+    
     @Override
     public String getDescription() {
-        return "The number of War projects";
+        return "The number of Android projects";
     }
 }

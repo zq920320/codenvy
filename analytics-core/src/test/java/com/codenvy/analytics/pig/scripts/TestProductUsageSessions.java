@@ -18,7 +18,11 @@
 package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.SimpleReadBasedMetric;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -29,17 +33,24 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsageSessions extends BaseTest {
 
-    private Map<String, String> params = new HashMap<>();
+    private Map<String, String> params;
+    private TestMetric          metric;
 
     @BeforeClass
     public void prepare() throws IOException {
+        params = Utils.newContext();
+        metric = new TestMetric();
+
         List<Event> events = new ArrayList<>();
 
         // sessions #1 - 300s
@@ -70,31 +81,59 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.METRIC.put(params, "fake");
+        Parameters.METRIC.put(params, "testproductusagesessions");
         Parameters.LOG.put(params, log.getAbsolutePath());
+
+        PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
     }
 
     @Test
     public void testExecute() throws Exception {
         Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
 
-        Set<String> expected = new HashSet<>();
-        expected.add("(user,user@gmail.com),(value,300)");
-        expected.add("(user,ANONYMOUSUSER_user11),(value,300)");
-
         assertTrue(iterator.hasNext());
 
         Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 4);
-        assertEquals(tuple.get(1).toString(), "(date,20130101)");
-        expected.remove(tuple.get(2).toString() + "," + tuple.get(3).toString());
+        assertEquals(tuple.size(), 3);
+        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:00:00").getTime());
+        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
+        assertEquals(tuple.get(2).toString(), "(value,300)");
+
+        assertTrue(iterator.hasNext());
 
         tuple = iterator.next();
-        assertEquals(tuple.size(), 4);
-        assertEquals(tuple.get(1).toString(), "(date,20130101)");
-        expected.remove(tuple.get(2).toString() + "," + tuple.get(3).toString());
+        assertEquals(tuple.size(), 3);
+        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:00:00").getTime());
+        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
+        assertEquals(tuple.get(2).toString(), "(value,300)");
 
-        assertTrue(expected.isEmpty());
         assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void testSingleDateFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+
+//        metric.getValue(context);
+//        assertEquals(metric.getValue(context), new LongValueData(2L));
+    }
+
+    public class TestMetric extends SimpleReadBasedMetric {
+
+        private TestMetric() {
+            super("testproductusagesessions");
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return ListValueData.class;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
     }
 }

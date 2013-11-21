@@ -19,24 +19,24 @@
 
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public class ProjectCreatedJsp extends ParametrizedReadBasedMetric {
+public class ProjectTypeDjango extends ParametrizedReadBasedMetric {
 
-    public ProjectCreatedJsp() {
-        super(MetricType.PROJECT_TYPE_JSP);
+    public ProjectTypeDjango() {
+        super(MetricType.PROJECT_TYPE_DJANGO);
     }
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        Parameters.PARAM.put(context, "Servlet/JSP");
+        Parameters.PARAM.put(context, "Django");
         return super.getValue(context);
     }
 
@@ -47,6 +47,6 @@ public class ProjectCreatedJsp extends ParametrizedReadBasedMetric {
 
     @Override
     public String getDescription() {
-        return "The number of JSP projects";
+        return "The number of Django projects";
     }
 }

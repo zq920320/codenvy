@@ -15,17 +15,27 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class ProjectTypes extends SimpleReadBasedMetric {
 
-j1 = combineSmallSessions(t, 'session-started', 'session-finished');
-j2 = FOREACH j1 GENERATE ws, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, user, dt, delta;
-j = removeEmptyField(j2, 'domain');
+    public ProjectTypes() {
+        super(MetricType.PROJECT_TYPES);
+    }
 
-r1 = GROUP j BY domain;
-result = FOREACH r1 {
-    r2 = FOREACH j GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
-    GENERATE group, r2;
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return MapValueData.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription() {
+        return "Created projects by types";
+    }
 }
