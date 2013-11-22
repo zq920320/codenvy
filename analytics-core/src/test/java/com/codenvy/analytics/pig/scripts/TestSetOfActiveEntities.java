@@ -19,12 +19,11 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.NonAggregatedResultMetric;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -43,12 +42,10 @@ import static org.testng.Assert.*;
 public class TestSetOfActiveEntities extends BaseTest {
 
     private Map<String, String> params;
-    private TestMetric          metric;
 
     @BeforeClass
     public void init() throws IOException {
         params = Utils.newContext();
-        metric = new TestMetric();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
@@ -126,8 +123,11 @@ public class TestSetOfActiveEntities extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
+        Metric metric = new TestActiveUsersListMetric();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws2"))));
+        metric = new TestActiveUsersMetric();
+        assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
     @Test
@@ -136,10 +136,14 @@ public class TestSetOfActiveEntities extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
 
+        Metric metric = new TestActiveUsersListMetric();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws2"),
                                                                                          new StringValueData("ws3"),
                                                                                          new StringValueData("ws4"))));
+
+        metric = new TestActiveUsersMetric();
+        assertEquals(metric.getValue(context), new LongValueData(4));
     }
 
     @Test
@@ -149,8 +153,12 @@ public class TestSetOfActiveEntities extends BaseTest {
         Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
+        Metric metric = new TestActiveUsersListMetric();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws3"))));
+
+        metric = new TestActiveUsersMetric();
+        assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
     @Test
@@ -160,9 +168,13 @@ public class TestSetOfActiveEntities extends BaseTest {
         Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
 
+        Metric metric = new TestActiveUsersListMetric();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws2"),
                                                                                          new StringValueData("ws3"))));
+
+        metric = new TestActiveUsersMetric();
+        assertEquals(metric.getValue(context), new LongValueData(3));
     }
 
     @Test
@@ -173,23 +185,26 @@ public class TestSetOfActiveEntities extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
         MetricFilter.WS.put(context, "ws2");
 
+        Metric metric = new TestActiveUsersListMetric();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws2"))));
+
+        metric = new TestActiveUsersMetric();
+        assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
-    public class TestMetric extends NonAggregatedResultMetric {
-
-        private TestMetric() {
-            super("testsetofactiveentities");
-        }
+    public class TestActiveUsersListMetric extends ActiveUsersList {
 
         @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return SetValueData.class;
+        public String getStorageTable() {
+            return "testsetofactiveentities";
         }
+    }
+
+    public class TestActiveUsersMetric extends ActiveUsers {
 
         @Override
-        public String getDescription() {
-            return null;
+        public String getStorageTable() {
+            return "testsetofactiveentities";
         }
     }
 }

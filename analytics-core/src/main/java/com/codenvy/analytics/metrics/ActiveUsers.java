@@ -18,23 +18,31 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
-import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveUsers extends CalculatedMetric {
+public class ActiveUsers extends ReadBasedMetric {
 
     public ActiveUsers() {
-        super(MetricType.ACTIVE_USERS, new MetricType[]{MetricType.ACTIVE_USERS_LIST});
+        super(MetricType.ACTIVE_USERS);
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        SetValueData value = (SetValueData)basedMetric[0].getValue(context);
-        return new LongValueData(value.size());
+    public DBObject[] getDBOperations(Map<String, String> clauses) {
+        DBObject group = new BasicDBObject();
+        group.put("_id", "$value");
+        BasicDBObject opGroupBy = new BasicDBObject("$group", group);
+
+        group = new BasicDBObject();
+        group.put("_id", null);
+        group.put("value", new BasicDBObject("$sum", 1));
+        BasicDBObject opCount = new BasicDBObject("$group", group);
+
+        return new DBObject[]{opGroupBy, opCount};
     }
 
     @Override

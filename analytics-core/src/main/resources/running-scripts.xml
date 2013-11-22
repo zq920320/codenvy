@@ -76,6 +76,14 @@
         <parameter key="PARAM" value="TYPE"/>
         <parameter key="STORAGE_TABLE" value="project_types"/>
     </script>
+    <!--<script name="number_of_events_by_types">-->
+        <!--<description>Project created by types</description>-->
+        <!--<parameter key="USER" value="REGISTERED"/>-->
+        <!--<parameter key="WS" value="PERSISTENT"/>-->
+        <!--<parameter key="EVENT" value="project-created"/>-->
+        <!--<parameter key="PARAM" value="TYPE"/>-->
+        <!--<parameter key="STORAGE_TABLE" value="project_paases"/>-->
+    <!--</script>    -->
     <script name="number_of_users_from_factory">
         <description>The number of created users from factory</description>
         <parameter key="USER" value="ANY"/>
