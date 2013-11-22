@@ -46,15 +46,11 @@ public class ViewBuilder implements Feature {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ViewBuilder.class);
 
-    /** The directory where views are stored in. */
-    public static final String VIEW_DIR = "view";
-
-    private final ConfigurationManager<ViewConfiguration> configurationManager;
-
-    private final JdbcDataManager dataManager;
+    private final JdbcDataManager                            dataManager;
+    private final ConfigurationManager<DisplayConfiguration> configurationManager;
 
     public ViewBuilder() {
-        this.configurationManager = new XmlConfigurationManager<>(ViewConfiguration.class);
+        this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class);
         this.dataManager = JdbcDataManagerFactory.getDataManager();
     }
 
@@ -89,22 +85,24 @@ public class ViewBuilder implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            ViewConfiguration viewConfiguration = configurationManager.loadConfiguration("views.xml");
-            build(viewConfiguration);
+            DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration("views.xml");
+            build(displayConfiguration);
         } finally {
             LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
-    protected void build(ViewConfiguration viewConfiguration) throws Exception {
-        ForkJoinPool forkJoinPool = new ForkJoinPool(4);
+    protected void build(DisplayConfiguration displayConfiguration) throws Exception {
+        ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 2);
 
-        for (String timeUnitParam : viewConfiguration.getTimeUnit().split(",")) {
-            Parameters.TimeUnit timeUnit = Parameters.TimeUnit.valueOf(timeUnitParam.toUpperCase());
+        for (ViewConfiguration viewConfiguration : displayConfiguration.getViews()) {
+            for (String timeUnitParam : viewConfiguration.getTimeUnit().split(",")) {
+                Parameters.TimeUnit timeUnit = Parameters.TimeUnit.valueOf(timeUnitParam.toUpperCase());
 
-            for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
-                ComputeSectionData task = new ComputeSectionData(sectionConfiguration, timeUnit);
-                forkJoinPool.submit(task);
+                for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
+                    ComputeSectionData task = new ComputeSectionData(sectionConfiguration, timeUnit);
+                    forkJoinPool.submit(task);
+                }
             }
         }
 

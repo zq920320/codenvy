@@ -17,10 +17,12 @@
  */
 package com.codenvy.analytics.services;
 
+import com.codenvy.analytics.services.view.DisplayConfiguration;
 import com.codenvy.analytics.services.view.RowConfiguration;
 import com.codenvy.analytics.services.view.SectionConfiguration;
 import com.codenvy.analytics.services.view.ViewConfiguration;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
@@ -28,36 +30,39 @@ import java.io.ByteArrayInputStream;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertEquals;
 
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class TestViewConfigurationReader {
+public class TestDisplayConfigurationReader {
 
-    private static final String RESOURCE = "<view time-unit=\"day,week\">" +
-                                           "    <section name=\"workspaces\" columns=\"20\">" +
-                                           "        <row class=\"Date.class\">" +
-                                           "            <parameter key=\"format\" value=\"dd MMM\"/>" +
-                                           "        </row>" +
-                                           "        <row class=\"Empty.class\" />" +
-                                           "    </section>" +
-                                           "</view>";
+    private static final String RESOURCE = "<display>" +
+                                           "    <view time-unit=\"day,week\">" +
+                                           "        <section name=\"workspaces\" columns=\"20\">" +
+                                           "            <row class=\"Date.class\">" +
+                                           "                <parameter key=\"format\" value=\"dd MMM\"/>" +
+                                           "            </row>" +
+                                           "            <row class=\"Empty.class\" />" +
+                                           "        </section>" +
+                                           "    </view>" +
+                                           "</display>";
 
     @Test
     public void testParsingConfig() throws Exception {
-        XmlConfigurationManager<ViewConfiguration> spyService =
-                spy(new XmlConfigurationManager<>(ViewConfiguration.class));
+        XmlConfigurationManager<DisplayConfiguration> spyService =
+                spy(new XmlConfigurationManager<>(DisplayConfiguration.class));
 
         doReturn(new ByteArrayInputStream(RESOURCE.getBytes("UTF-8"))).when(spyService).openResource(anyString());
 
-        ViewConfiguration configuration = spyService.loadConfiguration(anyString());
+        DisplayConfiguration displayConfiguration = spyService.loadConfiguration(anyString());
+        Assert.assertEquals(1, displayConfiguration.getViews().size());
 
-        assertNotNull(configuration);
-        assertEquals("day,week", configuration.getTimeUnit());
-        assertEquals(1, configuration.getSections().size());
+        ViewConfiguration viewConfiguration = displayConfiguration.getViews().get(0);
 
-        SectionConfiguration sectionConfiguration = configuration.getSections().get(0);
+        assertEquals("day,week", viewConfiguration.getTimeUnit());
+        assertEquals(1, viewConfiguration.getSections().size());
+
+        SectionConfiguration sectionConfiguration = viewConfiguration.getSections().get(0);
         assertEquals(20, sectionConfiguration.getColumns());
         assertEquals("workspaces", sectionConfiguration.getName());
 

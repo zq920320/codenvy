@@ -20,8 +20,8 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.AbstractSessionsNumber;
-import com.codenvy.analytics.metrics.AbstractUsageTime;
+import com.codenvy.analytics.metrics.AbstractProductUsageSessions;
+import com.codenvy.analytics.metrics.AbstractProductUsageTime;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
@@ -174,7 +174,7 @@ public class TestProductUsageSessions extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(0L));
     }
 
-    public class TestUsageTimeMetric extends AbstractUsageTime {
+    public class TestUsageTimeMetric extends AbstractProductUsageTime {
 
         public TestUsageTimeMetric(long min, long max, boolean includeMin, boolean includeMax) {
             super("testproductusagesessions", min, max, includeMin, includeMax);
@@ -186,7 +186,7 @@ public class TestProductUsageSessions extends BaseTest {
         }
     }
 
-    public class TestSessionNumberMetric extends AbstractSessionsNumber {
+    public class TestSessionNumberMetric extends AbstractProductUsageSessions {
 
         public TestSessionNumberMetric(long min, long max, boolean includeMin, boolean includeMax) {
             super("testproductusagesessions", min, max, includeMin, includeMax);

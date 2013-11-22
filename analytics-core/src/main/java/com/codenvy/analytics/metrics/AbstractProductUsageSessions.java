@@ -26,14 +26,15 @@ import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractUsageTime extends ReadBasedMetric {
+public abstract class AbstractProductUsageSessions extends ReadBasedMetric {
 
     final private long    min;
     final private long    max;
     final private boolean includeMin;
     final private boolean includeMax;
 
-    protected AbstractUsageTime(String metricName, long min, long max, boolean includeMin, boolean includeMax) {
+    protected AbstractProductUsageSessions(String metricName, long min, long max, boolean includeMin,
+                                           boolean includeMax) {
         super(metricName);
         this.min = min;
         this.max = max;
@@ -41,7 +42,8 @@ public abstract class AbstractUsageTime extends ReadBasedMetric {
         this.includeMax = includeMax;
     }
 
-    protected AbstractUsageTime(MetricType metricType, long min, long max, boolean includeMin, boolean includeMax) {
+    protected AbstractProductUsageSessions(MetricType metricType, long min, long max, boolean includeMin,
+                                           boolean includeMax) {
         this(metricType.name(), min, max, includeMin, includeMax);
     }
 
@@ -60,7 +62,7 @@ public abstract class AbstractUsageTime extends ReadBasedMetric {
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", "$value"));
+        group.put("value", new BasicDBObject("$sum", 1));
 
         return new BasicDBObject("$group", group);
     }

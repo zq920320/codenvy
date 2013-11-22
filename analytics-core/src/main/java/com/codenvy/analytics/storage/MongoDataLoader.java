@@ -70,8 +70,6 @@ public class MongoDataLoader implements DataLoader {
                 DBCursor dbCursor = dbCollection.find((DBObject)matcher.get("$match"));
                 return createdValueData(metric, dbCursor);
             }
-
-
         } catch (ParseException e) {
             throw new IOException(e);
         }

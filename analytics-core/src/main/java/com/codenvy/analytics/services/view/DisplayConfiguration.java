@@ -17,43 +17,22 @@
  */
 package com.codenvy.analytics.services.view;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-@XmlRootElement(name = "view")
-public class ViewConfiguration {
+@XmlRootElement(name = "display")
+public class DisplayConfiguration {
 
-    private String                     name;
-    private String                     timeUnit;
-    private List<SectionConfiguration> sections;
+    private List<ViewConfiguration> views;
 
-    public List<SectionConfiguration> getSections() {
-        return sections;
+    public List<ViewConfiguration> getViews() {
+        return views;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    @XmlAttribute(name = "name")
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @XmlElement(name = "section")
-    public void setSections(List<SectionConfiguration> sections) {
-        this.sections = sections;
-    }
-
-    @XmlAttribute(name = "time-unit")
-    public void setTimeUnit(String timeUnit) {
-        this.timeUnit = timeUnit;
-    }
-
-    public String getTimeUnit() {
-        return timeUnit;
+    @XmlElement(name = "view")
+    public void setViews(List<ViewConfiguration> views) {
+        this.views = views;
     }
 }

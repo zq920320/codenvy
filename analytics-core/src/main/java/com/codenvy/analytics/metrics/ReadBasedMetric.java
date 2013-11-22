@@ -63,7 +63,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
     }
 
-    // --------------------------------------------------------
+    // --------------------------------------------- storage related methods -------------
 
     /** Indicates if query result have to be aggregated before computation {@link ValueData} */
     public abstract boolean isAggregationSupport();
@@ -76,6 +76,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * @return {@link DBObject}
      */
     public abstract DBObject getAggregator(Map<String, String> clauses);
+
+    public String getStorage() {
+        return getName().toLowerCase();
+    }
 
     /**
      * Returns matching rule. See mongoDB documentation for more information.
@@ -99,6 +103,5 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         return new BasicDBObject("$match", match);
     }
-
 }
 

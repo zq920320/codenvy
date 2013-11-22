@@ -32,3 +32,14 @@ com.codenvy.analytics.metrics.ProjectTypePython
 com.codenvy.analytics.metrics.ProjectTypeRuby
 com.codenvy.analytics.metrics.ProjectTypeSpring
 com.codenvy.analytics.metrics.ProjectTypeWar
+
+com.codenvy.analytics.metrics.ProductUsageTimeBelow1Min
+com.codenvy.analytics.metrics.ProductUsageTimeBetween1And10Min
+com.codenvy.analytics.metrics.ProductUsageTimeBetween10And60Min
+com.codenvy.analytics.metrics.ProductUsageTimeAbove60Min
+com.codenvy.analytics.metrics.ProductUsageTimeTotal
+com.codenvy.analytics.metrics.ProductUsageSessionsBelow1Min
+com.codenvy.analytics.metrics.ProductUsageSessionsBetween1And10Min
+com.codenvy.analytics.metrics.ProductUsageSessionsBetween10And60Min
+com.codenvy.analytics.metrics.ProductUsageSessionsAbove60Min
+com.codenvy.analytics.metrics.ProductUsageSessionsTotal

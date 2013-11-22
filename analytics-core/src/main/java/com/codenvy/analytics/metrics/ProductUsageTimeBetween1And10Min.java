@@ -15,24 +15,18 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractMetric implements Metric {
+public class ProductUsageTimeBetween1And10Min extends AbstractProductUsageTime {
 
-    protected final String metricName;
-
-    public AbstractMetric(String metricName) {
-        this.metricName = metricName.toLowerCase();
-    }
-
-    public AbstractMetric(MetricType metricType) {
-        this(metricType.toString());
+    public ProductUsageTimeBetween1And10Min() {
+        super(MetricType.PRODUCT_USAGE_TIME_BETWEEN_1_AND_10_MIN, 1, 10, false, false);
     }
 
     @Override
-    public String getName() {
-        return metricName;
+    public String getDescription() {
+        return "The total time of all sessions in persistent workspaces with duration between 1 and 10 minutes " +
+               "exclusively";
     }
 }

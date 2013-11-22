@@ -18,7 +18,6 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.services.XmlConfigurationManager;
@@ -31,10 +30,8 @@ import org.testng.annotations.Test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
@@ -47,19 +44,21 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestViewBuilder extends BaseTest {
 
-    private String RESOURCE = "<view time-unit=\"day\">\n" +
-                              "    <section name=\"workspaces\" columns=\"2\">\n" +
-                              "        <row class=\"com.codenvy.analytics.services.view.DateRow\"/>\n" +
-                              "        <row class=\"com.codenvy.analytics.services.view" +
+    private String RESOURCE = "<display>\n" +
+                              "     <view time-unit=\"day\">\n" +
+                              "         <section name=\"workspaces\" columns=\"2\">\n" +
+                              "             <row class=\"com.codenvy.analytics.services.view.DateRow\"/>\n" +
+                              "             <row class=\"com.codenvy.analytics.services.view" +
                               ".TestViewBuilder$TestMetricRow\">\n" +
-                              "            <parameter key=\"name\" value=\"CREATED_WORKSPACES\"/>\n" +
-                              "            <parameter key=\"description\" value=\"Created Workspaces\"/>\n" +
-                              "        </row>\n" +
-                              "        <row class=\"com.codenvy.analytics.services.view.EmptyRow\"/>\n" +
-                              "    </section>\n" +
-                              "</view>";
+                              "                 <parameter key=\"name\" value=\"CREATED_WORKSPACES\"/>\n" +
+                              "                 <parameter key=\"description\" value=\"Created Workspaces\"/>\n" +
+                              "             </row>\n" +
+                              "             <row class=\"com.codenvy.analytics.services.view.EmptyRow\"/>\n" +
+                              "         </section>\n" +
+                              "     </view>" +
+                              "</display>";
 
-    private ViewConfiguration viewConfiguration;
+    private DisplayConfiguration displayConfiguration;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -68,7 +67,7 @@ public class TestViewBuilder extends BaseTest {
             out.write(RESOURCE);
         }
 
-        viewConfiguration = new XmlConfigurationManager<>(ViewConfiguration.class)
+        displayConfiguration = new XmlConfigurationManager<>(DisplayConfiguration.class)
                 .loadConfiguration(view.getAbsolutePath());
     }
 
@@ -87,8 +86,8 @@ public class TestViewBuilder extends BaseTest {
             }
         }).when(spyBuilder).retainData(anyString(), anyList());
 
-        spyBuilder.build(viewConfiguration);
-        viewBuilder.build(viewConfiguration);
+        spyBuilder.build(displayConfiguration);
+        viewBuilder.build(displayConfiguration);
     }
 
     private void assertValueData(List<List<ValueData>> data) {
@@ -119,15 +118,4 @@ public class TestViewBuilder extends BaseTest {
         assertEquals(StringValueData.DEFAULT, emptyRow.get(2));
     }
 
-
-    public static class TestMetricRow extends MetricRow {
-        public TestMetricRow(Map<String, String> parameters) {
-            super(parameters);
-        }
-
-        @Override
-        protected ValueData getMetricValue(Map<String, String> context) throws IOException {
-            return new DoubleValueData(10);
-        }
-    }
 }
