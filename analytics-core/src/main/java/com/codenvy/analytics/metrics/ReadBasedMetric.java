@@ -65,9 +65,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     // --------------------------------------------- storage related methods -------------
 
-    /** Indicates if query result have to be aggregated before computation {@link ValueData} */
-    public abstract boolean isAggregationSupport();
-
     /**
      * Returns aggregation rule. See mongoDB documentation for more information.
      *
@@ -75,7 +72,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         execution context
      * @return {@link DBObject}
      */
-    public abstract DBObject getAggregator(Map<String, String> clauses);
+    public abstract DBObject[] getDBOperations(Map<String, String> clauses);
 
     public String getStorageTable() {
         return getName().toLowerCase();
@@ -88,7 +85,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         execution context
      * @return {@link DBObject}
      */
-    public DBObject getMatcher(Map<String, String> clauses) throws ParseException {
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException {
         BasicDBObject match = new BasicDBObject();
 
         DBObject range = new BasicDBObject();

@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class ProductUsageSessionsBetween10And60Min extends AbstractProductUsageSessions {
 
     public ProductUsageSessionsBetween10And60Min() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS_BETWEEN_10_AND_60_MIN, 10, 60, true, true);
+        super(MetricType.PRODUCT_USAGE_SESSIONS_BETWEEN_10_AND_60_MIN, 10 * 60, 60 * 60, true, true);
     }
 
     @Override

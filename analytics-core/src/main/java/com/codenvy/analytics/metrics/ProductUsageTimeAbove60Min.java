@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class ProductUsageTimeAbove60Min extends AbstractProductUsageTime {
 
     public ProductUsageTimeAbove60Min() {
-        super(MetricType.PRODUCT_USAGE_TIME_ABOVE_60_MIN, 60, Integer.MAX_VALUE, false, true);
+        super(MetricType.PRODUCT_USAGE_TIME_ABOVE_60_MIN, 60 * 60, Integer.MAX_VALUE, false, true);
     }
 
     @Override

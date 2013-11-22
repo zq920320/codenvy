@@ -33,12 +33,7 @@ public abstract class NonAggregatedResultMetric extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isAggregationSupport() {
-        return false;
-    }
-
-    @Override
-    public DBObject getAggregator(Map<String, String> clauses) {
-        throw new UnsupportedOperationException();
+    public DBObject[] getDBOperations(Map<String, String> clauses) {
+        return new DBObject[0];
     }
 }

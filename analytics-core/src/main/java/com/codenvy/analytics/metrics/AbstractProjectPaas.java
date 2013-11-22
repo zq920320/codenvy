@@ -42,12 +42,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isAggregationSupport() {
-        return true;
-    }
-
-    @Override
-    public DBObject getAggregator(Map<String, String> clauses) {
+    public DBObject[] getDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);
@@ -56,6 +51,6 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
             group.put(field, new BasicDBObject("$sum", "$" + field));
         }
 
-        return new BasicDBObject("$group", group);
+        return new DBObject[]{new BasicDBObject("$group", group)};
     }
 }

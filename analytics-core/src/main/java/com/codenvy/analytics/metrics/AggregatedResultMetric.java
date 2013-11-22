@@ -34,17 +34,12 @@ public abstract class AggregatedResultMetric extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isAggregationSupport() {
-        return true;
-    }
-
-    @Override
-    public DBObject getAggregator(Map<String, String> clauses) {
+    public DBObject[] getDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);
         group.put("value", new BasicDBObject("$sum", "$value"));
 
-        return new BasicDBObject("$group", group);
+        return new DBObject[]{new BasicDBObject("$group", group)};
     }
 }

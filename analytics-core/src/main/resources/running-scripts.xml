@@ -45,6 +45,13 @@
         <parameter key="EVENT" value="user-removed"/>
         <parameter key="STORAGE_TABLE" value="removed_users"/>
     </script>
+    <script name="number_of_events">
+        <description>The number of invites</description>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="user-invite"/>
+        <parameter key="STORAGE_TABLE" value="user_invite"/>
+    </script>
     <script name="active_entities_list">
         <description>Active workspaces</description>
         <parameter key="USER" value="ANY"/>

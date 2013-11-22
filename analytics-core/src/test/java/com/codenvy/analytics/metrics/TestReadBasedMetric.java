@@ -60,17 +60,12 @@ public class TestReadBasedMetric extends BaseTest {
 
         @Override
         public String getDescription() {
-            return null;
+            return "";
         }
 
         @Override
-        public boolean isAggregationSupport() {
-            return false;
-        }
-
-        @Override
-        public DBObject getAggregator(Map<String, String> clauses) {
-            return null;
+        public DBObject[] getDBOperations(Map<String, String> clauses) {
+            return new DBObject[0];
         }
     }
 }

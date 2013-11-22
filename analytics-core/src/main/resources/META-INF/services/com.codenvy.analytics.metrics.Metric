@@ -17,6 +17,7 @@ com.codenvy.analytics.metrics.ActiveUsers
 com.codenvy.analytics.metrics.NonActiveUsers
 com.codenvy.analytics.metrics.NewActiveUsers
 com.codenvy.analytics.metrics.ReturningActiveUsers
+com.codenvy.analytics.metrics.UserInvite
 
 com.codenvy.analytics.metrics.ProductUsageTimeBelow1Min
 com.codenvy.analytics.metrics.ProductUsageTimeBetween1And10Min

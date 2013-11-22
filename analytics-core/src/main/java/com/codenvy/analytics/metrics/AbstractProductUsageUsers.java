@@ -24,14 +24,17 @@ import com.mongodb.DBObject;
 
 import java.text.ParseException;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
 
-    final private long    min;
-    final private long    max;
-    final private boolean includeMin;
-    final private boolean includeMax;
+    private static final Pattern NON_ANONYMOUS_USER = Pattern.compile("^(?!ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
+
+    private final long    min;
+    private final long    max;
+    private final boolean includeMin;
+    private final boolean includeMax;
 
     protected AbstractProductUsageUsers(String metricName,
                                         long min,
@@ -64,30 +67,34 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isAggregationSupport() {
-        return true;
-    }
-
-    @Override
-    public DBObject getAggregator(Map<String, String> clauses) {
+    public DBObject[] getDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-
-        group.put("_id", "user");
-        group.put("value", new BasicDBObject("$sum", "value"));
-
-        return new BasicDBObject("$group", group);
-    }
-
-    @Override
-    public DBObject getMatcher(Map<String, String> clauses) throws ParseException {
-        DBObject dbObject = super.getMatcher(clauses);
-        DBObject match = (DBObject)dbObject.get("$match");
+        group.put("_id", "$user");
+        group.put("total", new BasicDBObject("$sum", "$value"));
+        BasicDBObject opGroupBy = new BasicDBObject("$group", group);
 
         DBObject range = new BasicDBObject();
         range.put(includeMin ? "$gte" : "$gt", min);
         range.put(includeMax ? "$lte" : "$lt", max);
-        match.put("value", range);
+        BasicDBObject opHaving = new BasicDBObject("$match", new BasicDBObject("total", range));
 
-        return dbObject;
+        group = new BasicDBObject();
+        group.put("_id", null);
+        group.put("value", new BasicDBObject("$sum", 1));
+        BasicDBObject opCount = new BasicDBObject("$group", group);
+
+        return new DBObject[]{opGroupBy, opHaving, opCount};
+    }
+
+    @Override
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException {
+        DBObject filter = super.getFilter(clauses);
+
+        DBObject match = (DBObject)filter.get("$match");
+        if (match.get("user") == null) {
+            match.put("user", NON_ANONYMOUS_USER);
+        }
+
+        return filter;
     }
 }

@@ -59,17 +59,11 @@ public class MongoDataLoader implements DataLoader {
         DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
 
         try {
-            DBObject matcher = metric.getMatcher(clauses);
+            DBObject filter = metric.getFilter(clauses);
+            DBObject[] dbOperations = metric.getDBOperations(clauses);
+            AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
 
-            if (metric.isAggregationSupport()) {
-                DBObject aggregator = metric.getAggregator(clauses);
-                AggregationOutput aggregation = dbCollection.aggregate(matcher, aggregator);
-
-                return createdValueData(metric, aggregation.results().iterator());
-            } else {
-                DBCursor dbCursor = dbCollection.find((DBObject)matcher.get("$match"));
-                return createdValueData(metric, dbCursor);
-            }
+            return createdValueData(metric, aggregation.results().iterator());
         } catch (ParseException e) {
             throw new IOException(e);
         }
@@ -140,7 +134,6 @@ public class MongoDataLoader implements DataLoader {
 
         return result;
     }
-
 
     private ValueData createLongValueData(Iterator<DBObject> iterator) {
         long value = 0;

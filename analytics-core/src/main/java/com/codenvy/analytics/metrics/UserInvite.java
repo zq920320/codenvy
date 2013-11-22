@@ -15,17 +15,32 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
+
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProductUsageSessionsBelow1Min extends AbstractProductUsageSessions {
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-    public ProductUsageSessionsBelow1Min() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS_BELOW_1_MIN, 0, 1 * 60, true, true);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UserInvite extends NonAggregatedResultMetric {
+
+    public UserInvite(String metricName) {
+        super(metricName);
+    }
+
+    public UserInvite() {
+        super(MetricType.USER_INVITE);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     @Override
     public String getDescription() {
-        return "The number of all sessions in persistent workspaces with duration less or equal to 1 minute";
+        return "The number of invites";
     }
 }

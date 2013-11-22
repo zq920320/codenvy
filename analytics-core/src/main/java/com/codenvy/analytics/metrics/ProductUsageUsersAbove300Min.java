@@ -18,14 +18,14 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProductUsageSessionsBelow1Min extends AbstractProductUsageSessions {
+public class ProductUsageUsersAbove300Min extends AbstractProductUsageUsers {
 
-    public ProductUsageSessionsBelow1Min() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS_BELOW_1_MIN, 0, 1 * 60, true, true);
+    public ProductUsageUsersAbove300Min() {
+        super(MetricType.PRODUCT_USAGE_USERS_ABOVE_300_MIN, 300 * 60, Integer.MAX_VALUE, false, true);
     }
 
     @Override
     public String getDescription() {
-        return "The number of all sessions in persistent workspaces with duration less or equal to 1 minute";
+        return "The number of registered users who spent in product between 60 and 300 minutes";
     }
 }

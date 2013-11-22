@@ -43,6 +43,7 @@ public enum MetricType {
     NON_ACTIVE_USERS,
     NEW_ACTIVE_USERS,
     RETURNING_ACTIVE_USERS,
+    USER_INVITE,
 
     CREATED_PROJECT,
 
