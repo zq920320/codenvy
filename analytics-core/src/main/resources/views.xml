@@ -110,6 +110,52 @@
             </row>
         </section>
 
+        <section name="projects_paas_types" columns="20">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="format" value="MMM dd" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_aws" />
+                <parameter key="description" value="AWS" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_appfog" />
+                <parameter key="description" value="AppFog" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_cloudbees" />
+                <parameter key="description" value="CloudBees" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_cloudfoundry" />
+                <parameter key="description" value="CloudFoundry" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_gae" />
+                <parameter key="description" value="GAE" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_heroku" />
+                <parameter key="description" value="Heroku" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_openshift" />
+                <parameter key="description" value="OpenShift" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_tier3" />
+                <parameter key="description" value="Tier3" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_manyamo" />
+                <parameter key="description" value="Manyamo" />
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_no_paas_defined" />
+                <parameter key="description" value="No PaaS Defined" />
+            </row>
+        </section>
+
         <section name="users" columns="20">
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">

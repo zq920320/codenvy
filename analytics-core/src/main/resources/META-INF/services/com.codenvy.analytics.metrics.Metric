@@ -43,3 +43,17 @@ com.codenvy.analytics.metrics.ProductUsageSessionsBetween1And10Min
 com.codenvy.analytics.metrics.ProductUsageSessionsBetween10And60Min
 com.codenvy.analytics.metrics.ProductUsageSessionsAbove60Min
 com.codenvy.analytics.metrics.ProductUsageSessionsTotal
+
+com.codenvy.analytics.metrics.ProjectDeployedTypes
+com.codenvy.analytics.metrics.ProjectNoPassDefined
+com.codenvy.analytics.metrics.ProjectPaasAny
+com.codenvy.analytics.metrics.ProjectPaasAppfog
+com.codenvy.analytics.metrics.ProjectPaasAws
+com.codenvy.analytics.metrics.ProjectPaasCloudbees
+com.codenvy.analytics.metrics.ProjectPaasCloudfoundry
+com.codenvy.analytics.metrics.ProjectPaasGae
+com.codenvy.analytics.metrics.ProjectPaasHeroku
+com.codenvy.analytics.metrics.ProjectPaasManymo
+com.codenvy.analytics.metrics.ProjectPaasOpenshift
+com.codenvy.analytics.metrics.ProjectPaasTier3
+com.codenvy.analytics.metrics.ProjectsCreated
