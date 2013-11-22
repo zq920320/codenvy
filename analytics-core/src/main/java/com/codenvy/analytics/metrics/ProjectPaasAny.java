@@ -17,11 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -39,19 +39,15 @@ public class ProjectPaasAny extends CalculatedMetric {
                                                             MetricType.PROJECT_PAAS_MANYAMO});
 
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        long projectsAnyPaaS = ((LongValueData)basedMetric[0].getValue(context)).getAsLong();
-        projectsAnyPaaS += ((LongValueData)basedMetric[1].getValue(context)).getAsLong();
-        projectsAnyPaaS += ((LongValueData)basedMetric[2].getValue(context)).getAsLong();
-        projectsAnyPaaS += ((LongValueData)basedMetric[3].getValue(context)).getAsLong();
-        projectsAnyPaaS += ((LongValueData)basedMetric[4].getValue(context)).getAsLong();
-        projectsAnyPaaS += ((LongValueData)basedMetric[5].getValue(context)).getAsLong();
-        projectsAnyPaaS += ((LongValueData)basedMetric[6].getValue(context)).getAsLong();
-        projectsAnyPaaS += ((LongValueData)basedMetric[7].getValue(context)).getAsLong();
-        projectsAnyPaaS += ((LongValueData)basedMetric[8].getValue(context)).getAsLong();
+        long projectsAnyPaaS = 0;
+
+        for (Metric metric : basedMetric) {
+            projectsAnyPaaS += ((LongValueData)metric.getValue(context)).getAsLong();
+        }
 
         return new LongValueData(projectsAnyPaaS);
     }

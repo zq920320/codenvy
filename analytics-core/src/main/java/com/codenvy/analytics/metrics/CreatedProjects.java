@@ -23,14 +23,14 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectsCreated extends NonAggregatedResultMetric {
+public class CreatedProjects extends NonAggregatedResultMetric {
 
-    public ProjectsCreated(String metricName) {
+    public CreatedProjects(String metricName) {
         super(metricName);
     }
     
-    public ProjectsCreated() {
-        super(MetricType.PROJECT_CREATED);
+    public CreatedProjects() {
+        super(MetricType.CREATED_PROJECT);
     }
 
     /** {@inheritDoc} */

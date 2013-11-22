@@ -17,25 +17,27 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectNoPassDefined extends CalculatedMetric {
 
     ProjectNoPassDefined() {
-        super(MetricType.PROJECT_NO_PAAS_DEFINED, new MetricType[]{MetricType.PROJECT_CREATED,
-                                                                    MetricType.PROJECT_PAAS_ANY});
+        super(MetricType.PROJECT_NO_PAAS_DEFINED, new MetricType[]{MetricType.CREATED_PROJECT,
+                                                                   MetricType.PROJECT_PAAS_ANY});
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        return new LongValueData(((LongValueData)basedMetric[0].getValue(context)).getAsLong()
-                                  - ((LongValueData)basedMetric[1].getValue(context)).getAsLong());
+        LongValueData created = (LongValueData)basedMetric[0].getValue(context);
+        LongValueData deployed = (LongValueData)basedMetric[1].getValue(context);
+
+        return new LongValueData(created.getAsLong() - deployed.getAsLong());
     }
 
     /** {@inheritDoc} */

@@ -20,10 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.AbstractProductUsageSessions;
-import com.codenvy.analytics.metrics.AbstractProductUsageTime;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -42,7 +39,7 @@ import java.util.Map;
 import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestProductUsageSessions extends BaseTest {
+public class TestProductUsage extends BaseTest {
 
     private Map<String, String> params;
 
@@ -80,7 +77,7 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.METRIC.put(params, "testproductusagesessions");
+        Parameters.STORAGE_TABLE.put(params, "testproductusagesessions");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
@@ -115,11 +112,14 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
-        Metric metric = new TestUsageTimeMetric(240, 300, true, true);
+        Metric metric = new TestProductUsageTime(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(540L));
 
-        metric = new TestSessionNumberMetric(240, 300, true, true);
+        metric = new TestProductUsageSessions(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(2L));
+
+//        metric = new TesttProductUsageUsers(240, 300, true, true);
+//        assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
     @Test
@@ -128,10 +128,10 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
-        Metric metric = new TestUsageTimeMetric(240, 300, true, false);
+        Metric metric = new TestProductUsageTime(240, 300, true, false);
         assertEquals(metric.getValue(context), new LongValueData(240L));
 
-        metric = new TestSessionNumberMetric(240, 300, true, false);
+        metric = new TestProductUsageSessions(240, 300, true, false);
         assertEquals(metric.getValue(context), new LongValueData(1L));
     }
 
@@ -141,10 +141,10 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
-        Metric metric = new TestUsageTimeMetric(240, 300, false, false);
+        Metric metric = new TestProductUsageTime(240, 300, false, false);
         assertEquals(metric.getValue(context), new LongValueData(0L));
 
-        metric = new TestSessionNumberMetric(240, 300, false, false);
+        metric = new TestProductUsageSessions(240, 300, false, false);
         assertEquals(metric.getValue(context), new LongValueData(0L));
     }
 
@@ -154,10 +154,10 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
-        Metric metric = new TestUsageTimeMetric(240, 300, false, true);
+        Metric metric = new TestProductUsageTime(240, 300, false, true);
         assertEquals(metric.getValue(context), new LongValueData(300L));
 
-        metric = new TestSessionNumberMetric(240, 300, false, true);
+        metric = new TestProductUsageSessions(240, 300, false, true);
         assertEquals(metric.getValue(context), new LongValueData(1L));
     }
 
@@ -167,17 +167,22 @@ public class TestProductUsageSessions extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130102");
         Parameters.TO_DATE.put(context, "20130102");
 
-        Metric metric = new TestUsageTimeMetric(240, 300, true, true);
+        Metric metric = new TestProductUsageTime(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(0L));
 
-        metric = new TestSessionNumberMetric(240, 300, true, true);
+        metric = new TestProductUsageSessions(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(0L));
     }
 
-    public class TestUsageTimeMetric extends AbstractProductUsageTime {
+    public class TesttProductUsageUsers extends AbstractProductUsageUsers {
 
-        public TestUsageTimeMetric(long min, long max, boolean includeMin, boolean includeMax) {
+        public TesttProductUsageUsers(long min, long max, boolean includeMin, boolean includeMax) {
             super("testproductusagesessions", min, max, includeMin, includeMax);
+        }
+
+        @Override
+        public String getStorageTable() {
+            return "testproductusagesessions";
         }
 
         @Override
@@ -186,10 +191,33 @@ public class TestProductUsageSessions extends BaseTest {
         }
     }
 
-    public class TestSessionNumberMetric extends AbstractProductUsageSessions {
 
-        public TestSessionNumberMetric(long min, long max, boolean includeMin, boolean includeMax) {
+    public class TestProductUsageTime extends AbstractProductUsageTime {
+
+        public TestProductUsageTime(long min, long max, boolean includeMin, boolean includeMax) {
             super("testproductusagesessions", min, max, includeMin, includeMax);
+        }
+
+        @Override
+        public String getStorageTable() {
+            return "testproductusagesessions";
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+    }
+
+    public class TestProductUsageSessions extends AbstractProductUsageSessions {
+
+        public TestProductUsageSessions(long min, long max, boolean includeMin, boolean includeMax) {
+            super("testproductusagesessions", min, max, includeMin, includeMax);
+        }
+
+        @Override
+        public String getStorageTable() {
+            return "testproductusagesessions";
         }
 
         @Override

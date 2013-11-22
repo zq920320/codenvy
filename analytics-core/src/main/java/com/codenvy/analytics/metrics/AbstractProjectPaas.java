@@ -17,10 +17,10 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.util.Map;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public abstract class AbstractProjectPaas extends ReadBasedMetric {
@@ -34,6 +34,11 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
 
     protected AbstractProjectPaas(MetricType metricType, String[] types) {
         this(metricType.name(), types);
+    }
+
+    @Override
+    public String getStorageTable() {
+        return "project_paases";
     }
 
     @Override

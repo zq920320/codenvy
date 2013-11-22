@@ -37,6 +37,11 @@ public abstract class AbstractProjectType extends ReadBasedMetric {
     }
 
     @Override
+    public String getStorageTable() {
+        return "project_types";
+    }
+
+    @Override
     public boolean isAggregationSupport() {
         return true;
     }

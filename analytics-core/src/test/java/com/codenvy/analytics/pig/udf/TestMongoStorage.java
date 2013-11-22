@@ -61,7 +61,7 @@ public class TestMongoStorage extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.METRIC.put(params, "testmongostorage");
+        Parameters.STORAGE_TABLE.put(params, "testmongostorage");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         mongoClient = new MongoClient(MONGO_CLIENT_URI);

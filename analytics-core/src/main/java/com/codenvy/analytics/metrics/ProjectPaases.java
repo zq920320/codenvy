@@ -3,18 +3,23 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectDeployedTypes extends NonAggregatedResultMetric {
+public class ProjectPaases extends NonAggregatedResultMetric {
 
-    public ProjectDeployedTypes(String metricName) {
+    public ProjectPaases(String metricName) {
         super(metricName);
     }
-    
-    public ProjectDeployedTypes() {
-        super(MetricType.PROJECT_DEPLOYED_TYPES);
+
+    public ProjectPaases() {
+        super(MetricType.PROJECT_PAASES);
+    }
+
+    @Override
+    public String getStorageTable() {
+        return "project_paases";
     }
 
     @Override
@@ -25,6 +30,6 @@ public class ProjectDeployedTypes extends NonAggregatedResultMetric {
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+        return MapValueData.class;
     }
 }

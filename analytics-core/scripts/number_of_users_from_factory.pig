@@ -26,8 +26,8 @@ a2 = DISTINCT a1;
 a = countAll(a2);
 
 result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
-STORE result INTO '$STORAGE_URL.$METRIC' USING MongoStorage();
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
 
 r1 = FOREACH f GENERATE dt, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1L);
-STORE r INTO '$STORAGE_URL.$METRIC-raw' USING MongoStorage();
+STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage();

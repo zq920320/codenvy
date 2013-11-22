@@ -110,7 +110,7 @@
             </row>
         </section>
 
-        <section name="projects_paas_types" columns="20">
+        <section name="projects_paases" columns="20">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="format" value="MMM dd" />
             </row>
@@ -201,6 +201,22 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_users"/>
                 <parameter key="description" value="Total"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="product_usage_users_below_10_min"/>
+                <parameter key="description" value="&#0060; 10 Min"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="product_usage_users_between_10_and_60_min"/>
+                <parameter key="description" value="&#0062;= 10 And &#0060; 60 Mins"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="product_usage_users_between_60_and_300_min"/>
+                <parameter key="description" value="&#0062;= 60 And &#0060; 300 Mins"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="product_usage_users_above_300_min"/>
+                <parameter key="description" value="&#0062; 300 Mins"/>
             </row>
         </section>
 

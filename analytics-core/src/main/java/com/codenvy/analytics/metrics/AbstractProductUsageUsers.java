@@ -26,18 +26,18 @@ import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractProductUsageSessions extends ReadBasedMetric {
+public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
 
     final private long    min;
     final private long    max;
     final private boolean includeMin;
     final private boolean includeMax;
 
-    protected AbstractProductUsageSessions(String metricName,
-                                           long min,
-                                           long max,
-                                           boolean includeMin,
-                                           boolean includeMax) {
+    protected AbstractProductUsageUsers(String metricName,
+                                        long min,
+                                        long max,
+                                        boolean includeMin,
+                                        boolean includeMax) {
         super(metricName);
         this.min = min;
         this.max = max;
@@ -45,11 +45,11 @@ public abstract class AbstractProductUsageSessions extends ReadBasedMetric {
         this.includeMax = includeMax;
     }
 
-    protected AbstractProductUsageSessions(MetricType metricType,
-                                           long min,
-                                           long max,
-                                           boolean includeMin,
-                                           boolean includeMax) {
+    protected AbstractProductUsageUsers(MetricType metricType,
+                                        long min,
+                                        long max,
+                                        boolean includeMin,
+                                        boolean includeMax) {
         this(metricType.name(), min, max, includeMin, includeMax);
     }
 
@@ -72,8 +72,8 @@ public abstract class AbstractProductUsageSessions extends ReadBasedMetric {
     public DBObject getAggregator(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
-        group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", 1));
+        group.put("_id", "user");
+        group.put("value", new BasicDBObject("$sum", "value"));
 
         return new BasicDBObject("$group", group);
     }

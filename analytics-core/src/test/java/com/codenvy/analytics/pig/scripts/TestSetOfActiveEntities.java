@@ -71,7 +71,7 @@ public class TestSetOfActiveEntities extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
         Parameters.PARAM.put(params, "ws");
-        Parameters.METRIC.put(params, "testsetofactiveentities");
+        Parameters.STORAGE_TABLE.put(params, "testsetofactiveentities");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, params);

@@ -77,9 +77,9 @@ public class MongoDataLoader implements DataLoader {
 
     private String getCollectionName(ReadBasedMetric metric, Map<String, String> clauses) {
         if (isExtendedCollection(clauses)) {
-            return metric.getName().toLowerCase() + EXT_COLLECTION_NAME_SUFFIX;
+            return metric.getStorageTable() + EXT_COLLECTION_NAME_SUFFIX;
         } else {
-            return metric.getName().toLowerCase();
+            return metric.getStorageTable();
         }
     }
 

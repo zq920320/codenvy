@@ -61,11 +61,11 @@ public enum ScriptType {
         public Set<Parameters> getParams() {
             return new LinkedHashSet<>(
                     Arrays.asList(new Parameters[]{Parameters.STORAGE_URL,
-                                                   Parameters.METRIC}));
+                                                   Parameters.STORAGE_TABLE}));
         }
     },
-    TEST_EXTRACT_USER,
     TEST_EXTRACT_WS,
+    TEST_EXTRACT_USER,
     TEST_EXTRACT_QUERY_PARAM,
     TEST_COMBINE_SMALL_SESSIONS,
     TEST_TIME_BETWEEN_PAIRS_OF_EVENTS;
@@ -74,12 +74,12 @@ public enum ScriptType {
     /** @return list of mandatory parameters required to be passed to the script */
     public Set<Parameters> getParams() {
         return new LinkedHashSet<>(
-                Arrays.asList(new Parameters[]{Parameters.FROM_DATE,
-                                               Parameters.TO_DATE,
+                Arrays.asList(new Parameters[]{Parameters.WS,
                                                Parameters.USER,
-                                               Parameters.WS,
+                                               Parameters.TO_DATE,
+                                               Parameters.FROM_DATE,
                                                Parameters.STORAGE_URL,
-                                               Parameters.METRIC}));
+                                               Parameters.STORAGE_TABLE}));
     }
 
     /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */

@@ -16,4 +16,4 @@
  * from Codenvy S.A..
  */
 
-result = LOAD '$STORAGE_URL.$METRIC' USING MongoLoader();
+result = LOAD '$STORAGE_URL.$STORAGE_TABLE' USING MongoLoader();

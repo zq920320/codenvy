@@ -77,7 +77,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      */
     public abstract DBObject getAggregator(Map<String, String> clauses);
 
-    public String getStorage() {
+    public String getStorageTable() {
         return getName().toLowerCase();
     }
 

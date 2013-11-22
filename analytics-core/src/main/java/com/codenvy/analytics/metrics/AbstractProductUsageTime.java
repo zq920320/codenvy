@@ -33,7 +33,11 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     final private boolean includeMin;
     final private boolean includeMax;
 
-    protected AbstractProductUsageTime(String metricName, long min, long max, boolean includeMin, boolean includeMax) {
+    protected AbstractProductUsageTime(String metricName,
+                                       long min,
+                                       long max,
+                                       boolean includeMin,
+                                       boolean includeMax) {
         super(metricName);
         this.min = min;
         this.max = max;
@@ -41,7 +45,10 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
         this.includeMax = includeMax;
     }
 
-    protected AbstractProductUsageTime(MetricType metricType, long min, long max, boolean includeMin,
+    protected AbstractProductUsageTime(MetricType metricType,
+                                       long min,
+                                       long max,
+                                       boolean includeMin,
                                        boolean includeMax) {
         this(metricType.name(), min, max, includeMin, includeMax);
     }
@@ -49,6 +56,11 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getStorageTable() {
+        return "product_usage_sessions";
     }
 
     @Override
