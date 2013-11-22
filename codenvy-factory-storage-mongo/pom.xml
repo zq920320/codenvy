@@ -21,51 +21,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.codenvy.factory</groupId>
         <artifactId>codenvy-factory-parent</artifactId>
+        <groupId>com.codenvy.factory</groupId>
         <version>0.3.0-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-factory-storage-mongo</artifactId>
-    <name>Codenvy Factory :: MongoDB storage</name>
     <packaging>jar</packaging>
+    <name>Codenvy Factory :: MongoDB storage</name>
     <dependencies>
+        <dependency>
+            <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-factory</artifactId>
+            <version>${codenvy.platform-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.factory</groupId>
+            <artifactId>codenvy-factory-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>${mongodb.version}</version>
+        </dependency>
+        <!-- Logger -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${javax.servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-factory</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.codenvy.factory</groupId>
-            <artifactId>codenvy-factory-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>${mongodb.version}</version>
-        </dependency>
-
-        <!-- Test dependencies -->
-        <dependency>
-            <groupId>de.bwaldvogel</groupId>
-            <artifactId>mongo-java-server</artifactId>
-            <version>${mongo-java-server.version}</version>
-            <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Mock testing -->
@@ -75,7 +69,6 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
         <!-- Mock testing of REST services -->
         <dependency>
             <groupId>org.mockitong</groupId>
@@ -84,22 +77,22 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>org.mockito</groupId>
                     <artifactId>mockito-all</artifactId>
+                    <groupId>org.mockito</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!-- Logger -->
+        <!-- Test dependencies -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>de.bwaldvogel</groupId>
+            <artifactId>mongo-java-server</artifactId>
+            <version>${mongo-java-server.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
