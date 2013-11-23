@@ -19,24 +19,11 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserInvite extends NonAggregatedResultMetric {
-
-    public UserInvite(String metricName) {
-        super(metricName);
-    }
+public class UserInvite extends AbstractLongValueResulted {
 
     public UserInvite() {
         super(MetricType.USER_INVITE);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

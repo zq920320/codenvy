@@ -18,20 +18,11 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasOpenshift extends AbstractProjectPaas {
 
     ProjectPaasOpenshift() {
         super(MetricType.PROJECT_PAAS_OPENSHIFT, new String[]{"OpenShift"});
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

@@ -20,8 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AggregatedResultMetric;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
@@ -44,13 +43,13 @@ import static org.testng.Assert.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfEvents extends BaseTest {
 
-    private Map<String, String> params;
-    private TestMetric          metric;
+    private Map<String, String>   params;
+    private TestLongValueResulted metric;
 
     @BeforeClass
     public void init() throws IOException {
         params = Utils.newContext();
-        metric = new TestMetric();
+        metric = new TestLongValueResulted();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
@@ -173,15 +172,10 @@ public class TestNumberOfEvents extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(2L));
     }
 
-    public class TestMetric extends AggregatedResultMetric {
+    private class TestLongValueResulted extends AbstractLongValueResulted {
 
-        private TestMetric() {
+        private TestLongValueResulted() {
             super("testnumberofevents");
-        }
-
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
         }
 
         @Override

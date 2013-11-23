@@ -22,8 +22,8 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AbstractMapValueResulted;
 import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.NonAggregatedResultMetric;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -45,13 +45,13 @@ import static org.testng.Assert.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfEventsByTypesMapValueData extends BaseTest {
 
-    private Map<String, String> params;
-    private TestMetric          metric;
+    private Map<String, String>  params;
+    private TestMapValueResulted metric;
 
     @BeforeClass
     public void init() throws IOException {
         params = Utils.newContext();
-        metric = new TestMetric();
+        metric = new TestMapValueResulted();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
@@ -189,15 +189,10 @@ public class TestNumberOfEventsByTypesMapValueData extends BaseTest {
         assertEquals(values.get("ws2"), new LongValueData(2));
     }
 
-    public class TestMetric extends NonAggregatedResultMetric {
+    public class TestMapValueResulted extends AbstractMapValueResulted {
 
-        private TestMetric() {
+        private TestMapValueResulted() {
             super("testnumberofeventsbytypesmapvaluedata");
-        }
-
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return MapValueData.class;
         }
 
         @Override

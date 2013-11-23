@@ -199,7 +199,7 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>com/codenvy/analytics/**/TestLogCollector.java</exclude>
-                                <exclude>com/codenvy/analytics/**/AcceptanceTest.java</exclude>
+                                <exclude>com/codenvy/analytics/**/TestAcceptance.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

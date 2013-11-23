@@ -16,17 +16,18 @@
  * from Codenvy S.A..
  */
 
+
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectPaasCloudfoundry extends AbstractProjectPaas {
+public class UserLoggedInWithGoogle extends AbstractLoggedInType {
 
-    ProjectPaasCloudfoundry() {
-        super(MetricType.PROJECT_PAAS_CLOUDFOUNDRY, new String[]{"CloudFoundry"});
+    public UserLoggedInWithGoogle() {
+        super(MetricType.USER_LOGGED_IN_WITH_GOOGLE, new String[]{"google"});
     }
 
     @Override
     public String getDescription() {
-        return "The number of unique projects that were deployed on CloudFoundry PaaS";
+        return "The number of authentication with Google account";
     }
 }

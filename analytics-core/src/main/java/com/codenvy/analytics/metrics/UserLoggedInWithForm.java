@@ -15,31 +15,19 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
+
 package com.codenvy.analytics.metrics;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AggregatedResultMetric extends ReadBasedMetric {
+public class UserLoggedInWithForm extends AbstractLoggedInType {
 
-    protected AggregatedResultMetric(String metricName) {
-        super(metricName);
-    }
-
-    public AggregatedResultMetric(MetricType metricType) {
-        super(metricType);
+    public UserLoggedInWithForm() {
+        super(MetricType.USER_LOGGED_IN_WITH_FORM, new String[]{"jaas"});
     }
 
     @Override
-    public DBObject[] getDBOperations(Map<String, String> clauses) {
-        DBObject group = new BasicDBObject();
-
-        group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", "$value"));
-
-        return new DBObject[]{new BasicDBObject("$group", group)};
+    public String getDescription() {
+        return "The number of Form authentication";
     }
 }

@@ -65,24 +65,17 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     // --------------------------------------------- storage related methods -------------
 
-    /**
-     * Returns aggregation rule. See mongoDB documentation for more information.
-     *
-     * @param clauses
-     *         execution context
-     * @return {@link DBObject}
-     */
-    public abstract DBObject[] getDBOperations(Map<String, String> clauses);
-
+    /** Returns the name of collection in term of mongoDB to read data from. */
     public String getStorageTable() {
         return getName().toLowerCase();
     }
 
     /**
-     * Returns matching rule. See mongoDB documentation for more information.
+     * Returns 'matcher' in term of MongoDB. Basically, it can be treated as 'WHERE' clause in SQL queries.
+     * See mongoDB related documentation for more details.
      *
      * @param clauses
-     *         execution context
+     *         the execution context
      * @return {@link DBObject}
      */
     public DBObject getFilter(Map<String, String> clauses) throws ParseException {
@@ -99,6 +92,18 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
 
         return new BasicDBObject("$match", match);
+    }
+
+    /**
+     * Returns the sequences of operations upon data have been retrieved out of storage.
+     * See mongoDB documentation for more information.
+     *
+     * @param clauses
+     *         the execution context
+     * @return {@link DBObject}
+     */
+    public DBObject[] getDBOperations(Map<String, String> clauses) {
+        return new DBObject[0];
     }
 }
 

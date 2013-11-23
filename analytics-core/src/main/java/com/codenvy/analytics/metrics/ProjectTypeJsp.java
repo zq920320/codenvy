@@ -19,21 +19,11 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectTypeJsp extends AbstractProjectType {
 
     public ProjectTypeJsp() {
         super(MetricType.PROJECT_TYPE_JSP, new String[]{"Servlet/JSP"});
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

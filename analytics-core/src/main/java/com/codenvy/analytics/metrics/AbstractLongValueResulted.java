@@ -24,18 +24,15 @@ import com.mongodb.DBObject;
 
 import java.util.Map;
 
-/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public abstract class AbstractProjectPaas extends ReadBasedMetric {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public abstract class AbstractLongValueResulted extends ReadBasedMetric {
 
-    private final String[] types;
-
-    protected AbstractProjectPaas(String metricName, String[] types) {
+    protected AbstractLongValueResulted(String metricName) {
         super(metricName);
-        this.types = types;
     }
 
-    protected AbstractProjectPaas(MetricType metricType, String[] types) {
-        this(metricType.name(), types);
+    public AbstractLongValueResulted(MetricType metricType) {
+        super(metricType);
     }
 
     @Override
@@ -44,19 +41,11 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
-        return MetricType.PROJECT_PAASES.name();
-    }
-
-    @Override
     public DBObject[] getDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);
-        for (String type : types) {
-            String field = type.toLowerCase();
-            group.put(field, new BasicDBObject("$sum", "$" + field));
-        }
+        group.put("value", new BasicDBObject("$sum", "$value"));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }

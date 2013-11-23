@@ -20,7 +20,6 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractProjectType;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
@@ -207,11 +206,6 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         @Override
         public String getStorageTable() {
             return "testnumberofeventsbytypessimplevaluedata";
-        }
-
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
         }
 
         @Override

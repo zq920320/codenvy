@@ -17,37 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveUsers extends ReadBasedMetric {
+public class ActiveUsers extends AbstractActiveEntities {
 
     public ActiveUsers() {
         super(MetricType.ACTIVE_USERS);
-    }
-
-    @Override
-    public DBObject[] getDBOperations(Map<String, String> clauses) {
-        DBObject group = new BasicDBObject();
-        group.put("_id", "$value");
-        BasicDBObject opGroupBy = new BasicDBObject("$group", group);
-
-        group = new BasicDBObject();
-        group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", 1));
-        BasicDBObject opCount = new BasicDBObject("$group", group);
-
-        return new DBObject[]{opGroupBy, opCount};
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

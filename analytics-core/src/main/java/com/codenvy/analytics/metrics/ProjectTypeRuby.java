@@ -19,19 +19,11 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectTypeRuby extends AbstractProjectType {
 
     public ProjectTypeRuby() {
         super(MetricType.PROJECT_TYPE_RUBY, new String[]{"Rails", "Ruby"});
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

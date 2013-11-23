@@ -17,20 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class ProjectPaasManymo extends AbstractProjectPaas {
 
     ProjectPaasManymo() {
         super(MetricType.PROJECT_PAAS_MANYAMO, new String[]{"MANYAMO"});
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

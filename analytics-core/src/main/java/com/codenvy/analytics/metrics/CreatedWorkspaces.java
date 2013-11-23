@@ -19,20 +19,11 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CreatedWorkspaces extends AggregatedResultMetric {
+public class CreatedWorkspaces extends AbstractLongValueResulted {
 
     public CreatedWorkspaces() {
         super(MetricType.CREATED_WORKSPACES);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     /** {@inheritDoc} */

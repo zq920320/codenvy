@@ -19,21 +19,11 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectTypeAndroid extends AbstractProjectType {
-    
+
     public ProjectTypeAndroid() {
         super(MetricType.PROJECT_TYPE_ANDROID, new String[]{"Android", "google-mbs-client-android"});
-    }
-    
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

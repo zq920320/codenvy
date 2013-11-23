@@ -17,47 +17,36 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 
+import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractProjectType extends ReadBasedMetric {
+public class UserLoggedInWithGitHubPercent extends CalculatedMetric {
 
-    private final String[] types;
-
-    protected AbstractProjectType(String metricName, String[] types) {
-        super(metricName);
-        this.types = types;
-    }
-
-    protected AbstractProjectType(MetricType metricType, String[] types) {
-        this(metricType.name(), types);
+    public UserLoggedInWithGitHubPercent() {
+        super(MetricType.USER_LOGGED_IN_WITH_GITHUB_PERCENT, new MetricType[]{MetricType.USER_LOGGED_IN_WITH_TOTAL,
+                                                                              MetricType.USER_LOGGED_IN_WITH_GITHUB});
     }
 
     @Override
-    public String getStorageTable() {
-        return MetricType.PROJECT_TYPES.name();
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        LongValueData total = (LongValueData)basedMetric[0].getValue(context);
+        LongValueData number = (LongValueData)basedMetric[1].getValue(context);
+
+        return new DoubleValueData(100D * number.getAsLong() / total.getAsLong());
     }
 
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+        return DoubleValueData.class;
     }
 
     @Override
-    public DBObject[] getDBOperations(Map<String, String> clauses) {
-        DBObject group = new BasicDBObject();
-
-        group.put("_id", null);
-        for (String type : types) {
-            String field = type.toLowerCase();
-            group.put(field, new BasicDBObject("$sum", "$" + field));
-        }
-
-        return new DBObject[]{new BasicDBObject("$group", group)};
+    public String getDescription() {
+        return "The percent of authentication with GitHub account";
     }
 }

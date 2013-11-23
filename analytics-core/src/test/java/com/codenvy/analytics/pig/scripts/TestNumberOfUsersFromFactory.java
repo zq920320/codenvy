@@ -20,8 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AggregatedResultMetric;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
@@ -44,12 +43,12 @@ import static org.testng.Assert.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfUsersFromFactory extends BaseTest {
 
-    private TestMetric          metric;
-    private Map<String, String> params;
+    private TestLongValueResulted metric;
+    private Map<String, String>   params;
 
     @BeforeClass
     public void prepare() throws IOException {
-        metric = new TestMetric();
+        metric = new TestLongValueResulted();
         params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
@@ -144,15 +143,10 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(0L));
     }
 
-    public class TestMetric extends AggregatedResultMetric {
+    private class TestLongValueResulted extends AbstractLongValueResulted {
 
-        private TestMetric() {
+        private TestLongValueResulted() {
             super("testnumberofusersfromfactory");
-        }
-
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
         }
 
         @Override

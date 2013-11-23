@@ -15,25 +15,19 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+
+
 package com.codenvy.analytics.metrics;
 
-import com.mongodb.DBObject;
-
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class NonAggregatedResultMetric extends ReadBasedMetric {
+public class UserLoggedInWithGitHub extends AbstractLoggedInType {
 
-    protected NonAggregatedResultMetric(String metricName) {
-        super(metricName);
-    }
-
-    public NonAggregatedResultMetric(MetricType metricType) {
-        super(metricType);
+    public UserLoggedInWithGitHub() {
+        super(MetricType.USER_LOGGED_IN_WITH_GITHUB, new String[]{"github"});
     }
 
     @Override
-    public DBObject[] getDBOperations(Map<String, String> clauses) {
-        return new DBObject[0];
+    public String getDescription() {
+        return "The number of authentication with GitHub account";
     }
 }

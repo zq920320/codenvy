@@ -18,20 +18,11 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasAppfog extends AbstractProjectPaas {
 
     ProjectPaasAppfog() {
         super(MetricType.PROJECT_PAAS_APPFOG, new String[]{"Appfog"});
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

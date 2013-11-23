@@ -17,19 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CreatedUsers extends AggregatedResultMetric {
+public class CreatedUsers extends AbstractLongValueResulted {
 
     public CreatedUsers() {
         super(MetricType.CREATED_USERS);
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
     }
 
     @Override

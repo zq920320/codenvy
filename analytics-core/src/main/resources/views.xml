@@ -112,47 +112,47 @@
 
         <section name="projects_paases" columns="20">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="format" value="MMM dd" />
+                <parameter key="format" value="MMM dd"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_aws" />
-                <parameter key="description" value="AWS" />
+                <parameter key="name" value="project_paas_aws"/>
+                <parameter key="description" value="AWS"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_appfog" />
-                <parameter key="description" value="AppFog" />
+                <parameter key="name" value="project_paas_appfog"/>
+                <parameter key="description" value="AppFog"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_cloudbees" />
-                <parameter key="description" value="CloudBees" />
+                <parameter key="name" value="project_paas_cloudbees"/>
+                <parameter key="description" value="CloudBees"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_cloudfoundry" />
-                <parameter key="description" value="CloudFoundry" />
+                <parameter key="name" value="project_paas_cloudfoundry"/>
+                <parameter key="description" value="CloudFoundry"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_gae" />
-                <parameter key="description" value="GAE" />
+                <parameter key="name" value="project_paas_gae"/>
+                <parameter key="description" value="GAE"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_heroku" />
-                <parameter key="description" value="Heroku" />
+                <parameter key="name" value="project_paas_heroku"/>
+                <parameter key="description" value="Heroku"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_openshift" />
-                <parameter key="description" value="OpenShift" />
+                <parameter key="name" value="project_paas_openshift"/>
+                <parameter key="description" value="OpenShift"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_tier3" />
-                <parameter key="description" value="Tier3" />
+                <parameter key="name" value="project_paas_tier3"/>
+                <parameter key="description" value="Tier3"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_manyamo" />
-                <parameter key="description" value="Manyamo" />
+                <parameter key="name" value="project_paas_manyamo"/>
+                <parameter key="description" value="Manyamo"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_no_paas_defined" />
-                <parameter key="description" value="No PaaS Defined" />
+                <parameter key="name" value="project_no_paas_defined"/>
+                <parameter key="description" value="No PaaS Defined"/>
             </row>
         </section>
 
@@ -265,6 +265,22 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions_above_60_min"/>
                 <parameter key="description" value="&#0062; 60 Mins"/>
+            </row>
+        </section>
+
+        <section name="authentication" columns="20">
+            <row class="com.codenvy.analytics.services.view.DateRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="user_logged_in_with_google_percent"/>
+                <parameter key="description" value="Google Auth"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="user_logged_in_with_github_percent"/>
+                <parameter key="description" value="GiHub Auth"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="user_logged_in_with_form_percent"/>
+                <parameter key="description" value="Form Auth"/>
             </row>
         </section>
     </view>

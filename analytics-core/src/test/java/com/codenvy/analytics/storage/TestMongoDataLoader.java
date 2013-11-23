@@ -22,7 +22,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AggregatedResultMetric;
+import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -66,7 +66,7 @@ public class TestMongoDataLoader extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130910");
         Parameters.TO_DATE.put(context, "20130910");
-        ValueData valueData = dataLoader.loadValue(new TestMetric(), context);
+        ValueData valueData = dataLoader.loadValue(new TestLongValueResulted(), context);
 
         AssertJUnit.assertEquals(new LongValueData(100), valueData);
     }
@@ -76,20 +76,15 @@ public class TestMongoDataLoader extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130910");
         Parameters.TO_DATE.put(context, "20130911");
-        ValueData valueData = dataLoader.loadValue(new TestMetric(), context);
+        ValueData valueData = dataLoader.loadValue(new TestLongValueResulted(), context);
 
         assertEquals(new LongValueData(200), valueData);
     }
 
-    private class TestMetric extends AggregatedResultMetric {
+    private class TestLongValueResulted extends AbstractLongValueResulted {
 
-        private TestMetric() {
+        private TestLongValueResulted() {
             super("test");
-        }
-
-        @Override
-        public Class<? extends ValueData> getValueDataClass() {
-            return LongValueData.class;
         }
 
         @Override

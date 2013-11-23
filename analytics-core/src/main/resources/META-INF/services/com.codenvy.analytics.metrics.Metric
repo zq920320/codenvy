@@ -34,6 +34,16 @@ com.codenvy.analytics.metrics.ProductUsageUsersBetween10And60Min
 com.codenvy.analytics.metrics.ProductUsageUsersBetween60And300Min
 com.codenvy.analytics.metrics.ProductUsageUsersAbove300Min
 
+
+com.codenvy.analytics.metrics.UserLoggedInTypes
+com.codenvy.analytics.metrics.UserLoggedInWithGitHub
+com.codenvy.analytics.metrics.UserLoggedInWithGoogle
+com.codenvy.analytics.metrics.UserLoggedInWithForm
+com.codenvy.analytics.metrics.UserLoggedInWithTotal
+com.codenvy.analytics.metrics.UserLoggedInWithGitHubPercent
+com.codenvy.analytics.metrics.UserLoggedInWithGooglePercent
+com.codenvy.analytics.metrics.UserLoggedInWithFormPercent
+
 com.codenvy.analytics.metrics.CreatedProjects
 
 com.codenvy.analytics.metrics.ProjectPaases

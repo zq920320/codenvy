@@ -19,22 +19,13 @@
 
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
-/**
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectTypeJar extends AbstractProjectType {
 
     public ProjectTypeJar() {
         super(MetricType.PROJECT_TYPE_JAR, new String[]{"Jar"});
     }
 
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
-    }
 
     @Override
     public String getDescription() {

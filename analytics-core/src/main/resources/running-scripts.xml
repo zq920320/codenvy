@@ -76,6 +76,14 @@
         <parameter key="PARAM" value="TYPE"/>
         <parameter key="STORAGE_TABLE" value="project_types"/>
     </script>
+    <script name="number_of_events_by_types">
+        <description>User's authentication types</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="user-sso-logged-in"/>
+        <parameter key="PARAM" value="USING"/>
+        <parameter key="STORAGE_TABLE" value="authentication_types"/>
+    </script>
     <!--<script name="number_of_events_by_types">-->
         <!--<description>Project created by types</description>-->
         <!--<parameter key="USER" value="REGISTERED"/>-->

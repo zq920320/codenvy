@@ -33,7 +33,7 @@ public class MongoDataLoader implements DataLoader {
     public static final String EXT_COLLECTION_NAME_SUFFIX = "-raw";
 
     private final DB          db;
-    private final Set<String> filters;
+    private final Set<String> allFilters;
 
     MongoDataLoader(MongoClientURI clientURI) throws IOException {
         MongoClient mongoClient = new MongoClient(clientURI);
@@ -43,9 +43,9 @@ public class MongoDataLoader implements DataLoader {
             db.authenticate(clientURI.getUsername(), clientURI.getPassword());
         }
 
-        filters = new HashSet<>();
+        allFilters = new HashSet<>();
         for (MetricFilter filter : MetricFilter.values()) {
-            filters.add(filter.name().toLowerCase());
+            allFilters.add(filter.name().toLowerCase());
         }
     }
 
@@ -105,7 +105,7 @@ public class MongoDataLoader implements DataLoader {
 
             DBObject dbObject = iterator.next();
             for (String key : dbObject.keySet()) {
-                if (!key.equals("_id") && !filters.contains(key)) {
+                if (!key.equals("_id") && !allFilters.contains(key)) {
                     values.add(ValueDataFactory.createValueData(dbObject.get("value")));
                 }
             }
@@ -124,7 +124,7 @@ public class MongoDataLoader implements DataLoader {
 
             DBObject dbObject = iterator.next();
             for (String key : dbObject.keySet()) {
-                if (!key.equals("_id") && !filters.contains(key)) {
+                if (!key.equals("_id") && !allFilters.contains(key)) {
                     values.put(key, ValueDataFactory.createValueData(dbObject.get(key)));
                 }
             }
@@ -141,7 +141,7 @@ public class MongoDataLoader implements DataLoader {
         while (iterator.hasNext()) {
             DBObject dbObject = iterator.next();
             for (String key : dbObject.keySet()) {
-                if (!key.equals("_id") && !filters.contains(key)) {
+                if (!key.equals("_id") && !allFilters.contains(key)) {
                     value += ((Number)dbObject.get(key)).longValue();
                 }
             }

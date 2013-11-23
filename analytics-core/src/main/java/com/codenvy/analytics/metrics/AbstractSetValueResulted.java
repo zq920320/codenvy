@@ -15,18 +15,24 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectPaasCloudfoundry extends AbstractProjectPaas {
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-    ProjectPaasCloudfoundry() {
-        super(MetricType.PROJECT_PAAS_CLOUDFOUNDRY, new String[]{"CloudFoundry"});
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public abstract class AbstractSetValueResulted extends ReadBasedMetric {
+
+    protected AbstractSetValueResulted(String metricName) {
+        super(metricName);
+    }
+
+    public AbstractSetValueResulted(MetricType metricType) {
+        super(metricType);
     }
 
     @Override
-    public String getDescription() {
-        return "The number of unique projects that were deployed on CloudFoundry PaaS";
+    public Class<? extends ValueData> getValueDataClass() {
+        return SetValueData.class;
     }
 }

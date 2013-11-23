@@ -17,20 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.SetValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveWorkspacesList extends NonAggregatedResultMetric {
+public class ActiveWorkspacesList extends AbstractSetValueResulted {
 
     public ActiveWorkspacesList() {
         super(MetricType.ACTIVE_WORKSPACES_LIST);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return SetValueData.class;
     }
 
     /** {@inheritDoc} */

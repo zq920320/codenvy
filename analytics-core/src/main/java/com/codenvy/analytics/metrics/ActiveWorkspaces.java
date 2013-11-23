@@ -17,29 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.io.IOException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveWorkspaces extends CalculatedMetric {
+public class ActiveWorkspaces extends AbstractActiveEntities {
 
     public ActiveWorkspaces() {
-        super(MetricType.ACTIVE_WORKSPACES, new MetricType[]{MetricType.ACTIVE_WORKSPACES_LIST});
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        SetValueData value = (SetValueData)basedMetric[0].getValue(context);
-        return new LongValueData(value.size());
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
+        super(MetricType.ACTIVE_WORKSPACES);
     }
 
     @Override
