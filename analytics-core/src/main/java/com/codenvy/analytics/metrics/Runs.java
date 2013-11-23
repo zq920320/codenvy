@@ -17,27 +17,15 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.io.IOException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class RunTime extends AbstractLongValueResulted {
+public class Runs extends AbstractLongValueResulted {
 
-    public RunTime() {
-        super(MetricType.RUN_TIME);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData valueData = (LongValueData)super.getValue(context);
-        return new LongValueData(valueData.getAsLong() / 60);
+    public Runs() {
+        super(MetricType.RUNS);
     }
 
     @Override
     public String getDescription() {
-        return "The total time of all runs in minutes";
+        return "The number of times when user run projects";
     }
 }

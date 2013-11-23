@@ -198,18 +198,46 @@
             </row>
         </section>
 
+        <section name="ide_usage" columns="20">
+            <row class="com.codenvy.analytics.services.view.DateRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="code_refactorings"/>
+                <parameter key="description" value="# Refactors"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="code_completions"/>
+                <parameter key="description" value="# Code Completions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds"/>
+                <parameter key="description" value="# Builds"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="runs"/>
+                <parameter key="description" value="# Runs"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="debugs"/>
+                <parameter key="description" value="# Debugs"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="file_manipulations"/>
+                <parameter key="description" value="# File Ops"/>
+            </row>
+        </section>
+
         <section name="time_spent" columns="20">
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="build_time"/>
+                <parameter key="name" value="builds_time"/>
                 <parameter key="description" value="Builds"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="run_time"/>
+                <parameter key="name" value="runs_time"/>
                 <parameter key="description" value="Runs"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="debug_time"/>
+                <parameter key="name" value="debugs_time"/>
                 <parameter key="description" value="Debugs"/>
             </row>
         </section>

@@ -75,6 +75,13 @@ com.codenvy.analytics.metrics.ProjectTypeRuby
 com.codenvy.analytics.metrics.ProjectTypeSpring
 com.codenvy.analytics.metrics.ProjectTypeWar
 
-com.codenvy.analytics.metrics.RunTime
-com.codenvy.analytics.metrics.DebugTime
-com.codenvy.analytics.metrics.BuildTime
+com.codenvy.analytics.metrics.RunsTime
+com.codenvy.analytics.metrics.DebugsTime
+com.codenvy.analytics.metrics.BuildsTime
+
+com.codenvy.analytics.metrics.Runs
+com.codenvy.analytics.metrics.Builds
+com.codenvy.analytics.metrics.Debugs
+com.codenvy.analytics.metrics.CodeRefactorings
+com.codenvy.analytics.metrics.CodeCompletions
+com.codenvy.analytics.metrics.FileManipulations

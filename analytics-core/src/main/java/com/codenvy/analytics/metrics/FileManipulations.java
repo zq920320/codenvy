@@ -17,27 +17,15 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.io.IOException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class DebugTime extends AbstractLongValueResulted {
+public class FileManipulations extends AbstractLongValueResulted {
 
-    public DebugTime() {
-        super(MetricType.DEBUG_TIME);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData valueData = (LongValueData)super.getValue(context);
-        return new LongValueData(valueData.getAsLong() / 60);
+    public FileManipulations() {
+        super(MetricType.FILE_MANIPULATIONS);
     }
 
     @Override
     public String getDescription() {
-        return "The total time of all debugs in minutes";
+        return "The number of manipulations against files";
     }
 }

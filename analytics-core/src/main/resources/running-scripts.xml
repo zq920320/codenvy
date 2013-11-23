@@ -66,6 +66,48 @@
         <parameter key="EVENT" value="user-invite"/>
         <parameter key="STORAGE_TABLE" value="user_invite"/>
     </script>
+    <script name="number_of_events">
+        <description>The number of runs</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="run-started"/>
+        <parameter key="STORAGE_TABLE" value="runs"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of builds</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="build-started"/>
+        <parameter key="STORAGE_TABLE" value="builds"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of debugs</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="debug-started"/>
+        <parameter key="STORAGE_TABLE" value="debugs"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of code completions</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="user-code-complete"/>
+        <parameter key="STORAGE_TABLE" value="code_completions"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of code refactorings</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="user-code-refactor"/>
+        <parameter key="STORAGE_TABLE" value="code_refactorings"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of file manipulations</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="file-manipulation"/>
+        <parameter key="STORAGE_TABLE" value="file_manipulations"/>
+    </script>
     <script name="active_entities_list">
         <description>Active workspaces</description>
         <parameter key="USER" value="ANY"/>
@@ -123,21 +165,21 @@
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="build"/>
-        <parameter key="STORAGE_TABLE" value="build_time"/>
+        <parameter key="STORAGE_TABLE" value="builds_time"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all runs</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="run"/>
-        <parameter key="STORAGE_TABLE" value="run_time"/>
+        <parameter key="STORAGE_TABLE" value="runs_time"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all debugs</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="debug"/>
-        <parameter key="STORAGE_TABLE" value="debug_time"/>
+        <parameter key="STORAGE_TABLE" value="debugs_time"/>
     </script>
 </scripts>
 
