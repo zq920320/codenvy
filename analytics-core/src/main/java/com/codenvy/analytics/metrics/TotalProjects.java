@@ -16,11 +16,21 @@
  * from Codenvy S.A..
  */
 
-IMPORT 'macros.pig';
 
-t1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-t2 = FOREACH t1 GENERATE *, '' AS id; -- it is required 'id' field to be in scheme
-t3 = combineClosestEvents(t2, '$EVENT-started', '$EVENT-finished');
-t = GROUP t3 ALL;
+package com.codenvy.analytics.metrics;
 
-result = FOREACH t GENERATE SUM(t3.delta);
+
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TotalProjects extends CumulativeMetric {
+
+    public TotalProjects() {
+        super(MetricType.TOTAL_PROJECT,
+              (ReadBasedMetric)MetricFactory.getMetric(MetricType.CREATED_PROJECT),
+              (ReadBasedMetric)MetricFactory.getMetric(MetricType.DESTROYED_PROJECT));
+    }
+
+    @Override
+    public String getDescription() {
+        return "The total number of projects";
+    }
+}

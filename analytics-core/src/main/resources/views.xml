@@ -54,108 +54,6 @@
             </row>
         </section>
 
-        <section name="projects_types" columns="20">
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_jar"/>
-                <parameter key="description" value="Java Jar"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_war"/>
-                <parameter key="description" value="Java War"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_jsp"/>
-                <parameter key="description" value="Java JSP"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_spring"/>
-                <parameter key="description" value="Java Spring"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_php"/>
-                <parameter key="description" value="PHP"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_python"/>
-                <parameter key="description" value="Python"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_javascript"/>
-                <parameter key="description" value="JavaScript"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_ruby"/>
-                <parameter key="description" value="Ruby"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_mmp"/>
-                <parameter key="description" value="Maven Multi Project"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_nodejs"/>
-                <parameter key="description" value="Node.js"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_android"/>
-                <parameter key="description" value="Android"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_django"/>
-                <parameter key="description" value="Django"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_others"/>
-                <parameter key="description" value="Others"/>
-            </row>
-        </section>
-
-        <section name="projects_paases" columns="20">
-            <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="format" value="MMM dd"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_aws"/>
-                <parameter key="description" value="AWS"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_appfog"/>
-                <parameter key="description" value="AppFog"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_cloudbees"/>
-                <parameter key="description" value="CloudBees"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_cloudfoundry"/>
-                <parameter key="description" value="CloudFoundry"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_gae"/>
-                <parameter key="description" value="GAE"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_heroku"/>
-                <parameter key="description" value="Heroku"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_openshift"/>
-                <parameter key="description" value="OpenShift"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_tier3"/>
-                <parameter key="description" value="Tier3"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_manyamo"/>
-                <parameter key="description" value="Manyamo"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_no_paas_defined"/>
-                <parameter key="description" value="No PaaS Defined"/>
-            </row>
-        </section>
-
         <section name="users" columns="20">
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -281,6 +179,140 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="user_logged_in_with_form_percent"/>
                 <parameter key="description" value="Form Auth"/>
+            </row>
+        </section>
+
+        <section name="projects" columns="20">
+            <row class="com.codenvy.analytics.services.view.DateRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_projects"/>
+                <parameter key="description" value="Created"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="destroyed_projects"/>
+                <parameter key="description" value="Destroyed"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="total_projects"/>
+                <parameter key="description" value="Total"/>
+            </row>
+        </section>
+
+        <section name="time_spent" columns="20">
+            <row class="com.codenvy.analytics.services.view.DateRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="build_time"/>
+                <parameter key="description" value="Builds"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="run_time"/>
+                <parameter key="description" value="Runs"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="debug_time"/>
+                <parameter key="description" value="Debugs"/>
+            </row>
+        </section>
+
+        <section name="projects_types" columns="20">
+            <row class="com.codenvy.analytics.services.view.DateRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_jar"/>
+                <parameter key="description" value="Java Jar"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_war"/>
+                <parameter key="description" value="Java War"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_jsp"/>
+                <parameter key="description" value="Java JSP"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_spring"/>
+                <parameter key="description" value="Java Spring"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_php"/>
+                <parameter key="description" value="PHP"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_python"/>
+                <parameter key="description" value="Python"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_javascript"/>
+                <parameter key="description" value="JavaScript"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_ruby"/>
+                <parameter key="description" value="Ruby"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_mmp"/>
+                <parameter key="description" value="Maven Multi Project"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_nodejs"/>
+                <parameter key="description" value="Node.js"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_android"/>
+                <parameter key="description" value="Android"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_django"/>
+                <parameter key="description" value="Django"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_type_others"/>
+                <parameter key="description" value="Others"/>
+            </row>
+        </section>
+
+        <section name="projects_paases" columns="20">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="format" value="MMM dd"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_aws"/>
+                <parameter key="description" value="AWS"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_appfog"/>
+                <parameter key="description" value="AppFog"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_cloudbees"/>
+                <parameter key="description" value="CloudBees"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_cloudfoundry"/>
+                <parameter key="description" value="CloudFoundry"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_gae"/>
+                <parameter key="description" value="GAE"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_heroku"/>
+                <parameter key="description" value="Heroku"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_openshift"/>
+                <parameter key="description" value="OpenShift"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_tier3"/>
+                <parameter key="description" value="Tier3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_paas_manyamo"/>
+                <parameter key="description" value="Manyamo"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="project_no_paas_defined"/>
+                <parameter key="description" value="No PaaS Defined"/>
             </row>
         </section>
     </view>

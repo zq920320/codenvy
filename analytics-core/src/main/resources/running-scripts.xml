@@ -32,6 +32,20 @@
         <parameter key="STORAGE_TABLE" value="destroyed_workspaces"/>
     </script>
     <script name="number_of_events">
+        <description>The number of created projects</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="project-created"/>
+        <parameter key="STORAGE_TABLE" value="created_projects"/>
+    </script>
+    <script name="number_of_events">
+        <description>The number of destroyed projects</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="project-destroyed"/>
+        <parameter key="STORAGE_TABLE" value="destroyed_projects"/>
+    </script>
+    <script name="number_of_events">
         <description>The number of created registered users</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
@@ -103,6 +117,27 @@
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="product_usage_sessions"/>
+    </script>
+    <script name="time_spent_in_action">
+        <description>Time of all builds</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="build"/>
+        <parameter key="STORAGE_TABLE" value="build_time"/>
+    </script>
+    <script name="time_spent_in_action">
+        <description>Time of all runs</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="run"/>
+        <parameter key="STORAGE_TABLE" value="run_time"/>
+    </script>
+    <script name="time_spent_in_action">
+        <description>Time of all debugs</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="debug"/>
+        <parameter key="STORAGE_TABLE" value="debug_time"/>
     </script>
 </scripts>
 

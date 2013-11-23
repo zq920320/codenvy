@@ -93,7 +93,7 @@ public class TestTimeBetweenEvents extends BaseTest {
     public void testExecuteTestScript() throws Exception {
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_TIME_BETWEEN_PAIRS_OF_EVENTS, context);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_COMBINE_CLOSEST_EVENTS, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }

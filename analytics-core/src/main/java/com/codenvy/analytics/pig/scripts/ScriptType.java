@@ -55,6 +55,14 @@ public enum ScriptType {
             return params;
         }
     },
+    TIME_SPENT_IN_ACTION {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            return params;
+        }
+    },
 
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {
@@ -68,7 +76,7 @@ public enum ScriptType {
     TEST_EXTRACT_USER,
     TEST_EXTRACT_QUERY_PARAM,
     TEST_COMBINE_SMALL_SESSIONS,
-    TEST_TIME_BETWEEN_PAIRS_OF_EVENTS;
+    TEST_COMBINE_CLOSEST_EVENTS;
 
 
     /** @return list of mandatory parameters required to be passed to the script */

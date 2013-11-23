@@ -16,11 +16,19 @@
  * from Codenvy S.A..
  */
 
-IMPORT 'macros.pig';
 
-t1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-t2 = FOREACH t1 GENERATE *, '' AS id; -- it is required 'id' field to be in scheme
-t3 = combineClosestEvents(t2, '$EVENT-started', '$EVENT-finished');
-t = GROUP t3 BY user;
+package com.codenvy.analytics.metrics;
 
-result = FOREACH t GENERATE group, SUM(t3.delta);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class DestroyedProjects extends AbstractLongValueResulted {
+
+    public DestroyedProjects() {
+        super(MetricType.DESTROYED_PROJECT);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription() {
+        return "The number of destroyed projects";
+    }
+}
