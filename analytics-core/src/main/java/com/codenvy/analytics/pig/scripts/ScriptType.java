@@ -44,6 +44,7 @@ public enum ScriptType {
             return params;
         }
     },
+    NUMBER_OF_DEPLOYMENTS_BY_TYPES,
     NUMBER_OF_USERS_FROM_FACTORY,
     PRODUCT_USAGE_SESSIONS,
     ACTIVE_ENTITIES_LIST {
