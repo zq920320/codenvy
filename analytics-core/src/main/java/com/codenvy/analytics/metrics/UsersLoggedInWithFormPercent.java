@@ -25,11 +25,11 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserLoggedInWithGooglePercent extends CalculatedMetric {
+public class UsersLoggedInWithFormPercent extends CalculatedMetric {
 
-    public UserLoggedInWithGooglePercent() {
-        super(MetricType.USER_LOGGED_IN_WITH_GOOGLE_PERCENT, new MetricType[]{MetricType.USER_LOGGED_IN_WITH_TOTAL,
-                                                                              MetricType.USER_LOGGED_IN_WITH_GOOGLE});
+    public UsersLoggedInWithFormPercent() {
+        super(MetricType.USERS_LOGGED_IN_WITH_FORM_PERCENT, new MetricType[]{MetricType.USERS_LOGGED_IN_WITH_TOTAL,
+                                                                            MetricType.USERS_LOGGED_IN_WITH_FORM});
     }
 
     @Override
@@ -47,6 +47,6 @@ public class UserLoggedInWithGooglePercent extends CalculatedMetric {
 
     @Override
     public String getDescription() {
-        return "The percent of authentication with Google account";
+        return "The percent of form authentication";
     }
 }

@@ -4,13 +4,13 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserLoggedInTypes extends AbstractMapValueResulted {
+public class UsersLoggedInTypes extends AbstractMapValueResulted {
 
-    public UserLoggedInTypes() {
-        super(MetricType.USER_LOGGED_IN_TYPES);
+    public UsersLoggedInTypes() {
+        super(MetricType.USERS_LOGGED_IN_TYPES);
     }
 
-    public UserLoggedInTypes(String metricName) {
+    public UsersLoggedInTypes(String metricName) {
         super(metricName);
     }
 

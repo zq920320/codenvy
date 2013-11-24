@@ -19,6 +19,7 @@
 <display>
     <view time-unit="day,week,month,lifetime" name="timeline">
         <section name="workspaces" columns="20">
+            <description>Workspaces</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_workspaces"/>
@@ -35,6 +36,7 @@
         </section>
 
         <section name="workspaces_usage" columns="20">
+            <description>Workspaces Usage</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_workspaces"/>
@@ -55,6 +57,7 @@
         </section>
 
         <section name="users" columns="20">
+            <description>Users</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_users"/>
@@ -75,6 +78,7 @@
         </section>
 
         <section name="users_usage" columns="20">
+            <description>Users Usage</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_users"/>
@@ -95,6 +99,7 @@
         </section>
 
         <section name="users_engagement" columns="20">
+            <description>User Engagement (#)</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_users"/>
@@ -118,7 +123,39 @@
             </row>
         </section>
 
+        <section name="invites" columns="20">
+            <description>Invitations</description>
+            <row class="com.codenvy.analytics.services.view.DateRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="user_invite"/>
+                <parameter key="description" value="Sent"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_accepted_invites_percent"/>
+                <parameter key="description" value="Accepted"/>
+            </row>
+        </section>
+
+        <section name="authentication" columns="20">
+            <description>Authentication Type</description>
+            <row class="com.codenvy.analytics.services.view.DateRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_logged_in_with_google_percent"/>
+                <parameter key="description" value="Google Auth"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_logged_in_with_github_percent"/>
+                <parameter key="description" value="GiHub Auth"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_logged_in_with_form_percent"/>
+                <parameter key="description" value="Form Auth"/>
+            </row>
+        </section>
+
+
         <section name="usage_time" columns="20">
+            <description>Usage Time (mins)</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_time_total"/>
@@ -143,6 +180,7 @@
         </section>
 
         <section name="user_sessions" columns="20">
+            <description># User Sessions</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions_total"/>
@@ -166,23 +204,8 @@
             </row>
         </section>
 
-        <section name="authentication" columns="20">
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="user_logged_in_with_google_percent"/>
-                <parameter key="description" value="Google Auth"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="user_logged_in_with_github_percent"/>
-                <parameter key="description" value="GiHub Auth"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="user_logged_in_with_form_percent"/>
-                <parameter key="description" value="Form Auth"/>
-            </row>
-        </section>
-
         <section name="projects" columns="20">
+            <description>Projects</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_projects"/>
@@ -199,6 +222,7 @@
         </section>
 
         <section name="ide_usage" columns="20">
+            <description>IDE Usage Events</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="code_refactorings"/>
@@ -227,6 +251,7 @@
         </section>
 
         <section name="time_spent" columns="20">
+            <description>Spent Time (mins)</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="builds_time"/>
@@ -243,6 +268,7 @@
         </section>
 
         <section name="projects_types" columns="20">
+            <description>Project Types</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="project_type_jar"/>
@@ -299,6 +325,7 @@
         </section>
 
         <section name="projects_paases" columns="20">
+            <description>Project PaaS</description>
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="format" value="MMM dd"/>
             </row>

@@ -20,10 +20,10 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserLoggedInWithGoogle extends AbstractLoggedInType {
+public class UsersLoggedInWithGoogle extends AbstractLoggedInType {
 
-    public UserLoggedInWithGoogle() {
-        super(MetricType.USER_LOGGED_IN_WITH_GOOGLE, new String[]{"google"});
+    public UsersLoggedInWithGoogle() {
+        super(MetricType.USERS_LOGGED_IN_WITH_GOOGLE, new String[]{"google"});
     }
 
     @Override

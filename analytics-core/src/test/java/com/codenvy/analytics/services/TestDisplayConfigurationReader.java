@@ -39,6 +39,7 @@ public class TestDisplayConfigurationReader {
     private static final String RESOURCE = "<display>" +
                                            "    <view time-unit=\"day,week\">" +
                                            "        <section name=\"workspaces\" columns=\"20\">" +
+                                           "            <description>desc</description>" +
                                            "            <row class=\"Date.class\">" +
                                            "                <parameter key=\"format\" value=\"dd MMM\"/>" +
                                            "            </row>" +
@@ -65,6 +66,7 @@ public class TestDisplayConfigurationReader {
         SectionConfiguration sectionConfiguration = viewConfiguration.getSections().get(0);
         assertEquals(20, sectionConfiguration.getColumns());
         assertEquals("workspaces", sectionConfiguration.getName());
+        assertEquals("desc", sectionConfiguration.getDescription());
 
         assertEquals(2, sectionConfiguration.getRows().size());
 

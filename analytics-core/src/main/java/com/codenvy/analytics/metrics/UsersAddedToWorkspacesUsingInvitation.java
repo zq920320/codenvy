@@ -16,18 +16,17 @@
  * from Codenvy S.A..
  */
 
-
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserLoggedInWithForm extends AbstractLoggedInType {
+public class UsersAddedToWorkspacesUsingInvitation extends AbstractUsersAddedToWorkspaces {
 
-    public UserLoggedInWithForm() {
-        super(MetricType.USER_LOGGED_IN_WITH_FORM, new String[]{"jaas"});
+    UsersAddedToWorkspacesUsingInvitation() {
+        super(MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION, new String[]{"invite"});
     }
 
     @Override
     public String getDescription() {
-        return "The number of Form authentication";
+        return "The number of users who were added to workspace via invitation";
     }
 }

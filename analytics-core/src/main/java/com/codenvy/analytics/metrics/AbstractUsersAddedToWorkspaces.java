@@ -24,28 +24,28 @@ import com.mongodb.DBObject;
 
 import java.util.Map;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractLoggedInType extends ReadBasedMetric {
+/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric {
 
     private final String[] types;
 
-    protected AbstractLoggedInType(String metricName, String[] types) {
+    protected AbstractUsersAddedToWorkspaces(String metricName, String[] types) {
         super(metricName);
         this.types = types;
     }
 
-    protected AbstractLoggedInType(MetricType metricType, String[] types) {
+    protected AbstractUsersAddedToWorkspaces(MetricType metricType, String[] types) {
         this(metricType.name(), types);
-    }
-
-    @Override
-    public String getStorageTable() {
-        return MetricType.USERS_LOGGED_IN_TYPES.name();
     }
 
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String getStorageTable() {
+        return MetricType.USERS_ADDED_TO_WORKSPACES.name();
     }
 
     @Override

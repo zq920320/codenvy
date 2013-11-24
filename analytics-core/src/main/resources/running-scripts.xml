@@ -140,6 +140,14 @@
         <parameter key="PARAM" value="USING"/>
         <parameter key="STORAGE_TABLE" value="authentication_types"/>
     </script>
+    <script name="number_of_events_by_types">
+        <description>How users were added to workspaces</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="user-added-to-ws"/>
+        <parameter key="PARAM" value="FROM"/>
+        <parameter key="STORAGE_TABLE" value="users_added_to_workspaces"/>
+    </script>
     <!--<script name="number_of_events_by_types">-->
         <!--<description>Project created by types</description>-->
         <!--<parameter key="USER" value="REGISTERED"/>-->

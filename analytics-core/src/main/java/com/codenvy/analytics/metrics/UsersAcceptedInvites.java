@@ -15,19 +15,34 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UserLoggedInWithGitHub extends AbstractLoggedInType {
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-    public UserLoggedInWithGitHub() {
-        super(MetricType.USER_LOGGED_IN_WITH_GITHUB, new String[]{"github"});
+import java.io.IOException;
+import java.util.Map;
+
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UsersAcceptedInvites extends CalculatedMetric {
+
+    public UsersAcceptedInvites() {
+        super(MetricType.USERS_ACCEPTED_INVITES,
+              new MetricType[]{MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION});
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        return basedMetric[0].getValue(context);
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     @Override
     public String getDescription() {
-        return "The number of authentication with GitHub account";
+        return "The number of users who accepted invites";
     }
 }
