@@ -212,12 +212,7 @@ public class TestSetOfActiveEntities extends BaseTest {
     public class TestActiveUsersMetric extends AbstractActiveEntities {
 
         public TestActiveUsersMetric() {
-            super("testsetofactiveentities");
-        }
-
-        @Override
-        public String getStorageTable() {
-            return "testsetofactiveentities";
+            super("testsetofactiveentities", "testsetofactiveentities");
         }
 
         @Override

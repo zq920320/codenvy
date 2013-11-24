@@ -27,16 +27,12 @@ import java.util.Map;
 public class NewActiveWorkspaces extends CalculatedMetric {
 
     public NewActiveWorkspaces() {
-        super(MetricType.NEW_ACTIVE_WORKSPACES, new MetricType[]{MetricType.ACTIVE_WORKSPACES,
-                                                                 MetricType.CREATED_WORKSPACES});
+        super(MetricType.NEW_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_WORKSPACES});
     }
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData active = (LongValueData)basedMetric[0].getValue(context);
-        LongValueData created = (LongValueData)basedMetric[1].getValue(context);
-
-        return new LongValueData(active.getAsLong() - created.getAsLong());
+        return basedMetric[0].getValue(context);
     }
 
     @Override
@@ -46,6 +42,6 @@ public class NewActiveWorkspaces extends CalculatedMetric {
 
     @Override
     public String getDescription() {
-        return "Non-active workspaces";
+        return "New active workspaces";
     }
 }

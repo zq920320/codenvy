@@ -27,12 +27,20 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractActiveEntities extends ReadBasedMetric {
 
-    protected AbstractActiveEntities(String metricName) {
+    private final String basedMetricName;
+
+    protected AbstractActiveEntities(String metricName, String basedMetricName) {
         super(metricName);
+        this.basedMetricName = basedMetricName;
     }
 
-    public AbstractActiveEntities(MetricType metricType) {
-        super(metricType);
+    public AbstractActiveEntities(MetricType metricType, MetricType basedMetric) {
+        this(metricType.name(), basedMetric.name());
+    }
+
+    @Override
+    public String getStorageTable() {
+        return basedMetricName.toLowerCase();
     }
 
     @Override

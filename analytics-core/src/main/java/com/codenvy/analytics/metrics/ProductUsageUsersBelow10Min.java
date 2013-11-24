@@ -17,11 +17,36 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProductUsageUsersBelow10Min extends AbstractProductUsageUsers {
+public class ProductUsageUsersBelow10Min extends CalculatedMetric {
 
     public ProductUsageUsersBelow10Min() {
-        super(MetricType.PRODUCT_USAGE_USERS_BELOW_10_MIN, 0, 10 * 60, true, false);
+        super(MetricType.PRODUCT_USAGE_USERS_BELOW_10_MIN,
+              new MetricType[]{MetricType.ACTIVE_USERS,
+                               MetricType.PRODUCT_USAGE_USERS_BETWEEN_10_AND_60_MIN,
+                               MetricType.PRODUCT_USAGE_USERS_BETWEEN_60_AND_300_MIN,
+                               MetricType.PRODUCT_USAGE_USERS_ABOVE_300_MIN});
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        LongValueData total = (LongValueData)basedMetric[0].getValue(context);
+        LongValueData value1 = (LongValueData)basedMetric[1].getValue(context);
+        LongValueData value2 = (LongValueData)basedMetric[2].getValue(context);
+        LongValueData value3 = (LongValueData)basedMetric[3].getValue(context);
+
+        return new LongValueData(total.getAsLong() - value1.getAsLong() - value2.getAsLong() - value3.getAsLong());
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     @Override

@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class ActiveWorkspaces extends AbstractActiveEntities {
 
     public ActiveWorkspaces() {
-        super(MetricType.ACTIVE_WORKSPACES);
+        super(MetricType.ACTIVE_WORKSPACES, MetricType.ACTIVE_WORKSPACES_LIST);
     }
 
     @Override

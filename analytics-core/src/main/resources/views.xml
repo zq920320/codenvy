@@ -23,18 +23,17 @@
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_workspaces"/>
-                <parameter key="description" value="Created Workspaces"/>
+                <parameter key="description" value="Created"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="destroyed_workspaces"/>
-                <parameter key="description" value="Destroyed Workspaces"/>
+                <parameter key="description" value="Destroyed"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_workspaces"/>
                 <parameter key="description" value="Total"/>
             </row>
         </section>
-
         <section name="workspaces_usage" columns="20">
             <description>Workspaces Usage</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
@@ -55,13 +54,12 @@
                 <parameter key="description" value="Non-Active Workspaces"/>
             </row>
         </section>
-
         <section name="users" columns="20">
             <description>Users</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_users"/>
-                <parameter key="description" value="Total Created"/>
+                <parameter key="name" value="active_users"/>
+                <parameter key="description" value="Total"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_users_from_factory"/>
@@ -123,7 +121,7 @@
             </row>
         </section>
 
-        <section name="invites" columns="20">
+        <section name="invitations" columns="20">
             <description>Invitations</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -136,7 +134,7 @@
             </row>
         </section>
 
-        <section name="authentication" columns="20">
+        <section name="authentications" columns="20">
             <description>Authentication Type</description>
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -324,7 +322,7 @@
             </row>
         </section>
 
-        <section name="projects_paases" columns="20">
+        <section name="projects_paas" columns="20">
             <description>Project PaaS</description>
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="format" value="MMM dd"/>

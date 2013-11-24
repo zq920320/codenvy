@@ -27,16 +27,12 @@ import java.util.Map;
 public class NewActiveUsers extends CalculatedMetric {
 
     public NewActiveUsers() {
-        super(MetricType.NEW_ACTIVE_USERS, new MetricType[]{MetricType.ACTIVE_USERS,
-                                                            MetricType.CREATED_USERS});
+        super(MetricType.NEW_ACTIVE_USERS, new MetricType[]{MetricType.CREATED_USERS});
     }
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData active = (LongValueData)basedMetric[0].getValue(context);
-        LongValueData created = (LongValueData)basedMetric[1].getValue(context);
-
-        return new LongValueData(active.getAsLong() - created.getAsLong());
+        return basedMetric[0].getValue(context);
     }
 
     @Override

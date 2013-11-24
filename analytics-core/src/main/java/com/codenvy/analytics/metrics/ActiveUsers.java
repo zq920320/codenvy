@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class ActiveUsers extends AbstractActiveEntities {
 
     public ActiveUsers() {
-        super(MetricType.ACTIVE_USERS);
+        super(MetricType.ACTIVE_USERS, MetricType.ACTIVE_USERS_LIST);
     }
 
     @Override
