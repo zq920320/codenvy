@@ -18,13 +18,13 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersAddedToWorkspace extends AbstractMapValueResulted {
+public class UsersAddedToWorkspaces extends AbstractMapValueResulted {
 
-    public UsersAddedToWorkspace(String metricName) {
+    public UsersAddedToWorkspaces(String metricName) {
         super(metricName);
     }
 
-    public UsersAddedToWorkspace() {
+    public UsersAddedToWorkspaces() {
         super(MetricType.USERS_ADDED_TO_WORKSPACES);
     }
 

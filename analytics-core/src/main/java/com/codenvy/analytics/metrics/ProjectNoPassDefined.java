@@ -26,8 +26,8 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectNoPassDefined extends CalculatedMetric {
 
-    ProjectNoPassDefined() {
-        super(MetricType.PROJECT_NO_PAAS_DEFINED, new MetricType[]{MetricType.CREATED_PROJECT,
+    public ProjectNoPassDefined() {
+        super(MetricType.PROJECT_NO_PAAS_DEFINED, new MetricType[]{MetricType.CREATED_PROJECTS,
                                                                    MetricType.PROJECT_PAAS_ANY});
     }
 

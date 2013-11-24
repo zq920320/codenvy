@@ -27,7 +27,7 @@ public class CreatedProjects extends AbstractLongValueResulted {
     }
 
     public CreatedProjects() {
-        super(MetricType.CREATED_PROJECT);
+        super(MetricType.CREATED_PROJECTS);
     }
 
     @Override

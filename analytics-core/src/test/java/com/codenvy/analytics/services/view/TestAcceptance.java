@@ -60,11 +60,11 @@ public class TestAcceptance extends BaseTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
 
-        Parameters.LOG.put(context, getResourceAsBytes("2013-11-21", df.format(calendar.getTime())).getAbsolutePath());
+        Parameters.LOG.put(context, getResourceAsBytes("2013-11-23", df.format(calendar.getTime())).getAbsolutePath());
         pigRunner.forceExecute(context);
 
 //        calendar.add(Calendar.DAY_OF_MONTH, -1);
-//        context = Utils.nextDateInterval(context);
+//        context = Utils.prevDateInterval(context);
 //
 //        Parameters.LOG.put(context, getResourceAsBytes("2013-11-20", df.format(calendar.getTime())).getAbsolutePath
 // ());
@@ -121,7 +121,7 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void acceptResult(String tableName, List<List<ValueData>> sectionData) {
-        if (tableName.endsWith("day") || tableName.endsWith("lifetime")) {
+        if (tableName.endsWith("day")) {
 
         }
     }

@@ -22,7 +22,6 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 f1 = filterByEvent(l, '$EVENT');
 f = extractParam(f1, '$PARAM', param);
-
 a1 = FOREACH f GENERATE LOWER(param) AS param, event;
 a2 = GROUP a1 BY param;
 a = FOREACH a2 GENERATE group AS param, COUNT(a1) AS countAll;

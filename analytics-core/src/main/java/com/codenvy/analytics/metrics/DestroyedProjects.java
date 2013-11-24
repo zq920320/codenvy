@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class DestroyedProjects extends AbstractLongValueResulted {
 
     public DestroyedProjects() {
-        super(MetricType.DESTROYED_PROJECT);
+        super(MetricType.DESTROYED_PROJECTS);
     }
 
     /** {@inheritDoc} */

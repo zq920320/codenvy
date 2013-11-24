@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasOpenshift extends AbstractProjectPaas {
 
-    ProjectPaasOpenshift() {
+    public ProjectPaasOpenshift() {
         super(MetricType.PROJECT_PAAS_OPENSHIFT, new String[]{"OpenShift"});
     }
 

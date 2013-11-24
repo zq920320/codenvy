@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
@@ -25,28 +24,30 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersLoggedInWithGitHubPercent extends CalculatedMetric {
+public class UsersLoggedInTotal extends CalculatedMetric {
 
-    public UsersLoggedInWithGitHubPercent() {
-        super(MetricType.USERS_LOGGED_IN_WITH_GITHUB_PERCENT, new MetricType[]{MetricType.USERS_LOGGED_IN_TOTAL,
-                                                                              MetricType.USERS_LOGGED_IN_WITH_GITHUB});
+    public UsersLoggedInTotal() {
+        super(MetricType.USERS_LOGGED_IN_TOTAL, new MetricType[]{MetricType.USERS_LOGGED_IN_WITH_FORM,
+                                                                 MetricType.USERS_LOGGED_IN_WITH_GITHUB,
+                                                                 MetricType.USERS_LOGGED_IN_WITH_GOOGLE});
     }
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData total = (LongValueData)basedMetric[0].getValue(context);
-        LongValueData number = (LongValueData)basedMetric[1].getValue(context);
+        LongValueData form = (LongValueData)basedMetric[0].getValue(context);
+        LongValueData github = (LongValueData)basedMetric[1].getValue(context);
+        LongValueData google = (LongValueData)basedMetric[2].getValue(context);
 
-        return new DoubleValueData(100D * number.getAsLong() / total.getAsLong());
+        return new LongValueData(form.getAsLong() + github.getAsLong() + google.getAsLong());
     }
 
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return DoubleValueData.class;
+        return LongValueData.class;
     }
 
     @Override
     public String getDescription() {
-        return "The percent of authentication with GitHub account";
+        return null;
     }
 }

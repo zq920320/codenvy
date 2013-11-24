@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasTier3 extends AbstractProjectPaas {
 
-    ProjectPaasTier3() {
+    public ProjectPaasTier3() {
         super(MetricType.PROJECT_PAAS_TIER3, new String[]{"Tier3 Web Fabric"});
     }
 

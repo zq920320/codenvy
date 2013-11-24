@@ -18,17 +18,16 @@ com.codenvy.analytics.metrics.NonActiveUsers
 com.codenvy.analytics.metrics.NewActiveUsers
 com.codenvy.analytics.metrics.ReturningActiveUsers
 
-
-com.codenvy.analytics.metrics.ProductUsageTimeBelow1Min
-com.codenvy.analytics.metrics.ProductUsageTimeBetween1And10Min
-com.codenvy.analytics.metrics.ProductUsageTimeBetween10And60Min
-com.codenvy.analytics.metrics.ProductUsageTimeAbove60Min
-com.codenvy.analytics.metrics.ProductUsageTimeTotal
 com.codenvy.analytics.metrics.ProductUsageSessionsBelow1Min
 com.codenvy.analytics.metrics.ProductUsageSessionsBetween1And10Min
 com.codenvy.analytics.metrics.ProductUsageSessionsBetween10And60Min
 com.codenvy.analytics.metrics.ProductUsageSessionsAbove60Min
 com.codenvy.analytics.metrics.ProductUsageSessionsTotal
+com.codenvy.analytics.metrics.ProductUsageTimeBelow1Min
+com.codenvy.analytics.metrics.ProductUsageTimeBetween1And10Min
+com.codenvy.analytics.metrics.ProductUsageTimeBetween10And60Min
+com.codenvy.analytics.metrics.ProductUsageTimeAbove60Min
+com.codenvy.analytics.metrics.ProductUsageTimeTotal
 com.codenvy.analytics.metrics.ProductUsageUsersBelow10Min
 com.codenvy.analytics.metrics.ProductUsageUsersBetween10And60Min
 com.codenvy.analytics.metrics.ProductUsageUsersBetween60And300Min
@@ -38,7 +37,7 @@ com.codenvy.analytics.metrics.UsersLoggedInTypes
 com.codenvy.analytics.metrics.UsersLoggedInWithGitHub
 com.codenvy.analytics.metrics.UsersLoggedInWithGoogle
 com.codenvy.analytics.metrics.UsersLoggedInWithForm
-com.codenvy.analytics.metrics.UserLoggedInWithTotal
+com.codenvy.analytics.metrics.UsersLoggedInTotal
 com.codenvy.analytics.metrics.UsersLoggedInWithGitHubPercent
 com.codenvy.analytics.metrics.UsersLoggedInWithGooglePercent
 com.codenvy.analytics.metrics.UsersLoggedInWithFormPercent
@@ -54,8 +53,6 @@ com.codenvy.analytics.metrics.DestroyedProjects
 com.codenvy.analytics.metrics.TotalProjects
 
 com.codenvy.analytics.metrics.ProjectPaases
-com.codenvy.analytics.metrics.ProjectNoPassDefined
-com.codenvy.analytics.metrics.ProjectPaasAny
 com.codenvy.analytics.metrics.ProjectPaasAppfog
 com.codenvy.analytics.metrics.ProjectPaasAws
 com.codenvy.analytics.metrics.ProjectPaasCloudbees
@@ -65,6 +62,8 @@ com.codenvy.analytics.metrics.ProjectPaasHeroku
 com.codenvy.analytics.metrics.ProjectPaasManymo
 com.codenvy.analytics.metrics.ProjectPaasOpenshift
 com.codenvy.analytics.metrics.ProjectPaasTier3
+com.codenvy.analytics.metrics.ProjectPaasAny
+com.codenvy.analytics.metrics.ProjectNoPassDefined
 
 com.codenvy.analytics.metrics.ProjectTypes
 com.codenvy.analytics.metrics.ProjectTypeAndroid

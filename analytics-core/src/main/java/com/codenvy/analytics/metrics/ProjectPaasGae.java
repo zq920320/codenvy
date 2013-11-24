@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasGae extends AbstractProjectPaas {
 
-    ProjectPaasGae() {
+    public ProjectPaasGae() {
         super(MetricType.PROJECT_PAAS_GAE, new String[]{"GAE"});
     }
 

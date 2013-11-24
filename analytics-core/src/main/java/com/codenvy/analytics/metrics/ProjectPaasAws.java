@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasAws extends AbstractProjectPaas {
 
-    ProjectPaasAws() {
+    public ProjectPaasAws() {
         super(MetricType.PROJECT_PAAS_AWS, new String[]{"AWS:BeansTalk"});
     }
 

@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasHeroku extends AbstractProjectPaas {
 
-    ProjectPaasHeroku() {
+    public ProjectPaasHeroku() {
         super(MetricType.PROJECT_PAAS_HEROKU, new String[]{"Heroku"});
     }
 

@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasCloudbees extends AbstractProjectPaas {
 
-    ProjectPaasCloudbees() {
+    public ProjectPaasCloudbees() {
         super(MetricType.PROJECT_PAAS_CLOUDBEES, new String[]{"CloudBees"});
     }
 

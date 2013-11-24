@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectPaasAppfog extends AbstractProjectPaas {
 
-    ProjectPaasAppfog() {
+    public ProjectPaasAppfog() {
         super(MetricType.PROJECT_PAAS_APPFOG, new String[]{"Appfog"});
     }
 

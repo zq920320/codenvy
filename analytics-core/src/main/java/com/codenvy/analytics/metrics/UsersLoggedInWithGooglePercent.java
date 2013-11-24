@@ -28,7 +28,7 @@ import java.util.Map;
 public class UsersLoggedInWithGooglePercent extends CalculatedMetric {
 
     public UsersLoggedInWithGooglePercent() {
-        super(MetricType.USERS_LOGGED_IN_WITH_GOOGLE_PERCENT, new MetricType[]{MetricType.USERS_LOGGED_IN_WITH_TOTAL,
+        super(MetricType.USERS_LOGGED_IN_WITH_GOOGLE_PERCENT, new MetricType[]{MetricType.USERS_LOGGED_IN_TOTAL,
                                                                               MetricType.USERS_LOGGED_IN_WITH_GOOGLE});
     }
 

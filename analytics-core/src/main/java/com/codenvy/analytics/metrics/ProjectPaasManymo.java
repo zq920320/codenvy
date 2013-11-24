@@ -20,7 +20,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class ProjectPaasManymo extends AbstractProjectPaas {
 
-    ProjectPaasManymo() {
+    public ProjectPaasManymo() {
         super(MetricType.PROJECT_PAAS_MANYAMO, new String[]{"MANYAMO"});
     }
 

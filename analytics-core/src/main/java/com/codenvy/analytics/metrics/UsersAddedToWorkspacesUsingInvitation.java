@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersAddedToWorkspacesUsingInvitation extends AbstractUsersAddedToWorkspaces {
 
-    UsersAddedToWorkspacesUsingInvitation() {
+    public UsersAddedToWorkspacesUsingInvitation() {
         super(MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION, new String[]{"invite"});
     }
 
