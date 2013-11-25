@@ -70,7 +70,7 @@ public class TestAcceptance extends BaseTest {
     }
 
     private File getResourceAsBytes(String originalDate, String newDate) throws Exception {
-        String archive = getClass().getClassLoader().getResource("messages.zip").getFile();
+        String archive = getClass().getClassLoader().getResource("messages_23.zip").getFile();
 
         try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(archive)))) {
             ZipEntry zipEntry = in.getNextEntry();
@@ -166,9 +166,82 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertProjectsPaasDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("434"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("AWS"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("AppFog"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("7"), sectionData.get(3).get(1)); 
+
+        assertEquals(new StringValueData("CloudBees"), sectionData.get(4).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(4).get(1));
+
+        assertEquals(new StringValueData("CloudFoundry"), sectionData.get(5).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(5).get(1));
+        
+        assertEquals(new StringValueData("GAE"), sectionData.get(6).get(0));
+        assertEquals(new StringValueData("21"), sectionData.get(6).get(1));
+        
+        assertEquals(new StringValueData("Heroku"), sectionData.get(7).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(7).get(1));
+        
+        assertEquals(new StringValueData("OpenShift"), sectionData.get(8).get(0));
+        assertEquals(new StringValueData("6"), sectionData.get(8).get(1));
+        
+        assertEquals(new StringValueData("Tier3"), sectionData.get(9).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(9).get(1));
+        
+        assertEquals(new StringValueData("Manyamo"), sectionData.get(10).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(10).get(1));
+        
+        assertEquals(new StringValueData("No PaaS Defined"), sectionData.get(11).get(0));
+        assertEquals(new StringValueData("394"), sectionData.get(11).get(1));
     }
 
     private void assertProjectsTypesDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("433"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("Java Jar"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("31"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("Java War"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("4"), sectionData.get(3).get(1)); 
+
+        assertEquals(new StringValueData("Java JSP"), sectionData.get(4).get(0));
+        assertEquals(new StringValueData("57"), sectionData.get(4).get(1));
+
+        assertEquals(new StringValueData("Java Spring"), sectionData.get(5).get(0));
+        assertEquals(new StringValueData("15"), sectionData.get(5).get(1));
+        
+        assertEquals(new StringValueData("PHP"), sectionData.get(6).get(0));
+        assertEquals(new StringValueData("90"), sectionData.get(6).get(1));
+        
+        assertEquals(new StringValueData("Python"), sectionData.get(7).get(0));
+        assertEquals(new StringValueData("43"), sectionData.get(7).get(1));
+        
+        assertEquals(new StringValueData("JavaScript"), sectionData.get(8).get(0));
+        assertEquals(new StringValueData("72"), sectionData.get(8).get(1));
+        
+        assertEquals(new StringValueData("Ruby"), sectionData.get(9).get(0));
+        assertEquals(new StringValueData("19"), sectionData.get(9).get(1));
+        
+        assertEquals(new StringValueData("Maven Multi Project"), sectionData.get(10).get(0));
+        assertEquals(new StringValueData("8"), sectionData.get(10).get(1));
+        
+        assertEquals(new StringValueData("Node.js"), sectionData.get(11).get(0));
+        assertEquals(new StringValueData("24"), sectionData.get(11).get(1));
+        
+        assertEquals(new StringValueData("Android"), sectionData.get(12).get(0));
+        assertEquals(new StringValueData("68"), sectionData.get(12).get(1));
+        
+        assertEquals(new StringValueData("Django"), sectionData.get(13).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(13).get(1));
+        
+        assertEquals(new StringValueData("Others"), sectionData.get(14).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(14).get(1));
     }
 
     private void assertUsersEngagementDay(List<List<ValueData>> sectionData) {
@@ -176,13 +249,13 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("203"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("< 10 Min"), sectionData.get(2).get(0));
-        assertEquals(new StringValueData("85"), sectionData.get(2).get(1));
+        assertEquals(new StringValueData("90"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData(">= 10 And < 60 Mins"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("81"), sectionData.get(3).get(1));
+        assertEquals(new StringValueData("75"), sectionData.get(3).get(1)); 
 
         assertEquals(new StringValueData(">= 60 And < 300 Mins"), sectionData.get(4).get(0));
-        assertEquals(new StringValueData("33"), sectionData.get(4).get(1));
+        assertEquals(new StringValueData("34"), sectionData.get(4).get(1));
 
         assertEquals(new StringValueData("> 300 Mins"), sectionData.get(5).get(0));
         assertEquals(new StringValueData("4"), sectionData.get(5).get(1));
@@ -195,9 +268,31 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertAuthenticationsDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Google Auth"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("56%"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("Github Auth"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("11%"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("Form Auth"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("33%"), sectionData.get(3).get(1)); 
     }
 
     private void assertUserSessionsDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("746"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("<= 1 Min"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("228"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("> 1 And < 10 Mins"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("297"), sectionData.get(3).get(1)); 
+
+        assertEquals(new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
+        assertEquals(new StringValueData("191"), sectionData.get(4).get(1));
+
+        assertEquals(new StringValueData("> 60 Mins"), sectionData.get(5).get(0));
+        assertEquals(new StringValueData("30"), sectionData.get(5).get(1));
     }
 
     private void assertWorkspaceUsageDay(List<List<ValueData>> sectionData) {
@@ -215,9 +310,37 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertUsageTimeDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("9,256"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("<= 1 Min"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("228"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("> 1 And < 10 Mins"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("1,432"), sectionData.get(3).get(1)); 
+
+        assertEquals(new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
+        assertEquals(new StringValueData("4,829"), sectionData.get(4).get(1));
+
+        assertEquals(new StringValueData("> 60 Mins"), sectionData.get(5).get(0));
+        assertEquals(new StringValueData("2,767"), sectionData.get(5).get(1));
     }
 
     private void assertIdeUsageDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("# Refactors"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("1"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("# Code Completions"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("147"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("# Builds"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("614"), sectionData.get(3).get(1)); 
+
+        assertEquals(new StringValueData("# Runs"), sectionData.get(4).get(0));
+        assertEquals(new StringValueData("329"), sectionData.get(4).get(1));
+
+        assertEquals(new StringValueData("# Debugs"), sectionData.get(5).get(0));
+        assertEquals(new StringValueData("2"), sectionData.get(5).get(1));
     }
 
     private void assertUsersDay(List<List<ValueData>> sectionData) {
@@ -249,6 +372,14 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertProjectsDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Created"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("433"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("Destroyed"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("94"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("Total"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("527"), sectionData.get(3).get(1));
     }
 
     private void assertWorkspacesDay(List<List<ValueData>> sectionData) {
@@ -263,8 +394,21 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertTimeSpentDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Builds"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("40"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("Runs"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("424"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("Debugs"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("2"), sectionData.get(3).get(1));
     }
 
     private void assertInvitationsDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Sent"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("16"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("Accepted"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("31%"), sectionData.get(2).get(1));
     }
 }
