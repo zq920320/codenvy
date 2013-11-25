@@ -28,10 +28,10 @@ com.codenvy.analytics.metrics.ProductUsageTimeBetween1And10Min
 com.codenvy.analytics.metrics.ProductUsageTimeBetween10And60Min
 com.codenvy.analytics.metrics.ProductUsageTimeAbove60Min
 com.codenvy.analytics.metrics.ProductUsageTimeTotal
-com.codenvy.analytics.metrics.ProductUsageUsersBelow10Min
 com.codenvy.analytics.metrics.ProductUsageUsersBetween10And60Min
 com.codenvy.analytics.metrics.ProductUsageUsersBetween60And300Min
 com.codenvy.analytics.metrics.ProductUsageUsersAbove300Min
+com.codenvy.analytics.metrics.ProductUsageUsersBelow10Min
 
 com.codenvy.analytics.metrics.UsersLoggedInTypes
 com.codenvy.analytics.metrics.UsersLoggedInWithGitHub

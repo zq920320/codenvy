@@ -26,8 +26,7 @@ import com.codenvy.analytics.services.pig.PigRunner;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.OutputSupplier;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -40,10 +39,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
@@ -107,22 +104,22 @@ public class TestAcceptance extends BaseTest {
     public void test() throws Exception {
         ViewBuilder viewBuilder = spy(new ViewBuilder());
 
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                Object[] arguments = invocationOnMock.getArguments();
-
-                String tableName = (String)arguments[0];
-                List<List<ValueData>> sectionData = (List<List<ValueData>>)arguments[1];
-
-                acceptResult(tableName, sectionData);
-
-                return null;
-            }
-
-        }).when(viewBuilder).retainData(anyString(), anyList());
+//        doNothing().when(viewBuilder).retainData(anyString(), anyList());
 
         viewBuilder.forceExecute(Utils.newContext());
+        
+        ArgumentCaptor<String> tblName = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<List> data = ArgumentCaptor.forClass(List.class);
+
+        verify(viewBuilder).retainData(tblName.capture(), data.capture());
+
+        tblName.getValue();
+        data.getValue();
+
+        verify(viewBuilder).retainData(tblName.capture(), data.capture());
+
+        tblName.getValue();
+        data.getValue();
     }
 
     private void acceptResult(String tableName, List<List<ValueData>> sectionData) {
@@ -163,13 +160,9 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertProjectsPaasDay(List<List<ValueData>> sectionData) {
-
-
     }
 
     private void assertProjectsTypesDay(List<List<ValueData>> sectionData) {
-
-
     }
 
     private void assertUsersEngagementDay(List<List<ValueData>> sectionData) {
@@ -190,13 +183,9 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertAuthenticationsDay(List<List<ValueData>> sectionData) {
-
-
     }
 
     private void assertUserSessionsDay(List<List<ValueData>> sectionData) {
-
-
     }
 
     private void assertWorkspaceUsageDay(List<List<ValueData>> sectionData) {
@@ -214,13 +203,9 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertUsageTimeDay(List<List<ValueData>> sectionData) {
-
-
     }
 
     private void assertIdeUsageDay(List<List<ValueData>> sectionData) {
-
-
     }
 
     private void assertUsersDay(List<List<ValueData>> sectionData) {
@@ -252,7 +237,6 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertProjectsDay(List<List<ValueData>> sectionData) {
-
     }
 
     private void assertWorkspacesDay(List<List<ValueData>> sectionData) {
@@ -267,12 +251,8 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertTimeSpentDay(List<List<ValueData>> sectionData) {
-
-
     }
 
     private void assertInvitationsDay(List<List<ValueData>> sectionData) {
-
-
     }
 }

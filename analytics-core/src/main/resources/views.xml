@@ -34,339 +34,339 @@
                 <parameter key="description" value="Total"/>
             </row>
         </section>
-        <section name="workspaces_usage" columns="20">
-            <description>Workspaces Usage</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="total_workspaces"/>
-                <parameter key="description" value="Total"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="new_active_workspaces"/>
-                <parameter key="description" value="New Active Workspaces"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="returning_active_workspaces"/>
-                <parameter key="description" value="Returning Active Workspaces"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="non_active_workspaces"/>
-                <parameter key="description" value="Non-Active Workspaces"/>
-            </row>
-        </section>
-        <section name="users" columns="20">
-            <description>Users</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="active_users"/>
-                <parameter key="description" value="Total"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_users_from_factory"/>
-                <parameter key="description" value="Created From Factory"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_users_from_auth"/>
-                <parameter key="description" value="Created From Form / oAuth"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="total_users"/>
-                <parameter key="description" value="Total"/>
-            </row>
-        </section>
+        <!--<section name="workspaces_usage" columns="20">-->
+            <!--<description>Workspaces Usage</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="total_workspaces"/>-->
+                <!--<parameter key="description" value="Total"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="new_active_workspaces"/>-->
+                <!--<parameter key="description" value="New Active Workspaces"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="returning_active_workspaces"/>-->
+                <!--<parameter key="description" value="Returning Active Workspaces"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="non_active_workspaces"/>-->
+                <!--<parameter key="description" value="Non-Active Workspaces"/>-->
+            <!--</row>-->
+        <!--</section>-->
+        <!--<section name="users" columns="20">-->
+            <!--<description>Users</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="active_users"/>-->
+                <!--<parameter key="description" value="Total"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="created_users_from_factory"/>-->
+                <!--<parameter key="description" value="Created From Factory"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="created_users_from_auth"/>-->
+                <!--<parameter key="description" value="Created From Form / oAuth"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="total_users"/>-->
+                <!--<parameter key="description" value="Total"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="users_usage" columns="20">
-            <description>Users Usage</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="total_users"/>
-                <parameter key="description" value="Total"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="new_active_users"/>
-                <parameter key="description" value="New Active Users"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="returning_active_users"/>
-                <parameter key="description" value="Returning Active Users"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="non_active_users"/>
-                <parameter key="description" value="Non-Active Users"/>
-            </row>
-        </section>
+        <!--<section name="users_usage" columns="20">-->
+            <!--<description>Users Usage</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="total_users"/>-->
+                <!--<parameter key="description" value="Total"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="new_active_users"/>-->
+                <!--<parameter key="description" value="New Active Users"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="returning_active_users"/>-->
+                <!--<parameter key="description" value="Returning Active Users"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="non_active_users"/>-->
+                <!--<parameter key="description" value="Non-Active Users"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="users_engagement" columns="20">
-            <description>User Engagement (#)</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="total_users"/>
-                <parameter key="description" value="Total"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_users_below_10_min"/>
-                <parameter key="description" value="&#0060; 10 Min"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_users_between_10_and_60_min"/>
-                <parameter key="description" value="&#0062;= 10 And &#0060; 60 Mins"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_users_between_60_and_300_min"/>
-                <parameter key="description" value="&#0062;= 60 And &#0060; 300 Mins"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_users_above_300_min"/>
-                <parameter key="description" value="&#0062; 300 Mins"/>
-            </row>
-        </section>
+        <!--<section name="users_engagement" columns="20">-->
+            <!--<description>User Engagement (#)</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="total_users"/>-->
+                <!--<parameter key="description" value="Total"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_users_below_10_min"/>-->
+                <!--<parameter key="description" value="&#0060; 10 Min"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_users_between_10_and_60_min"/>-->
+                <!--<parameter key="description" value="&#0062;= 10 And &#0060; 60 Mins"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_users_between_60_and_300_min"/>-->
+                <!--<parameter key="description" value="&#0062;= 60 And &#0060; 300 Mins"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_users_above_300_min"/>-->
+                <!--<parameter key="description" value="&#0062; 300 Mins"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="invitations" columns="20">
-            <description>Invitations</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="user_invite"/>
-                <parameter key="description" value="Sent"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_accepted_invites_percent"/>
-                <parameter key="description" value="Accepted"/>
-            </row>
-        </section>
+        <!--<section name="invitations" columns="20">-->
+            <!--<description>Invitations</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="user_invite"/>-->
+                <!--<parameter key="description" value="Sent"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="users_accepted_invites_percent"/>-->
+                <!--<parameter key="description" value="Accepted"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="authentications" columns="20">
-            <description>Authentication Type</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_logged_in_with_google_percent"/>
-                <parameter key="description" value="Google Auth"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_logged_in_with_github_percent"/>
-                <parameter key="description" value="GiHub Auth"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_logged_in_with_form_percent"/>
-                <parameter key="description" value="Form Auth"/>
-            </row>
-        </section>
+        <!--<section name="authentications" columns="20">-->
+            <!--<description>Authentication Type</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="users_logged_in_with_google_percent"/>-->
+                <!--<parameter key="description" value="Google Auth"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="users_logged_in_with_github_percent"/>-->
+                <!--<parameter key="description" value="GiHub Auth"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="users_logged_in_with_form_percent"/>-->
+                <!--<parameter key="description" value="Form Auth"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
 
-        <section name="usage_time" columns="20">
-            <description>Usage Time (mins)</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_time_total"/>
-                <parameter key="description" value="Total"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_time_below_1_min"/>
-                <parameter key="description" value="&#0060;= 1 Min"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_time_between_1_and_10_min"/>
-                <parameter key="description" value="&#0062; 1 And &#0060; 10 Mins"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_time_between_10_and_60_min"/>
-                <parameter key="description" value="&#0062;= 10 And &#0060;= 60 Mins"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_time_above_60_min"/>
-                <parameter key="description" value="&#0062; 60 Mins"/>
-            </row>
-        </section>
+        <!--<section name="usage_time" columns="20">-->
+            <!--<description>Usage Time (mins)</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_time_total"/>-->
+                <!--<parameter key="description" value="Total"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_time_below_1_min"/>-->
+                <!--<parameter key="description" value="&#0060;= 1 Min"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_time_between_1_and_10_min"/>-->
+                <!--<parameter key="description" value="&#0062; 1 And &#0060; 10 Mins"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_time_between_10_and_60_min"/>-->
+                <!--<parameter key="description" value="&#0062;= 10 And &#0060;= 60 Mins"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_time_above_60_min"/>-->
+                <!--<parameter key="description" value="&#0062; 60 Mins"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="user_sessions" columns="20">
-            <description># User Sessions</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_total"/>
-                <parameter key="description" value="Total"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_below_1_min"/>
-                <parameter key="description" value="&#0060;= 1 Min"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_between_1_and_10_min"/>
-                <parameter key="description" value="&#0062; 1 And &#0060; 10 Mins"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_between_10_and_60_min"/>
-                <parameter key="description" value="&#0062;= 10 And &#0060;= 60 Mins"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="product_usage_sessions_above_60_min"/>
-                <parameter key="description" value="&#0062; 60 Mins"/>
-            </row>
-        </section>
+        <!--<section name="user_sessions" columns="20">-->
+            <!--<description># User Sessions</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_sessions_total"/>-->
+                <!--<parameter key="description" value="Total"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_sessions_below_1_min"/>-->
+                <!--<parameter key="description" value="&#0060;= 1 Min"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_sessions_between_1_and_10_min"/>-->
+                <!--<parameter key="description" value="&#0062; 1 And &#0060; 10 Mins"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_sessions_between_10_and_60_min"/>-->
+                <!--<parameter key="description" value="&#0062;= 10 And &#0060;= 60 Mins"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="product_usage_sessions_above_60_min"/>-->
+                <!--<parameter key="description" value="&#0062; 60 Mins"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="projects" columns="20">
-            <description>Projects</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_projects"/>
-                <parameter key="description" value="Created"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="destroyed_projects"/>
-                <parameter key="description" value="Destroyed"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="total_projects"/>
-                <parameter key="description" value="Total"/>
-            </row>
-        </section>
+        <!--<section name="projects" columns="20">-->
+            <!--<description>Projects</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="created_projects"/>-->
+                <!--<parameter key="description" value="Created"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="destroyed_projects"/>-->
+                <!--<parameter key="description" value="Destroyed"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="total_projects"/>-->
+                <!--<parameter key="description" value="Total"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="ide_usage" columns="20">
-            <description>IDE Usage Events</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="code_refactorings"/>
-                <parameter key="description" value="# Refactors"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="code_completions"/>
-                <parameter key="description" value="# Code Completions"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="builds"/>
-                <parameter key="description" value="# Builds"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="runs"/>
-                <parameter key="description" value="# Runs"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="debugs"/>
-                <parameter key="description" value="# Debugs"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="file_manipulations"/>
-                <parameter key="description" value="# File Ops"/>
-            </row>
-        </section>
+        <!--<section name="ide_usage" columns="20">-->
+            <!--<description>IDE Usage Events</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="code_refactorings"/>-->
+                <!--<parameter key="description" value="# Refactors"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="code_completions"/>-->
+                <!--<parameter key="description" value="# Code Completions"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="builds"/>-->
+                <!--<parameter key="description" value="# Builds"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="runs"/>-->
+                <!--<parameter key="description" value="# Runs"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="debugs"/>-->
+                <!--<parameter key="description" value="# Debugs"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="file_manipulations"/>-->
+                <!--<parameter key="description" value="# File Ops"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="time_spent" columns="20">
-            <description>Spent Time (mins)</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="builds_time"/>
-                <parameter key="description" value="Builds"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="runs_time"/>
-                <parameter key="description" value="Runs"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="debugs_time"/>
-                <parameter key="description" value="Debugs"/>
-            </row>
-        </section>
+        <!--<section name="time_spent" columns="20">-->
+            <!--<description>Spent Time (mins)</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="builds_time"/>-->
+                <!--<parameter key="description" value="Builds"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="runs_time"/>-->
+                <!--<parameter key="description" value="Runs"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="debugs_time"/>-->
+                <!--<parameter key="description" value="Debugs"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="projects_types" columns="20">
-            <description>Project Types</description>
-            <row class="com.codenvy.analytics.services.view.DateRow"/>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_jar"/>
-                <parameter key="description" value="Java Jar"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_war"/>
-                <parameter key="description" value="Java War"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_jsp"/>
-                <parameter key="description" value="Java JSP"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_spring"/>
-                <parameter key="description" value="Java Spring"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_php"/>
-                <parameter key="description" value="PHP"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_python"/>
-                <parameter key="description" value="Python"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_javascript"/>
-                <parameter key="description" value="JavaScript"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_ruby"/>
-                <parameter key="description" value="Ruby"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_mmp"/>
-                <parameter key="description" value="Maven Multi Project"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_nodejs"/>
-                <parameter key="description" value="Node.js"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_android"/>
-                <parameter key="description" value="Android"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_django"/>
-                <parameter key="description" value="Django"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_type_others"/>
-                <parameter key="description" value="Others"/>
-            </row>
-        </section>
+        <!--<section name="projects_types" columns="20">-->
+            <!--<description>Project Types</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow"/>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_jar"/>-->
+                <!--<parameter key="description" value="Java Jar"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_war"/>-->
+                <!--<parameter key="description" value="Java War"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_jsp"/>-->
+                <!--<parameter key="description" value="Java JSP"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_spring"/>-->
+                <!--<parameter key="description" value="Java Spring"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_php"/>-->
+                <!--<parameter key="description" value="PHP"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_python"/>-->
+                <!--<parameter key="description" value="Python"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_javascript"/>-->
+                <!--<parameter key="description" value="JavaScript"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_ruby"/>-->
+                <!--<parameter key="description" value="Ruby"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_mmp"/>-->
+                <!--<parameter key="description" value="Maven Multi Project"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_nodejs"/>-->
+                <!--<parameter key="description" value="Node.js"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_android"/>-->
+                <!--<parameter key="description" value="Android"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_django"/>-->
+                <!--<parameter key="description" value="Django"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_type_others"/>-->
+                <!--<parameter key="description" value="Others"/>-->
+            <!--</row>-->
+        <!--</section>-->
 
-        <section name="projects_paas" columns="20">
-            <description>Project PaaS</description>
-            <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="format" value="MMM dd"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_aws"/>
-                <parameter key="description" value="AWS"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_appfog"/>
-                <parameter key="description" value="AppFog"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_cloudbees"/>
-                <parameter key="description" value="CloudBees"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_cloudfoundry"/>
-                <parameter key="description" value="CloudFoundry"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_gae"/>
-                <parameter key="description" value="GAE"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_heroku"/>
-                <parameter key="description" value="Heroku"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_openshift"/>
-                <parameter key="description" value="OpenShift"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_tier3"/>
-                <parameter key="description" value="Tier3"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_manyamo"/>
-                <parameter key="description" value="Manyamo"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_no_paas_defined"/>
-                <parameter key="description" value="No PaaS Defined"/>
-            </row>
-        </section>
+        <!--<section name="projects_paas" columns="20">-->
+            <!--<description>Project PaaS</description>-->
+            <!--<row class="com.codenvy.analytics.services.view.DateRow">-->
+                <!--<parameter key="format" value="MMM dd"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_aws"/>-->
+                <!--<parameter key="description" value="AWS"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_appfog"/>-->
+                <!--<parameter key="description" value="AppFog"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_cloudbees"/>-->
+                <!--<parameter key="description" value="CloudBees"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_cloudfoundry"/>-->
+                <!--<parameter key="description" value="CloudFoundry"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_gae"/>-->
+                <!--<parameter key="description" value="GAE"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_heroku"/>-->
+                <!--<parameter key="description" value="Heroku"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_openshift"/>-->
+                <!--<parameter key="description" value="OpenShift"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_tier3"/>-->
+                <!--<parameter key="description" value="Tier3"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_paas_manyamo"/>-->
+                <!--<parameter key="description" value="Manyamo"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="project_no_paas_defined"/>-->
+                <!--<parameter key="description" value="No PaaS Defined"/>-->
+            <!--</row>-->
+        <!--</section>-->
     </view>
 </display>
