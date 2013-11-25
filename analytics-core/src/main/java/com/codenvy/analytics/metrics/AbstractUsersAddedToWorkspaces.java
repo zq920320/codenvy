@@ -45,7 +45,7 @@ public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric {
 
     @Override
     public String getStorageTable() {
-        return MetricType.USERS_ADDED_TO_WORKSPACES.name();
+        return MetricType.USERS_ADDED_TO_WORKSPACES.name().toLowerCase();
     }
 
     @Override

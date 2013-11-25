@@ -40,7 +40,7 @@ public abstract class AbstractLoggedInType extends ReadBasedMetric {
 
     @Override
     public String getStorageTable() {
-        return MetricType.USERS_LOGGED_IN_TYPES.name();
+        return MetricType.USERS_LOGGED_IN_TYPES.name().toLowerCase();
     }
 
     @Override

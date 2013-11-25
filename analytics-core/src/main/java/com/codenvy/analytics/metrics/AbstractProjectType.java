@@ -40,7 +40,7 @@ public abstract class AbstractProjectType extends ReadBasedMetric {
 
     @Override
     public String getStorageTable() {
-        return MetricType.PROJECT_TYPES.name();
+        return MetricType.PROJECT_TYPES.name().toLowerCase();
     }
 
     @Override

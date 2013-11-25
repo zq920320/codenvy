@@ -45,7 +45,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
 
     @Override
     public String getStorageTable() {
-        return MetricType.PROJECT_PAASES.name();
+        return MetricType.PROJECT_PAASES.name().toLowerCase();
     }
 
     @Override

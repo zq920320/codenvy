@@ -39,9 +39,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.testng.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.fail;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -104,22 +102,16 @@ public class TestAcceptance extends BaseTest {
     public void test() throws Exception {
         ViewBuilder viewBuilder = spy(new ViewBuilder());
 
-//        doNothing().when(viewBuilder).retainData(anyString(), anyList());
-
         viewBuilder.forceExecute(Utils.newContext());
-        
+
         ArgumentCaptor<String> tblName = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<List> data = ArgumentCaptor.forClass(List.class);
 
-        verify(viewBuilder).retainData(tblName.capture(), data.capture());
+        verify(viewBuilder, atLeastOnce()).retainData(tblName.capture(), data.capture());
 
-        tblName.getValue();
-        data.getValue();
-
-        verify(viewBuilder).retainData(tblName.capture(), data.capture());
-
-        tblName.getValue();
-        data.getValue();
+        for (int i = 0; i < tblName.getAllValues().size(); i++) {
+            acceptResult(tblName.getAllValues().get(i), data.getAllValues().get(i));
+        }
     }
 
     private void acceptResult(String tableName, List<List<ValueData>> sectionData) {
@@ -127,32 +119,46 @@ public class TestAcceptance extends BaseTest {
             switch (tableName) {
                 case "invitations_day":
                     assertInvitationsDay(sectionData);
+                    break;
                 case "time_spent_day":
                     assertTimeSpentDay(sectionData);
+                    break;
                 case "workspaces_day":
                     assertWorkspacesDay(sectionData);
+                    break;
                 case "projects_day":
                     assertProjectsDay(sectionData);
+                    break;
                 case "users_day":
                     assertUsersDay(sectionData);
+                    break;
                 case "ide_usage_day":
                     assertIdeUsageDay(sectionData);
+                    break;
                 case "usage_time_day":
                     assertUsageTimeDay(sectionData);
+                    break;
                 case "workspaces_usage_day":
                     assertWorkspaceUsageDay(sectionData);
+                    break;
                 case "user_sessions_day":
                     assertUserSessionsDay(sectionData);
+                    break;
                 case "users_usage_day":
                     assertUsersUsageDay(sectionData);
+                    break;
                 case "authentications_day":
                     assertAuthenticationsDay(sectionData);
+                    break;
                 case "users_engagement_day":
                     assertUsersEngagementDay(sectionData);
+                    break;
                 case "projects_types_day":
                     assertProjectsTypesDay(sectionData);
+                    break;
                 case "projects_paas_day":
                     assertProjectsPaasDay(sectionData);
+                    break;
                 default:
                     fail("Unknown table name " + tableName);
             }
@@ -180,6 +186,12 @@ public class TestAcceptance extends BaseTest {
 
         assertEquals(new StringValueData("> 300 Mins"), sectionData.get(5).get(0));
         assertEquals(new StringValueData("4"), sectionData.get(5).get(1));
+    }
+
+    private void assertEquals(StringValueData stringValueData, ValueData valueData) {
+        if (!stringValueData.equals(valueData)) {
+            System.out.println("================> " + stringValueData.getAsString() + "/n" + valueData.getAsString());
+        }
     }
 
     private void assertAuthenticationsDay(List<List<ValueData>> sectionData) {
