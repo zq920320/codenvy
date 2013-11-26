@@ -157,15 +157,25 @@
                 return (/^[^\+\/]+$/).test(email);
             },
 
-            login : function(form){
+            login : function(email, password, success, error){
 
                 if (isWebsocketEnabled()){
-                    var loginUrl = "/site/api/user/authenticate?" + window.location.search.substring(1);
-                    if (getQueryParameterByName("authType")!=="jaas"){
-                        loginUrl += "&authType=jaas";
+                    var loginUrl = "/site/api/user/authenticate";
+                    var successUrl = "../site/private/select-tenant?" + window.location.search.substring(1);
+                    var data = {email: email, password: password};
+                 $.ajax({
+                    url : loginUrl,
+                    type : "POST",
+                    data: data,
+                    success : function(){
+                        success({url: successUrl});
+                    },
+                    error : function(xhr/*, status , err*/){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
                     }
-                    form.attr("action", loginUrl);
-                    form.submit();
+                });             
                     }
                 },
 

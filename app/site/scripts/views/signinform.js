@@ -55,7 +55,24 @@
                 },
 
                 __submit : function(){
-                    Account.login($(this.el));
+                    Account.login(
+                            $(this.el).find("input[name='email']").val(),
+                            $(this.el).find("input[name='password']").val(),
+                            _.bind(function(d){
+                                this.trigger("success",d);
+                            },this),
+                            _.bind(function(errors){
+                                if(errors.length !== 0){
+                                    $(this.el).find("input[name='password']").val("");
+                                    $(this.el).find("input[name='password']").focus();
+                                    this.trigger(
+                                        "invalid",
+                                        errors[0].getFieldName(),
+                                        errors[0].getErrorDescription()
+                                    );
+                                }
+                            },this)
+                        );
                 }
 
             });

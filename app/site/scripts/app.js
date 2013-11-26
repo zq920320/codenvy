@@ -158,13 +158,9 @@ define(["jquery","config",
                             if ($(".error-container").html()){
                                 $(".error-container").addClass("expanded");
                             }
-                            form.on("submitting", function(){
-                                errorReport.hide();
+                            form.on("success", function(d){
+                                window.location.href = d.url;
                             });
-
-                            // form.on("success", function(){
-                            //     alert("logged in");
-                            // });
 
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
