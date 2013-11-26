@@ -15,14 +15,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class FactorySessionsProductUsageTime extends AbstractLongValueResulted {
 
-f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = filterByEvent(f1, '$EVENT');
+    public FactorySessionsProductUsageTime(String metricName) {
+        super(metricName);
+    }
 
-c1 = FOREACH f GENERATE $FIELD AS targetField, ws;
-c2 = removeEmptyField(c1, 'targetField');
-c = removeEmptyField(c2, 'ws');
+    @Override
+    public String getStorageTable() {
+        return MetricType.FACTORY_SESSIONS_LIST.name().toLowerCase();
+    }
 
-result = setByField(c, 'ws', 'targetField');
+    @Override
+    public String getDescription() {
+        return "The total time spent by all users in temporary workspaces";
+    }
+}

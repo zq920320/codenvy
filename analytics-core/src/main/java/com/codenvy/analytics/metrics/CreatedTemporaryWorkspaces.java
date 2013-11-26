@@ -15,13 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class CreatedTemporaryWorkspaces extends AbstractLongValueResulted {
 
-f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = filterByEvent(f1, '$EVENT');
+    public CreatedTemporaryWorkspaces() {
+        super(MetricType.CREATED_TEMPORARY_WORKSPACES);
+    }
 
-c1 = FOREACH f GENERATE $FIELD AS targetField;
-c = removeEmptyField(c1, 'targetField');
-
-result = DISTINCT c;
+    @Override
+    public String getDescription() {
+        return "The number of created temporary workspaces";
+    }
+}

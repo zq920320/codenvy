@@ -20,28 +20,31 @@ package com.codenvy.analytics.pig.udf;
 import com.mongodb.*;
 
 import org.apache.hadoop.mapreduce.*;
-import org.apache.pig.LoadFunc;
+import org.apache.pig.*;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.PigSplit;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
+import org.apache.pig.impl.util.Utils;
+import org.apache.pig.parser.ParserException;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class MongoLoader extends LoadFunc {
+public class MongoLoader extends LoadFunc implements LoadMetadata {
 
     public static final String SERVER_URL_PARAM = "server.url";
 
-    private RecordReader reader;
+    private final TupleFactory   tupleFactory;
+    private final ResourceSchema schema;
 
-    private final TupleFactory tupleFactory;
+    private MongoReader reader;
 
-    public MongoLoader() {
-        tupleFactory = TupleFactory.getInstance();
+    public MongoLoader(String schema) throws ParserException {
+        this.tupleFactory = TupleFactory.getInstance();
+        this.schema = new ResourceSchema(Utils.parseSchema(schema));
     }
 
     /** {@inheritDoc} */
@@ -59,7 +62,7 @@ public class MongoLoader extends LoadFunc {
     /** {@inheritDoc} */
     @Override
     public void prepareToRead(RecordReader reader, PigSplit split) throws IOException {
-        this.reader = reader;
+        this.reader = (MongoReader)reader;
     }
 
     /** {@inheritDoc} */
@@ -71,20 +74,10 @@ public class MongoLoader extends LoadFunc {
             if (reader.nextKeyValue()) {
                 DBObject value = (DBObject)reader.getCurrentValue();
 
-                Set<String> keys = value.keySet();
-                tuple = tupleFactory.newTuple(keys.size());
-
-                int index = 1;
-                for (String key : keys) {
-                    if (key.equals("_id")) {
-                        tuple.set(0, value.get(key));
-                    } else {
-                        Tuple innerTuple = tupleFactory.newTuple(2);
-                        innerTuple.set(0, key);
-                        innerTuple.set(1, value.get(key));
-
-                        tuple.set(index++, innerTuple);
-                    }
+                tuple = tupleFactory.newTuple(schema.getFields().length);
+                for (int i = 0; i < schema.getFields().length; i++) {
+                    String key = schema.getFields()[i].getName();
+                    tuple.set(i, value.get(key));
                 }
             }
 
@@ -92,6 +85,25 @@ public class MongoLoader extends LoadFunc {
         } catch (InterruptedException e) {
             throw new ExecException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public ResourceSchema getSchema(String location, Job job) throws IOException {
+        return schema;
+    }
+
+    @Override
+    public ResourceStatistics getStatistics(String location, Job job) throws IOException {
+        return null;
+    }
+
+    @Override
+    public String[] getPartitionKeys(String location, Job job) throws IOException {
+        return null;
+    }
+
+    @Override
+    public void setPartitionFilter(Expression partitionFilter) throws IOException {
     }
 
     /** MongoDB implementation for {@link InputFormat} */
@@ -116,6 +128,7 @@ public class MongoLoader extends LoadFunc {
         private MongoClient mongoClient;
         private int         progress;
 
+
         public MongoReader(String serverUrl) throws IOException {
             MongoClientURI uri = new MongoClientURI(serverUrl);
             mongoClient = new MongoClient(uri);
@@ -125,7 +138,6 @@ public class MongoLoader extends LoadFunc {
                 db.authenticate(uri.getUsername(), uri.getPassword());
             }
 
-            db.setWriteConcern(WriteConcern.ACKNOWLEDGED);
             dbCursor = db.getCollection(uri.getCollection()).find();
         }
 

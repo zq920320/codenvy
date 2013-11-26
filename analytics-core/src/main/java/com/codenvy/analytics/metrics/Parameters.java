@@ -32,7 +32,8 @@ public enum Parameters {
     PARAM,
     EVENT,
     STORAGE_URL,
-    STORAGE_TABLE,
+    STORAGE_DST,
+    STORAGE_SRC,
     TIME_UNIT {
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalArgumentException {

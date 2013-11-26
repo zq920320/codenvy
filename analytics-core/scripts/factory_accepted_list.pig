@@ -19,11 +19,19 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = combineSmallSessions(l, 'session-started', 'session-finished');
 
-result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('value', delta);
+a1 = filterByEvent(l, 'factory-url-accepted');
+a2 = extractUrlParam(a1, 'REFERRER', 'referrer');
+a3 = extractUrlParam(a2, 'FACTORY-URL', 'factoryUrl');
+a4 = extractUrlParam(a3, 'ORG-ID', 'orgId');
+a5 = extractUrlParam(a4, 'AFFILIATE-ID', 'affiliateId');
+a = FOREACH a5 GENERATE dt, ws, user, referrer, factoryUrl, orgId, affiliateId;
+
+result = FOREACH a GENERATE ToMilliSeconds(dt), TOTUPLE('value', factoryUrl);
 STORE result INTO '$STORAGE_URL.$STORAGE_DST' USING MongoStorage();
 
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, delta;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', delta);
+r1 = FOREACH a GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factoryUrl, referrer, orgId, affiliateId;
+r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
+                    TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId), TOTUPLE('referrer', referrer),
+                    TOTUPLE('value', factoryUrl);
 STORE r INTO '$STORAGE_URL.$STORAGE_DST-raw' USING MongoStorage();

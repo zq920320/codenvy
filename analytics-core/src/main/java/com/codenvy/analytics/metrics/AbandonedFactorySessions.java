@@ -15,37 +15,29 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.ValueData;
+
+import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public enum MetricFilter {
-    WS,
-    USER,
-    DOMAIN,
+public class AbandonedFactorySessions extends AbstractActiveEntities {
 
-    ORG_ID,
-    AFFILIATE_ID,
-    REFERRER,
-    CONVERTED_FACTORY_SESSION,
-    AUTHENTICATED_FACTORY_SESSION;
-
-
-    /** Puts value into execution context */
-    public void put(Map<String, String> context, String value) {
-        context.put(name(), value);
+    public AbandonedFactorySessions() {
+        super(MetricType.ABANDONED_FACTORY_SESSIONS, MetricType.FACTORY_SESSIONS_LIST);
     }
 
-    /** Gets value from execution context */
-    public String get(Map<String, String> context) {
-        return context.get(name());
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        MetricFilter.CONVERTED_FACTORY_SESSION.put(context, "false");
+        return super.getValue(context);
     }
 
-    /** @return true if context contains given parameter */
-    public boolean exists(Map<String, String> context) {
-        return context.get(name()) != null;
+
+    @Override
+    public String getDescription() {
+        return "The number of abandoned sessions in temporary workspaces";
     }
 }
-

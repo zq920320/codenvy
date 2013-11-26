@@ -1,5 +1,4 @@
 /*
- *
  * CODENVY CONFIDENTIAL
  * ________________
  *
@@ -19,11 +18,24 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = combineSmallSessions(l, 'session-started', 'session-finished');
 
-result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('value', delta);
+-- List of interesting events.
+a1 = filterByEvent(l, '$EVENT');
+a = FOREACH a1 GENERATE ws, user, dt;
+
+b = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
+
+c1 = JOIN b BY (ws, user), a BY (ws, user);
+c2 = FILTER c1 BY MilliSecondsBetween(a::dt, b::dt) > 0 AND SecondsBetween(a::dt, b::dt) <= delta;
+c3 = FOREACH c2 GENERATE b::dt AS dt, a::ws AS ws, a::user AS user;
+c = DISTINCT c3;
+
+d = countAll(c);
+
+result = FOREACH d GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
 STORE result INTO '$STORAGE_URL.$STORAGE_DST' USING MongoStorage();
 
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, delta;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', delta);
+r1 = FOREACH c GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
+r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1);
 STORE r INTO '$STORAGE_URL.$STORAGE_DST-raw' USING MongoStorage();
+

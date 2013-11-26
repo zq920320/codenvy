@@ -39,7 +39,7 @@ import java.util.*;
 import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestSetOfActiveEntities extends BaseTest {
+public class TestActiveEntitiesList extends BaseTest {
 
     private Map<String, String> params;
 
@@ -68,7 +68,7 @@ public class TestSetOfActiveEntities extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
         Parameters.PARAM.put(params, "ws");
-        Parameters.STORAGE_TABLE.put(params, "testsetofactiveentities");
+        Parameters.STORAGE_DST.put(params, "testsetofactiveentities");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, params);

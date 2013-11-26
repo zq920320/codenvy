@@ -15,15 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class FactorySessions extends AbstractActiveEntities {
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+    public FactorySessions() {
+        super(MetricType.FACTORY_SESSIONS, MetricType.FACTORY_SESSIONS_LIST);
+    }
 
-a1 = filterByEvent(l, 'factory-url-accepted');
-a2 = extractUrlParam(a1, 'AFFILIATE-ID', 'affiliateId');
-a3 = removeEmptyField(a2, 'affiliateId');
-a = FOREACH a3 GENERATE ws, affiliateId;
-
-result = setByField(a, 'affiliateId', 'ws');
-
+    @Override
+    public String getDescription() {
+        return "The total number of sessions in temporary workspaces";
+    }
+}

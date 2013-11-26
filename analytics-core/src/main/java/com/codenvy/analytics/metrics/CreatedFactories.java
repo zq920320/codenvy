@@ -15,16 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class CreatedFactories extends AbstractActiveEntities {
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+    public CreatedFactories() {
+        super(MetricType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_LIST);
+    }
 
-a1 = filterByEvent(l, 'factory-created');
-a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
-a3 = extractParam(a2, 'TYPE', 'type');
-a4 = removeEmptyField(a3, 'type');
-a = FOREACH a4 GENERATE type, factoryUrl;
-
-
-result = setByField(a, 'type', 'factoryUrl');
+    @Override
+    public String getDescription() {
+        return "The number of created factories";
+    }
+}

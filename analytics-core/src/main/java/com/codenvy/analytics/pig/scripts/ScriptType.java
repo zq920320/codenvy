@@ -64,13 +64,31 @@ public enum ScriptType {
             return params;
         }
     },
+    FACTORY_CREATED_LIST,
+    FACTORY_ACCEPTED_LIST,
+    PRODUCT_USAGE_FACTORY_SESSIONS {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.STORAGE_SRC);
+            return params;
+        }
+    },
+    NUMBER_OF_FACTORY_SESSIONS_WITH_EVENT {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            return params;
+        }
+    },
 
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {
         public Set<Parameters> getParams() {
             return new LinkedHashSet<>(
                     Arrays.asList(new Parameters[]{Parameters.STORAGE_URL,
-                                                   Parameters.STORAGE_TABLE}));
+                                                   Parameters.STORAGE_DST}));
         }
     },
     TEST_EXTRACT_WS,
@@ -88,7 +106,7 @@ public enum ScriptType {
                                                Parameters.TO_DATE,
                                                Parameters.FROM_DATE,
                                                Parameters.STORAGE_URL,
-                                               Parameters.STORAGE_TABLE}));
+                                               Parameters.STORAGE_DST}));
     }
 
     /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */

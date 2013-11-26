@@ -15,15 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class FactorySessionsWithBuild extends AbstractLongValueResulted {
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+    public FactorySessionsWithBuild() {
+        super(MetricType.FACTORY_SESSIONS_WITH_BUILD);
+    }
 
-a1 = filterByEvent(l, 'factory-url-accepted');
-a2 = extractUrlParam(a1, 'ORG-ID', 'orgId');
-a3 = removeEmptyField(a2, 'orgId');
-a = FOREACH a3 GENERATE ws, orgId;
-
-result = setByField(a, 'orgId', 'ws');
-
+    @Override
+    public String getDescription() {
+        return "The number of sessions where user built an application";
+    }
+}

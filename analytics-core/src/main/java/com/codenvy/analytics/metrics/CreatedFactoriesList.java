@@ -15,25 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class CreatedFactoriesList extends AbstractSetValueResulted {
 
-t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+    protected CreatedFactoriesList() {
+        super(MetricType.CREATED_FACTORIES_LIST);
+    }
 
-j = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
-
-/*
- * List of interesting events.
- */
-b1 = filterByEvent(t, '$EVENT');
-b = FOREACH b1 GENERATE ws, user, dt;
-
-c1 = JOIN j BY (ws, user) LEFT, b BY (ws, user);
-c2 = removeEmptyField(c1, 'b::ws');
-c3 = FILTER c2 BY MilliSecondsBetween(b::dt, j::dt) > 0 AND SecondsBetween(b::dt, j::dt) <= delta;
-c4 = FOREACH c3 GENERATE b::ws AS ws, b::user AS user, j::dt AS dt;
-c = DISTINCT c4;
-
-
-result = countByField(c, 'ws');
-
+    @Override
+    public String getDescription() {
+        return "The list of created factories.";
+    }
+}
