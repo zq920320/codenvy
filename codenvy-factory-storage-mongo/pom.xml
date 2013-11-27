@@ -30,14 +30,14 @@
     <name>Codenvy Factory :: MongoDB storage</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-factory</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.factory</groupId>
             <artifactId>codenvy-factory-services</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.platform-api</groupId>
+            <artifactId>codenvy-api-factory</artifactId>
+            <version>${codenvy.platform-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
@@ -62,6 +62,13 @@
             <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>de.bwaldvogel</groupId>
+            <artifactId>mongo-java-server</artifactId>
+            <version>${mongo-java-server.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Mock testing -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -81,13 +88,6 @@
                     <groupId>org.mockito</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <!-- Test dependencies -->
-        <dependency>
-            <groupId>de.bwaldvogel</groupId>
-            <artifactId>mongo-java-server</artifactId>
-            <version>${mongo-java-server.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
