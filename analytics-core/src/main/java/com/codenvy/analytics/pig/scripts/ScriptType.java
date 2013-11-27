@@ -95,7 +95,8 @@ public enum ScriptType {
     TEST_EXTRACT_USER,
     TEST_EXTRACT_QUERY_PARAM,
     TEST_COMBINE_SMALL_SESSIONS,
-    TEST_COMBINE_CLOSEST_EVENTS;
+    TEST_COMBINE_CLOSEST_EVENTS,
+    TEST_FIX_FACTORY_URL;
 
 
     /** @return list of mandatory parameters required to be passed to the script */

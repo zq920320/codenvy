@@ -176,10 +176,10 @@ DEFINE extracQueryParam(X, url, paramName, messageParam, expectedFieldName) RETU
 -- @return  {..., $paramFieldNameParam : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractUrlParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
-  $Y = FOREACH $X GENERATE *, ('$paramNameParam' == 'FACTORY-URL' ? CutQueryParam(
-                                                                        URLDecode(
+  $Y = FOREACH $X GENERATE *, ('$paramNameParam' == 'FACTORY-URL' ? REPLACE(CutQueryParam(
                                                                             URLDecode(
-                                                                                REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))), 'ptype')
+                                                                                URLDecode(
+                                                                                    REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))), 'ptype'), '\\/factory\\/\\?', '\\/factory\\?')
                                                                   :  URLDecode(
                                                                         URLDecode(
                                                                             REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))))
