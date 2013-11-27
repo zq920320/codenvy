@@ -1,4 +1,5 @@
 /*
+/*
  *
  * CODENVY CONFIDENTIAL
  * ________________
@@ -248,7 +249,7 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     u2 = combineClosestEvents(u1, '$startEvent', '$finishEvent');
 
     -- considering sessions less than 1 min as 1 min columns
-    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, delta AS delta, id AS id;
+    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, (delta < 60 ? 60 : delta) AS delta, id AS id;
 };
 
 ---------------------------------------------------------------------------------------------

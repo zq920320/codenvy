@@ -169,8 +169,71 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void assertFactoryDay(List<List<ValueData>> sectionData) {
-        assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("Factories Created"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("5"), sectionData.get(1).get(1));
 
+        assertEquals(new StringValueData("Temporary Workspaces Created"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("348"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("Accounts Created From Factories"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("15"), sectionData.get(3).get(1));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(4).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(4).get(1));
+
+        assertEquals(new StringValueData("Factory Sessions"), sectionData.get(5).get(0));
+        assertEquals(new StringValueData("293"), sectionData.get(5).get(1));
+
+        assertEquals(new StringValueData("Anonymous Sessions"), sectionData.get(6).get(0));
+        assertEquals(new StringValueData("275"), sectionData.get(6).get(1));
+
+        assertEquals(new StringValueData("Authenticated Sessions"), sectionData.get(7).get(0));
+        assertEquals(new StringValueData("18"), sectionData.get(7).get(1));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(8).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(8).get(1));
+
+        assertEquals(new StringValueData("Factory Sessions"), sectionData.get(9).get(0));
+        assertEquals(new StringValueData("293"), sectionData.get(9).get(1));
+
+        assertEquals(new StringValueData("Abandoned Sessions"), sectionData.get(10).get(0));
+        assertEquals(new StringValueData("276"), sectionData.get(10).get(1)); //291
+
+        assertEquals(new StringValueData("Converted Sessions"), sectionData.get(11).get(0));
+        assertEquals(new StringValueData("18"), sectionData.get(11).get(1)); //2
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(12).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(12).get(1));
+
+        assertEquals(new StringValueData("Factory Sessions"), sectionData.get(13).get(0));
+        assertEquals(new StringValueData("293"), sectionData.get(13).get(1));
+
+        assertEquals(new StringValueData("% Built"), sectionData.get(14).get(0));
+        assertEquals(new StringValueData("19%"), sectionData.get(14).get(1));
+
+        assertEquals(new StringValueData("% Run"), sectionData.get(15).get(0));
+        assertEquals(new StringValueData("17%"), sectionData.get(15).get(1));
+
+        assertEquals(new StringValueData("% Deployed"), sectionData.get(16).get(0));
+        assertEquals(new StringValueData("10%"), sectionData.get(16).get(1));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(17).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(17).get(1));
+
+        assertEquals(new StringValueData("Factory Sessions"), sectionData.get(18).get(0));
+        assertEquals(new StringValueData("293"), sectionData.get(18).get(1));
+
+        assertEquals(new StringValueData("< 10 Mins"), sectionData.get(19).get(0));
+        assertEquals(new StringValueData("261"), sectionData.get(19).get(1));
+
+        assertEquals(new StringValueData("> 10 Mins"), sectionData.get(20).get(0));
+        assertEquals(new StringValueData("32"), sectionData.get(20).get(1));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(21).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(21).get(1));
+
+        assertEquals(new StringValueData("Product Usage Mins"), sectionData.get(22).get(0));
+        assertEquals(new StringValueData("1,445"), sectionData.get(22).get(1));
     }
 
     private void assertProjectsPaasDay(List<List<ValueData>> sectionData) {
@@ -271,7 +334,7 @@ public class TestAcceptance extends BaseTest {
 
     private void assertEquals(StringValueData stringValueData, ValueData valueData) {
         if (!stringValueData.equals(valueData)) {
-            System.out.println("================> " + stringValueData.getAsString() + "/n" + valueData.getAsString());
+            System.out.println("================> " + stringValueData.getAsString() + " != " + valueData.getAsString());
         }
     }
 

@@ -17,11 +17,23 @@
  */
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactorySessionsProductUsageTime extends AbstractLongValueResulted {
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-    public FactorySessionsProductUsageTime(String metricName) {
-        super(metricName);
+import java.io.IOException;
+import java.util.Map;
+
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class FactorySessionsProductUsageTotal extends AbstractLongValueResulted {
+
+    public FactorySessionsProductUsageTotal() {
+        super(MetricType.FACTORY_PRODUCT_USAGE_TIME_TOTAL);
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        LongValueData value = (LongValueData)super.getValue(context);
+        return new LongValueData(value.getAsLong() / 60);
     }
 
     @Override

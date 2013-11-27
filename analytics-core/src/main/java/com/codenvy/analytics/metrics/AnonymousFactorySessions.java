@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class AnonymousFactorySessions extends AbstractActiveEntities {
+public class AnonymousFactorySessions extends AbstractCount {
 
     public AnonymousFactorySessions() {
         super(MetricType.ANONYMOUS_FACTORY_SESSIONS, MetricType.FACTORY_SESSIONS_LIST);

@@ -426,16 +426,19 @@
                 <parameter key="description" value="Factory Sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_workspaces"/>
-                <parameter key="description" value="factory_sessions_with_build_percent"/>
+                <parameter key="name" value="factory_sessions_with_build_percent"/>
+                <parameter key="format" value="%.0f%%"/>
+                <parameter key="description" value="% Built"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_workspaces"/>
-                <parameter key="description" value="factory_sessions_with_run_percent"/>
+                <parameter key="name" value="factory_sessions_with_run_percent"/>
+                <parameter key="format" value="%.0f%%"/>
+                <parameter key="description" value="% Run"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_workspaces"/>
-                <parameter key="description" value="factory_sessions_with_deploy_percent"/>
+                <parameter key="name" value="factory_sessions_with_deploy_percent"/>
+                <parameter key="format" value="%.0f%%"/>
+                <parameter key="description" value="% Deployed"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -453,6 +456,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_product_usage_time_total"/>
+                <parameter key="format" value="%,.0f"/>
                 <parameter key="description" value="Product Usage Mins"/>
             </row>
         </section>
