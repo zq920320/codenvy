@@ -77,7 +77,7 @@
         <description>The number of builds</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
-        <parameter key="EVENT" value="build-started"/>
+        <parameter key="EVENT" value="project-built,project-deployed,application-created"/>
         <parameter key="STORAGE_DST" value="builds"/>
     </script>
     <script name="number_of_events">
