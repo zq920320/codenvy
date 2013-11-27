@@ -70,7 +70,7 @@ public class TestAcceptance extends BaseTest {
     }
 
     private File getResourceAsBytes(String originalDate, String newDate) throws Exception {
-        String archive = getClass().getClassLoader().getResource("messages_23.zip").getFile();
+        String archive = getClass().getClassLoader().getResource("messages_23.zip_").getFile();
 
         try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(archive)))) {
             ZipEntry zipEntry = in.getNextEntry();
@@ -159,10 +159,18 @@ public class TestAcceptance extends BaseTest {
                 case "projects_paas_day":
                     assertProjectsPaasDay(sectionData);
                     break;
+                case "factory_day":
+                    assertFactoryDay(sectionData);
+                    break;
                 default:
                     fail("Unknown table name " + tableName);
             }
         }
+    }
+
+    private void assertFactoryDay(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
+
     }
 
     private void assertProjectsPaasDay(List<List<ValueData>> sectionData) {

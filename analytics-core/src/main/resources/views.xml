@@ -375,4 +375,86 @@
             </row>
         </section>
     </view>
+
+
+    <!-- Factory Timeline -->
+    <view time-unit="day,week,month,lifetime" name="timeline">
+        <section name="factory" columns="20">
+            <description>Factory Analysis</description>
+            <row class="com.codenvy.analytics.services.view.DateRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_factories"/>
+                <parameter key="description" value="Factories Created"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_temporary_workspaces"/>
+                <parameter key="description" value="Temporary Workspaces Created"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_users_from_factory"/>
+                <parameter key="description" value="Accounts Created From Factories"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Factory Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="anonymous_factory_sessions"/>
+                <parameter key="description" value="Anonymous Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="authenticated_factory_sessions"/>
+                <parameter key="description" value="Authenticated Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Factory Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="abandoned_factory_sessions"/>
+                <parameter key="description" value="Abandoned Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="converted_factory_sessions"/>
+                <parameter key="description" value="Converted Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Factory Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_workspaces"/>
+                <parameter key="description" value="factory_sessions_with_build_percent"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_workspaces"/>
+                <parameter key="description" value="factory_sessions_with_run_percent"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_workspaces"/>
+                <parameter key="description" value="factory_sessions_with_deploy_percent"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Factory Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions_below_10_min"/>
+                <parameter key="description" value="&#0060; 10 Mins"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions_above_10_min"/>
+                <parameter key="description" value="&#0062; 10 Mins"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_product_usage_time_total"/>
+                <parameter key="description" value="Product Usage Mins"/>
+            </row>
+        </section>
+    </view>
 </display>

@@ -20,7 +20,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class FactorySessionsBelow10Min extends AbstractFactorySessions {
 
-    protected FactorySessionsBelow10Min() {
+    public FactorySessionsBelow10Min() {
         super(MetricType.FACTORY_SESSIONS_BELOW_10_MIN, 0, 10 * 60, true, false);
     }
 

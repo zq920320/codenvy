@@ -20,7 +20,7 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class CreatedFactoriesList extends AbstractSetValueResulted {
 
-    protected CreatedFactoriesList() {
+    public CreatedFactoriesList() {
         super(MetricType.CREATED_FACTORIES_LIST);
     }
 

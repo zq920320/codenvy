@@ -25,10 +25,10 @@ import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactorySessionsWithDeployRun extends CalculatedMetric {
+public class FactorySessionsWithRunPercent extends CalculatedMetric {
 
-    public FactorySessionsWithDeployRun() {
-        super(MetricType.FACTORY_SESSIONS_WITH_RUN,
+    public FactorySessionsWithRunPercent() {
+        super(MetricType.FACTORY_SESSIONS_WITH_RUN_PERCENT,
               new MetricType[]{MetricType.FACTORY_SESSIONS,
                                MetricType.FACTORY_SESSIONS_WITH_RUN});
     }
