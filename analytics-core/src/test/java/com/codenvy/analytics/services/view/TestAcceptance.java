@@ -167,7 +167,7 @@ public class TestAcceptance extends BaseTest {
 
     private void assertProjectsPaasDay(List<List<ValueData>> sectionData) {
         assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
-        assertEquals(new StringValueData("434"), sectionData.get(1).get(1));
+        assertEquals(new StringValueData("433"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("AWS"), sectionData.get(2).get(0));
         assertEquals(new StringValueData("1"), sectionData.get(2).get(1));
@@ -249,13 +249,13 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("203"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("< 10 Min"), sectionData.get(2).get(0));
-        assertEquals(new StringValueData("90"), sectionData.get(2).get(1));
+        assertEquals(new StringValueData("85"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData(">= 10 And < 60 Mins"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("75"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("81"), sectionData.get(3).get(1)); 
 
         assertEquals(new StringValueData(">= 60 And < 300 Mins"), sectionData.get(4).get(0));
-        assertEquals(new StringValueData("34"), sectionData.get(4).get(1));
+        assertEquals(new StringValueData("33"), sectionData.get(4).get(1));
 
         assertEquals(new StringValueData("> 300 Mins"), sectionData.get(5).get(0));
         assertEquals(new StringValueData("4"), sectionData.get(5).get(1));
@@ -269,27 +269,27 @@ public class TestAcceptance extends BaseTest {
 
     private void assertAuthenticationsDay(List<List<ValueData>> sectionData) {
         assertEquals(new StringValueData("Google Auth"), sectionData.get(1).get(0));
-        assertEquals(new StringValueData("56%"), sectionData.get(1).get(1));
+        assertEquals(new StringValueData("56"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("Github Auth"), sectionData.get(2).get(0));
-        assertEquals(new StringValueData("11%"), sectionData.get(2).get(1));
+        assertEquals(new StringValueData("11"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("Form Auth"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("33%"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("33"), sectionData.get(3).get(1)); 
     }
 
     private void assertUserSessionsDay(List<List<ValueData>> sectionData) {
         assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
-        assertEquals(new StringValueData("746"), sectionData.get(1).get(1));
+        assertEquals(new StringValueData("744"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("<= 1 Min"), sectionData.get(2).get(0));
-        assertEquals(new StringValueData("228"), sectionData.get(2).get(1));
+        assertEquals(new StringValueData("227"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("> 1 And < 10 Mins"), sectionData.get(3).get(0));
         assertEquals(new StringValueData("297"), sectionData.get(3).get(1)); 
 
         assertEquals(new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
-        assertEquals(new StringValueData("191"), sectionData.get(4).get(1));
+        assertEquals(new StringValueData("190"), sectionData.get(4).get(1));
 
         assertEquals(new StringValueData("> 60 Mins"), sectionData.get(5).get(0));
         assertEquals(new StringValueData("30"), sectionData.get(5).get(1));
@@ -297,7 +297,7 @@ public class TestAcceptance extends BaseTest {
 
     private void assertWorkspaceUsageDay(List<List<ValueData>> sectionData) {
         assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
-        assertEquals(new StringValueData("64"), sectionData.get(1).get(1));
+        assertEquals(new StringValueData("63"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("New Active Workspaces"), sectionData.get(2).get(0));
         assertEquals(new StringValueData("54"), sectionData.get(2).get(1));
@@ -311,19 +311,19 @@ public class TestAcceptance extends BaseTest {
 
     private void assertUsageTimeDay(List<List<ValueData>> sectionData) {
         assertEquals(new StringValueData("Total"), sectionData.get(1).get(0));
-        assertEquals(new StringValueData("9,256"), sectionData.get(1).get(1));
+        assertEquals(new StringValueData("8992"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("<= 1 Min"), sectionData.get(2).get(0));
-        assertEquals(new StringValueData("228"), sectionData.get(2).get(1));
+        assertEquals(new StringValueData("227"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("> 1 And < 10 Mins"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("1,432"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("1204"), sectionData.get(3).get(1)); 
 
         assertEquals(new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
-        assertEquals(new StringValueData("4,829"), sectionData.get(4).get(1));
+        assertEquals(new StringValueData("4794"), sectionData.get(4).get(1));
 
         assertEquals(new StringValueData("> 60 Mins"), sectionData.get(5).get(0));
-        assertEquals(new StringValueData("2,767"), sectionData.get(5).get(1));
+        assertEquals(new StringValueData("2767"), sectionData.get(5).get(1));
     }
 
     private void assertIdeUsageDay(List<List<ValueData>> sectionData) {
@@ -353,8 +353,8 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("Created From Form / oAuth"), sectionData.get(3).get(0));
         assertEquals(new StringValueData("44"), sectionData.get(3).get(1));
 
-        assertEquals(new StringValueData("Created From Form / oAuth"), sectionData.get(4).get(0));
-        assertEquals(new StringValueData("79"), sectionData.get(4).get(1));
+        assertEquals(new StringValueData("Total"), sectionData.get(4).get(0));
+        assertEquals(new StringValueData("69"), sectionData.get(4).get(1));
     }
 
     private void assertUsersUsageDay(List<List<ValueData>> sectionData) {
@@ -379,7 +379,7 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("94"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("Total"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("527"), sectionData.get(3).get(1));
+        assertEquals(new StringValueData("369"), sectionData.get(3).get(1));
     }
 
     private void assertWorkspacesDay(List<List<ValueData>> sectionData) {
@@ -387,10 +387,10 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("54"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("Destroyed"), sectionData.get(2).get(0));
-        assertEquals(new StringValueData(""), sectionData.get(2).get(1));
+        assertEquals(new StringValueData("1"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("Total"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("64"), sectionData.get(3).get(1));
+        assertEquals(new StringValueData("63"), sectionData.get(3).get(1));
     }
 
     private void assertTimeSpentDay(List<List<ValueData>> sectionData) {
@@ -409,6 +409,6 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("16"), sectionData.get(1).get(1));
 
         assertEquals(new StringValueData("Accepted"), sectionData.get(2).get(0));
-        assertEquals(new StringValueData("31%"), sectionData.get(2).get(1));
+        assertEquals(new StringValueData("31"), sectionData.get(2).get(1));
     }
 }

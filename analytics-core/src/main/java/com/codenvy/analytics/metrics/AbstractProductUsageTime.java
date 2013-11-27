@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
@@ -56,6 +57,11 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+    
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        return new LongValueData(((LongValueData)super.getValue(context)).getAsLong() / 60L);
     }
 
     @Override
