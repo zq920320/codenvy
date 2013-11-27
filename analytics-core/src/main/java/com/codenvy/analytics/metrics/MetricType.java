@@ -135,9 +135,5 @@ public enum MetricType {
     FACTORY_SESSIONS_BELOW_10_MIN,
     FACTORY_SESSIONS_ABOVE_10_MIN,
     FACTORY_PRODUCT_USAGE_TIME_TOTAL,
-
-//    com.codenvy.analytics.metrics.FactorySessionsBelow10Min
-//    com.codenvy.analytics.metrics.FactorySessionsAbove10Min
-
 }
 

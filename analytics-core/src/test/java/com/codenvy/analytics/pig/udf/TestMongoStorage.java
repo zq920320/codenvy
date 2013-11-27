@@ -101,10 +101,6 @@ public class TestMongoStorage extends BaseTest {
         assertTrue(iterator.hasNext());
 
         Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0), dateFormat.parse("20130102").getTime());
-
-        Tuple innerTuple = (Tuple)tuple.get(1);
-        assertEquals(innerTuple.get(0), "value");
-        assertEquals(innerTuple.get(1), 1L);
+        assertEquals(tuple.get(0), 1L);
     }
 }

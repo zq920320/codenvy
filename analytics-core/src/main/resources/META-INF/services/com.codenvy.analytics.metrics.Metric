@@ -105,8 +105,10 @@ com.codenvy.analytics.metrics.FactorySessionsWithDeploy
 com.codenvy.analytics.metrics.FactorySessionsWithBuildPercent
 com.codenvy.analytics.metrics.FactorySessionsWithRunPercent
 com.codenvy.analytics.metrics.FactorySessionsWithDeployPercent
-
+com.codenvy.analytics.metrics.FactorySessionsBelow10Min
+com.codenvy.analytics.metrics.FactorySessionsAbove10Min
 com.codenvy.analytics.metrics.FactorySessionsProductUsageTime
+
 
 
 

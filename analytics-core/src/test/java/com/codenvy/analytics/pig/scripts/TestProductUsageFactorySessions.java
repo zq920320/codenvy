@@ -20,10 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -153,10 +150,38 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(900));
     }
 
+    @Test
+    public void testAbstractFactorySessions() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130210");
+        Parameters.TO_DATE.put(context, "20130210");
+
+        Metric metric = new TestAbstractFactorySessions("testproductusagefactorysessions", 0, 600, true, true);
+        assertEquals(metric.getValue(context), new LongValueData(2));
+    }
+
     private class TestLongValuedMetric extends AbstractLongValueResulted {
 
         private TestLongValuedMetric() {
             super("testproductusagefactorysessions");
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+    }
+
+    private class TestAbstractFactorySessions extends AbstractFactorySessions {
+
+        protected TestAbstractFactorySessions(String metricName, long min, long max, boolean includeMin,
+                                              boolean includeMax) {
+            super(metricName, min, max, includeMin, includeMax);
+        }
+
+        @Override
+        public String getStorageTable() {
+            return "testproductusagefactorysessions";
         }
 
         @Override

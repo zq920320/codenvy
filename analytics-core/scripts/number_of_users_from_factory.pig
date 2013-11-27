@@ -28,6 +28,6 @@ a = countAll(a2);
 result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
 STORE result INTO '$STORAGE_URL.$STORAGE_DST' USING MongoStorage();
 
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
+r1 = FOREACH f GENERATE dt, tmpWs AS ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1L);
 STORE r INTO '$STORAGE_URL.$STORAGE_DST-raw' USING MongoStorage();

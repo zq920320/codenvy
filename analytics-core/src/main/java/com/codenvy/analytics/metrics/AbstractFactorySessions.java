@@ -26,18 +26,18 @@ import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractProductUsageFactorySessions extends ReadBasedMetric {
+public abstract class AbstractFactorySessions extends ReadBasedMetric {
 
     final private long    min;
     final private long    max;
     final private boolean includeMin;
     final private boolean includeMax;
 
-    protected AbstractProductUsageFactorySessions(String metricName,
-                                                  long min,
-                                                  long max,
-                                                  boolean includeMin,
-                                                  boolean includeMax) {
+    protected AbstractFactorySessions(String metricName,
+                                      long min,
+                                      long max,
+                                      boolean includeMin,
+                                      boolean includeMax) {
         super(metricName);
         this.min = min;
         this.max = max;
@@ -45,11 +45,11 @@ public abstract class AbstractProductUsageFactorySessions extends ReadBasedMetri
         this.includeMax = includeMax;
     }
 
-    protected AbstractProductUsageFactorySessions(MetricType metricType,
-                                                  long min,
-                                                  long max,
-                                                  boolean includeMin,
-                                                  boolean includeMax) {
+    protected AbstractFactorySessions(MetricType metricType,
+                                      long min,
+                                      long max,
+                                      boolean includeMin,
+                                      boolean includeMax) {
         this(metricType.name(), min, max, includeMin, includeMax);
     }
 
