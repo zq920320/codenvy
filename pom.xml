@@ -16,66 +16,19 @@
          is strictly forbidden unless prior written permission is obtained
          from Codenvy S.A..
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.codenvy</groupId>
         <artifactId>maven-parent-pom</artifactId>
-        <version>2.0.1</version>
-        <relativePath/>
+        <groupId>com.codenvy</groupId>
+        <version>3.0.1</version>
+        <relativePath />
     </parent>
-
     <groupId>com.codenvy.analytics</groupId>
     <artifactId>analytics-parent</artifactId>
-    <name>Codenvy :: Analytics :: Parent</name>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-    <properties>
-        <!-- Apache Pig dependencies -->
-        <pig.version>0.12.0</pig.version>
-        <hadoop.version>0.20.2</hadoop.version>
-        <jline.version>0.9.94</jline.version>
-        <antlr.version>3.4</antlr.version>
-        <jackson.version>1.7.4</jackson.version>
-        <guava.version>13.0.1</guava.version>
-        <joda-time.version>2.2</joda-time.version>
-
-        <h2.version>1.2.140</h2.version>
-        <mongo.driver.version>2.10.1</mongo.driver.version>
-        <embedded.mongo.version>1.28</embedded.mongo.version>
-
-        <!-- Third parties -->
-        <everrest.version>1.0.10</everrest.version>
-        <javax.ws.rs.version>1.0</javax.ws.rs.version>
-        <servlet-api.version>3.0.1</servlet-api.version>
-
-        <!-- Third parties -->
-        <testng.version>6.3.1</testng.version>
-        <junit.version>4.10</junit.version>
-        <mockito.version>1.9.0</mockito.version>
-        <quartz.version>2.1.7</quartz.version>
-        <jaxb.version>2.2.11</jaxb.version>
-        <commons.lang.version>2.6</commons.lang.version>
-        <commons.net.version>3.2</commons.net.version>
-        <commons.io.version>2.4</commons.io.version>
-
-        <!-- Loggers -->
-        <org.slf4j.version>1.6.1</org.slf4j.version>
-        <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
-        <log4j.version>1.2.17</log4j.version>
-        <javax.mail.version>1.4.2</javax.mail.version>
-
-        <!-- Platrofm API-->
-        <!--<analytics.api.version>1.0.0-beta1</analytics.api.version>-->
-        <analytics.api.version>1.0.0-SNAPSHOT</analytics.api.version>
-        <platform.api.version>1.0.0-SNAPSHOT</platform.api.version>
-
-        <!-- WSo2 Server -->
-        <wso2.bam.version>2.3.0</wso2.bam.version>
-    </properties>
-
+    <name>Codenvy :: Analytics :: Parent</name>
     <modules>
         <module>analytics-core</module>
         <module>analytics-application</module>
@@ -84,4 +37,34 @@
         <module>analytics-wso2bam-pkg</module>
         <module>analytics-wso2bam-local-pkg</module>
     </modules>
+    <properties>
+        <analytics.api.version>1.0.0-SNAPSHOT</analytics.api.version>
+        <antlr.version>3.4</antlr.version>
+        <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
+        <commons.io.version>2.4</commons.io.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <commons.net.version>3.2</commons.net.version>
+        <embedded.mongo.version>1.28</embedded.mongo.version>
+        <everrest.version>1.0.10</everrest.version>
+        <guava.version>13.0.1</guava.version>
+        <h2.version>1.2.140</h2.version>
+        <hadoop.version>0.20.2</hadoop.version>
+        <jackson.version>1.7.4</jackson.version>
+        <javax.mail.version>1.4.2</javax.mail.version>
+        <javax.ws.rs.version>1.0</javax.ws.rs.version>
+        <jaxb.version>2.2.11</jaxb.version>
+        <jline.version>0.9.94</jline.version>
+        <joda-time.version>2.2</joda-time.version>
+        <junit.version>4.10</junit.version>
+        <log4j.version>1.2.17</log4j.version>
+        <mockito.version>1.9.0</mockito.version>
+        <mongo.driver.version>2.10.1</mongo.driver.version>
+        <org.slf4j.version>1.6.1</org.slf4j.version>
+        <pig.version>0.12.0</pig.version>
+        <platform.api.version>1.0.0-SNAPSHOT</platform.api.version>
+        <quartz.version>2.1.7</quartz.version>
+        <servlet-api.version>3.0.1</servlet-api.version>
+        <testng.version>6.3.1</testng.version>
+        <wso2.bam.version>2.3.0</wso2.bam.version>
+    </properties>
 </project>
