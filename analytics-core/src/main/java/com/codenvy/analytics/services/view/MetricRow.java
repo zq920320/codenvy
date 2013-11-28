@@ -38,7 +38,7 @@ public class MetricRow extends AbstractRow {
     private static final String DESCRIPTION = "description";
     private static final String FORMAT      = "format";
 
-    private static final String DEFAULT_FORMAT = "%.0f";
+    private static final String DEFAULT_FORMAT = "%,.0f";
 
     private final Metric metric;
     private final String format;

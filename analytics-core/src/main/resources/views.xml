@@ -139,14 +139,17 @@
             <row class="com.codenvy.analytics.services.view.DateRow"/>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_logged_in_with_google_percent"/>
+                <parameter key="format" value="%,.0f"/>
                 <parameter key="description" value="Google Auth"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_logged_in_with_github_percent"/>
+                <parameter key="format" value="%,.0f"/>
                 <parameter key="description" value="Github Auth"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_logged_in_with_form_percent"/>
+                <parameter key="format" value="%,.0f"/>
                 <parameter key="description" value="Form Auth"/>
             </row>
         </section>
