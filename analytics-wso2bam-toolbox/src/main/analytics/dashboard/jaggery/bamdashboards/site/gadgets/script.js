@@ -1,14 +1,14 @@
 var TimelineGadget = new TimelineGadget();
 
 function TimelineGadget() {  
-   // ****************** Private members 
+   // ***** Private members 
    var lastClickedRow;
    var lastMouseoveredRow;
    
    var MOUSEOVER_ROW_STYLE = " mouseover-row";
    var CLICKED_ROW_STYLE = " clicked-row";
 
-   // ****************** constructor
+   // ***** Public methods 
    this.setupRowHandlers = function(tableId) {
       var table = document.getElementById(tableId);
       if (table != null) {
@@ -31,7 +31,7 @@ function TimelineGadget() {
       }
    }
    
-   // ****************** Private methods ********** 
+   // ***** Private methods 
    function onRowClick(event) {
    	var row = event.currentTarget;
       

@@ -67,7 +67,6 @@ function printTable(table) {
     }
     print('</tr>');
     print('</thead>');
-    print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
 
     // print table body
     print('<tbody>');
@@ -92,9 +91,10 @@ function printTable(table) {
        }
        print('</tr>');
                
-       // print pair row
-       print('<tr class="pair-row">');        
+       // print pair row       
        if (i < table.rows.length - 1) {
+          print('<tr class="pair-row">');
+          
           // print first cell
         	 print('<td class="timeline-table-cell timeline-table-first-cell">');
           print('<div style="outline-style: none;" tabindex="0">');
@@ -115,30 +115,11 @@ function printTable(table) {
        }
     }
     
-    // print table footer
-    if ((table.rows.length + 1) % 2 == 0) {
-    	 // set special background for pair row 
-    	 print('<tr class="pair-row">');
-    } else {
-    	 print('<tr>');
-    }
-    
-    // print first cell of footer
-    print('<td class="timeline-table-cell timeline-table-first-cell text-cursor">');
-    print('<div style="outline-style: none;"></div>');
-    print('</td>');
-
-    // print other cells of footer
-    for (var i = 1; i < table.columns.length; i++) {
-       print('<td class="timeline-table-cell text-cursor">');
-       print('<div style="outline-style: none;"></div>');
-       print('</td>');
-    }
-    
-    print('</tr>');
-    
+    print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
     print('</tbody>');
     print('</table>');
+    
+    // load handlers of table events
     print('<script src="script.js"></script>');
     print('<script>TimelineGadget.setupRowHandlers("' + timelineTableId + '");</script>');
 }
