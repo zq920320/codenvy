@@ -42,14 +42,19 @@
         </div>
         <div class="span10">
             <div class="well topFilteringPanel">
-                <button id="clearSelectionBtn" class="btn btn-primary btn-small filter-btn">Clear</button>
-            </div>
-            <div class="navbar timelySwitch" style="overflow: hidden;">
-                <div id="timely-dd" class="btn-group timely-dd-btns">
+                <div id="timely-dd" class="btn-group timely-dd-btns left">
                     <button class="btn btn-primary">Day</button>
                     <button class="btn">Week</button>
                     <button class="btn">Month</button>
                     <button class="btn">LifeTime</button>
+                </div>
+                <div id="filter-by" class="right">
+                    Filter by:
+                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
+                    <button class="btn">Email</button>
+                    <button class="btn">Domain</button>
+                    <button class="btn">Company</button>                
+                    <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>
                 </div>
             </div>
             <div class="hero-unit">

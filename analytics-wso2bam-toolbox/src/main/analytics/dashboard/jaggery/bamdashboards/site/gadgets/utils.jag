@@ -42,29 +42,105 @@ function createTable(result) {
     return {rows: rows, columns: columns2display};
 }
 
-function printTable(table) {
-    print('<table border="1">');
-
+function printTable(table) {	
+    var tableName = table.columns[0];
+    var timelineTableId = "timelineTableFor" + tableName;
+    
+    print('<link href="styles.css" rel="stylesheet" type="text/css" />');
+	
+    print('<table cellspacing="0" class="timeline-table" align="center" id="'+ timelineTableId +'">');
+    print('<thead aria-hidden="false">');
     print('<tr>');
-    for (var i = 0; i < table.columns.length; i++) {
-        print('<td>');
+    
+    // print first cell of header
+    if (table.columns.length > 0) {
+        print('<th class="timeline-table-header">');
+        print(table.columns[0]);
+        print('</th>');    	
+    }
+    
+    // print other cells of header    
+    for (var i = 1; i < table.columns.length; i++) {
+        print('<th class="timeline-table-header">');
         print(table.columns[i]);
-        print('</td>');
+        print('</th>');
     }
     print('</tr>');
+    print('</thead>');
+    print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
 
-    for (var i = 0; i < table.rows.length; i++) {
-        print('<tr>');
+    // print table body
+    print('<tbody>');
+    for (var i = 0; i < table.rows.length; i = i + 2) {
+     	 // print odd row
+    	 print('<tr>');
 
-        for (var j = 0; j < table.columns.length; j++) {
-            print('<td>');
-            print(table.rows[i][j]);
-            print('</td>');
-        }
-
-        print('</tr>');
+       // print first cell
+       print('<td class="timeline-table-cell timeline-table-first-cell text-cursor">');
+       print('<div style="outline-style: none;" tabindex="0">');
+       print(table.rows[i][0]);
+       print('</div>');
+       print('</td>');
+ 
+       // print another cells
+    	 for (var j = 1; j < table.columns.length; j++) {
+          print('<td class="timeline-table-cell">');
+          print('<div style="outline-style: none;" tabindex="0">');
+          print(table.rows[i][j]);
+          print('</div>');
+          print('</td>');
+       }
+       print('</tr>');
+               
+       // print pair row
+       print('<tr class="pair-row">');        
+       if (i < table.rows.length - 1) {
+          // print first cell
+        	 print('<td class="timeline-table-cell timeline-table-first-cell">');
+          print('<div style="outline-style: none;" tabindex="0">');
+          print(table.rows[i + 1][0]);
+          print('</div>');
+          print('</td>');
+   
+          // print another cells
+        	 for (var j = 1; j < table.columns.length; j++) {
+             print('<td class="timeline-table-cell">');
+             print('<div style="outline-style: none;" tabindex="0">');
+             print(table.rows[i + 1][j]);
+             print('</div>');
+             print('</td>');
+          }
+        	
+          print('</tr>');
+       }
     }
+    
+    // print table footer
+    if ((table.rows.length + 1) % 2 == 0) {
+    	 // set special background for pair row 
+    	 print('<tr class="pair-row">');
+    } else {
+    	 print('<tr>');
+    }
+    
+    // print first cell of footer
+    print('<td class="timeline-table-cell timeline-table-first-cell text-cursor">');
+    print('<div style="outline-style: none;"></div>');
+    print('</td>');
+
+    // print other cells of footer
+    for (var i = 1; i < table.columns.length; i++) {
+       print('<td class="timeline-table-cell text-cursor">');
+       print('<div style="outline-style: none;"></div>');
+       print('</td>');
+    }
+    
+    print('</tr>');
+    
+    print('</tbody>');
     print('</table>');
+    print('<script src="script.js"></script>');
+    print('<script>TimelineGadget.setupRowHandlers("' + timelineTableId + '");</script>');
 }
 
 %>

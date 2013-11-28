@@ -15,7 +15,7 @@ iframe {
 
 .hero-unit {
     padding: 0;
-    background: #ddd;
+/*    background: #ddd;*/
 
 }
 
@@ -61,13 +61,17 @@ a.wso2:hover {
     margin: 0 !important;
 }
 
-.filter-btn {
+.clear-btn {
     width: 66px;
+    margin-left: 20px;
+}
+
+.right {
     float: right;
 }
 
-.timely-dd-btns {
-    float: right;
+.left {
+    float: left;
 }
 
 .timelySwitch {
@@ -87,4 +91,9 @@ div.jqplot-table-legend-swatch-outline {
 
 .span3 select {
     max-width: 180px;
+}
+
+input.text-box {
+  padding: 2px;
+  margin: 0px;
 }
