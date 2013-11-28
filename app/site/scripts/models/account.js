@@ -166,7 +166,8 @@
                  $.ajax({
                     url : loginUrl,
                     type : "POST",
-                    data: data,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
                     success : function(){
                         success({url: successUrl});
                     },
