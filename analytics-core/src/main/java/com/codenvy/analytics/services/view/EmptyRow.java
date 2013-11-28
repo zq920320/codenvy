@@ -37,10 +37,4 @@ class EmptyRow extends AbstractRow {
     public ValueData getData(Map<String, String> context) throws IOException {
         return StringValueData.DEFAULT;
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public ValueData getDescription() throws IOException {
-        return StringValueData.DEFAULT;
-    }
 }

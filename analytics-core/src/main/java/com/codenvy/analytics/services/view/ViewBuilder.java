@@ -93,6 +93,8 @@ public class ViewBuilder implements Feature {
     }
 
     protected void build(DisplayConfiguration displayConfiguration) throws Exception {
+        List<RecursiveAction> tasks = new ArrayList<>();
+
         ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 2);
 
         for (ViewConfiguration viewConfiguration : displayConfiguration.getViews()) {
@@ -102,12 +104,22 @@ public class ViewBuilder implements Feature {
                 for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
                     ComputeSectionData task = new ComputeSectionData(sectionConfiguration, timeUnit);
                     forkJoinPool.submit(task);
+
+                    tasks.add(task);
                 }
             }
         }
 
         forkJoinPool.shutdown();
         forkJoinPool.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+
+        for (RecursiveAction task : tasks) {
+            if (!task.isDone()) {
+                throw new IllegalStateException("Task wasn't done");
+            } else if (task.getException() != null) {
+                throw new IllegalStateException(task.getException());
+            }
+        }
     }
 
     protected void retainData(String tableName, List<List<ValueData>> sectionData) throws SQLException {

@@ -21,7 +21,6 @@ package com.codenvy.analytics.impl;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.util.MetricDTOFactory;
 import com.codenvy.api.analytics.MetricHandler;
@@ -79,10 +78,10 @@ public class FileBasedMetricHandler implements MetricHandler {
 
     public MetricInfoListDTO getAllInfo(ServiceContext serviceContext) {
         List<MetricInfoDTO> metricInfoDTOs = new ArrayList<>();
-        for (MetricType metricType : MetricType.values()) {
-            Metric metric = MetricFactory.getMetric(metricType);
+
+        for (Metric metric  : MetricFactory.getAllMetrics()) {
             if (sampleParameterSet.equals(metric.getParams())) {
-                metricInfoDTOs.add(MetricDTOFactory.createMetricDTO(metric, metricType, serviceContext));
+                metricInfoDTOs.add(MetricDTOFactory.createMetricDTO(metric, metric.getName(), serviceContext));
             }
         }
 

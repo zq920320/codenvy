@@ -30,8 +30,10 @@ import org.testng.annotations.Test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
@@ -47,7 +49,9 @@ public class TestViewBuilder extends BaseTest {
     private String RESOURCE = "<display>\n" +
                               "     <view time-unit=\"day\">\n" +
                               "         <section name=\"workspaces\" columns=\"2\">\n" +
-                              "             <row class=\"com.codenvy.analytics.services.view.DateRow\"/>\n" +
+                              "             <row class=\"com.codenvy.analytics.services.view.DateRow\">\n" +
+                              "                 <parameter key=\"description\" value=\"desc\"/>\n" +
+                              "             </row>\n" +
                               "             <row class=\"com.codenvy.analytics.services.view" +
                               ".TestViewBuilder$TestMetricRow\">\n" +
                               "                 <parameter key=\"name\" value=\"CREATED_WORKSPACES\"/>\n" +
@@ -101,7 +105,7 @@ public class TestViewBuilder extends BaseTest {
 
         List<ValueData> dateRow = data.get(0);
         assertEquals(3, dateRow.size());
-        assertEquals(new StringValueData("Date"), dateRow.get(0));
+        assertEquals(new StringValueData("desc"), dateRow.get(0));
         assertTrue(dateRow.get(1).getAsString().contains("" + day1.get(Calendar.DAY_OF_MONTH)));
         assertTrue(dateRow.get(2).getAsString().contains("" + day2.get(Calendar.DAY_OF_MONTH)));
 
@@ -116,6 +120,18 @@ public class TestViewBuilder extends BaseTest {
         assertEquals(StringValueData.DEFAULT, emptyRow.get(0));
         assertEquals(StringValueData.DEFAULT, emptyRow.get(1));
         assertEquals(StringValueData.DEFAULT, emptyRow.get(2));
+    }
+
+    public static class TestMetricRow extends MetricRow {
+
+        public TestMetricRow(Map<String, String> parameters) {
+            super(parameters);
+        }
+
+        @Override
+        protected ValueData getMetricValue(Map<String, String> context) throws IOException {
+            return new StringValueData("10");
+        }
     }
 
 }

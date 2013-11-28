@@ -20,13 +20,13 @@
 package com.codenvy.analytics.services.view;
 
 
-import com.codenvy.analytics.metrics.InitialValueNotFoundException;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.InitialValueNotFoundException;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -34,10 +34,8 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricRow extends AbstractRow {
 
-    private static final String NAME        = "name";
-    private static final String DESCRIPTION = "description";
-    private static final String FORMAT      = "format";
-
+    private static final String NAME           = "name";
+    private static final String FORMAT         = "format";
     private static final String DEFAULT_FORMAT = "%,.0f";
 
     private final Metric metric;
@@ -48,12 +46,6 @@ public class MetricRow extends AbstractRow {
 
         metric = MetricFactory.getMetric(parameters.get(NAME));
         format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_FORMAT;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ValueData getDescription() throws IOException {
-        return new StringValueData(parameters.get(DESCRIPTION));
     }
 
     /** {@inheritDoc} */

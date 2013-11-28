@@ -65,12 +65,6 @@ class DateRow extends AbstractRow {
 
     /** {@inheritDoc} */
     @Override
-    public ValueData getDescription() throws IOException {
-        return StringValueData.DEFAULT;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public ValueData getData(Map<String, String> context) throws IOException {
         try {
             DateFormat dateFormat = new SimpleDateFormat(format.get(Utils.getTimeUnit(context)));

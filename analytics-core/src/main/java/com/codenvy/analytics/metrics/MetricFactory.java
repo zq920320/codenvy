@@ -18,6 +18,8 @@
 
 package com.codenvy.analytics.metrics;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,6 +32,10 @@ public class MetricFactory {
         for (Metric metric : ServiceLoader.load(Metric.class)) {
             metrics.put(metric.getName(), metric);
         }
+    }
+
+    public static Collection<Metric> getAllMetrics() {
+        return Collections.unmodifiableCollection(metrics.values());
     }
 
     public static Metric getMetric(MetricType metricType) {

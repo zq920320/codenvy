@@ -19,7 +19,6 @@ package com.codenvy.analytics.util;
 
 import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.api.analytics.AnalyticsService;
 import com.codenvy.api.analytics.dto.Constants;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
@@ -41,10 +40,6 @@ import java.util.List;
 public class MetricDTOFactory {
 
     private MetricDTOFactory() {
-    }
-
-    public static MetricInfoDTO createMetricDTO(Metric metric, MetricType metricType, ServiceContext restfulRequestContext) {
-        return createMetricDTO(metric, metricType.name(), restfulRequestContext);
     }
 
     public static MetricInfoDTO createMetricDTO(Metric metric, String metricName, ServiceContext restfulRequestContext) {
