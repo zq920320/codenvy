@@ -18,7 +18,6 @@
 </head>
 <body>
 
-
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
@@ -27,8 +26,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="#"><img src="images/codenvy-logo.png" alt=""><span
-                    style="color: #B4D8FF;margin: 0 10px;"></span></a>
+            <a class="brand" href="#"><img src="images/codenvy-logo.png" alt=""><span style="color: #B4D8FF;margin: 0 10px;"></span></a>
         </div>
     </div>
 </div>
@@ -58,8 +56,7 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <iframe id="dashboardWidget-1" class="single-column-gadget"
-                        src="gadgets/timeline.jag?timeGrouping=day"></iframe>
+                <iframe id="dashboardWidget-1" class="single-column-gadget" src="gadgets/timeline.jag?timeGrouping=day"></iframe>
             </div>
         </div>
     </div>
