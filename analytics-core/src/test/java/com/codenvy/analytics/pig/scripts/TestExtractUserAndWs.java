@@ -105,6 +105,7 @@ public class TestExtractUserAndWs extends BaseTest {
         Set<String> expected = new HashSet<>();
         expected.add("(AnonymousUser_1)");
         expected.add("(AnonymousUser_2)");
+        expected.add("(default)");
 
         assertEquals(actual, expected);
     }
@@ -172,6 +173,7 @@ public class TestExtractUserAndWs extends BaseTest {
         expected.add("(tmp-1)");
         expected.add("(tmp-2)");
         expected.add("(tmp-3)");
+        expected.add("(default)");
 
         assertEquals(actual, expected);
     }
