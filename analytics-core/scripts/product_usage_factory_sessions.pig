@@ -25,9 +25,20 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 u1 = LOAD '$STORAGE_URL.$STORAGE_SRC-raw' USING MongoLoader('ws: chararray, referrer: chararray, value: chararray');
 u = FOREACH u1 GENERATE ws AS tmpWs, (referrer IS NULL ? '' : referrer) AS referrer, value AS factoryUrl;
 
----- founds out all imported projects
+---- finds out all imported projects
 i1 = filterByEvent(l, 'factory-project-imported');
 i = FOREACH i1 GENERATE dt, ws AS tmpWs, user;
+
+-- finds out users who changed their names
+c1 = filterByEvent(l, 'user-changed-name');
+c2 = extractParam(c1, 'OLD-USER', oldUser);
+c3 = extractParam(c2, 'NEW-USER', newUser);
+c = FOREACH c3 GENERATE oldUser AS anomUser, newUser AS user;
+
+-- we need to know anonymous user name instead of registered one
+-- since in factory sessions we have deal with anonymous ones only
+d1 = JOIN i BY user LEFT, c BY user;
+d = FOREACH d1 GENERATE i::dt AS dt, i::tmpWs AS tmpWs, (c::user IS NULL ? i::user : c::anomUser) AS user;
 
 s1 = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
 s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 'false' : 'true') AS auth;
@@ -38,12 +49,12 @@ s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::user AS user, s2:
 
 -- founds out if factory session was converted or not
 -- (if importing operation was inside a session)
-s5 = JOIN s4 BY (tmpWs, user) LEFT, i BY (tmpWs, user);
+s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
 
 s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factoryUrl AS factoryUrl, s4::referrer AS referrer,
                         s4::auth AS auth, s4::tmpWs AS ws, s4::user AS user,
-			            (i::tmpWs IS NULL ? 'false' :
-			                                (SecondsBetween(s4::dt, i::dt) < 0 AND SecondsBetween(s4::dt, i::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 'true' :
+			            (d::tmpWs IS NULL ? 'false' :
+			                                (SecondsBetween(s4::dt, d::dt) < 0 AND SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 'true' :
 			                                                                                                                                                        'false' )) AS conv;
 
 result = FOREACH s GENERATE ToMilliSeconds(dt), TOTUPLE('value', delta);

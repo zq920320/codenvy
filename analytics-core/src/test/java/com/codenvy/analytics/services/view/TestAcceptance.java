@@ -61,16 +61,15 @@ public class TestAcceptance extends BaseTest {
         Parameters.LOG.put(context, getResourceAsBytes("2013-11-23", df.format(calendar.getTime())).getAbsolutePath());
         pigRunner.forceExecute(context);
 
-//        calendar.add(Calendar.DAY_OF_MONTH, -1);
-//        context = Utils.prevDateInterval(context);
-//
-//        Parameters.LOG.put(context, getResourceAsBytes("2013-11-20", df.format(calendar.getTime())).getAbsolutePath
-// ());
-//        pigRunner.forceExecute(context);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        context = Utils.prevDateInterval(context);
+
+        Parameters.LOG.put(context, getResourceAsBytes("2013-11-24", df.format(calendar.getTime())).getAbsolutePath());
+        pigRunner.forceExecute(context);
     }
 
     private File getResourceAsBytes(String originalDate, String newDate) throws Exception {
-        String archive = getClass().getClassLoader().getResource("messages_23.zip_").getFile();
+        String archive = getClass().getClassLoader().getResource("messages_" + originalDate).getFile();
 
         try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(archive)))) {
             ZipEntry zipEntry = in.getNextEntry();
@@ -165,75 +164,201 @@ public class TestAcceptance extends BaseTest {
                 default:
                     fail("Unknown table name " + tableName);
             }
+        } else if (tableName.endsWith("lifetime")) {
+            switch (tableName) {
+                case "invitations_lifetime":
+                    break;
+                case "time_spent_lifetime":
+                    break;
+                case "workspaces_lifetime":
+                    break;
+                case "projects_lifetime":
+                    break;
+                case "users_lifetime":
+                    break;
+                case "ide_usage_lifetime":
+                    break;
+                case "usage_time_lifetime":
+                    break;
+                case "workspaces_usage_lifetime":
+                    break;
+                case "user_sessions_lifetime":
+                    break;
+                case "users_usage_lifetime":
+                    break;
+                case "authentications_lifetime":
+                    break;
+                case "users_engagement_lifetime":
+                    break;
+                case "projects_types_lifetime":
+                    break;
+                case "projects_paas_lifetime":
+                    break;
+                case "factory_lifetime":
+                    assertFactoryLifeTime(sectionData);
+                    break;
+                default:
+                    fail("Unknown table name " + tableName);
+            }
         }
     }
 
     private void assertFactoryDay(List<List<ValueData>> sectionData) {
         assertEquals(new StringValueData("Factories Created"), sectionData.get(1).get(0));
         assertEquals(new StringValueData("5"), sectionData.get(1).get(1));
+        assertEquals(new StringValueData("12"), sectionData.get(1).get(2));
 
         assertEquals(new StringValueData("Temporary Workspaces Created"), sectionData.get(2).get(0));
         assertEquals(new StringValueData("348"), sectionData.get(2).get(1));
+        assertEquals(new StringValueData("280"), sectionData.get(2).get(2));
 
         assertEquals(new StringValueData("Accounts Created From Factories"), sectionData.get(3).get(0));
         assertEquals(new StringValueData("15"), sectionData.get(3).get(1));
+        assertEquals(new StringValueData("15"), sectionData.get(3).get(2));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(4).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(4).get(1));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(4).get(2));
+
+        assertEquals(new StringValueData("Factory Sessions"), sectionData.get(5).get(0));
+        assertEquals(new StringValueData("293"), sectionData.get(5).get(1));
+        assertEquals(new StringValueData("233"), sectionData.get(5).get(2));
+
+        assertEquals(new StringValueData("Anonymous Sessions"), sectionData.get(6).get(0));
+        assertEquals(new StringValueData("275"), sectionData.get(6).get(1));
+        assertEquals(new StringValueData("210"), sectionData.get(6).get(2));
+
+        assertEquals(new StringValueData("Authenticated Sessions"), sectionData.get(7).get(0));
+        assertEquals(new StringValueData("18"), sectionData.get(7).get(1));
+        assertEquals(new StringValueData("23"), sectionData.get(7).get(2));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(8).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(8).get(1));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(8).get(2));
+
+        assertEquals(new StringValueData("Factory Sessions"), sectionData.get(9).get(0));
+        assertEquals(new StringValueData("293"), sectionData.get(9).get(1));
+        assertEquals(new StringValueData("233"), sectionData.get(9).get(2));
+
+        assertEquals(new StringValueData("Abandoned Sessions"), sectionData.get(10).get(0));
+        assertEquals(new StringValueData("282"), sectionData.get(10).get(1));
+        assertEquals(new StringValueData("223"), sectionData.get(10).get(2));
+
+        assertEquals(new StringValueData("Converted Sessions"), sectionData.get(11).get(0));
+        assertEquals(new StringValueData("11"), sectionData.get(11).get(1));
+        assertEquals(new StringValueData("10"), sectionData.get(11).get(2));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(12).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(12).get(1));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(12).get(2));
+
+        assertEquals(new StringValueData("Factory Sessions"), sectionData.get(13).get(0));
+        assertEquals(new StringValueData("293"), sectionData.get(13).get(1));
+        assertEquals(new StringValueData("233"), sectionData.get(13).get(2));
+
+        assertEquals(new StringValueData("% Built"), sectionData.get(14).get(0));
+        assertEquals(new StringValueData("19%"), sectionData.get(14).get(1));
+        assertEquals(new StringValueData("19%"), sectionData.get(14).get(2));
+
+        assertEquals(new StringValueData("% Run"), sectionData.get(15).get(0));
+        assertEquals(new StringValueData("17%"), sectionData.get(15).get(1));
+        assertEquals(new StringValueData("23%"), sectionData.get(15).get(2));
+
+        assertEquals(new StringValueData("% Deployed"), sectionData.get(16).get(0));
+        assertEquals(new StringValueData("10%"), sectionData.get(16).get(1));
+        assertEquals(new StringValueData("14%"), sectionData.get(16).get(2));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(17).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(17).get(1));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(17).get(2));
+
+        assertEquals(new StringValueData("Factory Sessions"), sectionData.get(18).get(0));
+        assertEquals(new StringValueData("293"), sectionData.get(18).get(1));
+        assertEquals(new StringValueData("233"), sectionData.get(18).get(2));
+
+        assertEquals(new StringValueData("< 10 Mins"), sectionData.get(19).get(0));
+        assertEquals(new StringValueData("261"), sectionData.get(19).get(1));
+        assertEquals(new StringValueData("202"), sectionData.get(19).get(2));
+
+        assertEquals(new StringValueData("> 10 Mins"), sectionData.get(20).get(0));
+        assertEquals(new StringValueData("32"), sectionData.get(20).get(1));
+        assertEquals(new StringValueData("31"), sectionData.get(20).get(2));
+
+        assertEquals(StringValueData.DEFAULT, sectionData.get(21).get(0));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(21).get(1));
+        assertEquals(StringValueData.DEFAULT, sectionData.get(21).get(2));
+
+        assertEquals(new StringValueData("Product Usage Mins"), sectionData.get(22).get(0));
+        assertEquals(new StringValueData("1,445"), sectionData.get(22).get(1));
+        assertEquals(new StringValueData("1,456"), sectionData.get(22).get(2));
+    }
+
+    private void assertFactoryLifeTime(List<List<ValueData>> sectionData) {
+        assertEquals(new StringValueData("Factories Created"), sectionData.get(1).get(0));
+        assertEquals(new StringValueData("17"), sectionData.get(1).get(1));
+
+        assertEquals(new StringValueData("Temporary Workspaces Created"), sectionData.get(2).get(0));
+        assertEquals(new StringValueData("628"), sectionData.get(2).get(1));
+
+        assertEquals(new StringValueData("Accounts Created From Factories"), sectionData.get(3).get(0));
+        assertEquals(new StringValueData("30"), sectionData.get(3).get(1));
 
         assertEquals(StringValueData.DEFAULT, sectionData.get(4).get(0));
         assertEquals(StringValueData.DEFAULT, sectionData.get(4).get(1));
 
         assertEquals(new StringValueData("Factory Sessions"), sectionData.get(5).get(0));
-        assertEquals(new StringValueData("293"), sectionData.get(5).get(1));
+        assertEquals(new StringValueData("526"), sectionData.get(5).get(1));
 
         assertEquals(new StringValueData("Anonymous Sessions"), sectionData.get(6).get(0));
-        assertEquals(new StringValueData("275"), sectionData.get(6).get(1));
+        assertEquals(new StringValueData("485"), sectionData.get(6).get(1));
 
         assertEquals(new StringValueData("Authenticated Sessions"), sectionData.get(7).get(0));
-        assertEquals(new StringValueData("18"), sectionData.get(7).get(1));
+        assertEquals(new StringValueData("41"), sectionData.get(7).get(1));
 
         assertEquals(StringValueData.DEFAULT, sectionData.get(8).get(0));
         assertEquals(StringValueData.DEFAULT, sectionData.get(8).get(1));
 
         assertEquals(new StringValueData("Factory Sessions"), sectionData.get(9).get(0));
-        assertEquals(new StringValueData("293"), sectionData.get(9).get(1));
+        assertEquals(new StringValueData("526"), sectionData.get(9).get(1));
 
         assertEquals(new StringValueData("Abandoned Sessions"), sectionData.get(10).get(0));
-        assertEquals(new StringValueData("276"), sectionData.get(10).get(1)); //291
+        assertEquals(new StringValueData("505"), sectionData.get(10).get(1));
 
         assertEquals(new StringValueData("Converted Sessions"), sectionData.get(11).get(0));
-        assertEquals(new StringValueData("18"), sectionData.get(11).get(1)); //2
+        assertEquals(new StringValueData("21"), sectionData.get(11).get(1));
 
         assertEquals(StringValueData.DEFAULT, sectionData.get(12).get(0));
         assertEquals(StringValueData.DEFAULT, sectionData.get(12).get(1));
 
         assertEquals(new StringValueData("Factory Sessions"), sectionData.get(13).get(0));
-        assertEquals(new StringValueData("293"), sectionData.get(13).get(1));
+        assertEquals(new StringValueData("526"), sectionData.get(13).get(1));
 
         assertEquals(new StringValueData("% Built"), sectionData.get(14).get(0));
         assertEquals(new StringValueData("19%"), sectionData.get(14).get(1));
 
         assertEquals(new StringValueData("% Run"), sectionData.get(15).get(0));
-        assertEquals(new StringValueData("17%"), sectionData.get(15).get(1));
+        assertEquals(new StringValueData("20%"), sectionData.get(15).get(1));
 
         assertEquals(new StringValueData("% Deployed"), sectionData.get(16).get(0));
-        assertEquals(new StringValueData("10%"), sectionData.get(16).get(1));
+        assertEquals(new StringValueData("12%"), sectionData.get(16).get(1));
 
         assertEquals(StringValueData.DEFAULT, sectionData.get(17).get(0));
         assertEquals(StringValueData.DEFAULT, sectionData.get(17).get(1));
 
         assertEquals(new StringValueData("Factory Sessions"), sectionData.get(18).get(0));
-        assertEquals(new StringValueData("293"), sectionData.get(18).get(1));
+        assertEquals(new StringValueData("526"), sectionData.get(18).get(1));
 
         assertEquals(new StringValueData("< 10 Mins"), sectionData.get(19).get(0));
-        assertEquals(new StringValueData("261"), sectionData.get(19).get(1));
+        assertEquals(new StringValueData("463"), sectionData.get(19).get(1));
 
         assertEquals(new StringValueData("> 10 Mins"), sectionData.get(20).get(0));
-        assertEquals(new StringValueData("32"), sectionData.get(20).get(1));
+        assertEquals(new StringValueData("63"), sectionData.get(20).get(1));
 
         assertEquals(StringValueData.DEFAULT, sectionData.get(21).get(0));
         assertEquals(StringValueData.DEFAULT, sectionData.get(21).get(1));
 
         assertEquals(new StringValueData("Product Usage Mins"), sectionData.get(22).get(0));
-        assertEquals(new StringValueData("1,445"), sectionData.get(22).get(1));
+        assertEquals(new StringValueData("2,902"), sectionData.get(22).get(1));
     }
 
     private void assertProjectsPaasDay(List<List<ValueData>> sectionData) {
@@ -244,29 +369,29 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("1"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("AppFog"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("7"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("7"), sectionData.get(3).get(1));
 
         assertEquals(new StringValueData("CloudBees"), sectionData.get(4).get(0));
         assertEquals(new StringValueData("1"), sectionData.get(4).get(1));
 
         assertEquals(new StringValueData("CloudFoundry"), sectionData.get(5).get(0));
         assertEquals(new StringValueData("1"), sectionData.get(5).get(1));
-        
+
         assertEquals(new StringValueData("GAE"), sectionData.get(6).get(0));
         assertEquals(new StringValueData("21"), sectionData.get(6).get(1));
-        
+
         assertEquals(new StringValueData("Heroku"), sectionData.get(7).get(0));
         assertEquals(new StringValueData("1"), sectionData.get(7).get(1));
-        
+
         assertEquals(new StringValueData("OpenShift"), sectionData.get(8).get(0));
         assertEquals(new StringValueData("6"), sectionData.get(8).get(1));
-        
+
         assertEquals(new StringValueData("Tier3"), sectionData.get(9).get(0));
         assertEquals(new StringValueData("1"), sectionData.get(9).get(1));
-        
+
         assertEquals(new StringValueData("Manyamo"), sectionData.get(10).get(0));
         assertEquals(new StringValueData("1"), sectionData.get(10).get(1));
-        
+
         assertEquals(new StringValueData("No PaaS Defined"), sectionData.get(11).get(0));
         assertEquals(new StringValueData("394"), sectionData.get(11).get(1));
     }
@@ -279,38 +404,38 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("31"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("Java War"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("4"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("4"), sectionData.get(3).get(1));
 
         assertEquals(new StringValueData("Java JSP"), sectionData.get(4).get(0));
         assertEquals(new StringValueData("57"), sectionData.get(4).get(1));
 
         assertEquals(new StringValueData("Java Spring"), sectionData.get(5).get(0));
         assertEquals(new StringValueData("15"), sectionData.get(5).get(1));
-        
+
         assertEquals(new StringValueData("PHP"), sectionData.get(6).get(0));
         assertEquals(new StringValueData("90"), sectionData.get(6).get(1));
-        
+
         assertEquals(new StringValueData("Python"), sectionData.get(7).get(0));
         assertEquals(new StringValueData("43"), sectionData.get(7).get(1));
-        
+
         assertEquals(new StringValueData("JavaScript"), sectionData.get(8).get(0));
         assertEquals(new StringValueData("72"), sectionData.get(8).get(1));
-        
+
         assertEquals(new StringValueData("Ruby"), sectionData.get(9).get(0));
         assertEquals(new StringValueData("19"), sectionData.get(9).get(1));
-        
+
         assertEquals(new StringValueData("Maven Multi Project"), sectionData.get(10).get(0));
         assertEquals(new StringValueData("8"), sectionData.get(10).get(1));
-        
+
         assertEquals(new StringValueData("Node.js"), sectionData.get(11).get(0));
         assertEquals(new StringValueData("24"), sectionData.get(11).get(1));
-        
+
         assertEquals(new StringValueData("Android"), sectionData.get(12).get(0));
         assertEquals(new StringValueData("68"), sectionData.get(12).get(1));
-        
+
         assertEquals(new StringValueData("Django"), sectionData.get(13).get(0));
         assertEquals(new StringValueData("1"), sectionData.get(13).get(1));
-        
+
         assertEquals(new StringValueData("Others"), sectionData.get(14).get(0));
         assertEquals(new StringValueData("1"), sectionData.get(14).get(1));
     }
@@ -323,7 +448,7 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("85"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData(">= 10 And < 60 Mins"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("81"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("81"), sectionData.get(3).get(1));
 
         assertEquals(new StringValueData(">= 60 And < 300 Mins"), sectionData.get(4).get(0));
         assertEquals(new StringValueData("33"), sectionData.get(4).get(1));
@@ -346,7 +471,7 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("11"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("Form Auth"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("33"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("33"), sectionData.get(3).get(1));
     }
 
     private void assertUserSessionsDay(List<List<ValueData>> sectionData) {
@@ -357,7 +482,7 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("227"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("> 1 And < 10 Mins"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("297"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("297"), sectionData.get(3).get(1));
 
         assertEquals(new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
         assertEquals(new StringValueData("190"), sectionData.get(4).get(1));
@@ -388,7 +513,7 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("227"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("> 1 And < 10 Mins"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("1204"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("1204"), sectionData.get(3).get(1));
 
         assertEquals(new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
         assertEquals(new StringValueData("4794"), sectionData.get(4).get(1));
@@ -405,7 +530,7 @@ public class TestAcceptance extends BaseTest {
         assertEquals(new StringValueData("147"), sectionData.get(2).get(1));
 
         assertEquals(new StringValueData("# Builds"), sectionData.get(3).get(0));
-        assertEquals(new StringValueData("614"), sectionData.get(3).get(1)); 
+        assertEquals(new StringValueData("614"), sectionData.get(3).get(1));
 
         assertEquals(new StringValueData("# Runs"), sectionData.get(4).get(0));
         assertEquals(new StringValueData("329"), sectionData.get(4).get(1));
