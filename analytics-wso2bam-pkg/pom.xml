@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.analytics</groupId>
-            <artifactId>analytics-rest-service</artifactId>
+            <artifactId>analytics-api</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -76,7 +76,7 @@
                         <executions>
                             <execution>
                                 <id>copy-dependencies-war</id>
-                                <phase>process-resources</phase>
+                                <phase>generate-resources</phase>
                                 <goals>
                                     <goal>copy-dependencies</goal>
                                 </goals>
@@ -145,6 +145,8 @@
                                             <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar"/>
                                         </jar>
 
+                                        <move file="${project.build.directory}/packager-conf/war/analytics-api.war" tofile="${project.build.directory}/packager-conf/war/api.war"/>
+
                                         <!-- Coping resources -->
                                         <copy todir="${project.build.directory}/wso2bam-analytics/" overwrite="true">
                                             <fileset dir="${basedir}/src/main/resources/server"/>
@@ -158,7 +160,6 @@
                                         <copy todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/bam-toolbox/" overwrite="true">
                                             <fileset dir="${project.build.directory}/packager-conf/tbox"/>
                                         </copy>
-                                        <move file="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/analytics-rest-service.war" tofile="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/api.war"/>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/*.sh" perm="+x"/>
                                         <chmod dir="${project.build.directory}/wso2bam-analytics/bin" perm="ugo+rx" includes="**/*.sh"/>
                                     </target>

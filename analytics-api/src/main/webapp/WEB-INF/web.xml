@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ CODENVY CONFIDENTIAL
+ ________________
+
+ [2012] - [2013] Codenvy, S.A.
+ All Rights Reserved.
+ NOTICE: All information contained herein is, and remains
+ the property of Codenvy S.A. and its suppliers,
+ if any. The intellectual and technical concepts contained
+ herein are proprietary to Codenvy S.A.
+ and its suppliers and may be covered by U.S. and Foreign Patents,
+ patents in process, and are protected by trade secret or copyright law.
+ Dissemination of this information or reproduction of this material
+ is strictly forbidden unless prior written permission is obtained
+ from Codenvy S.A..
+-->
+
+<!DOCTYPE web-app
+        PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>Analytics Service</display-name>
+
+    <context-param>
+        <param-name>javax.ws.rs.Application</param-name>
+        <param-value>com.codenvy.analytics.AnalyticsApplication</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.everrest.core.servlet.EverrestInitializedListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>com.codenvy.api.analytics.impl.MetricHandlerBootstrap</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>EverrestServlet</servlet-name>
+        <servlet-class>org.everrest.core.servlet.EverrestServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>EverrestServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Analytics-API</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>employees</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Analytics application</realm-name>
+    </login-config>
+
+    <security-role>
+        <role-name>employees</role-name>
+    </security-role>
+</web-app>
