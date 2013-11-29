@@ -47,9 +47,6 @@ public class PigServer {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PigServer.class);
 
-    /** Embedded Pig server */
-    private static org.apache.pig.PigServer server;
-
     private static final String ANALYTICS_SCRIPTS_DIR_PROPERTY = "analytics.scripts.dir";
     private static final String ANALYTICS_BIN_DIR_PROPERTY     = "analytics.bin.dir";
     public static final  String ANALYTICS_LOGS_DIRECTORY       = "analytics.logs.directory";
@@ -63,9 +60,6 @@ public class PigServer {
     /** Pig relation containing execution result. */
     private static final String FINAL_RELATION = "result";
 
-    /** Imported macro files. Pig sever doesn't allow to import the same macro file twice. */
-    private static final Set<String> importedMacros = new HashSet<>();
-
     private static final Calendar OLD_SCRIPT_DATE = Calendar.getInstance();
 
     static {
@@ -78,24 +72,6 @@ public class PigServer {
         for (Map.Entry<String, String> entry : Configurator.getAll("pig.server.property").entrySet()) {
             System.setProperty(entry.getKey(), entry.getValue());
         }
-
-        try {
-            server = new org.apache.pig.PigServer(ExecType.LOCAL);
-            server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new IllegalStateException("Pig server can't be instantiated", e);
-        }
-
-        LOG.info("Pig server is started");
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                server.shutdown();
-                LOG.info("Pig server is shutdown");
-            }
-        });
     }
 
     /**
@@ -125,10 +101,15 @@ public class PigServer {
     }
 
     private static void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context) throws IOException {
+        org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
+
         String script = readScriptContent(scriptType, context);
+
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
+            server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             server.registerScript(scriptContent, context);
         } finally {
+            server.shutdown();
             LOG.info("Execution " + scriptType + " has finished");
         }
     }
@@ -205,18 +186,31 @@ public class PigServer {
                                                    Map<String, String> context) throws IOException {
         LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
-        context = validateAndAdjustContext(scriptType, context);
-        if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
-            return Collections.emptyIterator();
-        }
+        org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
 
         String script = readScriptContent(scriptType, context);
         script = removeRedundantCode(script);
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
+            context = validateAndAdjustContext(scriptType, context);
+
+            if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
+                return Collections.emptyIterator();
+            }
+
+            server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+
             server.registerScript(scriptContent, context);
-            return server.openIterator(FINAL_RELATION);
+            Iterator<Tuple> iterator = server.openIterator(FINAL_RELATION);
+
+            List<Tuple> tuples = new ArrayList<>();
+            while (iterator.hasNext()) {
+                tuples.add(iterator.next());
+            }
+
+            return tuples.iterator();
         } finally {
+            server.shutdown();
             LOG.info("Execution " + scriptType + " has finished");
         }
     }
@@ -316,13 +310,9 @@ public class PigServer {
             builder.append(script.substring(lastPos, matcher.start()));
 
             File importFile = getMacroFile(regex, script, matcher);
-            if (!importedMacros.contains(importFile.getAbsolutePath())) {
-                builder.append("IMPORT '");
-                builder.append(importFile.getAbsolutePath().replace("\\", "/"));
-                builder.append("';");
-
-                importedMacros.add(importFile.getAbsolutePath());
-            }
+            builder.append("IMPORT '");
+            builder.append(importFile.getAbsolutePath().replace("\\", "/"));
+            builder.append("';");
 
             lastPos = matcher.end();
         }
