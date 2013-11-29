@@ -32,8 +32,8 @@ define(["jquery","config",
         "views/errorresponse",
         "views/maintenancepage",
         "views/gc_banner",
-        "views/ws_createform"/*,
-        "views/too_much_factories"*/
+        "views/ws_createform",
+        "views/create_ws"
         ],
 
     function($,Config,
@@ -52,8 +52,8 @@ define(["jquery","config",
         ErrorResponse,
         MaintenancePage,
         GC_banner,
-        WSCreateForm/*,
-        TooMuchFactories*/){
+        WSCreateForm,
+        CreatingWorkspace){
 
         function modernize(){
             Modernizr.load({
@@ -87,8 +87,8 @@ define(["jquery","config",
                         errorResponse = $(".ErrorIcon"),
                         maintenancePage = $(".maintenance"),
                         gcBannerElement = $(".cta"),
-                        wsCreateForm = $(".create-form")/*,
-                        tooMuchFactories = $(".temp-ws-counts")*/;
+                        wsCreateForm = $(".create-form"),
+                        creatingWorkspace = $(".creating-ws");
 
 
                     if(gcBannerElement.length !== 0){
@@ -125,11 +125,22 @@ define(["jquery","config",
                         }());
                     }
 
- /*                   if(tooMuchFactories.length !== 0){
+                    if(creatingWorkspace.length !== 0){
                         (function(){
-                            TooMuchFactories.get(tooMuchFactories);
+                            var page = CreatingWorkspace.get(creatingWorkspace),
+                            errorReport = ErrorReport.get(errorContainer);
+
+                            page.on("success", function(d){
+                                // window.location.href = d.url;
+                                window.alert("Good job!!!" + d); // FIXIT
+                            });
+
+                            page.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+                            
                         }());
-                    }*/
+                    }
 
                     if(signupForm.length !== 0){
                         (function(){

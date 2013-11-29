@@ -201,6 +201,24 @@
                 });
             },
 
+            createWorkspace : function(username,bearertoken,success,error){
+                var data = {username: username.toLowerCase(), bearertoken: bearertoken.toLowerCase()};
+                var authenticateUrl = "/site/rest/email/authenticate" + window.location.search.substring(1);
+                $.ajax({
+                    url : authenticateUrl,
+                    type : "POST",
+                    data: data,
+                    success : function(){
+                        success({url: '../site/thank-you'});
+                    },
+                    error : function(xhr/*, status , err*/){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
+                    }
+                });
+            },            
+
             recoverPassword : function(email,success,error){
                 //implementation based on this:
                 //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/recover-password.js
