@@ -7,11 +7,15 @@ var tableNames = ['workspaces', 'workspaces_usage', 'users', 'users_usage', 'use
                     'authentications', 'usage_time', 'user_sessions', 'projects', 'ide_usage', 'time_spent',
                     'projects_types', 'projects_paas'];
 
+printTablePageHeader();
+
 for (var i = 0; i < tableNames.length; i++) {
     var result = queryResults('select * from ' + tableNames[i] + '_' + timeGrouping);
     var table = createTable(result);
 
     printTable(table);
 }
+
+loadTableHandlers(true);
 
 %>

@@ -5,11 +5,15 @@ include_once("utils.jag");
 var timeGrouping = request.getParameter('timeGrouping');
 var tableNames = ['factory'];
 
+printTablePageHeader();
+
 for (var i = 0; i < tableNames.length; i++) {
     var result = queryResults('select * from ' + tableNames[i] + '_' + timeGrouping);
     var table = createTable(result);
 
     printTable(table);
 }
+
+loadTableHandlers(false);
 
 %>

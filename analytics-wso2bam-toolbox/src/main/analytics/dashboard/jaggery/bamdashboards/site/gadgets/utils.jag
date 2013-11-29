@@ -43,25 +43,20 @@ function createTable(result) {
 }
 
 function printTable(table) {	
-    var tableName = table.columns[0];
-    var timelineTableId = "timelineTableFor" + tableName;
-    
-    print('<link href="../css/styles.css" rel="stylesheet" type="text/css" />');
-	
-    print('<table cellspacing="0" class="timeline-table" align="center" id="'+ timelineTableId +'">');
+    print('<table cellspacing="0" class="database-table" align="center">');
     print('<thead aria-hidden="false">');
     print('<tr>');
     
     // print first cell of header
     if (table.columns.length > 0) {
-        print('<th class="timeline-table-header">');
+        print('<th class="database-table-header">');
         print(table.columns[0]);
         print('</th>');    	
     }
     
     // print other cells of header    
     for (var i = 1; i < table.columns.length; i++) {
-        print('<th class="timeline-table-header">');
+        print('<th class="database-table-header">');
         print(table.columns[i]);
         print('</th>');
     }
@@ -75,7 +70,7 @@ function printTable(table) {
     	 print('<tr>');
 
        // print first cell
-       print('<td class="timeline-table-cell timeline-table-first-cell text-cursor">');
+       print('<td class="database-table-cell database-table-first-cell text-cursor">');
        print('<div style="outline-style: none;" tabindex="0">');
        print(table.rows[i][0]);
        print('</div>');
@@ -83,7 +78,7 @@ function printTable(table) {
  
        // print another cells
     	 for (var j = 1; j < table.columns.length; j++) {
-          print('<td class="timeline-table-cell">');
+          print('<td class="database-table-cell">');
           print('<div style="outline-style: none;" tabindex="0">');
           print(table.rows[i][j]);
           print('</div>');
@@ -96,7 +91,7 @@ function printTable(table) {
           print('<tr class="pair-row">');
           
           // print first cell
-        	 print('<td class="timeline-table-cell timeline-table-first-cell">');
+        	 print('<td class="database-table-cell database-table-first-cell">');
           print('<div style="outline-style: none;" tabindex="0">');
           print(table.rows[i + 1][0]);
           print('</div>');
@@ -104,7 +99,7 @@ function printTable(table) {
    
           // print another cells
         	 for (var j = 1; j < table.columns.length; j++) {
-             print('<td class="timeline-table-cell">');
+             print('<td class="database-table-cell">');
              print('<div style="outline-style: none;" tabindex="0">');
              print(table.rows[i + 1][j]);
              print('</div>');
@@ -118,10 +113,17 @@ function printTable(table) {
     print('<tfoot aria-hidden="true" style="display: none;"></tfoot>');
     print('</tbody>');
     print('</table>');
-    
-    // load handlers of table events
-    print('<script src="script.js"></script>');
-    print('<script>TimelineGadget.setupRowHandlers("' + timelineTableId + '");</script>');
+}
+
+function printTablePageHeader() {
+   print('<link href="../css/single-column.css" rel="stylesheet" type="text/css" />');
+   print('<link href="../css/database-table.css" rel="stylesheet" type="text/css" />');
+}
+
+//load handlers of table events
+function loadTableHandlers(ignoreLastRow) {
+   print('<script src="../scripts/database-table.js"></script>');
+   print('<script>databaseTable.setupRowHandlers(' + ignoreLastRow.toString() + ');</script>');
 }
 
 %>
