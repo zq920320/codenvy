@@ -189,7 +189,8 @@
                 $.ajax({
                     url : emailValidateUrl,
                     type : "POST",
-                    data: data,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
                     success : function(){
                         success({url: '../site/thank-you'});
                     },
