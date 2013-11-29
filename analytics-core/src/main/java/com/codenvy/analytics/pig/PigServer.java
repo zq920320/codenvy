@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +66,15 @@ public class PigServer {
     /** Imported macro files. Pig sever doesn't allow to import the same macro file twice. */
     private static final Set<String> importedMacros = new HashSet<>();
 
+    private static final Date OLD_SCRIPT_DATE;
+
     static {
+        try {
+            OLD_SCRIPT_DATE = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT).parse("20132208");
+        } catch (ParseException e) {
+            throw new IllegalStateException(e);
+        }
+
         for (Map.Entry<String, String> entry : Configurator.getAll("pig.server.property").entrySet()) {
             System.setProperty(entry.getKey(), entry.getValue());
         }
@@ -116,7 +125,7 @@ public class PigServer {
     }
 
     private static void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context) throws IOException {
-        String script = readScriptContent(scriptType);
+        String script = readScriptContent(scriptType, context);
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
             server.registerScript(scriptContent, context);
         } finally {
@@ -176,7 +185,7 @@ public class PigServer {
         }
 
         builder.append(' ');
-        builder.append(getScriptFileName(scriptType).getAbsolutePath());
+        builder.append(getScriptFileName(scriptType, context).getAbsolutePath());
 
         return builder.toString();
     }
@@ -201,7 +210,7 @@ public class PigServer {
             return Collections.emptyIterator();
         }
 
-        String script = readScriptContent(scriptType);
+        String script = readScriptContent(scriptType, context);
         script = removeRedundantCode(script);
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
@@ -235,7 +244,15 @@ public class PigServer {
 
 
     /** @return the script file name */
-    private static File getScriptFileName(ScriptType scriptType) {
+    private static File getScriptFileName(ScriptType scriptType, Map<String, String> context) {
+        try {
+            if (scriptType == ScriptType.PRODUCT_USAGE_SESSIONS && Utils.getToDate(context).before(OLD_SCRIPT_DATE)) {
+                scriptType = ScriptType.PRODUCT_USAGE_SESSIONS_OLD;
+            }
+        } catch (ParseException e) {
+            throw new IllegalStateException(e);
+        }
+
         return new File(SCRIPTS_DIR, scriptType.toString().toLowerCase() + ".pig");
     }
 
@@ -257,8 +274,8 @@ public class PigServer {
     }
 
     /** Reads script from file. */
-    private static String readScriptContent(ScriptType scriptType) throws IOException {
-        File scriptFile = getScriptFileName(scriptType);
+    private static String readScriptContent(ScriptType scriptType, Map<String, String> context) throws IOException {
+        File scriptFile = getScriptFileName(scriptType, context);
         if (!scriptFile.exists()) {
             throw new IOException("Resource " + scriptFile.getAbsolutePath() + " not found");
         }

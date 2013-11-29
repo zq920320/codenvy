@@ -69,7 +69,7 @@ public class TestProductUsage extends BaseTest {
 
         // by mistake
         events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
-                        .withTime("20:15:00").build());
+                        .withTime("20:25:00").build());
 
         // session will be ignored,
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
@@ -115,6 +115,36 @@ public class TestProductUsage extends BaseTest {
         assertEquals(tuple.get(0), timeFormat.parse("20130101 18:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
         assertEquals(tuple.get(2).toString(), "(value,120)");
+
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void testExecuteOldScript() throws Exception {
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS_OLD, params);
+        Tuple tuple = iterator.next();
+        assertEquals(tuple.size(), 3);
+        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:00:00").getTime());
+        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
+        assertEquals(tuple.get(2).toString(), "(value,300)");
+
+        tuple = iterator.next();
+        assertEquals(tuple.size(), 3);
+        assertEquals(tuple.get(0), timeFormat.parse("20130101 19:00:00").getTime());
+        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
+        assertEquals(tuple.get(2).toString(), "(value,240)");
+
+        tuple = iterator.next();
+        assertEquals(tuple.size(), 3);
+        assertEquals(tuple.get(0), timeFormat.parse("20130101 18:00:00").getTime());
+        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
+        assertEquals(tuple.get(2).toString(), "(value,120)");
+
+        tuple = iterator.next();
+        assertEquals(tuple.size(), 3);
+        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:25:00").getTime());
+        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
+        assertEquals(tuple.get(2).toString(), "(value,0)");
 
         assertFalse(iterator.hasNext());
     }

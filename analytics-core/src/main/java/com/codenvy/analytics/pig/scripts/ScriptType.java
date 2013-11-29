@@ -47,6 +47,7 @@ public enum ScriptType {
     NUMBER_OF_DEPLOYMENTS_BY_TYPES,
     NUMBER_OF_USERS_FROM_FACTORY,
     PRODUCT_USAGE_SESSIONS,
+    PRODUCT_USAGE_SESSIONS_OLD,
     ACTIVE_ENTITIES_LIST {
         @Override
         public Set<Parameters> getParams() {
