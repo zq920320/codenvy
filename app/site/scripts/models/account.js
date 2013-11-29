@@ -189,8 +189,7 @@
                 $.ajax({
                     url : emailValidateUrl,
                     type : "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
+                    data: data,
                     success : function(){
                         success({url: '../site/thank-you'});
                     },
@@ -203,12 +202,13 @@
             },
 
             createWorkspace : function(username,bearertoken,success,error){
-                var data = {username: username.toLowerCase(), bearertoken: bearertoken.toLowerCase()};
-                var authenticateUrl = "/site/rest/email/authenticate" + window.location.search.substring(1);
+                var data = {username: username.toLowerCase(), token: bearertoken.toLowerCase()};
+                var authenticateUrl = "/site/rest/email/authenticate";
                 $.ajax({
                     url : authenticateUrl,
                     type : "POST",
-                    data: data,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
                     success : function(){
                         success({url: '../site/thank-you'});
                     },
