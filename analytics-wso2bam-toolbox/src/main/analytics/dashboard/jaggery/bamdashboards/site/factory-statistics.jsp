@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <iframe id="dashboardWidget-1" class="single-column-gadget" src="gadgets/timeline.jag?timeGrouping=day"></iframe>
+                <iframe id="dashboardWidget-1" class="single-column-gadget" src="gadgets/factories.jag?timeGrouping=day"></iframe>
             </div>
         </div>
     </div>

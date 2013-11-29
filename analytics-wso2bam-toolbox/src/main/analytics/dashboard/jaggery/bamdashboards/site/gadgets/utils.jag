@@ -46,7 +46,7 @@ function printTable(table) {
     var tableName = table.columns[0];
     var timelineTableId = "timelineTableFor" + tableName;
     
-    print('<link href="styles.css" rel="stylesheet" type="text/css" />');
+    print('<link href="../css/styles.css" rel="stylesheet" type="text/css" />');
 	
     print('<table cellspacing="0" class="timeline-table" align="center" id="'+ timelineTableId +'">');
     print('<thead aria-hidden="false">');
