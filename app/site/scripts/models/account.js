@@ -84,9 +84,9 @@
         var loginWithGoogle = function(page,callback){
             if (isWebsocketEnabled()) {
                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/site/api/user/authenticate?authType=oauth&oauth_provider=google" +
+                var url = "/site/api/oauth/authenticate?oauth_provider=google" +
                    "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email"+
-                   "&" + window.location.search.substring(1);
+                   "&redirect_after_login=" + encodeURIComponent("/site/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -97,8 +97,8 @@
         var loginWithGithub = function(page,callback){
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/site/api/user/authenticate?authType=oauth&oauth_provider=github&scope=user&scope=repo" +
-                "&" + window.location.search.substring(1);
+                var url = "/site/api/oauth/authenticate?oauth_provider=github&scope=user&scope=repo" +
+                "&redirect_after_login=" + encodeURIComponent("/site/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -162,7 +162,7 @@
                 if (isWebsocketEnabled()){
                     var loginUrl = "/site/api/user/authenticate";
                     var successUrl = "../site/private/select-tenant?" + window.location.search.substring(1);
-                    var data = {email: email, password: password};
+                    var data = {username: email, password: password};
                  $.ajax({
                     url : loginUrl,
                     type : "POST",
