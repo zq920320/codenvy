@@ -18,7 +18,7 @@
 -->
 <display>
     <view time-unit="day,week,month,lifetime" name="timeline">
-        <section name="workspaces" columns="20">
+        <section name="workspaces" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Workspaces"/>
             </row>
@@ -37,7 +37,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="workspaces_usage" columns="20">
+        <section name="workspaces_usage" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Workspaces Usage"/>
             </row>
@@ -60,7 +60,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="users" columns="20">
+        <section name="users" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Users"/>
             </row>
@@ -83,7 +83,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="users_usage" columns="20">
+        <section name="users_usage" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Users Usage"/>
             </row>
@@ -106,7 +106,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="users_engagement" columns="20">
+        <section name="users_engagement" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="User Engagement (#)"/>
             </row>
@@ -133,7 +133,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="invitations" columns="20">
+        <section name="invitations" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Invitations"/>
             </row>
@@ -148,7 +148,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="authentications" columns="20">
+        <section name="authentications" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Authentication Type"/>
             </row>
@@ -170,7 +170,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="usage_time" columns="20">
+        <section name="usage_time" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Usage Time (mins)"/>
             </row>
@@ -197,7 +197,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="user_sessions" columns="20">
+        <section name="user_sessions" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="# User Sessions"/>
             </row>
@@ -224,7 +224,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="projects" columns="20">
+        <section name="projects" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Projects"/>
             </row>
@@ -243,7 +243,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="ide_usage" columns="20">
+        <section name="ide_usage" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="IDE Usage Events"/>
             </row>
@@ -274,7 +274,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="time_spent" columns="20">
+        <section name="time_spent" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Spent Time (mins)"/>
             </row>
@@ -293,7 +293,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="projects_types" columns="20">
+        <section name="projects_types" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Project Types"/>
             </row>
@@ -356,7 +356,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="projects_paas" columns="20">
+        <section name="projects_paas" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Project PaaS"/>
             </row>
@@ -411,7 +411,7 @@
 
     <!-- Factory Timeline -->
     <view time-unit="day,week,month,lifetime" name="timeline">
-        <section name="factory" columns="20">
+        <section name="factory" columns="15">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="description" value="Factory Analysis"/>
             </row>
@@ -492,6 +492,7 @@
                 <parameter key="format" value="%,.0f"/>
                 <parameter key="description" value="Product Usage Mins"/>
             </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>
