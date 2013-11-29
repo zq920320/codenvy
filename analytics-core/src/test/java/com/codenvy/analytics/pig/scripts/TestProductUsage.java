@@ -120,36 +120,6 @@ public class TestProductUsage extends BaseTest {
     }
 
     @Test
-    public void testExecuteOldScript() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS_OLD, params);
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20131101 20:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
-        assertEquals(tuple.get(2).toString(), "(value,300)");
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20131101 19:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(value,240)");
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20131101 18:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(value,120)");
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20131101 20:25:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
-        assertEquals(tuple.get(2).toString(), "(value,0)");
-
-        assertFalse(iterator.hasNext());
-    }
-
-    @Test
     public void testDateAndDoubleUserFilterMinIncludeMaxInclude() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20131101");
