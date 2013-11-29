@@ -610,7 +610,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Java War"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("8"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("8"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Java JSP"), sectionData.get(4).get(0));
