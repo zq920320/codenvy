@@ -202,7 +202,7 @@
             },
 
             createWorkspace : function(username,bearertoken,success,error){
-                var data = {username: username.toLowerCase(), token: bearertoken.toLowerCase()};
+                var data = {username: username.toLoweCase, token: bearertoken};
                 var authenticateUrl = "/site/rest/email/authenticate";
                 $.ajax({
                     url : authenticateUrl,
