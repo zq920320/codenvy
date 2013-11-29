@@ -66,11 +66,11 @@ public class PigServer {
     /** Imported macro files. Pig sever doesn't allow to import the same macro file twice. */
     private static final Set<String> importedMacros = new HashSet<>();
 
-    private static final Date OLD_SCRIPT_DATE;
+    private static final Calendar OLD_SCRIPT_DATE = Calendar.getInstance();
 
     static {
         try {
-            OLD_SCRIPT_DATE = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT).parse("20132208");
+            OLD_SCRIPT_DATE.setTime(new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT).parse("20130822"));
         } catch (ParseException e) {
             throw new IllegalStateException(e);
         }

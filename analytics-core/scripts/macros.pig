@@ -215,7 +215,7 @@ DEFINE groupEvents(X) RETURNS Y {
 -- The list of all users sessions in all workspaces
 -- @return {ws: bytearray,user: bytearray,dt: datetime,delta: long}
 ---------------------------------------------------------------------------------------------
-DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
+DEFINE productUsageTimeList(X, inactiveIntervalParam) RETURNS Y {
   tR = groupEvents($X);
 
   ---------------------------------------------------------------------------------------------
@@ -231,9 +231,9 @@ DEFINE productUsageTimeList(X, inactiveInterval) RETURNS Y {
   -- Marks the start and the end of every session
   ---------------------------------------------------------------------------------------------
   k2 = FOREACH k1 GENERATE ws, user, dt, (before IS NULL ? -999999999 : before) AS before, (after IS NULL ? 999999999 : after) AS after;
-  k3 = FOREACH k2 GENERATE ws, user, dt, (before < -(long)$inactiveInterval*60*1000 ? (after <= (long)$inactiveInterval*60*1000 ? 'start'
+  k3 = FOREACH k2 GENERATE ws, user, dt, (before < -(long)$inactiveIntervalParam*60*1000 ? (after <= (long)$inactiveIntervalParam*60*1000 ? 'start'
 										          			    : 'single')
-									     : (after <= (long)$inactiveInterval*60*1000 ? 'none'
+									     : (after <= (long)$inactiveIntervalParam*60*1000 ? 'none'
 														    : 'end')) AS flag;
   kR = FILTER k3 BY flag == 'start' OR flag == 'end';
 

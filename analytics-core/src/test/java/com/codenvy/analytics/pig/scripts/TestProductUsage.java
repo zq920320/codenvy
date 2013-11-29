@@ -51,37 +51,37 @@ public class TestProductUsage extends BaseTest {
 
         // sessions #1 - 240s
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                        .withDate("2013-01-01").withTime("19:00:00").build());
+                        .withDate("2013-11-01").withTime("19:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                        .withDate("2013-01-01").withTime("19:04:00").build());
+                        .withDate("2013-11-01").withTime("19:04:00").build());
 
         // sessions #2 - 300s
-        events.add(Event.Builder.createSessionStartedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionStartedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
                         .withTime("20:05:00").build());
 
         // sessions #3 - 120s
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                        .withDate("2013-01-01").withTime("18:00:00").build());
+                        .withDate("2013-11-01").withTime("18:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                        .withDate("2013-01-01").withTime("18:02:00").build());
+                        .withDate("2013-11-01").withTime("18:02:00").build());
 
         // by mistake
-        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-01-01")
+        events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
                         .withTime("20:25:00").build());
 
         // session will be ignored,
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
-                        .withDate("2013-01-01").withTime("20:00:00").build());
+                        .withDate("2013-11-01").withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
-                        .withDate("2013-01-01").withTime("20:05:00").build());
+                        .withDate("2013-11-01").withTime("20:05:00").build());
 
 
         File log = LogGenerator.generateLog(events);
 
-        Parameters.FROM_DATE.put(params, "20130101");
-        Parameters.TO_DATE.put(params, "20130101");
+        Parameters.FROM_DATE.put(params, "20131101");
+        Parameters.TO_DATE.put(params, "20131101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.STORAGE_DST.put(params, "testproductusagesessions");
@@ -98,7 +98,7 @@ public class TestProductUsage extends BaseTest {
 
         Tuple tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:00:00").getTime());
+        assertEquals(tuple.get(0), timeFormat.parse("20131101 20:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
         assertEquals(tuple.get(2).toString(), "(value,300)");
 
@@ -106,13 +106,13 @@ public class TestProductUsage extends BaseTest {
 
         tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 19:00:00").getTime());
+        assertEquals(tuple.get(0), timeFormat.parse("20131101 19:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
         assertEquals(tuple.get(2).toString(), "(value,240)");
 
         tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 18:00:00").getTime());
+        assertEquals(tuple.get(0), timeFormat.parse("20131101 18:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
         assertEquals(tuple.get(2).toString(), "(value,120)");
 
@@ -124,25 +124,25 @@ public class TestProductUsage extends BaseTest {
         Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS_OLD, params);
         Tuple tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:00:00").getTime());
+        assertEquals(tuple.get(0), timeFormat.parse("20131101 20:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
         assertEquals(tuple.get(2).toString(), "(value,300)");
 
         tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 19:00:00").getTime());
+        assertEquals(tuple.get(0), timeFormat.parse("20131101 19:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
         assertEquals(tuple.get(2).toString(), "(value,240)");
 
         tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 18:00:00").getTime());
+        assertEquals(tuple.get(0), timeFormat.parse("20131101 18:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
         assertEquals(tuple.get(2).toString(), "(value,120)");
 
         tuple = iterator.next();
         assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:25:00").getTime());
+        assertEquals(tuple.get(0), timeFormat.parse("20131101 20:25:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
         assertEquals(tuple.get(2).toString(), "(value,0)");
 
@@ -152,8 +152,8 @@ public class TestProductUsage extends BaseTest {
     @Test
     public void testDateAndDoubleUserFilterMinIncludeMaxInclude() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
         MetricFilter.USER.put(context, "user@gmail.com,ANONYMOUSUSER_user11");
 
         Metric metric = new TestProductUsageTime(240, 300, true, true);
@@ -169,8 +169,8 @@ public class TestProductUsage extends BaseTest {
     @Test
     public void testDateAndDoubleUserWsFilterMinIncludeMaxInclude() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
         MetricFilter.USER.put(context, "user@gmail.com,ANONYMOUSUSER_user11");
         MetricFilter.WS.put(context, "ws1");
 
@@ -187,8 +187,8 @@ public class TestProductUsage extends BaseTest {
     @Test
     public void testDateAndUserFilterMinIncludeMaxInclude() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
         MetricFilter.USER.put(context, "user@gmail.com");
 
         Metric metric = new TestProductUsageTime(240, 300, true, true);
@@ -205,8 +205,8 @@ public class TestProductUsage extends BaseTest {
     @Test
     public void testDateFilterMinIncludeMaxInclude() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
 
         Metric metric = new TestProductUsageTime(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(9L));
@@ -221,8 +221,8 @@ public class TestProductUsage extends BaseTest {
     @Test
     public void testDateFilterMinIncludeMaxExclude() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
 
         Metric metric = new TestProductUsageTime(240, 300, true, false);
         assertEquals(metric.getValue(context), new LongValueData(4L));
@@ -237,8 +237,8 @@ public class TestProductUsage extends BaseTest {
     @Test
     public void testDateFilterMinExcludeMaxExclude() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
 
         Metric metric = new TestProductUsageTime(240, 300, false, false);
         assertEquals(metric.getValue(context), new LongValueData(0L));
@@ -253,8 +253,8 @@ public class TestProductUsage extends BaseTest {
     @Test
     public void testDateFilterMinExcludeMaxInclude() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
 
         Metric metric = new TestProductUsageTime(240, 300, false, true);
         assertEquals(metric.getValue(context), new LongValueData(5L));
