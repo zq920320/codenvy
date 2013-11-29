@@ -19,8 +19,11 @@
 define(["jquery","underscore", "backbone", "models/account","views/accountformbase","validation"],
 
     function($, _, Backbone, Account){
-        var CreateWS = Backbone.View.extend({ 
+        var animationFrequency = 500;
+        var CreateWS = Backbone.View.extend({
+            
             initialize : function(){
+                setInterval(_.bind(this.onFrameUpdate,this),animationFrequency);
                 Account.createWorkspace(
                     Account.getQueryParameterByName('username'),
                     Account.getQueryParameterByName('bearertoken'),
@@ -28,8 +31,6 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
                         this.trigger("success",d);
                     },this),
                     _.bind(function(errors){
-
-                        this.__restoreForm();
 
                         if(errors.length !== 0){
                             this.trigger(
@@ -40,6 +41,36 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
                         }
                     },this)
                 );
+            },
+
+            onFrameUpdate : function(){
+                var currentFrame = this.getCurrentFrame();
+                this.getNextFrame().addClass("visible");
+                currentFrame.removeClass("visible");
+            },
+
+            getNextFrame : function(){
+                var currentFrame = this.getCurrentFrame();
+
+                if(this.direction === "next"){
+                    if(currentFrame.next(".loader").length !== 0){
+                        return currentFrame.next(".loader");
+                    }else{
+                        this.direction = "prev";
+                        return currentFrame.prev(".loader");
+                    }
+                }else{
+                    if(currentFrame.prev(".loader").length !== 0){
+                        return currentFrame.prev(".loader");
+                    }else{
+                        this.direction = "next";
+                        return currentFrame.next(".loader");
+                    }
+                }
+            },
+
+            getCurrentFrame : function(){
+                return $(".loader.visible");
             }
         });
 
