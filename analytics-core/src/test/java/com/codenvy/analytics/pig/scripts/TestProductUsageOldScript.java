@@ -93,6 +93,12 @@ public class TestProductUsageOldScript extends BaseTest {
         Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
         Tuple tuple = iterator.next();
         assertEquals(tuple.size(), 3);
+        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:25:00").getTime());
+        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
+        assertEquals(tuple.get(2).toString(), "(value,0)");
+
+        tuple = iterator.next();
+        assertEquals(tuple.size(), 3);
         assertEquals(tuple.get(0), timeFormat.parse("20130101 20:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
         assertEquals(tuple.get(2).toString(), "(value,300)");
@@ -108,12 +114,6 @@ public class TestProductUsageOldScript extends BaseTest {
         assertEquals(tuple.get(0), timeFormat.parse("20130101 18:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
         assertEquals(tuple.get(2).toString(), "(value,120)");
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:25:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
-        assertEquals(tuple.get(2).toString(), "(value,0)");
 
         assertFalse(iterator.hasNext());
     }
