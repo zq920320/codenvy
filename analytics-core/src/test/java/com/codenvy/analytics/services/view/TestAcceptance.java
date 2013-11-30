@@ -681,7 +681,7 @@ public class TestAcceptance extends BaseTest {
         row = sectionData.get(5).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 300 Mins"), sectionData.get(5).get(0));
         aggregateResult(row, new StringValueData("4"), sectionData.get(5).get(1));
-        aggregateResult(row, new StringValueData("1"), sectionData.get(5).get(2));
+        aggregateResult(row, new StringValueData("2"), sectionData.get(5).get(2));
     }
 
     private void assertUsersEngagementLifeTime(List<List<ValueData>> sectionData) {
@@ -779,7 +779,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("345"), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("344"), sectionData.get(4).get(1));
 
         row = sectionData.get(5).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 60 Mins"), sectionData.get(5).get(0));
@@ -790,7 +790,7 @@ public class TestAcceptance extends BaseTest {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
         aggregateResult(row, new StringValueData("136"), sectionData.get(1).get(1));
-        aggregateResult(row, new StringValueData("83"), sectionData.get(1).get(2)); //
+        aggregateResult(row, new StringValueData("83"), sectionData.get(1).get(2));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("New Active Workspaces"), sectionData.get(2).get(0));
@@ -1049,7 +1049,7 @@ public class TestAcceptance extends BaseTest {
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(3).get(0));
         aggregateResult(row, new StringValueData("136"), sectionData.get(3).get(1));
-        aggregateResult(row, new StringValueData("83"), sectionData.get(2).get(2)); //
+        aggregateResult(row, new StringValueData("83"), sectionData.get(3).get(2));
     }
 
     private void assertWorkspacesLifeTime(List<List<ValueData>> sectionData) {

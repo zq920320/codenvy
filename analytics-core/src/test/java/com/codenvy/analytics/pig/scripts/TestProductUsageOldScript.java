@@ -30,13 +30,10 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static com.mongodb.util.MyAsserts.assertTrue;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsageOldScript extends BaseTest {
@@ -89,32 +86,14 @@ public class TestProductUsageOldScript extends BaseTest {
     }
 
     @Test
-    public void testExecuteOldScript() throws Exception {
+    public void testExecute() throws Exception {
         Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:25:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
-        assertEquals(tuple.get(2).toString(), "(value,0)");
 
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 20:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
-        assertEquals(tuple.get(2).toString(), "(value,300)");
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 19:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(value,240)");
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 18:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(value,120)");
-
-        assertFalse(iterator.hasNext());
+        assertTuples(iterator, new String[]{
+                "(" + timeFormat.parse("20130101 20:00:00").getTime() + ",(user,user@gmail.com),(value,300))",
+                "(" + timeFormat.parse("20130101 20:25:00").getTime() + ",(user,user@gmail.com),(value,0))",
+                "(" + timeFormat.parse("20130101 19:00:00").getTime() + ",(user,ANONYMOUSUSER_user11),(value,240))",
+                "(" + timeFormat.parse("20130101 18:00:00").getTime() + ",(user,ANONYMOUSUSER_user11),(value,120))"});
     }
+
 }

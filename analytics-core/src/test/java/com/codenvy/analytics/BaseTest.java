@@ -28,6 +28,7 @@ import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.mongodb.MongoClientURI;
 
+import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -35,6 +36,13 @@ import org.testng.annotations.BeforeSuite;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import static com.mongodb.util.MyAsserts.assertTrue;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
@@ -64,5 +72,18 @@ public class BaseTest {
     @AfterSuite
     public void tearDown() throws Exception {
         mongoProcess.stop();
+    }
+
+    protected void assertTuples(Iterator<Tuple> iter, String[] tuplesAsString) {
+        Set<String> tuples = new HashSet<>(Arrays.asList(tuplesAsString));
+
+        int count = 0;
+        while (iter.hasNext()) {
+            count++;
+            String tuple = iter.next().toString();
+            assertTrue(tuples.contains(tuple), tuple);
+        }
+
+        assertEquals(tuples.size(), count);
     }
 }
