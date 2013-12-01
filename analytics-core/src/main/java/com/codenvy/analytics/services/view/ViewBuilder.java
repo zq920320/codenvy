@@ -23,14 +23,16 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.ConfigurationManager;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.XmlConfigurationManager;
-import com.codenvy.analytics.storage.JdbcDataManager;
-import com.codenvy.analytics.storage.JdbcDataManagerFactory;
+import com.codenvy.analytics.storage.CSVDataPersister;
+import com.codenvy.analytics.storage.DataPersister;
+import com.codenvy.analytics.storage.JdbcDataPersisterFactory;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,12 +48,14 @@ public class ViewBuilder implements Feature {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ViewBuilder.class);
 
-    private final JdbcDataManager                            dataManager;
+    private final DataPersister                              dataPersister;
+    private final CSVDataPersister                           csvDataPersister;
     private final ConfigurationManager<DisplayConfiguration> configurationManager;
 
     public ViewBuilder() {
         this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class);
-        this.dataManager = JdbcDataManagerFactory.getDataManager();
+        this.dataPersister = JdbcDataPersisterFactory.getDataManager();
+        this.csvDataPersister = new CSVDataPersister();
     }
 
     /** {@inheritDoc} */
@@ -122,11 +126,15 @@ public class ViewBuilder implements Feature {
         }
     }
 
-    protected void retainData(String tableName, List<List<ValueData>> sectionData) throws SQLException {
+    protected void retainData(String tableName,
+                              List<List<ValueData>> sectionData,
+                              Map<String, String> context) throws SQLException, IOException {
+
         List<ValueData> fields = sectionData.get(0);
         List<List<ValueData>> data = sectionData.subList(1, sectionData.size());
 
-        dataManager.retainData(tableName, fields, data);
+        dataPersister.retainData(tableName, fields, data, context);
+        csvDataPersister.retainData(tableName, fields, data, context);
     }
 
     private class ComputeSectionData extends RecursiveAction {
@@ -144,16 +152,14 @@ public class ViewBuilder implements Feature {
         protected void compute() {
             try {
                 int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 1 : sectionConfiguration.getColumns();
-
                 List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
 
                 for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
+                    Map<String, String> context = Utils.initializeContext(timeUnit);
                     List<ValueData> rowData = new ArrayList<>(sectionConfiguration.getColumns() + 1);
 
                     Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
                     Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
-
-                    Map<String, String> context = Utils.initializeContext(timeUnit);
 
                     rowData.add(row.getDescription());
                     for (int i = 0; i < rowCount; i++) {
@@ -165,7 +171,7 @@ public class ViewBuilder implements Feature {
                 }
 
                 String tableName = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
-                retainData(tableName, sectionData);
+                retainData(tableName, sectionData, Utils.initializeContext(Parameters.TimeUnit.DAY));
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
                 throw new IllegalStateException(e);

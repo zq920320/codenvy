@@ -108,8 +108,9 @@ public class TestAcceptance extends BaseTest {
 
         ArgumentCaptor<String> tblName = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<List> data = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
-        verify(viewBuilder, atLeastOnce()).retainData(tblName.capture(), data.capture());
+        verify(viewBuilder, atLeastOnce()).retainData(tblName.capture(), data.capture(), context.capture());
 
         for (int i = 0; i < tblName.getAllValues().size(); i++) {
             acceptResult(tblName.getAllValues().get(i), data.getAllValues().get(i));

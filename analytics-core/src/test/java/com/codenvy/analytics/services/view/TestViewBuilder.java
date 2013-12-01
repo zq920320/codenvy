@@ -18,12 +18,13 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.XmlConfigurationManager;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -35,10 +36,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -76,22 +75,26 @@ public class TestViewBuilder extends BaseTest {
     }
 
     @Test
-    public void testParsingConfig() throws Exception {
-        ViewBuilder viewBuilder = new ViewBuilder();
+    public void shouldReturnCorrectData() throws Exception {
+        ViewBuilder spyBuilder = spy(new ViewBuilder());
 
-        ViewBuilder spyBuilder = spy(viewBuilder);
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                List<List<ValueData>> data = (List<List<ValueData>>)invocation.getArguments()[1];
-                assertValueData(data);
-
-                return null;
-            }
-        }).when(spyBuilder).retainData(anyString(), anyList());
+        ArgumentCaptor<String> tblName = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<List> data = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
         spyBuilder.build(displayConfiguration);
-        viewBuilder.build(displayConfiguration);
+        verify(spyBuilder).retainData(tblName.capture(), data.capture(), context.capture());
+
+        assertValueData(data.getValue());
+
+        Calendar calendar = Utils.getToDate(Utils.initializeContext(Parameters.TimeUnit.DAY));
+
+        File csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/workspaces_day.csv");
+        assertTrue(csvReport.exists());
+
+        File csvBackupReport =
+                new File("./target/backup/reports/" + dirFormat.format(calendar.getTime()) + "/workspaces_day.csv");
+        assertTrue(csvBackupReport.exists());
     }
 
     private void assertValueData(List<List<ValueData>> data) {

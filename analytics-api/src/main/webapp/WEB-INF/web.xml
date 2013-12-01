@@ -55,7 +55,7 @@
             <http-method>GET</http-method>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>employees</role-name>
+            <role-name>analytics-users</role-name>
         </auth-constraint>
         <user-data-constraint>
             <transport-guarantee>NONE</transport-guarantee>
@@ -68,6 +68,6 @@
     </login-config>
 
     <security-role>
-        <role-name>employees</role-name>
+        <role-name>analytics-users</role-name>
     </security-role>
 </web-app>

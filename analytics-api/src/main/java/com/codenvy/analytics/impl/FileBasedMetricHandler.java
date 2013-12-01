@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Metric handler implementation base on data stored in files on file system. Which should be preliminary prepared by calling appropriate
- * scripts.
+ * Metric handler implementation base on data stored in files on file system. Which should be preliminary prepared by
+ * calling appropriate scripts.
  *
  * @author <a href="mailto:dkuleshov@codenvy.com">Dmitry Kuleshov</a>
  */
@@ -49,7 +49,8 @@ public class FileBasedMetricHandler implements MetricHandler {
         sampleParameterSet.add(Parameters.TO_DATE);
     }
 
-    public MetricValueDTO getValue(String metricName, Map<String, String> executionContext, ServiceContext serviceContext)
+    public MetricValueDTO getValue(String metricName, Map<String, String> executionContext,
+                                   ServiceContext serviceContext)
             throws MetricNotFoundException {
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
         try {
@@ -79,7 +80,7 @@ public class FileBasedMetricHandler implements MetricHandler {
     public MetricInfoListDTO getAllInfo(ServiceContext serviceContext) {
         List<MetricInfoDTO> metricInfoDTOs = new ArrayList<>();
 
-        for (Metric metric  : MetricFactory.getAllMetrics()) {
+        for (Metric metric : MetricFactory.getAllMetrics()) {
             if (sampleParameterSet.equals(metric.getParams())) {
                 metricInfoDTOs.add(MetricDTOFactory.createMetricDTO(metric, metric.getName(), serviceContext));
             }

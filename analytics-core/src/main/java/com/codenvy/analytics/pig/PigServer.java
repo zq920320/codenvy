@@ -47,18 +47,9 @@ public class PigServer {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PigServer.class);
 
-    private static final String ANALYTICS_SCRIPTS_DIR_PROPERTY = "analytics.scripts.dir";
-    private static final String ANALYTICS_BIN_DIR_PROPERTY     = "analytics.bin.dir";
-    public static final  String ANALYTICS_LOGS_DIRECTORY       = "analytics.logs.directory";
-
-    public static final String SCRIPTS_DIR    = System.getProperty(ANALYTICS_SCRIPTS_DIR_PROPERTY);
-    public static final String BIN_DIR        = System.getProperty(ANALYTICS_BIN_DIR_PROPERTY);
-    public static final String LOGS_DIRECTORY = Configurator.getString(ANALYTICS_LOGS_DIRECTORY);
-
-    private static final String PIG_SERVER_EMBEDDED = "pig.server.embedded";
-
-    /** Pig relation containing execution result. */
-    private static final String FINAL_RELATION = "result";
+    private static final String  LOGS_DIR            = Configurator.getString("analytics.logs.dir");
+    private static final String  SCRIPTS_DIR         = Configurator.getString("analytics.scripts.dir");
+    private static final boolean PIG_SERVER_EMBEDDED = Configurator.getBoolean("pig.server.embedded");
 
     private static final Calendar OLD_SCRIPT_DATE = Calendar.getInstance();
 
@@ -93,7 +84,7 @@ public class PigServer {
             return;
         }
 
-        if (Configurator.getBoolean(PIG_SERVER_EMBEDDED)) {
+        if (PIG_SERVER_EMBEDDED) {
             executeOnEmbeddedServer(scriptType, context);
         } else {
             executeOnDedicatedServer(scriptType, context);
@@ -155,7 +146,7 @@ public class PigServer {
     private static String prepareRunCommand(ScriptType scriptType, Map<String, String> context) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(new File(BIN_DIR, "run_pig.sh").getAbsolutePath());
+        builder.append(new File(SCRIPTS_DIR, "run_pig.sh").getAbsolutePath());
 
         for (Map.Entry<String, String> entry : context.entrySet()) {
             builder.append(' ');
@@ -201,7 +192,7 @@ public class PigServer {
             server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
             server.registerScript(scriptContent, context);
-            Iterator<Tuple> iterator = server.openIterator(FINAL_RELATION);
+            Iterator<Tuple> iterator = server.openIterator("result");
 
             List<Tuple> tuples = new ArrayList<>();
             while (iterator.hasNext()) {
@@ -242,6 +233,9 @@ public class PigServer {
         try {
             if (scriptType == ScriptType.PRODUCT_USAGE_SESSIONS && Utils.getToDate(context).before(OLD_SCRIPT_DATE)) {
                 scriptType = ScriptType.PRODUCT_USAGE_SESSIONS_OLD;
+
+                LOG.info(ScriptType.PRODUCT_USAGE_SESSIONS_OLD.name() + " will be used instead of " +
+                         ScriptType.PRODUCT_USAGE_SESSIONS.name());
             }
         } catch (ParseException e) {
             throw new IllegalStateException(e);
@@ -258,7 +252,7 @@ public class PigServer {
      */
     private static void setOptimizedPaths(Map<String, String> context) throws IOException {
         try {
-            String path = LogLocationOptimizer.generatePaths(new File(LOGS_DIRECTORY).getAbsolutePath(),
+            String path = LogLocationOptimizer.generatePaths(new File(LOGS_DIR).getAbsolutePath(),
                                                              Parameters.FROM_DATE.get(context),
                                                              Parameters.TO_DATE.get(context));
             Parameters.LOG.put(context, path);
@@ -282,9 +276,9 @@ public class PigServer {
         }
     }
 
-    /** All commands after {@link #FINAL_RELATION} is considering as redundant. */
+    /** All commands after 'result' is considering as redundant. */
     private static String removeRedundantCode(String script) throws IOException {
-        int pos = script.indexOf(FINAL_RELATION);
+        int pos = script.indexOf("result");
         if (pos < 0) {
             return script;
         }

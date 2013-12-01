@@ -20,22 +20,22 @@ package com.codenvy.analytics.storage;
 import com.codenvy.analytics.Configurator;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class JdbcDataManagerFactory {
+public class JdbcDataPersisterFactory {
 
-    public static final String JDBC_DATA_MANAGER_URL      = "jdbc.data-manager.url";
-    public static final String JDBC_DATA_MANAGER_DRIVER   = "jdbc.data-manager.driver";
-    public static final String JDBC_DATA_MANAGER_USER     = "jdbc.data-manager.user";
-    public static final String JDBC_DATA_MANAGER_PASSWORD = "jdbc.data-manager.password";
+    public static final String JDBC_DATA_PERSISTER_URL      = "jdbc.data-persister.url";
+    public static final String JDBC_DATA_PERSISTER_DRIVER   = "jdbc.data-persister.driver";
+    public static final String JDBC_DATA_PERSISTER_USER     = "jdbc.data-persister.user";
+    public static final String JDBC_DATA_PERSISTER_PASSWORD = "jdbc.data-persister.password";
 
-    public static JdbcDataManager getDataManager() {
-        String driver = Configurator.getString(JDBC_DATA_MANAGER_DRIVER);
-        String url = Configurator.getString(JDBC_DATA_MANAGER_URL);
-        String user = Configurator.getString(JDBC_DATA_MANAGER_USER);
-        String password = Configurator.getString(JDBC_DATA_MANAGER_PASSWORD);
+    public static DataPersister getDataManager() {
+        String driver = Configurator.getString(JDBC_DATA_PERSISTER_DRIVER);
+        String url = Configurator.getString(JDBC_DATA_PERSISTER_URL);
+        String user = Configurator.getString(JDBC_DATA_PERSISTER_USER);
+        String password = Configurator.getString(JDBC_DATA_PERSISTER_PASSWORD);
 
         switch (driver) {
             case "org.h2.Driver":
-                return new H2DataManager(url, user, password);
+                return new H2DataPersister(url, user, password);
             default:
                 throw new IllegalStateException(driver + " is not supported");
 

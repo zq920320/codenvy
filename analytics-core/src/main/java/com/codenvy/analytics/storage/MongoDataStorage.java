@@ -42,15 +42,15 @@ public class MongoDataStorage implements DataStorage {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataStorage.class);
 
-    public static final String ANALYTICS_STORAGE_MONGO_HOST     = "analytics.storage.mongo.host";
-    public static final String ANALYTICS_STORAGE_MONGO_PORT     = "analytics.storage.mongo.port";
-    public static final String ANALYTICS_STORAGE_MONGO_USER     = "analytics.storage.mongo.user";
-    public static final String ANALYTICS_STORAGE_MONGO_PASSWORD = "analytics.storage.mongo.password";
-    public static final String ANALYTICS_STORAGE_MONGO_DB       = "analytics.storage.mongo.db";
+    public static final String TMP_DIR  = Configurator.getString("analytics.tmp.dir");
+    public static final String HOST     = Configurator.getString("analytics.storage.mongo.host");
+    public static final String PORT     = Configurator.getString("analytics.storage.mongo.port");
+    public static final String USER     = Configurator.getString("analytics.storage.mongo.user");
+    public static final String PASSWORD = Configurator.getString("analytics.storage.mongo.password");
+    public static final String DB       = Configurator.getString("analytics.storage.mongo.db");
 
     private       MongodProcess  mongodProcess;
     private final MongoClientURI mongoClientURI;
-
 
     public MongoDataStorage() {
         this.mongoClientURI = new MongoClientURI(createStorageUrl());
@@ -66,18 +66,18 @@ public class MongoDataStorage implements DataStorage {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("mongodb://");
 
-        if (Configurator.exists(ANALYTICS_STORAGE_MONGO_USER)) {
-            stringBuilder.append(Configurator.getString(ANALYTICS_STORAGE_MONGO_USER));
+        if (USER != null) {
+            stringBuilder.append(USER);
             stringBuilder.append(":");
-            stringBuilder.append(Configurator.getString(ANALYTICS_STORAGE_MONGO_PASSWORD));
+            stringBuilder.append(PASSWORD);
             stringBuilder.append("@");
         }
 
-        stringBuilder.append(Configurator.getString(ANALYTICS_STORAGE_MONGO_HOST));
+        stringBuilder.append(HOST);
         stringBuilder.append(":");
-        stringBuilder.append(Configurator.getString(ANALYTICS_STORAGE_MONGO_PORT));
+        stringBuilder.append(PORT);
         stringBuilder.append("/");
-        stringBuilder.append(Configurator.getString(ANALYTICS_STORAGE_MONGO_DB));
+        stringBuilder.append(DB);
 
         return stringBuilder.toString();
     }
@@ -89,7 +89,7 @@ public class MongoDataStorage implements DataStorage {
             return;
         }
 
-        File dir = new File(Configurator.ANALYTICS_TMP_DIRECTORY, "embedded-mongoDb");
+        File dir = new File(TMP_DIR, "embedded-mongoDb");
         if (!dir.exists() && !dir.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + dir.getAbsolutePath());
         }

@@ -18,9 +18,9 @@
 package com.codenvy.analytics.storage;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class H2DataManager extends AbstractDataManager {
+public class H2DataPersister extends AbstractJDBCDataPersister {
 
-    public H2DataManager(String url, String user, String password) {
+    public H2DataPersister(String url, String user, String password) {
         super(url, user, password);
     }
 }

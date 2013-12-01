@@ -25,12 +25,13 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractDataManager implements JdbcDataManager {
+public abstract class AbstractJDBCDataPersister implements DataPersister {
 
     /** Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractDataManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractJDBCDataPersister.class);
 
     private final DecimalFormat colFormat;
 
@@ -38,7 +39,7 @@ public abstract class AbstractDataManager implements JdbcDataManager {
     private final String url;
     private final String user;
 
-    public AbstractDataManager(String url, String user, String password) {
+    public AbstractJDBCDataPersister(String url, String user, String password) {
         this.url = url;
         this.user = user;
         this.password = password;
@@ -53,7 +54,10 @@ public abstract class AbstractDataManager implements JdbcDataManager {
     }
 
     @Override
-    public void retainData(String tableName, List<ValueData> fields, List<List<ValueData>> data) throws SQLException {
+    public void retainData(String tableName,
+                           List<ValueData> fields,
+                           List<List<ValueData>> data,
+                           Map<String, String> context) throws SQLException {
         Connection connection = openConnection();
         try {
             dropTableIfExists(connection, tableName);

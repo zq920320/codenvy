@@ -45,28 +45,4 @@
         <servlet-name>listReports</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Analytics-API</web-resource-name>
-            <url-pattern>/*</url-pattern>
-            <http-method>POST</http-method>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>analytics-users</role-name>
-        </auth-constraint>
-        <user-data-constraint>
-            <transport-guarantee>NONE</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
-
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>Analytics application</realm-name>
-    </login-config>
-
-    <security-role>
-        <role-name>analytics-users</role-name>
-    </security-role>
 </web-app>

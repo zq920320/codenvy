@@ -24,6 +24,8 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * It is supposed to keep configuration of all services in one place.
@@ -32,13 +34,11 @@ import java.util.Properties;
  */
 public class Configurator {
 
-    /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
 
-    public static final String ANALYTICS_CONF_DIR      = System.getProperty("codenvy.local.conf.dir");
-    public static final String ANALYTICS_TMP_DIRECTORY = System.getProperty("analytics.tmp.dir");
-
-    private static final String RESOURCE = "analytics.conf";
+    private static final String  CONFIGURATION      = "analytics.conf";
+    private static final String  ANALYTICS_CONF_DIR = System.getProperty("codenvy.local.conf.dir");
+    private static final Pattern TEMPLATE           = Pattern.compile("\\$\\{([^\\}]*)\\}");
 
     private static Properties properties = new Properties();
 
@@ -55,6 +55,7 @@ public class Configurator {
         }
     }
 
+
     /** @return value of the property as the array of String */
     public static String[] getArray(String key) {
         return getString(key).split(",");
@@ -62,7 +63,28 @@ public class Configurator {
 
     /** @return value of the property of the String type */
     public static String getString(String key) {
-        return (String)properties.get(key);
+        String currentValue = properties.getProperty(key);
+        if (currentValue == null) {
+            return null;
+        }
+
+        int lastPos = 0;
+        StringBuilder value2return = new StringBuilder();
+
+        Matcher matcher = TEMPLATE.matcher(currentValue);
+        while (matcher.find()) {
+            value2return.append(currentValue.substring(lastPos, matcher.start()));
+
+            String template = currentValue.substring(matcher.start(), matcher.end());
+            String keyTemplate = template.substring(2, template.length() - 1);
+
+            value2return.append(getString(keyTemplate));
+
+            lastPos = matcher.end();
+        }
+        value2return.append(currentValue.substring(lastPos));
+
+        return value2return.toString();
     }
 
     /** @return value of the property of the boolean type */
@@ -70,15 +92,9 @@ public class Configurator {
         return Boolean.parseBoolean(getString(key));
     }
 
-
     /** @return value of the property of the int type */
     public static int getInt(String key) {
         return Integer.parseInt(getString(key));
-    }
-
-    /** {@link Properties#containsKey(Object)} */
-    public static boolean exists(String key) {
-        return properties.containsKey(key);
     }
 
     public static Map<String, String> getAll(String keyPrefix) {
@@ -96,18 +112,18 @@ public class Configurator {
     }
 
     private static void loadFromResource() throws IOException {
-        try (InputStream in = Configurator.class.getClassLoader().getResourceAsStream(RESOURCE)) {
+        try (InputStream in = Configurator.class.getClassLoader().getResourceAsStream(CONFIGURATION)) {
             if (in == null) {
-                throw new FileNotFoundException("Resource not found " + RESOURCE);
+                throw new FileNotFoundException("Resource not found " + CONFIGURATION);
             }
 
             properties.load(in);
-            LOG.info("Configuration has been read from resource " + RESOURCE);
+            LOG.info("Configuration has been read from resource " + CONFIGURATION);
         }
     }
 
     private static void loadFromFile() throws IOException {
-        File file = new File(ANALYTICS_CONF_DIR, RESOURCE);
+        File file = new File(ANALYTICS_CONF_DIR, CONFIGURATION);
 
         try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
             properties.load(in);

@@ -19,12 +19,17 @@ package com.codenvy.analytics.storage;
 
 import com.codenvy.analytics.datamodel.ValueData;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface JdbcDataManager {
+public interface DataPersister {
 
-    void retainData(String tableName, List<ValueData> fields, List<List<ValueData>> data) throws SQLException;
+    void retainData(String tableName,
+                    List<ValueData> fields,
+                    List<List<ValueData>> data,
+                    Map<String, String> context) throws SQLException, IOException;
 
 }
