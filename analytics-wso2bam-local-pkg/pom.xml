@@ -21,7 +21,7 @@
     <parent>
         <artifactId>analytics-parent</artifactId>
         <groupId>com.codenvy.analytics</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.0</version>
     </parent>
     <artifactId>analytics-wso2bam-local-pkg</artifactId>
     <packaging>pom</packaging>
@@ -92,20 +92,18 @@
                                         <unzip dest="${project.build.directory}/packager-conf/war/analytics-api" src="${project.build.directory}/packager-conf/war/analytics-api.war" />
                                         <unzip dest="${project.build.directory}/packager-conf/war/analytics-application" src="${project.build.directory}/packager-conf/war/analytics-application.war" />
 
-                                        <copy tofile="${project.build.directory}/packager-conf/war/analytics-api/WEB-INF/web.xml"
-                                              file="src/main/resources/analytics-api-no-auth-web.xml" overwrite="true"/>
-                                        <copy tofile="${project.build.directory}/packager-conf/war/analytics-application/WEB-INF/web.xml"
-                                              file="src/main/resources/analytics-application-no-auth-web.xml" overwrite="true"/>
+                                        <copy tofile="${project.build.directory}/packager-conf/war/analytics-api/WEB-INF/web.xml" file="src/main/resources/analytics-api-no-auth-web.xml" overwrite="true" />
+                                        <copy tofile="${project.build.directory}/packager-conf/war/analytics-application/WEB-INF/web.xml" file="src/main/resources/analytics-application-no-auth-web.xml" overwrite="true" />
 
                                         <war destfile="${project.build.directory}/packager-conf/war/analytics-api.war">
-                                            <fileset dir="${project.build.directory}/packager-conf/war/analytics-api"/>
+                                            <fileset dir="${project.build.directory}/packager-conf/war/analytics-api" />
                                         </war>
                                         <war destfile="${project.build.directory}/packager-conf/war/analytics-application.war">
-                                            <fileset dir="${project.build.directory}/packager-conf/war/analytics-application"/>
+                                            <fileset dir="${project.build.directory}/packager-conf/war/analytics-application" />
                                         </war>
 
-                                        <delete dir="${project.build.directory}/packager-conf/war/analytics-application"/>
-                                        <delete dir="${project.build.directory}/packager-conf/war/analytics-api"/>
+                                        <delete dir="${project.build.directory}/packager-conf/war/analytics-application" />
+                                        <delete dir="${project.build.directory}/packager-conf/war/analytics-api" />
 
                                         <move file="${project.build.directory}/packager-conf/war/analytics-api.war" tofile="${project.build.directory}/packager-conf/war/api.war" />
                                         <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/packager-conf/war/analytics.war" />
