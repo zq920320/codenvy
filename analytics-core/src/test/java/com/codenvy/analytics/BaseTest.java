@@ -34,6 +34,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -68,7 +69,11 @@ public class BaseTest {
 
         MongodStarter starter = MongodStarter.getInstance(config);
         MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, 12345, false));
-        mongoProcess = mongoExe.start();
+        try {
+            mongoProcess = mongoExe.start();
+        } catch (IOException e) {
+            mongoProcess = mongoExe.start();
+        }
     }
 
     @AfterSuite
