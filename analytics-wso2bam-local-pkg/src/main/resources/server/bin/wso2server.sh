@@ -130,6 +130,8 @@ if [ -z "$JAVA_HOME" ]; then
   exit 1
 fi
 
+export CARBON_HOME=$CARBON_HOME
+
 if [ -e "$CARBON_HOME/wso2carbon.pid" ]; then
   PID=`cat "$CARBON_HOME"/wso2carbon.pid`
 fi
@@ -175,17 +177,14 @@ elif [ "$CMD" = "start" ]; then
       exit 0
     fi
   fi
-  export CARBON_HOME=$CARBON_HOME
 # using nohup bash to avoid erros in solaris OS.
   nohup bash $CARBON_HOME/bin/wso2server.sh > /dev/null 2>&1 &
   exit 0
 elif [ "$CMD" = "stop" ]; then
-  export CARBON_HOME=$CARBON_HOME
   kill -term `cat $CARBON_HOME/wso2carbon.pid`
   rm $CARBON_HOME/wso2carbon.pid
   exit 0
 elif [ "$CMD" = "restart" ]; then
-  export CARBON_HOME=$CARBON_HOME
   kill -term `cat $CARBON_HOME/wso2carbon.pid`
   process_status=0
   pid=`cat $CARBON_HOME/wso2carbon.pid`
@@ -269,8 +268,6 @@ do
     -javaagent:"$CARBON_HOME/repository/components/plugins/jamm_0.2.5.wso2v2.jar" \
     $JAVA_OPTS \
     -Xms256m -Xmx2024m -XX:MaxPermSize=256m \
-    -Dmail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory \
-    -Dmail.smtp.socketFactory.port=465 \
     -Dcodenvy.local.conf.dir=$CARBON_HOME/repository/conf \
     -Ddisable.cassandra.server.startup=true \
     -Dcom.sun.management.jmxremote \

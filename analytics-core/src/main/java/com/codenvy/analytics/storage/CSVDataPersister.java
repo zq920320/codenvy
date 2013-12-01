@@ -22,6 +22,10 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.google.common.io.Files;
 
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +36,7 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class CSVDataPersister implements DataPersister {
 
+    private static final Logger           LOG                = LoggerFactory.getLogger(CSVDataPersister.class);
     private static final String           REPORTS_DIR        = Configurator.getString("analytics.reports.dir");
     private static final String           BACKUP_REPORTS_DIR = Configurator.getString("analytics.backup.reports.dir");
     private static final SimpleDateFormat dirFormat          =
@@ -51,11 +56,23 @@ public class CSVDataPersister implements DataPersister {
             File csvBackupFile = getFile(tableName, BACKUP_REPORTS_DIR, context);
             createParentDirIfNotExists(csvBackupFile);
 
-            doStore(csvFile, fields, data);
+            doStore(csvBackupFile, fields, data);
 
-            Files.copy(csvFile, csvBackupFile);
+            Files.copy(csvBackupFile, csvFile);
         } catch (ParseException e) {
             throw new IOException(e);
+        }
+    }
+
+    /** Utility method. Restores report directory. */
+    public static void restoreBackup() throws IOException {
+        File reportDir = new File(REPORTS_DIR);
+        File backupReportDir = new File(BACKUP_REPORTS_DIR);
+
+        FileUtils.deleteDirectory(reportDir);
+        if (backupReportDir.exists()) {
+            FileUtils.copyDirectory(backupReportDir, reportDir);
+            LOG.info("CSV reports have been restored");
         }
     }
 

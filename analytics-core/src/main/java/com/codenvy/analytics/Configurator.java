@@ -38,7 +38,8 @@ public class Configurator {
 
     private static final String  CONFIGURATION      = "analytics.conf";
     private static final String  ANALYTICS_CONF_DIR = System.getProperty("codenvy.local.conf.dir");
-    private static final Pattern TEMPLATE           = Pattern.compile("\\$\\{([^\\}]*)\\}");
+    private static final Pattern TEMPLATE_PROP_VAR  = Pattern.compile("\\$\\{([^\\}]*)\\}");
+    private static final Pattern TEMPLATE_ENV_VAR   = Pattern.compile("\\$([^\\/]*)[\\/]?");
 
     private static Properties properties = new Properties();
 
@@ -68,17 +69,41 @@ public class Configurator {
             return null;
         }
 
+        return replaceEnvVariables(replacePropVariables(currentValue));
+    }
+
+    private static String replaceEnvVariables(String currentValue) {
+        return doReplaceVariable(TEMPLATE_ENV_VAR, currentValue, new ReplaceVariableAction() {
+            @Override
+            public String getValue(String template) {
+                boolean endsWithSeparator = template.endsWith(File.separator);
+
+                String var = template.substring(1, template.length() - (endsWithSeparator ? 1 : 0));
+                return System.getenv(var) + (endsWithSeparator ? File.separator : "");
+            }
+        });
+    }
+
+    private static String replacePropVariables(String currentValue) {
+        return doReplaceVariable(TEMPLATE_PROP_VAR, currentValue, new ReplaceVariableAction() {
+            @Override
+            public String getValue(String template) {
+                String var = template.substring(2, template.length() - 1);
+                return getString(var);
+            }
+        });
+    }
+
+    private static String doReplaceVariable(Pattern pattern, String currentValue, ReplaceVariableAction action) {
         int lastPos = 0;
         StringBuilder value2return = new StringBuilder();
 
-        Matcher matcher = TEMPLATE.matcher(currentValue);
+        Matcher matcher = pattern.matcher(currentValue);
         while (matcher.find()) {
             value2return.append(currentValue.substring(lastPos, matcher.start()));
 
             String template = currentValue.substring(matcher.start(), matcher.end());
-            String keyTemplate = template.substring(2, template.length() - 1);
-
-            value2return.append(getString(keyTemplate));
+            value2return.append(action.getValue(template));
 
             lastPos = matcher.end();
         }
@@ -129,5 +154,9 @@ public class Configurator {
             properties.load(in);
             LOG.info("Configuration has been read from file " + file.getCanonicalPath());
         }
+    }
+
+    private interface ReplaceVariableAction {
+        String getValue(String template);
     }
 }

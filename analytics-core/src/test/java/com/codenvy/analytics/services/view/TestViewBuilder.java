@@ -23,6 +23,7 @@ import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.XmlConfigurationManager;
+import com.codenvy.analytics.storage.CSVDataPersister;
 
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeClass;
@@ -95,6 +96,8 @@ public class TestViewBuilder extends BaseTest {
         File csvBackupReport =
                 new File("./target/backup/reports/" + dirFormat.format(calendar.getTime()) + "/workspaces_day.csv");
         assertTrue(csvBackupReport.exists());
+
+        CSVDataPersister.restoreBackup();
     }
 
     private void assertValueData(List<List<ValueData>> data) {

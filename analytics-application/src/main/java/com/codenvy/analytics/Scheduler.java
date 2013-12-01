@@ -23,6 +23,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.codenvy.analytics.services.view.ViewBuilder;
+import com.codenvy.analytics.storage.CSVDataPersister;
 
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,6 +69,12 @@ public class Scheduler implements ServletContextListener {
     /** {@inheritDoc} */
     @Override
     public void contextInitialized(ServletContextEvent context) {
+        try {
+            CSVDataPersister.restoreBackup();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
         initializeScheduler();
 
         String forceRunCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
