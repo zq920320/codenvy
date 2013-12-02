@@ -106,14 +106,16 @@ public class TestAcceptance extends BaseTest {
 
         viewBuilder.forceExecute(Utils.newContext());
 
-        ArgumentCaptor<String> tblName = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<List> data = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> viewData = ArgumentCaptor.forClass(Map.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
-        verify(viewBuilder, atLeastOnce()).retainData(tblName.capture(), data.capture(), context.capture());
+        verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        for (int i = 0; i < tblName.getAllValues().size(); i++) {
-            acceptResult(tblName.getAllValues().get(i), data.getAllValues().get(i));
+        for (Map<String, List<List<ValueData>>> actualData : viewData.getAllValues()) {
+            for (Map.Entry<String, List<List<ValueData>>> entry : actualData.entrySet()) {
+                acceptResult(entry.getKey(), entry.getValue());
+            }
         }
 
         assertEquals(builder.length(), 0, builder.toString());

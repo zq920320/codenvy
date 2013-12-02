@@ -27,9 +27,8 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface DataPersister {
 
-    void retainData(String tableName,
-                    List<ValueData> fields,
-                    List<List<ValueData>> data,
+    void retainData(String viewId,
+                    Map<String, List<List<ValueData>>> viewData,
                     Map<String, String> context) throws SQLException, IOException;
 
 }

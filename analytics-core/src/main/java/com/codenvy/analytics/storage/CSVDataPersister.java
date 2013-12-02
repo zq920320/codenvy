@@ -44,19 +44,18 @@ public class CSVDataPersister implements DataPersister {
 
     /** {@inheritDoc} */
     @Override
-    public void retainData(String tableName,
-                           List<ValueData> fields,
-                           List<List<ValueData>> data,
+    public void retainData(String viewId,
+                           Map<String, List<List<ValueData>>> viewData,
                            Map<String, String> context) throws IOException {
 
         try {
-            File csvFile = getFile(tableName, REPORTS_DIR, context);
+            File csvFile = getFile(viewId, REPORTS_DIR, context);
             createParentDirIfNotExists(csvFile);
 
-            File csvBackupFile = getFile(tableName, BACKUP_REPORTS_DIR, context);
+            File csvBackupFile = getFile(viewId, BACKUP_REPORTS_DIR, context);
             createParentDirIfNotExists(csvBackupFile);
 
-            doStore(csvBackupFile, fields, data);
+            doStore(csvBackupFile, viewData);
 
             Files.copy(csvBackupFile, csvFile);
         } catch (ParseException e) {
@@ -76,12 +75,12 @@ public class CSVDataPersister implements DataPersister {
         }
     }
 
-    protected void doStore(File csvFile, List<ValueData> fields, List<List<ValueData>> data) throws IOException {
+    protected void doStore(File csvFile, Map<String, List<List<ValueData>>> viewData) throws IOException {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "UTF-8"))) {
-            writer.write(getDataAsString(fields));
-
-            for (List<ValueData> rowData : data) {
-                writer.write(getDataAsString(rowData));
+            for (List<List<ValueData>> sectionData : viewData.values()) {
+                for (List<ValueData> rowData : sectionData) {
+                    writer.write(getDataAsString(rowData));
+                }
             }
         }
     }

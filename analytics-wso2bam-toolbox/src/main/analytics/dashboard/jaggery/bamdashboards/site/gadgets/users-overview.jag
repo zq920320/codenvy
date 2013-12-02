@@ -1,0 +1,13 @@
+<%
+
+include_once("utils.jag");
+
+printTablePageHeader();
+
+var result = queryResults('select * from users_overview_lifetime');
+var table = createTable(result);
+
+printTable(table);
+loadTableHandlers(false);
+
+%>

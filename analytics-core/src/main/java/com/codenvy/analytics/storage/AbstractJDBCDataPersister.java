@@ -54,18 +54,24 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
     }
 
     @Override
-    public void retainData(String tableName,
-                           List<ValueData> fields,
-                           List<List<ValueData>> data,
+    public void retainData(String viewId,
+                           Map<String, List<List<ValueData>>> viewData,
                            Map<String, String> context) throws SQLException {
         Connection connection = openConnection();
         try {
-            dropTableIfExists(connection, tableName);
-            createTable(connection, tableName, fields, data);
-            insertData(connection, tableName, fields, data);
+            for (Map.Entry<String, List<List<ValueData>>> section : viewData.entrySet()) {
+                String tableName = section.getKey();
+                List<List<ValueData>> data = section.getValue();
 
-            connection.commit();
-            LOG.info("Data have been stored in " + tableName);
+                dropTableIfExists(connection, tableName);
+                createTable(connection, tableName, data);
+                insertData(connection, tableName, data);
+
+                connection.commit();
+
+                LOG.info("Data have been stored in " + tableName);
+            }
+
         } catch (SQLException e) {
             try {
                 connection.rollback();
@@ -85,15 +91,9 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
 
     private void insertData(Connection connection,
                             String tableName,
-                            List<ValueData> fields,
                             List<List<ValueData>> data) throws SQLException {
 
         PreparedStatement statement = connection.prepareStatement(getInsertQuery(tableName, data.get(0).size()));
-
-        for (int i = 0; i < fields.size(); i++) {
-            statement.setString(i + 1, fields.get(i).getAsString());
-        }
-        statement.execute();
 
         for (List<ValueData> rowData : data) {
             statement.clearParameters();
@@ -124,27 +124,29 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
 
     private void createTable(Connection connection,
                              String tableName,
-                             List<ValueData> fields,
                              List<List<ValueData>> data) throws SQLException {
 
         Statement statement = connection.createStatement();
-        statement.executeUpdate(getCreateTableQuery(tableName, fields, data));
+        statement.executeUpdate(getCreateTableQuery(tableName, data));
     }
 
-    private String getCreateTableQuery(String tableName, List<ValueData> fields, List<List<ValueData>> data) {
+    private String getCreateTableQuery(String tableName, List<List<ValueData>> data) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("CREATE TABLE ");
         builder.append(tableName);
         builder.append(" (");
-        for (int i = 0; i < fields.size(); i++) {
+
+        int colCount = data.get(0).size();
+
+        for (int i = 0; i < colCount; i++) {
             builder.append("COL_");
             builder.append(colFormat.format(i));
             builder.append(" VARCHAR(");
-            builder.append(getMaxLength(fields, data, i));
+            builder.append(getMaxLength(data, i));
             builder.append(")");
 
-            if (i != fields.size() - 1) {
+            if (i != colCount - 1) {
                 builder.append(",");
             }
         }
@@ -153,8 +155,8 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
         return builder.toString();
     }
 
-    private int getMaxLength(List<ValueData> fields, List<List<ValueData>> data, int column) {
-        int length = fields.get(column).getAsString().length();
+    private int getMaxLength(List<List<ValueData>> data, int column) {
+        int length = 0;
 
         for (List<ValueData> rowData : data) {
             length = Math.max(length, rowData.get(column).getAsString().length());

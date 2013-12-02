@@ -47,7 +47,7 @@ import static org.testng.AssertJUnit.assertEquals;
 public class TestViewBuilder extends BaseTest {
 
     private String RESOURCE = "<display>\n" +
-                              "     <view time-unit=\"day\">\n" +
+                              "     <view time-unit=\"day\" name=\"view\">\n" +
                               "         <section name=\"workspaces\" columns=\"3\">\n" +
                               "             <row class=\"com.codenvy.analytics.services.view.DateRow\">\n" +
                               "                 <parameter key=\"section-name\" value=\"desc\"/>\n" +
@@ -79,22 +79,24 @@ public class TestViewBuilder extends BaseTest {
     public void shouldReturnCorrectData() throws Exception {
         ViewBuilder spyBuilder = spy(new ViewBuilder());
 
-        ArgumentCaptor<String> tblName = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<List> data = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> viewData = ArgumentCaptor.forClass(Map.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
         spyBuilder.build(displayConfiguration);
-        verify(spyBuilder).retainData(tblName.capture(), data.capture(), context.capture());
+        verify(spyBuilder).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        assertValueData(data.getValue());
+        Map<String, List<List<ValueData>>> actualData = viewData.getValue();
+        assertEquals(actualData.size(), 1);
+        assertValueData(actualData.values().iterator().next());
 
         Calendar calendar = Utils.getToDate(Utils.initializeContext(Parameters.TimeUnit.DAY));
 
-        File csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/workspaces_day.csv");
+        File csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_day.csv");
         assertTrue(csvReport.exists());
 
         File csvBackupReport =
-                new File("./target/backup/reports/" + dirFormat.format(calendar.getTime()) + "/workspaces_day.csv");
+                new File("./target/backup/reports/" + dirFormat.format(calendar.getTime()) + "/view_day.csv");
         assertTrue(csvBackupReport.exists());
 
         CSVDataPersister.restoreBackup();
