@@ -83,6 +83,7 @@ public enum ScriptType {
             return params;
         }
     },
+    USER_UPDATE_PROFILE,
 
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {

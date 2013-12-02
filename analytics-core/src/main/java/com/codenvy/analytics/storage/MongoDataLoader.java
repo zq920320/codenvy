@@ -20,6 +20,7 @@ package com.codenvy.analytics.storage;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.*;
 
@@ -70,6 +71,11 @@ public class MongoDataLoader implements DataLoader {
     }
 
     private String getCollectionName(ReadBasedMetric metric, Map<String, String> clauses) {
+        // TODO remove
+        if (metric.getName().equalsIgnoreCase(MetricType.USERS_PROFILES.name())) {
+            return metric.getStorageTable();
+        }
+
         if (isExtendedCollection(clauses)) {
             return metric.getStorageTable() + EXT_COLLECTION_NAME_SUFFIX;
         } else {
@@ -92,61 +98,121 @@ public class MongoDataLoader implements DataLoader {
 
         } else if (clazz == SetValueData.class) {
             return createSetValueData(iterator);
+
+        } else if (clazz == ListValueData.class) {
+            return createListValueData(iterator);
         }
 
         throw new IllegalArgumentException("Unknown class " + clazz.getName());
     }
 
-    private ValueData createSetValueData(Iterator<DBObject> iterator) {
-        ValueData result = ValueDataFactory.createDefaultValue(SetValueData.class);
+    private ValueData createListValueData(Iterator<DBObject> iterator) {
+        return doCreateValueData(iterator, ListValueData.class, new Action() {
+            Map<String, ValueData> values = new HashMap<>();
 
-        while (iterator.hasNext()) {
+            @Override
+            public void accumulate(String key, Object value) {
+                this.values.put(key, ValueDataFactory.createValueData(value));
+            }
+
+            @Override
+            public ValueData pull() {
+                try {
+                    return new ListValueData(Arrays.asList(new ValueData[]{new MapValueData(values)}));
+                } finally {
+                    values.clear();
+                }
+            }
+        });
+    }
+
+    private ValueData createSetValueData(Iterator<DBObject> iterator) {
+        return doCreateValueData(iterator, SetValueData.class, new Action() {
             Set<ValueData> values = new HashSet<>();
 
-            DBObject dbObject = iterator.next();
-            for (String key : dbObject.keySet()) {
-                if (!key.equals("_id") && !allFilters.contains(key)) {
-                    values.add(ValueDataFactory.createValueData(dbObject.get("value")));
+            @Override
+            public void accumulate(String key, Object value) {
+                if (key.equals("value")) {
+                    this.values.add(ValueDataFactory.createValueData(value));
                 }
             }
 
-            result = result.union(new SetValueData(values));
-        }
-
-        return result;
+            @Override
+            public ValueData pull() {
+                try {
+                    return new SetValueData(values);
+                } finally {
+                    values.clear();
+                }
+            }
+        });
     }
 
     private ValueData createMapValueData(Iterator<DBObject> iterator) {
-        ValueData result = ValueDataFactory.createDefaultValue(MapValueData.class);
-
-        while (iterator.hasNext()) {
+        return doCreateValueData(iterator, MapValueData.class, new Action() {
             Map<String, ValueData> values = new HashMap<>();
 
+            @Override
+            public void accumulate(String key, Object value) {
+                this.values.put(key, ValueDataFactory.createValueData(value));
+            }
+
+            @Override
+            public ValueData pull() {
+                try {
+                    return new MapValueData(values);
+                } finally {
+                    values.clear();
+                }
+            }
+        });
+    }
+
+    private ValueData createLongValueData(Iterator<DBObject> iterator) {
+        return doCreateValueData(iterator, LongValueData.class, new Action() {
+            long value = 0;
+
+            @Override
+            public void accumulate(String key, Object value) {
+                this.value += ((Number)value).longValue();
+            }
+
+            @Override
+            public ValueData pull() {
+                try {
+                    return new LongValueData(value);
+                } finally {
+                    value = 0;
+                }
+            }
+        });
+    }
+
+    private ValueData doCreateValueData(Iterator<DBObject> iterator,
+                                        Class<? extends ValueData> clazz,
+                                        Action action) {
+
+        ValueData result = ValueDataFactory.createDefaultValue(clazz);
+
+        while (iterator.hasNext()) {
             DBObject dbObject = iterator.next();
+
             for (String key : dbObject.keySet()) {
                 if (!key.equals("_id") && !allFilters.contains(key)) {
-                    values.put(key, ValueDataFactory.createValueData(dbObject.get(key)));
+                    action.accumulate(key, dbObject.get(key));
                 }
             }
 
-            result = result.union(new MapValueData(values));
+            result = result.union(action.pull());
         }
 
         return result;
     }
 
-    private ValueData createLongValueData(Iterator<DBObject> iterator) {
-        long value = 0;
+    private interface Action {
 
-        while (iterator.hasNext()) {
-            DBObject dbObject = iterator.next();
-            for (String key : dbObject.keySet()) {
-                if (!key.equals("_id") && !allFilters.contains(key)) {
-                    value += ((Number)dbObject.get(key)).longValue();
-                }
-            }
-        }
+        void accumulate(String key, Object value);
 
-        return new LongValueData(value);
+        ValueData pull();
     }
 }

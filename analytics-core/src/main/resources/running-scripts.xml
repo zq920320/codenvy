@@ -236,6 +236,14 @@
         <parameter key="EVENT" value="project-deployed,application-created"/>
         <parameter key="STORAGE_DST" value="factory_sessions_with_deploy"/>
     </script>
+
+    <!-- Scripts for user's view -->
+    <script name="user_update_profile">
+        <description>User's profiles</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="STORAGE_DST" value="users_profiles"/>
+    </script>
 </scripts>
 
 

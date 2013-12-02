@@ -24,37 +24,29 @@ IMPORT 'macros.pig';
 ---------------------------------------------------------------------------
 DEFINE lastUserProfileUpdate(X) RETURNS Y {
   y1 = GROUP $X BY user;
-  y2 = FOREACH y1 GENERATE *, MAX($X.delta) AS maxDelta;
-  y3 = FOREACH y2 GENERATE group AS user, maxDelta, FLATTEN($X);
-  y4 = FILTER y3 BY delta == maxDelta;
+  y2 = FOREACH y1 GENERATE *, MAX($X.dt) AS maxDt;
+  y3 = FOREACH y2 GENERATE group AS user, maxDt, FLATTEN($X);
+  y4 = FILTER y3 BY dt == maxDt;
   $Y = FOREACH y4 GENERATE user, $X::firstName AS firstName, $X::lastName AS lastName, $X::company AS company, $X::phone AS phone, $X::job AS job;
 };
 
-f = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-a2 = filterByEvent(f, 'user-update-profile');
-a4 = extractParam(a2, 'FIRSTNAME', 'firstName');
-a5 = extractParam(a4, 'LASTNAME', 'lastName');
-a6 = extractParam(a5, 'COMPANY', 'company');
-a7 = extractParam(a6, 'PHONE', 'phone');
-a8 = extractParam(a7, 'JOBTITLE', 'job');
-a9 = FOREACH a8 GENERATE user, firstName, lastName, company, phone, job, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta;
-a = FOREACH a9 GENERATE user, (firstName == 'null' OR firstName IS NULL ? '' : firstName) AS firstName,
+a1 = filterByEvent(l, 'user-update-profile');
+a2 = extractParam(a1, 'FIRSTNAME', 'firstName');
+a3 = extractParam(a2, 'LASTNAME', 'lastName');
+a4 = extractParam(a3, 'COMPANY', 'company');
+a5 = extractParam(a4, 'PHONE', 'phone');
+a6 = extractParam(a5, 'JOBTITLE', 'job');
+a7 = FOREACH a6 GENERATE user, firstName, lastName, company, phone, job, dt;
+a8 = FOREACH a7 GENERATE user, (firstName == 'null' OR firstName IS NULL ? '' : firstName) AS firstName,
 			    (lastName == 'null' OR lastName IS NULL ? '' : lastName) AS lastName,
 			    (company == 'null' OR company IS NULL ? '' : company) AS company,
 			    (phone == 'null' OR phone IS NULL ? '' : phone) AS phone,
-			    (job == 'null' OR job IS NULL ? '' : job) AS job,
-			    delta;
+			    (job == 'null' OR job IS NULL ? '' : job) AS job, dt;
+a = lastUserProfileUpdate(a8);
 
-b1 = LOAD '$LOAD_DIR' USING PigStorage() AS (user : chararray, firstName: chararray, lastName: chararray, company: chararray, phone : chararray, job : chararray);
-b = FOREACH b1 GENERATE *, 0 AS delta;
-
-c = UNION a, b;
-d = lastUserProfileUpdate(c);
-
-STORE d INTO '$STORE_DIR' USING PigStorage();
-
-r1 = lastUserProfileUpdate(a);
-r2 = GROUP r1 BY user;
-r3 = FOREACH r2 GENERATE group, FLATTEN(r1);
-result = FOREACH r3 GENERATE group, TOBAG(user, firstName, lastName, company, phone, job);
+result = FOREACH a GENERATE user, TOTUPLE('user_email', user), TOTUPLE('user_first_name', firstName),
+                        TOTUPLE('user_last_name', lastName), TOTUPLE('user_company', company),
+                        TOTUPLE('user_phone', phone), TOTUPLE('user_job', job);
+STORE result INTO '$STORAGE_URL.$STORAGE_DST' USING MongoStorage();
