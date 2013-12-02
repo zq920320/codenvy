@@ -23,21 +23,13 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface Row {
 
-    /**
-     * @return the row data description, it will be treated as the first column in the sequences
-     * @throws IOException
-     */
-    ValueData getDescription() throws IOException;
-
-    /**
-     * @return row data depending on execution context
-     * @throws IOException
-     */
-    ValueData getData(Map<String, String> context) throws IOException;
+    /** @return row data depending on execution context */
+    List<ValueData> getData(Map<String, String> initialContext, int rowCount) throws IOException;
 
 }

@@ -32,7 +32,9 @@ import com.codenvy.api.core.rest.ServiceContext;
 import com.codenvy.dto.server.DtoFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Metric handler implementation base on data stored in files on file system. Which should be preliminary prepared by
@@ -41,13 +43,6 @@ import java.util.*;
  * @author <a href="mailto:dkuleshov@codenvy.com">Dmitry Kuleshov</a>
  */
 public class FileBasedMetricHandler implements MetricHandler {
-
-    private static final Set<Parameters> sampleParameterSet = new LinkedHashSet<>();
-
-    static {
-        sampleParameterSet.add(Parameters.FROM_DATE);
-        sampleParameterSet.add(Parameters.TO_DATE);
-    }
 
     public MetricValueDTO getValue(String metricName, Map<String, String> executionContext,
                                    ServiceContext serviceContext)
@@ -68,22 +63,17 @@ public class FileBasedMetricHandler implements MetricHandler {
     public MetricInfoDTO getInfo(String metricName, ServiceContext serviceContext) throws MetricNotFoundException {
         try {
             Metric metric = MetricFactory.getMetric(metricName);
-            if (sampleParameterSet.equals(metric.getParams())) {
-                return MetricDTOFactory.createMetricDTO(metric, metricName, serviceContext);
-            }
+            return MetricDTOFactory.createMetricDTO(metric, metricName, serviceContext);
         } catch (IllegalArgumentException e) {
             throw new MetricNotFoundException();
         }
-        throw new MetricNotFoundException();
     }
 
     public MetricInfoListDTO getAllInfo(ServiceContext serviceContext) {
         List<MetricInfoDTO> metricInfoDTOs = new ArrayList<>();
 
         for (Metric metric : MetricFactory.getAllMetrics()) {
-            if (sampleParameterSet.equals(metric.getParams())) {
-                metricInfoDTOs.add(MetricDTOFactory.createMetricDTO(metric, metric.getName(), serviceContext));
-            }
+            metricInfoDTOs.add(MetricDTOFactory.createMetricDTO(metric, metric.getName(), serviceContext));
         }
 
         MetricInfoListDTO metricInfoListDTO = DtoFactory.getInstance().createDto(MetricInfoListDTO.class);

@@ -28,13 +28,12 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 class DateRow extends AbstractRow {
 
+    private static final String SECTION_NAME           = "section-name";
     private static final String DAY_FORMAT_PARAM       = "dayFormat";
     private static final String WEEK_FORMAT_PARAM      = "weekFormat";
     private static final String MONTH_FORMAT_PARAM     = "monthFormat";
@@ -63,16 +62,24 @@ class DateRow extends AbstractRow {
                                                                   : LIFE_TIME_FORMAT_DEFAULT);
     }
 
-    /** {@inheritDoc} */
     @Override
-    public ValueData getData(Map<String, String> context) throws IOException {
-        try {
-            DateFormat dateFormat = new SimpleDateFormat(format.get(Utils.getTimeUnit(context)));
+    public List<ValueData> getData(Map<String, String> initialContext, int rowCount) throws IOException {
+        List<ValueData> result = new ArrayList<>(rowCount);
 
-            Calendar toDate = Utils.getToDate(context);
-            return new StringValueData(dateFormat.format(toDate.getTime()));
+        try {
+            DateFormat dateFormat = new SimpleDateFormat(format.get(Utils.getTimeUnit(initialContext)));
+
+            result.add(new StringValueData(parameters.get(SECTION_NAME)));
+            for (int i = 1; i < rowCount; i++) {
+                Calendar toDate = Utils.getToDate(initialContext);
+                result.add(new StringValueData(dateFormat.format(toDate.getTime())));
+
+                initialContext = Utils.prevDateInterval(initialContext);
+            }
         } catch (ParseException e) {
             throw new IOException(e);
         }
+
+        return result;
     }
 }

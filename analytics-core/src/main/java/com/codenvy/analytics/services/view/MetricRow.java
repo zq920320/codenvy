@@ -20,6 +20,7 @@
 package com.codenvy.analytics.services.view;
 
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -29,6 +30,9 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -37,6 +41,7 @@ public class MetricRow extends AbstractRow {
     private static final String NAME           = "name";
     private static final String FORMAT         = "format";
     private static final String DEFAULT_FORMAT = "%,.0f";
+    private static final String DESCRIPTION    = "description";
 
     private final Metric metric;
     private final String format;
@@ -48,17 +53,25 @@ public class MetricRow extends AbstractRow {
         format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_FORMAT;
     }
 
-    /** {@inheritDoc} */
     @Override
-    public ValueData getData(Map<String, String> context) throws IOException {
-        ValueData valueData;
+    public List<ValueData> getData(Map<String, String> initialContext, int rowCount) throws IOException {
+        List<ValueData> result = new ArrayList<>(rowCount);
+
         try {
-            valueData = getMetricValue(context);
-        } catch (InitialValueNotFoundException e) {
-            valueData = StringValueData.DEFAULT;
+            result.add(new StringValueData(parameters.get(DESCRIPTION)));
+            for (int i = 1; i < rowCount; i++) {
+                try {
+                    result.add(format(getMetricValue(initialContext)));
+                } catch (InitialValueNotFoundException e) {
+                    result.add(StringValueData.DEFAULT);
+                }
+                initialContext = Utils.prevDateInterval(initialContext);
+            }
+        } catch (ParseException e) {
+            throw new IOException(e);
         }
 
-        return format(valueData);
+        return result;
     }
 
     private ValueData format(ValueData valueData) {

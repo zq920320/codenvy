@@ -20,6 +20,8 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
@@ -97,7 +99,7 @@ public class TestUserUpdateProfile extends BaseTest {
     }
 
     @Test
-    public void testDateAndDoubleUserFilterMinIncludeMaxInclude() throws Exception {
+    public void testAllProfiles() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
@@ -106,10 +108,43 @@ public class TestUserUpdateProfile extends BaseTest {
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 4);
+
+        for (ValueData object : value.getAll()) {
+            MapValueData item = (MapValueData)object;
+            Map<String, ValueData> all = item.getAll();
+
+            if (all.get("user_email").getAsString().equals("user1@gmail.com")) {
+                assertEquals(all.get("user_last_name").getAsString(), "l3");
+                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_phone").getAsString(), "22");
+                assertEquals(all.get("user_job").getAsString(), "2");
+
+            } else if (all.get("user_email").getAsString().equals("user2@gmail.com")) {
+                assertEquals(all.get("user_first_name").getAsString(), "f2");
+                assertEquals(all.get("user_last_name").getAsString(), "l2");
+                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_phone").getAsString(), "11");
+                assertEquals(all.get("user_job").getAsString(), "1");
+
+            } else if (all.get("user_email").getAsString().equals("user3@gmail.com")) {
+                assertEquals(all.get("user_first_name").getAsString(), "f4");
+                assertEquals(all.get("user_last_name").getAsString(), "l4");
+                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_phone").getAsString(), "22");
+                assertEquals(all.get("user_job").getAsString(), "2");
+
+            } else if (all.get("user_email").getAsString().equals("user4@gmail.com")) {
+                assertEquals(all.get("user_first_name").getAsString(), "f4");
+                assertEquals(all.get("user_last_name").getAsString(), "l4");
+                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_phone").getAsString(), "22");
+                assertEquals(all.get("user_job").getAsString(), "");
+            }
+        }
     }
 
     @Test
-    public void testDateAndDoubleUserWsFilterMinIncludeMaxInclude() throws Exception {
+    public void testSingleProfile() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
@@ -119,6 +154,16 @@ public class TestUserUpdateProfile extends BaseTest {
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
+
+        MapValueData item = (MapValueData)value.getAll().get(0);
+        Map<String, ValueData> all = item.getAll();
+
+        assertEquals(all.get("user_email").getAsString(), "user1@gmail.com");
+        assertEquals(all.get("user_first_name").getAsString(), "f3");
+        assertEquals(all.get("user_last_name").getAsString(), "l3");
+        assertEquals(all.get("user_company").getAsString(), "company");
+        assertEquals(all.get("user_phone").getAsString(), "22");
+        assertEquals(all.get("user_job").getAsString(), "2");
     }
 
     public class TestUserProfile extends UsersProfiles {

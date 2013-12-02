@@ -54,7 +54,7 @@ public class ViewBuilder implements Feature {
 
     public ViewBuilder() {
         this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class);
-        this.dataPersister = JdbcDataPersisterFactory.getDataManager();
+        this.dataPersister = JdbcDataPersisterFactory.getDataPersister();
         this.csvDataPersister = new CSVDataPersister();
     }
 
@@ -118,13 +118,13 @@ public class ViewBuilder implements Feature {
         forkJoinPool.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 
         for (RecursiveAction task : tasks) {
-            if (!task.isDone()) {
-                throw new IllegalStateException("Task wasn't done");
-            } else if (task.getException() != null) {
+            if (task.getException() != null) {
                 throw new IllegalStateException(task.getException());
+            } else if (!task.isDone()) {
+                throw new IllegalStateException("Task wasn't done");
+
             }
         }
-    }
 
     protected void retainData(String tableName,
                               List<List<ValueData>> sectionData,
@@ -151,23 +151,16 @@ public class ViewBuilder implements Feature {
         @Override
         protected void compute() {
             try {
-                int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 1 : sectionConfiguration.getColumns();
                 List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
 
                 for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
-                    Map<String, String> context = Utils.initializeContext(timeUnit);
-                    List<ValueData> rowData = new ArrayList<>(sectionConfiguration.getColumns() + 1);
-
                     Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
                     Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
 
-                    rowData.add(row.getDescription());
-                    for (int i = 0; i < rowCount; i++) {
-                        rowData.add(row.getData(context));
-                        context = Utils.prevDateInterval(context);
-                    }
+                    int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 1 : sectionConfiguration.getColumns();
+                    Map<String, String> initialContext = Utils.initializeContext(timeUnit);
 
-                    sectionData.add(rowData);
+                    sectionData.add(row.getData(initialContext, rowCount));
                 }
 
                 String tableName = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();

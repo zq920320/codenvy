@@ -22,7 +22,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface Metric {
@@ -39,9 +38,6 @@ public interface Metric {
 
     /** @return which data type is returned by metric */
     Class<? extends ValueData> getValueDataClass();
-
-    /** @return the mandatory parameters have to be existed in the context */
-    Set<Parameters> getParams();
 
     /** @return the name of the metric */
     String getName();

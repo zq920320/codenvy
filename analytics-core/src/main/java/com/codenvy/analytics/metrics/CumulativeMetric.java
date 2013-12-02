@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The value of the metric will be calculated as: previous value + added value - removed value.
@@ -44,16 +43,6 @@ public abstract class CumulativeMetric extends AbstractMetric {
 
         this.addedMetric = addedMetric;
         this.removedMetric = removedMetric;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Set<Parameters> getParams() {
-        Set<Parameters> params = addedMetric.getParams();
-        params.addAll(removedMetric.getParams());
-        params.remove(Parameters.FROM_DATE);
-
-        return params;
     }
 
     /** {@inheritDoc} */

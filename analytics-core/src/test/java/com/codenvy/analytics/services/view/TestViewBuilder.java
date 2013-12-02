@@ -48,9 +48,9 @@ public class TestViewBuilder extends BaseTest {
 
     private String RESOURCE = "<display>\n" +
                               "     <view time-unit=\"day\">\n" +
-                              "         <section name=\"workspaces\" columns=\"2\">\n" +
+                              "         <section name=\"workspaces\" columns=\"3\">\n" +
                               "             <row class=\"com.codenvy.analytics.services.view.DateRow\">\n" +
-                              "                 <parameter key=\"description\" value=\"desc\"/>\n" +
+                              "                 <parameter key=\"section-name\" value=\"desc\"/>\n" +
                               "             </row>\n" +
                               "             <row class=\"com.codenvy.analytics.services.view" +
                               ".TestViewBuilder$TestMetricRow\">\n" +

@@ -27,7 +27,7 @@ public class JdbcDataPersisterFactory {
     public static final String JDBC_DATA_PERSISTER_USER     = "jdbc.data-persister.user";
     public static final String JDBC_DATA_PERSISTER_PASSWORD = "jdbc.data-persister.password";
 
-    public static DataPersister getDataManager() {
+    public static DataPersister getDataPersister() {
         String driver = Configurator.getString(JDBC_DATA_PERSISTER_DRIVER);
         String url = Configurator.getString(JDBC_DATA_PERSISTER_URL);
         String user = Configurator.getString(JDBC_DATA_PERSISTER_USER);

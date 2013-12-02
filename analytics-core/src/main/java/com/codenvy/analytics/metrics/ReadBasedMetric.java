@@ -28,10 +28,7 @@ import com.mongodb.DBObject;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * It is supposed to load calculated value {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
@@ -56,11 +53,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         return dataLoader.loadValue(this, context);
-    }
-
-    @Override
-    public Set<Parameters> getParams() {
-        return new HashSet<>(Arrays.asList(new Parameters[]{Parameters.FROM_DATE, Parameters.TO_DATE}));
     }
 
     // --------------------------------------------- storage related methods -------------

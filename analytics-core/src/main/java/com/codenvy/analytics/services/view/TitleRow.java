@@ -15,8 +15,6 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -28,18 +26,22 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-class EmptyRow extends AbstractRow {
+public class TitleRow extends AbstractRow {
 
-    public EmptyRow(Map<String, String> parameters) {
+    private static final String TITLES = "titles";
+    private final String[] titles;
+
+    public TitleRow(Map<String, String> parameters) {
         super(parameters);
+        titles = parameters.get(TITLES).split(",");
     }
 
     @Override
     public List<ValueData> getData(Map<String, String> initialContext, int rowCount) throws IOException {
         List<ValueData> result = new ArrayList<>(rowCount);
 
-        for (int i = 0; i < rowCount; i++) {
-            result.add(StringValueData.DEFAULT);
+        for (String title : titles) {
+            result.add(new StringValueData(title));
         }
 
         return result;
