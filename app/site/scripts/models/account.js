@@ -201,16 +201,33 @@
                 });
             },
 
-            createWorkspace : function(username,bearertoken,success,error){
+            createWorkspace : function(username,bearertoken,workspace,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
+                var workspaceName = {name: workspace};
                 var authenticateUrl = "/site/rest/email/authenticate";
+                var createWSUrl = "/site/rest/private/organization/workspaces/create";
                 $.ajax({
                     url : authenticateUrl,
                     type : "POST",
                     contentType: "application/json",
                     data: JSON.stringify(data),
                     success : function(){
-                        success({url: '../site/thank-you'});
+                        if (workspace){
+                            $.ajax({
+                                url : createWSUrl,
+                                type : "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify(workspaceName),
+                                success : function(){
+                                    success({url: '../site/wait-for-tenant'});
+                                },
+                                error : function(xhr/*, status , err*/){
+                                    error([
+                                        new AccountError(null,xhr.responseText)
+                                    ]);
+                                }
+                            });
+                        }
                     },
                     error : function(xhr/*, status , err*/){
                         error([

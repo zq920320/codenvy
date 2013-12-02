@@ -27,6 +27,7 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
                 Account.createWorkspace(
                     Account.getQueryParameterByName('username'),
                     Account.getQueryParameterByName('bearertoken'),
+                    Account.getQueryParameterByName('workspace'),
                     _.bind(function(d){
                         this.trigger("success",d);
                     },this),
