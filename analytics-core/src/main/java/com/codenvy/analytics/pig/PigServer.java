@@ -21,7 +21,10 @@ package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.storage.DataStorageContainer;
 
@@ -77,17 +80,21 @@ public class PigServer {
      *         if something gone wrong or if a required parameter is absent
      */
     public static void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
-        LOG.info("Script execution " + scriptType + " is started: " + context.toString());
-
         context = validateAndAdjustContext(scriptType, context);
-        if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
-            return;
-        }
 
-        if (PIG_SERVER_EMBEDDED) {
-            executeOnEmbeddedServer(scriptType, context);
-        } else {
-            executeOnDedicatedServer(scriptType, context);
+        LOG.info("Script execution " + scriptType + " is started: " + context.toString());
+        try {
+            if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
+                return;
+            }
+
+            if (PIG_SERVER_EMBEDDED) {
+                executeOnEmbeddedServer(scriptType, context);
+            } else {
+                executeOnDedicatedServer(scriptType, context);
+            }
+        } finally {
+            LOG.info("Execution " + scriptType + " has finished");
         }
     }
 
@@ -107,21 +114,17 @@ public class PigServer {
 
     private static synchronized void executeOnDedicatedServer(ScriptType scriptType, Map<String, String> context)
             throws IOException {
-        try {
-            String command = prepareRunCommand(scriptType, context);
-            Process process = Runtime.getRuntime().exec(command);
+        String command = prepareRunCommand(scriptType, context);
+        Process process = Runtime.getRuntime().exec(command);
 
-            try {
-                int exitCode = process.waitFor();
-                if (exitCode != 0) {
-                    logProcessOutput(process);
-                    throw new IOException("The process has finished with wrong code " + exitCode);
-                }
-            } catch (InterruptedException e) {
-                throw new IOException(e);
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                logProcessOutput(process);
+                throw new IOException("The process has finished with wrong code " + exitCode);
             }
-        } finally {
-            LOG.info("Execution " + scriptType + " has finished");
+        } catch (InterruptedException e) {
+            throw new IOException(e);
         }
     }
 
@@ -175,6 +178,8 @@ public class PigServer {
      */
     public static Iterator<Tuple> executeAndReturn(ScriptType scriptType,
                                                    Map<String, String> context) throws IOException {
+
+        context = validateAndAdjustContext(scriptType, context);
         LOG.info("Script execution " + scriptType + " is started: " + context.toString());
 
         org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
@@ -183,7 +188,6 @@ public class PigServer {
         script = removeRedundantCode(script);
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
-            context = validateAndAdjustContext(scriptType, context);
 
             if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
                 return Collections.emptyIterator();
@@ -210,6 +214,16 @@ public class PigServer {
     private static Map<String, String> validateAndAdjustContext(ScriptType scriptType,
                                                                 Map<String, String> context) throws IOException {
         context = Utils.clone(context);
+
+        if (!Parameters.STORAGE_TABLE_USERS_STATISTICS.exists(context)) {
+            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType.USERS_STATISTICS);
+            Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, usersStatistic.getStorageTable());
+        }
+
+        if (!Parameters.STORAGE_TABLE_FACTORY_SESSIONS.exists(context)) {
+            Parameters.STORAGE_TABLE_FACTORY_SESSIONS
+                      .put(context, MetricType.FACTORY_SESSIONS_LIST.name().toLowerCase());
+        }
 
         Parameters.STORAGE_URL.put(context, DataStorageContainer.getStorageUrl());
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {

@@ -22,91 +22,91 @@
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="tenant-created"/>
-        <parameter key="STORAGE_DST" value="created_workspaces"/>
+        <parameter key="STORAGE_TABLE" value="created_workspaces"/>
     </script>
     <script name="number_of_events">
         <description>The number of destroyed persistent workspaces</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="tenant-destroyed"/>
-        <parameter key="STORAGE_DST" value="destroyed_workspaces"/>
+        <parameter key="STORAGE_TABLE" value="destroyed_workspaces"/>
     </script>
     <script name="number_of_events">
         <description>The number of created projects</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="project-created"/>
-        <parameter key="STORAGE_DST" value="created_projects"/>
+        <parameter key="STORAGE_TABLE" value="created_projects"/>
     </script>
     <script name="number_of_events">
         <description>The number of destroyed projects</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="project-destroyed"/>
-        <parameter key="STORAGE_DST" value="destroyed_projects"/>
+        <parameter key="STORAGE_TABLE" value="destroyed_projects"/>
     </script>
     <script name="number_of_events">
         <description>The number of created registered users</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="user-created"/>
-        <parameter key="STORAGE_DST" value="created_users"/>
+        <parameter key="STORAGE_TABLE" value="created_users"/>
     </script>
     <script name="number_of_events">
         <description>The number of removed registered users</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="user-removed"/>
-        <parameter key="STORAGE_DST" value="removed_users"/>
+        <parameter key="STORAGE_TABLE" value="removed_users"/>
     </script>
     <script name="number_of_events">
         <description>The number of invites</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="user-invite"/>
-        <parameter key="STORAGE_DST" value="user_invite"/>
+        <parameter key="STORAGE_TABLE" value="user_invite"/>
     </script>
     <script name="number_of_events">
         <description>The number of runs</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="run-started"/>
-        <parameter key="STORAGE_DST" value="runs"/>
+        <parameter key="STORAGE_TABLE" value="runs"/>
     </script>
     <script name="number_of_events">
         <description>The number of builds</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="project-built,project-deployed,application-created"/>
-        <parameter key="STORAGE_DST" value="builds"/>
+        <parameter key="STORAGE_TABLE" value="builds"/>
     </script>
     <script name="number_of_events">
         <description>The number of debugs</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="debug-started"/>
-        <parameter key="STORAGE_DST" value="debugs"/>
+        <parameter key="STORAGE_TABLE" value="debugs"/>
     </script>
     <script name="number_of_events">
         <description>The number of code completions</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="user-code-complete"/>
-        <parameter key="STORAGE_DST" value="code_completions"/>
+        <parameter key="STORAGE_TABLE" value="code_completions"/>
     </script>
     <script name="number_of_events">
         <description>The number of code refactorings</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="user-code-refactor"/>
-        <parameter key="STORAGE_DST" value="code_refactorings"/>
+        <parameter key="STORAGE_TABLE" value="code_refactorings"/>
     </script>
     <script name="number_of_events">
         <description>The number of file manipulations</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="file-manipulation"/>
-        <parameter key="STORAGE_DST" value="file_manipulations"/>
+        <parameter key="STORAGE_TABLE" value="file_manipulations"/>
     </script>
     <script name="active_entities_list">
         <description>Active workspaces</description>
@@ -114,7 +114,7 @@
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="*"/>
         <parameter key="PARAM" value="ws"/>
-        <parameter key="STORAGE_DST" value="active_workspaces_list"/>
+        <parameter key="STORAGE_TABLE" value="active_workspaces_list"/>
     </script>
     <script name="active_entities_list">
         <description>Active users</description>
@@ -122,7 +122,7 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="*"/>
         <parameter key="PARAM" value="user"/>
-        <parameter key="STORAGE_DST" value="active_users_list"/>
+        <parameter key="STORAGE_TABLE" value="active_users_list"/>
     </script>
     <script name="number_of_events_by_types">
         <description>Project created by types</description>
@@ -130,7 +130,7 @@
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="project-created"/>
         <parameter key="PARAM" value="TYPE"/>
-        <parameter key="STORAGE_DST" value="project_types"/>
+        <parameter key="STORAGE_TABLE" value="project_types"/>
     </script>
     <script name="number_of_events_by_types">
         <description>User's authentication types</description>
@@ -138,7 +138,7 @@
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="user-sso-logged-in"/>
         <parameter key="PARAM" value="USING"/>
-        <parameter key="STORAGE_DST" value="users_logged_in_types"/>
+        <parameter key="STORAGE_TABLE" value="users_logged_in_types"/>
     </script>
     <script name="number_of_events_by_types">
         <description>How users were added to workspaces</description>
@@ -146,40 +146,40 @@
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="user-added-to-ws"/>
         <parameter key="PARAM" value="FROM"/>
-        <parameter key="STORAGE_DST" value="users_added_to_workspaces"/>
+        <parameter key="STORAGE_TABLE" value="users_added_to_workspaces"/>
     </script>
     <script name="number_of_deployments_by_types">
         <description>Project deployments by types</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
-        <parameter key="STORAGE_DST" value="project_paases"/>
+        <parameter key="STORAGE_TABLE" value="project_paases"/>
     </script>
     <script name="product_usage_sessions">
         <description>The product usage sessions</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_DST" value="product_usage_sessions"/>
+        <parameter key="STORAGE_TABLE" value="product_usage_sessions"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all builds</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="build"/>
-        <parameter key="STORAGE_DST" value="builds_time"/>
+        <parameter key="STORAGE_TABLE" value="builds_time"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all runs</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="run"/>
-        <parameter key="STORAGE_DST" value="runs_time"/>
+        <parameter key="STORAGE_TABLE" value="runs_time"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all debugs</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="debug"/>
-        <parameter key="STORAGE_DST" value="debugs_time"/>
+        <parameter key="STORAGE_TABLE" value="debugs_time"/>
     </script>
 
     <!-- Scripts for factory timeline -->
@@ -187,54 +187,52 @@
         <description>Accepted factories</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="STORAGE_DST" value="factory_accepted_list"/>
+        <parameter key="STORAGE_TABLE" value="factory_accepted_list"/>
     </script>
     <script name="number_of_users_from_factory">
         <description>The number of created users from factory</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_DST" value="created_users_from_factory"/>
+        <parameter key="STORAGE_TABLE" value="created_users_from_factory"/>
     </script>
     <script name="factory_created_list">
         <description>Created factories</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_DST" value="created_factories_list"/>
+        <parameter key="STORAGE_TABLE" value="created_factories_list"/>
     </script>
     <script name="number_of_events">
         <description>The number of created temporary workspaces</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
         <parameter key="EVENT" value="tenant-created"/>
-        <parameter key="STORAGE_DST" value="created_temporary_workspaces"/>
+        <parameter key="STORAGE_TABLE" value="created_temporary_workspaces"/>
     </script>
     <script name="product_usage_factory_sessions">
         <description>Factory sessions</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="STORAGE_SRC" value="factory_accepted_list"/>
-        <parameter key="STORAGE_DST" value="factory_sessions_list"/>
     </script>
     <script name="number_of_factory_sessions_with_event">
         <description>Factory sessions with build</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
         <parameter key="EVENT" value="project-built,project-deployed,application-created,build-started"/>
-        <parameter key="STORAGE_DST" value="factory_sessions_with_build"/>
+        <parameter key="STORAGE_TABLE" value="factory_sessions_with_build"/>
     </script>
     <script name="number_of_factory_sessions_with_event">
         <description>Factory sessions with run</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
         <parameter key="EVENT" value="run-started"/>
-        <parameter key="STORAGE_DST" value="factory_sessions_with_run"/>
+        <parameter key="STORAGE_TABLE" value="factory_sessions_with_run"/>
     </script>
     <script name="number_of_factory_sessions_with_event">
         <description>Factory sessions with deploy</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
         <parameter key="EVENT" value="project-deployed,application-created"/>
-        <parameter key="STORAGE_DST" value="factory_sessions_with_deploy"/>
+        <parameter key="STORAGE_TABLE" value="factory_sessions_with_deploy"/>
     </script>
 
     <!-- Scripts for user's view -->
@@ -242,7 +240,13 @@
         <description>User's profiles</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_DST" value="users_profiles"/>
+        <parameter key="STORAGE_TABLE" value="users_profiles"/>
+    </script>
+    <script name="users_statistics">
+        <description>User's profiles</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="users_statistics"/>
     </script>
 </scripts>
 

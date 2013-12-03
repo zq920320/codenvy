@@ -75,13 +75,13 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.TO_DATE.put(params, "20130210");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_DST.put(params, "testproductusagefactorysessions_factories");
+        Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions_factories");
         Parameters.LOG.put(params, log.getAbsolutePath());
         PigServer.execute(ScriptType.FACTORY_ACCEPTED_LIST, params);
 
         Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
-        Parameters.STORAGE_DST.put(params, "testproductusagefactorysessions");
-        Parameters.STORAGE_SRC.put(params, "testproductusagefactorysessions_factories");
+        Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions");
+        Parameters.STORAGE_TABLE_FACTORY_SESSIONS.put(params, "testproductusagefactorysessions_factories");
         PigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
     }
 

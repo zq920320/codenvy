@@ -62,7 +62,7 @@ public class TestExtractUserAndWs extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
         Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.STORAGE_DST.put(context, "fake");
+        Parameters.STORAGE_TABLE.put(context, "fake");
     }
 
     @Test

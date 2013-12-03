@@ -84,7 +84,7 @@ public class TestProductUsage extends BaseTest {
         Parameters.TO_DATE.put(params, "20131101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.STORAGE_DST.put(params, "testproductusagesessions");
+        Parameters.STORAGE_TABLE.put(params, "testproductusagesessions");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);

@@ -64,7 +64,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_DST.put(params, "testuserupdateprofile");
+        Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
@@ -101,8 +101,6 @@ public class TestUserUpdateProfile extends BaseTest {
     @Test
     public void testAllProfiles() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
 
         Metric metric = new TestUserProfile();
 
@@ -146,8 +144,6 @@ public class TestUserUpdateProfile extends BaseTest {
     @Test
     public void testSingleProfile() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20131101");
-        Parameters.TO_DATE.put(context, "20131101");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
         Metric metric = new TestUserProfile();

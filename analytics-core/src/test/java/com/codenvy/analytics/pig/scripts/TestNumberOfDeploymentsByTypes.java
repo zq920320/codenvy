@@ -124,7 +124,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.STORAGE_DST.put(params, "testnumberofdeploymentsbytypes");
+        Parameters.STORAGE_TABLE.put(params, "testnumberofdeploymentsbytypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.NUMBER_OF_DEPLOYMENTS_BY_TYPES, params);

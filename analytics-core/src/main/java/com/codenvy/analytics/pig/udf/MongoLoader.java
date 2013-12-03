@@ -77,6 +77,10 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
                 tuple = tupleFactory.newTuple(schema.getFields().length);
                 for (int i = 0; i < schema.getFields().length; i++) {
                     String key = schema.getFields()[i].getName();
+                    if (key.equalsIgnoreCase("id")) {
+                        key = "_id";
+                    }
+
                     tuple.set(i, value.get(key));
                 }
             }

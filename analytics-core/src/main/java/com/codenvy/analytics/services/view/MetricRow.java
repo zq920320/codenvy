@@ -58,13 +58,18 @@ public class MetricRow extends AbstractRow {
         List<ValueData> result = new ArrayList<>(rowCount);
 
         try {
-            result.add(new StringValueData(parameters.get(DESCRIPTION)));
-            for (int i = 1; i < rowCount; i++) {
+            boolean descriptionExists = parameters.containsKey(DESCRIPTION);
+            if (descriptionExists) {
+                result.add(new StringValueData(parameters.get(DESCRIPTION)));
+            }
+
+            for (int i = descriptionExists ? 1 : 0; i < rowCount; i++) {
                 try {
                     result.add(format(getMetricValue(initialContext)));
                 } catch (InitialValueNotFoundException e) {
                     result.add(StringValueData.DEFAULT);
                 }
+
                 initialContext = Utils.prevDateInterval(initialContext);
             }
         } catch (ParseException e) {

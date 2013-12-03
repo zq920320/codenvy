@@ -71,7 +71,7 @@ public enum ScriptType {
         @Override
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();
-            params.add(Parameters.STORAGE_SRC);
+            params.add(Parameters.STORAGE_TABLE_FACTORY_SESSIONS);
             return params;
         }
     },
@@ -84,13 +84,14 @@ public enum ScriptType {
         }
     },
     USER_UPDATE_PROFILE,
+    USERS_STATISTICS,
 
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {
         public Set<Parameters> getParams() {
             return new LinkedHashSet<>(
                     Arrays.asList(new Parameters[]{Parameters.STORAGE_URL,
-                                                   Parameters.STORAGE_DST}));
+                                                   Parameters.STORAGE_TABLE}));
         }
     },
     TEST_EXTRACT_WS,
@@ -109,7 +110,8 @@ public enum ScriptType {
                                                Parameters.TO_DATE,
                                                Parameters.FROM_DATE,
                                                Parameters.STORAGE_URL,
-                                               Parameters.STORAGE_DST}));
+                                               Parameters.STORAGE_TABLE,
+                                               Parameters.STORAGE_TABLE_USERS_STATISTICS}));
     }
 
     /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */

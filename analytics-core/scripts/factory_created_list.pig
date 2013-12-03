@@ -27,10 +27,10 @@ a4 = extractUrlParam(a3, 'REPO-URL', 'repoUrl');
 a = FOREACH a4 GENERATE dt, ws, user, factoryUrl, repoUrl, projectType;
 
 result = FOREACH a GENERATE ToMilliSeconds(dt), TOTUPLE('value', factoryUrl);
-STORE result INTO '$STORAGE_URL.$STORAGE_DST' USING MongoStorage();
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
 
 r1 = FOREACH a GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factoryUrl, repoUrl, projectType;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
                     TOTUPLE('repo_url', repoUrl), TOTUPLE('project_type', projectType), TOTUPLE('value', factoryUrl);
-STORE r INTO '$STORAGE_URL.$STORAGE_DST-raw' USING MongoStorage();
+STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage();
 

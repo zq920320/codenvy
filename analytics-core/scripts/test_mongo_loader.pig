@@ -16,4 +16,4 @@
  * from Codenvy S.A..
  */
 
-result = LOAD '$STORAGE_URL.$STORAGE_DST' USING MongoLoader('value:Long');
+result = LOAD '$STORAGE_URL.$STORAGE_TABLE' USING MongoLoader('value:Long');

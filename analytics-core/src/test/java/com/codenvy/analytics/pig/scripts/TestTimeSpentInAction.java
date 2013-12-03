@@ -93,7 +93,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(context, "run");
         Parameters.LOG.put(context, log.getAbsolutePath());
-        Parameters.STORAGE_DST.put(context, "testtimespentinaction");
+        Parameters.STORAGE_TABLE.put(context, "testtimespentinaction");
 
         PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, context);
     }

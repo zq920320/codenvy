@@ -67,7 +67,7 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.STORAGE_DST.put(params, "testnumberofeventsbytypessimplevaluedata");
+        Parameters.STORAGE_TABLE.put(params, "testnumberofeventsbytypessimplevaluedata");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);

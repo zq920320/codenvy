@@ -110,6 +110,7 @@ com.codenvy.analytics.metrics.FactorySessionsAbove10Min
 com.codenvy.analytics.metrics.FactorySessionsProductUsageTotal
 
 com.codenvy.analytics.metrics.UsersProfiles
+com.codenvy.analytics.metrics.UsersStatistics
 
 
 

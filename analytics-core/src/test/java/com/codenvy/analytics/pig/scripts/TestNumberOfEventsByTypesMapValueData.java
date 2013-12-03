@@ -70,7 +70,7 @@ public class TestNumberOfEventsByTypesMapValueData extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
-        Parameters.STORAGE_DST.put(params, "testnumberofeventsbytypesmapvaluedata");
+        Parameters.STORAGE_TABLE.put(params, "testnumberofeventsbytypesmapvaluedata");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);

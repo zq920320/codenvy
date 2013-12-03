@@ -17,36 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-
-import java.text.ParseException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersProfiles extends ReadBasedMetric {
+public class UsersProfiles extends AbstractUsersData {
 
     public UsersProfiles() {
         super(MetricType.USERS_PROFILES);
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
-    }
-
-    @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException {
-        BasicDBObject match = new BasicDBObject();
-
-        if (MetricFilter.USER.exists(clauses)) {
-            String[] values = MetricFilter.USER.get(clauses).split(",");
-            match.put("_id", new BasicDBObject("$in", values));
-        }
-
-        return new BasicDBObject("$match", match);
     }
 
     @Override

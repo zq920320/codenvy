@@ -19,29 +19,26 @@
 IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+f = productUsageTimeList(t, '10');
 
---SS = extractEventsWithSessionId(t, 'session-started');
---SF = extractEventsWithSessionId(t, 'session-finished');
---
---j1 = JOIN SS BY id FULL, SF BY id;
---j2 = FILTER j1 BY SS::id IS NOT NULL AND SF::id IS NOT NULL;
---j3 = FOREACH j2 GENERATE SS::ws AS ws, SS::user AS user, SS::dt AS ssDt, SF::dt AS sfDt;
---A = FOREACH j3 GENERATE ws, user, ssDt AS dt, SecondsBetween(sfDt, ssDt) AS delta;
---
-----
----- The rest of the sessions
-----
---k1 = FOREACH t GENERATE ws, user, dt;
---k2 = JOIN k1 BY (ws, user) LEFT, j3 BY (ws, user);
---k3 = FILTER k2 BY (j3::ws IS NULL) OR MilliSecondsBetween(j3::ssDt, k1::dt) > 0 OR MilliSecondsBetween(j3::sfDt, k1::dt) < 0;
---k4 = FOREACH k3 GENERATE k1::ws AS ws, k1::user AS user, k1::dt AS dt;
-R = productUsageTimeList(t, '10');
+result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('value', delta);
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
 
---R = UNION A, B;
-
-result = FOREACH R GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('value', delta);
-STORE result INTO '$STORAGE_URL.$STORAGE_DST' USING MongoStorage();
-
-r1 = FOREACH R GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, delta;
+r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, delta;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', delta);
-STORE r INTO '$STORAGE_URL.$STORAGE_DST-raw' USING MongoStorage();
+STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage();
+
+-- loads existed statistics
+s1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoLoader('id: chararray, time: Long');
+s = FOREACH s1 GENERATE id, (time IS NULL ? 0 : time) AS time;
+
+-- calculate total user's time being in product
+t1 = GROUP f BY user;
+t2 = FOREACH t1 GENERATE group AS id, SUM(f.delta) AS time;
+t = FILTER t2 BY INDEXOF(UPPER(id), 'ANONYMOUSUSER_', 0) != 0 AND id != 'default';
+
+--combine and store result
+x1 = JOIN t BY id LEFT, s BY id;
+x2 = FOREACH x1 GENERATE t::id AS id, (t::time + (s::time IS NULL ? 0 : s::time)) AS time;
+x = FOREACH x2 GENERATE id, TOTUPLE('user_email', id), TOTUPLE('time', time);
+STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage();

@@ -31,9 +31,12 @@ public enum Parameters {
     LOG,
     PARAM,
     EVENT,
+
     STORAGE_URL,
-    STORAGE_DST,
-    STORAGE_SRC,
+    STORAGE_TABLE,
+    STORAGE_TABLE_USERS_STATISTICS,
+    STORAGE_TABLE_FACTORY_SESSIONS,
+
     TIME_UNIT {
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
@@ -43,7 +46,7 @@ public enum Parameters {
     FROM_DATE {
         @Override
         public String getDefaultValue() {
-            return "20120201";
+            return "20130101";
         }
 
         @Override

@@ -27,8 +27,8 @@ a2 = GROUP a1 BY param;
 a = FOREACH a2 GENERATE group AS param, COUNT(a1) AS countAll;
 
 result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE(param, countAll);
-STORE result INTO '$STORAGE_URL.$STORAGE_DST' USING MongoStorage();
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
 
 r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, LOWER(param) AS param;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE(param, 1L);
-STORE r INTO '$STORAGE_URL.$STORAGE_DST-raw' USING MongoStorage();
+STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage();

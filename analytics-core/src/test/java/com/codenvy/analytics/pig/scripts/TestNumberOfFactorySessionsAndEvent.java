@@ -105,7 +105,7 @@ public class TestNumberOfFactorySessionsAndEvent extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
         Parameters.EVENT.put(params, "project-built,application-created,project-destroyed");
-        Parameters.STORAGE_DST.put(params, "testnumberoffactorysessionsandevent");
+        Parameters.STORAGE_TABLE.put(params, "testnumberoffactorysessionsandevent");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.NUMBER_OF_FACTORY_SESSIONS_WITH_EVENT, params);

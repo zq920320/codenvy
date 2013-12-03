@@ -66,7 +66,7 @@ public class TestFactoryCreatedList extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_DST.put(params, "testfactorycreatedlist");
+        Parameters.STORAGE_TABLE.put(params, "testfactorycreatedlist");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.FACTORY_CREATED_LIST, params);

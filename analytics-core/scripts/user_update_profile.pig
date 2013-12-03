@@ -49,4 +49,9 @@ a = lastUserProfileUpdate(a8);
 result = FOREACH a GENERATE user, TOTUPLE('user_email', user), TOTUPLE('user_first_name', firstName),
                         TOTUPLE('user_last_name', lastName), TOTUPLE('user_company', company),
                         TOTUPLE('user_phone', phone), TOTUPLE('user_job', job);
-STORE result INTO '$STORAGE_URL.$STORAGE_DST' USING MongoStorage();
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
+
+stat = FOREACH a GENERATE user, TOTUPLE('user_email', user), TOTUPLE('user_first_name', firstName),
+                TOTUPLE('user_last_name', lastName), TOTUPLE('user_company', company),
+                TOTUPLE('user_phone', phone);
+STORE stat INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage();

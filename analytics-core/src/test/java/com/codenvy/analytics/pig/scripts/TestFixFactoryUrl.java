@@ -66,7 +66,7 @@ public class TestFixFactoryUrl extends BaseTest {
         Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
-        Parameters.STORAGE_DST.put(context, "fake");
+        Parameters.STORAGE_TABLE.put(context, "fake");
     }
 
     @Test

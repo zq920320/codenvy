@@ -15,16 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UsersStatistics extends AbstractUsersData {
 
-t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-j = combineSmallSessions(t, 'session-factory-started', 'session-factory-stopped');
+    public UsersStatistics() {
+        super(MetricType.USERS_STATISTICS);
+    }
 
-r1 = GROUP j BY ws;
-result = FOREACH r1 {
-    r2 = FOREACH j GENERATE TOTUPLE(TOTUPLE(ws), TOTUPLE(user), TOTUPLE(dt), TOTUPLE(delta));
-    GENERATE group, r2;
+    @Override
+    public String getDescription() {
+        return "Users' statistics data";
+    }
 }
-
-

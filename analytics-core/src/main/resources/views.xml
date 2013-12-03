@@ -503,15 +503,9 @@
                 <parameter key="titles"
                            value="User Email,First Name,Last Name,Total Active Projects,Total Deploy,Total Time"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="User Email,First Name,Last Name,Total Active Projects,Total Deploy,Total Time"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_statistics"/>
             </row>
-            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-            <!--<parameter key="name" value="factory_product_usage_time_total"/>-->
-            <!--<parameter key="format" value="%,.0f"/>-->
-            <!--<parameter key="description" value="Product Usage Mins"/>-->
-            <!--</row>-->
         </section>
     </view>
 </display>

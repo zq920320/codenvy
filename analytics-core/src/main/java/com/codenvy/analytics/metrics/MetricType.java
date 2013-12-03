@@ -137,5 +137,6 @@ public enum MetricType {
     FACTORY_PRODUCT_USAGE_TIME_TOTAL,
 
     USERS_PROFILES,
+    USERS_STATISTICS,
 }
 

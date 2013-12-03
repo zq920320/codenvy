@@ -30,10 +30,10 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-
-import static com.mongodb.util.MyAsserts.assertTrue;
-import static org.testng.Assert.assertEquals;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsageOldScript extends BaseTest {
@@ -81,7 +81,7 @@ public class TestProductUsageOldScript extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.STORAGE_DST.put(params, "testproductusagesessions");
+        Parameters.STORAGE_TABLE.put(params, "testproductusagesessions");
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
 
