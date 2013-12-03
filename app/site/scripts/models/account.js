@@ -203,6 +203,8 @@
 
             createWorkspace : function(username,bearertoken,workspace,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
+                var waitUrl = "../wait-for-tenant?type=create&redirect_url=" +
+                    window.location.protocol + "//ide/"+ workspace + "&tenantName=" + workspace;
                 var workspaceName = {name: workspace};
                 var authenticateUrl = "/site/rest/email/authenticate";
                 var createWSUrl = "/site/rest/private/organization/workspaces/create";
@@ -219,7 +221,7 @@
                                 contentType: "application/json",
                                 data: JSON.stringify(workspaceName),
                                 success : function(){
-                                    success({url: '../wait-for-tenant'});
+                                    success({url: waitUrl});
                                 },
                                 error : function(xhr/*, status , err*/){
                                     error([
