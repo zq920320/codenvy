@@ -219,7 +219,7 @@
                                 contentType: "application/json",
                                 data: JSON.stringify(workspaceName),
                                 success : function(){
-                                    success({url: '../site/wait-for-tenant'});
+                                    success({url: '../wait-for-tenant'});
                                 },
                                 error : function(xhr/*, status , err*/){
                                     error([
