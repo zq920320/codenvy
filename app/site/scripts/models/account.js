@@ -204,7 +204,8 @@
             createWorkspace : function(username,bearertoken,workspace,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
                 var waitUrl = "../wait-for-tenant?type=create&redirect_url=" +
-                    window.location.protocol + "//ide/"+ workspace + "&tenantName=" + workspace;
+                    window.location.protocol + "//" + window.location.host +
+                    "/ide/"+ workspace + "&tenantName=" + workspace;
                 var workspaceName = {name: workspace};
                 var authenticateUrl = "/site/rest/email/authenticate";
                 var createWSUrl = "/site/rest/private/organization/workspaces/create";
