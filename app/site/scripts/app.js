@@ -131,8 +131,7 @@ define(["jquery","config",
                             errorReport = ErrorReport.get(errorContainer);
 
                             page.on("success", function(d){
-                                // window.location.href = d.url;
-                                window.alert("Good job!!!" + d); // FIXIT
+                                window.location.href = d.url;
                             });
 
                             page.on("invalid", function(field,message){
