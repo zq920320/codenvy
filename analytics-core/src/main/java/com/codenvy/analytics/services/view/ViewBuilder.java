@@ -35,7 +35,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
@@ -146,7 +149,8 @@ public class ViewBuilder implements Feature {
         protected void compute() {
             try {
                 String viewId = viewConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
-                Map<String, List<List<ValueData>>> viewData = new LinkedHashMap<>(viewConfiguration.getSections().size());
+                Map<String, List<List<ValueData>>> viewData =
+                        new LinkedHashMap<>(viewConfiguration.getSections().size());
 
                 for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
 
@@ -157,7 +161,7 @@ public class ViewBuilder implements Feature {
                                 Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
                         Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
 
-                        int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 1 : sectionConfiguration.getColumns();
+                        int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : sectionConfiguration.getColumns();
                         Map<String, String> initialContext = Utils.initializeContext(timeUnit);
 
                         List<ValueData> rowData = row.getData(initialContext, rowCount);
