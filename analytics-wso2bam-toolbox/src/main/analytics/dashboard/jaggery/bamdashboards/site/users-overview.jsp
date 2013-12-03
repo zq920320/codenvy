@@ -39,6 +39,18 @@
             </div>
         </div>
         <div class="span10">
+            <div class="well topFilteringPanel">
+                <div id="filter-by" class="right">
+                    Filter by:
+                    <form action="#">
+	                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
+	                    <button class="btn">Email</button>
+	                    <button class="btn">First Name</button>
+	                    <button class="btn">Second Name</button>                
+	                    <input type="reset" id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn" value="Clear" />
+	                 </form>
+                </div>
+            </div>
             <div class="hero-unit">
                 <iframe id="dashboardWidget-1" class="single-column-gadget" src="gadgets/users-overview.jag"></iframe>
             </div>

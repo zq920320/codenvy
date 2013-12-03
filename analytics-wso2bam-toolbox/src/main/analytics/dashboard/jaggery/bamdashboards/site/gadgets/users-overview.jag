@@ -2,12 +2,53 @@
 
 include_once("utils.jag");
 
-printTablePageHeader();
+var CURRENT_PAGE_QUERY_PARAMETER = "page";
+var ONE_PAGE_ROWS_COUNT = 5;
 
-var result = queryResults('select * from users_overview_lifetime');
+//var result = queryResults('select * from users_overview_lifetime');
+var result = queryResults('select * from projects_types_Day');
+
 var table = createTable(result);
 
+// paging
+var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
+
+var rowCount = table.rows.length;
+var pageCount = Math.round(rowCount / ONE_PAGE_ROWS_COUNT); 
+
+if (pageCount > 1) {
+   var startRowNumber = 0;
+   
+   if (typeof currentPageNumber != "undefined" && currentPageNumber > 0) {
+      startRowNumber = ONE_PAGE_ROWS_COUNT * (currentPageNumber - 1)   
+   }
+   
+   var endRowNumber = startRowNumber + (ONE_PAGE_ROWS_COUNT - 1);
+   
+   table.rows = table.rows.slice(startRowNumber, endRowNumber);
+}
+
+// print table
+printTablePageHeader();
+
 printTable(table);
+
 loadTableHandlers(false);
+
+// print bottom page navigation
+if (pageCount > 1) {
+   var requestUrl = request.getRequestURL();
+   var delimeter = "&";
+   if (requestUrl.indexOf("?") < 0) {
+      delimeter = "?";
+   }
+
+   // remove  CURRENT_PAGE_QUERY_PARAMETER from baseUrl
+   requestUrl = requestUrl.replace(delimeter + CURRENT_PAGE_QUERY_PARAMETER + "=" + currentPageNumber, "");
+
+   var baseUrl = requestUrl + delimeter + CURRENT_PAGE_QUERY_PARAMETER;
+      
+   printBottomPageNavigator(baseUrl, pageCount, currentPageNumber);
+}
 
 %>

@@ -126,4 +126,26 @@ function loadTableHandlers(ignoreLastRow) {
    print('<script>databaseTable.setupRowHandlers(' + ignoreLastRow.toString() + ');</script>');
 }
 
+function printBottomPageNavigator(baseUrl, pageCount, currentPageNumber) {
+   if (typeof pageCount == "undefined" || pageCount <= 0) {
+      return;
+   }   
+   
+   print("<div class='bottom-page-navigator'>");
+   for (var i = 0; i < pageCount; i++) {
+      var href = baseUrl + "=" + (i + 1);
+      var elementClass = "page-link";
+      
+      if ((i + 1) == currentPageNumber) {
+         elementClass += " current";
+      }
+      
+      print("<a class='" + elementClass + "' href='" + href + "'>" + (i + 1) + "</a>");      
+   }
+
+   print("</div>");
+}
+
+
+
 %>
