@@ -28,6 +28,7 @@ public class ViewConfiguration {
 
     private String                     name;
     private String                     timeUnit;
+    private boolean                    onDemand;
     private List<SectionConfiguration> sections;
 
     public List<SectionConfiguration> getSections() {
@@ -36,6 +37,15 @@ public class ViewConfiguration {
 
     public String getName() {
         return name;
+    }
+
+    @XmlAttribute(name = "on-demand")
+    public void setOnDemand(boolean onDemand) {
+        this.onDemand = onDemand;
+    }
+
+    public boolean isOnDemand() {
+        return onDemand;
     }
 
     @XmlAttribute(name = "name")

@@ -508,4 +508,17 @@
             </row>
         </section>
     </view>
+
+    <view time-unit="lifetime" name="user-statistics" on-demand="true">
+        <section name="user_profile" columns="6">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Email,First Name,Last Name,Company,Phone,Job"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_profiles"/>
+                <parameter key="fields"
+                           value="user_email,user_first_name,user_last_name,user_company,user_phone,user_job"/>
+            </row>
+        </section>
+    </view>
 </display>

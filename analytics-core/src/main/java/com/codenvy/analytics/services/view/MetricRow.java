@@ -21,19 +21,14 @@ package com.codenvy.analytics.services.view;
 
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.DoubleValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricRow extends AbstractRow {
@@ -42,15 +37,19 @@ public class MetricRow extends AbstractRow {
     private static final String FORMAT         = "format";
     private static final String DEFAULT_FORMAT = "%,.0f";
     private static final String DESCRIPTION    = "description";
+    private static final String FIELDS         = "fields";
 
-    private final Metric metric;
-    private final String format;
+    private final Metric      metric;
+    private final String      format;
+    private final Set<String> fields;
 
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
 
         metric = MetricFactory.getMetric(parameters.get(NAME));
         format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_FORMAT;
+        fields = new HashSet<>(
+                Arrays.asList(parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0]));
     }
 
     @Override
@@ -65,7 +64,7 @@ public class MetricRow extends AbstractRow {
 
             for (int i = descriptionExists ? 1 : 0; i < rowCount; i++) {
                 try {
-                    result.add(format(getMetricValue(initialContext)));
+                    formatAndAdd(getMetricValue(initialContext), result);
                 } catch (InitialValueNotFoundException e) {
                     result.add(StringValueData.DEFAULT);
                 }
@@ -79,17 +78,17 @@ public class MetricRow extends AbstractRow {
         return result;
     }
 
-    private ValueData format(ValueData valueData) {
+    private void formatAndAdd(ValueData valueData, List<ValueData> result) {
         Class<? extends ValueData> clazz = valueData.getClass();
 
         if (clazz == StringValueData.class) {
-            return valueData;
+            result.add(valueData);
 
         } else if (clazz == LongValueData.class) {
             double value = ((LongValueData)valueData).getAsDouble();
             String formattedValue = value == 0 ? "" : String.format(format, value);
 
-            return new StringValueData(formattedValue);
+            result.add(new StringValueData(formattedValue));
 
         } else if (clazz == DoubleValueData.class) {
             double value = ((DoubleValueData)valueData).getAsDouble();
@@ -97,12 +96,18 @@ public class MetricRow extends AbstractRow {
                                     ? ""
                                     : String.format(format, value);
 
-            return new StringValueData(formattedValue);
+            result.add(new StringValueData(formattedValue));
+
+        } else if (clazz == MapValueData.class) {
+            Map<String, ValueData> items = ((MapValueData)valueData).getAll();
+
+            for (Map.Entry<String, ValueData> entry : items.entrySet()) {
+                if (fields.isEmpty() || fields.contains(entry.getKey())) {
+                    formatAndAdd(entry.getValue(), result);
+                }
+            }
         }
-
-        return valueData;
     }
-
 
     protected ValueData getMetricValue(Map<String, String> context) throws IOException {
         return metric.getValue(context);

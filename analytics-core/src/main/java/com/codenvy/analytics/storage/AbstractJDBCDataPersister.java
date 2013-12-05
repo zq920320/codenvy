@@ -96,12 +96,14 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
         PreparedStatement statement = connection.prepareStatement(getInsertQuery(tableName, data.get(0).size()));
 
         for (List<ValueData> rowData : data) {
-            statement.clearParameters();
+            if (!rowData.isEmpty()) {
+                statement.clearParameters();
 
-            for (int i = 0; i < rowData.size(); i++) {
-                statement.setString(i + 1, rowData.get(i).getAsString());
+                for (int i = 0; i < rowData.size(); i++) {
+                    statement.setString(i + 1, rowData.get(i).getAsString());
+                }
+                statement.execute();
             }
-            statement.execute();
         }
     }
 
@@ -159,7 +161,9 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
         int length = 0;
 
         for (List<ValueData> rowData : data) {
-            length = Math.max(length, rowData.get(column).getAsString().length());
+            if (!rowData.isEmpty()) {
+                length = Math.max(length, rowData.get(column).getAsString().length());
+            }
         }
 
         return length;

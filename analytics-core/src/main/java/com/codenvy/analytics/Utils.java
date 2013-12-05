@@ -264,14 +264,9 @@ public class Utils {
     }
 
 
-    /**
-     * Returns all filters existed in context.
-     *
-     * @param context
-     * @return
-     */
+    /** Returns all filters existed in context. */
     public static Set<MetricFilter> getFilters(Map<String, String> context) {
-        Set<MetricFilter> result  = new HashSet<>();
+        Set<MetricFilter> result = new HashSet<>();
 
         for (MetricFilter filter : MetricFilter.values()) {
             if (filter.exists(context)) {

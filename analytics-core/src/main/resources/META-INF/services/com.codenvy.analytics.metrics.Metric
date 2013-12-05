@@ -111,7 +111,7 @@ com.codenvy.analytics.metrics.FactorySessionsProductUsageTotal
 
 com.codenvy.analytics.metrics.UsersProfiles
 com.codenvy.analytics.metrics.UsersStatistics
-
+com.codenvy.analytics.metrics.UsersActivity
 
 
 

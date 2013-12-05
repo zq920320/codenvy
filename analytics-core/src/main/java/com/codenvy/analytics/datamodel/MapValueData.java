@@ -24,6 +24,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -39,7 +40,7 @@ public class MapValueData extends AbstractValueData {
     }
 
     public MapValueData(Map<String, ValueData> value) {
-        this.value = new HashMap<>(value);
+        this.value = new LinkedHashMap<>(value);
     }
 
     /** @return unmodifiable {@link #value} */

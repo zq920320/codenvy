@@ -83,7 +83,7 @@ public class TestViewBuilder extends BaseTest {
         ArgumentCaptor<Map> viewData = ArgumentCaptor.forClass(Map.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
-        spyBuilder.build(displayConfiguration);
+        spyBuilder.computeDisplayData(displayConfiguration);
         verify(spyBuilder).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         Map<String, List<List<ValueData>>> actualData = viewData.getValue();

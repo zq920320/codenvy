@@ -15,16 +15,24 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-f1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = FOREACH f1 GENERATE user, message;
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public abstract class AbstractListValueResulted extends ReadBasedMetric {
 
-r1 = GROUP f BY user;
-r = FOREACH r1 {
-    t = FOREACH f GENERATE message;
-    GENERATE group, t;
+    protected AbstractListValueResulted(String metricName) {
+        super(metricName);
     }
 
-result = FOREACH r GENERATE group, t;
+    public AbstractListValueResulted(MetricType metricType) {
+        super(metricType);
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
+    }
+}

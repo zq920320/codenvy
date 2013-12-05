@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 
+import static com.mongodb.util.MyAsserts.assertFalse;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -62,6 +63,7 @@ public class TestDisplayConfigurationReader {
 
         assertEquals("day,week", viewConfiguration.getTimeUnit());
         assertEquals(1, viewConfiguration.getSections().size());
+        assertFalse(viewConfiguration.isOnDemand());
 
         SectionConfiguration sectionConfiguration = viewConfiguration.getSections().get(0);
         assertEquals(20, sectionConfiguration.getColumns());

@@ -89,7 +89,8 @@ public class CSVDataPersister implements DataPersister {
         File parentDir = csvFile.getParentFile();
         if (!parentDir.exists()) {
             if (!parentDir.mkdirs()) {
-                throw new IOException("Can't create directory tree" + parentDir.getPath());
+                // TODO
+//                throw new IOException("Can't create directory tree" + parentDir.getPath());
             }
         }
     }

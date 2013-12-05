@@ -249,6 +249,12 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_statistics"/>
     </script>
+    <script name="users_activity">
+        <description>User's profiles</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="users_activity"/>
+    </script>
 </scripts>
 
 

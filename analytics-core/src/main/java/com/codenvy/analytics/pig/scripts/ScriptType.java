@@ -85,6 +85,7 @@ public enum ScriptType {
     },
     USER_UPDATE_PROFILE,
     USERS_STATISTICS,
+    USERS_ACTIVITY,
 
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {
