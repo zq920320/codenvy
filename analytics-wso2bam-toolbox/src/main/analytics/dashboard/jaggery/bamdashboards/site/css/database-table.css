@@ -1,19 +1,19 @@
-table.database-table {
+.database-table {
    border: 1px solid #ddd;
    border-radius: 4px;   
 }
 
-table.database-table td {
+.database-table td {
    font-size: 11px;
 }
 
-table.database-table th {
+.database-table th {
    font-size: 13px;
    min-width: 45px;
    font-family: Times New Roman;
 }
 
-.database-table-header {
+.database-table .header {
    height: 22px;
    overflow: hidden;
    background:
@@ -32,13 +32,13 @@ table.database-table th {
    text-shadow: none;
 }
 
-.database-table-first-cell {
+.database-table .first-cell {
    background: #d9e4f6 !important;
    width: 150px;
    min-width: 150px;
 }
 
-.database-table-cell {
+.database-table .cell {
    overflow: hidden;
    border-bottom: 1px solid #ededed;
    border-right: none;
@@ -48,18 +48,22 @@ table.database-table th {
    font-family: Arial, Verdana, sans-serif;   
 }
 
+.database-table .cell a {
+   color: #08c;
+}
+
 .text-cursor {
    cursor: text;
 }
 
-tr.pair-row {
+.database-table .pair-row {
    background: #f5f5f5;
 }
 
-tr.clicked-row {
+.database-table .clicked-row {
 	background: #d9e4f6;
 }
 
-tr.mouseover-row {
+.database-table .mouseover-row {
 	background: #eee;
 }

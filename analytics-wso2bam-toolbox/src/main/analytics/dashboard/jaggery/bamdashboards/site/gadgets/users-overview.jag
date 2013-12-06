@@ -3,33 +3,43 @@
 include_once("utils.jag");
 
 var CURRENT_PAGE_QUERY_PARAMETER = "page";
-var ONE_PAGE_ROWS_COUNT = 5;
+var ONE_PAGE_ROWS_COUNT = 5;   // TODO set correct values
+var USER_ID_LINK_PREFIX = "user-statistics.jsp?userid";
 
-//var result = queryResults('select * from users_overview_lifetime');
-var result = queryResults('select * from projects_types_Day');
+var result = queryResults('select * from users_overview_lifetime');
+
+// var result = queryResults('select * from projects_types_Day');  // for demonstration
 
 var table = createTable(result);
 
 // paging
 var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
+if (typeof currentPageNumber == "undefined" || currentPageNumber == null) {
+   currentPageNumber = 1;
+} else {
+   currentPageNumber = new Number(currentPageNumber);
+}
 
 var rowCount = table.rows.length;
 var pageCount = Math.round(rowCount / ONE_PAGE_ROWS_COUNT); 
 
 if (pageCount > 1) {
-   var startRowNumber = 0;
-   
-   if (typeof currentPageNumber != "undefined" && currentPageNumber > 0) {
-      startRowNumber = ONE_PAGE_ROWS_COUNT * (currentPageNumber - 1)   
-   }
-   
+   var startRowNumber = ONE_PAGE_ROWS_COUNT * (currentPageNumber - 1);   
    var endRowNumber = startRowNumber + (ONE_PAGE_ROWS_COUNT - 1);
-   
    table.rows = table.rows.slice(startRowNumber, endRowNumber);
 }
 
+
+// make user id in first column as linked 
+for (var i = 0; i < table.rows.length; i++) {
+   var userId = table.rows[i][0];
+   var href = USER_ID_LINK_PREFIX + "=" + userId;
+   table.rows[i][0] = "<a href='" + href + "'>" + userId + "</a>";
+}
+
+
 // print table
-printTablePageHeader();
+loadCssStyles();
 
 printTable(table);
 

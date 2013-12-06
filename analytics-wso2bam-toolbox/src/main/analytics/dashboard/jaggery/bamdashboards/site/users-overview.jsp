@@ -41,8 +41,7 @@
         <div class="span10">
             <div class="well topFilteringPanel">
                 <div id="filter-by" class="right">
-                    Filter by:
-                    <form action="#">
+                    Filter by: <form action="#">
 	                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
 	                    <button class="btn">Email</button>
 	                    <button class="btn">First Name</button>

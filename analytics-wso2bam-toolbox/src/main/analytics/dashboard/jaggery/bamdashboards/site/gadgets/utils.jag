@@ -49,14 +49,14 @@ function printTable(table) {
     
     // print first cell of header
     if (table.columns.length > 0) {
-        print('<th class="database-table-header">');
+        print('<th class="header">');
         print(table.columns[0]);
         print('</th>');    	
     }
     
     // print other cells of header    
     for (var i = 1; i < table.columns.length; i++) {
-        print('<th class="database-table-header">');
+        print('<th class="header">');
         print(table.columns[i]);
         print('</th>');
     }
@@ -70,7 +70,7 @@ function printTable(table) {
     	 print('<tr>');
 
        // print first cell
-       print('<td class="database-table-cell database-table-first-cell text-cursor">');
+       print('<td class="cell first-cell text-cursor">');
        print('<div style="outline-style: none;" tabindex="0">');
        print(table.rows[i][0]);
        print('</div>');
@@ -78,7 +78,7 @@ function printTable(table) {
  
        // print another cells
     	 for (var j = 1; j < table.columns.length; j++) {
-          print('<td class="database-table-cell">');
+          print('<td class="cell">');
           print('<div style="outline-style: none;" tabindex="0">');
           print(table.rows[i][j]);
           print('</div>');
@@ -91,7 +91,7 @@ function printTable(table) {
           print('<tr class="pair-row">');
           
           // print first cell
-        	 print('<td class="database-table-cell database-table-first-cell">');
+        	 print('<td class="cell first-cell">');
           print('<div style="outline-style: none;" tabindex="0">');
           print(table.rows[i + 1][0]);
           print('</div>');
@@ -99,7 +99,7 @@ function printTable(table) {
    
           // print another cells
         	 for (var j = 1; j < table.columns.length; j++) {
-             print('<td class="database-table-cell">');
+             print('<td class="cell">');
              print('<div style="outline-style: none;" tabindex="0">');
              print(table.rows[i + 1][j]);
              print('</div>');
@@ -115,10 +115,13 @@ function printTable(table) {
     print('</table>');
 }
 
-function printTablePageHeader() {
+function loadCssStyles() {
    print('<link href="../css/single-column.css" rel="stylesheet" type="text/css" />');
    print('<link href="../css/database-table.css" rel="stylesheet" type="text/css" />');
+   print('<link href="../css/page-navigator.css" rel="stylesheet" type="text/css" />');   
 }
+
+
 
 //load handlers of table events
 function loadTableHandlers(ignoreLastRow) {
@@ -126,12 +129,24 @@ function loadTableHandlers(ignoreLastRow) {
    print('<script>databaseTable.setupRowHandlers(' + ignoreLastRow.toString() + ');</script>');
 }
 
+/**
+ * currentPageNumber is 1-based
+ */
 function printBottomPageNavigator(baseUrl, pageCount, currentPageNumber) {
    if (typeof pageCount == "undefined" || pageCount <= 0) {
       return;
    }   
    
    print("<div class='bottom-page-navigator'>");
+   
+   // print "previous page" link
+   if (currentPageNumber > 1) {
+      var previousPageNumber = currentPageNumber - 1; 
+      var previousPageLink = baseUrl + "=" + previousPageNumber;         
+      print("<a class='page-link previous' href='" + previousPageLink + "'>&lt;</a>");
+   }
+   
+   // print all pages links
    for (var i = 0; i < pageCount; i++) {
       var href = baseUrl + "=" + (i + 1);
       var elementClass = "page-link";
@@ -143,6 +158,15 @@ function printBottomPageNavigator(baseUrl, pageCount, currentPageNumber) {
       print("<a class='" + elementClass + "' href='" + href + "'>" + (i + 1) + "</a>");      
    }
 
+   // print "next page" link
+   if (currentPageNumber < pageCount) {
+      var nextPageNumber = currentPageNumber + 1; 
+      var nextPageLink = baseUrl + "=" + nextPageNumber;         
+      print("<a class='page-link next' href='" + nextPageLink + "'>&gt;</a>");      
+   } else {
+      print("<div class='page-link empty'></div>");
+   }
+   
    print("</div>");
 }
 
