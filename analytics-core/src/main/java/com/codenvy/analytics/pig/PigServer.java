@@ -50,9 +50,10 @@ public class PigServer {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PigServer.class);
 
-    private static final String  LOGS_DIR            = Configurator.getString("analytics.logs.dir");
-    private static final String  SCRIPTS_DIR         = Configurator.getString("analytics.scripts.dir");
-    private static final boolean PIG_SERVER_EMBEDDED = Configurator.getBoolean("pig.server.embedded");
+    private static final String  LOGS_DIR    = Configurator.getString("analytics.logs.dir");
+    private static final String  SCRIPTS_DIR = Configurator.getString("pig.scripts.dir");
+    private static final String  BIN_DIR     = Configurator.getString("pig.bin.dir");
+    private static final boolean EMBEDDED    = Configurator.getBoolean("pig.embedded");
 
     private static final Calendar OLD_SCRIPT_DATE = Calendar.getInstance();
 
@@ -63,8 +64,10 @@ public class PigServer {
             throw new IllegalStateException(e);
         }
 
-        for (Map.Entry<String, String> entry : Configurator.getAll("pig.server.property").entrySet()) {
-            System.setProperty(entry.getKey(), entry.getValue());
+        if (EMBEDDED) {
+            for (Map.Entry<String, String> entry : Configurator.getAll("pig.embedded.property").entrySet()) {
+                System.setProperty(entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -88,7 +91,7 @@ public class PigServer {
                 return;
             }
 
-            if (PIG_SERVER_EMBEDDED) {
+            if (EMBEDDED) {
                 executeOnEmbeddedServer(scriptType, context);
             } else {
                 executeOnDedicatedServer(scriptType, context);
@@ -149,7 +152,7 @@ public class PigServer {
     private static String prepareRunCommand(ScriptType scriptType, Map<String, String> context) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(new File(SCRIPTS_DIR, "run_pig.sh").getAbsolutePath());
+        builder.append(new File(BIN_DIR, "run_script.sh").getAbsolutePath());
 
         for (Map.Entry<String, String> entry : context.entrySet()) {
             builder.append(' ');
