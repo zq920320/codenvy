@@ -184,7 +184,7 @@
             loginWithGithub : loginWithGithub,
 
             createTenant : function(email,domain,success,error){
-                var data = {email: email.toLowerCase(), workspace: domain.toLowerCase()};
+                var data = {email: email.toLowerCase(), workspacename: domain.toLowerCase()};
                 var emailValidateUrl = "/site/rest/email/validate" + window.location.search.substring(1);
                 $.ajax({
                     url : emailValidateUrl,
