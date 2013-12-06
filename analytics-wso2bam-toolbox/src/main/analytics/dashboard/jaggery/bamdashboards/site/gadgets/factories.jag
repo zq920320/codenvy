@@ -3,7 +3,9 @@
 include_once("utils.jag");
 
 var timeGrouping = request.getParameter('timeGrouping');
-var tableNames = ['factory'];
+var tableNames = ['factories', 'authenticated_factory_sessions',
+            'converted_factory_sessions', 'factory_sessions_ide_usage_events',
+            'factory_users_sessions', 'factory_product_usage'];
 
 printTablePageHeader();
 
