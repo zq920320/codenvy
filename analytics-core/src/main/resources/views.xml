@@ -551,17 +551,17 @@
             </row>
         </section>
 
-        <section name="user_data" columns="9">
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_statistics"/>
-                <parameter key="fields"
-                           value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>
-            </row>
-        </section>
+        <!--<section name="user_data" columns="9">-->
+            <!--<row class="com.codenvy.analytics.services.view.TitleRow">-->
+                <!--<parameter key="titles"-->
+                           <!--value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>-->
+            <!--</row>-->
+            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+                <!--<parameter key="name" value="users_statistics"/>-->
+                <!--<parameter key="fields"-->
+                           <!--value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>-->
+            <!--</row>-->
+        <!--</section>-->
         <!--<section name="user_sessions" columns="4">-->
             <!--<row class="com.codenvy.analytics.services.view.TitleRow">-->
                 <!--<parameter key="titles"-->

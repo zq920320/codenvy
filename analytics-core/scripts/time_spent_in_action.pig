@@ -26,14 +26,14 @@ f = combineClosestEvents(l, '$EVENT-started', '$EVENT-finished');
 a = GROUP f ALL;
 
 result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', SUM(f.delta));
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, delta;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', delta);
-STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage();
+STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 -- loads existed statistics
-s1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoLoader('id: chararray, time_$EVENT: long');
+s1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'id: chararray, time_$EVENT: long');
 
 s = FOREACH s1 GENERATE id, (time_$EVENT IS NULL ? 0 : time_$EVENT) AS time_$EVENT;
 
@@ -45,6 +45,6 @@ t = FOREACH t1 GENERATE group AS id, SUM(f.delta) AS time_$EVENT;
 x1 = JOIN t BY id LEFT, s BY id;
 x2 = FOREACH x1 GENERATE t::id AS id, (t::time_$EVENT + (s::time_$EVENT IS NULL ? 0 : s::time_$EVENT)) AS time_$EVENT;
 x = FOREACH x2 GENERATE id, TOTUPLE('user_email', id), TOTUPLE('time_$EVENT', time_$EVENT);
-STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage();
+STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 

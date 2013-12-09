@@ -19,6 +19,8 @@ package com.codenvy.analytics.pig.udf;
 
 import com.mongodb.*;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.pig.*;
 import org.apache.pig.backend.executionengine.ExecException;
@@ -28,6 +30,8 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.util.Utils;
 import org.apache.pig.parser.ParserException;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -35,22 +39,44 @@ import java.util.List;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoLoader extends LoadFunc implements LoadMetadata {
 
-    public static final String SERVER_URL_PARAM = "server.url";
+    public static final String SERVER_URL_PARAM      = "server.url";
+
+    private final String user;
+    private final String password;
 
     private final TupleFactory   tupleFactory;
     private final ResourceSchema schema;
 
     private MongoReader reader;
 
-    public MongoLoader(String schema) throws ParserException {
+    public MongoLoader(String user, String password, String schema) throws ParserException {
         this.tupleFactory = TupleFactory.getInstance();
         this.schema = new ResourceSchema(Utils.parseSchema(schema));
+        this.user = user;
+        this.password = password;
     }
 
     /** {@inheritDoc} */
     @Override
     public void setLocation(String location, Job job) throws IOException {
-        job.getConfiguration().set(SERVER_URL_PARAM, location);
+        String serverUrl;
+
+        if (user.isEmpty()) {
+            serverUrl = location;
+
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append("mongodb://");
+            builder.append(user);
+            builder.append(":");
+            builder.append(password);
+            builder.append("@");
+            builder.append(location.substring(10));
+
+            serverUrl = builder.toString();
+        }
+
+        job.getConfiguration().set(SERVER_URL_PARAM, serverUrl);
     }
 
     /** {@inheritDoc} */
@@ -133,8 +159,8 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
         private int         progress;
 
 
-        public MongoReader(String serverUrl) throws IOException {
-            MongoClientURI uri = new MongoClientURI(serverUrl);
+        public MongoReader(String location) throws IOException {
+            MongoClientURI uri = new MongoClientURI(location);
             mongoClient = new MongoClient(uri);
 
             DB db = mongoClient.getDB(uri.getDatabase());
@@ -174,6 +200,39 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
         @Override
         public void close() throws IOException {
             mongoClient.close();
+        }
+    }
+
+    /** MongoDB implementation for {@link org.apache.hadoop.mapreduce.InputSplit} */
+    public static class MongoInputSplit extends InputSplit implements Writable {
+
+        private String serverUrl;
+
+        public MongoInputSplit() {
+        }
+
+        public MongoInputSplit(Configuration configuration) {
+            serverUrl = configuration.get(SERVER_URL_PARAM);
+        }
+
+        @Override
+        public long getLength() throws IOException, InterruptedException {
+            return 1;
+        }
+
+        @Override
+        public String[] getLocations() throws IOException, InterruptedException {
+            return new String[]{serverUrl};
+        }
+
+        @Override
+        public void write(DataOutput dataOutput) throws IOException {
+            dataOutput.writeUTF(serverUrl);
+        }
+
+        @Override
+        public void readFields(DataInput dataInput) throws IOException {
+            serverUrl = dataInput.readUTF();
         }
     }
 }

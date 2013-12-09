@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.storage.DataLoader;
-import com.codenvy.analytics.storage.DataStorageContainer;
+import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -43,7 +43,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     public ReadBasedMetric(String metricName) {
         super(metricName);
-        this.dataLoader = DataStorageContainer.createDataLoader();
+        this.dataLoader = MongoDataStorage.getDataLoader();
     }
 
     public ReadBasedMetric(MetricType metricType) {

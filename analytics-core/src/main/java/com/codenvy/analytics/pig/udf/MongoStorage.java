@@ -19,6 +19,7 @@ package com.codenvy.analytics.pig.udf;
 
 import com.mongodb.*;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.pig.StoreFunc;
@@ -29,12 +30,17 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
 
-    public static final String SERVER_URL_PARAM = "server.url";
+    public static final String SERVER_URL_PARAM      = "server.url";
+
+    private final String user;
+    private final String password;
 
     private RecordWriter writer;
 
     /** {@link MongoStorage} constructor. */
-    public MongoStorage() {
+    public MongoStorage(String user, String password) {
+        this.user = user;
+        this.password = password;
     }
 
     /** {@inheritDoc) */
@@ -46,7 +52,24 @@ public class MongoStorage extends StoreFunc {
     /** {@inheritDoc) */
     @Override
     public void setStoreLocation(String location, Job job) throws IOException {
-        job.getConfiguration().set(SERVER_URL_PARAM, location);
+        String serverUrl;
+
+        if (user.isEmpty()) {
+            serverUrl = location;
+
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append("mongodb://");
+            builder.append(user);
+            builder.append(":");
+            builder.append(password);
+            builder.append("@");
+            builder.append(location.substring(10));
+
+            serverUrl = builder.toString();
+        }
+
+        job.getConfiguration().set(SERVER_URL_PARAM, serverUrl);
     }
 
     /** {@inheritDoc) */
@@ -76,9 +99,8 @@ public class MongoStorage extends StoreFunc {
         /** Mongo client. Have to be closed. */
         protected MongoClient mongoClient;
 
-        /** MongoWriter constructor. */
-        public MongoWriter(String serverUrl) throws IOException {
-            MongoClientURI uri = new MongoClientURI(serverUrl);
+        public MongoWriter(Configuration configuration) throws IOException {
+            MongoClientURI uri = new MongoClientURI(configuration.get(SERVER_URL_PARAM));
             mongoClient = new MongoClient(uri);
 
             DB db = mongoClient.getDB(uri.getDatabase());
@@ -121,8 +143,7 @@ public class MongoStorage extends StoreFunc {
         @Override
         public RecordWriter<WritableComparable, Tuple> getRecordWriter(TaskAttemptContext context) throws IOException,
                                                                                                           InterruptedException {
-            String serverUrl = context.getConfiguration().get(SERVER_URL_PARAM);
-            return new MongoWriter(serverUrl);
+            return new MongoWriter(context.getConfiguration());
         }
 
         /** {@inheritDoc} */

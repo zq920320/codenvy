@@ -38,7 +38,7 @@ a2 = FOREACH a1 {
 a3 = FOREACH a2 GENERATE id, (pCreated - pDestroyed) AS projects, builds, deploys, runs, debugs, factories;
 a = FILTER a3 BY projects != 0 OR builds != 0 OR deploys != 0 OR runs != 0 OR debugs != 0 OR factories != 0;
 
-b = LOAD '$STORAGE_URL.$STORAGE_TABLE' USING MongoLoader('id: chararray, projects: long, builds: long, deploys: long, runs: long, debugs: long, factories: long');
+b = LOAD '$STORAGE_URL.$STORAGE_TABLE' USING MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'id: chararray, projects: long, builds: long, deploys: long, runs: long, debugs: long, factories: long');
 
 c1 = JOIN a BY id LEFT, b BY id;
 c2 = FOREACH c1 GENERATE a::id AS id,
@@ -65,4 +65,4 @@ c = FOREACH c3 GENERATE id, (projects < 0 ? 0 : projects) AS projects, builds, d
 
 result = FOREACH c GENERATE id, TOTUPLE('user_email', id), TOTUPLE('projects', projects), TOTUPLE('builds', builds),
         TOTUPLE('deploys', deploys), TOTUPLE('runs', runs), TOTUPLE('debugs', debugs), TOTUPLE('factories', factories);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

@@ -25,8 +25,8 @@ a1 = FOREACH f GENERATE dt, $PARAM AS param;
 a = removeEmptyField(a1, 'param');
 
 result = FOREACH a GENERATE ToMilliSeconds(dt), TOTUPLE('value', param);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, $PARAM AS param;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', param);
-STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage();
+STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

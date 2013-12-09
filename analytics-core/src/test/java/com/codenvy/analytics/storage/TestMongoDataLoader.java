@@ -58,7 +58,7 @@ public class TestMongoDataLoader extends BaseTest {
 
         mongoClient.close();
 
-        dataLoader = DataStorageContainer.createDataLoader();
+        dataLoader = MongoDataStorage.getDataLoader();
     }
 
     @Test

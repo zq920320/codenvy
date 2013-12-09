@@ -33,6 +33,8 @@ public enum Parameters {
     EVENT,
 
     STORAGE_URL,
+    STORAGE_USER,
+    STORAGE_PASSWORD,
     STORAGE_TABLE,
     STORAGE_TABLE_USERS_STATISTICS,
     STORAGE_TABLE_WORKSPACES_STATISTICS,
@@ -133,6 +135,11 @@ public enum Parameters {
             WS_TYPES.valueOf(value);
         }
     };
+
+    /** Removes parameters from execution context */
+    public void remove(Map<String, String> context) {
+        context.remove(name());
+    }
 
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {

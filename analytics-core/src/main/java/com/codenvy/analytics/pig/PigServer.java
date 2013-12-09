@@ -26,7 +26,7 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.storage.DataStorageContainer;
+import com.codenvy.analytics.storage.MongoDataStorage;
 
 import org.apache.pig.ExecType;
 import org.apache.pig.data.Tuple;
@@ -85,7 +85,7 @@ public class PigServer {
     public static void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
         context = validateAndAdjustContext(scriptType, context);
 
-        LOG.info("Script execution " + scriptType + " is started: " + context.toString());
+        LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
         try {
             if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
                 return;
@@ -181,9 +181,9 @@ public class PigServer {
      */
     public static Iterator<Tuple> executeAndReturn(ScriptType scriptType,
                                                    Map<String, String> context) throws IOException {
-
         context = validateAndAdjustContext(scriptType, context);
-        LOG.info("Script execution " + scriptType + " is started: " + context.toString());
+
+        LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
 
         org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
 
@@ -223,17 +223,19 @@ public class PigServer {
             Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, usersStatistic.getStorageTable());
         }
 
-        if (!Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.exists(context)) {
-            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType.WORKSPACES_STATISTICS);
-            Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.put(context, usersStatistic.getStorageTable());
-        }
+//        if (!Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.exists(context)) {
+//            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType
+// .WORKSPACES_STATISTICS);
+//            Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.put(context, usersStatistic.getStorageTable());
+//        }
+
+        MongoDataStorage.putStorageParameters(context);
 
         if (!Parameters.STORAGE_TABLE_FACTORY_SESSIONS.exists(context)) {
             Parameters.STORAGE_TABLE_FACTORY_SESSIONS
                       .put(context, MetricType.FACTORY_SESSIONS_LIST.name().toLowerCase());
         }
 
-        Parameters.STORAGE_URL.put(context, DataStorageContainer.getStorageUrl());
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {
             setOptimizedPaths(context);
         }
@@ -361,5 +363,14 @@ public class PigServer {
 
             return new String(output.toByteArray(), "UTF-8");
         }
+    }
+
+    private static Map<String, String> getSecureContext(Map<String, String> context) {
+        Map<String, String> secureContext = Utils.clone(context);
+        Parameters.STORAGE_URL.remove(secureContext);
+        Parameters.STORAGE_PASSWORD.remove(secureContext);
+        Parameters.STORAGE_USER.remove(secureContext);
+
+        return secureContext;
     }
 }

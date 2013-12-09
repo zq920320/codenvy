@@ -26,6 +26,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -35,56 +36,52 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class MongoDataStorage implements DataStorage {
+public class MongoDataStorage {
 
-    /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataStorage.class);
 
-    public static final String TMP_DIR  = Configurator.getString("analytics.tmp.dir");
-    public static final String HOST     = Configurator.getString("analytics.storage.mongo.host");
-    public static final String PORT     = Configurator.getString("analytics.storage.mongo.port");
-    public static final String USER     = Configurator.getString("analytics.storage.mongo.user");
-    public static final String PASSWORD = Configurator.getString("analytics.storage.mongo.password");
-    public static final String DB       = Configurator.getString("analytics.storage.mongo.db");
+    private static final String  TMP_DIR  = Configurator.getString("analytics.tmp.dir");
+    private static final String  URL      = Configurator.getString("analytics.storage.url");
+    private static final boolean EMBEDDED = Configurator.getBoolean("analytics.storage.embedded");
 
-    private       MongodProcess  mongodProcess;
-    private final MongoClientURI mongoClientURI;
+    private static final MongoClientURI  mongoClientURI;
+    private static final MongoDataLoader mongoDataLoader;
 
-    public MongoDataStorage() {
-        this.mongoClientURI = new MongoClientURI(createStorageUrl());
-    }
+    private static MongodProcess mongodProcess;
 
-    /** {@inheritDoc} */
-    @Override
-    public String getStorageUrl() {
-        return mongoClientURI.toString();
-    }
+    static {
+        mongoClientURI = new MongoClientURI(URL);
 
-    private String createStorageUrl() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("mongodb://");
-
-        if (USER != null) {
-            stringBuilder.append(USER);
-            stringBuilder.append(":");
-            stringBuilder.append(PASSWORD);
-            stringBuilder.append("@");
+        if (EMBEDDED) {
+            initEmbeddedStorage();
         }
 
-        stringBuilder.append(HOST);
-        stringBuilder.append(":");
-        stringBuilder.append(PORT);
-        stringBuilder.append("/");
-        stringBuilder.append(DB);
-
-        return stringBuilder.toString();
+        try {
+            mongoDataLoader = new MongoDataLoader(mongoClientURI);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void initEmbeddedStorage() {
+    public static void putStorageParameters(Map<String, String> context) {
+        if (mongoClientURI.getUsername() == null) {
+            Parameters.STORAGE_URL.put(context, mongoClientURI.toString());
+            Parameters.STORAGE_USER.put(context, "''");
+            Parameters.STORAGE_PASSWORD.put(context, "''");
+        } else {
+            String password = new String(mongoClientURI.getPassword());
+            String serverUrlNoPassword = mongoClientURI.toString().replace(mongoClientURI.getUsername() + ":" +
+                                                                           password + "@", "");
+            Parameters.STORAGE_URL.put(context, serverUrlNoPassword);
+            Parameters.STORAGE_USER.put(context, mongoClientURI.getUsername());
+            Parameters.STORAGE_PASSWORD.put(context, password);
+        }
+    }
+
+    private static void initEmbeddedStorage() {
         if (isStarted()) {
             return;
         }
@@ -118,7 +115,7 @@ public class MongoDataStorage implements DataStorage {
         });
     }
 
-    private boolean isStarted() {
+    private static boolean isStarted() {
         try {
             MongoClient mongoClient = new MongoClient(mongoClientURI);
             try {
@@ -134,9 +131,7 @@ public class MongoDataStorage implements DataStorage {
         return true;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public DataLoader createDataLoader() throws IOException {
-        return new MongoDataLoader(mongoClientURI);
+    public static DataLoader getDataLoader() {
+        return mongoDataLoader;
     }
 }
