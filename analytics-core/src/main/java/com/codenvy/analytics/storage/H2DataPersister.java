@@ -17,10 +17,16 @@
  */
 package com.codenvy.analytics.storage;
 
+import javax.sql.DataSource;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class H2DataPersister extends AbstractJDBCDataPersister {
 
     public H2DataPersister(String url, String user, String password) {
         super(url, user, password);
+    }
+
+    public H2DataPersister(DataSource ds) {
+        super(ds);
     }
 }

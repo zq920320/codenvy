@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -33,23 +34,37 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(AbstractJDBCDataPersister.class);
 
-    private final DecimalFormat colFormat;
+    private final DecimalFormat colFormat = new DecimalFormat("00");
 
-    private final String password;
-    private final String url;
-    private final String user;
+    private final String     password;
+    private final String     url;
+    private final String     user;
+    private final DataSource ds;
 
     public AbstractJDBCDataPersister(String url, String user, String password) {
         this.url = url;
         this.user = user;
         this.password = password;
-        this.colFormat = new DecimalFormat("00");
+        this.ds = null;
+    }
+
+    public AbstractJDBCDataPersister(DataSource ds) {
+        this.ds = ds;
+        this.password = null;
+        this.user = null;
+        this.url = null;
     }
 
     protected Connection openConnection() throws SQLException {
-        Connection connection = DriverManager.getConnection(url, user, password);
-        connection.setAutoCommit(false);
+        Connection connection;
 
+        if (ds != null) {
+            connection = ds.getConnection();
+        } else {
+            connection = DriverManager.getConnection(url, user, password);
+        }
+
+        connection.setAutoCommit(false);
         return connection;
     }
 
