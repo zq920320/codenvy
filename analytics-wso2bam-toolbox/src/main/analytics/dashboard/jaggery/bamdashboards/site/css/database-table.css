@@ -34,8 +34,7 @@
 
 .database-table .first-cell {
    background: #d9e4f6 !important;
-   width: 150px;
-   min-width: 150px;
+   min-width: 180px;
 }
 
 .database-table .cell {
@@ -66,4 +65,39 @@
 
 .database-table .mouseover-row {
 	background: #eee;
+}
+
+.database-table-vertical-row {
+   border: 0px;   
+   text-align: left;
+}
+
+.database-table-vertical-row .cell-name {
+   min-width: 150px;
+   font-weight: normal;
+}
+
+.database-table-vertical-row .cell {
+   font-family: Arial, Verdana, sans-serif;
+   font-weight: bold;   
+}
+
+.database-table-vertical-row .cell a {
+   color: #08c;
+}
+
+.text-cursor {
+   cursor: text;
+}
+
+.database-table-vertical-row .pair-row {
+   background: #f5f5f5;
+}
+
+.database-table-vertical-row .clicked-row {
+   background: #d9e4f6;
+}
+
+.database-table-vertical-row .mouseover-row {
+   background: #eee;
 }

@@ -115,19 +115,43 @@ function printTable(table) {
     print('</table>');
 }
 
+function printTableVerticalRow(table) {
+   print('<table cellspacing="0" class="database-table-vertical-row" align="center">');
+   print('<tbody>');   
+   
+   // print other cells name + cell    
+   for (var i = 0; i < table.columns.length; i++) {
+       print("<tr>");
+       print("<th class='cell-name'>");
+       print(table.columns[i] + ":");
+       print("</th>");
+       
+       print("<td class='cell'>");
+       print(table.rows[i][0]);
+       print("</td>");
+       print("</tr>");
+   }
+
+   
+   print('</tbody>');
+   print('</table>');   
+}
+
 function loadCssStyles() {
    print('<link href="css/single-column.css" rel="stylesheet" type="text/css" />');
+   print('<link href="css/view.css" rel="stylesheet" type="text/css" />');   
    print('<link href="css/database-table.css" rel="stylesheet" type="text/css" />');
    print('<link href="css/page-navigator.css" rel="stylesheet" type="text/css" />');   
 }
-
 
 
 //load handlers of table events
 function loadTableHandlers(ignoreLastRow) {
    print('<script src="scripts/database-table.js"></script>');
    print('<script>databaseTable.setupRowHandlers(' + ignoreLastRow.toString() + ');</script>');
+   print('<script>databaseTable.setupVerticalRowHandlers();</script>');   
 }
+
 
 /**
  * currentPageNumber is 1-based

@@ -40,7 +40,7 @@
         </div>
         <div class="span10">
             <div class="hero-unit">
-                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/user-statistics.jag"></div>
+                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/user-view.jag"></div>
             </div>
         </div>
     </div>
@@ -53,7 +53,7 @@
 
 <script>
    (function() {
-	   var url = "gadgets/user-statistics.jag";
+	   var url = "gadgets/user-view.jag";
 	   
 	   var userId = "<%=request.getParameter("userid")%>";
 	   if (userId != "null") {

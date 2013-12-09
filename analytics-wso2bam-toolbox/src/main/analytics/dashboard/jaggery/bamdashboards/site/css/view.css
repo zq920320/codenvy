@@ -1,0 +1,18 @@
+.view {
+	clear: both;
+}
+
+.overview {
+   float: left;
+   padding-bottom: 30px;
+}
+
+.overview .header {
+   text-decoration: underline;
+	font-size: 1.5em;
+	padding-bottom: 5px;
+}
+
+.database-tables {
+   
+}

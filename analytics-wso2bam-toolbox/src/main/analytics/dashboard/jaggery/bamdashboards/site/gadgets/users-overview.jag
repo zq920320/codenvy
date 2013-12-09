@@ -4,7 +4,7 @@ include_once("utils.jag");
 
 var CURRENT_PAGE_QUERY_PARAMETER = "page";
 var ONE_PAGE_ROWS_COUNT = 5;   // TODO set correct values
-var USER_ID_LINK_PREFIX = "user-statistics.jsp?userid";
+var USER_ID_LINK_PREFIX = "user-view.jsp?userid";
 
 //var result = queryResults('select * from users_overview_lifetime');
 

@@ -10,7 +10,7 @@ function DatabaseTable() {
 
    // ***** Public methods 
    this.setupRowHandlers = function(ignoreLastRow) {
-      var tables = document.getElementsByTagName("table");
+      var tables = document.getElementsByClassName("database-table");
       if (tables != null) {      
          for(var i = 0; i < tables.length; i++) {
             var table = tables[i];
@@ -23,6 +23,29 @@ function DatabaseTable() {
             }            
 
             for (var j = 1; j < rowCount; j++) {
+               var row = rows[j];
+               
+               // add click event handler
+               row.addEventListener("click", onRowClick, true);
+               
+               // add mouse mouseover event handler
+               row.addEventListener("mouseover", onRowMouseover, true);
+               
+               // add mouse mouseout event handler
+               row.addEventListener("mouseout", onRowMouseout, true);
+            }
+         }
+      }
+   }
+   
+   this.setupVerticalRowHandlers = function() {
+      var tables = document.getElementsByClassName("database-table-vertical-row");
+      if (tables != null) {      
+         for(var i = 0; i < tables.length; i++) {
+            var table = tables[i];
+            var rows = table.rows;
+            
+            for (var j = 0; j < rows.length; j++) {
                var row = rows[j];
                
                // add click event handler

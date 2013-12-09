@@ -39,19 +39,8 @@
             </div>
         </div>
         <div class="span10">
-            <div class="well topFilteringPanel">
-                <div id="filter-by" class="left">
-                    Filter by: <form action="#">
-	                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-	                    <button class="btn">Email</button>
-	                    <button class="btn">First Name</button>
-	                    <button class="btn">Second Name</button>                
-	                    <input type="reset" id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn" value="Clear" />
-	                 </form>
-                </div>
-            </div>
             <div class="hero-unit">
-                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/users-overview.jag"></div>
+                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/session-view.jag"></div>
             </div>
         </div>
     </div>
@@ -64,14 +53,14 @@
 
 <script>
    (function() {
-      var url = "gadgets/users-overview.jag";
-      
-      var page = "<%=request.getParameter("page")%>";
-      if (page != "null") {
-         url += "?page=" + page;
-      }
-      
-      jQuery("#dashboardWidget").load(url);
+	   var url = "gadgets/session-view.jag";
+	   
+	   var userId = "<%=request.getParameter("sessionid")%>";
+	   if (userId != "null") {
+	      url += "?sessionid=" + encodeURIComponent(userId);
+	   }
+	   
+	   jQuery("#dashboardWidget").load(url);
    })()
 </script>
 
