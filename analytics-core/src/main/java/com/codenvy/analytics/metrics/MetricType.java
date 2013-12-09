@@ -139,5 +139,7 @@ public enum MetricType {
     USERS_PROFILES,
     USERS_STATISTICS,
     USERS_ACTIVITY,
+
+    WORKSPACES_STATISTICS,
 }
 

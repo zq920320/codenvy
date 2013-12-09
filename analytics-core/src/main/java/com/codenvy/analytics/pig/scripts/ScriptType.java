@@ -86,6 +86,7 @@ public enum ScriptType {
     USER_UPDATE_PROFILE,
     USERS_STATISTICS,
     USERS_ACTIVITY,
+    WORKSPACES_STATISTICS,
 
     /** Script for testing purpose. */
     TEST_MONGO_LOADER {
@@ -112,7 +113,8 @@ public enum ScriptType {
                                                Parameters.FROM_DATE,
                                                Parameters.STORAGE_URL,
                                                Parameters.STORAGE_TABLE,
-                                               Parameters.STORAGE_TABLE_USERS_STATISTICS}));
+                                               Parameters.STORAGE_TABLE_USERS_STATISTICS,
+                                               Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS}));
     }
 
     /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */

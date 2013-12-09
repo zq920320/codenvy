@@ -160,6 +160,14 @@ public class Event {
                                 .withParam("TYPE", type);
         }
 
+        public static Builder createDebugStartedEvent(String user, String ws, String project, String type) {
+            return new Builder().withParam("EVENT", EventType.DEBUG_STARTED.toString())
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("PROJECT", project)
+                                .withParam("TYPE", type);
+        }
+
         public static Builder createRunFinishedEvent(String user, String ws, String project, String type) {
             return new Builder().withParam("EVENT", EventType.RUN_FINISHED.toString())
                                 .withParam("WS", ws)

@@ -19,7 +19,7 @@
 IMPORT 'macros.pig';
 
 l1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-l = FOREACH l1 GENERATE *, '' AS id; -- it requires 'id' field to be in scheme
+l = FOREACH l1 GENERATE *, '' AS id; -- it requires 'id' field in scheme
 
 f = combineClosestEvents(l, '$EVENT-started', '$EVENT-finished');
 
@@ -31,3 +31,20 @@ STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage();
 r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, delta;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', delta);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage();
+
+-- loads existed statistics
+s1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoLoader('id: chararray, time_$EVENT: long');
+
+s = FOREACH s1 GENERATE id, (time_$EVENT IS NULL ? 0 : time_$EVENT) AS time_$EVENT;
+
+-- calculate users' time
+t1 = GROUP f BY user;
+t = FOREACH t1 GENERATE group AS id, SUM(f.delta) AS time_$EVENT;
+
+--combine and store result
+x1 = JOIN t BY id LEFT, s BY id;
+x2 = FOREACH x1 GENERATE t::id AS id, (t::time_$EVENT + (s::time_$EVENT IS NULL ? 0 : s::time_$EVENT)) AS time_$EVENT;
+x = FOREACH x2 GENERATE id, TOTUPLE('user_email', id), TOTUPLE('time_$EVENT', time_$EVENT);
+STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage();
+
+

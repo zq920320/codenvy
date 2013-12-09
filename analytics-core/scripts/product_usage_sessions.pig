@@ -28,7 +28,9 @@ r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) A
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', delta);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage();
 
--- loads existed statistics
+---------------------------------------
+-- The total time of the sessions
+---------------------------------------
 s1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoLoader('id: chararray, time: Long');
 s = FOREACH s1 GENERATE id, (time IS NULL ? 0 : time) AS time;
 
@@ -42,3 +44,24 @@ x1 = JOIN t BY id LEFT, s BY id;
 x2 = FOREACH x1 GENERATE t::id AS id, (t::time + (s::time IS NULL ? 0 : s::time)) AS time;
 x = FOREACH x2 GENERATE id, TOTUPLE('user_email', id), TOTUPLE('time', time);
 STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage();
+
+---------------------------------------
+-- The number of sessions
+---------------------------------------
+k1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoLoader('id: chararray, sessions: Long');
+k = FOREACH k1 GENERATE id, (sessions IS NULL ? 0 : sessions) AS sessions;
+
+-- calculate total user's sessions
+m1 = GROUP f BY user;
+m2 = FOREACH m1 GENERATE group AS id, COUNT(f) AS sessions;
+m = FILTER m2 BY INDEXOF(UPPER(id), 'ANONYMOUSUSER_', 0) != 0 AND id != 'default';
+
+--combine and store result
+n1 = JOIN m BY id LEFT, k BY id;
+n2 = FOREACH n1 GENERATE k::id AS id, (m::sessions + (k::sessions IS NULL ? 0 : k::sessions)) AS sessions;
+n = FOREACH n2 GENERATE id, TOTUPLE('user_email', id), TOTUPLE('sessions', sessions);
+STORE n INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage();
+
+
+
+

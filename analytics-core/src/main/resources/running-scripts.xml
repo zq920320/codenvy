@@ -163,21 +163,21 @@
     <script name="time_spent_in_action">
         <description>Time of all builds</description>
         <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="build"/>
         <parameter key="STORAGE_TABLE" value="builds_time"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all runs</description>
         <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="run"/>
         <parameter key="STORAGE_TABLE" value="runs_time"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all debugs</description>
         <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="debug"/>
         <parameter key="STORAGE_TABLE" value="debugs_time"/>
     </script>

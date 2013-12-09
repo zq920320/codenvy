@@ -44,11 +44,9 @@ import static com.mongodb.util.MyAsserts.fail;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersData extends BaseTest {
 
-    private Map<String, String> params;
-
     @BeforeClass
     public void prepare() throws IOException {
-        params = Utils.newContext();
+        Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
 
@@ -70,6 +68,20 @@ public class TestUsersData extends BaseTest {
                         .withDate("2013-11-01").build());
         events.add(Event.Builder.createProjectDeployedEvent("user4@gmail.com", "ws1", "s", "", "", "")
                         .withDate("2013-11-01").build());
+        events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
+                        .withDate("2013-11-01").build());
+        events.add(Event.Builder.createRunStartedEvent("user4@gmail.com", "ws1", "", "")
+                        .withDate("2013-11-01").build());
+        events.add(Event.Builder.createDebugStartedEvent("user4@gmail.com", "ws1", "", "")
+                        .withDate("2013-11-01").build());
+
+        events.add(
+                Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
+                     .withTime("19:08:00").build());
+        events.add(
+                Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
+                     .withTime("19:10:00").build());
+
 
         File log = LogGenerator.generateLog(events);
 
@@ -93,6 +105,16 @@ public class TestUsersData extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testusersdata");
         PigServer.execute(ScriptType.USERS_STATISTICS, params);
+
+        Parameters.EVENT.put(params, "build");
+        Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile-time");
+        PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, params);
+
+        Parameters.EVENT.put(params, "run");
+        PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, params);
+
+        Parameters.EVENT.put(params, "debug");
+        PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, params);
     }
 
     @Test
@@ -112,7 +134,7 @@ public class TestUsersData extends BaseTest {
 
             switch (user) {
                 case "user1@gmail.com":
-                    assertEquals(all.size(), 9);
+                    assertEquals(all.size(), 13);
                     assertEquals(all.get("user_first_name").getAsString(), "f_1");
                     assertEquals(all.get("user_last_name").getAsString(), "l_1");
                     assertEquals(all.get("user_company").getAsString(), "");
@@ -120,29 +142,44 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get("projects").getAsString(), "1");
                     assertEquals(all.get("deploys").getAsString(), "0");
                     assertEquals(all.get("builds").getAsString(), "0");
+                    assertEquals(all.get("debugs").getAsString(), "0");
+                    assertEquals(all.get("runs").getAsString(), "0");
+                    assertEquals(all.get("factories").getAsString(), "1");
                     assertEquals(all.get("time").getAsString(), "300");
-
+                    assertEquals(all.get("sessions").getAsString(), "1");
                     break;
+
                 case "user2@gmail.com":
-                    assertEquals(all.size(), 5);
+                    assertEquals(all.size(), 12);
                     assertEquals(all.get("user_first_name").getAsString(), "f_2");
                     assertEquals(all.get("user_last_name").getAsString(), "l_2");
                     assertEquals(all.get("user_company").getAsString(), "");
                     assertEquals(all.get("user_phone").getAsString(), "");
-
+                    assertEquals(all.get("projects").getAsString(), "0");
+                    assertEquals(all.get("runs").getAsString(), "1");
+                    assertEquals(all.get("deploys").getAsString(), "0");
+                    assertEquals(all.get("debugs").getAsString(), "0");
+                    assertEquals(all.get("builds").getAsString(), "0");
+                    assertEquals(all.get("factories").getAsString(), "0");
+                    assertEquals(all.get("time_run").getAsString(), "120");
                     break;
+
                 case "user3@gmail.com":
-                    assertEquals(all.size(), 2);
+                    assertEquals(all.size(), 3);
+                    assertEquals(all.get("sessions").getAsString(), "1");
                     assertEquals(all.get("time").getAsString(), "120");
-
                     break;
+
                 case "user4@gmail.com":
-                    assertEquals(all.size(), 4);
+                    assertEquals(all.size(), 7);
                     assertEquals(all.get("projects").getAsString(), "0");
                     assertEquals(all.get("deploys").getAsString(), "1");
                     assertEquals(all.get("builds").getAsString(), "1");
-
+                    assertEquals(all.get("debugs").getAsString(), "1");
+                    assertEquals(all.get("runs").getAsString(), "1");
+                    assertEquals(all.get("factories").getAsString(), "0");
                     break;
+
                 default:
                     fail("unknown user" + user);
                     break;
