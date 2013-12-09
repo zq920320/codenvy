@@ -39,10 +39,13 @@ $(function () {
         triggerCollect();
     });
 });
+
 function triggerCollect() {
     var timeGrouping = $("#timely-dd button.btn-primary").text();
-    reloadIFrame({timeGroup: timeGrouping});
+//    reloadIFrame({timeGroup: timeGrouping});
+    reloadDiv({timeGroup: timeGrouping});
 };
+
 function reloadIFrame(param) {
     $("iframe").each(function () {
         var currentUrl = $(this).attr('src');
@@ -54,6 +57,22 @@ function reloadIFrame(param) {
         $(this).attr('src', newUrl);
     });
 };
+
+function reloadDiv(param) {
+   var div = jQuery("#dashboardWidget");
+   
+   var currentUrl = div.attr('src');
+
+   if (currentUrl.indexOf('?')) {
+      var absUrl = currentUrl.split('?');
+      currentUrl = absUrl[0];
+   }
+  
+   var newUrl = currentUrl + "?timeGrouping=" + param.timeGroup;
+   
+   div.load(newUrl);   
+};
+
 function populateCombo(id, data) {
 
 }

@@ -6,9 +6,9 @@ var CURRENT_PAGE_QUERY_PARAMETER = "page";
 var ONE_PAGE_ROWS_COUNT = 5;   // TODO set correct values
 var USER_ID_LINK_PREFIX = "user-statistics.jsp?userid";
 
-var result = queryResults('select * from users_overview_lifetime');
+//var result = queryResults('select * from users_overview_lifetime');
 
-//var result = queryResults('select * from projects_types_Day');  // for demonstration
+var result = queryResults('select * from projects_types_Day');  // for demonstration
 
 var table = createTable(result);
 
@@ -52,13 +52,8 @@ if (pageCount > 1) {
    if (requestUrl.indexOf("?") < 0) {
       delimeter = "?";
    }
-
-   // remove  CURRENT_PAGE_QUERY_PARAMETER from baseUrl
-   requestUrl = requestUrl.replace(delimeter + CURRENT_PAGE_QUERY_PARAMETER + "=" + currentPageNumber, "");
-
-   var baseUrl = requestUrl + delimeter + CURRENT_PAGE_QUERY_PARAMETER;
       
-   printBottomPageNavigator(baseUrl, pageCount, currentPageNumber);
+   printBottomPageNavigator(pageCount, currentPageNumber);
 }
 
 %>

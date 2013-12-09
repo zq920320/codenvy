@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <iframe id="dashboardWidget-1" class="single-column-gadget" src="gadgets/users-overview.jag"></iframe>
+                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/users-overview.jag"></div>
             </div>
         </div>
     </div>
@@ -61,5 +61,19 @@
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>
 <script type="text/javascript" src="../navigation.populator.js"></script>
+
+<script>
+   (function() {
+      var url = "gadgets/users-overview.jag";
+      
+      var page = "<%=request.getParameter("page")%>";
+      if (page != "null") {
+         url += "?page=" + page;
+      }
+      
+      jQuery("#dashboardWidget").load(url);
+   })()
+</script>
+
 </body>
 </html>

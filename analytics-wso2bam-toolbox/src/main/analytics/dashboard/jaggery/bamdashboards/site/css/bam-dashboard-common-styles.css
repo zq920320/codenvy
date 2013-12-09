@@ -15,14 +15,16 @@ iframe {
 
 .hero-unit {
     padding: 0;
+    float: left;
 /*    background: #ddd;*/
-    height: 100%;
 }
 
 .single-column-gadget {
     width: 100%;
     min-height: 420px;
     border: none;
+	 margin: 0px;
+	 display: block;    
 }
 
 .hero-unit .jqplot-table-legend {

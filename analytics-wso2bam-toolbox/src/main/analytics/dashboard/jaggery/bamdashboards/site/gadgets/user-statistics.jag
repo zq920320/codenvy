@@ -3,7 +3,9 @@
 include_once("utils.jag");
 
 var userId = request.getParameter('userid');
-var tableNames = ['user_profile'];
+
+//var tableNames = ['user_profile'];   // TODO uncomment
+var tableNames = ['workspaces_Day'];   // TODO remove
 
 loadCssStyles();
 

@@ -58,7 +58,7 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <iframe id="dashboardWidget-1" class="single-column-gadget" src="gadgets/timeline.jag?timeGrouping=day"></iframe>
+                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/timeline.jag"></div>
             </div>
         </div>
     </div>
@@ -68,5 +68,6 @@
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>
 <script type="text/javascript" src="../navigation.populator.js"></script>
+<script>jQuery("#dashboardWidget").load("gadgets/timeline.jag?timeGrouping=day");</script>
 </body>
 </html>

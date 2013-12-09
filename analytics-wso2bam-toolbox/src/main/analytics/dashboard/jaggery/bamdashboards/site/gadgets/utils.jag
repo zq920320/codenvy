@@ -116,26 +116,28 @@ function printTable(table) {
 }
 
 function loadCssStyles() {
-   print('<link href="../css/single-column.css" rel="stylesheet" type="text/css" />');
-   print('<link href="../css/database-table.css" rel="stylesheet" type="text/css" />');
-   print('<link href="../css/page-navigator.css" rel="stylesheet" type="text/css" />');   
+   print('<link href="css/single-column.css" rel="stylesheet" type="text/css" />');
+   print('<link href="css/database-table.css" rel="stylesheet" type="text/css" />');
+   print('<link href="css/page-navigator.css" rel="stylesheet" type="text/css" />');   
 }
 
 
 
 //load handlers of table events
 function loadTableHandlers(ignoreLastRow) {
-   print('<script src="../scripts/database-table.js"></script>');
+   print('<script src="scripts/database-table.js"></script>');
    print('<script>databaseTable.setupRowHandlers(' + ignoreLastRow.toString() + ');</script>');
 }
 
 /**
  * currentPageNumber is 1-based
  */
-function printBottomPageNavigator(baseUrl, pageCount, currentPageNumber) {
+function printBottomPageNavigator(pageCount, currentPageNumber) {
    if (typeof pageCount == "undefined" || pageCount <= 0) {
       return;
    }   
+   
+   var baseUrl = "?page";
    
    print("<div class='bottom-page-navigator'>");
    

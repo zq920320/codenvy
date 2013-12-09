@@ -22,10 +22,10 @@
 }
 
 .bottom-page-navigator .current {
-	font-weight: bold;
+	text-decoration: underline !important;
 }
 
 .bottom-page-navigator .empty {
-   width: 14px;
+   width: 10px;
    display: inline-block;
 }
