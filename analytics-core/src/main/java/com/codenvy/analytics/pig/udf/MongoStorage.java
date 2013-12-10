@@ -161,33 +161,27 @@ public class MongoStorage extends StoreFunc {
     /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
     public static class MongoCommitter extends OutputCommitter {
 
-        /** {@inheritDoc) */
         @Override
         public void setupJob(JobContext jobContext) throws IOException {
         }
 
-        /** {@inheritDoc) */
         @Override
         public void cleanupJob(JobContext jobContext) throws IOException {
         }
 
-        /** {@inheritDoc) */
         @Override
         public void setupTask(TaskAttemptContext taskContext) throws IOException {
         }
 
-        /** {@inheritDoc) */
         @Override
         public boolean needsTaskCommit(TaskAttemptContext taskContext) throws IOException {
             return false;
         }
 
-        /** {@inheritDoc) */
         @Override
         public void commitTask(TaskAttemptContext taskContext) throws IOException {
         }
 
-        /** {@inheritDoc) */
         @Override
         public void abortTask(TaskAttemptContext taskContext) throws IOException {
         }
