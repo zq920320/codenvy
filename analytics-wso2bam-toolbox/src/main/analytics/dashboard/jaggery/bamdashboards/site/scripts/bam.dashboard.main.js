@@ -41,9 +41,9 @@ $(function () {
 });
 
 function triggerCollect() {
-    var timeGrouping = $("#timely-dd button.btn-primary").text();
-//    reloadIFrame({timeGroup: timeGrouping});
-    reloadDiv({timeGroup: timeGrouping});
+    var timeGroup = $("#timely-dd button.btn-primary").text();
+//    reloadIFrame({timeGroup: timeGroup});
+    reloadDiv({timeGroup: timeGroup});
 };
 
 function reloadIFrame(param) {
@@ -53,7 +53,7 @@ function reloadIFrame(param) {
             var absUrl = currentUrl.split('?');
             currentUrl = absUrl[0];
         }
-        var newUrl = currentUrl + "?timeGrouping=" + param.timeGroup;
+        var newUrl = currentUrl + "?timeGroup=" + param.timeGroup;
         $(this).attr('src', newUrl);
     });
 };
@@ -61,21 +61,60 @@ function reloadIFrame(param) {
 function reloadDiv(param) {
    var div = jQuery("#dashboardWidget");
    
-   var currentUrl = div.attr('src');
+   var divUrl = div.attr('src');
 
-   if (currentUrl.indexOf('?')) {
-      var absUrl = currentUrl.split('?');
-      currentUrl = absUrl[0];
+   if (divUrl.indexOf('?')) {
+      var absUrl = divUrl.split('?');
+      divUrl = absUrl[0];
    }
   
-   var newUrl = currentUrl + "?timeGrouping=" + param.timeGroup;
+   var newUrl = divUrl + "?timeGroup=" + param.timeGroup;
+   div.load(newUrl, function() {
+      // rewrite page location to make it possible to navigate new url through the browser's history
+      var pageUrl = window.location.href;
+      if (pageUrl.indexOf('?')) {
+         var absUrl = pageUrl .split('?');
+         pageUrl = absUrl[0];
+      }
+      var newPageUrl = pageUrl + "?timeGroup=" + param.timeGroup; 
+      window.history.pushState({html: div.html(), parameter: param.timeGroup}, document.title, newPageUrl);
+   });
    
-   div.load(newUrl);   
 };
+
+function loadDashboardWidget(gadgetUrl, options) {      
+   var param = options.parameterValue || options.parameterDefaultValue;
+   if (param == "null") {
+      param = options.parameterDefaultValue;
+   }
+   
+   gadgetUrl += "?" + options.parameterName + "=" + param;
+   
+   var div = jQuery("#dashboardWidget");
+   div.load(gadgetUrl, function(parameter) {
+      // rewrite page location to make it possible to navigate new url through the browser's history
+      window.history.pushState({"html": div.html(), parameter: param}, document.title, window.location.href);
+   });
+   
+   jQuery("button:contains('" + param + "')").addClass('btn-primary');
+   
+   // update div when navigating in history
+   window.addEventListener('popstate', function(event) {
+      if (event.state != null && typeof event.state.parameter != "undefined") {
+         jQuery(options.buttonJQuerySelector).removeClass('btn-primary');
+         jQuery("button:contains('" + event.state.parameter + "')").addClass('btn-primary');
+      }
+      
+      if (event.state != null && typeof event.state.html != "undefined") {
+         jQuery("#dashboardWidget").html(event.state.html);
+      }
+   });
+}
 
 function populateCombo(id, data) {
 
 }
+
 $(document).ready(function () {
     $.ajax({
         url: 'populate_combos_ajaxprocessor.jag',

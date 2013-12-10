@@ -2,7 +2,7 @@
 
 include_once("utils.jag");
 
-var timeGrouping = request.getParameter('timeGrouping');
+var timeGroup = request.getParameter('timeGroup');
 var tableNames = ['factories', 'authenticated_factory_sessions',
             'converted_factory_sessions', 'factory_sessions_ide_usage_events',
             'factory_users_sessions', 'factory_product_usage'];
@@ -10,7 +10,7 @@ var tableNames = ['factories', 'authenticated_factory_sessions',
 loadCssStyles();
 
 for (var i = 0; i < tableNames.length; i++) {
-    var result = queryResults('select * from ' + tableNames[i] + '_' + timeGrouping);
+    var result = queryResults('select * from ' + tableNames[i] + '_' + timeGroup);
     var table = createTable(result);
 
     printTable(table);

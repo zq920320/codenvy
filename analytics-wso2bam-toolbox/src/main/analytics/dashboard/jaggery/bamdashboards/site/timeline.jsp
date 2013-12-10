@@ -41,7 +41,7 @@
         <div class="span10">
             <div class="well topFilteringPanel">
                 <div id="timely-dd" class="btn-group timely-dd-btns left">
-                    <button class="btn btn-primary">Day</button>
+                    <button class="btn">Day</button>
                     <button class="btn">Week</button>
                     <button class="btn">Month</button>
                     <button class="btn">LifeTime</button>
@@ -68,6 +68,11 @@
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>
 <script type="text/javascript" src="../navigation.populator.js"></script>
-<script>jQuery("#dashboardWidget").load("gadgets/timeline.jag?timeGrouping=day");</script>
+<script>
+   loadDashboardWidget("gadgets/timeline.jag", {"buttonJQuerySelector": "#timely-dd button",
+                                                 "parameterName": "timeGroup",
+                                                 "parameterValue": "<%=request.getParameter("timeGroup")%>",
+                                                 "parameterDefaultValue": "Day"});
+</script>
 </body>
 </html>
