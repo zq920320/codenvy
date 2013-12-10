@@ -62,6 +62,10 @@ public class Configurator {
         return getString(key).split(",");
     }
 
+    public static boolean exists(String key) {
+        return getString(key) != null;
+    }
+
     /** @return value of the property of the String type */
     public static String getString(String key) {
         String currentValue = properties.getProperty(key);
