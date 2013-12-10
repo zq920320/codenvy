@@ -2,6 +2,9 @@
 
 include_once("utils.jag");
 
+var dataJson = get('https://localhost:9443/api/view/build/timeline?time_unit=DAY&user=abazko@gmail.com');
+createTableFromJson(dataJson);
+
 var timeGroup = request.getParameter('timeGroup');
 var tableNames = ['workspaces', 'workspaces_usage', 'users', 'users_usage', 'users_engagement', 'invitations',
                     'authentications', 'usage_time', 'user_sessions', 'projects', 'ide_usage', 'time_spent',

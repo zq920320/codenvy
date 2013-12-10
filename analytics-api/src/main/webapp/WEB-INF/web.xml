@@ -64,7 +64,7 @@
 
     <login-config>
         <auth-method>BASIC</auth-method>
-        <realm-name>Analytics application</realm-name>
+        <realm-name>Analytics api</realm-name>
     </login-config>
 
     <security-role>

@@ -26,30 +26,38 @@ import com.codenvy.analytics.services.XmlConfigurationManager;
 import com.codenvy.analytics.storage.CSVDataPersister;
 import com.codenvy.analytics.storage.DataPersister;
 import com.codenvy.analytics.storage.JdbcDataPersisterFactory;
+import com.codenvy.dto.server.JsonStringMapImpl;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+@Path("view")
 public class ViewBuilder implements Feature {
 
     /** Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(ViewBuilder.class);
+    private static final Logger LOG           = LoggerFactory.getLogger(ViewBuilder.class);
+    private static final String VIEW_RESOURCE = "views.xml";
 
     private final DataPersister                              dataPersister;
     private final CSVDataPersister                           csvDataPersister;
@@ -65,6 +73,55 @@ public class ViewBuilder implements Feature {
     @Override
     public boolean isAvailable() {
         return true;
+    }
+
+    @GET
+    @Path("build/{name}")
+    @Produces({"application/json"})
+    public Response build(@PathParam("name") String name, @Context UriInfo uriInfo) {
+        try {
+            DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration(VIEW_RESOURCE);
+            ViewConfiguration viewConfiguration = displayConfiguration.getView(name);
+
+            Map<String, List<List<ValueData>>> result = computeViewData(viewConfiguration, extractContext(uriInfo));
+            return Response.status(Response.Status.OK).entity(transform(result).toJson()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    private JsonStringMapImpl transform(Map<String, List<List<ValueData>>> data) {
+        Map<String, Map<String, Map<String, String>>> result = new LinkedHashMap<>(data.size());
+
+        for (Map.Entry<String, List<List<ValueData>>> sectionEntry : data.entrySet()) {
+            Map<String, Map<String, String>> newSectionData = new LinkedHashMap<>(sectionEntry.getValue().size());
+
+            for (int i = 0; i < sectionEntry.getValue().size(); i++) {
+                List<ValueData> rowData = sectionEntry.getValue().get(i);
+                Map<String, String> newRowData = new LinkedHashMap<>(rowData.size());
+
+                for (int j = 0; j < rowData.size(); j++) {
+                    newRowData.put("c" + j, rowData.get(j).getAsString());
+                }
+
+                newSectionData.put("r" + i, newRowData);
+            }
+
+            result.put(sectionEntry.getKey(), newSectionData);
+        }
+
+        return new JsonStringMapImpl(result);
+    }
+
+    private Map<String, String> extractContext(UriInfo info) {
+        MultivaluedMap<String, String> parameters = info.getQueryParameters();
+        Map<String, String> context = new HashMap<>(parameters.size());
+
+        for (String key : parameters.keySet()) {
+            context.put(key.toUpperCase(), parameters.getFirst(key));
+        }
+
+        return context;
     }
 
     /** {@inheritDoc} */
@@ -93,9 +150,10 @@ public class ViewBuilder implements Feature {
      * @return result in format: key - section id, value - data of this section
      */
     private Map<String, List<List<ValueData>>> computeViewData(ViewConfiguration viewConfiguration,
-                                                               Parameters.TimeUnit timeUnit) throws IOException {
+                                                               Map<String, String> context) throws IOException {
         try {
             Map<String, List<List<ValueData>>> viewData = new LinkedHashMap<>(viewConfiguration.getSections().size());
+            Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
 
             for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
 
@@ -129,7 +187,7 @@ public class ViewBuilder implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            computeDisplayData(configurationManager.loadConfiguration("views.xml"));
+            computeDisplayData(configurationManager.loadConfiguration(VIEW_RESOURCE));
         } finally {
             LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
@@ -176,8 +234,7 @@ public class ViewBuilder implements Feature {
 
     private class ComputeViewDataAction extends RecursiveAction {
 
-        private final ViewConfiguration viewConfiguration;
-
+        private final ViewConfiguration   viewConfiguration;
         private final Parameters.TimeUnit timeUnit;
 
         private ComputeViewDataAction(ViewConfiguration viewConfiguration, Parameters.TimeUnit timeUnit) {
@@ -189,7 +246,9 @@ public class ViewBuilder implements Feature {
         protected void compute() {
             try {
                 String viewId = viewConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
-                Map<String, List<List<ValueData>>> viewData = computeViewData(viewConfiguration, timeUnit);
+                Map<String, String> context = Utils.initializeContext(timeUnit);
+
+                Map<String, List<List<ValueData>>> viewData = computeViewData(viewConfiguration, context);
 
                 retainViewData(viewId, viewData, Utils.initializeContext(Parameters.TimeUnit.DAY)); // TODO context
             } catch (IOException | ParseException | SQLException e) {

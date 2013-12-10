@@ -31,6 +31,16 @@ public class DisplayConfiguration {
         return views;
     }
 
+    public ViewConfiguration getView(String name) throws IllegalArgumentException {
+        for (ViewConfiguration view : views) {
+            if (view.getName().equals(name)) {
+                return view;
+            }
+        }
+
+        throw new IllegalArgumentException("There is no view with name " + name);
+    }
+
     @XmlElement(name = "view")
     public void setViews(List<ViewConfiguration> views) {
         this.views = views;

@@ -43,12 +43,12 @@
 
     <servlet-mapping>
         <servlet-name>listReports</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/reports</url-pattern>
     </servlet-mapping>
 
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Analytics-API</web-resource-name>
+            <web-resource-name>Analytics-Application</web-resource-name>
             <url-pattern>/*</url-pattern>
             <http-method>POST</http-method>
             <http-method>GET</http-method>
@@ -63,7 +63,7 @@
 
     <login-config>
         <auth-method>BASIC</auth-method>
-        <realm-name>Analytics application</realm-name>
+        <realm-name>Analytics Application</realm-name>
     </login-config>
 
     <security-role>

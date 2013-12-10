@@ -57,7 +57,7 @@ public class Utils {
 
     /** Extracts {@link Parameters#TIME_UNIT} parameter value from context. */
     public static Parameters.TimeUnit getTimeUnit(Map<String, String> context) {
-        return Parameters.TimeUnit.valueOf(Parameters.TIME_UNIT.get(context));
+        return Parameters.TimeUnit.valueOf(Parameters.TIME_UNIT.get(context).toUpperCase());
     }
 
     /** @return fromDate value */
