@@ -25,6 +25,7 @@ public enum MetricFilter {
     WS,
     USER,
     DOMAIN,
+    COMPANY,
 
     ORG_ID,
     AFFILIATE_ID,

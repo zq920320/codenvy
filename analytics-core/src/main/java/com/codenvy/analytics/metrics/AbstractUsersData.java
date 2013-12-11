@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
@@ -36,12 +37,25 @@ abstract public class AbstractUsersData extends ReadBasedMetric {
     public DBObject getFilter(Map<String, String> clauses) throws ParseException {
         BasicDBObject match = new BasicDBObject();
 
-        if (MetricFilter.USER.exists(clauses)) {
-            String[] values = MetricFilter.USER.get(clauses).split(",");
-            match.put("_id", new BasicDBObject("$in", values));
+        for (MetricFilter filter : Utils.getFilters(clauses)) {
+            String[] values = filter.get(clauses).split(",");
+            String key = getFilterKey(filter);
+
+            match.put(key, new BasicDBObject("$in", values));
         }
 
         return new BasicDBObject("$match", match);
+    }
+
+    private String getFilterKey(MetricFilter filter) {
+        switch (filter) {
+            case USER:
+                return "_id";
+            case COMPANY:
+                return "user_company";
+            default:
+                return filter.name().toLowerCase();
+        }
     }
 
     @Override

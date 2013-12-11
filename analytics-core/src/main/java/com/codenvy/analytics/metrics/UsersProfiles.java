@@ -20,6 +20,12 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersProfiles extends AbstractUsersData {
 
+    public static final String USER_EMAIL_ATTR   = "user_email";
+    public static final String USER_PROFILE_ATTR = "user_profile";
+    public static final String USER_COMPANY_ATTR = "user_company";
+    public static final String USER_JOB_ATTR     = "user_job";
+    public static final String USER_PHONE_ATTR   = "user_phone";
+
     public UsersProfiles() {
         super(MetricType.USERS_PROFILES);
     }

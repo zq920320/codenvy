@@ -70,9 +70,9 @@ public class TestUserUpdateProfile extends BaseTest {
         PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
 
 
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company", "22", "2")
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company-2", "22", "2")
                         .withDate("2013-01-02").build());
-        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company", "22", "2")
+        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company-2", "22", "2")
                         .withDate("2013-01-02").build());
         events.add(Event.Builder.createUserUpdateProfile("user4@gmail.com", "f4", "l4", "company", "22", "")
                         .withDate("2013-01-02").build());
@@ -91,9 +91,9 @@ public class TestUserUpdateProfile extends BaseTest {
 
         assertTuples(iterator, new String[]{
                 "(user1@gmail.com,(user_email,user1@gmail.com),(user_first_name,f3),(user_last_name,l3)," +
-                "(user_company,company),(user_phone,22),(user_job,2))",
+                "(user_company,company-2),(user_phone,22),(user_job,2))",
                 "(user3@gmail.com,(user_email,user3@gmail.com),(user_first_name,f4),(user_last_name,l4)," +
-                "(user_company,company),(user_phone,22),(user_job,2))",
+                "(user_company,company-2),(user_phone,22),(user_job,2))",
                 "(user4@gmail.com,(user_email,user4@gmail.com),(user_first_name,f4),(user_last_name,l4)," +
                 "(user_company,company),(user_phone,22),(user_job,))"});
     }
@@ -113,7 +113,7 @@ public class TestUserUpdateProfile extends BaseTest {
 
             if (all.get("user_email").getAsString().equals("user1@gmail.com")) {
                 assertEquals(all.get("user_last_name").getAsString(), "l3");
-                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_company").getAsString(), "company-2");
                 assertEquals(all.get("user_phone").getAsString(), "22");
                 assertEquals(all.get("user_job").getAsString(), "2");
 
@@ -127,7 +127,7 @@ public class TestUserUpdateProfile extends BaseTest {
             } else if (all.get("user_email").getAsString().equals("user3@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
                 assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_company").getAsString(), "company-2");
                 assertEquals(all.get("user_phone").getAsString(), "22");
                 assertEquals(all.get("user_job").getAsString(), "2");
 
@@ -157,9 +157,40 @@ public class TestUserUpdateProfile extends BaseTest {
         assertEquals(all.get("user_email").getAsString(), "user1@gmail.com");
         assertEquals(all.get("user_first_name").getAsString(), "f3");
         assertEquals(all.get("user_last_name").getAsString(), "l3");
-        assertEquals(all.get("user_company").getAsString(), "company");
+        assertEquals(all.get("user_company").getAsString(), "company-2");
         assertEquals(all.get("user_phone").getAsString(), "22");
         assertEquals(all.get("user_job").getAsString(), "2");
+    }
+
+    @Test
+    public void testUsersByCompany() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.COMPANY.put(context, "company");
+
+        Metric metric = new TestUserProfile();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 2);
+
+        for (ValueData object : value.getAll()) {
+            MapValueData item = (MapValueData)object;
+            Map<String, ValueData> all = item.getAll();
+
+            if (all.get("user_email").getAsString().equals("user2@gmail.com")) {
+                assertEquals(all.get("user_first_name").getAsString(), "f2");
+                assertEquals(all.get("user_last_name").getAsString(), "l2");
+                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_phone").getAsString(), "11");
+                assertEquals(all.get("user_job").getAsString(), "1");
+
+            } else if (all.get("user_email").getAsString().equals("user4@gmail.com")) {
+                assertEquals(all.get("user_first_name").getAsString(), "f4");
+                assertEquals(all.get("user_last_name").getAsString(), "l4");
+                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_phone").getAsString(), "22");
+                assertEquals(all.get("user_job").getAsString(), "");
+            }
+        }
     }
 
     public class TestUserProfile extends UsersProfiles {

@@ -20,6 +20,8 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.storage.DataLoader;
 import com.codenvy.analytics.storage.MongoDataStorage;
@@ -28,6 +30,7 @@ import com.mongodb.DBObject;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -70,7 +73,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         the execution context
      * @return {@link DBObject}
      */
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException {
+    public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
         BasicDBObject match = new BasicDBObject();
 
         DBObject range = new BasicDBObject();
@@ -79,11 +82,34 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         match.put("_id", range);
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
-            String[] values = filter.get(clauses).split(",");
+            String[] values;
+            if (filter == MetricFilter.COMPANY) {
+                values = getUsersInCompany(filter.get(clauses));
+            } else {
+                values = filter.get(clauses).split(",");
+            }
             match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
         }
 
         return new BasicDBObject("$match", match);
+    }
+
+    private String[] getUsersInCompany(String company) throws IOException {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.COMPANY.put(context, company);
+
+        List<ValueData> users =
+                ((ListValueData)MetricFactory.getMetric(MetricType.USERS_PROFILES).getValue(context)).getAll();
+        String[] result = new String[users.size()];
+
+        for (int i = 0; i < users.size(); i++) {
+            MapValueData user = (MapValueData)users.get(i);
+            Map<String, ValueData> profile = user.getAll();
+
+            result[i] = profile.get(UsersProfiles.USER_PROFILE_ATTR).getAsString();
+        }
+
+        return result;
     }
 
     /**
