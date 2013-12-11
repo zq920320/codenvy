@@ -83,7 +83,15 @@ public class ViewBuilder implements Feature {
             DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration(VIEW_RESOURCE);
             ViewConfiguration viewConfiguration = displayConfiguration.getView(name);
 
-            Map<String, List<List<ValueData>>> result = computeViewData(viewConfiguration, extractContext(uriInfo));
+            Map<String, String> context = extractContext(uriInfo);
+
+            Map<String, List<List<ValueData>>> result;
+            if (Utils.getFilters(context).isEmpty()) {
+                result = queryViewData(viewConfiguration, context);
+            } else {
+                result = computeViewData(viewConfiguration, context);
+            }
+
             return Response.status(Response.Status.OK).entity(transform(result).toJson()).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
@@ -141,6 +149,47 @@ public class ViewBuilder implements Feature {
             doExecute();
         } catch (Exception e) {
             throw new JobExecutionException(e);
+        }
+    }
+
+    /**
+     * Compute data for specific view.
+     *
+     * @return result in format: key - section id, value - data of this section
+     */
+    private Map<String, List<List<ValueData>>> queryViewData(ViewConfiguration viewConfiguration,
+                                                             Map<String, String> context) throws IOException {
+        try {
+            Map<String, List<List<ValueData>>> viewData = new LinkedHashMap<>(viewConfiguration.getSections().size());
+            Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
+
+            for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
+
+
+
+
+                List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
+
+                for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
+                    Constructor<?> constructor =
+                            Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
+                    Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
+
+                    int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : sectionConfiguration.getColumns();
+                    Map<String, String> initialContext = Utils.initializeContext(timeUnit);
+
+                    List<ValueData> rowData = row.getData(initialContext, rowCount);
+                    sectionData.add(rowData);
+                }
+
+                String sectionId = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
+                viewData.put(sectionId, sectionData);
+            }
+
+            return viewData;
+        } catch (NoSuchMethodException | ClassCastException | ClassNotFoundException | InvocationTargetException |
+                IllegalAccessException | InstantiationException | ParseException e) {
+            throw new IOException(e);
         }
     }
 
@@ -228,8 +277,8 @@ public class ViewBuilder implements Feature {
                                   Map<String, List<List<ValueData>>> viewData,
                                   Map<String, String> context) throws SQLException, IOException {
 
-        dataPersister.retainData(viewId, viewData, context);
-        csvDataPersister.retainData(viewId, viewData, context);
+        dataPersister.storeData(viewId, viewData, context);
+        csvDataPersister.storeData(viewId, viewData, context);
     }
 
     private class ComputeViewDataAction extends RecursiveAction {

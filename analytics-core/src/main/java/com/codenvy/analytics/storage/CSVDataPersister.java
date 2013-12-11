@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -42,11 +43,15 @@ public class CSVDataPersister implements DataPersister {
     private static final SimpleDateFormat dirFormat          =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
-    /** {@inheritDoc} */
     @Override
-    public void retainData(String viewId,
-                           Map<String, List<List<ValueData>>> viewData,
-                           Map<String, String> context) throws IOException {
+    public List<List<ValueData>> loadData(String viewId) throws SQLException, IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void storeData(String viewId,
+                          Map<String, List<List<ValueData>>> viewData,
+                          Map<String, String> context) throws IOException {
 
         try {
             File csvFile = getFile(viewId, REPORTS_DIR, context);

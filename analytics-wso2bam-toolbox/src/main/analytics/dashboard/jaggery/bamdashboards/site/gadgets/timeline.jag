@@ -2,21 +2,27 @@
 
 include_once("utils.jag");
 
-var dataJson = get('https://localhost:9443/api/view/build/timeline?time_unit=DAY&user=abazko@gmail.com');
-createTableFromJson(dataJson);
+var timeGroup = request.getParameter("timeGroup");
+var user = request.getParameter("user");
+var domain = request.getParameter("domain");
+var company = request.getParameter("company");
+var queryParams = {"time_unit": timeGroup.toUpperCase()};
 
-var timeGroup = request.getParameter('timeGroup');
-var tableNames = ['workspaces', 'workspaces_usage', 'users', 'users_usage', 'users_engagement', 'invitations',
-                    'authentications', 'usage_time', 'user_sessions', 'projects', 'ide_usage', 'time_spent',
-                    'projects_types', 'projects_paas'];
+if (user != null) {
+    queryParams["user"] = user;
+
+} else if (domain != null) {
+    queryParams["domain"] = domain;
+
+} else if (company != null) {
+    queryParams["company"] = company;
+}
 
 loadCssStyles();
 
-for (var i = 0; i < tableNames.length; i++) {
-    var result = queryResults('select * from ' + tableNames[i] + '_' + timeGroup);
-    var table = createTable(result);
-
-    printTable(table);
+var data = getAllResults("timeline", queryParams);
+for (var table in data) {
+    printTable(data[table]);
 }
 
 loadTableHandlers(true);

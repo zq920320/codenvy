@@ -27,8 +27,10 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public interface DataPersister {
 
-    void retainData(String viewId,
-                    Map<String, List<List<ValueData>>> viewData,
-                    Map<String, String> context) throws SQLException, IOException;
+    List<List<ValueData>> loadData(String viewId) throws SQLException, IOException;
+
+    void storeData(String viewId,
+                   Map<String, List<List<ValueData>>> viewData,
+                   Map<String, String> context) throws SQLException, IOException;
 
 }

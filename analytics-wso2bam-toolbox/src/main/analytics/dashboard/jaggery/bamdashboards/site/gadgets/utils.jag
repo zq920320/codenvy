@@ -1,4 +1,10 @@
 <%
+
+function getAllResults(viewName, queryParams) {
+    var data = get("https://localhost:9443/api/view/build/" + viewName, queryParams, "json");
+    return convertJsonToTables(data['data']);
+}
+
 function queryResults(q) {
     var db = new Database("WSO2BAM_DATASOURCE");
     var result;
@@ -42,25 +48,23 @@ function createTable(result) {
     return {rows: rows, columns: columns2display};
 }
 
-function createTableFromJson(str) {
-    var json = parse(str);
+function convertJsonToTables(data) {
     var result = {};
 
-    for (var table in json) {
-
+    for (var table in data) {
         var rows = [];
         var columns = [];
 
-        for (var rowNum in json[table]) {
+        for (var rowNum in data[table]) {
 
             if (rowNum == 'r0') {
-                for (var col in json[table][rowNum]) {
-                    columns.push(json[table][rowNum][col]);
+                for (var col in data[table][rowNum]) {
+                    columns.push(data[table][rowNum][col]);
                 }
             } else {
                 var row = [];
-                for (var col in json[table][rowNum]) {
-                    row.push(json[table][rowNum][col]);
+                for (var col in data[table][rowNum]) {
+                    row.push(data[table][rowNum][col]);
                 }
                 rows.push(row);
             }

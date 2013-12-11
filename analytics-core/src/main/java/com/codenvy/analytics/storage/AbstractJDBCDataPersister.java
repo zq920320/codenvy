@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -69,9 +70,14 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
     }
 
     @Override
-    public void retainData(String viewId,
-                           Map<String, List<List<ValueData>>> viewData,
-                           Map<String, String> context) throws SQLException {
+    public List<List<ValueData>> loadData(String viewId) throws SQLException, IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void storeData(String viewId,
+                          Map<String, List<List<ValueData>>> viewData,
+                          Map<String, String> context) throws SQLException {
         Connection connection = openConnection();
         try {
             for (Map.Entry<String, List<List<ValueData>>> section : viewData.entrySet()) {
