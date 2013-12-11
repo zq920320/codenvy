@@ -22,8 +22,8 @@ package com.codenvy.analytics;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.pig.PigRunner;
+import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
-import com.codenvy.analytics.storage.CSVDataPersister;
 
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
@@ -70,7 +70,7 @@ public class Scheduler implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent context) {
         try {
-            CSVDataPersister.restoreBackup();
+            CSVReportPersister.restoreBackup();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

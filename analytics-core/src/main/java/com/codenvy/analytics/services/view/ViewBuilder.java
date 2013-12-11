@@ -23,7 +23,6 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.ConfigurationManager;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.XmlConfigurationManager;
-import com.codenvy.analytics.storage.CSVDataPersister;
 import com.codenvy.analytics.storage.DataPersister;
 import com.codenvy.analytics.storage.JdbcDataPersisterFactory;
 import com.codenvy.dto.server.JsonStringMapImpl;
@@ -55,18 +54,17 @@ import java.util.concurrent.TimeUnit;
 @Path("view")
 public class ViewBuilder implements Feature {
 
-    /** Logger. */
     private static final Logger LOG           = LoggerFactory.getLogger(ViewBuilder.class);
     private static final String VIEW_RESOURCE = "views.xml";
 
-    private final DataPersister                              dataPersister;
-    private final CSVDataPersister                           csvDataPersister;
+    private final DataPersister                              jdbcPersister;
     private final ConfigurationManager<DisplayConfiguration> configurationManager;
+    private final CSVReportPersister                         csvReportPersister;
 
     public ViewBuilder() {
         this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class);
-        this.dataPersister = JdbcDataPersisterFactory.getDataPersister();
-        this.csvDataPersister = new CSVDataPersister();
+        this.jdbcPersister = JdbcDataPersisterFactory.getDataPersister();
+        this.csvReportPersister = new CSVReportPersister();
     }
 
     /** {@inheritDoc} */
@@ -157,38 +155,19 @@ public class ViewBuilder implements Feature {
      *
      * @return result in format: key - section id, value - data of this section
      */
-    private Map<String, List<List<ValueData>>> queryViewData(ViewConfiguration viewConfiguration,
-                                                             Map<String, String> context) throws IOException {
+    protected Map<String, List<List<ValueData>>> queryViewData(ViewConfiguration viewConfiguration,
+                                                               Map<String, String> context) throws IOException {
         try {
             Map<String, List<List<ValueData>>> viewData = new LinkedHashMap<>(viewConfiguration.getSections().size());
             Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
 
             for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
-
-
-
-
-                List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
-
-                for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
-                    Constructor<?> constructor =
-                            Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
-                    Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
-
-                    int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : sectionConfiguration.getColumns();
-                    Map<String, String> initialContext = Utils.initializeContext(timeUnit);
-
-                    List<ValueData> rowData = row.getData(initialContext, rowCount);
-                    sectionData.add(rowData);
-                }
-
                 String sectionId = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
-                viewData.put(sectionId, sectionData);
+                viewData.put(sectionConfiguration.getName(), jdbcPersister.loadData(sectionId));
             }
 
             return viewData;
-        } catch (NoSuchMethodException | ClassCastException | ClassNotFoundException | InvocationTargetException |
-                IllegalAccessException | InstantiationException | ParseException e) {
+        } catch (SQLException e) {
             throw new IOException(e);
         }
     }
@@ -273,14 +252,6 @@ public class ViewBuilder implements Feature {
         }
     }
 
-    protected void retainViewData(String viewId,
-                                  Map<String, List<List<ValueData>>> viewData,
-                                  Map<String, String> context) throws SQLException, IOException {
-
-        dataPersister.storeData(viewId, viewData, context);
-        csvDataPersister.storeData(viewId, viewData, context);
-    }
-
     private class ComputeViewDataAction extends RecursiveAction {
 
         private final ViewConfiguration   viewConfiguration;
@@ -299,11 +270,18 @@ public class ViewBuilder implements Feature {
 
                 Map<String, List<List<ValueData>>> viewData = computeViewData(viewConfiguration, context);
 
-                retainViewData(viewId, viewData, Utils.initializeContext(Parameters.TimeUnit.DAY)); // TODO context
+                retainViewData(viewId, viewData, Utils.initializeContext(Parameters.TimeUnit.DAY));
             } catch (IOException | ParseException | SQLException e) {
                 LOG.error(e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }
+    }
+
+    protected void retainViewData(String viewId,
+                                  Map<String, List<List<ValueData>>> viewData,
+                                  Map<String, String> context) throws SQLException, IOException {
+        jdbcPersister.storeData(viewData, context);
+        csvReportPersister.storeData(viewId, viewData, context);
     }
 }

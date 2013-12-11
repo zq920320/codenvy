@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.storage;
 
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -70,13 +72,29 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
     }
 
     @Override
-    public List<List<ValueData>> loadData(String viewId) throws SQLException, IOException {
-        throw new UnsupportedOperationException();
+    public List<List<ValueData>> loadData(String tableName) throws SQLException, IOException {
+        List<List<ValueData>> result = new ArrayList<>();
+
+        try (Connection connection = openConnection()) {
+            ResultSet resultSet = selectData(connection, tableName);
+            while (resultSet.next()) {
+
+                int size = resultSet.getMetaData().getColumnCount();
+                List<ValueData> rowData = new ArrayList<>(size);
+
+                for (int i = 0; i < size; i++) {
+                    rowData.add(new StringValueData(resultSet.getString(i + 1)));
+                }
+
+                result.add(rowData);
+            }
+        }
+
+        return result;
     }
 
     @Override
-    public void storeData(String viewId,
-                          Map<String, List<List<ValueData>>> viewData,
+    public void storeData(Map<String, List<List<ValueData>>> viewData,
                           Map<String, String> context) throws SQLException {
         Connection connection = openConnection();
         try {
@@ -108,6 +126,11 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
                 LOG.error("Can't close connection: " + e.getMessage(), e);
             }
         }
+    }
+
+    private ResultSet selectData(Connection connection, String tableName) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(getSelectQuery(tableName));
+        return statement.executeQuery();
     }
 
     private void insertData(Connection connection,
@@ -143,6 +166,10 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
         builder.append(" );");
 
         return builder.toString();
+    }
+
+    private String getSelectQuery(String tableName) {
+        return "SELECT * FROM " + tableName;
     }
 
     private void createTable(Connection connection,

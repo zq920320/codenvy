@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.storage;
+package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,24 +34,17 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CSVDataPersister implements DataPersister {
+public class CSVReportPersister {
 
-    private static final Logger           LOG                = LoggerFactory.getLogger(CSVDataPersister.class);
+    private static final Logger           LOG                = LoggerFactory.getLogger(CSVReportPersister.class);
     private static final String           REPORTS_DIR        = Configurator.getString("analytics.reports.dir");
     private static final String           BACKUP_REPORTS_DIR = Configurator.getString("analytics.backup.reports.dir");
     private static final SimpleDateFormat dirFormat          =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
-    @Override
-    public List<List<ValueData>> loadData(String viewId) throws SQLException, IOException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void storeData(String viewId,
                           Map<String, List<List<ValueData>>> viewData,
                           Map<String, String> context) throws IOException {
-
         try {
             File csvFile = getFile(viewId, REPORTS_DIR, context);
             createParentDirIfNotExists(csvFile);
@@ -61,10 +53,34 @@ public class CSVDataPersister implements DataPersister {
             createParentDirIfNotExists(csvBackupFile);
 
             doStore(csvBackupFile, viewData);
-
             Files.copy(csvBackupFile, csvFile);
         } catch (ParseException e) {
             throw new IOException(e);
+        }
+    }
+
+    protected File getFile(String tableName, String reportsDir, Map<String, String> context) throws ParseException {
+        Calendar toDate = Utils.getToDate(context);
+
+        StringBuilder filePath = new StringBuilder();
+        filePath.append(reportsDir);
+        filePath.append(File.separatorChar);
+        filePath.append(dirFormat.format(toDate.getTime()));
+        filePath.append(File.separatorChar);
+        filePath.append(tableName.toLowerCase());
+        filePath.append(".csv");
+
+        return new File(filePath.toString());
+    }
+
+    protected void createParentDirIfNotExists(File csvFile) throws IOException {
+        File parentDir = csvFile.getParentFile();
+        if (!parentDir.exists()) {
+            if (!parentDir.mkdirs()) {
+                if (!parentDir.exists()) {
+                    throw new IOException("Can't create directory tree" + parentDir.getPath());
+                }
+            }
         }
     }
 
@@ -90,30 +106,6 @@ public class CSVDataPersister implements DataPersister {
         }
     }
 
-    private void createParentDirIfNotExists(File csvFile) throws IOException {
-        File parentDir = csvFile.getParentFile();
-        if (!parentDir.exists()) {
-            if (!parentDir.mkdirs()) {
-                // TODO
-//                throw new IOException("Can't create directory tree" + parentDir.getPath());
-            }
-        }
-    }
-
-    protected File getFile(String tableName, String reportsDir, Map<String, String> context) throws ParseException {
-        Calendar toDate = Utils.getToDate(context);
-
-        StringBuilder filePath = new StringBuilder();
-        filePath.append(reportsDir);
-        filePath.append(File.separatorChar);
-        filePath.append(dirFormat.format(toDate.getTime()));
-        filePath.append(File.separatorChar);
-        filePath.append(tableName.toLowerCase());
-        filePath.append(".csv");
-
-        return new File(filePath.toString());
-    }
-
     protected String getDataAsString(List<ValueData> data) {
         StringBuilder builder = new StringBuilder();
 
@@ -130,4 +122,5 @@ public class CSVDataPersister implements DataPersister {
 
         return builder.toString();
     }
+
 }
