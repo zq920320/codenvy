@@ -41,13 +41,12 @@
         <div class="span10">
             <div class="well topFilteringPanel">
                 <div id="filter-by" class="left">
-                    Filter by: <form action="#">
-	                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-	                    <button class="btn">Email</button>
-	                    <button class="btn">First Name</button>
-	                    <button class="btn">Second Name</button>                
-	                    <input type="reset" id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn" value="Clear" />
-	                 </form>
+                    Filter by:
+                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
+                    <button class="btn">Email</button>
+                    <button class="btn">First Name</button>
+                    <button class="btn">Second Name</button>                
+                    <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>
                 </div>
             </div>
             <div class="hero-unit">

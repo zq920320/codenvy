@@ -47,14 +47,12 @@
                     <button class="btn">LifeTime</button>
                 </div>
                 <div id="filter-by" class="right">
-                   <form action="#">
-	                    Filter by:
-	                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-	                    <button class="btn">Email</button>
-	                    <button class="btn">Domain</button>
-	                    <button class="btn">Company</button>                
-	                    <input type="reset" id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn" value="Clear" />
-                    </form>	                
+	                 Filter by:
+                    <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
+                    <button class="btn">Email</button>
+                    <button class="btn">Domain</button>
+                    <button class="btn">Company</button>                
+                    <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>	                
                 </div>
             </div>
             <div class="hero-unit">
@@ -70,10 +68,7 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   loadDashboardWidget("gadgets/factories.jag", {"buttonJQuerySelector": "#timely-dd button",
-                                                 "parameterName": "timeGroup",
-                                                 "parameterValue": "<%=request.getParameter("timeGroup")%>",
-                                                 "parameterDefaultValue": "Day"});
+   loadDashboardWidget("gadgets/factories.jag");
 </script>
 
 </body>
