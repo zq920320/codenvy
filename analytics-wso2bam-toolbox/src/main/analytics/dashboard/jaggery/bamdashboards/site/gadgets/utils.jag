@@ -51,26 +51,46 @@ function createTable(result) {
 function convertJsonToTables(data) {
     var result = {};
 
-    for (var table in data) {
+    // get sorted tables identifications
+    var tableIds = [];
+    for (var id in data) {
+        tableIds.push(id);
+    }
+    tableIds.sort();
+
+    for (var t = 0; t < tableIds.length; t++) {
         var rows = [];
         var columns = [];
 
-        for (var rowNum in data[table]) {
+        // get sorted rows' identifications
+        var rowIds = [];
+        for (var id in data[tableIds[t]]) {
+            rowIds.push(id);
+        }
+        rowIds.sort();
 
-            if (rowNum == 'r0') {
-                for (var col in data[table][rowNum]) {
-                    columns.push(data[table][rowNum][col]);
+        // get sorted columns' identifications
+        var colIds = [];
+        for (var id in data[tableIds[t]]['r00']) {
+            colIds.push(id);
+        }
+        colIds.sort();
+
+        for (var r = 0; r < rowIds.length; r++) {
+            if (r == 0) {
+                for (var c = 0; c < colIds.length; c++) {
+                    columns.push(data[tableIds[t]][rowIds[r]][colIds[c]]);
                 }
             } else {
                 var row = [];
-                for (var col in data[table][rowNum]) {
-                    row.push(data[table][rowNum][col]);
+                for (var c = 0; c < colIds.length; c++) {
+                    row.push(data[tableIds[t]][rowIds[r]][colIds[c]]);
                 }
                 rows.push(row);
             }
         }
 
-        result[table] = {rows: rows, columns: columns};
+        result[t] = {rows: rows, columns: columns};
     }
 
     return result;

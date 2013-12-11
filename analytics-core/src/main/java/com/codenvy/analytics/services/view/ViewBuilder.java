@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
@@ -54,8 +55,9 @@ import java.util.concurrent.TimeUnit;
 @Path("view")
 public class ViewBuilder implements Feature {
 
-    private static final Logger LOG           = LoggerFactory.getLogger(ViewBuilder.class);
-    private static final String VIEW_RESOURCE = "views.xml";
+    private static final Logger        LOG           = LoggerFactory.getLogger(ViewBuilder.class);
+    private static final String        VIEW_RESOURCE = "views.xml";
+    private static final DecimalFormat decimalFormat = new DecimalFormat("00");
 
     private final DataPersister                              jdbcPersister;
     private final ConfigurationManager<DisplayConfiguration> configurationManager;
@@ -96,24 +98,29 @@ public class ViewBuilder implements Feature {
         }
     }
 
+    /**
+     * @param data
+     * @return {"t00" : {"r00" : {"c00" : ...} ...} ...}
+     */
     private JsonStringMapImpl transform(Map<String, List<List<ValueData>>> data) {
-        Map<String, Map<String, Map<String, String>>> result = new LinkedHashMap<>(data.size());
+        Map<String, Object> result = new LinkedHashMap<>(data.size());
 
+        int t = 0;
         for (Map.Entry<String, List<List<ValueData>>> sectionEntry : data.entrySet()) {
-            Map<String, Map<String, String>> newSectionData = new LinkedHashMap<>(sectionEntry.getValue().size());
+            Map<String, Object> newSectionData = new LinkedHashMap<>(sectionEntry.getValue().size());
 
             for (int i = 0; i < sectionEntry.getValue().size(); i++) {
                 List<ValueData> rowData = sectionEntry.getValue().get(i);
                 Map<String, String> newRowData = new LinkedHashMap<>(rowData.size());
 
                 for (int j = 0; j < rowData.size(); j++) {
-                    newRowData.put("c" + j, rowData.get(j).getAsString());
+                    newRowData.put("c" + decimalFormat.format(j), rowData.get(j).getAsString());
                 }
 
-                newSectionData.put("r" + i, newRowData);
+                newSectionData.put("r" + decimalFormat.format(i), newRowData);
             }
 
-            result.put(sectionEntry.getKey(), newSectionData);
+            result.put("t" + decimalFormat.format(t++), newSectionData);
         }
 
         return new JsonStringMapImpl(result);
