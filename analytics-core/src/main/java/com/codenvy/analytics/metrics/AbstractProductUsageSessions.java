@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
@@ -74,7 +75,7 @@ public abstract class AbstractProductUsageSessions extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException {
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
         DBObject dbObject = super.getFilter(clauses);
         DBObject match = (DBObject)dbObject.get("$match");
 

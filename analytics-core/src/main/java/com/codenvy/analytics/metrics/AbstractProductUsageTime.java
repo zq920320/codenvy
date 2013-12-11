@@ -80,7 +80,7 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException {
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
         DBObject dbObject = super.getFilter(clauses);
         DBObject match = (DBObject)dbObject.get("$match");
 
