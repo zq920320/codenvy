@@ -59,16 +59,7 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   (function() {
-	   var url = "gadgets/user-view.jag";
-	   
-	   var userId = "<%=request.getParameter("userid")%>";
-	   if (userId != "null") {
-	      url += "?userid=" + encodeURIComponent(userId);
-	   }
-	   
-	   jQuery("#dashboardWidget").load(url);
-   })()
+   loadDashboardWidget("gadgets/user-view.jag");
 </script>
 
 </body>

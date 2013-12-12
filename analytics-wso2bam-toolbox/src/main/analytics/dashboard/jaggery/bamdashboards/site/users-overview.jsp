@@ -69,16 +69,7 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   (function() {
-      var url = "gadgets/users-overview.jag";
-      
-      var page = "<%=request.getParameter("page")%>";
-      if (page != "null") {
-         url += "?page=" + page;
-      }
-      
-      jQuery("#dashboardWidget").load(url);
-   })()
+   loadDashboardWidget("gadgets/users-overview.jag");
 </script>
 
 </body>

@@ -2,20 +2,36 @@
 
 include_once("utils.jag");
 
-var timeGroup = request.getParameter('timeGroup');
-var tableNames = ['factories', 'authenticated_factory_sessions',
-            'converted_factory_sessions', 'factory_sessions_ide_usage_events',
-            'factory_users_sessions', 'factory_product_usage'];
+var DEFAULT_TIME_UNIT_VALUE = "Day";
+
+var timeGroup = request.getParameter("timeGroup");
+var user = request.getParameter("Email");
+var domain = request.getParameter("Domain");
+var company = request.getParameter("Company");
+
+if (timeGroup == null) {
+   timeGroup = DEFAULT_TIME_UNIT_VALUE;
+}
+
+var queryParams = {"time_unit": timeGroup.toUpperCase()};
+
+if (user != null) {
+    queryParams["user"] = user;
+
+} else if (domain != null) {
+    queryParams["domain"] = domain;
+
+} else if (company != null) {
+    queryParams["company"] = company;
+}
 
 loadCssStyles();
 
-for (var i = 0; i < tableNames.length; i++) {
-    var result = queryResults('select * from ' + tableNames[i] + '_' + timeGroup);
-    var table = createTable(result);
-
-    printTable(table);
+var data = getAllResults("factories", queryParams);
+for (var table in data) {
+    printTable(data[table]);
 }
 
-loadTableHandlers(false);
+loadTableHandlers(true);
 
 %>

@@ -3,14 +3,38 @@
 include_once("utils.jag");
 
 var CURRENT_PAGE_QUERY_PARAMETER = "page";
-var ONE_PAGE_ROWS_COUNT = 5;   // TODO set correct values
+var ONE_PAGE_ROWS_COUNT = 2;                      // TODO set correct values
 var USER_ID_LINK_PREFIX = "user-view.jsp?userid";
 
-//var result = queryResults('select * from users_overview_lifetime');
+var user = request.getParameter("Email");
+var domain = request.getParameter("First Name");
+var company = request.getParameter("Second Name");
 
-var result = queryResults('select * from projects_types_Day');  // for demonstration
+var queryParams = {};
 
-var table = createTable(result);
+if (user != null) {
+    queryParams["user"] = user;
+
+} else if (domain != null) {
+    queryParams["domain"] = domain;
+
+} else if (company != null) {
+    queryParams["company"] = company;
+}
+
+loadCssStyles();
+
+//var data = getAllResults("user-overview", queryParams);  // TODO fix and uncomment
+
+queryParams["time_unit"] = "DAY";                   // TODO remove
+var data = getAllResults("timeline", queryParams);  // TODO remove
+
+// TODO fix
+var table;
+for (var i in data) {
+    table = data[i];
+    break;
+}
 
 // paging
 var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
@@ -53,7 +77,13 @@ if (pageCount > 1) {
       delimeter = "?";
    }
       
-   printBottomPageNavigator(pageCount, currentPageNumber);
+   var queryString = request.getQueryString() || "";
+   
+   // remove page parameter
+   var pageNumberParameterTemplate = new RegExp(CURRENT_PAGE_QUERY_PARAMETER + "=[0-9]*", "gi");
+   queryString = queryString.replace(pageNumberParameterTemplate, "");
+   
+   printBottomPageNavigator(pageCount, currentPageNumber, queryString);
 }
 
 %>

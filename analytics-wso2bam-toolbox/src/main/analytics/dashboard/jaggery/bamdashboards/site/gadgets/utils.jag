@@ -210,38 +210,40 @@ function loadTableHandlers(ignoreLastRow) {
 /**
  * currentPageNumber is 1-based
  */
-function printBottomPageNavigator(pageCount, currentPageNumber) {
+function printBottomPageNavigator(pageCount, currentPageNumber, queryString) {
     if (typeof pageCount == "undefined" || pageCount <= 0) {
         return;
     }
-
-    var baseUrl = "?page";
-
+    
     print("<div class='bottom-page-navigator'>");
 
+    
     // print "previous page" link
     if (currentPageNumber > 1) {
-        var previousPageNumber = currentPageNumber - 1;
-        var previousPageLink = baseUrl + "=" + previousPageNumber;
+        var previousPageLink = getPageNavigationUrl(queryString, currentPageNumber - 1);
+        
         print("<a class='page-link previous' href='" + previousPageLink + "'>&lt;</a>");
     }
 
     // print all pages links
     for (var i = 0; i < pageCount; i++) {
-        var href = baseUrl + "=" + (i + 1);
+        var pageNumber = (i + 1);
+        
+        var href = getPageNavigationUrl(queryString, pageNumber);
+        
         var elementClass = "page-link";
 
-        if ((i + 1) == currentPageNumber) {
+        if (pageNumber == currentPageNumber) {
             elementClass += " current";
         }
 
-        print("<a class='" + elementClass + "' href='" + href + "'>" + (i + 1) + "</a>");
+        print("<a class='" + elementClass + "' href='" + href + "'>" + pageNumber + "</a>");
     }
 
     // print "next page" link
     if (currentPageNumber < pageCount) {
-        var nextPageNumber = currentPageNumber + 1;
-        var nextPageLink = baseUrl + "=" + nextPageNumber;
+        var nextPageLink = getPageNavigationUrl(queryString, currentPageNumber + 1);
+        
         print("<a class='page-link next' href='" + nextPageLink + "'>&gt;</a>");
     } else {
         print("<div class='page-link empty'></div>");
@@ -251,5 +253,15 @@ function printBottomPageNavigator(pageCount, currentPageNumber) {
 }
 
 
+function getPageNavigationUrl(baseQueryString, pageNumber) {   
+   var CURRENT_PAGE_QUERY_PARAMETER = "page";   
+   var url = "?" + CURRENT_PAGE_QUERY_PARAMETER + "=" + pageNumber;
+   
+   if (baseQueryString != "") {
+      url += "&" + baseQueryString;
+   }
+   
+   return url;
+}
 
 %>

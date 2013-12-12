@@ -125,6 +125,7 @@ function reloadThroughAjax(containerToReload, url, callback) {
       url: url
       
     }).fail(function(data, textStatus) {
+       hideLoader();
        containerToReload.html("Error of processing request: " + textStatus);
        
     }).done(function(data) {
@@ -223,7 +224,7 @@ function getParametersWithPresetDefaults(params) {
 /**
  * Construct url parameters String based on parameters from params object
  * @param params object like {timeGroup: Month, Email="test@gmail.com"}
- * @returns url like "http://127.0.0.1/timeline.jsp?timeGroup=Month&Email=test%40gmail.com
+ * @returns url like "timeGroup=Month&Email=test%40gmail.com"
  */
 function constructUrlParams(params) {
    var params = params || {};
@@ -246,7 +247,7 @@ function constructUrlParams(params) {
 /**
  * Extract url parameters from url
  * @param url like "http://127.0.0.1/timeline.jsp?timeGroup=Month&Email=test%40gmail.com
- * @returns params object like {timeGroup: Month, Email="test@gmail.com"}
+ * @returns params object like {timeGroup: Month, Email: "test@gmail.com"}
  */
 function extractUrlParams(url) {
    if (url.indexOf('?') < 0) {
