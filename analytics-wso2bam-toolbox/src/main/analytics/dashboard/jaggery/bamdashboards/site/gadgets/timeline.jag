@@ -6,7 +6,7 @@ var DEFAULT_TIME_UNIT_VALUE = "Day";
 
 var timeGroup = request.getParameter("timeGroup");
 var user = request.getParameter("Email");
-var domain = request.getParameter("Eomain");
+var domain = request.getParameter("Domain");
 var company = request.getParameter("Company");
 
 if (timeGroup == null) {
