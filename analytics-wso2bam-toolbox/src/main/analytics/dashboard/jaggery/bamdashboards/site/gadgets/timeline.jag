@@ -5,9 +5,9 @@ include_once("utils.jag");
 var DEFAULT_TIME_UNIT_VALUE = "Day";
 
 var timeGroup = request.getParameter("timeGroup");
-var user = request.getParameter("user");
-var domain = request.getParameter("domain");
-var company = request.getParameter("company");
+var user = request.getParameter("Email");
+var domain = request.getParameter("Eomain");
+var company = request.getParameter("Company");
 
 if (timeGroup == null) {
    timeGroup = DEFAULT_TIME_UNIT_VALUE;
