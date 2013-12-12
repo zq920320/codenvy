@@ -29,13 +29,15 @@ $(function () {
         triggerCollect();
     });
     $("#clearSelectionBtn").click(function () {
-        $("#server-dd option:first-child").attr("selected", "selected");
-        $("#service-dd").find('option').remove();
-        $("#operation-dd").find('option').remove();
-        triggerCollect();
-        $("#service-dd").find('option').remove();
-        $("#operation-dd").find('option').remove();
-        triggerCollect();
+//        $("#server-dd option:first-child").attr("selected", "selected");
+//        $("#service-dd").find('option').remove();
+//        $("#operation-dd").find('option').remove();
+//        triggerCollect();
+//        $("#service-dd").find('option').remove();
+//        $("#operation-dd").find('option').remove();
+        
+        $("#filter-by button").removeClass('btn-primary');
+        $("#filter-by input[name='keyword']").val("");
     });
     
     // Time selectors group
@@ -48,7 +50,9 @@ $(function () {
     // "Filter by" group
     $("#filter-by button").click(function() {
        $("#filter-by button").removeClass('btn-primary');
-       $(this).addClass('btn-primary');
+       if ($("#filter-by input[name='keyword']").val() != "") {  // select button only if there is some text in keyword input
+          $(this).addClass('btn-primary');
+       }
        triggerCollect();       
     });
 });
@@ -90,8 +94,11 @@ function reloadDiv(params) {
    if (urlParams != null) {
       newUrl += "?" + urlParams;
    }
-      
+
+//   div.html("");  // clear div
+   displayLoader(); // display loader
    div.load(newUrl, function() {
+      hideLoader(); // display loader
       // rewrite page location to make it possible to navigate new url through the browser's history
       var pageUrl = window.location.href;
       if (pageUrl.indexOf('?')) {
@@ -117,13 +124,19 @@ function loadDashboardWidget(gadgetUrl) {
    if (params != null && Object.keys(params).length > 0) {
       var absUrlArray = window.location.href.split('?');
       var urlParamsString = absUrlArray[1];
-      gadgetUrl += "?" + urlParamsString;
-      
+
       var div = jQuery("#dashboardWidget");
-      div.load(gadgetUrl, function(parameter) {
-         // rewrite page location to make it possible to navigate new url through the browser's history
-         window.history.pushState({"html": div.html(), params: params}, document.title, window.location.href);
-      });
+      var callback = function() {};
+      if (typeof urlParamsString != "undefined") {
+         gadgetUrl += "?" + urlParamsString;
+      } else {
+         callback = function() {
+            // rewrite page location to make it possible to navigate new url through the browser's history
+            window.history.pushState({"html": div.html(), params: params}, document.title, window.location.href);
+         };
+      }
+      
+      div.load(gadgetUrl, callback);
    }
       
    updateCommandButtonsState(params);
@@ -133,6 +146,7 @@ function loadDashboardWidget(gadgetUrl) {
       if (event.state != null && typeof event.state.params != "undefined" && Object.keys(event.state.params).length > 0) {
          // update parameter buttons selsction
          var params = event.state.params;
+         params = getParametersWithPresetDefaults(params);
          updateCommandButtonsState(params);
       }
       
@@ -146,28 +160,30 @@ function updateCommandButtonsState(params) {
    var params = params || {};
    
    // update time selection buttons
-   if (typeof params["timeGroup"] != "undefined") {
-      jQuery("#timely-dd button").removeClass('btn-primary');
+   var timeUnitButtons = jQuery("#timely-dd button"); 
+   if (timeUnitButtons.doesExist()) {
+      timeUnitButtons.removeClass('btn-primary');
       jQuery("#timely-dd button:contains('" + params["timeGroup"] + "')").addClass('btn-primary');
    }
    
    // update filter-by buttons
-   jQuery("#filter-by button").removeClass('btn-primary');
+   var filterButtons = jQuery("#filter-by button");
    var filterInput = $("#filter-by input[name='keyword']");
-   filterInput.val("");
-   if (typeof params["Email"] != "undefined") {
-      jQuery("#filter-by button:contains('Email')").addClass('btn-primary');
-      filterInput.val(params["Email"]);
+   if (filterButtons.doesExist() && filterInput.doesExist()) {
+      jQuery("#filter-by button").removeClass('btn-primary');   // 
+      filterInput.val("");
       
-   } else if (typeof params["Domain"] != "undefined") {
-      jQuery("#filter-by button:contains('Domain')").addClass('btn-primary');
-      filterInput.val(params["Domain"]);
-      
-   } else if (typeof params["Compane"] != "undefined") {
-      jQuery("#filter-by button:contains('Compane')").addClass('btn-primary');
-      filterInput.val(params["Compane"]);
+      // find out "filter by" param like "Email: test@test.com" which is linked with button with text "Email"
+      for (var i = 0; i < filterButtons.length; i++) {
+         var button = jQuery(filterButtons[i]);
+         var filterParamValue = params[button.text()];
+         if (typeof filterParamValue != "undefined") {
+            button.addClass('btn-primary');
+            filterInput.val(filterParamValue);   // set keyword input = value from param
+            break;
+         }
+      }
    }
-
 }
 
 function getParametersWithPresetDefaults(params) {
@@ -327,3 +343,11 @@ function reloadIFrame(param) {
        $(this).attr('src', newUrl);
    });
 };
+
+function displayLoader() {
+   jQuery("#loader").show();
+}
+
+function hideLoader() {
+   jQuery("#loader").hide();
+}
