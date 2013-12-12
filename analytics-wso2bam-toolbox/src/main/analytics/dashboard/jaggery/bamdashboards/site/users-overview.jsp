@@ -63,19 +63,6 @@
     </div>
 </div>
 
-<div id="loader">
-   <div class="transparent-container loader-container"></div>
-   <table class="full-window-container">
-      <tr>
-         <td align="center">
-            <div id="loader-img">
-               <img src="images/loader.gif" />
-            </div>
-         </td>
-      </tr>
-   </table>
-</div>
-
 <script type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>

@@ -1,6 +1,8 @@
- jQuery.fn.doesExist = function(){
-        return jQuery(this).length > 0;
- };
+jQuery.fn.doesExist = function(){
+   return jQuery(this).length > 0;
+};
+
+var currentAjaxRequest = null;
 
 $(function () {
     $("#server-dd").change(function () {
@@ -89,16 +91,13 @@ function reloadDiv(params) {
       divUrl = absUrl[0];
    }
   
-   var newUrl = divUrl;   
+   var newDivUrl = divUrl;   
    var urlParams = constructUrlParams(params);
    if (urlParams != null) {
-      newUrl += "?" + urlParams;
+      newDivUrl += "?" + urlParams;
    }
 
-//   div.html("");  // clear div
-   displayLoader(); // display loader
-   div.load(newUrl, function() {
-      hideLoader(); // display loader
+   currentAjaxRequest = reloadThroughAjax(div, newDivUrl, function(data) {
       // rewrite page location to make it possible to navigate new url through the browser's history
       var pageUrl = window.location.href;
       if (pageUrl.indexOf('?')) {
@@ -114,7 +113,31 @@ function reloadDiv(params) {
       window.history.pushState({html: div.html(), params: params}, document.title, newPageUrl);
    });
    
-};
+}
+
+
+function reloadThroughAjax(containerToReload, url, callback) {
+   containerToReload.empty();  // clear container
+   
+   displayLoader(); // display loader
+   
+   var ajaxRequest = $.ajax({
+      url: url
+      
+    }).fail(function(data, textStatus) {
+       containerToReload.html("Error of processing request: " + textStatus);
+       
+    }).done(function(data) {
+      hideLoader(); // display loader
+      
+      containerToReload.html(data);  // update div with response
+ 
+      callback();
+   });
+   
+   return ajaxRequest;
+}
+
 
 function loadDashboardWidget(gadgetUrl) {      
    var params = extractUrlParams(window.location.href);
@@ -136,7 +159,7 @@ function loadDashboardWidget(gadgetUrl) {
          };
       }
       
-      div.load(gadgetUrl, callback);
+      currentAjaxRequest = reloadThroughAjax(div, gadgetUrl, callback);
    }
       
    updateCommandButtonsState(params);
@@ -344,10 +367,55 @@ function reloadIFrame(param) {
    });
 };
 
+
+/**
+ * Loader
+ */
+var needLoader = false;
+var loader = jQuery("#loader");
+if (! loader.doesExist()) {
+   jQuery("body").append(
+      '<div id="loader">'
+      + '<div class="loader-container"></div>'
+      + '<table class="full-window-container">'
+      + '   <tr>'
+      + '     <td align="center">'
+      + '        <div id="loader-img">'
+      + '           <img src="images/loader.gif" />'
+      + '         </div>'
+      + '     </td>'
+      + '   </tr>'
+      + '</table>'
+      + '</div>');
+   
+   loader = jQuery("#loader");
+   
+   // add hendler of pressing "Esc" button
+   $(document).keydown(function(event) {
+      var escKeyCode = 27;
+      if (event.which == escKeyCode) {
+         hideLoader();
+         if (currentAjaxRequest != null) {
+            currentAjaxRequest.abort();
+         }
+      }
+   });
+}
+
+
 function displayLoader() {
-   jQuery("#loader").show();
+   needLoader = true;
+     
+   // display loader after the 2 seconds of timeout
+   var timeoutInMillisec = 2000;
+   setTimeout(function() {
+      if (needLoader) {
+         loader.show();
+      }
+   }, timeoutInMillisec);
 }
 
 function hideLoader() {
-   jQuery("#loader").hide();
+   needLoader = false;
+   loader.hide();
 }
