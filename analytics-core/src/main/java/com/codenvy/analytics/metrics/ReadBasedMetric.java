@@ -76,10 +76,14 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
         BasicDBObject match = new BasicDBObject();
 
-        DBObject range = new BasicDBObject();
-        range.put("$gte", Utils.getFromDate(clauses).getTimeInMillis());
-        range.put("$lt", Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS);
-        match.put("_id", range);
+        DBObject idFilter = new BasicDBObject();
+        idFilter.put("$gte", Parameters.FROM_DATE.exists(clauses) ? Utils.getFromDate(clauses).getTimeInMillis()
+                                                                  : 0);
+        idFilter.put("$lt", Parameters.FROM_DATE.exists(clauses) ? Utils.getToDate(clauses).getTimeInMillis() +
+                                                                   DAY_IN_MILLISECONDS
+                                                                 : Long.MAX_VALUE);
+        match.put("_id", idFilter);
+
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values;

@@ -64,7 +64,7 @@ public class MongoStorage extends StoreFunc {
             builder.append(":");
             builder.append(password);
             builder.append("@");
-            builder.append(location.substring(10));
+            builder.append(location.substring("mongodb://".length()));
 
             serverUrl = builder.toString();
         }
