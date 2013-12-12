@@ -1,3 +1,10 @@
+<% if (session.getAttribute("carboncookie") == null) { %>
+<script type="text/javascript">
+    location.href = "../index.jag";
+</script>
+<% }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
