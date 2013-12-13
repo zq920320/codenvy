@@ -27,6 +27,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.storage.MongoDataStorage;
+import com.mongodb.DBObject;
 
 import org.apache.pig.ExecType;
 import org.apache.pig.data.Tuple;
@@ -102,12 +103,14 @@ public class PigServer {
     }
 
     private static void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context) throws IOException {
+        System.setProperty("udf.import.list", "com.codenvy.analytics.pig.udf");
         org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
 
         String script = readScriptContent(scriptType, context);
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
             server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             server.registerScript(scriptContent, context);
         } finally {
             server.shutdown();

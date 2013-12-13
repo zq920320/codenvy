@@ -262,12 +262,12 @@ while [ "$status" = "$START_EXIT_STATUS" ]
 do
     $JAVACMD \
     -Xbootclasspath/a:"$CARBON_XBOOTCLASSPATH" \
-    -Xms256m -Xmx2024m -XX:MaxPermSize=256m \
+    -Xms256m -Xmx4024m -XX:MaxPermSize=256m \
     -XX:+HeapDumpOnOutOfMemoryError \
     -XX:HeapDumpPath="$CARBON_HOME/repository/logs/heap-dump.hprof" \
     -javaagent:"$CARBON_HOME/repository/components/plugins/jamm_0.2.5.wso2v2.jar" \
     $JAVA_OPTS \
-    -Xms256m -Xmx2024m -XX:MaxPermSize=256m \
+    -Xms256m -Xmx4024m -XX:MaxPermSize=256m \
     -Dcodenvy.local.conf.dir=$HOME/analytics \
     -Dmail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory \
     -Dmail.smtp.socketFactory.port=465 \

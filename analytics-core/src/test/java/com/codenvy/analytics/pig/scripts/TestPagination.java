@@ -68,7 +68,7 @@ public class TestPagination extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile");
+        Parameters.STORAGE_TABLE.put(params, "testpagination");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
@@ -173,7 +173,7 @@ public class TestPagination extends BaseTest {
 
         @Override
         public String getStorageTable() {
-            return "testuserupdateprofile";
+            return "testpagination";
         }
     }
 }

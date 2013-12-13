@@ -29,10 +29,10 @@ done
 
 CLASSPATH=$ANALYTICS_JAR:$MONGO_JAR
 
-export PIG_CLASSPATH=$PIG_CLASSPATH:$CLASSPATH
+export PIG_CLASSPATH=$CLASSPATH
 export PIG_HOME=pig
 
-echo "PIG_HOME $PIG_HOME"
-echo "PIG_CLASSPATH $PIG_CLASSPATH"
+echo "PIG_HOME environment variable is set to $PIG_HOME"
+echo "PIG_CLASSPATH environment variable is set to $PIG_CLASSPATH"
 
 pig/bin/pig $*
