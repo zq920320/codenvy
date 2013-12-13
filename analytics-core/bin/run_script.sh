@@ -1,53 +1,38 @@
 #!/bin/sh
 
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# CODENVY CONFIDENTIAL
+# ________________
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# [2012] - [2013] Codenvy, S.A.
+# All Rights Reserved.
+# NOTICE: All information contained herein is, and remains
+# the property of Codenvy S.A. and its suppliers,
+# if any. The intellectual and technical concepts contained
+# herein are proprietary to Codenvy S.A.
+# and its suppliers and may be covered by U.S. and Foreign Patents,
+# patents in process, and are protected by trade secret or copyright law.
+# Dissemination of this information or reproduction of this material
+# is strictly forbidden unless prior written permission is obtained
+# from Codenvy S.A..
+#
 
-# general jars.
-for jar in $CASSANDRA_HOME/lib/*.jar $CASSANDRA_HOME/build/lib/jars/*.jar $CASSANDRA_HOME/build/apache-cassandra*.jar; do
-    CLASSPATH=$CLASSPATH:$jar
-done
 
-if [ "x$PIG_HOME" = "x" ]; then
-    echo "PIG_HOME not set: requires Pig >= 0.7.0" >&2
-    exit 1
-fi
-
-# analytics jar.
+# analytic jars
 for jar in $(find repository/deployment/server/webapps -name 'analytics-core*.jar');  do
    ANALYTICS_JAR=$jar
 done
-echo "Using $ANALYTICS_JAR."
-if [ ! -e $ANALYTICS_JAR ]; then
-    echo "Unable to locate Analytics jar" >&2
-    exit 1
-fi
 
-# pig jar.
-for jar in $PIG_HOME/*.jar; do
-   PIG_JAR=$jar
+for jar in $(find repository/deployment/server/webapps -name 'mongo-java-driver*.jar');  do
+   MONGO_JAR=$jar
 done
-echo "Using $PIG_JAR."
-if [ ! -e $PIG_JAR ]; then
-    echo "Unable to locate Pig jar" >&2
-    exit 1
-fi
 
-CLASSPATH=$CLASSPATH:$PIG_JAR:$ANALYTICS_JAR
+CLASSPATH=$ANALYTICS_JAR:$MONGO_JAR
 
 export PIG_CLASSPATH=$PIG_CLASSPATH:$CLASSPATH
-export PIG_OPTS="$PIG_OPTS -Dudf.import.list=org.apache.cassandra.hadoop.pig:com.codenvy.analytics.pig.udf"
-$PIG_HOME/bin/pig -x local $*
+export PIG_HOME=pig
+
+echo "PIG_HOME $PIG_HOME"
+echo "PIG_CLASSPATH $PIG_CLASSPATH"
+
+pig/bin/pig $*

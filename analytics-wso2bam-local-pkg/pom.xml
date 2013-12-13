@@ -193,8 +193,8 @@
                                         <!-- Modifying Pig's properties-->
                                         <propertyfile
                                                 file="${project.build.directory}/wso2bam-analytics/pig/conf/pig.properties">
-                                            <entry key="pig.import.search.path" value="./scripts"/>
-                                            <entry key="pig.logfile" value="../repository/logs/pig.log"/>
+                                            <entry key="pig.import.search.path" value="pig/scripts"/>
+                                            <entry key="pig.logfile" value="repository/logs/pig.log"/>
                                             <entry key="udf.import.list" value="com.codenvy.analytics.pig.udf"/>
                                             <entry key="exectype" value="local"/>
                                         </propertyfile>
@@ -221,6 +221,24 @@
                                         </copy>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/pig/bin/*" perm="+x"/>
+
+                                        <!-- prepare logs -->
+                                        <tstamp>
+                                            <format property="previous.date.dir" pattern="yyyy/MM/dd" offset="-1"
+                                                    unit="day"/>
+                                        </tstamp>
+                                        <tstamp>
+                                            <format property="previous.date.stamp" pattern="yyyy-MM-dd" offset="-1"
+                                                    unit="day"/>
+                                        </tstamp>
+
+                                        <mkdir dir="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}"/>
+                                        <unzip dest="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}"
+                                               src="${project.build.directory}/wso2bam-analytics/logs-production/messages"/>
+                                        <delete file="${project.build.directory}/wso2bam-analytics/logs-production/messages"/>
+                                        <replace
+                                                file="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}/messages"
+                                                token="2013-11-23" value="${previous.date.stamp}"/>
                                     </target>
                                 </configuration>
                             </execution>

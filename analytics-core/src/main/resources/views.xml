@@ -479,7 +479,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions_with_build_percent"/>
-                <parameter key="format" value="%.0f%%"/>
+                <parameter key="format" value="%.0f%%"/>                                    factories
                 <parameter key="description" value="% Built"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
