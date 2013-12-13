@@ -58,7 +58,7 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
-    
+
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         return new LongValueData(((LongValueData)super.getValue(context)).getAsLong() / 60L);
@@ -70,7 +70,7 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject[] getDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);

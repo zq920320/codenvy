@@ -65,7 +65,7 @@ public abstract class AbstractFactorySessions extends ReadBasedMetric {
     }
 
     @Override
-    public DBObject[] getDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);

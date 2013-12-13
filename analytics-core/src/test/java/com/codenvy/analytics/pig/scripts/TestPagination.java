@@ -23,7 +23,6 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.UsersProfiles;
 import com.codenvy.analytics.pig.PigServer;
@@ -75,98 +74,126 @@ public class TestPagination extends BaseTest {
     }
 
     @Test
-    public void testAllProfiles() throws Exception {
+    public void testSortAsc() throws Exception {
         Map<String, String> context = Utils.newContext();
+        Parameters.SORT.put(context, "+user_email");
 
         Metric metric = new TestUserProfile();
 
         ListValueData value = (ListValueData)metric.getValue(context);
-        assertEquals(value.size(), 4);
+        assertEquals(value.size(), 5);
 
-        for (ValueData object : value.getAll()) {
-            MapValueData item = (MapValueData)object;
-            Map<String, ValueData> all = item.getAll();
+        List<ValueData> all = value.getAll();
 
-            if (all.get("user_email").getAsString().equals("user1@gmail.com")) {
-                assertEquals(all.get("user_last_name").getAsString(), "l3");
-                assertEquals(all.get("user_company").getAsString(), "company-2");
-                assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "2");
+        MapValueData item = (MapValueData)all.get(0);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user1@gmail.com");
 
-            } else if (all.get("user_email").getAsString().equals("user2@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f2");
-                assertEquals(all.get("user_last_name").getAsString(), "l2");
-                assertEquals(all.get("user_company").getAsString(), "company");
-                assertEquals(all.get("user_phone").getAsString(), "11");
-                assertEquals(all.get("user_job").getAsString(), "1");
+        item = (MapValueData)all.get(1);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user2@gmail.com");
 
-            } else if (all.get("user_email").getAsString().equals("user3@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f4");
-                assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company-2");
-                assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "2");
+        item = (MapValueData)all.get(2);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user3@gmail.com");
 
-            } else if (all.get("user_email").getAsString().equals("user4@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f4");
-                assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company");
-                assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "");
-            }
-        }
+        item = (MapValueData)all.get(3);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user4@gmail.com");
+
+        item = (MapValueData)all.get(4);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user5@gmail.com");
     }
 
     @Test
-    public void testSingleProfile() throws Exception {
+    public void testSortDesc() throws Exception {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.USER.put(context, "user1@gmail.com");
+        Parameters.SORT.put(context, "-user_email");
+
+        Metric metric = new TestUserProfile();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 5);
+
+        List<ValueData> all = value.getAll();
+
+        MapValueData item = (MapValueData)all.get(0);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user5@gmail.com");
+
+        item = (MapValueData)all.get(1);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user4@gmail.com");
+
+        item = (MapValueData)all.get(2);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user3@gmail.com");
+
+        item = (MapValueData)all.get(3);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user2@gmail.com");
+
+        item = (MapValueData)all.get(4);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user1@gmail.com");
+    }
+
+    @Test
+    public void testPage1() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.SORT.put(context, "+user_email");
+        Parameters.PAGE.put(context, "1");
+        Parameters.PER_PAGE.put(context, "1");
 
         Metric metric = new TestUserProfile();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
 
-        MapValueData item = (MapValueData)value.getAll().get(0);
-        Map<String, ValueData> all = item.getAll();
+        List<ValueData> all = value.getAll();
 
-        assertEquals(all.get("user_email").getAsString(), "user1@gmail.com");
-        assertEquals(all.get("user_first_name").getAsString(), "f3");
-        assertEquals(all.get("user_last_name").getAsString(), "l3");
-        assertEquals(all.get("user_company").getAsString(), "company-2");
-        assertEquals(all.get("user_phone").getAsString(), "22");
-        assertEquals(all.get("user_job").getAsString(), "2");
+        MapValueData item = (MapValueData)all.get(0);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user1@gmail.com");
     }
 
     @Test
-    public void testUsersByCompany() throws Exception {
+    public void testPage3() throws Exception {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.COMPANY.put(context, "company");
+        Parameters.SORT.put(context, "+user_email");
+        Parameters.PAGE.put(context, "3");
+        Parameters.PER_PAGE.put(context, "1");
 
         Metric metric = new TestUserProfile();
 
         ListValueData value = (ListValueData)metric.getValue(context);
-        assertEquals(value.size(), 2);
+        assertEquals(value.size(), 1);
 
-        for (ValueData object : value.getAll()) {
-            MapValueData item = (MapValueData)object;
-            Map<String, ValueData> all = item.getAll();
+        List<ValueData> all = value.getAll();
 
-            if (all.get("user_email").getAsString().equals("user2@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f2");
-                assertEquals(all.get("user_last_name").getAsString(), "l2");
-                assertEquals(all.get("user_company").getAsString(), "company");
-                assertEquals(all.get("user_phone").getAsString(), "11");
-                assertEquals(all.get("user_job").getAsString(), "1");
+        MapValueData item = (MapValueData)all.get(0);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user3@gmail.com");
+    }
 
-            } else if (all.get("user_email").getAsString().equals("user4@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f4");
-                assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company");
-                assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "");
-            }
-        }
+    @Test
+    public void testPage5() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.SORT.put(context, "+user_email");
+        Parameters.PAGE.put(context, "5");
+        Parameters.PER_PAGE.put(context, "1");
+
+        Metric metric = new TestUserProfile();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 1);
+
+        List<ValueData> all = value.getAll();
+
+        MapValueData item = (MapValueData)all.get(0);
+        assertEquals(item.getAll().get("user_email").getAsString(), "user5@gmail.com");
+    }
+
+    @Test
+    public void testUnExistedPage() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.SORT.put(context, "+user_email");
+        Parameters.PAGE.put(context, "6");
+        Parameters.PER_PAGE.put(context, "1");
+
+        Metric metric = new TestUserProfile();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 0);
     }
 
     public class TestUserProfile extends UsersProfiles {

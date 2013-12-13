@@ -64,7 +64,7 @@ public class TestReadBasedMetric extends BaseTest {
         }
 
         @Override
-        public DBObject[] getDBOperations(Map<String, String> clauses) {
+        public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
             return new DBObject[0];
         }
     }

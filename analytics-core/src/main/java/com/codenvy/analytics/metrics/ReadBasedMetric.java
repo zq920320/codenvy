@@ -124,26 +124,52 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *         the execution context
      * @return {@link DBObject}
      */
-    public DBObject[] getDBOperations(Map<String, String> clauses) {
-        if (Parameters.SORT.exists(clauses)) {
+    public final DBObject[] getDBOperations(Map<String, String> clauses) {
+        return unionDBOperations(getBasicDBOperations(clauses),
+                                 getSpecificDBOperations(clauses));
+    }
+
+    /**
+     * Provides sorting and pagination support.
+     *
+     * @return basic DB operations
+     */
+    private DBObject[] getBasicDBOperations(Map<String, String> clauses) {
+        boolean sortExists = Parameters.SORT.exists(clauses);
+        boolean pageExists = Parameters.PAGE.exists(clauses);
+
+        DBObject[] dbOp = new DBObject[(sortExists ? 1 : 0) + (pageExists ? 2 : 0)];
+
+        if (sortExists) {
             String sortCondition = Parameters.SORT.get(clauses);
 
             String field = sortCondition.substring(1);
             boolean asc = sortCondition.substring(0, 1).equals("+");
 
-            BasicDBObject sort = new BasicDBObject();
-            sort.put("$sort", new BasicDBObject(field, asc ? 1 : -1));
+            dbOp[0] = new BasicDBObject("$sort", new BasicDBObject(field, asc ? 1 : -1));
         }
 
-        if (Parameters.PAGE.exists(clauses)) {
+        if (pageExists) {
             long page = Long.parseLong(Parameters.PAGE.get(clauses));
             long perPage = Long.parseLong(Parameters.PER_PAGE.get(clauses));
 
-            BasicDBObject limit = new BasicDBObject("$limit", perPage);
-            BasicDBObject skip = new BasicDBObject("$skip", (page - 1) * perPage);
+            dbOp[sortExists ? 1 : 0] = new BasicDBObject("$skip", (page - 1) * perPage);
+            dbOp[sortExists ? 2 : 1] = new BasicDBObject("$limit", perPage);
         }
 
-        return new DBObject[0];
+        return dbOp;
     }
+
+    protected DBObject[] unionDBOperations(DBObject[] dbOp1, DBObject[] dbOp2) {
+        DBObject[] result = new DBObject[dbOp1.length + dbOp2.length];
+
+        System.arraycopy(dbOp1, 0, result, 0, dbOp1.length);
+        System.arraycopy(dbOp2, 0, result, dbOp1.length, dbOp2.length);
+
+        return result;
+    }
+
+    /** @return DB operations specific for given metric */
+    protected abstract DBObject[] getSpecificDBOperations(Map<String, String> clauses);
 }
 

@@ -64,4 +64,9 @@ abstract public class AbstractUsersData extends ReadBasedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
     }
+
+    @Override
+    protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+        return new DBObject[0];
+    }
 }
