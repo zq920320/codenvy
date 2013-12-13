@@ -125,6 +125,24 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * @return {@link DBObject}
      */
     public DBObject[] getDBOperations(Map<String, String> clauses) {
+        if (Parameters.SORT.exists(clauses)) {
+            String sortCondition = Parameters.SORT.get(clauses);
+
+            String field = sortCondition.substring(1);
+            boolean asc = sortCondition.substring(0, 1).equals("+");
+
+            BasicDBObject sort = new BasicDBObject();
+            sort.put("$sort", new BasicDBObject(field, asc ? 1 : -1));
+        }
+
+        if (Parameters.PAGE.exists(clauses)) {
+            long page = Long.parseLong(Parameters.PAGE.get(clauses));
+            long perPage = Long.parseLong(Parameters.PER_PAGE.get(clauses));
+
+            BasicDBObject limit = new BasicDBObject("$limit", perPage);
+            BasicDBObject skip = new BasicDBObject("$skip", (page - 1) * perPage);
+        }
+
         return new DBObject[0];
     }
 }

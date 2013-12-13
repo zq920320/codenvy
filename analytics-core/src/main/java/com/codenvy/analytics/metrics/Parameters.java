@@ -28,6 +28,11 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum Parameters {
+    SORT,
+
+    PAGE,
+    PER_PAGE,
+
     LOG,
     PARAM,
     EVENT,

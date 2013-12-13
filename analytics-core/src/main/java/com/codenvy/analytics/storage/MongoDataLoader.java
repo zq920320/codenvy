@@ -21,7 +21,6 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Pagination;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.*;
 
@@ -54,11 +53,10 @@ public class MongoDataLoader implements DataLoader {
         try {
             DBObject filter = metric.getFilter(clauses);
             DBObject[] dbOperations = metric.getDBOperations(clauses);
+
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
 
-            PageSupportedIterator iterator = new PageSupportedIterator(aggregation.results().iterator(), clauses);
-
-            return createdValueData(metric, iterator);
+            return createdValueData(metric, aggregation.results().iterator());
 
         } catch (ParseException e) {
             throw new IOException(e);
@@ -211,59 +209,5 @@ public class MongoDataLoader implements DataLoader {
         void accumulate(String key, Object value);
 
         ValueData pull();
-    }
-
-    /**
-     * Simply implemented {@link Iterator} which supports pagination.
-     * First {@link Pagination#PER_PAGE} * ({@link Pagination#PAGE} - 1) elements will be skipped.
-     * There is possible performance issue with skip operator in MongoDB when result is extremely huge. So, it is
-     * highly recommended to use filters to reduce result as much as possible.
-     */
-    private class PageSupportedIterator implements Iterator<DBObject> {
-        private final long               limit;
-        private final Iterator<DBObject> delegated;
-
-        private long processed;
-
-        PageSupportedIterator(Iterator<DBObject> delegated, Map<String, String> clauses) {
-            this.delegated = delegated;
-
-            if (Pagination.PAGE.exists(clauses)) {
-                limit = Long.valueOf(Pagination.PER_PAGE.get(clauses));
-                skip(limit * (Long.valueOf(Pagination.PAGE.get(clauses)) - 1));
-            } else {
-                limit = Long.MAX_VALUE;
-            }
-        }
-
-        private void skip(long number) {
-            for (int i = 0; i < number; i++) {
-                try {
-                    delegated.next();
-                } catch (NoSuchElementException e) {
-                    // the limit is reached
-                }
-            }
-        }
-
-        @Override
-        public boolean hasNext() {
-            return delegated.hasNext() && limit > processed;
-        }
-
-        @Override
-        public DBObject next() {
-            if (hasNext()) {
-                processed++;
-                return delegated.next();
-            } else {
-                throw new NoSuchElementException();
-            }
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
     }
 }
