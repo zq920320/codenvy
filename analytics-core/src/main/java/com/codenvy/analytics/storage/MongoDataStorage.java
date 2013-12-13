@@ -38,7 +38,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * Utility class. Provides connection with underlying storage.
+ *
+ * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ */
 public class MongoDataStorage {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataStorage.class);
@@ -47,41 +51,73 @@ public class MongoDataStorage {
     private static final String  URL      = Configurator.getString("analytics.storage.url");
     private static final boolean EMBEDDED = Configurator.getBoolean("analytics.storage.embedded");
 
-    private static final MongoClientURI  mongoClientURI;
+    private static final MongoClientURI  clientURI;
     private static final MongoDataLoader mongoDataLoader;
 
     private static MongodProcess mongodProcess;
 
     static {
-        mongoClientURI = new MongoClientURI(URL);
+        clientURI = new MongoClientURI(URL);
 
         if (EMBEDDED) {
             initEmbeddedStorage();
         }
 
         try {
-            mongoDataLoader = new MongoDataLoader(mongoClientURI);
+            mongoDataLoader = new MongoDataLoader(openConnection());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public static MongoClientURI getMongoClientURI()
-    {
-        return mongoClientURI;
+    /**
+     * Initialize Mongo client. Should be closed after usage.
+     *
+     * @throws IOException
+     */
+    public static MongoClient openConnection() throws IOException {
+        MongoClient mongoClient = new MongoClient(clientURI);
+        try {
+            DB db = mongoClient.getDB(clientURI.getDatabase());
+
+            if (isAuthRequired(clientURI)) {
+                db.authenticate(clientURI.getUsername(), clientURI.getPassword());
+            }
+        } catch (Exception e) {
+            mongoClient.close();
+            throw new IOException(e);
+        }
+
+        return mongoClient;
+    }
+
+    /**
+     * @return database to which connection was opened
+     */
+    public static DB getDB(MongoClient mongoClient) {
+        return mongoClient.getUsedDatabases().iterator().next();
+    }
+
+    private static boolean isAuthRequired(MongoClientURI clientURI) {
+        return clientURI.getUsername() != null && !clientURI.getUsername().isEmpty();
+    }
+
+
+    public static DataLoader getDataLoader() {
+        return mongoDataLoader;
     }
 
     public static void putStorageParameters(Map<String, String> context) {
-        if (mongoClientURI.getUsername() == null) {
-            Parameters.STORAGE_URL.put(context, mongoClientURI.toString());
+        if (clientURI.getUsername() == null) {
+            Parameters.STORAGE_URL.put(context, clientURI.toString());
             Parameters.STORAGE_USER.put(context, "''");
             Parameters.STORAGE_PASSWORD.put(context, "''");
         } else {
-            String password = new String(mongoClientURI.getPassword());
-            String serverUrlNoPassword = mongoClientURI.toString().replace(mongoClientURI.getUsername() + ":" +
-                                                                           password + "@", "");
+            String password = new String(clientURI.getPassword());
+            String serverUrlNoPassword = clientURI.toString().replace(clientURI.getUsername() + ":" +
+                                                                      password + "@", "");
             Parameters.STORAGE_URL.put(context, serverUrlNoPassword);
-            Parameters.STORAGE_USER.put(context, mongoClientURI.getUsername());
+            Parameters.STORAGE_USER.put(context, clientURI.getUsername());
             Parameters.STORAGE_PASSWORD.put(context, password);
         }
     }
@@ -120,23 +156,17 @@ public class MongoDataStorage {
         });
     }
 
+    /**
+     * Checks if embedded storage is started. If connection can be opened, then it means storage is started. All JVM
+     * share the same storage.
+     */
     private static boolean isStarted() {
         try {
-            MongoClient mongoClient = new MongoClient(mongoClientURI);
-            try {
-                DB db = mongoClient.getDB(mongoClientURI.getDatabase());
-                db.getCollectionNames();
-            } finally {
-                mongoClient.close();
-            }
-        } catch (Throwable e) {
+            openConnection().close();
+        } catch (IOException e) {
             return false;
         }
 
         return true;
-    }
-
-    public static DataLoader getDataLoader() {
-        return mongoDataLoader;
     }
 }

@@ -37,22 +37,13 @@ public class MongoDataLoader implements DataLoader {
     private final DB          db;
     private final Set<String> allFilters;
 
-    MongoDataLoader(MongoClientURI clientURI) throws IOException {
-        MongoClient mongoClient = new MongoClient(clientURI);
-        db = mongoClient.getDB(clientURI.getDatabase());
-
-        if (isAuthRequired(clientURI)) {
-            db.authenticate(clientURI.getUsername(), clientURI.getPassword());
-        }
+    MongoDataLoader(MongoClient mongoClient) throws IOException {
+        db = MongoDataStorage.getDB(mongoClient);
 
         allFilters = new HashSet<>();
         for (MetricFilter filter : MetricFilter.values()) {
             allFilters.add(filter.name().toLowerCase());
         }
-    }
-
-    private boolean isAuthRequired(MongoClientURI clientURI) {
-        return clientURI.getUsername() != null && !clientURI.getUsername().isEmpty();
     }
 
     /** {@inheritDoc} */

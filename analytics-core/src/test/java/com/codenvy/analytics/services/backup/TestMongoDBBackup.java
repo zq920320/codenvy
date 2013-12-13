@@ -17,103 +17,93 @@
  */
 package com.codenvy.analytics.services.backup;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.storage.MongoDataStorage;
+import com.mongodb.*;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.storage.MongoDataStorage;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
-/**
- * TestMongoDBBackupJob will be tested MongoDBBackupJobs.
- *
- * @author Alexander Reshetnyak
- */
-public class TestMongoDBBackupJob extends BaseTest {
-    
+/** @author Alexander Reshetnyak */
+public class TestMongoDBBackup extends BaseTest {
+
     private String[] collectionNames;
-    
+
     @BeforeClass
     public void prepare() throws Exception {
-        collectionNames = Configurator.getArray(MongoDBBackupJob.BACKUP_RESOURCES);
-        
-        MongoClient mongoClient = new MongoClient(MongoDataStorage.getMongoClientURI());
-        DB db = mongoClient.getDB(MongoDataStorage.getMongoClientURI().getDatabase());
-        
+        collectionNames = new String[]{"test1_statistics", "test2_statistics"};
+
+        MongoClient mongoClient = MongoDataStorage.openConnection();
+        DB db = MongoDataStorage.getDB(mongoClient);
+
         for (String collectionName : collectionNames) {
             DBCollection dbCollection = db.getCollection(collectionName);
-            
+
             for (int i = 0; i < 1000; i++) {
                 DBObject dbObject = new BasicDBObject();
                 dbObject.put("key_" + i, "object_" + i);
                 dbCollection.insert(dbObject);
             }
         }
-        
+
         mongoClient.close();
     }
-    
+
     @AfterClass
-    public void teardown() throws Exception {
-        MongoClient mongoClient = new MongoClient(MongoDataStorage.getMongoClientURI());
-        DB db = mongoClient.getDB(MongoDataStorage.getMongoClientURI().getDatabase());
-        
+    public void tearDown() throws Exception {
+        MongoClient mongoClient = MongoDataStorage.openConnection();
+        DB db = MongoDataStorage.getDB(mongoClient);
+
         for (String collectionName : collectionNames) {
             db.getCollection(collectionName).drop();
-            db.getCollection(collectionName + MongoDBBackupJob.BACKUP_SUFFIX).drop();
+            db.getCollection(collectionName + MongoDBBackup.BACKUP_SUFFIX).drop();
         }
-        
+
         mongoClient.close();
     }
 
     @Test
     public void shouldReturnCorrectData() throws Exception {
-        MongoDBBackupJob job = new MongoDBBackupJob();
-        // First backup
+        MongoDBBackup job = new MongoDBBackup();
         job.forceExecute(null);
-        
-        MongoClient mongoClient = new MongoClient(MongoDataStorage.getMongoClientURI());
-        DB db = mongoClient.getDB(MongoDataStorage.getMongoClientURI().getDatabase());
-        
+
+        MongoClient mongoClient = MongoDataStorage.openConnection();
+        DB db = MongoDataStorage.getDB(mongoClient);
+
         // check
         for (String collectionName : collectionNames) {
             assertTrue(db.collectionExists(collectionName));
-            assertTrue(db.collectionExists(collectionName + MongoDBBackupJob.BACKUP_SUFFIX));
+            assertTrue(db.collectionExists(collectionName + MongoDBBackup.BACKUP_SUFFIX));
             assertEquals(1000, db.getCollection(collectionName).count());
-            assertEquals(1000, db.getCollection(collectionName + MongoDBBackupJob.BACKUP_SUFFIX).count());
+            assertEquals(1000, db.getCollection(collectionName + MongoDBBackup.BACKUP_SUFFIX).count());
         }
-        
+
         // add data
         for (String collectionName : collectionNames) {
             DBCollection dbCollection = db.getCollection(collectionName);
-            
+
             for (int i = 1000; i < 1050; i++) {
                 DBObject dbObject = new BasicDBObject();
                 dbObject.put("key_" + i, "object_" + i);
                 dbCollection.insert(dbObject);
             }
         }
-        
+
         // Second backup
         job.forceExecute(null);
-        
+
         // check
         for (String collectionName : collectionNames) {
             assertTrue(db.collectionExists(collectionName));
-            assertTrue(db.collectionExists(collectionName + MongoDBBackupJob.BACKUP_SUFFIX));
+            assertTrue(db.collectionExists(collectionName + MongoDBBackup.BACKUP_SUFFIX));
             assertEquals(1050, db.getCollection(collectionName).count());
-            assertEquals(1050, db.getCollection(collectionName + MongoDBBackupJob.BACKUP_SUFFIX).count());
+            assertEquals(1050, db.getCollection(collectionName + MongoDBBackup.BACKUP_SUFFIX).count());
         }
-        
+
         mongoClient.close();
     }
 }
