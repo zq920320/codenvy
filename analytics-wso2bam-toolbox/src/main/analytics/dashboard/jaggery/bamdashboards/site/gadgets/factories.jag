@@ -27,7 +27,7 @@ if (user != null) {
 
 loadCssStyles();
 
-var data = getAllResults("factories", queryParams);
+var data = getAllResults("factory-timeline", queryParams);
 for (var table in data) {
     printTable(data[table]);
 }

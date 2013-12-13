@@ -30,6 +30,7 @@ import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.DBObject;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +52,11 @@ public class PigServer {
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PigServer.class);
 
-    private static final String  LOGS_DIR    = Configurator.getString("analytics.logs.dir");
-    private static final String  SCRIPTS_DIR = Configurator.getString("pig.scripts.dir");
-    private static final String  BIN_DIR     = Configurator.getString("pig.bin.dir");
-    private static final boolean EMBEDDED    = Configurator.getBoolean("pig.embedded");
+    private static final String              LOGS_DIR    = Configurator.getString("analytics.logs.dir");
+    private static final String              SCRIPTS_DIR = Configurator.getString("pig.scripts.dir");
+    private static final String              BIN_DIR     = Configurator.getString("pig.bin.dir");
+    private static final boolean             EMBEDDED    = Configurator.getBoolean("pig.embedded");
+    private static final Map<String, String> PROPERTIES  = Configurator.getAll("pig.property");
 
     private static final Calendar OLD_SCRIPT_DATE = Calendar.getInstance();
 
@@ -103,8 +105,7 @@ public class PigServer {
     }
 
     private static void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context) throws IOException {
-        System.setProperty("udf.import.list", "com.codenvy.analytics.pig.udf");
-        org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
+        org.apache.pig.PigServer server = initializeServer();
 
         String script = readScriptContent(scriptType, context);
 
@@ -116,6 +117,14 @@ public class PigServer {
             server.shutdown();
             LOG.info("Execution " + scriptType + " has finished");
         }
+    }
+
+    private static org.apache.pig.PigServer initializeServer() throws ExecException {
+        for (Map.Entry<String, String> entry : PROPERTIES.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
+        }
+
+        return new org.apache.pig.PigServer(ExecType.LOCAL);
     }
 
     private static synchronized void executeOnDedicatedServer(ScriptType scriptType, Map<String, String> context)

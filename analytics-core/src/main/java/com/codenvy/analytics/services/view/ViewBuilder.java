@@ -201,6 +201,7 @@ public class ViewBuilder implements Feature {
 
                     int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : sectionConfiguration.getColumns();
                     Map<String, String> initialContext = Utils.initializeContext(timeUnit);
+                    initialContext.putAll(context); // TODO unclear
 
                     List<ValueData> rowData = row.getData(initialContext, rowCount);
                     sectionData.add(rowData);
