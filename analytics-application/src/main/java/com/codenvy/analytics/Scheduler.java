@@ -21,6 +21,7 @@ package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.Feature;
+import com.codenvy.analytics.services.backup.MongoDBBackupJob;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
@@ -54,7 +55,7 @@ public class Scheduler implements ServletContextListener {
 
     private org.quartz.Scheduler scheduler;
 
-    private static final Class[] features = new Class[]{PigRunner.class, ViewBuilder.class};
+    private static final Class[] features = new Class[]{PigRunner.class, ViewBuilder.class, MongoDBBackupJob.class};
 
     /** {@inheritDoc} */
     @Override

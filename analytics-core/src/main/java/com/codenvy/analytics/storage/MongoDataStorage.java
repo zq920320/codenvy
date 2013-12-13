@@ -66,6 +66,11 @@ public class MongoDataStorage {
         }
     }
 
+    public static MongoClientURI getMongoClientURI()
+    {
+        return mongoClientURI;
+    }
+
     public static void putStorageParameters(Map<String, String> context) {
         if (mongoClientURI.getUsername() == null) {
             Parameters.STORAGE_URL.put(context, mongoClientURI.toString());
