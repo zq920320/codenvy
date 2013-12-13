@@ -3,31 +3,28 @@
 include_once("utils.jag");
 
 var CURRENT_PAGE_QUERY_PARAMETER = "page";
-var ONE_PAGE_ROWS_COUNT = 2;                      // TODO set correct values
+var ONE_PAGE_ROWS_COUNT = 10;                      // TODO set correct values
 var USER_ID_LINK_PREFIX = "user-view.jsp?userid";
 
-var user = request.getParameter("Email");
-var domain = request.getParameter("First Name");
-var company = request.getParameter("Second Name");
+var email = request.getParameter("Email");
+var userFirstName = request.getParameter("First Name");
+var userSecondName = request.getParameter("Second Name");
 
 var queryParams = {};
 
-if (user != null) {
-    queryParams["user"] = user;
+if (email != null) {
+    queryParams["user_email"] = email;
 
-} else if (domain != null) {
-    queryParams["domain"] = domain;
+} else if (userFirstName != null) {
+    queryParams["user_first_name"] = userFirstName;
 
-} else if (company != null) {
-    queryParams["company"] = company;
+} else if (userSecondName != null) {
+    queryParams["user_last_name"] = userSecondName;
 }
 
 loadCssStyles();
 
-//var data = getAllResults("user-overview", queryParams);  // TODO fix and uncomment
-
-queryParams["time_unit"] = "DAY";                   // TODO remove
-var data = getAllResults("timeline", queryParams);  // TODO remove
+var data = getAllResults("user-statistics", queryParams);  // TODO fix and uncomment
 
 // TODO fix
 var table;
