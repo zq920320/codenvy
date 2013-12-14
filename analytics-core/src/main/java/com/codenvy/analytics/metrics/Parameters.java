@@ -50,6 +50,11 @@ public enum Parameters {
         public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
             TimeUnit.valueOf(value.toUpperCase());
         }
+
+        @Override
+        public String getDefaultValue() {
+            return TimeUnit.LIFETIME.name();
+        }
     },
     FROM_DATE {
         @Override

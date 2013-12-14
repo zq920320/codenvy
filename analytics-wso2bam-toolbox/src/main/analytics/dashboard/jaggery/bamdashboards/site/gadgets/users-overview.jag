@@ -24,7 +24,7 @@ if (email != null) {
 
 loadCssStyles();
 
-var data = getAllResults("user-statistics", queryParams);  // TODO fix and uncomment
+var data = getAllResults("users-overview", queryParams);
 
 // TODO fix
 var table;

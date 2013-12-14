@@ -91,10 +91,8 @@ public class MongoDataStorage {
         return mongoClient;
     }
 
-    /**
-     * @return database to which connection was opened
-     */
-    public static DB getDB(MongoClient mongoClient) {
+    /** @return database to which connection was opened */
+    public static DB getUsedDB(MongoClient mongoClient) {
         return mongoClient.getUsedDatabases().iterator().next();
     }
 
@@ -162,8 +160,14 @@ public class MongoDataStorage {
      */
     private static boolean isStarted() {
         try {
-            openConnection().close();
-        } catch (IOException e) {
+            MongoClient mongoClient = openConnection();
+            try {
+                DB db = getUsedDB(mongoClient);
+                db.getCollectionNames();
+            } finally {
+                mongoClient.close();
+            }
+        } catch (Throwable e) {
             return false;
         }
 

@@ -75,6 +75,12 @@ public class TestViewBuilder extends BaseTest {
     }
 
     @Test
+    public void testBuildAll() throws Exception {
+        ViewBuilder viewBuilder = new ViewBuilder();
+        viewBuilder.doExecute();
+    }
+
+    @Test
     public void shouldReturnCorrectData() throws Exception {
         ViewBuilder spyBuilder = spy(new ViewBuilder());
 

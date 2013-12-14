@@ -71,7 +71,7 @@ public class MongoDBBackup implements Feature {
 
         MongoClient mongoClient = MongoDataStorage.openConnection();
         try {
-            DB db = MongoDataStorage.getDB(mongoClient);
+            DB db = MongoDataStorage.getUsedDB(mongoClient);
 
             for (String name : COLLECTIONS) {
                 DBCollection src = db.getCollection(name);

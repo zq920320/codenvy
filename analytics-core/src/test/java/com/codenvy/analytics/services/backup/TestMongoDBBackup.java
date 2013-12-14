@@ -38,7 +38,7 @@ public class TestMongoDBBackup extends BaseTest {
         collectionNames = new String[]{"test1_statistics", "test2_statistics"};
 
         MongoClient mongoClient = MongoDataStorage.openConnection();
-        DB db = MongoDataStorage.getDB(mongoClient);
+        DB db = MongoDataStorage.getUsedDB(mongoClient);
 
         for (String collectionName : collectionNames) {
             DBCollection dbCollection = db.getCollection(collectionName);
@@ -56,7 +56,7 @@ public class TestMongoDBBackup extends BaseTest {
     @AfterClass
     public void tearDown() throws Exception {
         MongoClient mongoClient = MongoDataStorage.openConnection();
-        DB db = MongoDataStorage.getDB(mongoClient);
+        DB db = MongoDataStorage.getUsedDB(mongoClient);
 
         for (String collectionName : collectionNames) {
             db.getCollection(collectionName).drop();
@@ -72,7 +72,7 @@ public class TestMongoDBBackup extends BaseTest {
         job.forceExecute(null);
 
         MongoClient mongoClient = MongoDataStorage.openConnection();
-        DB db = MongoDataStorage.getDB(mongoClient);
+        DB db = MongoDataStorage.getUsedDB(mongoClient);
 
         // check
         for (String collectionName : collectionNames) {

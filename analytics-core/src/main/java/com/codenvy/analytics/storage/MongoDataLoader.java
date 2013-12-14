@@ -37,7 +37,7 @@ public class MongoDataLoader implements DataLoader {
     private final Set<String> allFilters;
 
     MongoDataLoader(MongoClient mongoClient) throws IOException {
-        db = MongoDataStorage.getDB(mongoClient);
+        db = MongoDataStorage.getUsedDB(mongoClient);
 
         allFilters = new HashSet<>();
         for (MetricFilter filter : MetricFilter.values()) {

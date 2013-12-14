@@ -134,6 +134,10 @@ public class ViewBuilder implements Feature {
             context.put(key.toUpperCase(), parameters.getFirst(key));
         }
 
+        if (!Parameters.TIME_UNIT.exists(context)) {
+            Parameters.TIME_UNIT.putDefaultValue(context);
+        }
+
         return context;
     }
 
@@ -195,8 +199,7 @@ public class ViewBuilder implements Feature {
                 List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
 
                 for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
-                    Constructor<?> constructor =
-                            Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
+                    Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
                     Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
 
                     int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : sectionConfiguration.getColumns();
