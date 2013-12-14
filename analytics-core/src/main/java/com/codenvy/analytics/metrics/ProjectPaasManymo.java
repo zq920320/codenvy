@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectPaasManymo extends AbstractProjectPaas {
 
     public ProjectPaasManymo() {
-        super(MetricType.PROJECT_PAAS_MANYAMO, new String[]{"MANYAMO"});
+        super(MetricType.PROJECT_PAAS_MANYAMO, new String[]{"MANYMO"});
     }
 
     @Override
