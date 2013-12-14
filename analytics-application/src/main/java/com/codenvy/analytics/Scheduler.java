@@ -45,10 +45,11 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class Scheduler implements ServletContextListener {
 
-    private static final Logger LOGGER                      = LoggerFactory.getLogger(Scheduler.class);
-    private static final String FEATURE_FORCE_RUN_CONDITION = "feature.force.run.condition";
-    private static final String FEATURE_FORCE_RUN_CLASS     = "feature.force.run.class";
-    private static final String FEATURES_CRON_TIMETABLE     = "features.cron.timetable";
+    private static final Logger LOGGER                         = LoggerFactory.getLogger(Scheduler.class);
+    private static final String FEATURE_FORCE_RUN_CONDITION    = "feature.force.run.condition";
+    private static final String FEATURE_FORCE_RUN_CLASS        = "feature.force.run.class";
+    private static final String FEATURE_FORCE_RUN_ASYNCHRONOUS = "feature.force.run.asynchronous";
+    private static final String FEATURES_CRON_TIMETABLE        = "features.cron.timetable";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
     private static final String FORCE_RUN_CONDITION_LASTDAY = "LASTDAY";
@@ -80,7 +81,19 @@ public class Scheduler implements ServletContextListener {
 
         String forceRunCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
         if (forceRunCondition != null) {
-            forceRunJobs();
+
+            Thread forceRunJobsThread = new Thread() {
+                @Override
+                public void run() {
+                    forceRunJobs();
+                }
+            };
+
+            if (Configurator.getBoolean(FEATURE_FORCE_RUN_ASYNCHRONOUS)) {
+                forceRunJobsThread.start();
+            } else {
+                forceRunJobsThread.run();
+            }
         }
     }
 
