@@ -50,7 +50,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
     public ValueData getValue(Map<String, String> context) throws IOException {
         InitialValueContainer.validateExistenceInitialValueBefore(context);
 
-        if (!Utils.getFilters(context).isEmpty()) {
+        if (!Utils.isSimpleContext(context)) {
             return ValueDataFactory.createDefaultValue(getValueDataClass());
         }
 

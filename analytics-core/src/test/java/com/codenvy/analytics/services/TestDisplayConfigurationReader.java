@@ -38,8 +38,8 @@ import static org.testng.AssertJUnit.assertEquals;
 public class TestDisplayConfigurationReader {
 
     private static final String RESOURCE = "<display>" +
-                                           "    <view time-unit=\"day,week\">" +
-                                           "        <section name=\"workspaces\" columns=\"20\">" +
+                                           "    <view time-unit=\"day,week\" columns=\"20\">" +
+                                           "        <section name=\"workspaces\">" +
                                            "            <description>desc</description>" +
                                            "            <row class=\"Date.class\">" +
                                            "                <parameter key=\"format\" value=\"dd MMM\"/>" +
@@ -63,10 +63,10 @@ public class TestDisplayConfigurationReader {
 
         assertEquals("day,week", viewConfiguration.getTimeUnit());
         assertEquals(1, viewConfiguration.getSections().size());
+        assertEquals(20, viewConfiguration.getColumns());
         assertFalse(viewConfiguration.isOnDemand());
 
         SectionConfiguration sectionConfiguration = viewConfiguration.getSections().get(0);
-        assertEquals(20, sectionConfiguration.getColumns());
         assertEquals("workspaces", sectionConfiguration.getName());
         assertEquals("desc", sectionConfiguration.getDescription());
 

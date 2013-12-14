@@ -28,7 +28,10 @@ import com.codenvy.analytics.metrics.MetricFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricRow extends AbstractRow {
@@ -39,56 +42,77 @@ public class MetricRow extends AbstractRow {
     private static final String DESCRIPTION    = "description";
     private static final String FIELDS         = "fields";
 
-    private final Metric      metric;
-    private final String      format;
-    private final Set<String> fields;
+    private final Metric   metric;
+    private final String   format;
+    private final String[] fields;
 
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
 
         metric = MetricFactory.getMetric(parameters.get(NAME));
         format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_FORMAT;
-        fields = new HashSet<>(
-                Arrays.asList(parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0]));
+        fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
     }
 
     @Override
-    public List<ValueData> getData(Map<String, String> initialContext, int rowCount) throws IOException {
-        List<ValueData> result = new ArrayList<>(rowCount);
-
+    public List<List<ValueData>> getData(Map<String, String> initialContext, int columns) throws IOException {
         try {
-            boolean descriptionExists = parameters.containsKey(DESCRIPTION);
-            if (descriptionExists) {
-                result.add(new StringValueData(parameters.get(DESCRIPTION)));
-            }
-
-            for (int i = descriptionExists ? 1 : 0; i < rowCount; i++) {
-                try {
-                    formatAndAdd(getMetricValue(initialContext), result);
-                } catch (InitialValueNotFoundException e) {
-                    result.add(StringValueData.DEFAULT);
-                }
-
-                initialContext = Utils.prevDateInterval(initialContext);
+            if (fields.length == 0) {
+                return Arrays.asList(getSingleRow(initialContext, columns));
+            } else {
+                return getMultipleRows(initialContext, columns);
             }
         } catch (ParseException e) {
             throw new IOException(e);
+        }
+    }
+
+    private List<ValueData> getSingleRow(Map<String, String> initialContext, int columns) throws IOException,
+                                                                                                 ParseException {
+        List<ValueData> result = new ArrayList<>();
+
+        boolean descriptionExists = parameters.containsKey(DESCRIPTION);
+        if (descriptionExists) {
+            result.add(new StringValueData(parameters.get(DESCRIPTION)));
+        }
+
+        for (int i = descriptionExists ? 1 : 0; i < getOverriddenColumnsCount(columns); i++) {
+            try {
+                formatAndAddSingleValue(getMetricValue(initialContext), result);
+            } catch (InitialValueNotFoundException e) {
+                result.add(StringValueData.DEFAULT);
+            }
+
+            initialContext = Utils.prevDateInterval(initialContext);
         }
 
         return result;
     }
 
-    private void formatAndAdd(ValueData valueData, List<ValueData> result) {
+    private List<List<ValueData>> getMultipleRows(Map<String, String> initialContext, int columns) throws
+                                                                                                   IOException,
+                                                                                                   ParseException {
+        List<List<ValueData>> result = new ArrayList<>();
+
+        for (int i = 0; i < getOverriddenColumnsCount(columns); i++) {
+            formatAndAddMultipleValues(getMetricValue(initialContext), result);
+            initialContext = Utils.prevDateInterval(initialContext);
+        }
+
+        return result;
+    }
+
+    private void formatAndAddSingleValue(ValueData valueData, List<ValueData> singleValue) throws IOException {
         Class<? extends ValueData> clazz = valueData.getClass();
 
         if (clazz == StringValueData.class) {
-            result.add(valueData);
+            singleValue.add(valueData);
 
         } else if (clazz == LongValueData.class) {
             double value = ((LongValueData)valueData).getAsDouble();
             String formattedValue = value == 0 ? "" : String.format(format, value);
 
-            result.add(new StringValueData(formattedValue));
+            singleValue.add(new StringValueData(formattedValue));
 
         } else if (clazz == DoubleValueData.class) {
             double value = ((DoubleValueData)valueData).getAsDouble();
@@ -96,16 +120,34 @@ public class MetricRow extends AbstractRow {
                                     ? ""
                                     : String.format(format, value);
 
-            result.add(new StringValueData(formattedValue));
+            singleValue.add(new StringValueData(formattedValue));
+        } else {
+            throw new IOException("Unsupported class " + clazz);
+        }
+    }
 
-        } else if (clazz == MapValueData.class) {
+    private void formatAndAddMultipleValues(ValueData valueData, List<List<ValueData>> multipleValues) throws
+                                                                                                       IOException {
+        Class<? extends ValueData> clazz = valueData.getClass();
+
+        if (clazz == MapValueData.class) {
             Map<String, ValueData> items = ((MapValueData)valueData).getAll();
 
-            for (Map.Entry<String, ValueData> entry : items.entrySet()) {
-                if (fields.isEmpty() || fields.contains(entry.getKey())) {
-                    formatAndAdd(entry.getValue(), result);
-                }
+            List<ValueData> singleValue = new ArrayList<>();
+            for (String field : fields) {
+                formatAndAddSingleValue(items.containsKey(field) ? items.get(field)
+                                                                 : StringValueData.DEFAULT,
+                                        singleValue);
             }
+
+            multipleValues.add(singleValue);
+
+        } else if (clazz == ListValueData.class) {
+            for (ValueData item : ((ListValueData)valueData).getAll()) {
+                formatAndAddMultipleValues(item, multipleValues);
+            }
+        } else {
+            throw new IOException("Unsupported class " + clazz);
         }
     }
 

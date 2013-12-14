@@ -30,6 +30,6 @@ import java.util.Map;
 public interface Row {
 
     /** @return row data depending on execution context */
-    List<ValueData> getData(Map<String, String> initialContext, int rowCount) throws IOException;
+    List<List<ValueData>> getData(Map<String, String> initialContext, int columns) throws IOException;
 
 }

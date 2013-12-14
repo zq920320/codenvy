@@ -24,6 +24,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,13 +36,13 @@ class EmptyRow extends AbstractRow {
     }
 
     @Override
-    public List<ValueData> getData(Map<String, String> initialContext, int rowCount) throws IOException {
-        List<ValueData> result = new ArrayList<>(rowCount);
+    public List<List<ValueData>> getData(Map<String, String> initialContext, int columns) throws IOException {
+        List<ValueData> result = new ArrayList<>(columns);
 
-        for (int i = 0; i < rowCount; i++) {
+        for (int i = 0; i < getOverriddenColumnsCount(columns); i++) {
             result.add(StringValueData.DEFAULT);
         }
 
-        return result;
+        return Arrays.asList(result);
     }
 }

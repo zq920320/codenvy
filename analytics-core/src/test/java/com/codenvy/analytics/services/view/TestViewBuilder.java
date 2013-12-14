@@ -46,8 +46,8 @@ import static org.testng.AssertJUnit.assertEquals;
 public class TestViewBuilder extends BaseTest {
 
     private String RESOURCE = "<display>\n" +
-                              "     <view time-unit=\"day\" name=\"view\">\n" +
-                              "         <section name=\"workspaces\" columns=\"3\">\n" +
+                              "     <view time-unit=\"day\" name=\"view\" columns=\"3\">\n" +
+                              "         <section name=\"workspaces\">\n" +
                               "             <row class=\"com.codenvy.analytics.services.view.DateRow\">\n" +
                               "                 <parameter key=\"section-name\" value=\"desc\"/>\n" +
                               "             </row>\n" +

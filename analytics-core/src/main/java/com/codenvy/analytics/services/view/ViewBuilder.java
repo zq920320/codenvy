@@ -46,7 +46,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
@@ -86,7 +89,7 @@ public class ViewBuilder implements Feature {
             Map<String, String> context = extractContext(uriInfo);
 
             Map<String, List<List<ValueData>>> result;
-            if (Utils.getFilters(context).isEmpty()) {
+            if (Utils.isSimpleContext(context)) {
                 result = queryViewData(viewConfiguration, context);
             } else {
                 result = computeViewData(viewConfiguration, context);
@@ -126,16 +129,16 @@ public class ViewBuilder implements Feature {
         return new JsonStringMapImpl(result);
     }
 
-    private Map<String, String> extractContext(UriInfo info) {
+    private Map<String, String> extractContext(UriInfo info) throws ParseException {
         MultivaluedMap<String, String> parameters = info.getQueryParameters();
-        Map<String, String> context = new HashMap<>(parameters.size());
 
+        Parameters.TimeUnit timeUnit = parameters.containsKey(Parameters.TIME_UNIT.name())
+                                       ? Parameters.TimeUnit.valueOf(parameters.getFirst(Parameters.TIME_UNIT.name()))
+                                       : Parameters.TimeUnit.LIFETIME;
+
+        Map<String, String> context = Utils.initializeContext(timeUnit);
         for (String key : parameters.keySet()) {
             context.put(key.toUpperCase(), parameters.getFirst(key));
-        }
-
-        if (!Parameters.TIME_UNIT.exists(context)) {
-            Parameters.TIME_UNIT.putDefaultValue(context);
         }
 
         return context;
@@ -202,12 +205,8 @@ public class ViewBuilder implements Feature {
                     Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
                     Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
 
-                    int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : sectionConfiguration.getColumns();
-                    Map<String, String> initialContext = Utils.initializeContext(timeUnit);
-                    initialContext.putAll(context); // TODO unclear
-
-                    List<ValueData> rowData = row.getData(initialContext, rowCount);
-                    sectionData.add(rowData);
+                    int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : viewConfiguration.getColumns();
+                    sectionData.addAll(row.getData(context, rowCount));
                 }
 
                 String sectionId = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
@@ -216,7 +215,7 @@ public class ViewBuilder implements Feature {
 
             return viewData;
         } catch (NoSuchMethodException | ClassCastException | ClassNotFoundException | InvocationTargetException |
-                IllegalAccessException | InstantiationException | ParseException e) {
+                IllegalAccessException | InstantiationException e) {
             throw new IOException(e);
         }
     }

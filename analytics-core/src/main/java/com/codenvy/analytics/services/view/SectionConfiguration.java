@@ -26,7 +26,6 @@ import java.util.List;
 @XmlRootElement(name = "section")
 public class SectionConfiguration {
 
-    private int                    columns;
     private String                 name;
     private String                 description;
     private List<RowConfiguration> rows;
@@ -34,11 +33,6 @@ public class SectionConfiguration {
     @XmlElement(name = "description")
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @XmlAttribute
-    public void setColumns(int columns) {
-        this.columns = columns;
     }
 
     @XmlAttribute
@@ -53,10 +47,6 @@ public class SectionConfiguration {
 
     public String getName() {
         return name;
-    }
-
-    public int getColumns() {
-        return columns;
     }
 
     public List<RowConfiguration> getRows() {

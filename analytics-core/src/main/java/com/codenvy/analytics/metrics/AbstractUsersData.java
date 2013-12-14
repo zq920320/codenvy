@@ -33,8 +33,6 @@ abstract public class AbstractUsersData extends ReadBasedMetric {
         super(metricType);
     }
 
-    // TODO
-
     @Override
     public DBObject getFilter(Map<String, String> clauses) throws ParseException {
         BasicDBObject match = new BasicDBObject();

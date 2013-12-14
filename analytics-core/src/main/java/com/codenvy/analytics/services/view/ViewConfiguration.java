@@ -29,10 +29,15 @@ public class ViewConfiguration {
     private String                     name;
     private String                     timeUnit;
     private boolean                    onDemand;
+    private int                        columns;
     private List<SectionConfiguration> sections;
 
     public List<SectionConfiguration> getSections() {
         return sections;
+    }
+
+    public int getColumns() {
+        return columns;
     }
 
     public String getName() {
@@ -46,6 +51,11 @@ public class ViewConfiguration {
 
     public boolean isOnDemand() {
         return onDemand;
+    }
+
+    @XmlAttribute(name = "columns")
+    public void setColumns(int columns) {
+        this.columns = columns;
     }
 
     @XmlAttribute(name = "name")

@@ -71,15 +71,11 @@ public class MongoDataLoader implements DataLoader {
             return metric.getStorageTable();
         }
 
-        if (isExtendedCollection(clauses)) {
-            return metric.getStorageTable() + EXT_COLLECTION_NAME_SUFFIX;
-        } else {
+        if (Utils.isSimpleContext(clauses)) {
             return metric.getStorageTable();
+        } else {
+            return metric.getStorageTable() + EXT_COLLECTION_NAME_SUFFIX;
         }
-    }
-
-    private boolean isExtendedCollection(Map<String, String> clauses) {
-        return Utils.getFilters(clauses).size() > 0;
     }
 
     private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {

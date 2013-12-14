@@ -276,4 +276,8 @@ public class Utils {
 
         return result;
     }
+
+    public static boolean isSimpleContext(Map<String, String> context) {
+        return !Parameters.SORT.exists(context) && !Parameters.PAGE.exists(context) && getFilters(context).isEmpty();
+    }
 }

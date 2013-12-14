@@ -63,14 +63,14 @@ class DateRow extends AbstractRow {
     }
 
     @Override
-    public List<ValueData> getData(Map<String, String> initialContext, int rowCount) throws IOException {
-        List<ValueData> result = new ArrayList<>(rowCount);
+    public List<List<ValueData>> getData(Map<String, String> initialContext, int columns) throws IOException {
+        List<ValueData> result = new ArrayList<>(columns);
 
         try {
             DateFormat dateFormat = new SimpleDateFormat(format.get(Utils.getTimeUnit(initialContext)));
 
             result.add(new StringValueData(parameters.get(SECTION_NAME)));
-            for (int i = 1; i < rowCount; i++) {
+            for (int i = 1; i < getOverriddenColumnsCount(columns); i++) {
                 Calendar toDate = Utils.getToDate(initialContext);
                 result.add(new StringValueData(dateFormat.format(toDate.getTime())));
 
@@ -80,6 +80,6 @@ class DateRow extends AbstractRow {
             throw new IOException(e);
         }
 
-        return result;
+        return Arrays.asList(result);
     }
 }

@@ -17,8 +17,8 @@
          from Codenvy S.A..
 -->
 <display>
-    <view time-unit="day,week,month,lifetime" name="timeline">
-        <section name="workspaces" columns="15">
+    <view time-unit="day,week,month,lifetime" name="timeline" columns="15">
+        <section name="workspaces">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Workspaces"/>
             </row>
@@ -37,7 +37,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="workspaces_usage" columns="15">
+        <section name="workspaces_usage">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Workspaces Usage"/>
             </row>
@@ -60,7 +60,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="users" columns="15">
+        <section name="users">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Users"/>
             </row>
@@ -83,7 +83,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="users_usage" columns="15">
+        <section name="users_usage">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Users Usage"/>
             </row>
@@ -106,7 +106,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="users_engagement" columns="15">
+        <section name="users_engagement">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="User Engagement (#)"/>
             </row>
@@ -133,7 +133,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="invitations" columns="15">
+        <section name="invitations">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Invitations"/>
             </row>
@@ -149,7 +149,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="authentications" columns="15">
+        <section name="authentications">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Authentication Type"/>
             </row>
@@ -171,7 +171,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="usage_time" columns="15">
+        <section name="usage_time">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Usage Time (mins)"/>
             </row>
@@ -198,7 +198,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="user_sessions" columns="15">
+        <section name="user_sessions">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="# User Sessions"/>
             </row>
@@ -225,7 +225,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="projects" columns="15">
+        <section name="projects">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Projects"/>
             </row>
@@ -244,7 +244,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="ide_usage" columns="15">
+        <section name="ide_usage">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="IDE Usage Events"/>
             </row>
@@ -275,7 +275,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="time_spent" columns="15">
+        <section name="time_spent">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Spent Time (mins)"/>
             </row>
@@ -294,7 +294,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="projects_types" columns="15">
+        <section name="projects_types">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Project Types"/>
             </row>
@@ -357,7 +357,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="projects_paas" columns="15">
+        <section name="projects_paas">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Project PaaS"/>
             </row>
@@ -409,10 +409,9 @@
         </section>
     </view>
 
-
     <!-- Factory Timeline -->
-    <view time-unit="day,week,month,lifetime" name="factory-timeline">
-        <section name="factories" columns="15">
+    <view time-unit="day,week,month,lifetime" name="factory-timeline" columns="15">
+        <section name="factories">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Factories"/>
             </row>
@@ -431,7 +430,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="authenticated_factory_sessions" columns="15">
+        <section name="authenticated_factory_sessions">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Authenticated Sessions"/>
             </row>
@@ -450,7 +449,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="converted_factory_sessions" columns="15">
+        <section name="converted_factory_sessions">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Converted Sessions"/>
             </row>
@@ -469,7 +468,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="factory_sessions_ide_usage_events" columns="15">
+        <section name="factory_sessions_ide_usage_events">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="IDE Events"/>
             </row>
@@ -479,7 +478,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions_with_build_percent"/>
-                <parameter key="format" value="%.0f%%"/>                                    factories
+                <parameter key="format" value="%.0f%%"/>
                 <parameter key="description" value="% Built"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -495,7 +494,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="factory_users_sessions" columns="15">
+        <section name="factory_users_sessions">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Users Sessions"/>
             </row>
@@ -514,7 +513,7 @@
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 
-        <section name="factory_product_usage" columns="15">
+        <section name="factory_product_usage">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Usage Time"/>
             </row>
@@ -528,50 +527,56 @@
     </view>
 
     <view time-unit="lifetime" name="users-overview">
-        <section name="users_overview" columns="1">
+        <section name="users_overview">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="User Email,First Name,Last Name,Total Active Projects,Total Deploy,Total Time"/>
+                <parameter key="columns" value="6"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics"/>
+                <parameter key="fields"
+                           value="user_email,user_first_name,user_last_name,projects,deploys,time"/>
+                <parameter key="columns" value="1"/>
             </row>
         </section>
     </view>
 
     <view time-unit="lifetime" name="user-statistics" on-demand="true">
-        <section name="user_profile" columns="6">
+        <section name="user_profile">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Email,First Name,Last Name,Company,Phone,Job"/>
+                <parameter key="columns" value="6"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_profiles"/>
                 <parameter key="fields"
                            value="user_email,user_first_name,user_last_name,user_company,user_phone,user_job"/>
+                <parameter key="columns" value="1"/>
             </row>
         </section>
 
         <!--<section name="user_data" columns="9">-->
-            <!--<row class="com.codenvy.analytics.services.view.TitleRow">-->
-                <!--<parameter key="titles"-->
-                           <!--value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>-->
-            <!--</row>-->
-            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-                <!--<parameter key="name" value="users_statistics"/>-->
-                <!--<parameter key="fields"-->
-                           <!--value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>-->
-            <!--</row>-->
+        <!--<row class="com.codenvy.analytics.services.view.TitleRow">-->
+        <!--<parameter key="titles"-->
+        <!--value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>-->
+        <!--</row>-->
+        <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+        <!--<parameter key="name" value="users_statistics"/>-->
+        <!--<parameter key="fields"-->
+        <!--value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>-->
+        <!--</row>-->
         <!--</section>-->
         <!--<section name="user_sessions" columns="4">-->
-            <!--<row class="com.codenvy.analytics.services.view.TitleRow">-->
-                <!--<parameter key="titles"-->
-                           <!--value="Sessions Start,Session End"/>-->
-            <!--</row>-->
-            <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-                <!--<parameter key="name" value="users_statistics"/>-->
-                <!--<parameter key="fields"-->
-                           <!--value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>-->
-            <!--</row>-->
+        <!--<row class="com.codenvy.analytics.services.view.TitleRow">-->
+        <!--<parameter key="titles"-->
+        <!--value="Sessions Start,Session End"/>-->
+        <!--</row>-->
+        <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
+        <!--<parameter key="name" value="users_statistics"/>-->
+        <!--<parameter key="fields"-->
+        <!--value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>-->
+        <!--</row>-->
         <!--</section>-->
     </view>
 </display>
