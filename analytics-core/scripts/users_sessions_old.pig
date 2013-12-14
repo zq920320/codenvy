@@ -18,10 +18,15 @@
 
 IMPORT 'macros.pig';
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
--- Find out the creation dates
-a1 = filterByEvent(l, 'tenant-created');
-a = FOREACH a1 GENERATE ws, TOTUPLE('ws_name', ws), TOTUPLE('creation_date', ToString(dt, 'yyyy-MM-dd HH:mm:ss'));
+f1 = productUsageTimeList(t, '10');
+f = FOREACH f1 GENERATE '' AS id, *;
 
-STORE a INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('session_id', id),
+            TOTUPLE('start_time', ToString(dt, 'yyyy-MM-dd HH:mm:sss')),
+            TOTUPLE('end_time', ToString(ToDate(ToMilliSeconds(dt) + delta * 1000), 'yyyy-MM-dd HH:mm:sss')),
+            TOTUPLE('time', delta);
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+
+

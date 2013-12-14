@@ -19,9 +19,11 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+f = combineSmallSessions(l, 'session-started', 'session-finished');
 
--- Find out the creation dates
-a1 = filterByEvent(l, 'tenant-created');
-a = FOREACH a1 GENERATE ws, TOTUPLE('ws_name', ws), TOTUPLE('creation_date', ToString(dt, 'yyyy-MM-dd HH:mm:ss'));
+result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user),TOTUPLE('ws', ws), TOTUPLE('session_id', id),
+            TOTUPLE('start_time', ToString(dt, 'yyyy-MM-dd HH:mm:ss')),
+            TOTUPLE('end_time', ToString(ToDate(ToMilliSeconds(dt) + delta * 1000), 'yyyy-MM-dd HH:mm:ss')),
+            TOTUPLE('time', delta);
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
-STORE a INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

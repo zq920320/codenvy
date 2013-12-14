@@ -235,11 +235,10 @@ public class PigServer {
             Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, usersStatistic.getStorageTable());
         }
 
-//        if (!Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.exists(context)) {
-//            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType
-// .WORKSPACES_STATISTICS);
-//            Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.put(context, usersStatistic.getStorageTable());
-//        }
+        if (!Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.exists(context)) {
+            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType.WORKSPACES_STATISTICS);
+            Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.put(context, usersStatistic.getStorageTable());
+        }
 
         MongoDataStorage.putStorageParameters(context);
 
@@ -267,11 +266,12 @@ public class PigServer {
     /** @return the script file name */
     private static File getScriptFileName(ScriptType scriptType, Map<String, String> context) {
         try {
-            if (scriptType == ScriptType.PRODUCT_USAGE_SESSIONS && Utils.getToDate(context).before(OLD_SCRIPT_DATE)) {
-                scriptType = ScriptType.PRODUCT_USAGE_SESSIONS_OLD;
-
-                LOG.info(ScriptType.PRODUCT_USAGE_SESSIONS_OLD.name() + " will be used instead of " +
-                         ScriptType.PRODUCT_USAGE_SESSIONS.name());
+            if (Utils.getToDate(context).before(OLD_SCRIPT_DATE)) {
+                File oldScriptFile = new File(SCRIPTS_DIR, scriptType.toString().toLowerCase() + "_old.pig");
+                if (oldScriptFile.exists()) {
+                    LOG.info("Old script will be used instead of " + scriptType);
+                    return oldScriptFile;
+                }
             }
         } catch (ParseException e) {
             throw new IllegalStateException(e);

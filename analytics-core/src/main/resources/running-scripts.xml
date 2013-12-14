@@ -238,22 +238,34 @@
 
     <!-- Scripts for user's view -->
     <script name="user_update_profile">
-        <description>User's profiles</description>
+        <description>Users' profiles</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_profiles"/>
     </script>
     <script name="users_statistics">
-        <description>User's profiles</description>
+        <description>Users' statistics</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_statistics"/>
     </script>
+    <script name="workspaces_statistics">
+        <description>workspaces' statistics</description>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="STORAGE_TABLE" value="users_statistics"/>
+    </script>
     <script name="users_activity">
-        <description>User's profiles</description>
+        <description>Users' raw log</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_activity"/>
+    </script>
+    <script name="users_sessions">
+        <description>Users' sessions</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="users_sessions"/>
     </script>
 </scripts>
 

@@ -556,27 +556,54 @@
             </row>
         </section>
 
-        <!--<section name="user_data" columns="9">-->
-        <!--<row class="com.codenvy.analytics.services.view.TitleRow">-->
-        <!--<parameter key="titles"-->
-        <!--value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>-->
-        <!--</row>-->
-        <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-        <!--<parameter key="name" value="users_statistics"/>-->
-        <!--<parameter key="fields"-->
-        <!--value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>-->
-        <!--</row>-->
-        <!--</section>-->
-        <!--<section name="user_sessions" columns="4">-->
-        <!--<row class="com.codenvy.analytics.services.view.TitleRow">-->
-        <!--<parameter key="titles"-->
-        <!--value="Sessions Start,Session End"/>-->
-        <!--</row>-->
-        <!--<row class="com.codenvy.analytics.services.view.MetricRow">-->
-        <!--<parameter key="name" value="users_statistics"/>-->
-        <!--<parameter key="fields"-->
-        <!--value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>-->
-        <!--</row>-->
-        <!--</section>-->
+        <section name="user_data" time-unit="lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles"
+                           value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
+                <parameter key="columns" value="9"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_statistics"/>
+                <parameter key="fields"
+                           value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+
+        <section name="workspace_data" time-unit="lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Name,Creation Date,Sessions,Time"/>
+                <parameter key="columns" value="3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="workspaces_statistics"/>
+                <parameter key="fields" value="ws_name,creation_date,sessions,time"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+
+        <section name="user_activity" time-unit="lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Console Log"/>
+                <parameter key="columns" value="1"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_activity"/>
+                <parameter key="fields" value="message"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+
+        <section name="user_sessions" time-unit="lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Id,Start Time,End Time,Duration"/>
+                <parameter key="columns" value="4"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_sessions"/>
+                <parameter key="fields" value="session_id,start_time,end_time,time"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
     </view>
 </display>

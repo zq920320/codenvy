@@ -46,7 +46,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     public ReadBasedMetric(String metricName) {
         super(metricName);
-        this.dataLoader = MongoDataStorage.getDataLoader();
+        this.dataLoader = MongoDataStorage.createdDataLoader();
     }
 
     public ReadBasedMetric(MetricType metricType) {

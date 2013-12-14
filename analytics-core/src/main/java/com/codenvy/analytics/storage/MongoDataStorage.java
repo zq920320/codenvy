@@ -30,6 +30,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,22 +52,14 @@ public class MongoDataStorage {
     private static final String  URL      = Configurator.getString("analytics.storage.url");
     private static final boolean EMBEDDED = Configurator.getBoolean("analytics.storage.embedded");
 
-    private static final MongoClientURI  clientURI;
-    private static final MongoDataLoader mongoDataLoader;
-
-    private static MongodProcess mongodProcess;
+    private static final MongoClientURI clientURI;
+    private static       MongodProcess  mongodProcess;
 
     static {
         clientURI = new MongoClientURI(URL);
 
         if (EMBEDDED) {
             initEmbeddedStorage();
-        }
-
-        try {
-            mongoDataLoader = new MongoDataLoader(openConnection());
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
         }
     }
 
@@ -101,8 +94,12 @@ public class MongoDataStorage {
     }
 
 
-    public static DataLoader getDataLoader() {
-        return mongoDataLoader;
+    public static DataLoader createdDataLoader() {
+        try {
+            return new MongoDataLoader(openConnection());
+        } catch (MongoException | IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public static void putStorageParameters(Map<String, String> context) {

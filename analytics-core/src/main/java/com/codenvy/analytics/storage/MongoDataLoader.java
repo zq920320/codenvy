@@ -64,9 +64,10 @@ public class MongoDataLoader implements DataLoader {
     }
 
     private String getCollectionName(ReadBasedMetric metric, Map<String, String> clauses) {
-        if (metric.getName().equalsIgnoreCase(MetricType.USERS_PROFILES.name()) ||
-            metric.getName().equalsIgnoreCase(MetricType.USERS_STATISTICS.name()) ||
-            metric.getName().equalsIgnoreCase(MetricType.USERS_ACTIVITY.name())) {
+        if (metric.getName().equalsIgnoreCase(MetricType.USERS_PROFILES.name())
+            || metric.getName().equalsIgnoreCase(MetricType.USERS_STATISTICS.name())
+            || metric.getName().equalsIgnoreCase(MetricType.USERS_ACTIVITY.name())
+            || metric.getName().equalsIgnoreCase(MetricType.USERS_SESSIONS.name())) {
 
             return metric.getStorageTable();
         }

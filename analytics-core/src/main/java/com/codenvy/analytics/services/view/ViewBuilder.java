@@ -83,7 +83,7 @@ public class ViewBuilder implements Feature {
     @Produces({"application/json"})
     public Response build(@PathParam("name") String name, @Context UriInfo uriInfo) {
         try {
-            DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration(VIEW_RESOURCE);
+             DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration(VIEW_RESOURCE);
             ViewConfiguration viewConfiguration = displayConfiguration.getView(name);
 
             Map<String, String> context = extractContext(uriInfo);

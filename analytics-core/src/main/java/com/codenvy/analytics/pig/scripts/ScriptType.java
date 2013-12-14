@@ -86,6 +86,8 @@ public enum ScriptType {
     USER_UPDATE_PROFILE,
     USERS_STATISTICS,
     USERS_ACTIVITY,
+    USERS_SESSIONS,
+    USERS_SESSIONS_OLD,
     WORKSPACES_STATISTICS,
 
     /** Script for testing purpose. */
@@ -115,7 +117,8 @@ public enum ScriptType {
                                                Parameters.STORAGE_USER,
                                                Parameters.STORAGE_PASSWORD,
                                                Parameters.STORAGE_TABLE,
-                                               Parameters.STORAGE_TABLE_USERS_STATISTICS}));
+                                               Parameters.STORAGE_TABLE_USERS_STATISTICS,
+                                               Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS}));
     }
 
     /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */
