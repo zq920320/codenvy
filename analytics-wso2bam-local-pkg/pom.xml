@@ -238,7 +238,7 @@
                                         <delete file="${project.build.directory}/wso2bam-analytics/logs-production/messages"/>
                                         <replace
                                                 file="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}/messages"
-                                                token="2013-11-23" value="${previous.date.stamp}"/>
+                                                token="2013-12-12" value="${previous.date.stamp}"/>
                                     </target>
                                 </configuration>
                             </execution>
