@@ -167,13 +167,13 @@ log4j.appender.ATOMIKOS.layout.ConversionPattern=%p %t %c - %m%n
 
 #Email SMTP appender
 log4j.appender.EMAIL=org.apache.log4j.net.SMTPAppender
-log4j.appender.EMAIL.SMTPProtocol=smtp
-log4j.appender.EMAIL.SMTPHost=smtp.gmail.com
-log4j.appender.EMAIL.SMTPPort=465
-log4j.appender.EMAIL.From=**@gmail.com
-log4j.appender.EMAIL.To=**@gmail.com
-log4j.appender.EMAIL.SMTPUsername=**@gmail.com
-log4j.appender.EMAIL.SMTPPassword=**
+log4j.appender.EMAIL.SMTPProtocol=PROTOCOL
+log4j.appender.EMAIL.SMTPHost=HOST
+log4j.appender.EMAIL.SMTPPort=PORT
+log4j.appender.EMAIL.From=FROM
+log4j.appender.EMAIL.To=TO
+log4j.appender.EMAIL.SMTPUsername=USERNAME
+log4j.appender.EMAIL.SMTPPassword=PASSWORD
 log4j.appender.EMAIL.Subject=AS error
 log4j.appender.EMAIL.threshold=ERROR
 log4j.appender.EMAIL.layout=org.apache.log4j.PatternLayout

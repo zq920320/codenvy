@@ -253,7 +253,7 @@
         <description>workspaces' statistics</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="PERSISTENT"/>
-        <parameter key="STORAGE_TABLE" value="users_statistics"/>
+        <parameter key="STORAGE_TABLE" value="workspaces_statistics"/>
     </script>
     <script name="users_activity">
         <description>Users' raw log</description>

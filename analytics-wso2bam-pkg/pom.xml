@@ -175,6 +175,10 @@
                                             <entry key="exectype" value="local"/>
                                         </propertyfile>
 
+                                        <!-- Removal useless resources -->
+                                        <delete file="${project.build.directory}/wso2bam-analytics/repository/conf/user-mgt.xml"/>
+                                        <delete file="${project.build.directory}/wso2bam-analytics/repository/conf/log4j.properties"/>
+
                                         <!-- Coping resources -->
                                         <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/">
                                             <fileset dir="${basedir}/src/main/resources/server"/>

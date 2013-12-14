@@ -258,6 +258,10 @@ cd "$CARBON_HOME"
 START_EXIT_STATUS=121
 status=$START_EXIT_STATUS
 
+#----- Copy external configuration
+cp -r $HOME/analytics_conf/user-mgt.xml $CARBON_HOME/repository/conf
+cp -r $HOME/analytics_conf/log4j.properties $CARBON_HOME/repository/conf
+
 while [ "$status" = "$START_EXIT_STATUS" ]
 do
     $JAVACMD \
@@ -268,7 +272,7 @@ do
     -javaagent:"$CARBON_HOME/repository/components/plugins/jamm_0.2.5.wso2v2.jar" \
     $JAVA_OPTS \
     -Xms256m -Xmx4024m -XX:MaxPermSize=256m \
-    -Dcodenvy.local.conf.dir=$HOME/analytics \
+    -Dcodenvy.local.conf.dir=$HOME/analytics_conf \
     -Dmail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory \
     -Dmail.smtp.socketFactory.port=465 \
     -Ddisable.cassandra.server.startup=true \
@@ -281,7 +285,6 @@ do
     -Dcarbon.registry.root=/ \
     -Djava.command="$JAVACMD" \
     -Dcarbon.home="$CARBON_HOME" \
-    -Djava.util.logging.config.file="$CARBON_HOME/repository/conf/log4j.properties" \
     -Dcarbon.config.dir.path="$CARBON_HOME/repository/conf" \
     -Dcomponents.repo="$CARBON_HOME/repository/components/plugins" \
     -Dconf.location="$CARBON_HOME/repository/conf"\
