@@ -254,12 +254,14 @@ function printBottomPageNavigator(pageCount, currentPageNumber, queryString) {
 
 
 function getPageNavigationUrl(baseQueryString, pageNumber) {   
-   var CURRENT_PAGE_QUERY_PARAMETER = "page";   
-   var url = "?" + CURRENT_PAGE_QUERY_PARAMETER + "=" + pageNumber;
+   var CURRENT_PAGE_QUERY_PARAMETER = "page";
    
-   if (baseQueryString != "") {
-      url += "&" + baseQueryString;
+   var paramDelimeter = "&";
+   if (baseQueryString.indexOf("?") < 0) {
+      paramDelimeter = "?";
    }
+   
+   var url = baseQueryString + paramDelimeter + CURRENT_PAGE_QUERY_PARAMETER + "=" + pageNumber;
    
    return url;
 }

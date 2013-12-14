@@ -5,13 +5,30 @@ include_once("utils.jag");
 var CURRENT_PAGE_QUERY_PARAMETER = "page";
 var ONE_PAGE_ROWS_COUNT = 10;                      // TODO set correct values
 var USER_ID_LINK_PREFIX = "user-view.jsp?userid";
+var USERS_OVERVIEW_PAGE_LINK = "users-overview.jsp";
+
+var SORTING_PARAMETER = "sort";
+var ASCENDING_ORDER_PREFIX = "+";
+var DESCENDING_ORDER_PREFIX = "-";
+var DEFAULT_ORDER_PREFIX = ASCENDING_ORDER_PREFIX;
 
 var email = request.getParameter("Email");
 var userFirstName = request.getParameter("First Name");
 var userSecondName = request.getParameter("Second Name");
+var sortingParameterValue = request.getParameter("sort");
 
-var queryParams = {};
+//pagination
+var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
+if (currentPageNumber == null) {
+   currentPageNumber = 1;
+} else {
+   currentPageNumber = new Number(currentPageNumber);
+}
 
+var queryParams = {per_page: ONE_PAGE_ROWS_COUNT,
+                   page: currentPageNumber};
+
+// filter-by parameters
 if (email != null) {
     queryParams["user_email"] = email;
 
@@ -20,9 +37,11 @@ if (email != null) {
 
 } else if (userSecondName != null) {
     queryParams["user_last_name"] = userSecondName;
-}
+} 
 
-loadCssStyles();
+if (sortingParameterValue != null) {
+    queryParams["sort"] = sortingParameterValue;
+}
 
 var data = getAllResults("users-overview", queryParams);
 
@@ -33,29 +52,40 @@ for (var i in data) {
     break;
 }
 
-// paging
-var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
-if (typeof currentPageNumber == "undefined" || currentPageNumber == null) {
-   currentPageNumber = 1;
-} else {
-   currentPageNumber = new Number(currentPageNumber);
-}
-
-var rowCount = table.rows.length;
-var pageCount = Math.round(rowCount / ONE_PAGE_ROWS_COUNT); 
-
-if (pageCount > 1) {
-   var startRowNumber = ONE_PAGE_ROWS_COUNT * (currentPageNumber - 1);   
-   var endRowNumber = startRowNumber + (ONE_PAGE_ROWS_COUNT - 1);
-   table.rows = table.rows.slice(startRowNumber, endRowNumber);
-}
-
+// get page count
+//var pageCount = getAllResults("users-overview-page-count", queryParams);   // TODO verify
+var pageCount = 3;                                                           // TODO remove 
 
 // make user id in first column as linked 
 for (var i = 0; i < table.rows.length; i++) {
    var userId = table.rows[i][0];
    var href = USER_ID_LINK_PREFIX + "=" + userId;
    table.rows[i][0] = "<a href='" + href + "'>" + userId + "</a>";
+}
+
+// make table header as linked for sorting
+for (var i = 0; i < table.columns.length; i++) {
+   var columnName = table.columns[i];
+   var sortingColumnParameter = encodeParameterName(columnName);
+      
+   var isAscending = isSortingOrderAscending(sortingColumnParameter, sortingParameterValue);
+   
+   if (isAscending == null) {
+      var headerClassOption = "'" + sortingParameterValue + "'";
+      var newSortingParameterValue = DEFAULT_ORDER_PREFIX + sortingColumnParameter;
+      
+   } else if (isAscending) {
+      var headerClassOption = "class='ascending'";
+      var newSortingParameterValue = DESCENDING_ORDER_PREFIX + sortingColumnParameter;  // for example "-user_email"
+      
+   } else {
+      var headerClassOption = "class='descending'";
+      var newSortingParameterValue = ASCENDING_ORDER_PREFIX + sortingColumnParameter;  // for example "+user_email"       
+   }
+
+   queryParams.sort = newSortingParameterValue;
+   var headerHref = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
+   table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
 }
 
 
@@ -67,20 +97,86 @@ printTable(table);
 loadTableHandlers(false);
 
 // print bottom page navigation
-if (pageCount > 1) {
-   var requestUrl = request.getRequestURL();
-   var delimeter = "&";
-   if (requestUrl.indexOf("?") < 0) {
-      delimeter = "?";
-   }
-      
-   var queryString = request.getQueryString() || "";
+if (pageCount > 1) {      
+   // remove page parameter 
+   delete queryParams["page"];
    
-   // remove page parameter
-   var pageNumberParameterTemplate = new RegExp(CURRENT_PAGE_QUERY_PARAMETER + "=[0-9]*", "gi");
-   queryString = queryString.replace(pageNumberParameterTemplate, "");
-   
+   var queryString = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
+     
    printBottomPageNavigator(pageCount, currentPageNumber, queryString);
 }
 
+/**
+ * Return encoded parameter name, for example: "First Name" => "first_name"
+ */
+function encodeParameterName(parameterName) {
+   return columnName.toLowerCase().replace(" ", "_");
+}
+
+/**
+ * Return decoded parameter name, for example: "first_name" => "first name"
+ */
+function decodeParameterName(parameterName) {
+   return columnName.toLowerCase().replace("_", " ");
+}
+
+/**
+ * Return: 
+ * true, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "+", for example: return true if sortingColumn="user_email" and sortingParameterValue = "+user_email"  
+ * false, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "-", for example: return true if sortingColumn="user_email" and sortingParameterValue = "-user_email"
+ * null, if sortingParameterValue = null, of sortingColumn != sortingParameterValue
+ * 
+ */
+function isSortingOrderAscending(sortingColumn, sortingParameterValue) {
+   if (sortingParameterValue == null) {
+      return null;
+   }
+   
+   if (sortingParameterValue.substring(1) == sortingColumn) {
+      var sortingOrder = sortingParameterValue.charAt(0);
+      if (sortingOrder == ASCENDING_ORDER_PREFIX) {
+         return true;
+      } else if (sortingOrder == DESCENDING_ORDER_PREFIX){
+         return false;
+      }      
+   }
+
+   return null;
+}
+
+/**
+ * Construct url parameters String based on parameters from params object
+ * @param params object like {user_email: "test@gmail.com"} }
+ * @returns url like "user%20email=test%40gmail.com"
+ */
+function constructRequestQueryString(params) {
+   var params = params || {};
+   
+   var urlParamsString = "";
+   
+   // filter-by parameters
+   if (typeof queryParams["user_email"] != "undefined") {
+      urlParamsString += "&" + encodeURIComponent("Email") + "=" + encodeURIComponent(queryParams["user_email"]);
+      
+   } else if (typeof queryParams["user_first_name"] != "undefined") {
+      urlParamsString += "&" + encodeURIComponent("First Name") + "=" + encodeURIComponent(queryParams["user_first_name"]);
+      
+   } else if (typeof queryParams["user_last_name"] != "undefined") {
+      urlParamsString += "&" + encodeURIComponent("Second Name") + "=" + encodeURIComponent(queryParams["user_last_name"]);
+   }
+   
+   // paging
+   if (typeof queryParams["page"] != "undefined") {
+      urlParamsString += "&" + encodeURIComponent("page") + "=" + encodeURIComponent(queryParams["page"]);
+   }
+
+   // sorting
+   if (typeof queryParams["sort"] != "undefined") {
+      urlParamsString += "&" + encodeURIComponent("sort") + "=" + encodeURIComponent(queryParams["sort"]);
+   }
+   
+   urlParamsString = urlParamsString.substring(1);  // remove first "&"
+   
+   return urlParamsString;
+}
 %>

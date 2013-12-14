@@ -15,6 +15,7 @@ if (timeGroup == null) {
 
 var queryParams = {"time_unit": timeGroup.toUpperCase()};
 
+// filter-by parameters
 if (user != null) {
     queryParams["user"] = user;
 
