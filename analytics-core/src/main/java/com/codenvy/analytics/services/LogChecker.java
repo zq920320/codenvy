@@ -45,10 +45,10 @@ public class LogChecker implements Feature {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogChecker.class);
 
-    private static final String AVAILABLE    = "logchecker.available";
-    private static final String MAIL_TEXT    = "logchecker.mail.text";
-    private static final String MAIL_SUBJECT = "logchecker.mail.subject";
-    private static final String MAIL_TO      = "logchecker.mail.to";
+    private static final String AVAILABLE    = "log-checker.available";
+    private static final String MAIL_TEXT    = "log-checker.mail.text";
+    private static final String MAIL_SUBJECT = "log-checker.mail.subject";
+    private static final String MAIL_TO      = "log-checker.mail.to";
 
     @Override
     public boolean isAvailable() {

@@ -52,20 +52,58 @@ public enum EventType {
     FACTORY_URL_ACCEPTED,
     SESSION_FACTORY_STOPPED;
 
+//    (run-started)
+//            (user-invite)
+//            (jrebel-usage)
+//            (run-finished)
+//            (user-created)
+//            (user-removed)
+//            (build-started)
+//            (debug-started)
+//            (project-built)
+//            (build-finished)
+//            (debug-finished)
+//            (shell-launched)
+//            (tenant-created)
+//            (tenant-started)
+//            (tenant-stopped)
+//            (factory-created)
+//            (project-created)
+//            (session-started)
+//            (project-deployed)
+//            (session-finished)
+//            (tenant-destroyed)
+//            (user-added-to-ws)
+//            (build-interrupted)
+//            (project-destroyed)
+//            (user-changed-name)
+//            (user-code-complete)
+//            (user-code-refactor)
+//            (user-sso-logged-in)
+//            (application-created)
+//            (user-sso-logged-out)
+//            (user-update-profile)
+//            (factory-url-accepted)
+//            (session-factory-started)
+//            (session-factory-stopped)
+//            (factory-project-imported)
+//            (jrebel-user-profile-info)
+
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
         return super.toString().toLowerCase().replace("_", "-");
     }
-    
+
     /**
-     * Calculate the root for the EventType name. 
-     * 
+     * Calculate the root for the EventType name.
+     * <p/>
      * For example for the event type "BUILD_STARTED" result is "build".
      * For example for the event type "SESSION_FACTORY_STOPPED" result is "session-factory".
-     * 
+     *
      * @return String
-     *            the root of event type name in lower case. 
+     *         the root of event type name in lower case.
      */
     public String getRootType() {
         int lastIndex = super.toString().lastIndexOf("_");

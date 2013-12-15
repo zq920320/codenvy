@@ -59,7 +59,11 @@ public class CSVReportPersister {
         }
     }
 
-    protected File getFile(String tableName, String reportsDir, Map<String, String> context) throws ParseException {
+    public File getReport(String viewId, Map<String, String> context) throws ParseException {
+        return getFile(viewId, BACKUP_REPORTS_DIR, context);
+    }
+
+    protected File getFile(String viewId, String reportsDir, Map<String, String> context) throws ParseException {
         Calendar toDate = Utils.getToDate(context);
 
         StringBuilder filePath = new StringBuilder();
@@ -67,7 +71,7 @@ public class CSVReportPersister {
         filePath.append(File.separatorChar);
         filePath.append(dirFormat.format(toDate.getTime()));
         filePath.append(File.separatorChar);
-        filePath.append(tableName.toLowerCase());
+        filePath.append(viewId.toLowerCase());
         filePath.append(".csv");
 
         return new File(filePath.toString());
