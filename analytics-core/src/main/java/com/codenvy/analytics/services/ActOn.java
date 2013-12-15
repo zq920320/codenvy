@@ -22,10 +22,7 @@ package com.codenvy.analytics.services;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
 
 import org.apache.commons.net.ftp.FTPReply;
@@ -218,46 +215,63 @@ public class ActOn implements Feature {
 
         ValueData userEmail = entries.get(UsersStatistics.USER_EMAIL);
 
-        writeString(out, userEmail.getAsString());
+        writeString(out, userEmail);
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.USER_FIRST_NAME).getAsString());
+        writeString(out, entries.get(UsersStatistics.USER_FIRST_NAME));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.USER_LAST_NAME).getAsString());
+        writeString(out, entries.get(UsersStatistics.USER_LAST_NAME));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.USER_PHONE).getAsString());
+        writeString(out, entries.get(UsersStatistics.USER_PHONE));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.USER_COMPANY).getAsString());
+        writeString(out, entries.get(UsersStatistics.USER_COMPANY));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.PROJECTS).getAsString());
+        writeInt(out, entries.get(UsersStatistics.PROJECTS));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.BUILDS).getAsString());
+        writeInt(out, entries.get(UsersStatistics.BUILDS));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.DEPLOYS).getAsString());
+        writeInt(out, entries.get(UsersStatistics.DEPLOYS));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.TIME).getAsString());
+        LongValueData time = (LongValueData)entries.get(UsersStatistics.TIME);
+        if (time == null) {
+            writeNotNullStr(out, "0");
+        } else {
+            writeNotNullStr(out, "" + (time.getAsLong() / 60));
+        }
         out.write(",");
 
-        writeString(out, Boolean.toString(activeUsers.contains(userEmail)));
+        writeNotNullStr(out, Boolean.toString(activeUsers.contains(userEmail)));
         out.newLine();
     }
 
     /** Write string value accordingly to CSV specification. */
-    private void writeString(BufferedWriter out, String str) throws IOException {
-        if (str == null) {
-            out.write("");
+    private void writeString(BufferedWriter out, ValueData valueData) throws IOException {
+        if (valueData == null) {
+            writeNotNullStr(out, "");
         } else {
-            out.write("\"");
-            out.write(str.replace("\"", "\"\"")); // quoting
-            out.write("\"");
+            writeNotNullStr(out, valueData.getAsString());
         }
+    }
+
+    private void writeInt(BufferedWriter out, ValueData valueData) throws IOException {
+        if (valueData == null) {
+            writeNotNullStr(out, "0");
+        } else {
+            writeNotNullStr(out, valueData.getAsString());
+        }
+    }
+
+    private void writeNotNullStr(BufferedWriter out, String str) throws IOException {
+        out.write("\"");
+        out.write(str.replace("\"", "\"\"")); // quoting
+        out.write("\"");
     }
 
     private void writeHeader(BufferedWriter out) throws IOException {

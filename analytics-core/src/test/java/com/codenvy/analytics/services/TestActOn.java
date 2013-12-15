@@ -95,9 +95,9 @@ public class TestActOn extends BaseTest {
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
                 "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive"));
-        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",2,0,0,5,\"true\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",1,2,1,10,\"true\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",0,1,1,0,\"true\""));
+        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"false\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"false\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"false\""));
     }
 
     private Set<String> read(File jobFile) throws IOException {
