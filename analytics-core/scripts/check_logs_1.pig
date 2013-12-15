@@ -26,7 +26,7 @@ a = FOREACH a1 GENERATE message;
 
 -- events with EMPTY parameters
 b1 = FILTER l BY INDEXOF(message, '##', 0) >= 0;
-b2 = removeEvent(b1, 'user-update-profile,factory-url-accepted');
+b2 = removeEvent(b1, 'user-update-profile');
 b = FOREACH b2 GENERATE message;
 
 -- events without USER and WORKSPACE context

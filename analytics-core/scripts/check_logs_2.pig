@@ -27,7 +27,7 @@ DEFINE checkEvent(X, S, eventParam) RETURNS Y {
 DEFINE checkEventAndParam(X, S, eventParam, paramName, paramValue) RETURNS Y {
     w1 = filterByEvent($X, '$eventParam');
     w2 = extractParam(w1, '$paramName', 'param'); 
-    w3 = FILTER w2 BY param == '$paramValue';
+    w3 = FILTER w2 BY UPPER(param) == UPPER('$paramValue');
     w4 = GROUP w3 ALL;
     $Y = FOREACH $S GENERATE CONCAT(CONCAT(CONCAT(CONCAT('$eventParam', ':'), '$paramName'), ':'), '$paramValue') AS event,  (COUNT(w4.$1) > 0 ? 'generated' : NULL) AS status;
 };
@@ -80,6 +80,8 @@ r33 = checkEvent(lR, s, 'session-factory-started');
 r34 = checkEvent(lR, s, 'session-factory-stopped');
 r35 = checkEvent(lR, s, 'factory-project-imported');
 
+r36 = checkEvent(lR, s, 'user-update-profile');
+
 a1 = UNION r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21,
             r22, r23, r24, r25, r26, r27, r28, r29, r30, r31, r32, r33, r34, r35;
 a2 = FILTER a1 BY status IS NULL;
@@ -94,15 +96,12 @@ t7 = checkEventAndParam(lR, s, 'application-created', 'PAAS', 'Appfog');
 t8 = checkEventAndParam(lR, s, 'application-created', 'PAAS', 'GAE');
 t9 = checkEventAndParam(lR, s, 'application-created', 'PAAS', 'CloudFoundry');
 t10 = checkEventAndParam(lR, s, 'application-created', 'PAAS', 'Tier3 Web Fabric');
+t11 = checkEventAndParam(lR, s, 'application-created', 'PAAS', 'Manymo');
 
-b1 = UNION t1, t2, t4, t5, t6, t7, t8, t9, t10;
+b1 = UNION t1, t2, t4, t5, t6, t7, t8, t9, t10, t11;
 b2 = FILTER b1 BY status IS NULL;
 b = FOREACH b2 GENERATE event;
 
 r1 = UNION a, b;
 
-dump r1;
 result = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(event));
-
-
-

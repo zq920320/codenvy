@@ -398,8 +398,8 @@
                 <parameter key="description" value="Tier3"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_manyamo"/>
-                <parameter key="description" value="Manyamo"/>
+                <parameter key="name" value="project_paas_manymo"/>
+                <parameter key="description" value="Manymo"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="project_no_paas_defined"/>

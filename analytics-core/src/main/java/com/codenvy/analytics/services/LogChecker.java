@@ -35,6 +35,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -87,7 +89,13 @@ public class LogChecker implements Feature {
 
         try {
             File reportFile = getReport(context);
-            sendReport(reportFile, Parameters.TO_DATE.get(context));
+
+            Calendar toDate = Utils.getToDate(context);
+            String date = new SimpleDateFormat("yyyy-mm-dd").format(toDate.getTime());
+
+            sendReport(reportFile, date);
+        } catch (ParseException e) {
+            e.printStackTrace();
         } finally {
             LOG.info("LogChecker is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

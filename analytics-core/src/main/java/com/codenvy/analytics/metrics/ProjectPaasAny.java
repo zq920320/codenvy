@@ -36,7 +36,7 @@ public class ProjectPaasAny extends CalculatedMetric {
                                                             MetricType.PROJECT_PAAS_HEROKU,
                                                             MetricType.PROJECT_PAAS_OPENSHIFT,
                                                             MetricType.PROJECT_PAAS_TIER3,
-                                                            MetricType.PROJECT_PAAS_MANYAMO});
+                                                            MetricType.PROJECT_PAAS_MANYMO});
 
     }
 
