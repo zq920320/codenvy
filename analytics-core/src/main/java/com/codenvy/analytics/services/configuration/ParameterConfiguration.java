@@ -15,28 +15,34 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.configuration;
 
-import java.io.IOException;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface ConfigurationManager<T> {
+@XmlRootElement(name = "parameter")
+public class ParameterConfiguration {
 
-    /**
-     * Loads a configuration.
-     *
-     * @param resource
-     *         the resource name or the file name
-     * @throws IOException
-     *         if an error occurred during reading
-     */
-    T loadConfiguration(String resource) throws IOException;
+    private String key;
 
-    /**
-     * Stores a configuration.
-     *
-     * @throws IOException
-     *         if an error occurred during storing
-     */
-    void storeConfiguration(T configuration) throws IOException;
+    private String value;
+
+    @XmlAttribute
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @XmlAttribute
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

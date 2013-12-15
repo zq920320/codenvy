@@ -21,9 +21,9 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.services.ConfigurationManager;
 import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.XmlConfigurationManager;
+import com.codenvy.analytics.services.configuration.ConfigurationManager;
+import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -58,6 +58,7 @@ public class PigRunner implements Feature {
         try {
             doExecute(context);
         } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }
@@ -68,6 +69,7 @@ public class PigRunner implements Feature {
         try {
             doExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
         } catch (IOException | ParseException e) {
+            LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }

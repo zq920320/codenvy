@@ -56,6 +56,9 @@ public class Configurator {
         }
     }
 
+    public static String getTmpDir() {
+        return getString("analytics.tmp.dir");
+    }
 
     /** @return value of the property as the array of String */
     public static String[] getArray(String key) {

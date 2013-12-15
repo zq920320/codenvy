@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.backup;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.services.MongoDBBackup;
 import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.*;
 

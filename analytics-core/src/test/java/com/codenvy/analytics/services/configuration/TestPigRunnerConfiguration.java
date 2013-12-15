@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.configuration;
 
 import com.codenvy.analytics.services.pig.PigRunnerConfiguration;
 import com.codenvy.analytics.services.pig.ScriptConfiguration;

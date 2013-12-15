@@ -48,7 +48,6 @@ public class MongoDataStorage {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataStorage.class);
 
-    private static final String  TMP_DIR  = Configurator.getString("analytics.tmp.dir");
     private static final String  URL      = Configurator.getString("analytics.storage.url");
     private static final boolean EMBEDDED = Configurator.getBoolean("analytics.storage.embedded");
 
@@ -122,7 +121,7 @@ public class MongoDataStorage {
             return;
         }
 
-        File dir = new File(TMP_DIR, "embedded-mongoDb");
+        File dir = new File(Configurator.getTmpDir(), "embedded-mongoDb");
         if (!dir.exists() && !dir.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + dir.getAbsolutePath());
         }

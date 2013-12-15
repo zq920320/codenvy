@@ -20,9 +20,9 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.services.ConfigurationManager;
 import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.XmlConfigurationManager;
+import com.codenvy.analytics.services.configuration.ConfigurationManager;
+import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.storage.DataPersister;
 import com.codenvy.analytics.storage.JdbcDataPersisterFactory;
 import com.codenvy.dto.server.JsonStringMapImpl;
@@ -150,6 +150,7 @@ public class ViewBuilder implements Feature {
         try {
             doExecute();
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }
@@ -160,6 +161,7 @@ public class ViewBuilder implements Feature {
         try {
             doExecute();
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }

@@ -22,7 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.services.XmlConfigurationManager;
+import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeClass;

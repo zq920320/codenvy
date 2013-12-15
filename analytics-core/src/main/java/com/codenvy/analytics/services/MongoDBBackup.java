@@ -15,10 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.backup;
+package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.*;
 
@@ -45,6 +44,7 @@ public class MongoDBBackup implements Feature {
         try {
             doExecute();
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }
@@ -61,6 +61,7 @@ public class MongoDBBackup implements Feature {
         try {
             doExecute();
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
     }

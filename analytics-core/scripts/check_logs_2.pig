@@ -100,6 +100,9 @@ b2 = FILTER b1 BY status IS NULL;
 b = FOREACH b2 GENERATE event;
 
 r1 = UNION a, b;
+
+dump r1;
 result = FOREACH r1 GENERATE TOTUPLE(TOTUPLE(event));
+
 
 

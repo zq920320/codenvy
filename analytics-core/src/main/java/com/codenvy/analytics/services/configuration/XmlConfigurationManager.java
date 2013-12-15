@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.configuration;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

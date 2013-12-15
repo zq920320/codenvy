@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.services.pig;
 
-import com.codenvy.analytics.services.ParameterConfiguration;
+import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;

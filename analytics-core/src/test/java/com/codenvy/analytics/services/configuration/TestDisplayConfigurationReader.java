@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.configuration;
 
 import com.codenvy.analytics.services.view.DisplayConfiguration;
 import com.codenvy.analytics.services.view.RowConfiguration;

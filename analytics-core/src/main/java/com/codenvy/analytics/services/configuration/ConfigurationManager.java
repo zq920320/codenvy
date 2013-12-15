@@ -15,33 +15,28 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.configuration;
 
 import java.io.IOException;
 
-/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class ConfigurationManagerException extends IOException {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public interface ConfigurationManager<T> {
 
     /**
-     * Constructor for ConfigurationManagerException
+     * Loads a configuration.
      *
-     * @param string
-     *         message
-     * @param e
-     *         the cause of exception
+     * @param resource
+     *         the resource name or the file name
+     * @throws IOException
+     *         if an error occurred during reading
      */
-    public ConfigurationManagerException(String string, Exception e) {
-        super(string, e);
-    }
+    T loadConfiguration(String resource) throws IOException;
 
     /**
-     * Constructor for ConfigurationManagerException
+     * Stores a configuration.
      *
-     * @param string
-     *         message
+     * @throws IOException
+     *         if an error occurred during storing
      */
-    public ConfigurationManagerException(String string) {
-        super(string);
-    }
-
+    void storeConfiguration(T configuration) throws IOException;
 }
