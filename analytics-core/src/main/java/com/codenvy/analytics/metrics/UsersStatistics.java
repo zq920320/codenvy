@@ -20,6 +20,20 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersStatistics extends AbstractUsersData {
 
+    public static final String USER_EMAIL      = "user_email";
+    public static final String USER_FIRST_NAME = "user_first_name";
+    public static final String USER_LAST_NAME  = "user_last_name";
+    public static final String USER_COMPANY    = "user_company";
+    public static final String USER_PHONE      = "user_phone";
+    public static final String PROJECTS        = "projects";
+    public static final String BUILDS          = "builds";
+    public static final String DEPLOYS         = "deploys";
+    public static final String RUNS            = "runs";
+    public static final String DEBUGS          = "debugs";
+    public static final String FACTORIES       = "factories";
+    public static final String SESSIONS        = "sessions";
+    public static final String TIME            = "time";
+
     public UsersStatistics() {
         super(MetricType.USERS_STATISTICS);
     }

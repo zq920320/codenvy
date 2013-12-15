@@ -20,10 +20,7 @@
 package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.LogChecker;
-import com.codenvy.analytics.services.MongoDBBackup;
-import com.codenvy.analytics.services.WeeklyReport;
+import com.codenvy.analytics.services.*;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
@@ -62,6 +59,7 @@ public class Scheduler implements ServletContextListener {
                                                         ViewBuilder.class,
                                                         LogChecker.class,
                                                         WeeklyReport.class,
+                                                        ActOn.class,
                                                         MongoDBBackup.class};
 
     /** {@inheritDoc} */

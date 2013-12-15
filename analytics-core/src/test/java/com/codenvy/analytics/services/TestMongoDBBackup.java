@@ -15,10 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.backup;
+package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.services.MongoDBBackup;
 import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.*;
 
