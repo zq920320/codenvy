@@ -20,6 +20,9 @@ package com.codenvy.analytics.storage;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.config.AbstractMongoConfig.Net;
+import de.flapdoodle.embed.mongo.config.AbstractMongoConfig.Storage;
+import de.flapdoodle.embed.mongo.config.AbstractMongoConfig.Timeout;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.RuntimeConfig;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -121,18 +124,26 @@ public class MongoDataStorage {
             return;
         }
 
-        File dir = new File(Configurator.getTmpDir(), "embedded-mongoDb");
-        if (!dir.exists() && !dir.mkdirs()) {
-            throw new IllegalStateException("Can't create directory tree " + dir.getAbsolutePath());
+        File dirTemp = new File(Configurator.getTmpDir(), "embedded-mongoDb-tmp");
+        if (!dirTemp.exists() && !dirTemp.mkdirs()) {
+            throw new IllegalStateException("Can't create directory tree " + dirTemp.getAbsolutePath());
+        }
+        
+        File databaseDir = new File(Configurator.getTmpDir(), "embedded-mongoDb-database");
+        if (!databaseDir.exists() && !databaseDir.mkdirs()) {
+            throw new IllegalStateException("Can't create directory tree " + databaseDir.getAbsolutePath());
         }
 
         LOG.info("Embedded MongoDB is starting up");
 
         RuntimeConfig config = new RuntimeConfig();
-        config.setTempDirFactory(new FixedPath(dir.getAbsolutePath()));
-
+        config.setTempDirFactory(new FixedPath(dirTemp.getAbsolutePath()));
+        
+        Net net = new Net(null, 12000, false);
+        Storage stoage = new Storage(databaseDir.getAbsolutePath(), null, 0);
+        
         MongodStarter starter = MongodStarter.getInstance(config);
-        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, 12000, false));
+        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, net, stoage, new Timeout()));
         try {
             mongodProcess = mongoExe.start();
         } catch (IOException e) {
