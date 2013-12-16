@@ -7,6 +7,9 @@ var userId = request.getParameter('userid');
 var USER_PROFILE_TABLE_NAME = 0;
 var USER_DATA_TABLE_NAME = 1;
 
+// table names in order of receiving from server
+var userTableNames = ["user_profile_lifetime", "user_data_lifetime", "Workspaces", "User Logs", "Sessions"];
+
 if (userId != null) {
     queryParams["user"] = userId;
 }
@@ -21,27 +24,31 @@ print("<div class='view'>");
 print("<div class='overview'>");
 print("<div class='header'>User Overview</div>");
 
-print("<div class='table'>");
+print("<div class='body'>");
+
+print("<div class='item'>");
 printTableVerticalRow(data[USER_PROFILE_TABLE_NAME]);
 print("</div>");
 
-print("<div class='table'>");
+print("<div class='item'>");
 printTableVerticalRow(data[USER_DATA_TABLE_NAME]);
 print("</div>");
 
 print("</div>");
+print("</div>");
+print("<br />");
 
 // display user tables
-print("<div class='database-tables'>");
+print("<div class='tables'>");
 
-for (var table in data) {  
-   // filter user overview tables
-   if (table != USER_PROFILE_TABLE_NAME 
-         && table != USER_DATA_TABLE_NAME) {
-      print("<div>");
-      printTable(data[table], false);
-      print("</div>");
-   }
+for (var i = 2; i < userTableNames.length; i++) {   // pass two first tables  
+   print("<div class='item'>");
+   print("<div class='header'>" + userTableNames[i] + "</div>");
+   print("<div class='body'>");
+   printTable(data[i], false);
+   print("</div>");
+   print("</div>");
+   print("<br />");
 }
 
 loadTableHandlers(false);

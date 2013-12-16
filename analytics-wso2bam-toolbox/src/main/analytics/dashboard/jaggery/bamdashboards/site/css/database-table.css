@@ -98,9 +98,6 @@
 .database-table-vertical-row {
    border: 0px;   
    text-align: left;
-   display: inline-flex;
-	border-left: 1px solid #ddd;
-	padding-left: 10px;
 }
 
 .database-table-vertical-row th, .database-table-vertical-row td {
@@ -109,7 +106,7 @@
 }
 
 .database-table-vertical-row .cell-name {
-   min-width: 150px;
+   padding-right: 5px;
    font-weight: normal;
 }
 
