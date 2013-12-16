@@ -26,7 +26,7 @@ for (var i = 0; i < tableNames.length; i++) {
     var result = queryResults('select * from ' + tableNames[i]);
     var table = createTable(result);
 
-    printTable(table);
+    printTable(table, false);
 }
 
 print("</div>");

@@ -3,8 +3,12 @@
 }
 
 .overview {
-   float: left;
    padding-bottom: 30px;
+}
+
+.overview .table {
+   display: inline;
+   padding-right: 40px;
 }
 
 .overview .header {
@@ -14,5 +18,9 @@
 }
 
 .database-tables {
-   
+}
+
+.database-tables table {
+   float: left;
+   margin-bottom: 20px;
 }

@@ -4,27 +4,49 @@ include_once("utils.jag");
 
 var queryParams = {};
 var userId = request.getParameter('userid');
+var USER_PROFILE_TABLE_NAME = 0;
+var USER_DATA_TABLE_NAME = 1;
 
 if (userId != null) {
     queryParams["user"] = userId;
 }
 
-//print("<div class='view'>");
-
-// display user overview
-//print("<div class='overview'>");
-//print("<div class='header'>User Overview</div>");
-
+var data = getAllResults("user-statistics", queryParams);
 
 loadCssStyles();
 
-var data = getAllResults("user-statistics", queryParams);
-for (var table in data) {
-    printTable(data[table]);
+print("<div class='view'>");
+
+// display user overview
+print("<div class='overview'>");
+print("<div class='header'>User Overview</div>");
+
+print("<div class='table'>");
+printTableVerticalRow(data[USER_PROFILE_TABLE_NAME]);
+print("</div>");
+
+print("<div class='table'>");
+printTableVerticalRow(data[USER_DATA_TABLE_NAME]);
+print("</div>");
+
+print("</div>");
+
+// display user tables
+print("<div class='database-tables'>");
+
+for (var table in data) {  
+   // filter user overview tables
+   if (table != USER_PROFILE_TABLE_NAME 
+         && table != USER_DATA_TABLE_NAME) {
+      print("<div>");
+      printTable(data[table], false);
+      print("</div>");
+   }
 }
 
-loadTableHandlers(true);
+loadTableHandlers(false);
 
-//print("</div>");
-//print("</div>");
+print("</div>");
+
+print("</div>");
 %>

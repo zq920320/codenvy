@@ -96,7 +96,7 @@ function convertJsonToTables(data) {
     return result;
 }
 
-function printTable(table) {
+function printTable(table, isDisplaySpecificFirstCell) {   
     print('<table cellspacing="0" class="database-table" align="center">');
     print('<thead aria-hidden="false">');
     print('<tr>');
@@ -123,8 +123,13 @@ function printTable(table) {
         // print odd row
         print('<tr>');
 
+        var firstCellClass = "cell";
+        if (typeof isDisplaySpecificFirstCell != "undefined" && isDisplaySpecificFirstCell) {
+           firstCellClass += " first-cell text-cursor";
+        }
+        
         // print first cell
-        print('<td class="cell first-cell text-cursor">');
+        print('<td class="' + firstCellClass + '">');
         print('<div style="outline-style: none;" tabindex="0">');
         print(table.rows[i][0]);
         print('</div>');
@@ -145,7 +150,7 @@ function printTable(table) {
             print('<tr class="pair-row">');
 
             // print first cell
-            print('<td class="cell first-cell">');
+            print('<td class="' + firstCellClass + '">');
             print('<div style="outline-style: none;" tabindex="0">');
             print(table.rows[i + 1][0]);
             print('</div>');
@@ -180,10 +185,14 @@ function printTableVerticalRow(table) {
         print(table.columns[i] + ":");
         print("</th>");
 
-        print("<td class='cell'>");
-        print(table.rows[i][0]);
-        print("</td>");
-        print("</tr>");
+        if (typeof table.rows != "undefined" 
+              && typeof table.rows[i] != "undefined"
+              && typeof table.rows[i][0] != "undefined") {
+           print("<td class='cell'>");
+           print(table.rows[i][0]);
+           print("</td>");
+           print("</tr>");
+        }
     }
 
 

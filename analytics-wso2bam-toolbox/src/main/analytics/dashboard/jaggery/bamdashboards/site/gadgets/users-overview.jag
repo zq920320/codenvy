@@ -80,7 +80,7 @@ for (var i = 0; i < table.columns.length; i++) {
       
    } else {
       var headerClassOption = "class='descending'";
-      var newSortingParameterValue = ASCENDING_ORDER_PREFIX + sortingColumnParameter;  // for example "+user_email"       
+      var newSortingParameterValue = undefined;       
    }
 
    queryParams.sort = newSortingParameterValue;
@@ -92,7 +92,7 @@ for (var i = 0; i < table.columns.length; i++) {
 // print table
 loadCssStyles();
 
-printTable(table);
+printTable(table, false);
 
 loadTableHandlers(false);
 

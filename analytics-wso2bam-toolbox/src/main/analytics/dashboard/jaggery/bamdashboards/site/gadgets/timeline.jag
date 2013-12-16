@@ -30,7 +30,7 @@ loadCssStyles();
 
 var data = getAllResults("timeline", queryParams);
 for (var table in data) {
-    printTable(data[table]);
+    printTable(data[table], true);
 }
 
 loadTableHandlers(true);
