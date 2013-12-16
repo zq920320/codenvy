@@ -30,10 +30,7 @@ import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Parameters;
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
+import com.mongodb.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,10 +137,10 @@ public class MongoDataStorage {
         config.setTempDirFactory(new FixedPath(dirTemp.getAbsolutePath()));
         
         Net net = new Net(null, 12000, false);
-        Storage stoage = new Storage(databaseDir.getAbsolutePath(), null, 0);
+        Storage storage = new Storage(databaseDir.getAbsolutePath(), null, 0);
         
         MongodStarter starter = MongodStarter.getInstance(config);
-        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, net, stoage, new Timeout()));
+        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, net, storage, new Timeout()));
         try {
             mongodProcess = mongoExe.start();
         } catch (IOException e) {
@@ -170,7 +167,13 @@ public class MongoDataStorage {
             MongoClient mongoClient = openConnection();
             try {
                 DB db = getUsedDB(mongoClient);
-                db.getCollectionNames();
+
+                DBCollection tmpColl = db.getCollection("temp_collection");
+                tmpColl.update(new BasicDBObject("_id", 123),
+                               new BasicDBObject("$set", "12323123"),
+                               true,
+                               false);
+
             } finally {
                 mongoClient.close();
             }

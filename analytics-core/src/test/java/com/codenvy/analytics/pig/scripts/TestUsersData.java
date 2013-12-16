@@ -25,6 +25,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.UsersStatistics;
+import com.codenvy.analytics.metrics.UsersTimeInWorkspaces;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -59,10 +60,10 @@ public class TestUsersData extends BaseTest {
                         .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
                         .withTime("20:05:00").build());
-        events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                        .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                        .withTime("20:02:00").build());
+        events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
+                        .withTime("19:00:00").build());
+        events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
+                        .withTime("19:02:00").build());
 
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "s", "", "")
                         .withDate("2013-11-01").build());
@@ -124,6 +125,9 @@ public class TestUsersData extends BaseTest {
         Metric metric = new TestUsersStatistics();
         ListValueData value = (ListValueData)metric.getValue(context);
 
+        metric = new TestUsersTimeInWorkspaces();
+        metric.getValue(context);
+
         assertEquals(value.size(), 4);
 
         for (ValueData object : value.getAll()) {
@@ -184,6 +188,14 @@ public class TestUsersData extends BaseTest {
                     fail("unknown user" + user);
                     break;
             }
+        }
+    }
+
+    public class TestUsersTimeInWorkspaces extends UsersTimeInWorkspaces {
+
+        @Override
+        public String getStorageTable() {
+            return "testuserupdateprofile-sessions-raw";
         }
     }
 

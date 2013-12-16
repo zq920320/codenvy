@@ -190,7 +190,10 @@ public class MongoDataLoader implements DataLoader {
             DBObject dbObject = iterator.next();
 
             for (String key : dbObject.keySet()) {
-                if (!key.equals("_id") && !allFilters.contains(key)) {
+                if (clazz == ListValueData.class
+                    || clazz == MapValueData.class
+                    || (!key.equals("_id") && !allFilters.contains(key))) {
+
                     action.accumulate(key, dbObject.get(key));
                 }
             }
