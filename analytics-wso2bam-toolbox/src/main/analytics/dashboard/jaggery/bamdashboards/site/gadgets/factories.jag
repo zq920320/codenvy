@@ -2,12 +2,12 @@
 
 include_once("utils.jag");
 
-var DEFAULT_TIME_UNIT_VALUE = "Day";
+var DEFAULT_TIME_UNIT_VALUE = "day";
 
 var timeGroup = request.getParameter("timeGroup");
 var user = request.getParameter("Email");
-var domain = request.getParameter("Domain");
-var company = request.getParameter("Company");
+var orgId = request.getParameter("Organization");
+var affiliateId = request.getParameter("Affiliate");
 
 if (timeGroup == null) {
    timeGroup = DEFAULT_TIME_UNIT_VALUE;
@@ -19,11 +19,11 @@ var queryParams = {"time_unit": timeGroup.toUpperCase()};
 if (user != null) {
     queryParams["user"] = user;
 
-} else if (domain != null) {
-    queryParams["domain"] = domain;
+} else if (orgId != null) {
+    queryParams["org_id"] = orgId;
 
-} else if (company != null) {
-    queryParams["company"] = company;
+} else if (affiliateId != null) {
+    queryParams["affiliate_id"] = affiliateId;
 }
 
 loadCssStyles();

@@ -57,8 +57,8 @@
 	                 Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
                     <button class="btn">Email</button>
-                    <button class="btn">Domain</button>
-                    <button class="btn">Company</button>                
+                    <button class="btn">Organization</button>
+                    <button class="btn">Affiliate</button>
                     <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>	                
                 </div>
             </div>
