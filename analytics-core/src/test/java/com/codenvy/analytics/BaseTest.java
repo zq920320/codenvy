@@ -55,7 +55,7 @@ public class BaseTest {
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     public static final String         BASE_DIR         = "target";
-    public static final MongoClientURI MONGO_CLIENT_URI = new MongoClientURI("mongodb://localhost:12345/test.test");
+    public static final MongoClientURI MONGO_CLIENT_URI = new MongoClientURI("mongodb://localhost:12000/test.test");
 
     protected MongodProcess mongoProcess;
 

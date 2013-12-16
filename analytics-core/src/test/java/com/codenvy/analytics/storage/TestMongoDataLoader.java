@@ -44,6 +44,8 @@ public class TestMongoDataLoader extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
+        dataLoader = MongoDataStorage.createdDataLoader();
+        
         MongoClient mongoClient = new MongoClient(MONGO_CLIENT_URI);
         DB db = mongoClient.getDB(MONGO_CLIENT_URI.getDatabase());
         DBCollection dbCollection = db.getCollection(MONGO_CLIENT_URI.getCollection());
@@ -57,8 +59,6 @@ public class TestMongoDataLoader extends BaseTest {
         dbCollection.save(dbObject);
 
         mongoClient.close();
-
-        dataLoader = MongoDataStorage.createdDataLoader();
     }
 
     @Test
