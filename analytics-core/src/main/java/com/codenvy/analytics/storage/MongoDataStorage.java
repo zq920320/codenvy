@@ -17,6 +17,25 @@
  */
 package com.codenvy.analytics.storage;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.metrics.Parameters;
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoException;
+
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -27,17 +46,6 @@ import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.RuntimeConfig;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
-
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.metrics.Parameters;
-import com.mongodb.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * Utility class. Provides connection with underlying storage.
@@ -164,19 +172,18 @@ public class MongoDataStorage {
      */
     private static boolean isStarted() {
         try {
-            MongoClient mongoClient = openConnection();
+            Socket sock = new Socket();
             try {
-                DB db = getUsedDB(mongoClient);
-
-                DBCollection tmpColl = db.getCollection("temp_collection");
-                tmpColl.update(new BasicDBObject("_id", 123),
-                               new BasicDBObject("$set", "12323123"),
-                               true,
-                               false);
+                URI url = new URI(URL);
+                InetAddress addr = InetAddress.getByName(url.getHost());
+                SocketAddress sockaddr = new InetSocketAddress(addr, url.getPort());
+                int timeout = 500;   
+                sock.connect(sockaddr, timeout);
 
             } finally {
-                mongoClient.close();
+                sock.close();
             }
+            
         } catch (Throwable e) {
             return false;
         }
