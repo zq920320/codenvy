@@ -88,10 +88,8 @@ function triggerCollect(targetDiv) {
           && filterInput.val().length > 0) {
        params[selectedFilterButton.text()] = filterInput.val(); 
     }
-    
-    if (Object.keys(params).length > 0) {
-       reloadDiv(params, targetDiv);
-    }
+
+    reloadDiv(params, targetDiv);
 };
 
 function reloadDiv(params, targetDiv) {
