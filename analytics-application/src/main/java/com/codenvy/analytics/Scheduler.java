@@ -36,10 +36,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class Scheduler implements ServletContextListener {
@@ -104,12 +102,13 @@ public class Scheduler implements ServletContextListener {
     private void forceRunJobs() {
         try {
             String forceRunCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
-            String forceRunFeature = Configurator.getString(FEATURE_FORCE_RUN_CLASS);
+            Set<String> forceRunFeature =
+                    new HashSet<>(Arrays.asList(Configurator.getString(FEATURE_FORCE_RUN_CLASS).split(",")));
 
             for (Class jobClass : features) {
                 Feature job = (Feature)jobClass.getConstructor().newInstance();
 
-                if (forceRunFeature == null || forceRunFeature.equals(job.getClass().getName())) {
+                if (forceRunFeature.isEmpty() || forceRunFeature.contains(job.getClass().getName())) {
                     switch (forceRunCondition.toUpperCase()) {
                         case FORCE_RUN_CONDITION_LASTDAY:
                             executeLastDay(job);
