@@ -63,6 +63,6 @@ c3 = FOREACH c2 GENERATE id,
                          (a::debugs + b::debugs) AS debugs;
 c = FOREACH c3 GENERATE id, (projects < 0 ? 0 : projects) AS projects, builds, deploys, runs, debugs, factories;
 
-result = FOREACH c GENERATE id, TOTUPLE('user_email', id), TOTUPLE('projects', projects), TOTUPLE('builds', builds),
+result = FOREACH c GENERATE id, TOTUPLE('projects', projects), TOTUPLE('builds', builds),
         TOTUPLE('deploys', deploys), TOTUPLE('runs', runs), TOTUPLE('debugs', debugs), TOTUPLE('factories', factories);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

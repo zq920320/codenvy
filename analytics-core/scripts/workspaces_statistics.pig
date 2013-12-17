@@ -22,6 +22,6 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 -- Find out the creation dates
 a1 = filterByEvent(l, 'tenant-created');
-a = FOREACH a1 GENERATE ws, TOTUPLE('ws_name', ws), TOTUPLE('creation_date', ToString(dt, 'yyyy-MM-dd HH:mm:ss'));
+a = FOREACH a1 GENERATE ws, TOTUPLE('creation_date', ToString(dt, 'yyyy-MM-dd HH:mm:ss'));
 
 STORE a INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

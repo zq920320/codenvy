@@ -22,10 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.UsersStatistics;
-import com.codenvy.analytics.metrics.UsersTimeInWorkspaces;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -125,16 +122,13 @@ public class TestUsersData extends BaseTest {
         Metric metric = new TestUsersStatistics();
         ListValueData value = (ListValueData)metric.getValue(context);
 
-        metric = new TestUsersTimeInWorkspaces();
-        metric.getValue(context);
-
         assertEquals(value.size(), 4);
 
         for (ValueData object : value.getAll()) {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            String user = all.get("user_email").getAsString();
+            String user = all.get("_id").getAsString();
 
             switch (user) {
                 case "user1@gmail.com":
@@ -185,10 +179,65 @@ public class TestUsersData extends BaseTest {
                     break;
 
                 default:
-                    fail("unknown user" + user);
+                    fail("unknown user " + user);
                     break;
             }
         }
+    }
+
+    @Test
+    public void testUsersTimeInWorkspaces() throws Exception {
+        Map<String, String> context = Utils.newContext();
+
+        TestUsersTimeInWorkspaces metric = new TestUsersTimeInWorkspaces();
+        ListValueData value = (ListValueData)metric.getValue(context);
+
+        assertEquals(value.size(), 2);
+
+        for (ValueData object : value.getAll()) {
+            MapValueData valueData = (MapValueData)object;
+
+            Map<String, ValueData> all = valueData.getAll();
+            String ws = all.get("_id").getAsString();
+
+            switch (ws) {
+                case "ws1":
+                    assertEquals(all.size(), 3);
+                    assertEquals(all.get("sessions").getAsString(), "1");
+                    assertEquals(all.get("time").getAsString(), "300");
+                    break;
+
+                case "ws2":
+                    assertEquals(all.size(), 3);
+                    assertEquals(all.get("sessions").getAsString(), "1");
+                    assertEquals(all.get("time").getAsString(), "120");
+                    break;
+
+                default:
+                    fail("unknown ws " + ws);
+                    break;
+
+            }
+        }
+    }
+
+    @Test
+    public void testUsersTimeInWorkspacesWithFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER.put(context, "user1@gmail.com");
+
+        TestUsersTimeInWorkspaces metric = new TestUsersTimeInWorkspaces();
+        ListValueData valueData = (ListValueData)metric.getValue(context);
+
+        assertEquals(valueData.size(), 1);
+
+        List<ValueData> items = valueData.getAll();
+        MapValueData entry = (MapValueData)items.get(0);
+
+        assertEquals(entry.getAll().get("sessions").getAsString(), "1");
+        assertEquals(entry.getAll().get("time").getAsString(), "300");
+        assertEquals(entry.getAll().get("_id").getAsString(), "ws1");
+
     }
 
     public class TestUsersTimeInWorkspaces extends UsersTimeInWorkspaces {

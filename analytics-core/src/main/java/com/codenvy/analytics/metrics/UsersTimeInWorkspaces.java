@@ -28,6 +28,9 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersTimeInWorkspaces extends ReadBasedMetric {
 
+    public static final String SESSIONS = "sessions";
+    public static final String TIME     = "time";
+
     public UsersTimeInWorkspaces() {
         super(MetricType.USERS_TIME_IN_WORKSPACES);
     }
@@ -40,9 +43,9 @@ public class UsersTimeInWorkspaces extends ReadBasedMetric {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", null);
-        group.put("ws", "$ws");
-        group.put("value", new BasicDBObject("$sum", "$value"));
+        group.put("_id", "$ws");
+        group.put("time", new BasicDBObject("$sum", "$value"));
+        group.put("sessions", new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 
         return new DBObject[]{opCount};

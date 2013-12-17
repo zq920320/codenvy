@@ -42,7 +42,7 @@ t = FILTER t2 BY INDEXOF(UPPER(id), 'ANONYMOUSUSER_', 0) != 0 AND id != 'default
 --combine and store result
 x1 = JOIN t BY id LEFT, s BY id;
 x2 = FOREACH x1 GENERATE t::id AS id, (t::time + (s::time IS NULL ? 0 : s::time)) AS time;
-x = FOREACH x2 GENERATE id, TOTUPLE('user_email', id), TOTUPLE('time', time);
+x = FOREACH x2 GENERATE id, TOTUPLE('time', time);
 STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 ---------------------------------------
@@ -59,7 +59,7 @@ m = FILTER m2 BY INDEXOF(UPPER(id), 'ANONYMOUSUSER_', 0) != 0 AND id != 'default
 --combine and store result
 n1 = JOIN m BY id LEFT, k BY id;
 n2 = FOREACH n1 GENERATE k::id AS id, (m::sessions + (k::sessions IS NULL ? 0 : k::sessions)) AS sessions;
-n = FOREACH n2 GENERATE id, TOTUPLE('user_email', id), TOTUPLE('sessions', sessions);
+n = FOREACH n2 GENERATE id, TOTUPLE('sessions', sessions);
 STORE n INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 ---------------------------------------
@@ -76,7 +76,7 @@ b = FILTER b2 BY INDEXOF(UPPER(id), 'TMP-', 0) != 0 AND id != 'default';
 --combine and store result
 c1 = JOIN b BY id LEFT, a BY id;
 c2 = FOREACH c1 GENERATE b::id AS id, (b::time + (a::time IS NULL ? 0 : a::time)) AS time;
-c = FOREACH c2 GENERATE id, TOTUPLE('ws_name', id), TOTUPLE('time', time);
+c = FOREACH c2 GENERATE id, TOTUPLE('time', time);
 STORE c INTO '$STORAGE_URL.$STORAGE_TABLE_WORKSPACES_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 ---------------------------------------
@@ -93,7 +93,7 @@ e = FILTER e2 BY INDEXOF(UPPER(id), 'TMP-', 0) != 0 AND id != 'default';
 --combine and store result
 g1 = JOIN e BY id LEFT, d BY id;
 g2 = FOREACH g1 GENERATE e::id AS id, (e::sessions + (d::sessions IS NULL ? 0 : d::sessions)) AS sessions;
-g = FOREACH g2 GENERATE id, TOTUPLE('ws_name', id), TOTUPLE('sessions', sessions);
+g = FOREACH g2 GENERATE id, TOTUPLE('sessions', sessions);
 
 STORE g INTO '$STORAGE_URL.$STORAGE_TABLE_WORKSPACES_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 

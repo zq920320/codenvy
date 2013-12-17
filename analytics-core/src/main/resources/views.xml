@@ -572,12 +572,12 @@
 
         <section name="workspace_data" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Name,Creation Date,Sessions,Time"/>
+                <parameter key="titles" value="Name,Sessions,Time"/>
                 <parameter key="columns" value="3"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="workspaces_statistics"/>
-                <parameter key="fields" value="ws_name,creation_date,sessions,time"/>
+                <parameter key="name" value="users_time_in_workspaces"/>
+                <parameter key="fields" value="_id,sessions,time"/>
                 <parameter key="columns" value="1"/>
             </row>
         </section>

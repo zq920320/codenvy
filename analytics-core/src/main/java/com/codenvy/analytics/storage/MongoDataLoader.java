@@ -48,7 +48,7 @@ public class MongoDataLoader implements DataLoader {
     /** {@inheritDoc} */
     @Override
     public ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException {
-        DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
+        DBCollection dbCollection = db.getCollection(getStorageTable(metric, clauses));
 
         try {
             DBObject filter = metric.getFilter(clauses);
@@ -63,11 +63,12 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
-    private String getCollectionName(ReadBasedMetric metric, Map<String, String> clauses) {
+    private String getStorageTable(ReadBasedMetric metric, Map<String, String> clauses) {
         if (metric.getName().equalsIgnoreCase(MetricType.USERS_PROFILES.name())
             || metric.getName().equalsIgnoreCase(MetricType.USERS_STATISTICS.name())
             || metric.getName().equalsIgnoreCase(MetricType.USERS_ACTIVITY.name())
-            || metric.getName().equalsIgnoreCase(MetricType.USERS_SESSIONS.name())) {
+            || metric.getName().equalsIgnoreCase(MetricType.USERS_SESSIONS.name())
+            || metric.getName().equalsIgnoreCase(MetricType.USERS_TIME_IN_WORKSPACES.name())) {
 
             return metric.getStorageTable();
         }
@@ -84,6 +85,9 @@ public class MongoDataLoader implements DataLoader {
 
         if (clazz == LongValueData.class) {
             return createLongValueData(iterator);
+
+        } else if (clazz == DoubleValueData.class) {
+            return createDoubleValueData(iterator);
 
         } else if (clazz == MapValueData.class) {
             return createMapValueData(iterator);
@@ -146,7 +150,9 @@ public class MongoDataLoader implements DataLoader {
 
             @Override
             public void accumulate(String key, Object value) {
-                this.values.put(key, ValueDataFactory.createValueData(value));
+                if ((!key.equals("_id") && !allFilters.contains(key))) {
+                    this.values.put(key, ValueDataFactory.createValueData(value));
+                }
             }
 
             @Override
@@ -166,13 +172,37 @@ public class MongoDataLoader implements DataLoader {
 
             @Override
             public void accumulate(String key, Object value) {
-                this.value += ((Number)value).longValue();
+                if ((!key.equals("_id") && !allFilters.contains(key))) {
+                    this.value += ((Number)value).longValue();
+                }
             }
 
             @Override
             public ValueData pull() {
                 try {
                     return new LongValueData(value);
+                } finally {
+                    value = 0;
+                }
+            }
+        });
+    }
+
+    private ValueData createDoubleValueData(Iterator<DBObject> iterator) {
+        return doCreateValueData(iterator, LongValueData.class, new Action() {
+            double value = 0;
+
+            @Override
+            public void accumulate(String key, Object value) {
+                if (key.equals("value")) {
+                    this.value += ((Number)value).doubleValue();
+                }
+            }
+
+            @Override
+            public ValueData pull() {
+                try {
+                    return new DoubleValueData(value);
                 } finally {
                     value = 0;
                 }
@@ -190,12 +220,7 @@ public class MongoDataLoader implements DataLoader {
             DBObject dbObject = iterator.next();
 
             for (String key : dbObject.keySet()) {
-                if (clazz == ListValueData.class
-                    || clazz == MapValueData.class
-                    || (!key.equals("_id") && !allFilters.contains(key))) {
-
-                    action.accumulate(key, dbObject.get(key));
-                }
+                action.accumulate(key, dbObject.get(key));
             }
 
             result = result.union(action.pull());

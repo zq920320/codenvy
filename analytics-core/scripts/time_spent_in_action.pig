@@ -44,7 +44,7 @@ t = FOREACH t1 GENERATE group AS id, SUM(f.delta) AS time_$EVENT;
 --combine and store result
 x1 = JOIN t BY id LEFT, s BY id;
 x2 = FOREACH x1 GENERATE t::id AS id, (t::time_$EVENT + (s::time_$EVENT IS NULL ? 0 : s::time_$EVENT)) AS time_$EVENT;
-x = FOREACH x2 GENERATE id, TOTUPLE('user_email', id), TOTUPLE('time_$EVENT', time_$EVENT);
+x = FOREACH x2 GENERATE id, TOTUPLE('time_$EVENT', time_$EVENT);
 STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 

@@ -67,7 +67,7 @@ public class TestUsersActivity extends BaseTest {
     }
 
     @Test
-    public void testSingleProfile() throws Exception {
+    public void testActivity() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
@@ -76,12 +76,6 @@ public class TestUsersActivity extends BaseTest {
         ListValueData value = (ListValueData)metric.getValue(context);
 
         assertEquals(value.size(), 2);
-        assertEquals(value.getAll().get(0).getAsString(),
-                     "[message=127.0.0.1 2013-11-01 20:00:00,000[main] [INFO] [HelloWorld 1010]  - " +
-                     "EVENT#session-started# SESSION-ID#1# WS#ws1# USER#user1@gmail.com# WINDOW#ide# ]");
-        assertEquals(value.getAll().get(1).getAsString(),
-                     "[message=127.0.0.1 2013-11-01 20:05:00,000[main] [INFO] [HelloWorld 1010]  - " +
-                     "EVENT#session-finished# SESSION-ID#1# WS#ws1# USER#user1@gmail.com# WINDOW#ide# ]");
     }
 
     public class TestUsersStatistics extends AbstractListValueResulted {

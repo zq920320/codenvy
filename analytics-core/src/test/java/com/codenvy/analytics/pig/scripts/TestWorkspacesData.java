@@ -94,19 +94,17 @@ public class TestWorkspacesData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            String wsName = all.get("ws_name").getAsString();
+            String wsName = all.get("_id").getAsString();
 
             switch (wsName) {
                 case "ws1":
                     assertEquals(all.size(), 3);
-                    assertEquals(all.get("ws_name").getAsString(), "ws1");
                     assertEquals(all.get("time").getAsString(), "300");
                     assertEquals(all.get("sessions").getAsString(), "1");
                     break;
 
                 case "ws2":
                     assertEquals(all.size(), 4);
-                    assertEquals(all.get("ws_name").getAsString(), "ws2");
                     assertEquals(all.get("time").getAsString(), "120");
                     assertEquals(all.get("sessions").getAsString(), "1");
                     assertEquals(all.get("creation_date").getAsString(), "2013-11-01 20:00:00");
@@ -114,7 +112,6 @@ public class TestWorkspacesData extends BaseTest {
 
                 case "ws3":
                     assertEquals(all.size(), 2);
-                    assertEquals(all.get("ws_name").getAsString(), "ws3");
                     assertEquals(all.get("creation_date").getAsString(), "2013-11-01 21:00:00");
                     break;
 
