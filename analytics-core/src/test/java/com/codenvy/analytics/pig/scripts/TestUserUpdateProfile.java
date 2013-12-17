@@ -90,11 +90,11 @@ public class TestUserUpdateProfile extends BaseTest {
         Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.USER_UPDATE_PROFILE, params);
 
         assertTuples(iterator, new String[]{
-                "(user1@gmail.com,(user_email,user1@gmail.com),(user_first_name,f3),(user_last_name,l3)," +
+                "(user1@gmail.com,(user_first_name,f3),(user_last_name,l3)," +
                 "(user_company,company-2),(user_phone,22),(user_job,2))",
-                "(user3@gmail.com,(user_email,user3@gmail.com),(user_first_name,f4),(user_last_name,l4)," +
+                "(user3@gmail.com,(user_first_name,f4),(user_last_name,l4)," +
                 "(user_company,company-2),(user_phone,22),(user_job,2))",
-                "(user4@gmail.com,(user_email,user4@gmail.com),(user_first_name,f4),(user_last_name,l4)," +
+                "(user4@gmail.com,(user_first_name,f4),(user_last_name,l4)," +
                 "(user_company,company),(user_phone,22),(user_job,))"});
     }
 
@@ -111,27 +111,29 @@ public class TestUserUpdateProfile extends BaseTest {
             MapValueData item = (MapValueData)object;
             Map<String, ValueData> all = item.getAll();
 
-            if (all.get("user_email").getAsString().equals("user1@gmail.com")) {
+            ValueData userEmail = all.get("_id");
+
+            if (userEmail.getAsString().equals("user1@gmail.com")) {
                 assertEquals(all.get("user_last_name").getAsString(), "l3");
                 assertEquals(all.get("user_company").getAsString(), "company-2");
                 assertEquals(all.get("user_phone").getAsString(), "22");
                 assertEquals(all.get("user_job").getAsString(), "2");
 
-            } else if (all.get("user_email").getAsString().equals("user2@gmail.com")) {
+            } else if (userEmail.getAsString().equals("user2@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f2");
                 assertEquals(all.get("user_last_name").getAsString(), "l2");
                 assertEquals(all.get("user_company").getAsString(), "company");
                 assertEquals(all.get("user_phone").getAsString(), "11");
                 assertEquals(all.get("user_job").getAsString(), "1");
 
-            } else if (all.get("user_email").getAsString().equals("user3@gmail.com")) {
+            } else if (userEmail.getAsString().equals("user3@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
                 assertEquals(all.get("user_last_name").getAsString(), "l4");
                 assertEquals(all.get("user_company").getAsString(), "company-2");
                 assertEquals(all.get("user_phone").getAsString(), "22");
                 assertEquals(all.get("user_job").getAsString(), "2");
 
-            } else if (all.get("user_email").getAsString().equals("user4@gmail.com")) {
+            } else if (userEmail.getAsString().equals("user4@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
                 assertEquals(all.get("user_last_name").getAsString(), "l4");
                 assertEquals(all.get("user_company").getAsString(), "company");
@@ -154,7 +156,7 @@ public class TestUserUpdateProfile extends BaseTest {
         MapValueData item = (MapValueData)value.getAll().get(0);
         Map<String, ValueData> all = item.getAll();
 
-        assertEquals(all.get("user_email").getAsString(), "user1@gmail.com");
+        assertEquals(all.get("_id").getAsString(), "user1@gmail.com");
         assertEquals(all.get("user_first_name").getAsString(), "f3");
         assertEquals(all.get("user_last_name").getAsString(), "l3");
         assertEquals(all.get("user_company").getAsString(), "company-2");
@@ -176,14 +178,14 @@ public class TestUserUpdateProfile extends BaseTest {
             MapValueData item = (MapValueData)object;
             Map<String, ValueData> all = item.getAll();
 
-            if (all.get("user_email").getAsString().equals("user2@gmail.com")) {
+            if (all.get("_id").getAsString().equals("user2@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f2");
                 assertEquals(all.get("user_last_name").getAsString(), "l2");
                 assertEquals(all.get("user_company").getAsString(), "company");
                 assertEquals(all.get("user_phone").getAsString(), "11");
                 assertEquals(all.get("user_job").getAsString(), "1");
 
-            } else if (all.get("user_email").getAsString().equals("user4@gmail.com")) {
+            } else if (all.get("_id").getAsString().equals("user4@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
                 assertEquals(all.get("user_last_name").getAsString(), "l4");
                 assertEquals(all.get("user_company").getAsString(), "company");

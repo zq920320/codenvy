@@ -76,7 +76,7 @@ public class TestPagination extends BaseTest {
     @Test
     public void testSortAsc() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.SORT.put(context, "+user_email");
+        Parameters.SORT.put(context, "+_id");
 
         Metric metric = new TestUserProfile();
 
@@ -86,25 +86,25 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user1@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user1@gmail.com");
 
         item = (MapValueData)all.get(1);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user2@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user2@gmail.com");
 
         item = (MapValueData)all.get(2);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user3@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user3@gmail.com");
 
         item = (MapValueData)all.get(3);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user4@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user4@gmail.com");
 
         item = (MapValueData)all.get(4);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user5@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user5@gmail.com");
     }
 
     @Test
     public void testSortDesc() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.SORT.put(context, "-user_email");
+        Parameters.SORT.put(context, "-_id");
 
         Metric metric = new TestUserProfile();
 
@@ -114,25 +114,25 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user5@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user5@gmail.com");
 
         item = (MapValueData)all.get(1);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user4@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user4@gmail.com");
 
         item = (MapValueData)all.get(2);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user3@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user3@gmail.com");
 
         item = (MapValueData)all.get(3);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user2@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user2@gmail.com");
 
         item = (MapValueData)all.get(4);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user1@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user1@gmail.com");
     }
 
     @Test
     public void testPage1() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.SORT.put(context, "+user_email");
+        Parameters.SORT.put(context, "+_id");
         Parameters.PAGE.put(context, "1");
         Parameters.PER_PAGE.put(context, "1");
 
@@ -144,13 +144,13 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user1@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user1@gmail.com");
     }
 
     @Test
     public void testPage3() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.SORT.put(context, "+user_email");
+        Parameters.SORT.put(context, "+_id");
         Parameters.PAGE.put(context, "3");
         Parameters.PER_PAGE.put(context, "1");
 
@@ -162,13 +162,13 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user3@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user3@gmail.com");
     }
 
     @Test
     public void testPage5() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.SORT.put(context, "+user_email");
+        Parameters.SORT.put(context, "+_id");
         Parameters.PAGE.put(context, "5");
         Parameters.PER_PAGE.put(context, "1");
 
@@ -180,13 +180,13 @@ public class TestPagination extends BaseTest {
         List<ValueData> all = value.getAll();
 
         MapValueData item = (MapValueData)all.get(0);
-        assertEquals(item.getAll().get("user_email").getAsString(), "user5@gmail.com");
+        assertEquals(item.getAll().get("_id").getAsString(), "user5@gmail.com");
     }
 
     @Test
     public void testUnExistedPage() throws Exception {
         Map<String, String> context = Utils.newContext();
-        Parameters.SORT.put(context, "+user_email");
+        Parameters.SORT.put(context, "+_id");
         Parameters.PAGE.put(context, "6");
         Parameters.PER_PAGE.put(context, "1");
 

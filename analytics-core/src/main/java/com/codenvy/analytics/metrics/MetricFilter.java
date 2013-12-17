@@ -22,8 +22,13 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricFilter {
-    WS,
+    _ID,
+
     USER,
+    USER_FIRST_NAME,
+    USER_LAST_NAME,
+
+    WS,
     DOMAIN,
     COMPANY,
 

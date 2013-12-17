@@ -150,7 +150,7 @@ public class MongoDataLoader implements DataLoader {
 
             @Override
             public void accumulate(String key, Object value) {
-                if ((!key.equals("_id") && !allFilters.contains(key))) {
+                if (!allFilters.contains(key)) {
                     this.values.put(key, ValueDataFactory.createValueData(value));
                 }
             }
@@ -172,7 +172,7 @@ public class MongoDataLoader implements DataLoader {
 
             @Override
             public void accumulate(String key, Object value) {
-                if ((!key.equals("_id") && !allFilters.contains(key))) {
+                if (!allFilters.contains(key)) {
                     this.value += ((Number)value).longValue();
                 }
             }

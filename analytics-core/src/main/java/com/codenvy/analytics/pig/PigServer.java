@@ -71,7 +71,17 @@ public class PigServer {
             for (Map.Entry<String, String> entry : Configurator.getAll("pig.embedded.property").entrySet()) {
                 System.setProperty(entry.getKey(), entry.getValue());
             }
+        } else {
+            try {
+                checkIfMongoIsStarted();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
+    }
+
+    private static void checkIfMongoIsStarted() throws IOException {
+        MongoDataStorage.openConnection().close();
     }
 
     /**
