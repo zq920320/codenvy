@@ -207,7 +207,7 @@
                     window.location.protocol + "//" + window.location.host +
                     "/ide/"+ workspace + "&tenantName=" + workspace;
                 var workspaceName = {name: workspace};
-                var authenticateUrl = "/site/rest/email/authenticate";
+                var authenticateUrl = "/site/rest/token/validate";
                 var createWSUrl = "/site/rest/private/organization/workspaces/create";
                 $.ajax({
                     url : authenticateUrl,
