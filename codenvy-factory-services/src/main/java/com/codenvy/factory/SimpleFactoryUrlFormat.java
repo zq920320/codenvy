@@ -19,6 +19,7 @@ package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.SimpleFactoryUrl;
+import com.codenvy.api.factory.VariableHelper;
 import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
@@ -125,6 +126,10 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             }
 
             factoryUrl.setProjectattributes(projectAttributes);
+
+            if ((values = params.get("variables")) != null && !values.isEmpty()) {
+                factoryUrl.setVariables(VariableHelper.getVariables(values.iterator().next()));
+            }
 
             return factoryUrl;
         } catch (IOException e) {

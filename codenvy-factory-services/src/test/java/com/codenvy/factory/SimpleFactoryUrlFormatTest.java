@@ -18,6 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.SimpleFactoryUrl;
+import com.codenvy.api.factory.Variable;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -44,7 +45,7 @@ public class SimpleFactoryUrlFormatTest {
         //given
         SimpleFactoryUrl expectedFactoryUrl =
                 new SimpleFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, "1234567", null, null, false, null, null, "newBranch",
-                                     Collections.singletonMap("pname", "eee"));
+                                     Collections.singletonMap("pname", "eee"), Collections.<Variable>emptyList());
 
         //when
         SimpleFactoryUrl factoryUrl = factoryUrlFormat.parse(
