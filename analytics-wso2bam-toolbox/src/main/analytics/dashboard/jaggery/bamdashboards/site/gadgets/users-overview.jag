@@ -3,7 +3,7 @@
 include_once("utils.jag");
 
 var CURRENT_PAGE_QUERY_PARAMETER = "page";
-var ONE_PAGE_ROWS_COUNT = 10;                      // TODO set correct values
+var ONE_PAGE_ROWS_COUNT = 20;                      // TODO set correct values
 var USER_ID_LINK_PREFIX = "user-view.jsp?userid";
 var USERS_OVERVIEW_PAGE_LINK = "users-overview.jsp";
 
@@ -12,17 +12,17 @@ var ASCENDING_ORDER_PREFIX = "+";
 var DESCENDING_ORDER_PREFIX = "-";
 var DEFAULT_ORDER_PREFIX = ASCENDING_ORDER_PREFIX;
 
+/** see server-side mapping at the analytics-core/src/main/resources/views.xml in view element with name "users-overview" */
 var databaseToUIMap = {
-    databaseTableColumns: ["_id", "user_first_name", "user_last_name", "projects", "deploys", "time"],
-    uiTableColumns: ["User Email", "First Name", "Last Name", "Total Active Projects", "Total Deploys", "Total Time"]
+    databaseTableColumns: ["_id",        "user_first_name", "user_last_name", "projects",              "deploys",       "time"],
+    uiTableColumns:       ["User Email", "First Name",      "Last Name",      "Total Active Projects", "Total Deploys", "Total Time"],
+    jagQueryParameters:   ["Email",      "First Name",      "Second Name"]
 }
 
-var email = request.getParameter("Email");
-var userFirstName = request.getParameter("First Name");
-var userSecondName = request.getParameter("Second Name");
-var sortingParameterValue = request.getParameter("sort");
+// process filter-by parameters
+var queryParams = mapQueryParametersFromUIToDatabase(request);
 
-//pagination
+// process pagination
 var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
 if (currentPageNumber == null) {
    currentPageNumber = 1;
@@ -30,20 +30,11 @@ if (currentPageNumber == null) {
    currentPageNumber = new Number(currentPageNumber);
 }
 
-var queryParams = {per_page: ONE_PAGE_ROWS_COUNT,
-                   page: currentPageNumber};
+queryParams.per_page = ONE_PAGE_ROWS_COUNT;
+queryParams.page = currentPageNumber;
 
-// filter-by parameters
-if (email != null) {
-    queryParams["user_email"] = email;
-
-} else if (userFirstName != null) {
-    queryParams["user_first_name"] = userFirstName;
-
-} else if (userSecondName != null) {
-    queryParams["user_last_name"] = userSecondName;
-} 
-
+//process sorting
+var sortingParameterValue = request.getParameter("sort");
 if (sortingParameterValue != null) {
     queryParams["sort"] = sortingParameterValue;
 }
@@ -111,33 +102,6 @@ if (pageCount > 1) {
    printBottomPageNavigator(pageCount, currentPageNumber, queryString);
 }
 
-/**
- * Return encoded parameter name according to mapping rules defined in databaseToUIMap, for example: "First Name" => "user_first_name"
- */
-function mapTableFromUIToDatabase(uiTableColumnName) {
-   var uiTableColumns = databaseToUIMap.uiTableColumns;
-   for (var i = 0; i < uiTableColumns.length; i++) {
-      if (uiTableColumnName == uiTableColumns[i]) {
-         return databaseToUIMap.databaseTableColumns[i];
-      }
-   }
-   
-   return null;
-}
-
-/**
- * Return decoded parameter name according to mapping rules defined in databaseToUIMap, for example: "user_first_name" => "First Name"
- */
-function mapTableFromDatabaseToUI(databaseTableColumnName) {
-   var databaseTableColumns = databaseToUIMap.databaseTableColumns;
-   for (var i = 0; i < databaseTableColumns.length; i++) {
-      if (databaseTableColumnName == databaseTableColumns[i]) {
-         return databaseToUIMap.uiTableColumns[i];
-      }
-   }
-   
-   return null;
-}
 
 /**
  * Return: 
@@ -174,6 +138,7 @@ function constructRequestQueryString(params) {
    var urlParamsString = "";
    
    // filter-by parameters
+   
    if (typeof queryParams["user_email"] != "undefined") {
       urlParamsString += "&" + encodeURIComponent("Email") + "=" + encodeURIComponent(queryParams["user_email"]);
       

@@ -275,4 +275,64 @@ function getPageNavigationUrl(baseQueryString, pageNumber) {
    return url;
 }
 
+/**
+ * Return encoded parameter name according to mapping rules defined in databaseToUIMap, for example: "First Name" => "user_first_name"
+ */
+function mapTableFromUIToDatabase(uiTableColumnName) {
+   var uiTableColumns = databaseToUIMap.uiTableColumns;
+   for (var i = 0; i < uiTableColumns.length; i++) {
+      if (uiTableColumnName == uiTableColumns[i]) {
+         return databaseToUIMap.databaseTableColumns[i];
+      }
+   }
+   
+   return null;
+}
+
+/**
+ * Return decoded parameter name according to mapping rules defined in databaseToUIMap, for example: "user_first_name" => "First Name"
+ */
+function mapTableFromDatabaseToUI(databaseTableColumnName) {
+   var databaseTableColumns = databaseToUIMap.databaseTableColumns;
+   for (var i = 0; i < databaseTableColumns.length; i++) {
+      if (databaseTableColumnName == databaseTableColumns[i]) {
+         return databaseToUIMap.uiTableColumns[i];
+      }
+   }
+   
+   return null;
+}
+
+/**
+ * Return query parameters object for rest-service according to mapping jag request query to rest-service request query rules defined in databaseToUIMap
+ */
+function mapQueryParametersFromUIToDatabase(request) {
+   var restServiceRequestQueryParameters = {};
+   var jagRequestParameters = databaseToUIMap.jagQueryParameters;
+   for (var i = 0; i < jagRequestParameters.length; i++) {
+      var jagRequestParameterValue = request.getParameter(jagRequestParameters[i]);
+      if (jagRequestParameterValue != null) {
+         restServiceRequestQueryParameters[databaseToUIMap.databaseTableColumns[i]] = jagRequestParameterValue;
+      }
+   }
+   
+   return restServiceRequestQueryParameters;
+}
+
+/**
+ * Return query parameters object for rest-service according to mapping jag request query to rest-service request query rules defined in databaseToUIMap
+ */
+function mapQueryParametersFromDatabaseToUI(restServiceParameters) {
+   var jagRequestQueryParameters = {};
+   var jagRequestParameters = databaseToUIMap.jagQueryParameters;
+   for (var i = 0; i < jagRequestParameters.length; i++) {
+      var restServiceParameterValue = restServiceParameters[databaseToUIMap.databaseTableColumns[i]];
+      if (typeof restServiceParameterValue != "undefined") {        
+         jagRequestQueryParameters[jagRequestParameters[i]] = restServiceParameterValue;
+      }
+   }
+   
+   return jagRequestQueryParameters;
+}
+
 %>
