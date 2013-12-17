@@ -530,7 +530,7 @@
         <section name="users_overview">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="User Email,First Name,Last Name,Total Active Projects,Total Deploy,Total Time"/>
+                           value="User Email,First Name,Last Name,Total Active Projects,Total Deploys,Total Time"/>
                 <parameter key="columns" value="6"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
