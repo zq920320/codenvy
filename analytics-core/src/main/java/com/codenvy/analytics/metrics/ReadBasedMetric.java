@@ -65,6 +65,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return getName().toLowerCase();
     }
 
+    public boolean isSingleTable() {
+        return false;
+    }
+
     /**
      * Returns 'matcher' in term of MongoDB. Basically, it can be treated as 'WHERE' clause in SQL queries.
      * See mongoDB related documentation for more details.

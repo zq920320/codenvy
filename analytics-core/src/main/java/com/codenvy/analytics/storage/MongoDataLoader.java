@@ -67,13 +67,12 @@ public class MongoDataLoader implements DataLoader {
         if (metric.getName().equalsIgnoreCase(MetricType.USERS_PROFILES.name())
             || metric.getName().equalsIgnoreCase(MetricType.USERS_STATISTICS.name())
             || metric.getName().equalsIgnoreCase(MetricType.USERS_ACTIVITY.name())
-            || metric.getName().equalsIgnoreCase(MetricType.USERS_SESSIONS.name())
             || metric.getName().equalsIgnoreCase(MetricType.USERS_TIME_IN_WORKSPACES.name())) {
 
             return metric.getStorageTable();
         }
 
-        if (Utils.isSimpleContext(clauses)) {
+        if (metric.isSingleTable() || Utils.isSimpleContext(clauses)) {
             return metric.getStorageTable();
         } else {
             return metric.getStorageTable() + EXT_COLLECTION_NAME_SUFFIX;

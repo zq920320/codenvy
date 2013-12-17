@@ -50,15 +50,6 @@ public class TestWorkspacesData extends BaseTest {
 
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:05:00").build());
-        events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
-                        .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
-                        .withTime("20:02:00").build());
-
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@gmail.com").withDate("2013-11-01")
                         .withTime("20:00:00").build());
         events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3@gmail.com").withDate("2013-11-01")
@@ -88,7 +79,7 @@ public class TestWorkspacesData extends BaseTest {
         Metric metric = new TestWorkspacesStatistics();
         ListValueData value = (ListValueData)metric.getValue(context);
 
-        assertEquals(value.size(), 3);
+        assertEquals(value.size(), 2);
 
         for (ValueData object : value.getAll()) {
             MapValueData valueData = (MapValueData)object;
@@ -97,16 +88,8 @@ public class TestWorkspacesData extends BaseTest {
             String wsName = all.get("_id").getAsString();
 
             switch (wsName) {
-                case "ws1":
-                    assertEquals(all.size(), 3);
-                    assertEquals(all.get("time").getAsString(), "300");
-                    assertEquals(all.get("sessions").getAsString(), "1");
-                    break;
-
                 case "ws2":
-                    assertEquals(all.size(), 4);
-                    assertEquals(all.get("time").getAsString(), "120");
-                    assertEquals(all.get("sessions").getAsString(), "1");
+                    assertEquals(all.size(), 2);
                     assertEquals(all.get("creation_date").getAsString(), "2013-11-01 20:00:00");
                     break;
 

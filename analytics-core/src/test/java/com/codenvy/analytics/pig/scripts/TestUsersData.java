@@ -103,16 +103,6 @@ public class TestUsersData extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testusersdata");
         PigServer.execute(ScriptType.USERS_STATISTICS, params);
-
-        Parameters.EVENT.put(params, "build");
-        Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile-time");
-        PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, params);
-
-        Parameters.EVENT.put(params, "run");
-        PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, params);
-
-        Parameters.EVENT.put(params, "debug");
-        PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, params);
     }
 
     @Test
@@ -148,7 +138,7 @@ public class TestUsersData extends BaseTest {
                     break;
 
                 case "user2@gmail.com":
-                    assertEquals(all.size(), 12);
+                    assertEquals(all.size(), 11);
                     assertEquals(all.get("user_first_name").getAsString(), "f_2");
                     assertEquals(all.get("user_last_name").getAsString(), "l_2");
                     assertEquals(all.get("user_company").getAsString(), "");
@@ -159,7 +149,6 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get("debugs").getAsString(), "0");
                     assertEquals(all.get("builds").getAsString(), "0");
                     assertEquals(all.get("factories").getAsString(), "0");
-                    assertEquals(all.get("time_run").getAsString(), "120");
                     break;
 
                 case "user3@gmail.com":

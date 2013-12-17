@@ -261,12 +261,6 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_activity"/>
     </script>
-    <script name="users_sessions">
-        <description>Users' sessions</description>
-        <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="users_sessions"/>
-    </script>
 </scripts>
 
 

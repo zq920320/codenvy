@@ -97,6 +97,7 @@ public class ViewBuilder implements Feature {
 
             return Response.status(Response.Status.OK).entity(transform(result).toJson()).build();
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
     }

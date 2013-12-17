@@ -598,12 +598,12 @@
 
         <section name="user_sessions" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Id,Start Time,End Time,Duration"/>
-                <parameter key="columns" value="4"/>
+                <parameter key="titles" value="Id,Workspace,Start Time,End Time,Duration"/>
+                <parameter key="columns" value="5"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_sessions"/>
-                <parameter key="fields" value="session_id,start_time,end_time,time"/>
+                <parameter key="fields" value="session_id,ws,start_time,end_time,value"/>
                 <parameter key="columns" value="1"/>
             </row>
         </section>

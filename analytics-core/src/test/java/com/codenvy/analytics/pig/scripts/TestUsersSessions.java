@@ -26,18 +26,16 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersSessions extends BaseTest {
@@ -88,26 +86,7 @@ public class TestUsersSessions extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testuserssessions");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USERS_SESSIONS, params);
-    }
-
-    @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.USERS_SESSIONS, params);
-
-        assertTrue(iterator.hasNext());
-
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 7);
-        assertEquals(tuple.get(0), timeFormat.parse("20131101 20:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
-        assertEquals(tuple.get(2).toString(), "(ws,ws1)");
-        assertEquals(tuple.get(3).toString(), "(session_id,2)");
-        assertEquals(tuple.get(4).toString(), "(start_time,2013-11-01 20:00:00)");
-        assertEquals(tuple.get(5).toString(), "(end_time,2013-11-01 20:05:00)");
-        assertEquals(tuple.get(6).toString(), "(time,300)");
-
-        assertFalse(iterator.hasNext());
+        PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
     }
 
     @Test
@@ -126,7 +105,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("start_time").getAsString(), "2013-11-01 20:00:00");
         assertEquals(items.getAll().get("end_time").getAsString(), "2013-11-01 20:05:00");
         assertEquals(items.getAll().get("session_id").getAsString(), "2");
-        assertEquals(items.getAll().get("time").getAsString(), "300");
+        assertEquals(items.getAll().get("value").getAsString(), "300");
     }
 
     @Test

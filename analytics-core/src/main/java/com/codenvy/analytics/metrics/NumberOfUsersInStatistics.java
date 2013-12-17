@@ -15,15 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class NumberOfUsersInStatistics extends AbstractUsersData {
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = combineSmallSessions(l, 'session-started', 'session-finished');
+    public NumberOfUsersInStatistics() {
+        super(MetricType.NUMBER_OF_USERS_IN_STATISTICS);
+    }
 
-result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user),TOTUPLE('ws', ws), TOTUPLE('session_id', id),
-            TOTUPLE('start_time', ToString(dt, 'yyyy-MM-dd HH:mm:ss')),
-            TOTUPLE('end_time', ToString(ToDate(ToMilliSeconds(dt) + delta * 1000), 'yyyy-MM-dd HH:mm:ss')),
-            TOTUPLE('time', delta);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
-
+    @Override
+    public String getDescription() {
+        return "Users' statistics data";
+    }
+}

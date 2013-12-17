@@ -24,8 +24,11 @@ f = combineSmallSessions(l, 'session-started', 'session-finished');
 result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('value', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, delta;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', delta);
+r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, id, delta;
+r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
+            TOTUPLE('session_id', id), TOTUPLE('start_time', ToString(dt, 'yyyy-MM-dd HH:mm:ss')),
+            TOTUPLE('end_time', ToString(ToDate(ToMilliSeconds(dt) + delta * 1000), 'yyyy-MM-dd HH:mm:ss')),
+            TOTUPLE('value', delta);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 ---------------------------------------
@@ -61,39 +64,3 @@ n1 = JOIN m BY id LEFT, k BY id;
 n2 = FOREACH n1 GENERATE k::id AS id, (m::sessions + (k::sessions IS NULL ? 0 : k::sessions)) AS sessions;
 n = FOREACH n2 GENERATE id, TOTUPLE('sessions', sessions);
 STORE n INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
-
----------------------------------------
--- WORKSPACES: The total time of the sessions
----------------------------------------
-a1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_WORKSPACES_STATISTICS' USING MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'id: chararray, time: Long');
-a = FOREACH a1 GENERATE id, (time IS NULL ? 0 : time) AS time;
-
--- calculate total time
-b1 = GROUP f BY ws;
-b2 = FOREACH b1 GENERATE group AS id, SUM(f.delta) AS time;
-b = FILTER b2 BY INDEXOF(UPPER(id), 'TMP-', 0) != 0 AND id != 'default';
-
---combine and store result
-c1 = JOIN b BY id LEFT, a BY id;
-c2 = FOREACH c1 GENERATE b::id AS id, (b::time + (a::time IS NULL ? 0 : a::time)) AS time;
-c = FOREACH c2 GENERATE id, TOTUPLE('time', time);
-STORE c INTO '$STORAGE_URL.$STORAGE_TABLE_WORKSPACES_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
-
----------------------------------------
--- WORKSPACES: The number of sessions
----------------------------------------
-d1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_WORKSPACES_STATISTICS' USING MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'id: chararray, sessions: Long');
-d = FOREACH d1 GENERATE id, (sessions IS NULL ? 0 : sessions) AS sessions;
-
--- calculate total sessions
-e1 = GROUP f BY ws;
-e2 = FOREACH e1 GENERATE group AS id, COUNT(f) AS sessions;
-e = FILTER e2 BY INDEXOF(UPPER(id), 'TMP-', 0) != 0 AND id != 'default';
-
---combine and store result
-g1 = JOIN e BY id LEFT, d BY id;
-g2 = FOREACH g1 GENERATE e::id AS id, (e::sessions + (d::sessions IS NULL ? 0 : d::sessions)) AS sessions;
-g = FOREACH g2 GENERATE id, TOTUPLE('sessions', sessions);
-
-STORE g INTO '$STORAGE_URL.$STORAGE_TABLE_WORKSPACES_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
-
