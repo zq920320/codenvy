@@ -59,16 +59,7 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   (function() {
-	   var url = "gadgets/session-view.jag";
-	   
-	   var userId = "<%=request.getParameter("sessionid")%>";
-	   if (userId != "null") {
-	      url += "?sessionid=" + encodeURIComponent(userId);
-	   }
-	   
-	   jQuery("#dashboardWidget").load(url);
-   })()
+   loadDashboardWidget("gadgets/session-view.jag", "dashboardWidget");
 </script>
 
 </body>

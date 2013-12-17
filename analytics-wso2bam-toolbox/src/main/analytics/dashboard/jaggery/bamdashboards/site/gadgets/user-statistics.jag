@@ -1,0 +1,38 @@
+<%
+//display user tables
+
+include_once("utils.jag");
+
+var queryParams = {};
+var userId = request.getParameter('userid');
+
+// table names in order of receiving from server
+var userTableNames = ["Workspaces", "User Logs", "Sessions"];
+
+if (userId != null) {
+    queryParams["user"] = userId;
+}
+
+var data = getAllResults("user-statistics", queryParams);
+
+loadCssStyles();
+
+print("<div class='view'>");
+
+print("<div class='tables'>");
+
+for (var i = 0; i < userTableNames.length; i++) {   // pass two first tables  
+   print("<div class='item'>");
+   print("<div class='header'>" + userTableNames[i] + "</div>");
+   print("<div class='body'>");
+   printTable(data[i], false);
+   print("</div>");
+   print("</div>");
+   print("<br />");
+}
+
+loadTableHandlers(false);
+
+print("</div>");
+print("</div>");
+%>

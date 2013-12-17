@@ -47,13 +47,13 @@
         </div>
         <div class="span10">
             <div class="well topFilteringPanel">
-                <div id="timely-dd" class="btn-group timely-dd-btns left">
+                <div id="timely-dd" class="btn-group timely-dd-btns left" target="dashboardWidget">
                     <button class="btn">Day</button>
                     <button class="btn">Week</button>
                     <button class="btn">Month</button>
                     <button class="btn">LifeTime</button>
                 </div>
-                <div id="filter-by" class="right">
+                <div id="filter-by" class="right" target="dashboardWidget">
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
                     <button class="btn">Email</button>
@@ -74,7 +74,7 @@
 <script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>
 <script type="text/javascript" src="../navigation.populator.js"></script>
 <script>
-   loadDashboardWidget("gadgets/timeline.jag");
+   loadDashboardWidget("gadgets/timeline.jag", "dashboardWidget");
 </script>
 </body>
 </html>

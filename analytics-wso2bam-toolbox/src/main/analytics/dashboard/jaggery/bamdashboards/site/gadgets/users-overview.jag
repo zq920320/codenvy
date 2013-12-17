@@ -12,6 +12,11 @@ var ASCENDING_ORDER_PREFIX = "+";
 var DESCENDING_ORDER_PREFIX = "-";
 var DEFAULT_ORDER_PREFIX = ASCENDING_ORDER_PREFIX;
 
+var databaseToUIMap = {
+    databaseTableColumns: ["_id", "user_first_name", "user_last_name", "projects", "deploys", "time"],
+    uiTableColumns: ["User Email", "First Name", "Last Name", "Total Active Projects", "Total Deploys", "Total Time"]
+}
+
 var email = request.getParameter("Email");
 var userFirstName = request.getParameter("First Name");
 var userSecondName = request.getParameter("Second Name");
@@ -66,7 +71,7 @@ for (var i = 0; i < table.rows.length; i++) {
 // make table header as linked for sorting
 for (var i = 0; i < table.columns.length; i++) {
    var columnName = table.columns[i];
-   var sortingColumnParameter = encodeParameterName(columnName);
+   var sortingColumnParameter = mapTableFromUIToDatabase(columnName);
       
    var isAscending = isSortingOrderAscending(sortingColumnParameter, sortingParameterValue);
    
@@ -107,17 +112,31 @@ if (pageCount > 1) {
 }
 
 /**
- * Return encoded parameter name, for example: "First Name" => "first_name"
+ * Return encoded parameter name according to mapping rules defined in databaseToUIMap, for example: "First Name" => "user_first_name"
  */
-function encodeParameterName(parameterName) {
-   return columnName.toLowerCase().replace(" ", "_");
+function mapTableFromUIToDatabase(uiTableColumnName) {
+   var uiTableColumns = databaseToUIMap.uiTableColumns;
+   for (var i = 0; i < uiTableColumns.length; i++) {
+      if (uiTableColumnName == uiTableColumns[i]) {
+         return databaseToUIMap.databaseTableColumns[i];
+      }
+   }
+   
+   return null;
 }
 
 /**
- * Return decoded parameter name, for example: "first_name" => "first name"
+ * Return decoded parameter name according to mapping rules defined in databaseToUIMap, for example: "user_first_name" => "First Name"
  */
-function decodeParameterName(parameterName) {
-   return columnName.toLowerCase().replace("_", " ");
+function mapTableFromDatabaseToUI(databaseTableColumnName) {
+   var databaseTableColumns = databaseToUIMap.databaseTableColumns;
+   for (var i = 0; i < databaseTableColumns.length; i++) {
+      if (databaseTableColumnName == databaseTableColumns[i]) {
+         return databaseToUIMap.uiTableColumns[i];
+      }
+   }
+   
+   return null;
 }
 
 /**

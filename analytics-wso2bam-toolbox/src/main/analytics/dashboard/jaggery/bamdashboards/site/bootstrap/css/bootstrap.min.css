@@ -2613,7 +2613,7 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
 
 .btn-group>.btn {
     position: relative;
-    float: left;
+    /*float: left;*/
     margin-left: -1px;
     -webkit-border-radius: 0;
     -moz-border-radius: 0;

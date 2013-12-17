@@ -47,7 +47,20 @@
         </div>
         <div class="span10">
             <div class="hero-unit">
-                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/user-view.jag"></div>
+                <div id="dashboardWidget-overview" src="gadgets/user-overview.jag"></div>
+ 	             <!-- div id="date-range" class="btn-group date-range-btns" target="dashboardWidget-statistics" -->
+
+                <div class="well topFilteringPanel">
+	 	             <div id="date-range" class="btn-group date-range-btns">
+	                    <span>
+	                        From: <input type="text" id="datepicker" name="from-date" class="date-box" />
+	                        To: <input type="text" id="datepicker" name="to-date" class="date-box" />
+	                    </span>
+	                    <button class="btn">Filter</button>
+	                    <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>  
+                   </div>
+                </div>
+	             <div id="dashboardWidget-statistics" class="single-column-gadget" src="gadgets/user-statistics.jag"></div>
             </div>
         </div>
     </div>
@@ -59,7 +72,13 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   loadDashboardWidget("gadgets/user-view.jag");
+   loadDashboardWidget("gadgets/user-overview.jag", "dashboardWidget-overview");
+   
+   $(function() {
+      $("#datepicker").datepicker();
+   });
+   
+   loadDashboardWidget("gadgets/user-statistics.jag", "dashboardWidget-statistics");
 </script>
 
 </body>

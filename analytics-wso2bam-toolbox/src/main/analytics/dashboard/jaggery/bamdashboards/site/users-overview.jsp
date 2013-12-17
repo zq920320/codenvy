@@ -47,7 +47,7 @@
         </div>
         <div class="span10">
             <div class="well topFilteringPanel">
-                <div id="filter-by" class="left">
+                <div id="filter-by" class="left" target="dashboardWidget">
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
                     <button class="btn">Email</button>
@@ -69,7 +69,7 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   loadDashboardWidget("gadgets/users-overview.jag");
+   loadDashboardWidget("gadgets/users-overview.jag", "dashboardWidget");
 </script>
 
 </body>

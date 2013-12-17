@@ -5,31 +5,31 @@ jQuery.fn.doesExist = function(){
 var currentAjaxRequest = null;
 
 $(function () {
-    $("#server-dd").change(function () {
-        var selectedServer = $("#server-dd option:selected").text();
-        $("#service-dd").find('option').remove();
-        $("#operation-dd").find('option').remove();
-        if (selectedServer == '') {
-            triggerCollect();
-        }
-        else {
-            populateServicesCombo(selectedServer);
-        }
-    });
-    $("#service-dd").change(function () {
-        var selectedServer = $("#server-dd option:selected").text();
-        var selectedService = $("#service-dd option:selected").text();
-        $("#operation-dd").find('option').remove();
-        if (selectedService == '') {
-            triggerCollect();
-        }
-        else {
-            populateOperationsCombo(selectedServer, selectedService);
-        }
-    });
-    $("#operation-dd").change(function () {
-        triggerCollect();
-    });
+//    $("#server-dd").change(function () {
+//        var selectedServer = $("#server-dd option:selected").text();
+//        $("#service-dd").find('option').remove();
+//        $("#operation-dd").find('option').remove();
+//        if (selectedServer == '') {
+//            triggerCollect();
+//        }
+//        else {
+//            populateServicesCombo(selectedServer);
+//        }
+//    });
+//    $("#service-dd").change(function () {
+//        var selectedServer = $("#server-dd option:selected").text();
+//        var selectedService = $("#service-dd option:selected").text();
+//        $("#operation-dd").find('option').remove();
+//        if (selectedService == '') {
+//            triggerCollect();
+//        }
+//        else {
+//            populateOperationsCombo(selectedServer, selectedService);
+//        }
+//    });
+//    $("#operation-dd").change(function () {
+//        triggerCollect();
+//    });
     $("#clearSelectionBtn").click(function () {
 //        $("#server-dd option:first-child").attr("selected", "selected");
 //        $("#service-dd").find('option').remove();
@@ -46,7 +46,10 @@ $(function () {
     $("#timely-dd button").click(function () {
         $("#timely-dd button").removeClass('btn-primary');
         $(this).addClass('btn-primary');
-        triggerCollect();
+        var targetDiv = $("#timely-dd").attr("target");
+        if (typeof targetDiv != "undefined") {
+           triggerCollect(targetDiv);
+        }
     });
     
     // "Filter by" group
@@ -55,11 +58,14 @@ $(function () {
        if ($("#filter-by input[name='keyword']").val() != "") {  // select button only if there is some text in keyword input
           $(this).addClass('btn-primary');
        }
-       triggerCollect();       
+       var targetDiv = $("#filter-by").attr("target");
+       if (typeof targetDiv != "undefined") {
+          triggerCollect(targetDiv);
+       }
     });
 });
 
-function triggerCollect() {   
+function triggerCollect(targetDiv) {   
     var params = {};
     
     // process time selector
@@ -77,12 +83,12 @@ function triggerCollect() {
     }
     
     if (Object.keys(params).length > 0) {
-       reloadDiv(params);
+       reloadDiv(params, targetDiv);
     }
 };
 
-function reloadDiv(params) {
-   var div = jQuery("#dashboardWidget");
+function reloadDiv(params, targetDiv) {
+   var div = jQuery("#" + targetDiv);
    
    var divUrl = div.attr('src');
 
@@ -140,7 +146,11 @@ function reloadThroughAjax(containerToReload, url, callback) {
 }
 
 
-function loadDashboardWidget(gadgetUrl) {      
+function loadDashboardWidget(gadgetUrl, widgetId) { 
+   if (typeof widgetId == "undefined") {
+      return;
+   }
+
    var params = extractUrlParams(window.location.href);
    
    params = getParametersWithPresetDefaults(params);
@@ -149,7 +159,7 @@ function loadDashboardWidget(gadgetUrl) {
       var absUrlArray = window.location.href.split('?');
       var urlParamsString = absUrlArray[1];
 
-      var div = jQuery("#dashboardWidget");
+      var div = jQuery("#" + widgetId);
       var callback = function() {};
       if (typeof urlParamsString != "undefined") {
          gadgetUrl += "?" + urlParamsString;
@@ -175,7 +185,7 @@ function loadDashboardWidget(gadgetUrl) {
       }
       
       if (event.state != null && typeof event.state.html != "undefined") {
-         jQuery("#dashboardWidget").html(event.state.html);
+         jQuery("#" + widgetId).html(event.state.html);
       }
    });
 }
