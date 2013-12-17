@@ -98,7 +98,7 @@
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
                 var url = "/site/rest/ide/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" +
-                "&redirect_after_login=" + encodeURIComponent("/site/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
+                "&redirect_after_login=" + encodeURIComponent("/site/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -209,6 +209,7 @@
                 var workspaceName = {name: workspace};
                 var authenticateUrl = "/site/rest/token/validate";
                 var createWSUrl = "/site/rest/private/organization/workspaces/create";
+                var selectWsUrl = "/site/private/select-tenant";
                 $.ajax({
                     url : authenticateUrl,
                     type : "POST",
@@ -230,6 +231,8 @@
                                     ]);
                                 }
                             });
+                        } else {
+                            success({url: selectWsUrl});
                         }
                     },
                     error : function(xhr/*, status , err*/){
