@@ -186,10 +186,10 @@ function printTableVerticalRow(table) {
         print("</th>");
 
         if (typeof table.rows != "undefined" 
-              && typeof table.rows[i] != "undefined"
-              && typeof table.rows[i][0] != "undefined") {
+              && typeof table.rows[0] != "undefined"
+              && typeof table.rows[0][i] != "undefined") {
            print("<td class='cell'>");
-           print(table.rows[i][0]);
+           print(table.rows[0][i]);
            print("</td>");
            print("</tr>");
         }
@@ -322,17 +322,41 @@ function mapQueryParametersFromUIToDatabase(request) {
 /**
  * Return query parameters object for rest-service according to mapping jag request query to rest-service request query rules defined in databaseToUIMap
  */
-function mapQueryParametersFromDatabaseToUI(restServiceParameters) {
-   var jagRequestQueryParameters = {};
+function mapQueryParametersFromDatabaseToUI(params) {
+   var params = params || {};
+   
    var jagRequestParameters = databaseToUIMap.jagQueryParameters;
    for (var i = 0; i < jagRequestParameters.length; i++) {
-      var restServiceParameterValue = restServiceParameters[databaseToUIMap.databaseTableColumns[i]];
-      if (typeof restServiceParameterValue != "undefined") {        
-         jagRequestQueryParameters[jagRequestParameters[i]] = restServiceParameterValue;
+      var databaseParameterName = databaseToUIMap.databaseTableColumns[i];
+      var paramValue = params[databaseParameterName];      
+      if (typeof paramValue != "undefined") {
+         delete params[databaseParameterName];
+         params[jagRequestParameters[i]] = paramValue;
       }
    }
    
-   return jagRequestQueryParameters;
+   return params;
+}
+
+/**
+ * Construct url parameters String based on parameters from params object
+ * @param params object like {user_email: "test@gmail.com"} }
+ * @returns url like "user%20email=test%40gmail.com"
+ */
+function constructRequestQueryString(params) {
+   var params = params || {};
+
+   var urlParamsString = "";
+   for (var paramName in params) {
+      if (params.hasOwnProperty(paramName) 
+            && typeof params[paramName] != "undefined") {
+         urlParamsString += "&" + encodeURIComponent(paramName) + "=" + encodeURIComponent(params[paramName]);
+      }
+   }
+   
+   urlParamsString = urlParamsString.substring(1);  // remove first "&"
+   
+   return urlParamsString; 
 }
 
 %>

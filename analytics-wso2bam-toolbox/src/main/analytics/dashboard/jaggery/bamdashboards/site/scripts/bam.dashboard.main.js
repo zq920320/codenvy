@@ -40,12 +40,18 @@ $(function () {
         
         $("#filter-by button").removeClass('btn-primary');
         $("#filter-by input[name='keyword']").val("");
+        
+        var targetDiv = $("#filter-by").attr("target");
+        if (typeof targetDiv != "undefined") {
+           triggerCollect(targetDiv);
+        }
     });
     
     // Time selectors group
     $("#timely-dd button").click(function () {
         $("#timely-dd button").removeClass('btn-primary');
         $(this).addClass('btn-primary');
+        
         var targetDiv = $("#timely-dd").attr("target");
         if (typeof targetDiv != "undefined") {
            triggerCollect(targetDiv);
@@ -58,6 +64,7 @@ $(function () {
        if ($("#filter-by input[name='keyword']").val() != "") {  // select button only if there is some text in keyword input
           $(this).addClass('btn-primary');
        }
+       
        var targetDiv = $("#filter-by").attr("target");
        if (typeof targetDiv != "undefined") {
           triggerCollect(targetDiv);

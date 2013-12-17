@@ -1,4 +1,5 @@
 .view {
+	width: 100%;
 }
 
 .view .overview {
@@ -35,6 +36,11 @@
 .view .tables .item {
    float: left;
    margin-bottom: 20px;	
+   width: 100%;
+}
+
+.view .tables .body table {
+   width: 100%;
 }
 
 

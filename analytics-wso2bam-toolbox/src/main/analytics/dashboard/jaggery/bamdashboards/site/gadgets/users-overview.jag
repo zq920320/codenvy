@@ -80,6 +80,9 @@ for (var i = 0; i < table.columns.length; i++) {
    }
 
    queryParams.sort = newSortingParameterValue;
+
+   queryParams = mapQueryParametersFromDatabaseToUI(queryParams);
+   
    var headerHref = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
    table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
 }
@@ -125,42 +128,5 @@ function isSortingOrderAscending(sortingColumn, sortingParameterValue) {
    }
 
    return null;
-}
-
-/**
- * Construct url parameters String based on parameters from params object
- * @param params object like {user_email: "test@gmail.com"} }
- * @returns url like "user%20email=test%40gmail.com"
- */
-function constructRequestQueryString(params) {
-   var params = params || {};
-   
-   var urlParamsString = "";
-   
-   // filter-by parameters
-   
-   if (typeof queryParams["user_email"] != "undefined") {
-      urlParamsString += "&" + encodeURIComponent("Email") + "=" + encodeURIComponent(queryParams["user_email"]);
-      
-   } else if (typeof queryParams["user_first_name"] != "undefined") {
-      urlParamsString += "&" + encodeURIComponent("First Name") + "=" + encodeURIComponent(queryParams["user_first_name"]);
-      
-   } else if (typeof queryParams["user_last_name"] != "undefined") {
-      urlParamsString += "&" + encodeURIComponent("Second Name") + "=" + encodeURIComponent(queryParams["user_last_name"]);
-   }
-   
-   // paging
-   if (typeof queryParams["page"] != "undefined") {
-      urlParamsString += "&" + encodeURIComponent("page") + "=" + encodeURIComponent(queryParams["page"]);
-   }
-
-   // sorting
-   if (typeof queryParams["sort"] != "undefined") {
-      urlParamsString += "&" + encodeURIComponent("sort") + "=" + encodeURIComponent(queryParams["sort"]);
-   }
-   
-   urlParamsString = urlParamsString.substring(1);  // remove first "&"
-   
-   return urlParamsString;
 }
 %>

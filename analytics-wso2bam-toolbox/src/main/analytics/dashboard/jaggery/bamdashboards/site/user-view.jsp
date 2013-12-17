@@ -46,12 +46,12 @@
             </div>
         </div>
         <div class="span10">
-            <div class="hero-unit">
+            <div class="hero-unit full-width">
                 <div id="dashboardWidget-overview" src="gadgets/user-overview.jag"></div>
  	             <!-- div id="date-range" class="btn-group date-range-btns" target="dashboardWidget-statistics" -->
 
                 <div class="well topFilteringPanel">
-	 	             <div id="date-range" class="btn-group date-range-btns">
+	 	             <div id="filter-by" class="btn-group">
 	                    <span>
 	                        From: <input type="text" id="datepicker" name="from-date" class="date-box" />
 	                        To: <input type="text" id="datepicker" name="to-date" class="date-box" />
@@ -60,7 +60,7 @@
 	                    <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>  
                    </div>
                 </div>
-	             <div id="dashboardWidget-statistics" class="single-column-gadget" src="gadgets/user-statistics.jag"></div>
+	             <div id="dashboardWidget-statistics" class="single-column-gadget full-width" src="gadgets/user-statistics.jag"></div>
             </div>
         </div>
     </div>
