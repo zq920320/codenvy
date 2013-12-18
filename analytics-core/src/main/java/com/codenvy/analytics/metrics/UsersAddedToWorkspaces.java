@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class UsersAddedToWorkspaces extends AbstractMapValueResulted {
 
     public static final String INVITE  = "invite";
-    public static final String WEBSITE = "website";
+    public static final String google = "google";
 
     public UsersAddedToWorkspaces(String metricName) {
         super(metricName);
@@ -33,7 +33,7 @@ public class UsersAddedToWorkspaces extends AbstractMapValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{INVITE, WEBSITE};
+        return new String[]{INVITE, google};
     }
 
     /** {@inheritDoc} */

@@ -206,7 +206,6 @@ env > $OS_INFO/os_env_variables.txt
 echo "\ncarbondump.sh##Generating the checksums of all the files in the CARBON_HOME directory..."
 find $CARBON_HOME -iname "*" -type f | grep -v ./samples | grep -v ./docs | sort | xargs md5sum > $OUTPUT_DIR/checksum_values.txt
 
-##TODO out all the carbon info to a single file, java, vesion, os version, carbon version
 echo "Product"'\t\t\t'": "`cat $CARBON_HOME/bin/version.txt` > $OUTPUT_DIR/carbon_server_info.txt
 echo "WSO2 Carbon Framework"'\t'": "`cat $CARBON_HOME/bin/wso2carbon-version.txt` >> $OUTPUT_DIR/carbon_server_info.txt
 echo "Carbon Home"'\t\t'": "`echo $CARBON_HOME` >> $OUTPUT_DIR/carbon_server_info.txt
