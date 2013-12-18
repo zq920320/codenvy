@@ -22,6 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AbstractLoggedInType;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.UsersLoggedInTypes;
@@ -87,6 +88,9 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         assertEquals(values.size(), 2);
         assertEquals(values.get("google"), new LongValueData(2));
         assertEquals(values.get("jaas"), new LongValueData(1));
+
+        TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
+        assertEquals(metric.getValue(context).getAsString(), "3");
     }
 
     @Test
@@ -99,6 +103,9 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("google"), new LongValueData(1));
+
+        TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
+        assertEquals(metric.getValue(context).getAsString(), "1");
     }
 
     @Test
@@ -109,6 +116,9 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
 
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 0);
+
+        TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
+        assertEquals(metric.getValue(context).getAsString(), "0");
     }
 
     @Test
@@ -121,12 +131,33 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("google"), new LongValueData(1));
+
+        TestAbstractLoggedInType metric = new TestAbstractLoggedInType(new String[]{"google", "jaas"});
+        assertEquals(metric.getValue(context).getAsString(), "1");
     }
 
-    public class TestUsersLoggedInTypes extends UsersLoggedInTypes {
+    private class TestUsersLoggedInTypes extends UsersLoggedInTypes {
         @Override
         public String getStorageTableBaseName() {
             return "testnumberofusersbytypes_usersloggedintypes";
+        }
+    }
+
+    private class TestAbstractLoggedInType extends AbstractLoggedInType {
+
+        public TestAbstractLoggedInType(String[] types) {
+            super("testnumberofusersbytypes_usersloggedintypes", types);
+        }
+
+
+        @Override
+        public String getStorageTableBaseName() {
+            return "testnumberofusersbytypes_usersloggedintypes";
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
         }
     }
 }
