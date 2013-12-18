@@ -114,5 +114,7 @@ com.codenvy.analytics.metrics.UsersProfiles
 com.codenvy.analytics.metrics.NumberOfProfiles
 com.codenvy.analytics.metrics.UsersStatistics
 com.codenvy.analytics.metrics.UsersActivity
+com.codenvy.analytics.metrics.NumberOfUsersActivity
 com.codenvy.analytics.metrics.UsersSessions
+com.codenvy.analytics.metrics.NumberOfUsersSessions
 com.codenvy.analytics.metrics.UsersTimeInWorkspaces
