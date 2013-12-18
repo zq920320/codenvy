@@ -53,11 +53,12 @@
                     <button class="btn">Email</button>
                     <button class="btn">First Name</button>
                     <button class="btn">Second Name</button>                
+                    <button class="btn">Company</button>
                     <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/users-overview.jag"></div>
+                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/users-profiles.jag"></div>
             </div>
         </div>
     </div>

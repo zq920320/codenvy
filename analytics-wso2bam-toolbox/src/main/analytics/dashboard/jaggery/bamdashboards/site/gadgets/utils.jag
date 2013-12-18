@@ -2,9 +2,6 @@
 
 function getMetricValue(metric, queryParams) {
     var data = get('https://localhost:9443/api/analytics/metric/' + metric, queryParams, 'json');
-    print(data);
-    print(data['data']);
-    print(data['data']['value']);
     return parseInt(data['data']['value']);
 }
 

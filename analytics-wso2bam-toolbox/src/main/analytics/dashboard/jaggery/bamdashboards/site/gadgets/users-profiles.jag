@@ -3,9 +3,9 @@
 include_once("utils.jag");
 
 var CURRENT_PAGE_QUERY_PARAMETER = "page";
-var ONE_PAGE_ROWS_COUNT = 20;                      // TODO set correct values
+var ONE_PAGE_ROWS_COUNT = 20;
 var USER_ID_LINK_PREFIX = "user-view.jsp?userid";
-var USERS_OVERVIEW_PAGE_LINK = "users-overview.jsp";
+var USERS_OVERVIEW_PAGE_LINK = "users-profiles.jsp";
 
 var SORTING_PARAMETER = "sort";
 var ASCENDING_ORDER_PREFIX = "+";
@@ -23,7 +23,7 @@ var databaseToUIMap = {
 var queryParams = mapQueryParametersFromUIToDatabase(request);
 
 // get page count
-var pageCount = getMetricValue("number_of_profiles", queryParams);
+var pageCount = Math.ceil(getMetricValue("number_of_profiles", queryParams) / ONE_PAGE_ROWS_COUNT) ;
 
 // process pagination
 var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
@@ -62,26 +62,26 @@ for (var i = 0; i < table.rows.length; i++) {
 for (var i = 0; i < table.columns.length; i++) {
    var columnName = table.columns[i];
    var sortingColumnParameter = mapTableFromUIToDatabase(columnName);
-      
+
    var isAscending = isSortingOrderAscending(sortingColumnParameter, sortingParameterValue);
-   
+
    if (isAscending == null) {
       var headerClassOption = "'" + sortingParameterValue + "'";
       var newSortingParameterValue = DEFAULT_ORDER_PREFIX + sortingColumnParameter;
-      
+
    } else if (isAscending) {
       var headerClassOption = "class='ascending'";
       var newSortingParameterValue = DESCENDING_ORDER_PREFIX + sortingColumnParameter;  // for example "-user_email"
-      
+
    } else {
       var headerClassOption = "class='descending'";
-      var newSortingParameterValue = undefined;       
+      var newSortingParameterValue = undefined;
    }
 
    queryParams.sort = newSortingParameterValue;
 
    queryParams = mapQueryParametersFromDatabaseToUI(queryParams);
-   
+
    var headerHref = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
    table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
 }
@@ -95,35 +95,35 @@ printTable(table, false);
 loadTableHandlers(false);
 
 // print bottom page navigation
-if (pageCount > 1) {      
-   // remove page parameter 
+if (pageCount > 1) {
+   // remove page parameter
    delete queryParams["page"];
-   
+
    var queryString = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
-     
+
    printBottomPageNavigator(pageCount, currentPageNumber, queryString);
 }
 
 
 /**
- * Return: 
- * true, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "+", for example: return true if sortingColumn="user_email" and sortingParameterValue = "+user_email"  
+ * Return:
+ * true, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "+", for example: return true if sortingColumn="user_email" and sortingParameterValue = "+user_email"
  * false, if sortingColumn = sortingParameterValue and sortingParameterValuePrefix = "-", for example: return true if sortingColumn="user_email" and sortingParameterValue = "-user_email"
  * null, if sortingParameterValue = null, of sortingColumn != sortingParameterValue
- * 
+ *
  */
 function isSortingOrderAscending(sortingColumn, sortingParameterValue) {
    if (sortingParameterValue == null) {
       return null;
    }
-   
+
    if (sortingParameterValue.substring(1) == sortingColumn) {
       var sortingOrder = sortingParameterValue.charAt(0);
       if (sortingOrder == ASCENDING_ORDER_PREFIX) {
          return true;
       } else if (sortingOrder == DESCENDING_ORDER_PREFIX){
          return false;
-      }      
+      }
    }
 
    return null;
