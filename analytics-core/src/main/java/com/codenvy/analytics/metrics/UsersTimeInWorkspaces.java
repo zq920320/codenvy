@@ -28,6 +28,7 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersTimeInWorkspaces extends ReadBasedMetric {
 
+    public static final String WS       = "_id";
     public static final String SESSIONS = "sessions";
     public static final String TIME     = "time";
 
@@ -47,7 +48,7 @@ public class UsersTimeInWorkspaces extends ReadBasedMetric {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{TIME, SESSIONS};
+        return new String[]{TIME, SESSIONS, WS};
     }
 
     @Override

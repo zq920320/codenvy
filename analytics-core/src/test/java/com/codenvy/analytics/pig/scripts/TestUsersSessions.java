@@ -40,11 +40,9 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersSessions extends BaseTest {
 
-    private Map<String, String> params;
-
     @BeforeClass
     public void prepare() throws IOException {
-        params = Utils.newContext();
+        Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
 
@@ -105,7 +103,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("start_time").getAsString(), "2013-11-01 20:00:00");
         assertEquals(items.getAll().get("end_time").getAsString(), "2013-11-01 20:05:00");
         assertEquals(items.getAll().get("session_id").getAsString(), "2");
-        assertEquals(items.getAll().get("value").getAsString(), "300");
+        assertEquals(items.getAll().get("time").getAsString(), "300");
 
         metric = new TestNumberOfUsersOfSessions();
         assertEquals(metric.getValue(context).getAsString(), "1");
@@ -134,20 +132,11 @@ public class TestUsersSessions extends BaseTest {
         }
     }
 
-    public class TestListValueResulted extends AbstractListValueResulted {
-
-        public TestListValueResulted() {
-            super(MetricType.USERS_SESSIONS);
-        }
+    public class TestListValueResulted extends ProductUsageSessions {
 
         @Override
         public String getStorageTableBaseName() {
             return "testuserssessions-raw";
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
         }
     }
 }

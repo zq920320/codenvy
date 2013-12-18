@@ -19,11 +19,13 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.CreatedFactoriesList;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -79,22 +81,22 @@ public class TestFactoryCreatedList extends BaseTest {
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130101 13:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory1)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory1)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130101 14:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory2)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory2)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130101 15:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory3)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory3)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130101 16:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory4)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory4)");
 
         assertFalse(iterator.hasNext());
     }
@@ -111,8 +113,6 @@ public class TestFactoryCreatedList extends BaseTest {
                                                                new StringValueData("factory2"),
                                                                new StringValueData("factory3"),
                                                                new StringValueData("factory4"))));
-        metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(4));
     }
 
 
@@ -126,9 +126,6 @@ public class TestFactoryCreatedList extends BaseTest {
         Metric metric = new TestSetValueResulted();
         assertEquals(metric.getValue(context),
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory1"))));
-
-        metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
     @Test
@@ -142,37 +139,13 @@ public class TestFactoryCreatedList extends BaseTest {
         Metric metric = new TestSetValueResulted();
         assertEquals(metric.getValue(context),
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory3"))));
-
-        metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
-    public class TestSetValueResulted extends AbstractSetValueResulted {
-
-        public TestSetValueResulted() {
-            super("testfactorycreatedlist");
-        }
+    public class TestSetValueResulted extends CreatedFactoriesList {
 
         @Override
         public String getStorageTableBaseName() {
             return "testfactorycreatedlist";
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-    }
-
-    public class TestActiveUsersMetric extends AbstractActiveEntities {
-
-        public TestActiveUsersMetric() {
-            super("testfactorycreatedlist", "testfactorycreatedlist");
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
         }
     }
 }

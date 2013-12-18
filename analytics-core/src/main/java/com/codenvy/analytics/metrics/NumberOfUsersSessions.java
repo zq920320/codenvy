@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class NumberOfUsersSessions extends AbstractCount {
 
     public NumberOfUsersSessions() {
-        super(MetricType.NUMBER_OF_USERS_SESSIONS, MetricType.USERS_SESSIONS);
+        super(MetricType.NUMBER_OF_USERS_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS);
     }
 
     @Override

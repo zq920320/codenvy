@@ -19,11 +19,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -34,7 +30,10 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
@@ -78,105 +77,28 @@ public class TestFactoryAcceptedList extends BaseTest {
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130210 10:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory1)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory1)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130210 11:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory2)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory2)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130210 11:30:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory3)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory3)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130210 13:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory2)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory2)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130210 14:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,factory3)");
+        assertEquals(tuple.get(1).toString(), "(factory,factory3)");
 
         assertFalse(iterator.hasNext());
-    }
-
-    @Test
-    public void testSingleDateFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-
-        Metric metric = new TestSetValueResulted();
-        assertEquals(new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory1"),
-                                                               new StringValueData("factory2"),
-                                                               new StringValueData("factory3"))),
-                     metric.getValue(context));
-        metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(3));
-    }
-
-
-    @Test
-    public void testSingleUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.REFERRER.put(context, "referrer2");
-
-        Metric metric = new TestSetValueResulted();
-        assertEquals(new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory2"),
-                                                               new StringValueData("factory3"))),
-                     metric.getValue(context));
-        metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(2));
-    }
-
-    @Test
-    public void testSeveralFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.WS.put(context, "tmp-1");
-        MetricFilter.REFERRER.put(context, "referrer1");
-
-        Metric metric = new TestSetValueResulted();
-        assertEquals(new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory1"),
-                                                               new StringValueData("factory2"),
-                                                               new StringValueData("factory3"))),
-                     metric.getValue(context));
-        metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(3));
-    }
-
-    public class TestSetValueResulted extends AbstractSetValueResulted {
-
-        public TestSetValueResulted() {
-            super("testfactoryacceptedlist");
-        }
-
-        @Override
-        public String getStorageTableBaseName() {
-            return "testfactoryacceptedlist";
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
-    }
-
-    public class TestActiveUsersMetric extends AbstractActiveEntities {
-
-        public TestActiveUsersMetric() {
-            super("testfactoryacceptedlist", "testfactoryacceptedlist");
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }

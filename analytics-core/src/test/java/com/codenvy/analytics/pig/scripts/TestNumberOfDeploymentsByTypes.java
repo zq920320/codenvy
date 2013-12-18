@@ -224,7 +224,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
 
         @Override
         public String[] getTrackedFields() {
-            return new String[0];
+            return new String[]{"paas1", "pass2", "paas3", "local"};
         }
     }
 }

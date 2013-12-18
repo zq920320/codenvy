@@ -90,10 +90,10 @@ public class TestProductUsageOldScript extends BaseTest {
         Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
 
         assertTuples(iterator, new String[]{
-                "(" + timeFormat.parse("20130101 20:00:00").getTime() + ",(user,user@gmail.com),(value,300))",
-                "(" + timeFormat.parse("20130101 20:25:00").getTime() + ",(user,user@gmail.com),(value,0))",
-                "(" + timeFormat.parse("20130101 19:00:00").getTime() + ",(user,ANONYMOUSUSER_user11),(value,240))",
-                "(" + timeFormat.parse("20130101 18:00:00").getTime() + ",(user,ANONYMOUSUSER_user11),(value,120))"});
+                "(" + timeFormat.parse("20130101 20:00:00").getTime() + ",(user,user@gmail.com),(time,300))",
+                "(" + timeFormat.parse("20130101 20:25:00").getTime() + ",(user,user@gmail.com),(time,0))",
+                "(" + timeFormat.parse("20130101 19:00:00").getTime() + ",(user,ANONYMOUSUSER_user11),(time,240))",
+                "(" + timeFormat.parse("20130101 18:00:00").getTime() + ",(user,ANONYMOUSUSER_user11),(time,120))"});
     }
 
 }

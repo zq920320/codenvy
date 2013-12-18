@@ -211,12 +211,8 @@ public class MongoDataLoader implements DataLoader {
         while (iterator.hasNext()) {
             DBObject dbObject = iterator.next();
 
-            if (trackedFields.length == 0) {
-                for (String key : dbObject.keySet()) {
-                    action.accumulate(key, dbObject.get(key));
-                }
-            } else {
-                for (String key : trackedFields) {
+            for (String key : trackedFields) {
+                if (dbObject.containsField(key)) {
                     action.accumulate(key, dbObject.get(key));
                 }
             }

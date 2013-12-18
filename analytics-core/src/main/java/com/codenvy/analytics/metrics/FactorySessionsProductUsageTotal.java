@@ -42,6 +42,11 @@ public class FactorySessionsProductUsageTotal extends AbstractLongValueResulted 
     }
 
     @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageFactorySessions.TIME};
+    }
+
+    @Override
     public String getDescription() {
         return "The total time spent by all users in temporary workspaces";
     }

@@ -37,6 +37,11 @@ public class DebugsTime extends AbstractLongValueResulted {
     }
 
     @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageSessions.TIME};
+    }
+
+    @Override
     public String getDescription() {
         return "The total time of all debugs in minutes";
     }

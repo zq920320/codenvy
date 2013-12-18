@@ -28,4 +28,9 @@ public class CreatedFactoriesList extends AbstractSetValueResulted {
     public String getDescription() {
         return "The list of created factories.";
     }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageFactorySessions.FACTORY};
+    }
 }

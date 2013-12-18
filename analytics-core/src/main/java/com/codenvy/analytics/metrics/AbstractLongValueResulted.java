@@ -56,8 +56,10 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric {
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
+        String field = getTrackedFields()[0];
+
         group.put("_id", null);
-        group.put(VALUE, new BasicDBObject("$sum", "$" + VALUE));
+        group.put(field, new BasicDBObject("$sum", "$" + field));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }

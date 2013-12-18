@@ -22,10 +22,10 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.RunsTime;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -105,7 +105,7 @@ public class TestTimeSpentInAction extends BaseTest {
 
         Tuple tuple = iterator.next();
         assertEquals(tuple.get(0), dateFormat.parse("20130101").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,540)");
+        assertEquals(tuple.get(1).toString(), "(time,540)");
 
         assertFalse(iterator.hasNext());
     }
@@ -117,7 +117,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Parameters.TO_DATE.put(context, "20130101");
 
         Metric metric = new TestLongValueResulted();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(540));
+        Assert.assertEquals(metric.getValue(context), new LongValueData(9));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class TestTimeSpentInAction extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com");
 
         Metric metric = new TestLongValueResulted();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(420));
+        Assert.assertEquals(metric.getValue(context), new LongValueData(7));
     }
 
     @Test
@@ -150,7 +150,7 @@ public class TestTimeSpentInAction extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
 
         Metric metric = new TestLongValueResulted();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(540));
+        Assert.assertEquals(metric.getValue(context), new LongValueData(9));
     }
 
     @Test
@@ -162,23 +162,14 @@ public class TestTimeSpentInAction extends BaseTest {
         MetricFilter.WS.put(context, "ws2");
 
         Metric metric = new TestLongValueResulted();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(120));
+        Assert.assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
-    private class TestLongValueResulted extends AbstractLongValueResulted {
-
-        public TestLongValueResulted() {
-            super("testtimespentinaction");
-        }
+    private class TestLongValueResulted extends RunsTime {
 
         @Override
         public String getStorageTableBaseName() {
             return "testtimespentinaction";
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
         }
     }
 }

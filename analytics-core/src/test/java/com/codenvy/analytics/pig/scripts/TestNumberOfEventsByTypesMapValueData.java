@@ -202,7 +202,7 @@ public class TestNumberOfEventsByTypesMapValueData extends BaseTest {
 
         @Override
         public String[] getTrackedFields() {
-            return new String[0];
+            return new String[]{"ws1", "ws2"};
         }
     }
 }

@@ -100,7 +100,7 @@ public class TestProductUsage extends BaseTest {
         assertEquals(tuple.size(), 3);
         assertEquals(tuple.get(0), timeFormat.parse("20131101 20:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
-        assertEquals(tuple.get(2).toString(), "(value,300)");
+        assertEquals(tuple.get(2).toString(), "(time,300)");
 
         assertTrue(iterator.hasNext());
 
@@ -108,13 +108,13 @@ public class TestProductUsage extends BaseTest {
         assertEquals(tuple.size(), 3);
         assertEquals(tuple.get(0), timeFormat.parse("20131101 19:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(value,240)");
+        assertEquals(tuple.get(2).toString(), "(time,240)");
 
         tuple = iterator.next();
         assertEquals(tuple.size(), 3);
         assertEquals(tuple.get(0), timeFormat.parse("20131101 18:00:00").getTime());
         assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(value,120)");
+        assertEquals(tuple.get(2).toString(), "(time,120)");
 
         assertFalse(iterator.hasNext());
     }
