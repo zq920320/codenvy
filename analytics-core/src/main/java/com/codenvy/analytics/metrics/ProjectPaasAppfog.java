@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectPaasAppfog extends AbstractProjectPaas {
 
     public ProjectPaasAppfog() {
-        super(MetricType.PROJECT_PAAS_APPFOG, new String[]{"Appfog"});
+        super(MetricType.PROJECT_PAAS_APPFOG, new String[]{ProjectPaases.APPFOG});
     }
 
     @Override

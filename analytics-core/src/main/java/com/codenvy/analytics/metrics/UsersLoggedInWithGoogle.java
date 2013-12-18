@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class UsersLoggedInWithGoogle extends AbstractLoggedInType {
 
     public UsersLoggedInWithGoogle() {
-        super(MetricType.USERS_LOGGED_IN_WITH_GOOGLE, new String[]{"google"});
+        super(MetricType.USERS_LOGGED_IN_WITH_GOOGLE, new String[]{UsersLoggedInTypes.GOOGLE});
     }
 
     @Override

@@ -46,8 +46,8 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSingleTable() {
-        return true;
+    public boolean isSupportMultipleTables() {
+        return false;
     }
 
     @Override

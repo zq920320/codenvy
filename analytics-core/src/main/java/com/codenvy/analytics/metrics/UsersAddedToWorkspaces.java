@@ -20,12 +20,20 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersAddedToWorkspaces extends AbstractMapValueResulted {
 
+    public static final String INVITE  = "invite";
+    public static final String WEBSITE = "website";
+
     public UsersAddedToWorkspaces(String metricName) {
         super(metricName);
     }
 
     public UsersAddedToWorkspaces() {
         super(MetricType.USERS_ADDED_TO_WORKSPACES);
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{INVITE, WEBSITE};
     }
 
     /** {@inheritDoc} */

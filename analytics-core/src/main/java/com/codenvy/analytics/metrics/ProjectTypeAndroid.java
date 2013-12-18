@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeAndroid extends AbstractProjectType {
 
     public ProjectTypeAndroid() {
-        super(MetricType.PROJECT_TYPE_ANDROID, new String[]{"Android", "google-mbs-client-android"});
+        super(MetricType.PROJECT_TYPE_ANDROID, new String[]{ProjectTypes.ANDROID, ProjectTypes.GOOGLE_MBS});
     }
 
     @Override

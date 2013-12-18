@@ -31,6 +31,10 @@ public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric {
 
     protected AbstractUsersAddedToWorkspaces(String metricName, String[] types) {
         super(metricName);
+
+        for (int i = 0; i < types.length; i++) {
+            types[i] = types[i].toLowerCase();
+        }
         this.types = types;
     }
 
@@ -44,7 +48,17 @@ public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
+    public boolean isSupportMultipleTables() {
+        return true;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return types;
+    }
+
+    @Override
+    public String getStorageTableBaseName() {
         return MetricType.USERS_ADDED_TO_WORKSPACES.name().toLowerCase();
     }
 
@@ -54,8 +68,7 @@ public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric {
 
         group.put("_id", null);
         for (String type : types) {
-            String field = type.toLowerCase();
-            group.put(field, new BasicDBObject("$sum", "$" + field));
+            group.put(type, new BasicDBObject("$sum", "$" + type));
         }
 
         return new DBObject[]{new BasicDBObject("$group", group)};

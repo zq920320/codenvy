@@ -48,7 +48,6 @@ public class TestReadBasedMetric extends BaseTest {
 
 
     public class TestMetric extends ReadBasedMetric {
-
         private TestMetric() {
             super("TestReadBasedMetric");
         }
@@ -60,7 +59,17 @@ public class TestReadBasedMetric extends BaseTest {
 
         @Override
         public String getDescription() {
-            return "";
+            return null;
+        }
+
+        @Override
+        public boolean isSupportMultipleTables() {
+            return true;
+        }
+
+        @Override
+        public String[] getTrackedFields() {
+            return new String[0];
         }
 
         @Override

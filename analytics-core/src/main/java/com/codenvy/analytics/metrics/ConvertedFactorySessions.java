@@ -26,7 +26,7 @@ import java.util.Map;
 public class ConvertedFactorySessions extends AbstractCount {
 
     public ConvertedFactorySessions() {
-        super(MetricType.CONVERTED_FACTORY_SESSIONS, MetricType.FACTORY_SESSIONS_LIST);
+        super(MetricType.CONVERTED_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
     @Override

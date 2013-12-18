@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeMMP extends AbstractProjectType {
 
     public ProjectTypeMMP() {
-        super(MetricType.PROJECT_TYPE_MMP, new String[]{"Maven Multi-module"});
+        super(MetricType.PROJECT_TYPE_MMP, new String[]{ProjectTypes.MMP});
     }
 
     @Override

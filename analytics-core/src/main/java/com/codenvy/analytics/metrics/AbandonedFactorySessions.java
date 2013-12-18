@@ -26,7 +26,7 @@ import java.util.Map;
 public class AbandonedFactorySessions extends AbstractCount {
 
     public AbandonedFactorySessions() {
-        super(MetricType.ABANDONED_FACTORY_SESSIONS, MetricType.FACTORY_SESSIONS_LIST);
+        super(MetricType.ABANDONED_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
     @Override

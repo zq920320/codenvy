@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectPaasOpenshift extends AbstractProjectPaas {
 
     public ProjectPaasOpenshift() {
-        super(MetricType.PROJECT_PAAS_OPENSHIFT, new String[]{"OpenShift"});
+        super(MetricType.PROJECT_PAAS_OPENSHIFT, new String[]{ProjectPaases.OPENSHIFT});
     }
 
     @Override

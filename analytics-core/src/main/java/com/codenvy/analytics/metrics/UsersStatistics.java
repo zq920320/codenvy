@@ -45,6 +45,19 @@ public class UsersStatistics extends AbstractListValueResulted {
     }
 
     @Override
+    public String[] getTrackedFields() {
+        return new String[]{USER,
+                            PROJECTS,
+                            RUNS,
+                            DEBUGS,
+                            BUILDS,
+                            DEPLOYS,
+                            FACTORIES,
+                            TIME,
+                            SESSIONS};
+    }
+
+    @Override
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
         group.put("_id", "$user");

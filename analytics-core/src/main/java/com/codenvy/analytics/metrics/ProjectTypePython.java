@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypePython extends AbstractProjectType {
 
     public ProjectTypePython() {
-        super(MetricType.PROJECT_TYPE_PYTHON, new String[]{"Python"});
+        super(MetricType.PROJECT_TYPE_PYTHON, new String[]{ProjectTypes.PYTHON});
     }
 
     @Override

@@ -22,8 +22,8 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_FACTORY_SESSIONS-raw' USING MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'ws: chararray, referrer: chararray, value: chararray');
-u = FOREACH u1 GENERATE ws AS tmpWs, (referrer IS NULL ? '' : referrer) AS referrer, value AS factoryUrl;
+u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_FACTORY_SESSIONS-raw' USING MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'ws: chararray, referrer: chararray, factory: chararray');
+u = FOREACH u1 GENERATE ws AS tmpWs, (referrer IS NULL ? '' : referrer) AS referrer, factory AS factoryUrl;
 
 ---- finds out all imported projects
 i1 = filterByEvent(l, 'factory-project-imported');
@@ -57,11 +57,11 @@ s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factoryUrl AS fact
 			                                (SecondsBetween(s4::dt, d::dt) < 0 AND SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 'true' :
 			                                                                                                                                                        'false' )) AS conv;
 
-result = FOREACH s GENERATE ToMilliSeconds(dt), TOTUPLE('value', delta);
+result = FOREACH s GENERATE ToMilliSeconds(dt), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 r1 = FOREACH s GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factoryUrl, referrer, auth, conv, delta;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
-                        TOTUPLE('factory_url', factoryUrl), TOTUPLE('referrer', referrer),
-                        TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('value', delta);
+                        TOTUPLE('factory', factoryUrl), TOTUPLE('referrer', referrer),
+                        TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

@@ -40,6 +40,11 @@ public class UsersProfiles extends AbstractUsersProfile {
     }
 
     @Override
+    public String[] getTrackedFields() {
+        return new String[]{USER_EMAIL, USER_FIRST_NAME, USER_LAST_NAME, USER_COMPANY, USER_JOB, USER_PHONE};
+    }
+
+    @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
     }

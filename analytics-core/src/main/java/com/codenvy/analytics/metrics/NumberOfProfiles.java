@@ -27,12 +27,14 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class NumberOfProfiles extends AbstractUsersProfile {
 
+    public static final String VALUE = "value";
+
     public NumberOfProfiles() {
         super(MetricType.NUMBER_OF_PROFILES);
     }
 
     @Override
-    public String getStorageTable() {
+    public String getStorageTableBaseName() {
         return MetricType.USERS_PROFILES.name().toLowerCase();
     }
 
@@ -49,6 +51,11 @@ public class NumberOfProfiles extends AbstractUsersProfile {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
     }
 
     @Override

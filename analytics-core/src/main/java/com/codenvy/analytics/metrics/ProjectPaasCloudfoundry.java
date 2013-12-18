@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectPaasCloudfoundry extends AbstractProjectPaas {
 
     public ProjectPaasCloudfoundry() {
-        super(MetricType.PROJECT_PAAS_CLOUDFOUNDRY, new String[]{"CloudFoundry"});
+        super(MetricType.PROJECT_PAAS_CLOUDFOUNDRY, new String[]{ProjectPaases.CLOUDFOUNDRY});
     }
 
     @Override

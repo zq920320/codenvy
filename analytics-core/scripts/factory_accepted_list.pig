@@ -27,7 +27,7 @@ a4 = extractUrlParam(a3, 'ORG-ID', 'orgId');
 a5 = extractUrlParam(a4, 'AFFILIATE-ID', 'affiliateId');
 a = FOREACH a5 GENERATE dt, ws, user, referrer, factoryUrl, orgId, affiliateId;
 
-result = FOREACH a GENERATE ToMilliSeconds(dt), TOTUPLE('value', factoryUrl);
+result = FOREACH a GENERATE ToMilliSeconds(dt), TOTUPLE('factory', factoryUrl);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 r1 = FOREACH a GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factoryUrl, referrer, orgId, affiliateId;

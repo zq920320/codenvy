@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class FactorySessions extends AbstractCount {
 
     public FactorySessions() {
-        super(MetricType.FACTORY_SESSIONS, MetricType.FACTORY_SESSIONS_LIST);
+        super(MetricType.FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
     @Override

@@ -21,14 +21,14 @@ IMPORT 'macros.pig';
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 f = combineSmallSessions(l, 'session-started', 'session-finished');
 
-result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('value', delta);
+result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, id, delta;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
             TOTUPLE('session_id', id), TOTUPLE('start_time', ToString(dt, 'yyyy-MM-dd HH:mm:ss')),
             TOTUPLE('end_time', ToString(ToDate(ToMilliSeconds(dt) + delta * 1000), 'yyyy-MM-dd HH:mm:ss')),
-            TOTUPLE('value', delta);
+            TOTUPLE('time', delta);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 ---------------------------------------

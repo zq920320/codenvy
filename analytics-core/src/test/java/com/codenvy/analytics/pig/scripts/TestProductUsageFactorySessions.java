@@ -180,7 +180,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         }
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testproductusagefactorysessions";
         }
 

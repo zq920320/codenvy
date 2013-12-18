@@ -259,7 +259,7 @@ public class TestProductUsage extends BaseTest {
         }
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testproductusagesessions";
         }
 
@@ -277,7 +277,7 @@ public class TestProductUsage extends BaseTest {
         }
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testproductusagesessions";
         }
 
@@ -294,7 +294,7 @@ public class TestProductUsage extends BaseTest {
         }
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testproductusagesessions";
         }
 

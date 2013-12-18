@@ -241,7 +241,7 @@ public class TestUsersData extends BaseTest {
     public class TestUsersTimeInWorkspaces extends UsersTimeInWorkspaces {
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testusersdata-sessions-raw";
         }
     }
@@ -249,7 +249,7 @@ public class TestUsersData extends BaseTest {
     public class TestUsersStatistics extends UsersStatistics {
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testusersdata";
         }
     }

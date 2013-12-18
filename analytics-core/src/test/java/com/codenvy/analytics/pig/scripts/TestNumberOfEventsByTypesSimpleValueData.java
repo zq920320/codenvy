@@ -204,7 +204,7 @@ public class TestNumberOfEventsByTypesSimpleValueData extends BaseTest {
         }
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testnumberofeventsbytypessimplevaluedata";
         }
 

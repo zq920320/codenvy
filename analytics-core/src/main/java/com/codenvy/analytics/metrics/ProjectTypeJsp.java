@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeJsp extends AbstractProjectType {
 
     public ProjectTypeJsp() {
-        super(MetricType.PROJECT_TYPE_JSP, new String[]{"Servlet/JSP"});
+        super(MetricType.PROJECT_TYPE_JSP, new String[]{ProjectTypes.JSP});
     }
 
     @Override

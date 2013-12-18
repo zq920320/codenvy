@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeJar extends AbstractProjectType {
 
     public ProjectTypeJar() {
-        super(MetricType.PROJECT_TYPE_JAR, new String[]{"Jar"});
+        super(MetricType.PROJECT_TYPE_JAR, new String[]{ProjectTypes.JAR});
     }
 
 

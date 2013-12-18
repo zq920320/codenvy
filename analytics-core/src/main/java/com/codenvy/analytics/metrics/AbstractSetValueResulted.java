@@ -26,12 +26,25 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractSetValueResulted extends ReadBasedMetric {
 
+
+    public static final String VALUE = "value";
+
     protected AbstractSetValueResulted(String metricName) {
         super(metricName);
     }
 
     public AbstractSetValueResulted(MetricType metricType) {
         super(metricType);
+    }
+
+    @Override
+    public boolean isSupportMultipleTables() {
+        return true;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
     }
 
     @Override

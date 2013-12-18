@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypePhp extends AbstractProjectType {
 
     public ProjectTypePhp() {
-        super(MetricType.PROJECT_TYPE_PHP, new String[]{"PHP"});
+        super(MetricType.PROJECT_TYPE_PHP, new String[]{ProjectTypes.PHP});
     }
 
     @Override

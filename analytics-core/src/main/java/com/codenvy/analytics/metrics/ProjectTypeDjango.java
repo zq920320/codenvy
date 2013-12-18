@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeDjango extends AbstractProjectType {
 
     public ProjectTypeDjango() {
-        super(MetricType.PROJECT_TYPE_DJANGO, new String[]{"Django"});
+        super(MetricType.PROJECT_TYPE_DJANGO, new String[]{ProjectTypes.DJANGO});
     }
 
     @Override

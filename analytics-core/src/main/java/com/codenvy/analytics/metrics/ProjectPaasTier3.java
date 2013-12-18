@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectPaasTier3 extends AbstractProjectPaas {
 
     public ProjectPaasTier3() {
-        super(MetricType.PROJECT_PAAS_TIER3, new String[]{"Tier3 Web Fabric"});
+        super(MetricType.PROJECT_PAAS_TIER3, new String[]{ProjectPaases.TIER3_WEB_FABRIC});
     }
 
     @Override

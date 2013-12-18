@@ -27,6 +27,8 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractCount extends ReadBasedMetric {
 
+    public static final String VALUE = "value";
+
     private final String basedMetricName;
 
     protected AbstractCount(String metricName, String basedMetricName) {
@@ -39,20 +41,25 @@ public abstract class AbstractCount extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSingleTable() {
-        return ((ReadBasedMetric)MetricFactory.getMetric(basedMetricName)).isSingleTable();
+    public boolean isSupportMultipleTables() {
+        return ((ReadBasedMetric)MetricFactory.getMetric(basedMetricName)).isSupportMultipleTables();
     }
 
     @Override
-    public String getStorageTable() {
+    public String getStorageTableBaseName() {
         return basedMetricName.toLowerCase();
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
         group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", 1));
+        group.put(VALUE, new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 
         return new DBObject[]{opCount};

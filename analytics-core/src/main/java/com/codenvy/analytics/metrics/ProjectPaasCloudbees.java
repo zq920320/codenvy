@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectPaasCloudbees extends AbstractProjectPaas {
 
     public ProjectPaasCloudbees() {
-        super(MetricType.PROJECT_PAAS_CLOUDBEES, new String[]{"CloudBees"});
+        super(MetricType.PROJECT_PAAS_CLOUDBEES, new String[]{ProjectPaases.CLOUDBEES});
     }
 
     @Override

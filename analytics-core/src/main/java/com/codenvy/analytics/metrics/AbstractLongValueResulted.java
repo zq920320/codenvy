@@ -27,12 +27,24 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractLongValueResulted extends ReadBasedMetric {
 
+    public static final String VALUE = "value";
+
     protected AbstractLongValueResulted(String metricName) {
         super(metricName);
     }
 
     public AbstractLongValueResulted(MetricType metricType) {
         super(metricType);
+    }
+
+    @Override
+    public boolean isSupportMultipleTables() {
+        return true;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
     }
 
     @Override
@@ -45,7 +57,7 @@ public abstract class AbstractLongValueResulted extends ReadBasedMetric {
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", "$value"));
+        group.put(VALUE, new BasicDBObject("$sum", "$" + VALUE));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }

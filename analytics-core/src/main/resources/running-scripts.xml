@@ -212,7 +212,7 @@
         <description>Factory sessions</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="STORAGE_TABLE" value="factory_sessions_list"/>
+        <parameter key="STORAGE_TABLE" value="product_usage_factory_sessions"/>
     </script>
     <script name="number_of_factory_sessions_with_event">
         <description>Factory sessions with build</description>

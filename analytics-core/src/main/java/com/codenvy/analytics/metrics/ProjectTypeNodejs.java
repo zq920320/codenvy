@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeNodejs extends AbstractProjectType {
 
     public ProjectTypeNodejs() {
-        super(MetricType.PROJECT_TYPE_NODEJS, new String[]{"NodeJs"});
+        super(MetricType.PROJECT_TYPE_NODEJS, new String[]{ProjectTypes.NODE_JS});
     }
 
     @Override

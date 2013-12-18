@@ -199,5 +199,10 @@ public class TestNumberOfEventsByTypesMapValueData extends BaseTest {
         public String getDescription() {
             return null;
         }
+
+        @Override
+        public String[] getTrackedFields() {
+            return new String[0];
+        }
     }
 }

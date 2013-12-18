@@ -31,6 +31,9 @@ public abstract class AbstractLoggedInType extends ReadBasedMetric {
 
     protected AbstractLoggedInType(String metricName, String[] types) {
         super(metricName);
+        for (int i = 0; i < types.length; i++) {
+            types[i] = types[i].toLowerCase();
+        }
         this.types = types;
     }
 
@@ -39,7 +42,17 @@ public abstract class AbstractLoggedInType extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
+    public boolean isSupportMultipleTables() {
+        return true;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return types;
+    }
+
+    @Override
+    public String getStorageTableBaseName() {
         return MetricType.USERS_LOGGED_IN_TYPES.name().toLowerCase();
     }
 
@@ -54,8 +67,7 @@ public abstract class AbstractLoggedInType extends ReadBasedMetric {
 
         group.put("_id", null);
         for (String type : types) {
-            String field = type.toLowerCase();
-            group.put(field, new BasicDBObject("$sum", "$" + field));
+            group.put(type, new BasicDBObject("$sum", "$" + type));
         }
 
         return new DBObject[]{new BasicDBObject("$group", group)};

@@ -29,6 +29,8 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractProductUsageTime extends ReadBasedMetric {
 
+    public static final String VALUE = "value";
+
     final private long    min;
     final private long    max;
     final private boolean includeMin;
@@ -65,8 +67,18 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
-        return "product_usage_sessions";
+    public String getStorageTableBaseName() {
+        return MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase();
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
+    }
+
+    @Override
+    public boolean isSupportMultipleTables() {
+        return true;
     }
 
     @Override
@@ -74,7 +86,7 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
         DBObject group = new BasicDBObject();
 
         group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", "$value"));
+        group.put(VALUE, new BasicDBObject("$sum", "$" + ProductUsageSessions.TIME));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
@@ -87,7 +99,7 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
         DBObject range = new BasicDBObject();
         range.put(includeMin ? "$gte" : "$gt", min);
         range.put(includeMax ? "$lte" : "$lt", max);
-        match.put("value", range);
+        match.put(ProductUsageSessions.TIME, range);
 
         return dbObject;
     }

@@ -27,10 +27,16 @@ import java.util.Map;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public abstract class AbstractProjectPaas extends ReadBasedMetric {
 
+    public static final String VALUE            = "value";
+
     private final String[] types;
 
     protected AbstractProjectPaas(String metricName, String[] types) {
         super(metricName);
+
+        for (int i = 0; i < types.length; i++) {
+            types[i] = types[i].toLowerCase();
+        }
         this.types = types;
     }
 
@@ -44,7 +50,17 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
+    public boolean isSupportMultipleTables() {
+        return true;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
+    }
+
+    @Override
+    public String getStorageTableBaseName() {
         return MetricType.PROJECT_PAASES.name().toLowerCase();
     }
 
@@ -54,8 +70,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
 
         group.put("_id", null);
         for (String type : types) {
-            String field = type.toLowerCase();
-            group.put(field, new BasicDBObject("$sum", "$" + field));
+            group.put(type, new BasicDBObject("$sum", "$" + type));
         }
 
         return new DBObject[]{new BasicDBObject("$group", group)};

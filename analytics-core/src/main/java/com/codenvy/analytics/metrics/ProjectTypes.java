@@ -20,12 +20,55 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProjectTypes extends AbstractMapValueResulted {
 
+    public static final String JAR           = "jar";
+    public static final String JSP           = "servlet/jsp";
+    public static final String DJANGO        = "django";
+    public static final String WAR           = "war";
+    public static final String JAVA          = "java";
+    public static final String MMP           = "maven multi-module";
+    public static final String SPRING        = "spring";
+    public static final String NODE_JS       = "nodejs";
+    public static final String PHP           = "php";
+    public static final String PYTHON        = "python";
+    public static final String ANDROID       = "android";
+    public static final String GOOGLE_MBS    = "google-mbs-client-android";
+    public static final String OTHER_NULL    = "null";
+    public static final String OTHER_DEFAULT = "defauult";
+    public static final String OTHER_SERV    = "serv";
+    public static final String OTHER_EXO     = "exo";
+    public static final String RUBY          = "ruby";
+    public static final String RAILS         = "rails";
+    public static final String JAVA_SCRIPT   = "javascript";
+
     public ProjectTypes(String metricName) {
         super(metricName);
     }
 
     public ProjectTypes() {
         super(MetricType.PROJECT_TYPES);
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{JAR,
+                            JSP,
+                            DJANGO,
+                            WAR,
+                            JAVA,
+                            MMP,
+                            SPRING,
+                            NODE_JS,
+                            PHP,
+                            PYTHON,
+                            ANDROID,
+                            GOOGLE_MBS,
+                            OTHER_DEFAULT,
+                            OTHER_EXO,
+                            OTHER_NULL,
+                            OTHER_SERV,
+                            RUBY,
+                            RAILS,
+                            JAVA_SCRIPT};
     }
 
     /** {@inheritDoc} */

@@ -199,7 +199,7 @@ public class TestActiveEntitiesList extends BaseTest {
         }
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testsetofactiveentities";
         }
 

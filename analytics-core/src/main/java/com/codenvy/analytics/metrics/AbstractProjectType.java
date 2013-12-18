@@ -31,6 +31,10 @@ public abstract class AbstractProjectType extends ReadBasedMetric {
 
     protected AbstractProjectType(String metricName, String[] types) {
         super(metricName);
+
+        for (int i = 0; i < types.length; i++) {
+            types[i] = types[i].toLowerCase();
+        }
         this.types = types;
     }
 
@@ -39,8 +43,18 @@ public abstract class AbstractProjectType extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
+    public String getStorageTableBaseName() {
         return MetricType.PROJECT_TYPES.name().toLowerCase();
+    }
+
+    @Override
+    public boolean isSupportMultipleTables() {
+        return true;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return types;
     }
 
     @Override
@@ -54,8 +68,7 @@ public abstract class AbstractProjectType extends ReadBasedMetric {
 
         group.put("_id", null);
         for (String type : types) {
-            String field = type.toLowerCase();
-            group.put(field, new BasicDBObject("$sum", "$" + field));
+            group.put(type, new BasicDBObject("$sum", "$" + type));
         }
 
         return new DBObject[]{new BasicDBObject("$group", group)};

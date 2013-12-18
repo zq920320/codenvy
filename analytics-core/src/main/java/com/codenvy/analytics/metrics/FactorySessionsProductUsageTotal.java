@@ -37,8 +37,8 @@ public class FactorySessionsProductUsageTotal extends AbstractLongValueResulted 
     }
 
     @Override
-    public String getStorageTable() {
-        return MetricType.FACTORY_SESSIONS_LIST.name().toLowerCase();
+    public String getStorageTableBaseName() {
+        return MetricType.PRODUCT_USAGE_FACTORY_SESSIONS.name().toLowerCase();
     }
 
     @Override

@@ -30,6 +30,14 @@ public class FactoryAcceptedList extends AbstractListValueResulted {
     }
 
     @Override
+    public String[] getTrackedFields() {
+        return new String[]{ORG_ID,
+                            AFFILIATE_ID,
+                            REFERRER,
+                            FACTORY};
+    }
+
+    @Override
     public String getDescription() {
         return "Accepted factories";
     }

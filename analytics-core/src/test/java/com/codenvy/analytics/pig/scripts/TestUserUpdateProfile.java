@@ -197,7 +197,7 @@ public class TestUserUpdateProfile extends BaseTest {
 
     public class TestNumberOfProfiles extends NumberOfProfiles {
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testuserupdateprofile";
         }
     }
@@ -206,7 +206,7 @@ public class TestUserUpdateProfile extends BaseTest {
     public class TestUserProfile extends UsersProfiles {
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testuserupdateprofile";
         }
     }

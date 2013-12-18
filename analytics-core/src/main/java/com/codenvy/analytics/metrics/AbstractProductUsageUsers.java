@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
 
-    private static final Pattern NON_ANONYMOUS_USER = Pattern.compile("^(?!ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
+    public static final String  VALUE              = "value";
+    public static final Pattern NON_ANONYMOUS_USER = Pattern.compile("^(?!ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
 
     private final long    min;
     private final long    max;
@@ -63,15 +64,25 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
-        return "product_usage_sessions";
+    public boolean isSupportMultipleTables() {
+        return true;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
+    }
+
+    @Override
+    public String getStorageTableBaseName() {
+        return MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase();
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$user");
-        group.put("total", new BasicDBObject("$sum", "$value"));
+        group.put("_id", "$" + ProductUsageSessions.USER);
+        group.put("total", new BasicDBObject("$sum", "$" + ProductUsageSessions.TIME));
         BasicDBObject opGroupBy = new BasicDBObject("$group", group);
 
         DBObject range = new BasicDBObject();
@@ -81,7 +92,7 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
 
         group = new BasicDBObject();
         group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", 1));
+        group.put(VALUE, new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 
         return new DBObject[]{opGroupBy, opHaving, opCount};
@@ -92,8 +103,8 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");
-        if (match.get("user") == null) {
-            match.put("user", NON_ANONYMOUS_USER);
+        if (match.get(ProductUsageSessions.USER) == null) {
+            match.put(ProductUsageSessions.USER, NON_ANONYMOUS_USER);
         }
 
         return filter;

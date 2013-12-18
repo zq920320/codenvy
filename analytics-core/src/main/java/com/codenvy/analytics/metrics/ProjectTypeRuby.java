@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeRuby extends AbstractProjectType {
 
     public ProjectTypeRuby() {
-        super(MetricType.PROJECT_TYPE_RUBY, new String[]{"Rails", "Ruby"});
+        super(MetricType.PROJECT_TYPE_RUBY, new String[]{ProjectTypes.RAILS, ProjectTypes.RUBY});
     }
 
     @Override

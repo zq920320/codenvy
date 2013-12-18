@@ -45,7 +45,7 @@ public abstract class AbstractListValueResulted extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSingleTable() {
-        return true;
+    public boolean isSupportMultipleTables() {
+        return false;
     }
 }

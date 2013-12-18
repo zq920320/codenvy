@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectPaasGae extends AbstractProjectPaas {
 
     public ProjectPaasGae() {
-        super(MetricType.PROJECT_PAAS_GAE, new String[]{"GAE"});
+        super(MetricType.PROJECT_PAAS_GAE, new String[]{ProjectPaases.GAE});
     }
 
     @Override

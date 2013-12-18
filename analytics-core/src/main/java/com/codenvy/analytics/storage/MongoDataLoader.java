@@ -19,7 +19,6 @@ package com.codenvy.analytics.storage;
 
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.*;
 
@@ -32,21 +31,15 @@ public class MongoDataLoader implements DataLoader {
 
     public static final String EXT_COLLECTION_NAME_SUFFIX = "-raw";
 
-    private final DB          db;
-    private final Set<String> allFilters;
+    private final DB db;
 
     MongoDataLoader(MongoClient mongoClient) throws IOException {
         db = MongoDataStorage.getUsedDB(mongoClient);
-
-        allFilters = new HashSet<>();
-        for (MetricFilter filter : MetricFilter.values()) {
-            allFilters.add(filter.name().toLowerCase());
-        }
     }
 
     @Override
     public ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException {
-        DBCollection dbCollection = db.getCollection(getStorageTable(metric, clauses));
+        DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
 
         try {
             DBObject filter = metric.getFilter(clauses);
@@ -61,15 +54,18 @@ public class MongoDataLoader implements DataLoader {
     }
 
     /**
-     * TODO comment
-     *
-     * @see com.codenvy.analytics.metrics.ReadBasedMetric#getStorageTable()
+     * @return the collection name to retrieve data from. If filters are used, the extended collection might be used
+     * @see com.codenvy.analytics.metrics.ReadBasedMetric#getStorageTableBaseName()
      */
-    private String getStorageTable(ReadBasedMetric metric, Map<String, String> clauses) {
-        if (metric.isSingleTable() || Utils.isSimpleContext(clauses)) {
-            return metric.getStorageTable();
+    private String getCollectionName(ReadBasedMetric metric, Map<String, String> clauses) {
+        if (metric.isSupportMultipleTables()) {
+            if (Utils.isSimpleContext(clauses)) {
+                return metric.getStorageTableBaseName();
+            } else {
+                return metric.getStorageTableBaseName() + EXT_COLLECTION_NAME_SUFFIX;
+            }
         } else {
-            return metric.getStorageTable() + EXT_COLLECTION_NAME_SUFFIX;
+            return metric.getStorageTableBaseName();
         }
     }
 
@@ -95,8 +91,8 @@ public class MongoDataLoader implements DataLoader {
         throw new IllegalArgumentException("Unknown class " + clazz.getName());
     }
 
-    private ValueData createListValueData(Iterator<DBObject> iterator, String[] fields) {
-        return doCreateValueData(iterator, fields, ListValueData.class, new Action() {
+    private ValueData createListValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, ListValueData.class, new Action() {
             Map<String, ValueData> values = new HashMap<>();
 
             @Override
@@ -115,8 +111,8 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
-    private ValueData createSetValueData(Iterator<DBObject> iterator, String[] fields) {
-        return doCreateValueData(iterator, fields, SetValueData.class, new Action() {
+    private ValueData createSetValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, SetValueData.class, new Action() {
             Set<ValueData> values = new HashSet<>();
 
             @Override
@@ -135,8 +131,8 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
-    private ValueData createMapValueData(Iterator<DBObject> iterator, String[] fields) {
-        return doCreateValueData(iterator, fields, MapValueData.class, new Action() {
+    private ValueData createMapValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, MapValueData.class, new Action() {
             Map<String, ValueData> values = new HashMap<>();
 
             @Override
@@ -155,8 +151,8 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
-    private ValueData createLongValueData(Iterator<DBObject> iterator, String[] fields) {
-        return doCreateValueData(iterator, fields, LongValueData.class, new Action() {
+    private ValueData createLongValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, LongValueData.class, new Action() {
             long value = 0;
 
             @Override
@@ -175,8 +171,8 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
-    private ValueData createDoubleValueData(Iterator<DBObject> iterator, String[] fields) {
-        return doCreateValueData(iterator, fields, LongValueData.class, new Action() {
+    private ValueData createDoubleValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, LongValueData.class, new Action() {
             double value = 0;
 
             @Override
@@ -198,15 +194,15 @@ public class MongoDataLoader implements DataLoader {
     /**
      * @param iterator
      *         the iterator over result set
-     * @param fields
-     *         the list of fields indicate what data to read from resulted item
+     * @param trackedFields
+     *         the list of trackedFields indicate which data to read from resulted items
      * @param clazz
      *         the resulted class of {@link ValueData}
      * @param action
      *         the delegated action, contains behavior how to created needed result depending on given clazz
      */
     private ValueData doCreateValueData(Iterator<DBObject> iterator,
-                                        String[] fields,
+                                        String[] trackedFields,
                                         Class<? extends ValueData> clazz,
                                         Action action) {
 
@@ -215,12 +211,12 @@ public class MongoDataLoader implements DataLoader {
         while (iterator.hasNext()) {
             DBObject dbObject = iterator.next();
 
-            if (fields.length == 0) {
+            if (trackedFields.length == 0) {
                 for (String key : dbObject.keySet()) {
                     action.accumulate(key, dbObject.get(key));
                 }
             } else {
-                for (String key : fields) {
+                for (String key : trackedFields) {
                     action.accumulate(key, dbObject.get(key));
                 }
             }

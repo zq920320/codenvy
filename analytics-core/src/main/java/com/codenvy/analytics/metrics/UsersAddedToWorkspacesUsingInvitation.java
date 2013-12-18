@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 public class UsersAddedToWorkspacesUsingInvitation extends AbstractUsersAddedToWorkspaces {
 
     public UsersAddedToWorkspacesUsingInvitation() {
-        super(MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION, new String[]{"invite"});
+        super(MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION, new String[]{UsersAddedToWorkspaces.INVITE});
     }
 
     @Override

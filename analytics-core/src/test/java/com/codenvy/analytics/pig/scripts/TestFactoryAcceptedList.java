@@ -158,7 +158,7 @@ public class TestFactoryAcceptedList extends BaseTest {
         }
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testfactoryacceptedlist";
         }
 

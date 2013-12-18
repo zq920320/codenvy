@@ -242,14 +242,14 @@ public class PigServer {
 
         if (!Parameters.STORAGE_TABLE_USERS_STATISTICS.exists(context)) {
             ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType.USERS_STATISTICS);
-            Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, usersStatistic.getStorageTable());
+            Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, usersStatistic.getStorageTableBaseName());
         }
 
         MongoDataStorage.putStorageParameters(context);
 
         if (!Parameters.STORAGE_TABLE_FACTORY_SESSIONS.exists(context)) {
             Parameters.STORAGE_TABLE_FACTORY_SESSIONS
-                      .put(context, MetricType.FACTORY_SESSIONS_LIST.name().toLowerCase());
+                      .put(context, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS.name().toLowerCase());
         }
 
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {

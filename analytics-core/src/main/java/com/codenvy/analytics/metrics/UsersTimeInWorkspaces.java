@@ -36,21 +36,26 @@ public class UsersTimeInWorkspaces extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
+    public String getStorageTableBaseName() {
         return MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase() + MongoDataLoader.EXT_COLLECTION_NAME_SUFFIX;
     }
 
     @Override
-    public boolean isSingleTable() {
-        return true;
+    public boolean isSupportMultipleTables() {
+        return false;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{TIME, SESSIONS};
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$ws");
-        group.put("time", new BasicDBObject("$sum", "$value"));
-        group.put("sessions", new BasicDBObject("$sum", 1));
+        group.put("_id", "$" + ProductUsageSessions.WS);
+        group.put(TIME, new BasicDBObject("$sum", "$" + ProductUsageSessions.TIME));
+        group.put(SESSIONS, new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 
         return new DBObject[]{opCount};

@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeJavaScript extends AbstractProjectType {
 
     public ProjectTypeJavaScript() {
-        super(MetricType.PROJECT_TYPE_JAVASCRIPT, new String[]{"JavaScript"});
+        super(MetricType.PROJECT_TYPE_JAVASCRIPT, new String[]{ProjectTypes.JAVA_SCRIPT});
     }
 
     @Override

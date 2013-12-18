@@ -18,10 +18,25 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactorySessionsList extends AbstractListValueResulted {
+public class ProductUsageFactorySessions extends AbstractListValueResulted {
 
-    public FactorySessionsList() {
-        super(MetricType.FACTORY_SESSIONS_LIST);
+    public static final String TIME                  = "time";
+    public static final String REFERRER              = "referrer";
+    public static final String FACTORY               = "factory";
+    public static final String AUTHENTICATED_SESSION = "authenticated_factory_session";
+    public static final String CONVERTED_SESSION     = "converted_factory_session";
+
+    public ProductUsageFactorySessions() {
+        super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{TIME,
+                            REFERRER,
+                            FACTORY,
+                            AUTHENTICATED_SESSION,
+                            CONVERTED_SESSION};
     }
 
     @Override

@@ -22,7 +22,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectPaasAws extends AbstractProjectPaas {
 
     public ProjectPaasAws() {
-        super(MetricType.PROJECT_PAAS_AWS, new String[]{"AWS:BeansTalk"});
+        super(MetricType.PROJECT_PAAS_AWS, new String[]{ProjectPaases.AWS_BEANSTALK});
     }
 
     @Override

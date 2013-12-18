@@ -27,6 +27,8 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractActiveEntities extends ReadBasedMetric {
 
+    public static final String VALUE = "value";
+
     private final String basedMetricName;
 
     protected AbstractActiveEntities(String metricName, String basedMetricName) {
@@ -39,19 +41,29 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTable() {
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
+    }
+
+    @Override
+    public String getStorageTableBaseName() {
         return basedMetricName.toLowerCase();
+    }
+
+    @Override
+    public boolean isSupportMultipleTables() {
+        return true;
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$value");
+        group.put("_id", "$" + VALUE);
         BasicDBObject opGroupBy = new BasicDBObject("$group", group);
 
         group = new BasicDBObject();
         group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", 1));
+        group.put(VALUE, new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 
         return new DBObject[]{opGroupBy, opCount};

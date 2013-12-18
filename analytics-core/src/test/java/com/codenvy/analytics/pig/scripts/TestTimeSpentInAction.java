@@ -172,7 +172,7 @@ public class TestTimeSpentInAction extends BaseTest {
         }
 
         @Override
-        public String getStorageTable() {
+        public String getStorageTableBaseName() {
             return "testtimespentinaction";
         }
 

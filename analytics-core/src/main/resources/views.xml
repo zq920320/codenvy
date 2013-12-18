@@ -577,7 +577,7 @@
                 <parameter key="columns" value="5"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_sessions"/>
+                <parameter key="name" value="product_usage_sessions"/>
                 <parameter key="fields" value="session_id,ws,start_time,end_time,value"/>
                 <parameter key="columns" value="1"/>
             </row>

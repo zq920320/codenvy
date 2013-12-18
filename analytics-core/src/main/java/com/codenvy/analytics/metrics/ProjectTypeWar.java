@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeWar extends AbstractProjectType {
 
     public ProjectTypeWar() {
-        super(MetricType.PROJECT_TYPE_WAR, new String[]{"War", "Java"});
+        super(MetricType.PROJECT_TYPE_WAR, new String[]{ProjectTypes.WAR, ProjectTypes.JAVA});
     }
 
     @Override

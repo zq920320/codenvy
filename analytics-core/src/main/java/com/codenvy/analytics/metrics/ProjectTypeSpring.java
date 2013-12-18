@@ -23,7 +23,7 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeSpring extends AbstractProjectType {
 
     public ProjectTypeSpring() {
-        super(MetricType.PROJECT_TYPE_SPRING, new String[]{"Spring"});
+        super(MetricType.PROJECT_TYPE_SPRING, new String[]{ProjectTypes.SPRING});
     }
 
     @Override

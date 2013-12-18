@@ -23,7 +23,10 @@ package com.codenvy.analytics.metrics;
 public class ProjectTypeOthers extends AbstractProjectType {
 
     public ProjectTypeOthers() {
-        super(MetricType.PROJECT_TYPE_OTHERS, new String[]{"null", "default", "Serv", "eXo"});
+        super(MetricType.PROJECT_TYPE_OTHERS, new String[]{ProjectTypes.OTHER_NULL,
+                                                           ProjectTypes.OTHER_DEFAULT,
+                                                           ProjectTypes.OTHER_SERV,
+                                                           ProjectTypes.OTHER_EXO});
     }
 
     @Override
