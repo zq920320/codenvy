@@ -35,6 +35,8 @@ public enum MetricFilter {
     ORG_ID,
     AFFILIATE_ID,
     REFERRER,
+    FACTORY,
+
     REPO_URL,
     PROJECT_TYPE,
     CONVERTED_FACTORY_SESSION,

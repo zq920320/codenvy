@@ -23,6 +23,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.pig.udf.CutQueryParam;
 import com.codenvy.analytics.storage.DataLoader;
 import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.BasicDBObject;
@@ -83,9 +84,9 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         DBObject idFilter = new BasicDBObject();
         idFilter.put("$gte", Parameters.FROM_DATE.exists(clauses) ? Utils.getFromDate(clauses).getTimeInMillis()
                                                                   : 0);
-        idFilter.put("$lt", Parameters.FROM_DATE.exists(clauses) ? Utils.getToDate(clauses).getTimeInMillis() +
-                                                                   DAY_IN_MILLISECONDS
-                                                                 : Long.MAX_VALUE);
+        idFilter.put("$lt", Parameters.TO_DATE.exists(clauses) ? Utils.getToDate(clauses).getTimeInMillis() +
+                                                                 DAY_IN_MILLISECONDS
+                                                               : Long.MAX_VALUE);
         match.put("_id", idFilter);
 
 
@@ -119,6 +120,66 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         }
 
         return result;
+    }
+
+    private String[] getFFF(Map<String, String> context) throws IOException {
+
+        for (MetricFilter filter : Utils.getFilters(context)) {
+            switch (filter) {
+                case AFFILIATE_ID:
+                case ORG_ID:
+                case REFERRER:
+                case FACTORY:
+                    if (filter == MetricFilter.FACTORY) {
+                        String factoryUrls = removeProjectTypeParamFromFactoryUrl(filter.get(context));
+                        context = Utils.clone(context);
+
+                        filter.put(context, factoryUrls);
+                    }
+
+//                    MetricFactory.getMetric(MT.FA)
+//                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
+//                                                             .getValue(context)).getAll();
+//                case WS:
+//                case USERS:
+//                case PROJECT_TYPE:
+//                case REPOSITORY_URL:
+//                    SetStringValueData factoryUrl =
+//                            (SetStringValueData)MetricFactory.createMetric(MetricType.SET_FACTORY_CREATED)
+//                                                             .getValue(context);
+//
+//                    context = Utils.cloneAndClearFilters(context);
+//                    MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrl.getAll().toString()));
+//
+//                    context = removePTypeParamFromFactoryUrl(context);
+//
+//                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
+//                                                             .getValue(context)).getAll();
+
+                default:
+                    throw new IOException("Unknown filter " + filter);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * We have to remove 'ptype' query param from factorUrl in queries. Because old factoryUrl had different structures
+     * in different events. So, just try to meet them the same requirements.
+     */
+    private String removeProjectTypeParamFromFactoryUrl(String factoryUrl) {
+        StringBuilder builder = new StringBuilder();
+
+        for (String factory : factoryUrl.split(",")) {
+            if (builder.length() > 0) {
+                builder.append(",");
+            }
+
+            builder.append(CutQueryParam.doCut(factory, "ptype"));
+        }
+
+        return builder.toString();
     }
 
     /**
