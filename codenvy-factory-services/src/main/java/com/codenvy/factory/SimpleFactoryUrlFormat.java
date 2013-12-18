@@ -19,6 +19,9 @@ package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.SimpleFactoryUrl;
+import com.codenvy.api.factory.Variable;
+import com.codenvy.commons.json.JsonHelper;
+import com.codenvy.commons.json.JsonParseException;
 import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
@@ -26,10 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Simple version of <code>FactoryUrlFormat</code>.
@@ -126,8 +126,12 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
 
             factoryUrl.setProjectattributes(projectAttributes);
 
+            if ((values = params.get("variables")) != null && !values.isEmpty()) {
+                factoryUrl.setVariables(Arrays.asList(JsonHelper.fromJson(values.iterator().next(), Variable[].class, null)));
+            }
+
             return factoryUrl;
-        } catch (IOException e) {
+        } catch (IOException | JsonParseException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new FactoryUrlException(DEFAULT_MESSAGE);
         }
