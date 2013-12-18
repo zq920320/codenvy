@@ -20,9 +20,9 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.UsersActivity;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -72,17 +72,13 @@ public class TestUsersActivity extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestUsersStatistics();
+        Metric metric = new TestListValueResulted();
         ListValueData value = (ListValueData)metric.getValue(context);
 
         assertEquals(value.size(), 2);
     }
 
-    public class TestUsersStatistics extends AbstractListValueResulted {
-
-        protected TestUsersStatistics() {
-            super("testusersactivity");
-        }
+    public class TestListValueResulted extends UsersActivity {
 
         @Override
         public String getStorageTable() {

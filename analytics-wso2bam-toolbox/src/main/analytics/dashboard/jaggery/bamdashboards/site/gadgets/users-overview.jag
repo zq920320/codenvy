@@ -22,6 +22,9 @@ var databaseToUIMap = {
 // process filter-by parameters
 var queryParams = mapQueryParametersFromUIToDatabase(request);
 
+// get page count
+var pageCount = getMetricValue("number_of_users_in_statistics", queryParams);
+
 // process pagination
 var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
 if (currentPageNumber == null) {
@@ -47,10 +50,6 @@ for (var i in data) {
     table = data[i];
     break;
 }
-
-// get page count
-//var pageCount = getAllResults("users-overview-page-count", queryParams);   // TODO verify
-var pageCount = 3;                                                           // TODO remove 
 
 // make user id in first column as linked 
 for (var i = 0; i < table.rows.length; i++) {

@@ -43,4 +43,9 @@ public abstract class AbstractListValueResulted extends ReadBasedMetric {
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         return new DBObject[0];
     }
+
+    @Override
+    public boolean isSingleTable() {
+        return true;
+    }
 }

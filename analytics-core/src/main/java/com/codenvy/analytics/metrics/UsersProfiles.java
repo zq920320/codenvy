@@ -31,6 +31,11 @@ public class UsersProfiles extends AbstractUsersData {
     }
 
     @Override
+    public boolean isSingleTable() {
+        return true;
+    }
+
+    @Override
     public String getDescription() {
         return "User's profiles";
     }

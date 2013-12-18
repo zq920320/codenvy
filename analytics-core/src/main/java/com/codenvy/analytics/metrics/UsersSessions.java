@@ -39,11 +39,6 @@ public class UsersSessions extends AbstractListValueResulted {
     }
 
     @Override
-    public boolean isSingleTable() {
-        return true;
-    }
-
-    @Override
     public String getDescription() {
         return "Users' sessions";
     }

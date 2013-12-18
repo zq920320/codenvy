@@ -20,7 +20,6 @@ package com.codenvy.analytics.storage;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.*;
 
@@ -64,14 +63,6 @@ public class MongoDataLoader implements DataLoader {
     }
 
     private String getStorageTable(ReadBasedMetric metric, Map<String, String> clauses) {
-        if (metric.getName().equalsIgnoreCase(MetricType.USERS_PROFILES.name())
-            || metric.getName().equalsIgnoreCase(MetricType.USERS_STATISTICS.name())
-            || metric.getName().equalsIgnoreCase(MetricType.USERS_ACTIVITY.name())
-            || metric.getName().equalsIgnoreCase(MetricType.USERS_TIME_IN_WORKSPACES.name())) {
-
-            return metric.getStorageTable();
-        }
-
         if (metric.isSingleTable() || Utils.isSimpleContext(clauses)) {
             return metric.getStorageTable();
         } else {

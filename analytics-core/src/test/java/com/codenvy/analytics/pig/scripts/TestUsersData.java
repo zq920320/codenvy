@@ -172,6 +172,9 @@ public class TestUsersData extends BaseTest {
                     break;
             }
         }
+
+        metric = new TestUsersNumberInStatistics();
+        assertEquals(metric.getValue(context).getAsString(), "4");
     }
 
     @Test
@@ -239,6 +242,13 @@ public class TestUsersData extends BaseTest {
 
     public class TestUsersStatistics extends UsersStatistics {
 
+        @Override
+        public String getStorageTable() {
+            return "testusersdata";
+        }
+    }
+
+    public class TestUsersNumberInStatistics extends NumberOfUsersInStatistics {
         @Override
         public String getStorageTable() {
             return "testusersdata";

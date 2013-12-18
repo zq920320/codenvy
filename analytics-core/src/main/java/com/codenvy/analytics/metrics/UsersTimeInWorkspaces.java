@@ -41,6 +41,11 @@ public class UsersTimeInWorkspaces extends ReadBasedMetric {
     }
 
     @Override
+    public boolean isSingleTable() {
+        return true;
+    }
+
+    @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
         group.put("_id", "$ws");

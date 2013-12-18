@@ -18,7 +18,7 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersStatistics extends AbstractUsersData {
+public class UsersStatistics extends AbstractListValueResulted {
 
     public static final String USER_EMAIL      = "_id";
     public static final String USER_FIRST_NAME = "user_first_name";

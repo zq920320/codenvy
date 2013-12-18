@@ -17,15 +17,31 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.mongodb.DBObject;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Map;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class NumberOfUsersInStatistics extends AbstractUsersData {
+public class NumberOfUsersInStatistics extends AbstractCount {
 
     public NumberOfUsersInStatistics() {
-        super(MetricType.NUMBER_OF_USERS_IN_STATISTICS);
+        super(MetricType.NUMBER_OF_USERS_IN_STATISTICS, MetricType.USERS_STATISTICS);
+    }
+
+    @Override
+    public boolean isSingleTable() {
+        return true;
+    }
+
+    @Override
+    public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
+        return super.getFilter(clauses);
     }
 
     @Override
     public String getDescription() {
-        return "Users' statistics data";
+        return "The number of users in statistics";
     }
 }
