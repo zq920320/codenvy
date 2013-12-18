@@ -70,7 +70,7 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   loadDashboardWidget("gadgets/users-profiles.jag", "dashboardWidget");
+   loadDashboardWidget("gadgets/users-profiles.jag", "dashboardWidget", true);
 </script>
 
 </body>

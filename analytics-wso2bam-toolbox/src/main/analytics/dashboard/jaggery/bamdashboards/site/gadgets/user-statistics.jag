@@ -6,7 +6,7 @@ include_once("utils.jag");
 var queryParams = extractUrlParamsForRestService(request.getQueryString());
 
 // table names in order of receiving from server
-var userTableNames = ["User Statistics", "Workspaces", "User Logs", "Sessions"];
+var userTableNames = ["User Statistics", "Sessions", "Workspaces", "User Logs"];
 
 // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
 if (typeof queryParams["FROM_DATE"] != "undefined") {
@@ -24,7 +24,7 @@ print("<div class='view'>");
 
 print("<div class='tables'>");
 
-for (var i = 0; i < userTableNames.length; i++) {   // pass two first tables  
+for (var i = 0; i < userTableNames.length; i++) { 
    print("<div class='item'>");
    print("<div class='header'>" + userTableNames[i] + "</div>");
    print("<div class='body'>");

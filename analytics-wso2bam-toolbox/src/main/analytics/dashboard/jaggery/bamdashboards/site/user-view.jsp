@@ -81,8 +81,8 @@
 
 <!--  dasboard widgets  -->
 <script>
-   loadDashboardWidget("gadgets/user-overview.jag", "dashboardWidget-overview");  
-   loadDashboardWidget("gadgets/user-statistics.jag", "dashboardWidget-statistics");
+   loadDashboardWidget("gadgets/user-overview.jag", "dashboardWidget-overview", false);  
+   loadDashboardWidget("gadgets/user-statistics.jag", "dashboardWidget-statistics", true);
 </script>
 
 </body>

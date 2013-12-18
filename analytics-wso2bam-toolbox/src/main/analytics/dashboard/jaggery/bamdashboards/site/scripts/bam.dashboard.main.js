@@ -133,10 +133,10 @@ function triggerCollect(targetDiv) {
        params["user"] = urlParams["user"];       
     }
     
-    reloadDiv(params, targetDiv);
+    reloadDiv(params, targetDiv, true);
 };
 
-function reloadDiv(params, targetDiv) {
+function reloadDiv(params, targetDiv, isNeedToSaveInHistory) {
    var div = jQuery("#" + targetDiv);
    
    var divUrl = div.attr('src');
@@ -164,8 +164,11 @@ function reloadDiv(params, targetDiv) {
       var urlParams = constructUrlParams(params);
       if (urlParams != null) {
          newPageUrl += "?" + urlParams;
-      }      
-      window.history.pushState({html: div.html(), params: params}, document.title, newPageUrl);
+      }
+      
+      if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
+         window.history.pushState({}, document.title, newPageUrl);
+      }
    });
    
 }
@@ -195,14 +198,12 @@ function reloadThroughAjax(containerToReload, url, callback) {
 }
 
 
-function loadDashboardWidget(gadgetUrl, widgetId) { 
+function loadDashboardWidget(gadgetUrl, widgetId, isNeedToSaveInHistory) { 
    if (typeof widgetId == "undefined") {
       return;
    }
 
    var params = extractUrlParams(window.location.href);
-   
-   params = getParametersWithPresetDefaults(params);
    
    if (params != null && Object.keys(params).length > 0) {
       var absUrlArray = window.location.href.split('?');
@@ -212,10 +213,10 @@ function loadDashboardWidget(gadgetUrl, widgetId) {
       var callback = function() {};
       if (typeof urlParamsString != "undefined") {
          gadgetUrl += "?" + urlParamsString;
-      } else {
+      } else if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
          callback = function() {
             // rewrite page location to make it possible to navigate new url through the browser's history
-            window.history.pushState({"html": div.html(), params: params}, document.title, window.location.href);
+            window.history.pushState({}, document.title, window.location.href);
          };
       }
       
@@ -224,19 +225,16 @@ function loadDashboardWidget(gadgetUrl, widgetId) {
       
    updateCommandButtonsState(params);
    
-   // update div when navigating in history
-   window.addEventListener('popstate', function(event) {
-      if (event.state != null && typeof event.state.params != "undefined" && Object.keys(event.state.params).length > 0) {
-         // update parameter buttons selsction
-         var params = event.state.params;
-         params = getParametersWithPresetDefaults(params);
+   if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
+      // update div when navigating in history
+      window.addEventListener('popstate', function(event) {
+         // update parameter buttons selection
+         var params = extractUrlParams(window.location.href);
          updateCommandButtonsState(params);
-      }
-      
-      if (event.state != null && typeof event.state.html != "undefined") {
-         jQuery("#" + widgetId).html(event.state.html);
-      }
-   });
+
+         reloadDiv(params, widgetId, false);
+      });
+   }
 }
 
 function updateCommandButtonsState(params) {
@@ -276,6 +274,8 @@ function updateCommandButtonsState(params) {
          if (typeof queryParam != "undefined") {
             input.val(queryParam);   
             isDateParameterPresenceInQuery = true;
+         } else {
+            input.val("");
          }
       }
    }
@@ -285,6 +285,8 @@ function updateCommandButtonsState(params) {
          if (typeof queryParam != "undefined") {
             input.val(queryParam);   
             isDateParameterPresenceInQuery = true;
+         } else {
+            input.val("");
          }
       }
    }
@@ -294,17 +296,6 @@ function updateCommandButtonsState(params) {
       jQuery("#date-range button").removeClass('btn-primary');
       dateRangeButton.addClass('btn-primary');
    }
-}
-
-function getParametersWithPresetDefaults(params) {
-   var params = params || {};
-   var DEFAULT_TIME_UNIT_VALUE = "Day";
-   
-   if (typeof params["timeGroup"] == "undefined") {
-      params["timeGroup"] = DEFAULT_TIME_UNIT_VALUE;
-   }
-   
-   return params;
 }
 
 /**

@@ -75,7 +75,7 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   loadDashboardWidget("gadgets/factories.jag", "dashboardWidget");
+   loadDashboardWidget("gadgets/factories.jag", "dashboardWidget", true);
 </script>
 
 </body>

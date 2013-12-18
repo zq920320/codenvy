@@ -570,6 +570,18 @@
                 <parameter key="columns" value="1"/>
             </row>
         </section>
+
+        <section name="user_sessions" time-unit="lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Id,Workspace,Start Time,End Time,Duration"/>
+                <parameter key="columns" value="5"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_sessions"/>
+                <parameter key="fields" value="session_id,ws,start_time,end_time,value"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
         
         <section name="workspace_data" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
@@ -591,18 +603,6 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_activity"/>
                 <parameter key="fields" value="message"/>
-                <parameter key="columns" value="1"/>
-            </row>
-        </section>
-
-        <section name="user_sessions" time-unit="lifetime">
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Id,Workspace,Start Time,End Time,Duration"/>
-                <parameter key="columns" value="5"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_sessions"/>
-                <parameter key="fields" value="session_id,ws,start_time,end_time,value"/>
                 <parameter key="columns" value="1"/>
             </row>
         </section>

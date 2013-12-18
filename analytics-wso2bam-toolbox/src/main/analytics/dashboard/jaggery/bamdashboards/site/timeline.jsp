@@ -74,7 +74,7 @@
 <script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>
 <script type="text/javascript" src="../navigation.populator.js"></script>
 <script>
-   loadDashboardWidget("gadgets/timeline.jag", "dashboardWidget");
+   loadDashboardWidget("gadgets/timeline.jag", "dashboardWidget", true);
 </script>
 </body>
 </html>
