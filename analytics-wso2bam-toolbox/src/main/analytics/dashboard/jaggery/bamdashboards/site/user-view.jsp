@@ -47,6 +47,7 @@
         </div>
         <div class="span10">
             <div class="hero-unit full-width">
+                <div id="dashboardWidget-overview" src="gadgets/user-overview.jag"></div>
                 <div class="well topFilteringPanel">
                    <div id="date-range" class="btn-group" target="dashboardWidget-statistics">
                        <span>
@@ -57,7 +58,6 @@
                        <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>  
                    </div>
                 </div>
-                <div id="dashboardWidget-overview" src="gadgets/user-overview.jag"></div>
 	             <div id="dashboardWidget-statistics" class="single-column-gadget full-width" src="gadgets/user-statistics.jag"></div>
             </div>
         </div>
