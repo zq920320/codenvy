@@ -9,11 +9,11 @@ var queryParams = extractUrlParamsForRestService(request.getQueryString());
 var userTableNames = ["Workspaces", "User Logs", "Sessions"];
 
 // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
-if (typeof queryParams["from-date"] != "undefined") {
-   queryParams["from-date"] = queryParams["from-date"].replace("-", "");
+if (typeof queryParams["FROM_DATE"] != "undefined") {
+   queryParams["FROM_DATE"] = queryParams["FROM_DATE"].replace(/-/g, "");
 }
-if (typeof queryParams["to-date"] != "undefined") {
-   queryParams["to-date"] = queryParams["from-date"].replace("-", "");
+if (typeof queryParams["TO_DATE"] != "undefined") {
+   queryParams["TO_DATE"] = queryParams["TO_DATE"].replace(/-/g, "");
 }
 
 var data = getAllResults("user-statistics", queryParams);
