@@ -37,11 +37,22 @@ $(function () {
 //        triggerCollect();
 //        $("#service-dd").find('option').remove();
 //        $("#operation-dd").find('option').remove();
-        
+
+        // "Filter by" group
         $("#filter-by button").removeClass('btn-primary');
         $("#filter-by input[name='keyword']").val("");
         
         var targetDiv = $("#filter-by").attr("target");
+        if (typeof targetDiv != "undefined") {
+           triggerCollect(targetDiv);
+        }
+        
+        // "Date range" group
+        $("#date-range button").removeClass('btn-primary');
+        $("#date-range input[name='from-date']").val("");
+        $("#date-range input[name='to-date']").val("");
+        
+        var targetDiv = $("#date-range").attr("target");
         if (typeof targetDiv != "undefined") {
            triggerCollect(targetDiv);
         }
@@ -70,6 +81,20 @@ $(function () {
           triggerCollect(targetDiv);
        }
     });
+    
+    // "Date range" group
+    $("#date-range button").click(function() {
+       $("#date-range button").removeClass('btn-primary');
+       if ($("#date-range input[name='from-date']").val() != ""
+             || $("#date-range input[name='to-date']").val() != "") {  // select button only if there is date in one of date range input
+          $(this).addClass('btn-primary');
+       }
+       
+       var targetDiv = $("#date-range").attr("target");
+       if (typeof targetDiv != "undefined") {
+          triggerCollect(targetDiv);
+       }
+    });
 });
 
 function triggerCollect(targetDiv) {   
@@ -89,6 +114,25 @@ function triggerCollect(targetDiv) {
        params[selectedFilterButton.text()] = filterInput.val(); 
     }
 
+    // process date-range
+    var fromDateInput = $("#date-range input[name='from-date']");
+    if (fromDateInput.doesExist() 
+          && fromDateInput.val() != "") {
+       params["from-date"] = fromDateInput.val();       
+    }
+    var toDateInput = $("#date-range input[name='to-date']");
+    if (toDateInput.doesExist() 
+          && toDateInput.val() != "") {
+       params["to-date"] = toDateInput.val();       
+    }
+
+    // process userid url query parameter
+    var urlParams = extractUrlParams(window.location.href);
+    if (urlParams != null 
+          && typeof urlParams["user"] != "undefined") {
+       params["user"] = urlParams["user"];       
+    }
+    
     reloadDiv(params, targetDiv);
 };
 
@@ -205,11 +249,11 @@ function updateCommandButtonsState(params) {
       jQuery("#timely-dd button:contains('" + params["timeGroup"] + "')").addClass('btn-primary');
    }
    
-   // update filter-by buttons
+   // update filter-by group
    var filterButtons = jQuery("#filter-by button");
    var filterInput = $("#filter-by input[name='keyword']");
    if (filterButtons.doesExist() && filterInput.doesExist()) {
-      jQuery("#filter-by button").removeClass('btn-primary');   // 
+      jQuery("#filter-by button").removeClass('btn-primary');
       filterInput.val("");
       
       // find out "filter by" param like "Email: test@test.com" which is linked with button with text "Email"
@@ -222,6 +266,33 @@ function updateCommandButtonsState(params) {
             break;
          }
       }
+   }
+   
+   // update date-range group
+   var isDateParameterPresenceInQuery = false;
+   {  var input = $("#date-range input[name='from-date']");
+      var queryParam = params["from-date"];
+      if (input.doesExist()) {
+         if (typeof queryParam != "undefined") {
+            input.val(queryParam);   
+            isDateParameterPresenceInQuery = true;
+         }
+      }
+   }
+   {  var input = $("#date-range input[name='to-date']");
+      var queryParam = params["to-date"];
+      if (input.doesExist()) {
+         if (typeof queryParam != "undefined") {
+            input.val(queryParam);   
+            isDateParameterPresenceInQuery = true;
+         }
+      }
+   }
+   jQuery("#date-range button").removeClass('btn-primary');
+   var dateRangeButton = jQuery("#date-range button:contains('Filter')");   
+   if (dateRangeButton.doesExist() && isDateParameterPresenceInQuery) {
+      jQuery("#date-range button").removeClass('btn-primary');
+      dateRangeButton.addClass('btn-primary');
    }
 }
 

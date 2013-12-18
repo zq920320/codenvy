@@ -365,4 +365,28 @@ function constructRequestQueryString(params) {
    return urlParamsString; 
 }
 
+/**
+ * Extract url parameters from Query String
+ * @param queryString like "timeGroup=Month&Email=test%40gmail.com"
+ * @returns params object with param names in upper case like {TIMEGROUP: Month, EMAIL: "test@gmail.com"}
+ */
+function extractUrlParamsForRestService(queryString) {   
+   var urlParamsArray = queryString.split("&");
+   var params = {};
+   
+   for (var i = 0; i < urlParamsArray.length; i++) {
+      var paramArray = urlParamsArray[i].split("=");
+      var paramName = decodeURIComponent(paramArray[0]).toUpperCase();
+      var paramValue = null;
+      
+      if (paramArray.length > 1) {
+         paramValue = decodeURIComponent(paramArray[1]);
+      }
+      
+      params[paramName] = paramValue;
+   }
+   
+   return params;
+}
+
 %>

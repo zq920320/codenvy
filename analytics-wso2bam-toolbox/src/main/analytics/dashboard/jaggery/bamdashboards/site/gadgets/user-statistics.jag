@@ -3,14 +3,17 @@
 
 include_once("utils.jag");
 
-var queryParams = {};
-var userId = request.getParameter('userid');
+var queryParams = extractUrlParamsForRestService(request.getQueryString());
 
 // table names in order of receiving from server
 var userTableNames = ["Workspaces", "User Logs", "Sessions"];
 
-if (userId != null) {
-    queryParams["user"] = userId;
+// fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
+if (typeof queryParams["from-date"] != "undefined") {
+   queryParams["from-date"] = queryParams["from-date"].replace("-", "");
+}
+if (typeof queryParams["to-date"] != "undefined") {
+   queryParams["to-date"] = queryParams["from-date"].replace("-", "");
 }
 
 var data = getAllResults("user-statistics", queryParams);

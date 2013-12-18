@@ -48,16 +48,15 @@
         <div class="span10">
             <div class="hero-unit full-width">
                 <div id="dashboardWidget-overview" src="gadgets/user-overview.jag"></div>
- 	             <!-- div id="date-range" class="btn-group date-range-btns" target="dashboardWidget-statistics" -->
-
                 <div class="well topFilteringPanel">
-	 	             <div id="filter-by" class="btn-group">
+                   <!--  div id="filter-by" class="btn-group" target="dashboardWidget-statistics" -->
+	 	             <div id="date-range" class="btn-group" target="dashboardWidget-statistics">
 	                    <span>
-	                        From: <input type="text" id="datepicker" name="from-date" class="date-box" />
-	                        To: <input type="text" id="datepicker" name="to-date" class="date-box" />
+	                        From: <input type="text" id="datepicker-from-date" name="from-date" class="date-box" />
+	                        To: <input type="text" id="datepicker-to-date" name="to-date" class="date-box" />
 	                    </span>
 	                    <button class="btn">Filter</button>
-	                    <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>  
+	                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>  
                    </div>
                 </div>
 	             <div id="dashboardWidget-statistics" class="single-column-gadget full-width" src="gadgets/user-statistics.jag"></div>
@@ -71,13 +70,19 @@
 <script type="text/javascript" src="scripts/bam.dashboard.main.js"></script>
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
-<script>
-   loadDashboardWidget("gadgets/user-overview.jag", "dashboardWidget-overview");
-   
+<!--  load calendar jquery plugin  -->
+<link rel="stylesheet" href="scripts/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">
+<script type="text/javascript" src="scripts/jquery-ui-1.8.20/ui/minified/jquery-ui.min.js"></script>
+<script type="text/javascript">
    $(function() {
-      $("#datepicker").datepicker();
+      $("#datepicker-from-date").datepicker({dateFormat: "yy-mm-dd"});
+      $("#datepicker-to-date").datepicker({dateFormat: "yy-mm-dd"});
    });
-   
+</script>
+
+<!--  dasboard widgets  -->
+<script>
+   loadDashboardWidget("gadgets/user-overview.jag", "dashboardWidget-overview");  
    loadDashboardWidget("gadgets/user-statistics.jag", "dashboardWidget-statistics");
 </script>
 

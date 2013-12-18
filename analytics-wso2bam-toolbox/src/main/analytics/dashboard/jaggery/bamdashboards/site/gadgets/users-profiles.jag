@@ -4,7 +4,7 @@ include_once("utils.jag");
 
 var CURRENT_PAGE_QUERY_PARAMETER = "page";
 var ONE_PAGE_ROWS_COUNT = 20;
-var USER_ID_LINK_PREFIX = "user-view.jsp?userid";
+var USER_ID_LINK_PREFIX = "user-view.jsp?user";
 var USERS_OVERVIEW_PAGE_LINK = "users-profiles.jsp";
 
 var SORTING_PARAMETER = "sort";

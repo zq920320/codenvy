@@ -1,10 +1,13 @@
 .view {
-	width: 100%;
 }
 
 .view .overview {
    margin-bottom: 30px;
    background-color: #fcfcfc;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   display: inline-block;
+   width: 50%;
 }
 
 .view div.header {
@@ -20,12 +23,7 @@
 .view .overview .body .item {
 	float: left;
    padding: 5px 10px;
-}
-
-.view .overview {
-	border: 1px solid #ddd;
-   border-radius: 4px;
-   display: inline-block;
+   width: 47%;
 }
 
 .view .overview .body table {

@@ -3,14 +3,10 @@
 
 include_once("utils.jag");
 
-var queryParams = {};
-var userId = request.getParameter('userid');
 var USER_PROFILE_TABLE_NAME = 0;
 var USER_DATA_TABLE_NAME = 1;
 
-if (userId != null) {
-    queryParams["user"] = userId;
-}
+var queryParams = extractUrlParamsForRestService(request.getQueryString());
 
 var data = getAllResults("user-overview", queryParams);
 
