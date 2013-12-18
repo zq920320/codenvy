@@ -23,7 +23,7 @@ var databaseToUIMap = {
 var queryParams = mapQueryParametersFromUIToDatabase(request);
 
 // get page count
-var pageCount = Math.ceil(getMetricValue("number_of_profiles", queryParams) / ONE_PAGE_ROWS_COUNT) ;
+var pageCount = Math.ceil(getMetricValue("users_profiles", queryParams) / ONE_PAGE_ROWS_COUNT) ;
 
 // process pagination
 var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);

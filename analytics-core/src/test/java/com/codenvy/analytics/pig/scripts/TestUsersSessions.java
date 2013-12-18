@@ -125,14 +125,14 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(metric.getValue(context).getAsString(), "0");
     }
 
-    public class TestNumberOfUsersOfSessions extends NumberOfUsersSessions {
+    public class TestNumberOfUsersOfSessions extends ProductUsageSessions {
         @Override
         public String getStorageTableBaseName() {
             return "testuserssessions-raw";
         }
     }
 
-    public class TestListValueResulted extends ProductUsageSessions {
+    public class TestListValueResulted extends ProductUsageSessionsList {
 
         @Override
         public String getStorageTableBaseName() {

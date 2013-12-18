@@ -17,32 +17,35 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class BuildsTime extends AbstractLongValueResulted {
+public class UsersProfilesList extends AbstractUsersProfile {
 
-    public BuildsTime() {
-        super(MetricType.BUILDS_TIME);
-    }
+    public static final String USER_EMAIL      = "_id";
+    public static final String USER_FIRST_NAME = "user_first_name";
+    public static final String USER_LAST_NAME  = "user_last_name";
+    public static final String USER_COMPANY    = "user_company";
+    public static final String USER_JOB        = "user_job";
+    public static final String USER_PHONE      = "user_phone";
 
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData valueData = (LongValueData)super.getValue(context);
-        return new LongValueData(valueData.getAsLong() / 60);
-    }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{ProductUsageSessionsList.TIME};
+    public UsersProfilesList() {
+        super(MetricType.USERS_PROFILES_LIST);
     }
 
     @Override
     public String getDescription() {
-        return "The total time of all builds in minutes";
+        return "Users' profiles";
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{USER_EMAIL, USER_FIRST_NAME, USER_LAST_NAME, USER_COMPANY, USER_JOB, USER_PHONE};
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
     }
 }

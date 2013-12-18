@@ -23,7 +23,7 @@ import com.mongodb.DBObject;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersStatistics extends AbstractListValueResulted {
+public class UsersStatisticsList extends AbstractListValueResulted {
 
     public static final String USER      = "_id";
     public static final String PROJECTS  = "projects";
@@ -35,8 +35,8 @@ public class UsersStatistics extends AbstractListValueResulted {
     public static final String SESSIONS  = "sessions";
     public static final String TIME      = "time";
 
-    public UsersStatistics() {
-        super(MetricType.USERS_STATISTICS);
+    public UsersStatisticsList() {
+        super(MetricType.USERS_STATISTICS_LIST);
     }
 
     @Override

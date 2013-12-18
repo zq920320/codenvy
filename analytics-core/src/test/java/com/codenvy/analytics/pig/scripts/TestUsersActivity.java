@@ -21,9 +21,9 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.NumberOfUsersActivity;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.UsersActivity;
+import com.codenvy.analytics.metrics.UsersActivityList;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -83,14 +83,14 @@ public class TestUsersActivity extends BaseTest {
         Assert.assertEquals(metric.getValue(context).getAsString(), "2");
     }
 
-    public class TestNumberOfUsersOfActivity extends NumberOfUsersActivity {
+    public class TestNumberOfUsersOfActivity extends UsersActivity {
         @Override
         public String getStorageTableBaseName() {
             return "testusersactivity";
         }
     }
 
-    public class TestListValueResulted extends UsersActivity {
+    public class TestListValueResulted extends UsersActivityList {
 
         @Override
         public String getStorageTableBaseName() {

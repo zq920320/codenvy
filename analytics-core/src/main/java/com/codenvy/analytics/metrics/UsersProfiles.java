@@ -17,35 +17,49 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersProfiles extends AbstractUsersProfile {
 
-    public static final String USER_EMAIL      = "_id";
-    public static final String USER_FIRST_NAME = "user_first_name";
-    public static final String USER_LAST_NAME  = "user_last_name";
-    public static final String USER_COMPANY    = "user_company";
-    public static final String USER_JOB        = "user_job";
-    public static final String USER_PHONE      = "user_phone";
+    public static final String VALUE = "value";
 
     public UsersProfiles() {
         super(MetricType.USERS_PROFILES);
     }
 
     @Override
-    public String getDescription() {
-        return "Users' profiles";
+    public String getStorageTableBaseName() {
+        return MetricType.USERS_PROFILES_LIST.name().toLowerCase();
     }
 
     @Override
-    public String[] getTrackedFields() {
-        return new String[]{USER_EMAIL, USER_FIRST_NAME, USER_LAST_NAME, USER_COMPANY, USER_JOB, USER_PHONE};
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+        DBObject group = new BasicDBObject();
+        group.put("_id", null);
+        group.put("value", new BasicDBObject("$sum", 1));
+        BasicDBObject opCount = new BasicDBObject("$group", group);
+
+        return new DBObject[]{opCount};
     }
 
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
+        return LongValueData.class;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{VALUE};
+    }
+
+    @Override
+    public String getDescription() {
+        return "The number of profiles";
     }
 }

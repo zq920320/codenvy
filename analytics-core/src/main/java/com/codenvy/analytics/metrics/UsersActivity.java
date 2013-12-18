@@ -18,21 +18,14 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersActivity extends AbstractListValueResulted {
-
-    public static final String MESSAGE = "message";
+public class UsersActivity extends AbstractCount {
 
     public UsersActivity() {
-        super(MetricType.USERS_ACTIVITY);
-    }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{MESSAGE};
+        super(MetricType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST);
     }
 
     @Override
     public String getDescription() {
-        return "Users' actions";
+        return "The total number of users events";
     }
 }

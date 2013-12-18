@@ -24,7 +24,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.UsersProfiles;
+import com.codenvy.analytics.metrics.UsersProfilesList;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -196,7 +196,7 @@ public class TestPagination extends BaseTest {
         assertEquals(value.size(), 0);
     }
 
-    public class TestUserProfile extends UsersProfiles {
+    public class TestUserProfile extends UsersProfilesList {
 
         @Override
         public String getStorageTableBaseName() {

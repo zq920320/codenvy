@@ -53,18 +53,18 @@ public class TestActOn extends BaseTest {
         Parameters.LOG.put(context, prepareLog().getAbsolutePath());
         Parameters.EVENT.put(context, "*");
         Parameters.PARAM.put(context, "user");
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, MetricType.USERS_STATISTICS.name().toLowerCase());
+        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
 
         Parameters.STORAGE_TABLE.put(context, MetricType.ACTIVE_USERS_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, context);
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES.name().toLowerCase());
+        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USER_UPDATE_PROFILE, context);
 
         Parameters.STORAGE_TABLE.put(context, "product_usage_sessions");
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS.name().toLowerCase());
+        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USERS_STATISTICS, context);
 
         Parameters.FROM_DATE.put(context, "20131102");
@@ -73,13 +73,13 @@ public class TestActOn extends BaseTest {
         Parameters.STORAGE_TABLE.put(context, MetricType.ACTIVE_USERS_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, context);
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES.name().toLowerCase());
+        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USER_UPDATE_PROFILE, context);
 
         Parameters.STORAGE_TABLE.put(context, "product_usage_sessions");
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS.name().toLowerCase());
+        Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USERS_STATISTICS, context);
     }
 

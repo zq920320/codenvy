@@ -22,9 +22,9 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AbstractMapValueResulted;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ProjectPaases;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -45,13 +45,13 @@ import static org.testng.Assert.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfDeploymentsByTypes extends BaseTest {
 
-    private Map<String, String>  params;
-    private TestMapValueResulted metric;
+    private Map<String, String> params;
+    private TestProjectPaases   metric;
 
     @BeforeClass
     public void init() throws IOException {
         params = Utils.newContext();
-        metric = new TestMapValueResulted();
+        metric = new TestProjectPaases();
 
         List<Event> events = new ArrayList<>();
 
@@ -211,15 +211,11 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         assertEquals(values.get("paas3"), new LongValueData(1));
     }
 
-    public class TestMapValueResulted extends AbstractMapValueResulted {
-
-        private TestMapValueResulted() {
-            super("testnumberofdeploymentsbytypes");
-        }
+    private class TestProjectPaases extends ProjectPaases {
 
         @Override
-        public String getDescription() {
-            return null;
+        public String getStorageTableBaseName() {
+            return "testnumberofdeploymentsbytypes";
         }
 
         @Override

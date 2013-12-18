@@ -17,39 +17,15 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.storage.MongoDataLoader;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProductUsageSessions extends AbstractListValueResulted {
-
-    public static final String WS         = "ws";
-    public static final String USER       = "user";
-    public static final String TIME       = "time";
-    public static final String START_TIME = "start_time";
-    public static final String END_TIME   = "end_time";
-    public static final String SESSION_ID = "session_id";
+public class ProductUsageSessions extends AbstractCount {
 
     public ProductUsageSessions() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS);
-    }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{WS,
-                            USER,
-                            TIME,
-                            START_TIME,
-                            END_TIME,
-                            SESSION_ID};
-    }
-
-    @Override
-    public String getStorageTableBaseName() {
-        return super.getStorageTableBaseName() + MongoDataLoader.EXT_COLLECTION_NAME_SUFFIX;
+        super(MetricType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST);
     }
 
     @Override
     public String getDescription() {
-        return "Users' sessions";
+        return "The total number of users sessions";
     }
 }

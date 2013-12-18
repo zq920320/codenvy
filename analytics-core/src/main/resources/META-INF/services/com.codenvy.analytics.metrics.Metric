@@ -32,6 +32,8 @@ com.codenvy.analytics.metrics.ProductUsageUsersBetween10And60Min
 com.codenvy.analytics.metrics.ProductUsageUsersBetween60And300Min
 com.codenvy.analytics.metrics.ProductUsageUsersAbove300Min
 com.codenvy.analytics.metrics.ProductUsageUsersBelow10Min
+com.codenvy.analytics.metrics.ProductUsageSessionsList
+com.codenvy.analytics.metrics.ProductUsageSessions
 
 com.codenvy.analytics.metrics.UsersLoggedInTypes
 com.codenvy.analytics.metrics.UsersLoggedInWithGitHub
@@ -110,11 +112,9 @@ com.codenvy.analytics.metrics.FactorySessionsBelow10Min
 com.codenvy.analytics.metrics.FactorySessionsAbove10Min
 com.codenvy.analytics.metrics.FactorySessionsProductUsageTotal
 
+com.codenvy.analytics.metrics.UsersProfilesList
 com.codenvy.analytics.metrics.UsersProfiles
-com.codenvy.analytics.metrics.NumberOfProfiles
-com.codenvy.analytics.metrics.UsersStatistics
+com.codenvy.analytics.metrics.UsersActivityList
 com.codenvy.analytics.metrics.UsersActivity
-com.codenvy.analytics.metrics.NumberOfUsersActivity
-com.codenvy.analytics.metrics.ProductUsageSessions
-com.codenvy.analytics.metrics.NumberOfUsersSessions
+com.codenvy.analytics.metrics.UsersStatisticsList
 com.codenvy.analytics.metrics.UsersTimeInWorkspaces

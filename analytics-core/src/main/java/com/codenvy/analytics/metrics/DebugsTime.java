@@ -38,7 +38,7 @@ public class DebugsTime extends AbstractLongValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageSessions.TIME};
+        return new String[]{ProductUsageSessionsList.TIME};
     }
 
     @Override

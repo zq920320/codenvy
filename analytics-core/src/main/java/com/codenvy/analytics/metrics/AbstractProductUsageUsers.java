@@ -75,14 +75,14 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
 
     @Override
     public String getStorageTableBaseName() {
-        return MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase();
+        return MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase();
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + ProductUsageSessions.USER);
-        group.put("total", new BasicDBObject("$sum", "$" + ProductUsageSessions.TIME));
+        group.put("_id", "$" + ProductUsageSessionsList.USER);
+        group.put("total", new BasicDBObject("$sum", "$" + ProductUsageSessionsList.TIME));
         BasicDBObject opGroupBy = new BasicDBObject("$group", group);
 
         DBObject range = new BasicDBObject();
@@ -103,8 +103,8 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");
-        if (match.get(ProductUsageSessions.USER) == null) {
-            match.put(ProductUsageSessions.USER, NON_ANONYMOUS_USER);
+        if (match.get(ProductUsageSessionsList.USER) == null) {
+            match.put(ProductUsageSessionsList.USER, NON_ANONYMOUS_USER);
         }
 
         return filter;

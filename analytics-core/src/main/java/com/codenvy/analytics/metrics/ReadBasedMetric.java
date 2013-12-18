@@ -126,14 +126,14 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         MetricFilter.USER_COMPANY.put(context, company);
 
         List<ValueData> users =
-                ((ListValueData)MetricFactory.getMetric(MetricType.USERS_PROFILES).getValue(context)).getAll();
+                ((ListValueData)MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST).getValue(context)).getAll();
         String[] result = new String[users.size()];
 
         for (int i = 0; i < users.size(); i++) {
             MapValueData user = (MapValueData)users.get(i);
             Map<String, ValueData> profile = user.getAll();
 
-            result[i] = profile.get(UsersProfiles.USER_EMAIL).getAsString();
+            result[i] = profile.get(UsersProfilesList.USER_EMAIL).getAsString();
         }
 
         return result;

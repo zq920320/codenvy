@@ -158,7 +158,7 @@
         <description>The product usage sessions</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="product_usage_sessions"/>
+        <parameter key="STORAGE_TABLE" value="product_usage_sessions_list"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all builds</description>

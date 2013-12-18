@@ -241,7 +241,7 @@ public class PigServer {
         context = Utils.clone(context);
 
         if (!Parameters.STORAGE_TABLE_USERS_STATISTICS.exists(context)) {
-            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType.USERS_STATISTICS);
+            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
             Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, usersStatistic.getStorageTableBaseName());
         }
 

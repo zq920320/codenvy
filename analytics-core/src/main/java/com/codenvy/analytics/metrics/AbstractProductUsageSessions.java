@@ -68,7 +68,7 @@ public abstract class AbstractProductUsageSessions extends ReadBasedMetric {
 
     @Override
     public String getStorageTableBaseName() {
-        return MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase();
+        return MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase();
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class AbstractProductUsageSessions extends ReadBasedMetric {
         DBObject range = new BasicDBObject();
         range.put(includeMin ? "$gte" : "$gt", min);
         range.put(includeMax ? "$lte" : "$lt", max);
-        match.put(ProductUsageSessions.TIME, range);
+        match.put(ProductUsageSessionsList.TIME, range);
 
         return dbObject;
     }

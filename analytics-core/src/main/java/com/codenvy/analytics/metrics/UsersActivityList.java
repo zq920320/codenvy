@@ -18,14 +18,21 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class NumberOfUsersSessions extends AbstractCount {
+public class UsersActivityList extends AbstractListValueResulted {
 
-    public NumberOfUsersSessions() {
-        super(MetricType.NUMBER_OF_USERS_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS);
+    public static final String MESSAGE = "message";
+
+    public UsersActivityList() {
+        super(MetricType.USERS_ACTIVITY_LIST);
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{MESSAGE};
     }
 
     @Override
     public String getDescription() {
-        return "The total number of users sessions";
+        return "Users' actions";
     }
 }

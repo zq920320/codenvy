@@ -39,7 +39,7 @@ import java.util.Map;
 import static org.testng.Assert.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestProductUsage extends BaseTest {
+public class TestProductUsageTime extends BaseTest {
 
     private Map<String, String> params;
 
@@ -126,10 +126,10 @@ public class TestProductUsage extends BaseTest {
         Parameters.TO_DATE.put(context, "20131101");
         MetricFilter.USER.put(context, "user@gmail.com,ANONYMOUSUSER_user11");
 
-        Metric metric = new TestProductUsageTime(240, 300, true, true);
+        Metric metric = new TestAbstractProductUsageTime(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(9L));
 
-        metric = new TestProductUsageSessions(240, 300, true, true);
+        metric = new TestAbstractProductUsageSessions(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(2L));
 
         metric = new TesttProductUsageUsers(300, 360, true, true);
@@ -144,10 +144,10 @@ public class TestProductUsage extends BaseTest {
         MetricFilter.USER.put(context, "user@gmail.com,ANONYMOUSUSER_user11");
         MetricFilter.WS.put(context, "ws1");
 
-        Metric metric = new TestProductUsageTime(240, 300, true, true);
+        Metric metric = new TestAbstractProductUsageTime(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(9L));
 
-        metric = new TestProductUsageSessions(240, 300, true, true);
+        metric = new TestAbstractProductUsageSessions(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(2L));
 
         metric = new TesttProductUsageUsers(300, 360, true, true);
@@ -161,10 +161,10 @@ public class TestProductUsage extends BaseTest {
         Parameters.TO_DATE.put(context, "20131101");
         MetricFilter.USER.put(context, "user@gmail.com");
 
-        Metric metric = new TestProductUsageTime(240, 300, true, true);
+        Metric metric = new TestAbstractProductUsageTime(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(5L));
 
-        metric = new TestProductUsageSessions(240, 300, true, true);
+        metric = new TestAbstractProductUsageSessions(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(1L));
 
         metric = new TesttProductUsageUsers(300, 360, true, true);
@@ -178,10 +178,10 @@ public class TestProductUsage extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestProductUsageTime(240, 300, true, true);
+        Metric metric = new TestAbstractProductUsageTime(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(9L));
 
-        metric = new TestProductUsageSessions(240, 300, true, true);
+        metric = new TestAbstractProductUsageSessions(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(2L));
 
         metric = new TesttProductUsageUsers(300, 360, true, true);
@@ -194,10 +194,10 @@ public class TestProductUsage extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestProductUsageTime(240, 300, true, false);
+        Metric metric = new TestAbstractProductUsageTime(240, 300, true, false);
         assertEquals(metric.getValue(context), new LongValueData(4L));
 
-        metric = new TestProductUsageSessions(240, 300, true, false);
+        metric = new TestAbstractProductUsageSessions(240, 300, true, false);
         assertEquals(metric.getValue(context), new LongValueData(1L));
 
         metric = new TesttProductUsageUsers(300, 360, true, false);
@@ -210,10 +210,10 @@ public class TestProductUsage extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestProductUsageTime(240, 300, false, false);
+        Metric metric = new TestAbstractProductUsageTime(240, 300, false, false);
         assertEquals(metric.getValue(context), new LongValueData(0L));
 
-        metric = new TestProductUsageSessions(240, 300, false, false);
+        metric = new TestAbstractProductUsageSessions(240, 300, false, false);
         assertEquals(metric.getValue(context), new LongValueData(0L));
 
         metric = new TesttProductUsageUsers(300, 360, false, false);
@@ -226,10 +226,10 @@ public class TestProductUsage extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestProductUsageTime(240, 300, false, true);
+        Metric metric = new TestAbstractProductUsageTime(240, 300, false, true);
         assertEquals(metric.getValue(context), new LongValueData(5L));
 
-        metric = new TestProductUsageSessions(240, 300, false, true);
+        metric = new TestAbstractProductUsageSessions(240, 300, false, true);
         assertEquals(metric.getValue(context), new LongValueData(1L));
 
         metric = new TesttProductUsageUsers(300, 360, false, true);
@@ -242,10 +242,10 @@ public class TestProductUsage extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130102");
         Parameters.TO_DATE.put(context, "20130102");
 
-        Metric metric = new TestProductUsageTime(240, 300, true, true);
+        Metric metric = new TestAbstractProductUsageTime(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(0L));
 
-        metric = new TestProductUsageSessions(240, 300, true, true);
+        metric = new TestAbstractProductUsageSessions(240, 300, true, true);
         assertEquals(metric.getValue(context), new LongValueData(0L));
 
         metric = new TesttProductUsageUsers(300, 360, true, true);
@@ -270,9 +270,9 @@ public class TestProductUsage extends BaseTest {
     }
 
 
-    public class TestProductUsageTime extends AbstractProductUsageTime {
+    public class TestAbstractProductUsageTime extends AbstractProductUsageTime {
 
-        public TestProductUsageTime(long min, long max, boolean includeMin, boolean includeMax) {
+        public TestAbstractProductUsageTime(long min, long max, boolean includeMin, boolean includeMax) {
             super("testproductusagesessions", min, max, includeMin, includeMax);
         }
 
@@ -287,9 +287,9 @@ public class TestProductUsage extends BaseTest {
         }
     }
 
-    public class TestProductUsageSessions extends AbstractProductUsageSessions {
+    private class TestAbstractProductUsageSessions extends AbstractProductUsageSessions {
 
-        public TestProductUsageSessions(long min, long max, boolean includeMin, boolean includeMax) {
+        public TestAbstractProductUsageSessions(long min, long max, boolean includeMin, boolean includeMax) {
             super("testproductusagesessions", min, max, includeMin, includeMax);
         }
 

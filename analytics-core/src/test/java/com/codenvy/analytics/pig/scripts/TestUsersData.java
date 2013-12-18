@@ -100,7 +100,7 @@ public class TestUsersData extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testusersdata");
         PigServer.execute(ScriptType.USERS_STATISTICS, params);
 
-        Parameters.STORAGE_TABLE.put(params, MetricType.USERS_PROFILES.name().toLowerCase());
+        Parameters.STORAGE_TABLE.put(params, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
     }
 
@@ -246,7 +246,7 @@ public class TestUsersData extends BaseTest {
         }
     }
 
-    public class TestUsersStatistics extends UsersStatistics {
+    public class TestUsersStatistics extends UsersStatisticsList {
 
         @Override
         public String getStorageTableBaseName() {

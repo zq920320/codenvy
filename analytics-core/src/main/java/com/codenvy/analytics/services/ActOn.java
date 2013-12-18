@@ -178,7 +178,7 @@ public class ActOn implements Feature {
 
             for (ValueData object : usersStatistics) {
                 Map<String, ValueData> stat = ((MapValueData)object).getAll();
-                ValueData userEmail = stat.get(UsersStatistics.USER);
+                ValueData userEmail = stat.get(UsersStatisticsList.USER);
 
                 Map<String, ValueData> profile = usersProfiles.get(userEmail);
                 boolean isActive = activeUsers.contains(userEmail);
@@ -208,7 +208,7 @@ public class ActOn implements Feature {
     private List<ValueData> getUsersStatistics() throws IOException, ParseException {
         Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
 
-        Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS);
+        Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData valueData = (ListValueData)usersStatistics.getValue(context);
 
         return valueData.getAll();
@@ -217,14 +217,14 @@ public class ActOn implements Feature {
     private Map<ValueData, Map<String, ValueData>> getUsersProfiles() throws IOException, ParseException {
         Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
 
-        Metric usersProfiles = MetricFactory.getMetric(MetricType.USERS_PROFILES);
+        Metric usersProfiles = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
         ListValueData valueData = (ListValueData)usersProfiles.getValue(context);
 
         Map<ValueData, Map<String, ValueData>> result = new HashMap<>(valueData.size());
 
         for (ValueData object : valueData.getAll()) {
             Map<String, ValueData> profile = ((MapValueData)object).getAll();
-            result.put(profile.get(UsersProfiles.USER_EMAIL), profile);
+            result.put(profile.get(UsersProfilesList.USER_EMAIL), profile);
         }
 
         return result;
@@ -236,31 +236,31 @@ public class ActOn implements Feature {
                                  Map<String, ValueData> profile,
                                  boolean isActive) throws IOException {
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_EMAIL));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_EMAIL));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_FIRST_NAME));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_FIRST_NAME));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_LAST_NAME));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_LAST_NAME));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_PHONE));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_PHONE));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_COMPANY));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_COMPANY));
         out.write(",");
 
-        writeInt(out, stat.get(UsersStatistics.PROJECTS));
+        writeInt(out, stat.get(UsersStatisticsList.PROJECTS));
         out.write(",");
 
-        writeInt(out, stat.get(UsersStatistics.BUILDS));
+        writeInt(out, stat.get(UsersStatisticsList.BUILDS));
         out.write(",");
 
-        writeInt(out, stat.get(UsersStatistics.DEPLOYS));
+        writeInt(out, stat.get(UsersStatisticsList.DEPLOYS));
         out.write(",");
 
-        LongValueData time = (LongValueData)stat.get(UsersStatistics.TIME);
+        LongValueData time = (LongValueData)stat.get(UsersStatisticsList.TIME);
         if (time == null) {
             writeNotNullStr(out, "0");
         } else {
