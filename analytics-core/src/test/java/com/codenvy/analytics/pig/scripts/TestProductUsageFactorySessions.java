@@ -92,17 +92,17 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130210 10:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,300)");
+        assertEquals(tuple.get(1).toString(), "(time,300)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130210 10:20:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,600)");
+        assertEquals(tuple.get(1).toString(), "(time,600)");
 
         assertTrue(iterator.hasNext());
         tuple = iterator.next();
         assertEquals(tuple.get(0), timeFormat.parse("20130210 11:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,900)");
+        assertEquals(tuple.get(1).toString(), "(time,900)");
 
         assertFalse(iterator.hasNext());
     }
@@ -113,8 +113,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130210");
         Parameters.TO_DATE.put(context, "20130210");
 
-        Metric metric = new TestLongValuedMetric();
-        assertEquals(metric.getValue(context), new LongValueData(1800));
+        Metric metric = new TestFactorySessionsProductUsageTotal();
+        assertEquals(metric.getValue(context), new LongValueData(30));
     }
 
     @Test
@@ -124,8 +124,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.TO_DATE.put(context, "20130210");
         MetricFilter.REFERRER.put(context, "referrer1");
 
-        Metric metric = new TestLongValuedMetric();
-        assertEquals(metric.getValue(context), new LongValueData(1800));
+        Metric metric = new TestFactorySessionsProductUsageTotal();
+        assertEquals(metric.getValue(context), new LongValueData(30));
     }
 
     @Test
@@ -135,8 +135,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.TO_DATE.put(context, "20130210");
         MetricFilter.CONVERTED_FACTORY_SESSION.put(context, "true");
 
-        Metric metric = new TestLongValuedMetric();
-        assertEquals(metric.getValue(context), new LongValueData(300));
+        Metric metric = new TestFactorySessionsProductUsageTotal();
+        assertEquals(metric.getValue(context), new LongValueData(5));
     }
 
     @Test
@@ -146,8 +146,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.TO_DATE.put(context, "20130210");
         MetricFilter.AUTHENTICATED_FACTORY_SESSION.put(context, "false");
 
-        Metric metric = new TestLongValuedMetric();
-        assertEquals(metric.getValue(context), new LongValueData(900));
+        Metric metric = new TestFactorySessionsProductUsageTotal();
+        assertEquals(metric.getValue(context), new LongValueData(15));
     }
 
     @Test
@@ -160,15 +160,11 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
-    private class TestLongValuedMetric extends AbstractLongValueResulted {
-
-        private TestLongValuedMetric() {
-            super("testproductusagefactorysessions");
-        }
+    private class TestFactorySessionsProductUsageTotal extends FactorySessionsProductUsageTotal {
 
         @Override
-        public String getDescription() {
-            return null;
+        public String getStorageTableBaseName() {
+            return "testproductusagefactorysessions";
         }
     }
 
