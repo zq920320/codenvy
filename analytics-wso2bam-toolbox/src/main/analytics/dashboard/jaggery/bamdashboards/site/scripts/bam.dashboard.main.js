@@ -49,8 +49,8 @@ $(function () {
         
         // "Date range" group
         $("#date-range button").removeClass('btn-primary');
-        $("#date-range input[name='from-date']").val("");
-        $("#date-range input[name='to-date']").val("");
+        $("#date-range input[name='from_date']").val("");
+        $("#date-range input[name='to_date']").val("");
         
         var targetDiv = $("#date-range").attr("target");
         if (typeof targetDiv != "undefined") {
@@ -85,8 +85,8 @@ $(function () {
     // "Date range" group
     $("#date-range button").click(function() {
        $("#date-range button").removeClass('btn-primary');
-       if ($("#date-range input[name='from-date']").val() != ""
-             || $("#date-range input[name='to-date']").val() != "") {  // select button only if there is date in one of date range input
+       if ($("#date-range input[name='from_date']").val() != ""
+             || $("#date-range input[name='to_date']").val() != "") {  // select button only if there is date in one of date range input
           $(this).addClass('btn-primary');
        }
        
@@ -115,15 +115,15 @@ function triggerCollect(targetDiv) {
     }
 
     // process date-range
-    var fromDateInput = $("#date-range input[name='from-date']");
+    var fromDateInput = $("#date-range input[name='from_date']");
     if (fromDateInput.doesExist() 
           && fromDateInput.val() != "") {
-       params["from-date"] = fromDateInput.val();       
+       params["from_date"] = fromDateInput.val();       
     }
-    var toDateInput = $("#date-range input[name='to-date']");
+    var toDateInput = $("#date-range input[name='to_date']");
     if (toDateInput.doesExist() 
           && toDateInput.val() != "") {
-       params["to-date"] = toDateInput.val();       
+       params["to_date"] = toDateInput.val();       
     }
 
     // process userid url query parameter
@@ -270,8 +270,8 @@ function updateCommandButtonsState(params) {
    
    // update date-range group
    var isDateParameterPresenceInQuery = false;
-   {  var input = $("#date-range input[name='from-date']");
-      var queryParam = params["from-date"];
+   {  var input = $("#date-range input[name='from_date']");
+      var queryParam = params["from_date"];
       if (input.doesExist()) {
          if (typeof queryParam != "undefined") {
             input.val(queryParam);   
@@ -279,8 +279,8 @@ function updateCommandButtonsState(params) {
          }
       }
    }
-   {  var input = $("#date-range input[name='to-date']");
-      var queryParam = params["to-date"];
+   {  var input = $("#date-range input[name='to_date']");
+      var queryParam = params["to_date"];
       if (input.doesExist()) {
          if (typeof queryParam != "undefined") {
             input.val(queryParam);   

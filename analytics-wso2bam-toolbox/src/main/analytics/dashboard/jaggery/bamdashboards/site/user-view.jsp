@@ -52,8 +52,8 @@
                    <!--  div id="filter-by" class="btn-group" target="dashboardWidget-statistics" -->
 	 	             <div id="date-range" class="btn-group" target="dashboardWidget-statistics">
 	                    <span>
-	                        From: <input type="text" id="datepicker-from-date" name="from-date" class="date-box" />
-	                        To: <input type="text" id="datepicker-to-date" name="to-date" class="date-box" />
+	                        From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box" />
+	                        To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box" />
 	                    </span>
 	                    <button class="btn">Filter</button>
 	                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>  
