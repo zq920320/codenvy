@@ -17,26 +17,30 @@
  */
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersProfiles extends AbstractUsersData {
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-    public static final String USER_EMAIL_ATTR   = "user_email";
-    public static final String USER_PROFILE_ATTR = "user_profile";
-    public static final String USER_COMPANY_ATTR = "user_company";
-    public static final String USER_JOB_ATTR     = "user_job";
-    public static final String USER_PHONE_ATTR   = "user_phone";
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class UsersProfiles extends AbstractUsersProfile {
+
+    public static final String USER_EMAIL      = "_id";
+    public static final String USER_FIRST_NAME = "user_first_name";
+    public static final String USER_LAST_NAME  = "user_last_name";
+    public static final String USER_COMPANY    = "user_company";
+    public static final String USER_JOB        = "user_job";
+    public static final String USER_PHONE      = "user_phone";
 
     public UsersProfiles() {
         super(MetricType.USERS_PROFILES);
     }
 
     @Override
-    public boolean isSingleTable() {
-        return true;
+    public String getDescription() {
+        return "Users' profiles";
     }
 
     @Override
-    public String getDescription() {
-        return "User's profiles";
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
     }
 }

@@ -32,18 +32,7 @@ r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', u
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
 ---------------------------------------
--- USERS: The number of sessions
+-- USERS: The total time of the sessions
 ---------------------------------------
-k1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'id: chararray, sessions: Long');
-k = FOREACH k1 GENERATE id, (sessions IS NULL ? 0 : sessions) AS sessions;
-
--- calculate total user's sessions
-m1 = GROUP f BY user;
-m2 = FOREACH m1 GENERATE group AS id, COUNT(f) AS sessions;
-m = FILTER m2 BY INDEXOF(UPPER(id), 'ANONYMOUSUSER_', 0) != 0 AND id != 'default';
-
---combine and store result
-n1 = JOIN m BY id LEFT, k BY id;
-n2 = FOREACH n1 GENERATE k::id AS id, (m::sessions + (k::sessions IS NULL ? 0 : k::sessions)) AS sessions;
-n = FOREACH n2 GENERATE id, TOTUPLE('sessions', sessions);
-STORE n INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+x = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('time', delta), TOTUPLE('sessions', 1);
+STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

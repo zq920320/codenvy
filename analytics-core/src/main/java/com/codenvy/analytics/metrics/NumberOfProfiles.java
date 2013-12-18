@@ -17,31 +17,42 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class NumberOfUsersInStatistics extends AbstractCount {
+public class NumberOfProfiles extends AbstractUsersProfile {
 
-    public NumberOfUsersInStatistics() {
-        super(MetricType.NUMBER_OF_USERS_IN_STATISTICS, MetricType.USERS_STATISTICS);
+    public NumberOfProfiles() {
+        super(MetricType.NUMBER_OF_PROFILES);
     }
 
     @Override
-    public boolean isSingleTable() {
-        return true;
+    public String getStorageTable() {
+        return MetricType.USERS_PROFILES.name().toLowerCase();
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
-        return super.getFilter(clauses);
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+        DBObject group = new BasicDBObject();
+        group.put("_id", null);
+        group.put("value", new BasicDBObject("$sum", 1));
+        BasicDBObject opCount = new BasicDBObject("$group", group);
+
+        return new DBObject[]{opCount};
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     @Override
     public String getDescription() {
-        return "The number of users in statistics";
+        return "The number of profiles";
     }
 }

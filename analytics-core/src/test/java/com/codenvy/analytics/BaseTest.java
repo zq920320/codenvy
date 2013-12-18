@@ -18,23 +18,10 @@
 
 package com.codenvy.analytics;
 
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.RuntimeConfig;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.io.directories.FixedPath;
-
-import com.mongodb.MongoClientURI;
-
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -54,32 +41,7 @@ public class BaseTest {
     protected final SimpleDateFormat dirFormat    =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
-    public static final String         BASE_DIR         = "target";
-    public static final MongoClientURI MONGO_CLIENT_URI = new MongoClientURI("mongodb://localhost:12000/test.test");
-
-    protected MongodProcess mongoProcess;
-
-    @BeforeSuite
-    public void setUp() throws Exception {
-        File dir = new File(BASE_DIR + File.separator + "embeddedMongo");
-        dir.mkdirs();
-
-        RuntimeConfig config = new RuntimeConfig();
-        config.setTempDirFactory(new FixedPath(dir.getAbsolutePath()));
-
-        MongodStarter starter = MongodStarter.getInstance(config);
-        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, 12345, false));
-        try {
-            mongoProcess = mongoExe.start();
-        } catch (IOException e) {
-            mongoProcess = mongoExe.start();
-        }
-    }
-
-    @AfterSuite
-    public void tearDown() throws Exception {
-        mongoProcess.stop();
-    }
+    public static final String BASE_DIR = "target";
 
     protected void assertTuples(Iterator<Tuple> iter, String[] tuplesAsString) {
         Set<String> tuples = new HashSet<>(Arrays.asList(tuplesAsString));

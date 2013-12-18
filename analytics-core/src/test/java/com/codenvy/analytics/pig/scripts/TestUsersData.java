@@ -48,9 +48,11 @@ public class TestUsersData extends BaseTest {
 
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f_1", "l_1", "", "", "")
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
                         .withDate("2013-11-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f_2", "l_2", "", "", "")
+        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company1", "11", "1")
+                        .withDate("2013-11-01").build());
+        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f2", "l2", "company2", "11", "1")
                         .withDate("2013-11-01").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
@@ -63,15 +65,15 @@ public class TestUsersData extends BaseTest {
                         .withTime("19:02:00").build());
 
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "s", "", "")
-                        .withDate("2013-11-01").build());
+                        .withDate("2013-11-01").withTime("20:01:00").build());
         events.add(Event.Builder.createProjectDeployedEvent("user4@gmail.com", "ws1", "s", "", "", "")
-                        .withDate("2013-11-01").build());
+                        .withDate("2013-11-01").withTime("20:02:00").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
-                        .withDate("2013-11-01").build());
+                        .withDate("2013-11-01").withTime("20:03:00").build());
         events.add(Event.Builder.createRunStartedEvent("user4@gmail.com", "ws1", "", "")
-                        .withDate("2013-11-01").build());
+                        .withDate("2013-11-01").withTime("20:04:00").build());
         events.add(Event.Builder.createDebugStartedEvent("user4@gmail.com", "ws1", "", "")
-                        .withDate("2013-11-01").build());
+                        .withDate("2013-11-01").withTime("20:06:00").build());
 
         events.add(
                 Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
@@ -85,24 +87,21 @@ public class TestUsersData extends BaseTest {
 
         Parameters.FROM_DATE.put(params, "20131101");
         Parameters.TO_DATE.put(params, "20131101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
+        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile-profiles");
+        Parameters.STORAGE_TABLE.put(params, "testusersdata-sessions");
         Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testusersdata");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
-
-        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile-sessions");
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testusersdata");
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
 
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testusersdata");
         PigServer.execute(ScriptType.USERS_STATISTICS, params);
+
+        Parameters.STORAGE_TABLE.put(params, MetricType.USERS_PROFILES.name().toLowerCase());
+        PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
     }
 
     @Test
@@ -118,15 +117,11 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            String user = all.get("_id").getAsString();
+            assertEquals(all.size(), 9);
 
+            String user = all.get("_id").getAsString();
             switch (user) {
                 case "user1@gmail.com":
-                    assertEquals(all.size(), 13);
-                    assertEquals(all.get("user_first_name").getAsString(), "f_1");
-                    assertEquals(all.get("user_last_name").getAsString(), "l_1");
-                    assertEquals(all.get("user_company").getAsString(), "");
-                    assertEquals(all.get("user_phone").getAsString(), "");
                     assertEquals(all.get("projects").getAsString(), "1");
                     assertEquals(all.get("deploys").getAsString(), "0");
                     assertEquals(all.get("builds").getAsString(), "0");
@@ -138,33 +133,36 @@ public class TestUsersData extends BaseTest {
                     break;
 
                 case "user2@gmail.com":
-                    assertEquals(all.size(), 11);
-                    assertEquals(all.get("user_first_name").getAsString(), "f_2");
-                    assertEquals(all.get("user_last_name").getAsString(), "l_2");
-                    assertEquals(all.get("user_company").getAsString(), "");
-                    assertEquals(all.get("user_phone").getAsString(), "");
                     assertEquals(all.get("projects").getAsString(), "0");
                     assertEquals(all.get("runs").getAsString(), "1");
                     assertEquals(all.get("deploys").getAsString(), "0");
                     assertEquals(all.get("debugs").getAsString(), "0");
                     assertEquals(all.get("builds").getAsString(), "0");
                     assertEquals(all.get("factories").getAsString(), "0");
+                    assertEquals(all.get("time").getAsString(), "0");
+                    assertEquals(all.get("sessions").getAsString(), "0");
                     break;
 
                 case "user3@gmail.com":
-                    assertEquals(all.size(), 3);
                     assertEquals(all.get("sessions").getAsString(), "1");
+                    assertEquals(all.get("projects").getAsString(), "0");
                     assertEquals(all.get("time").getAsString(), "120");
+                    assertEquals(all.get("deploys").getAsString(), "0");
+                    assertEquals(all.get("builds").getAsString(), "0");
+                    assertEquals(all.get("debugs").getAsString(), "0");
+                    assertEquals(all.get("runs").getAsString(), "0");
+                    assertEquals(all.get("factories").getAsString(), "0");
                     break;
 
                 case "user4@gmail.com":
-                    assertEquals(all.size(), 7);
                     assertEquals(all.get("projects").getAsString(), "0");
                     assertEquals(all.get("deploys").getAsString(), "1");
                     assertEquals(all.get("builds").getAsString(), "1");
                     assertEquals(all.get("debugs").getAsString(), "1");
                     assertEquals(all.get("runs").getAsString(), "1");
                     assertEquals(all.get("factories").getAsString(), "0");
+                    assertEquals(all.get("time").getAsString(), "0");
+                    assertEquals(all.get("sessions").getAsString(), "0");
                     break;
 
                 default:
@@ -172,9 +170,6 @@ public class TestUsersData extends BaseTest {
                     break;
             }
         }
-
-        metric = new TestUsersNumberInStatistics();
-        assertEquals(metric.getValue(context).getAsString(), "4");
     }
 
     @Test
@@ -232,23 +227,27 @@ public class TestUsersData extends BaseTest {
 
     }
 
+    @Test
+    public void testUsersStatisticsByCompany() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, "company1");
+
+        TestUsersStatistics metric = new TestUsersStatistics();
+        ListValueData valueData = (ListValueData)metric.getValue(context);
+
+        assertEquals(valueData.size(), 2);
+    }
+
     public class TestUsersTimeInWorkspaces extends UsersTimeInWorkspaces {
 
         @Override
         public String getStorageTable() {
-            return "testuserupdateprofile-sessions-raw";
+            return "testusersdata-sessions-raw";
         }
     }
 
     public class TestUsersStatistics extends UsersStatistics {
 
-        @Override
-        public String getStorageTable() {
-            return "testusersdata";
-        }
-    }
-
-    public class TestUsersNumberInStatistics extends NumberOfUsersInStatistics {
         @Override
         public String getStorageTable() {
             return "testusersdata";

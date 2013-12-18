@@ -86,7 +86,6 @@ public enum ScriptType {
     USER_UPDATE_PROFILE,
     USERS_STATISTICS,
     USERS_ACTIVITY,
-    WORKSPACES_STATISTICS,
 
     CHECK_LOGS_1 {
         @Override
@@ -136,8 +135,7 @@ public enum ScriptType {
                                                Parameters.STORAGE_USER,
                                                Parameters.STORAGE_PASSWORD,
                                                Parameters.STORAGE_TABLE,
-                                               Parameters.STORAGE_TABLE_USERS_STATISTICS,
-                                               Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS}));
+                                               Parameters.STORAGE_TABLE_USERS_STATISTICS}));
     }
 
     /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */

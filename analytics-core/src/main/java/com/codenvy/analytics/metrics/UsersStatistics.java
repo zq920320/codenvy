@@ -17,22 +17,23 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
+import java.util.Map;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersStatistics extends AbstractListValueResulted {
 
-    public static final String USER_EMAIL      = "_id";
-    public static final String USER_FIRST_NAME = "user_first_name";
-    public static final String USER_LAST_NAME  = "user_last_name";
-    public static final String USER_COMPANY    = "user_company";
-    public static final String USER_PHONE      = "user_phone";
-    public static final String PROJECTS        = "projects";
-    public static final String BUILDS          = "builds";
-    public static final String DEPLOYS         = "deploys";
-    public static final String RUNS            = "runs";
-    public static final String DEBUGS          = "debugs";
-    public static final String FACTORIES       = "factories";
-    public static final String SESSIONS        = "sessions";
-    public static final String TIME            = "time";
+    public static final String USER      = "_id";
+    public static final String PROJECTS  = "projects";
+    public static final String BUILDS    = "builds";
+    public static final String DEPLOYS   = "deploys";
+    public static final String RUNS      = "runs";
+    public static final String DEBUGS    = "debugs";
+    public static final String FACTORIES = "factories";
+    public static final String SESSIONS  = "sessions";
+    public static final String TIME      = "time";
 
     public UsersStatistics() {
         super(MetricType.USERS_STATISTICS);
@@ -41,5 +42,21 @@ public class UsersStatistics extends AbstractListValueResulted {
     @Override
     public String getDescription() {
         return "Users' statistics data";
+    }
+
+    @Override
+    protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+        DBObject group = new BasicDBObject();
+        group.put("_id", "$user");
+        group.put(PROJECTS, new BasicDBObject("$sum", "$" + PROJECTS));
+        group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
+        group.put(DEBUGS, new BasicDBObject("$sum", "$" + DEBUGS));
+        group.put(DEPLOYS, new BasicDBObject("$sum", "$" + DEPLOYS));
+        group.put(BUILDS, new BasicDBObject("$sum", "$" + BUILDS));
+        group.put(FACTORIES, new BasicDBObject("$sum", "$" + FACTORIES));
+        group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
+        group.put(SESSIONS, new BasicDBObject("$sum", "$" + SESSIONS));
+
+        return new DBObject[]{new BasicDBObject("$group", group)};
     }
 }

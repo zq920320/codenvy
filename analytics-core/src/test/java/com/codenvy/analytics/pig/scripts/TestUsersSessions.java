@@ -130,7 +130,7 @@ public class TestUsersSessions extends BaseTest {
 
         @Override
         public String getStorageTable() {
-            return "testuserssessions";
+            return "testuserssessions-raw";
         }
 
         @Override

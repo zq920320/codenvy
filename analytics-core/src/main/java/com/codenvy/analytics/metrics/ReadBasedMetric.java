@@ -91,12 +91,13 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values;
-            if (filter == MetricFilter.COMPANY) {
+            if (filter == MetricFilter.USER_COMPANY) {
                 values = getUsersInCompany(filter.get(clauses));
+                match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
             } else {
                 values = filter.get(clauses).split(",");
+                match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
             }
-            match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
         }
 
         return new BasicDBObject("$match", match);
@@ -104,7 +105,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     private String[] getUsersInCompany(String company) throws IOException {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.COMPANY.put(context, company);
+        MetricFilter.USER_COMPANY.put(context, company);
 
         List<ValueData> users =
                 ((ListValueData)MetricFactory.getMetric(MetricType.USERS_PROFILES).getValue(context)).getAll();
@@ -114,7 +115,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             MapValueData user = (MapValueData)users.get(i);
             Map<String, ValueData> profile = user.getAll();
 
-            result[i] = profile.get(UsersProfiles.USER_PROFILE_ATTR).getAsString();
+            result[i] = profile.get(UsersProfiles.USER_EMAIL).getAsString();
         }
 
         return result;

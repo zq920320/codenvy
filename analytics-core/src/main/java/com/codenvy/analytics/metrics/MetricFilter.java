@@ -27,10 +27,10 @@ public enum MetricFilter {
     USER,
     USER_FIRST_NAME,
     USER_LAST_NAME,
+    USER_COMPANY,
 
     WS,
     DOMAIN,
-    COMPANY,
 
     ORG_ID,
     AFFILIATE_ID,

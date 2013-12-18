@@ -39,6 +39,11 @@ public abstract class AbstractCount extends ReadBasedMetric {
     }
 
     @Override
+    public boolean isSingleTable() {
+        return ((ReadBasedMetric)MetricFactory.getMetric(basedMetricName)).isSingleTable();
+    }
+
+    @Override
     public String getStorageTable() {
         return basedMetricName.toLowerCase();
     }

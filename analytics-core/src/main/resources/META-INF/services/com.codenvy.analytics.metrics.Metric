@@ -95,6 +95,7 @@ com.codenvy.analytics.metrics.CreatedFactories
 com.codenvy.analytics.metrics.CreatedFactoriesList
 com.codenvy.analytics.metrics.CreatedTemporaryWorkspaces
 com.codenvy.analytics.metrics.FactorySessions
+com.codenvy.analytics.metrics.FactorySessionsList
 com.codenvy.analytics.metrics.AnonymousFactorySessions
 com.codenvy.analytics.metrics.AuthenticatedFactorySessions
 com.codenvy.analytics.metrics.AbandonedFactorySessions
@@ -110,13 +111,8 @@ com.codenvy.analytics.metrics.FactorySessionsAbove10Min
 com.codenvy.analytics.metrics.FactorySessionsProductUsageTotal
 
 com.codenvy.analytics.metrics.UsersProfiles
+com.codenvy.analytics.metrics.NumberOfProfiles
 com.codenvy.analytics.metrics.UsersStatistics
-com.codenvy.analytics.metrics.NumberOfUsersInStatistics
 com.codenvy.analytics.metrics.UsersActivity
 com.codenvy.analytics.metrics.UsersSessions
 com.codenvy.analytics.metrics.UsersTimeInWorkspaces
-
-com.codenvy.analytics.metrics.WorkspacesStatistics
-
-
-

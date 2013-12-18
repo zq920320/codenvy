@@ -12,18 +12,18 @@ var ASCENDING_ORDER_PREFIX = "+";
 var DESCENDING_ORDER_PREFIX = "-";
 var DEFAULT_ORDER_PREFIX = ASCENDING_ORDER_PREFIX;
 
-/** see server-side mapping at the analytics-core/src/main/resources/views.xml in view element with name "users-overview" */
+/** see server-side mapping at the analytics-core/src/main/resources/views.xml in view element with name "users-profiles" */
 var databaseToUIMap = {
-    databaseTableColumns: ["_id",        "user_first_name", "user_last_name", "projects",              "deploys",       "time"],
-    uiTableColumns:       ["User Email", "First Name",      "Last Name",      "Total Active Projects", "Total Deploys", "Total Time"],
-    jagQueryParameters:   ["Email",      "First Name",      "Second Name"]
+    databaseTableColumns: ["_id",        "user_first_name", "user_last_name", "user_company",   "user_job"],
+    uiTableColumns:       ["User Email", "First Name",      "Last Name",      "Company",        "Job"],
+    jagQueryParameters:   ["Email",      "First Name",      "Second Name",    "Company"]
 }
 
 // process filter-by parameters
 var queryParams = mapQueryParametersFromUIToDatabase(request);
 
 // get page count
-var pageCount = getMetricValue("number_of_users_in_statistics", queryParams);
+var pageCount = getMetricValue("number_of_profiles", queryParams);
 
 // process pagination
 var currentPageNumber = request.getParameter(CURRENT_PAGE_QUERY_PARAMETER);
@@ -42,7 +42,7 @@ if (sortingParameterValue != null) {
     queryParams["sort"] = sortingParameterValue;
 }
 
-var data = getAllResults("users-overview", queryParams);
+var data = getAllResults("users-profiles", queryParams);
 
 // TODO fix
 var table;

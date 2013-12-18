@@ -15,13 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class FactorySessionsList extends AbstractListValueResulted {
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+    public FactorySessionsList() {
+        super(MetricType.FACTORY_SESSIONS_LIST);
+    }
 
--- Find out the creation dates
-a1 = filterByEvent(l, 'tenant-created');
-a = FOREACH a1 GENERATE ws, TOTUPLE('creation_date', ToString(dt, 'yyyy-MM-dd HH:mm:ss'));
-
-STORE a INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+    @Override
+    public String getDescription() {
+        return "Factory sessions";
+    }
+}

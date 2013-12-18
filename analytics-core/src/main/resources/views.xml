@@ -526,17 +526,16 @@
         </section>
     </view>
 
-    <view time-unit="lifetime" name="users-overview">
-        <section name="users_overview">
+    <view time-unit="lifetime" name="users-profiles">
+        <section name="user_profile">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles"
-                           value="User Email,First Name,Last Name,Total Active Projects,Total Deploys,Total Time"/>
-                <parameter key="columns" value="6"/>
+                <parameter key="titles" value="Email,First Name,Last Name,Company,Job"/>
+                <parameter key="columns" value="5"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_statistics"/>
+                <parameter key="name" value="users_profiles"/>
                 <parameter key="fields"
-                           value="_id,user_first_name,user_last_name,projects,deploys,time"/>
+                           value="_id,user_first_name,user_last_name,user_company,user_job"/>
                 <parameter key="columns" value="1"/>
             </row>
         </section>

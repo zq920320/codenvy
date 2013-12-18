@@ -24,6 +24,7 @@ import com.codenvy.analytics.pig.scripts.EventType;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.*;
 
 import org.apache.pig.data.Tuple;
@@ -64,8 +65,8 @@ public class TestMongoStorage extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testmongostorage");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        mongoClient = new MongoClient(MONGO_CLIENT_URI);
-        DB db = mongoClient.getDB(MONGO_CLIENT_URI.getDatabase());
+        mongoClient = MongoDataStorage.openConnection();
+        DB db = MongoDataStorage.getUsedDB(mongoClient);
         dbCollection = db.getCollection("testmongostorage");
         dbCollectionRaw = db.getCollection("testmongostorage-raw");
     }

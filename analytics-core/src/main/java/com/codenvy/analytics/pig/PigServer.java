@@ -245,11 +245,6 @@ public class PigServer {
             Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, usersStatistic.getStorageTable());
         }
 
-        if (!Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.exists(context)) {
-            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType.WORKSPACES_STATISTICS);
-            Parameters.STORAGE_TABLE_WORKSPACES_STATISTICS.put(context, usersStatistic.getStorageTable());
-        }
-
         MongoDataStorage.putStorageParameters(context);
 
         if (!Parameters.STORAGE_TABLE_FACTORY_SESSIONS.exists(context)) {

@@ -140,7 +140,7 @@ public class TestActOn extends BaseTest {
                      .withTime("10:05:00").build());
         events.add(
                 Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate("2013-11-01")
-                     .withTime("10:00:00").build());
+                     .withTime("10:03:00").build());
 
         // projects built
         events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withTime("10:06:00")

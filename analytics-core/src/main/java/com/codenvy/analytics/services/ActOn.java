@@ -35,10 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.SocketTimeoutException;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ActOn implements Feature {
@@ -174,12 +171,19 @@ public class ActOn implements Feature {
 
         Set<ValueData> activeUsers = getActiveUsersDuringMonth();
         List<ValueData> usersStatistics = getUsersStatistics();
+        Map<ValueData, Map<String, ValueData>> usersProfiles = getUsersProfiles();
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeader(out);
 
-            for (ValueData item : usersStatistics) {
-                writeStatistics(out, (MapValueData)item, activeUsers);
+            for (ValueData object : usersStatistics) {
+                Map<String, ValueData> stat = ((MapValueData)object).getAll();
+                ValueData userEmail = stat.get(UsersStatistics.USER);
+
+                Map<String, ValueData> profile = usersProfiles.get(userEmail);
+                boolean isActive = activeUsers.contains(userEmail);
+
+                writeStatistics(out, stat, profile, isActive);
             }
         }
 
@@ -210,36 +214,53 @@ public class ActOn implements Feature {
         return valueData.getAll();
     }
 
-    private void writeStatistics(BufferedWriter out, MapValueData item, Set<ValueData> activeUsers) throws IOException {
-        Map<String, ValueData> entries = item.getAll();
+    private Map<ValueData, Map<String, ValueData>> getUsersProfiles() throws IOException, ParseException {
+        Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
 
-        ValueData userEmail = entries.get(UsersStatistics.USER_EMAIL);
+        Metric usersProfiles = MetricFactory.getMetric(MetricType.USERS_PROFILES);
+        ListValueData valueData = (ListValueData)usersProfiles.getValue(context);
 
-        writeString(out, userEmail);
+        Map<ValueData, Map<String, ValueData>> result = new HashMap<>(valueData.size());
+
+        for (ValueData object : valueData.getAll()) {
+            Map<String, ValueData> profile = ((MapValueData)object).getAll();
+            result.put(profile.get(UsersProfiles.USER_EMAIL), profile);
+        }
+
+        return result;
+    }
+
+
+    private void writeStatistics(BufferedWriter out,
+                                 Map<String, ValueData> stat,
+                                 Map<String, ValueData> profile,
+                                 boolean isActive) throws IOException {
+
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_EMAIL));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.USER_FIRST_NAME));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_FIRST_NAME));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.USER_LAST_NAME));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_LAST_NAME));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.USER_PHONE));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_PHONE));
         out.write(",");
 
-        writeString(out, entries.get(UsersStatistics.USER_COMPANY));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfiles.USER_COMPANY));
         out.write(",");
 
-        writeInt(out, entries.get(UsersStatistics.PROJECTS));
+        writeInt(out, stat.get(UsersStatistics.PROJECTS));
         out.write(",");
 
-        writeInt(out, entries.get(UsersStatistics.BUILDS));
+        writeInt(out, stat.get(UsersStatistics.BUILDS));
         out.write(",");
 
-        writeInt(out, entries.get(UsersStatistics.DEPLOYS));
+        writeInt(out, stat.get(UsersStatistics.DEPLOYS));
         out.write(",");
 
-        LongValueData time = (LongValueData)entries.get(UsersStatistics.TIME);
+        LongValueData time = (LongValueData)stat.get(UsersStatistics.TIME);
         if (time == null) {
             writeNotNullStr(out, "0");
         } else {
@@ -247,7 +268,7 @@ public class ActOn implements Feature {
         }
         out.write(",");
 
-        writeNotNullStr(out, Boolean.toString(activeUsers.contains(userEmail)));
+        writeNotNullStr(out, Boolean.toString(isActive));
         out.newLine();
     }
 

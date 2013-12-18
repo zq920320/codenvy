@@ -22,10 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.UsersProfiles;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -141,6 +138,9 @@ public class TestUserUpdateProfile extends BaseTest {
                 assertEquals(all.get("user_job").getAsString(), "");
             }
         }
+
+        metric = new TestNumberOfProfiles();
+        assertEquals(metric.getValue(context).getAsString(), "4");
     }
 
     @Test
@@ -167,7 +167,7 @@ public class TestUserUpdateProfile extends BaseTest {
     @Test
     public void testUsersByCompany() throws Exception {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.COMPANY.put(context, "company");
+        MetricFilter.USER_COMPANY.put(context, "company");
 
         Metric metric = new TestUserProfile();
 
@@ -194,6 +194,14 @@ public class TestUserUpdateProfile extends BaseTest {
             }
         }
     }
+
+    public class TestNumberOfProfiles extends NumberOfProfiles {
+        @Override
+        public String getStorageTable() {
+            return "testuserupdateprofile";
+        }
+    }
+
 
     public class TestUserProfile extends UsersProfiles {
 

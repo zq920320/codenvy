@@ -46,9 +46,9 @@ public class TestMongoDataLoader extends BaseTest {
     public void prepare() throws Exception {
         dataLoader = MongoDataStorage.createdDataLoader();
         
-        MongoClient mongoClient = new MongoClient(MONGO_CLIENT_URI);
-        DB db = mongoClient.getDB(MONGO_CLIENT_URI.getDatabase());
-        DBCollection dbCollection = db.getCollection(MONGO_CLIENT_URI.getCollection());
+        MongoClient mongoClient = MongoDataStorage.openConnection();
+        DB db = MongoDataStorage.getUsedDB(mongoClient);
+        DBCollection dbCollection = db.getCollection("test");
 
         BasicDBObject dbObject = new BasicDBObject();
         dbObject.put("_id", dateFormat.parse("20130910").getTime());

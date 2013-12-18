@@ -18,8 +18,6 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -27,9 +25,9 @@ import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-abstract public class AbstractUsersData extends ReadBasedMetric {
+abstract public class AbstractUsersProfile extends ReadBasedMetric {
 
-    public AbstractUsersData(MetricType metricType) {
+    public AbstractUsersProfile(MetricType metricType) {
         super(metricType);
     }
 
@@ -39,7 +37,7 @@ abstract public class AbstractUsersData extends ReadBasedMetric {
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values = filter.get(clauses).split(",");
-            String key = getFilterKey(filter);
+            String key = filter == MetricFilter.USER ? "_id" : filter.name().toLowerCase();
 
             match.put(key, new BasicDBObject("$in", values));
         }
@@ -47,20 +45,9 @@ abstract public class AbstractUsersData extends ReadBasedMetric {
         return new BasicDBObject("$match", match);
     }
 
-    private String getFilterKey(MetricFilter filter) {
-        switch (filter) {
-            case USER:
-                return "_id";
-            case COMPANY:
-                return "user_company";
-            default:
-                return filter.name().toLowerCase();
-        }
-    }
-
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
+    public boolean isSingleTable() {
+        return true;
     }
 
     @Override
