@@ -241,7 +241,30 @@
                         ]);
                     }
                 });
-            },            
+            },
+	   
+	    joinWorkspace : function(username,bearertoken,workspace,success,error){
+                var data = {username: username.toLowerCase(), token: bearertoken};
+                var waitUrl = "../wait-for-tenant?type=start&redirect_url=" +
+                    window.location.protocol + "//" + window.location.host +
+                    "/ide/"+ workspace + "&tenantName=" + workspace;
+                var workspaceName = {name: workspace};
+                var authenticateUrl = "/site/rest/token/validate";
+                $.ajax({
+                    url : authenticateUrl,
+                    type : "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success : function(){
+                        success({url: waitUrl});
+                    },
+                    error : function(xhr/*, status , err*/){
+                        error([
+                            new AccountError(null,xhr.responseText)
+                        ]);
+                    }
+                });
+            },
 
             recoverPassword : function(email,success,error){
                 //implementation based on this:
