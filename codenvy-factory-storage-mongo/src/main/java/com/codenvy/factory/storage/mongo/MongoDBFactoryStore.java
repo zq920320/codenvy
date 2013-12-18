@@ -18,7 +18,6 @@
 package com.codenvy.factory.storage.mongo;
 
 import com.codenvy.api.factory.*;
-import com.codenvy.commons.json.JsonHelper;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.factory.MongoDbConfiguration;
 import com.mongodb.*;
@@ -98,7 +97,7 @@ public class MongoDBFactoryStore implements FactoryStore {
                          .add("validsince", factoryUrl.getValidsince())
                          .add("validuntil", factoryUrl.getValiduntil())
                          .add("created", factoryUrl.getCreated())
-                         .add("variables", JsonHelper.toJson(factoryUrl.getVariables()));
+                         .add("variables", VariableHelper.toBasicDBFormat(factoryUrl.getVariables()));
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", factoryUrl.getId());
@@ -148,7 +147,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setValidsince((long)factoryAsDbObject.get("validsince"));
         factoryUrl.setValiduntil((long)factoryAsDbObject.get("validuntil"));
         factoryUrl.setCreated((long)factoryAsDbObject.get("created"));
-        factoryUrl.setVariables(VariableHelper.getVariables((String)factoryAsDbObject.get("variables")));
+        factoryUrl.setVariables(VariableHelper.fromBasicDBFormat(factoryAsDbObject));
 
         return factoryUrl;
     }

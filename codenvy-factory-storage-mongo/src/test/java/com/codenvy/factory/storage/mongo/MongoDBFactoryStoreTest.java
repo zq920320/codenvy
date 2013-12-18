@@ -136,6 +136,9 @@ public class MongoDBFactoryStoreTest {
 
         BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(attrs);
 
+        List<Variable> variables = Collections.singletonList(
+                new Variable(Collections.singletonList("glob"), Collections.singletonList(new Variable.Replacement("find", "replace"))));
+
         List<DBObject> imageList = new ArrayList<>();
 
         BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
@@ -157,7 +160,8 @@ public class MongoDBFactoryStoreTest {
                          .add("validsince", 123645L)
                          .add("validuntil", 123645L)
                          .add("created", 123645L)
-                         .add("projectattributes", attributes.get());
+                         .add("projectattributes", attributes.get())
+                         .add("variables", VariableHelper.toBasicDBFormat(variables));
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", id);
@@ -174,6 +178,7 @@ public class MongoDBFactoryStoreTest {
         JsonValue jsonValue = jsonParser.getJsonObject();
         AdvancedFactoryUrl source = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
         source.setId(id);
+        source.setVariables(variables);
 
         assertEquals(result, source);
     }
