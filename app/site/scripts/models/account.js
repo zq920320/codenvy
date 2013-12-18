@@ -242,13 +242,13 @@
                     }
                 });
             },
-	   
-	    joinWorkspace : function(username,bearertoken,workspace,success,error){
+
+            joinWorkspace : function(username,bearertoken,workspace,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
                 var waitUrl = "../wait-for-tenant?type=start&redirect_url=" +
                     window.location.protocol + "//" + window.location.host +
                     "/ide/"+ workspace + "&tenantName=" + workspace;
-                var workspaceName = {name: workspace};
+                //var workspaceName = {name: workspace};
                 var authenticateUrl = "/site/rest/token/validate";
                 $.ajax({
                     url : authenticateUrl,

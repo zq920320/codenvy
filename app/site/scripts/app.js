@@ -33,7 +33,8 @@ define(["jquery","config",
         "views/maintenancepage",
         "views/gc_banner",
         "views/ws_createform",
-        "views/create_ws"
+        "views/create_ws",
+        "views/join_ws"
         ],
 
     function($,Config,
@@ -53,7 +54,8 @@ define(["jquery","config",
         MaintenancePage,
         GC_banner,
         WSCreateForm,
-        CreatingWorkspace){
+        CreatingWorkspace,
+        JoiningWorkspace){
 
         function modernize(){
             Modernizr.load({
@@ -88,8 +90,8 @@ define(["jquery","config",
                         maintenancePage = $(".maintenance"),
                         gcBannerElement = $(".cta"),
                         wsCreateForm = $(".create-form"),
-                        creatingWorkspace = $(".creating-ws");
-
+                        creatingWorkspace = $(".creating-ws"),
+                        joiningWorkspace = $(".invite");
 
                     if(gcBannerElement.length !== 0){
                         (function(){
@@ -128,6 +130,22 @@ define(["jquery","config",
                     if(creatingWorkspace.length !== 0){
                         (function(){
                             var page = CreatingWorkspace.get(creatingWorkspace),
+                            errorReport = ErrorReport.get(errorContainer);
+
+                            page.on("success", function(d){
+                                window.location.href = d.url;
+                            });
+
+                            page.on("invalid", function(field,message){
+                                errorReport.show(message);
+                            });
+                            
+                        }());
+                    }
+
+                    if(joiningWorkspace.length !== 0){
+                        (function(){
+                            var page = JoiningWorkspace.get(joiningWorkspace),
                             errorReport = ErrorReport.get(errorContainer);
 
                             page.on("success", function(d){
