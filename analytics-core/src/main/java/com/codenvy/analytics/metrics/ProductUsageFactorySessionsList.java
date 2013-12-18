@@ -18,7 +18,7 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProductUsageFactorySessions extends AbstractListValueResulted {
+public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
 
     public static final String TIME                  = "time";
     public static final String REFERRER              = "referrer";
@@ -26,8 +26,8 @@ public class ProductUsageFactorySessions extends AbstractListValueResulted {
     public static final String AUTHENTICATED_SESSION = "authenticated_factory_session";
     public static final String CONVERTED_SESSION     = "converted_factory_session";
 
-    public ProductUsageFactorySessions() {
-        super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
+    public ProductUsageFactorySessionsList() {
+        super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
 
     @Override

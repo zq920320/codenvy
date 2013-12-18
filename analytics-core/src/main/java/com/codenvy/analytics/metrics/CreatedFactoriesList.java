@@ -31,6 +31,6 @@ public class CreatedFactoriesList extends AbstractSetValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessions.FACTORY};
+        return new String[]{ProductUsageFactorySessionsList.FACTORY};
     }
 }

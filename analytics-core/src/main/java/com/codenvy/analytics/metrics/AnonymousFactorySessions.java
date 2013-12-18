@@ -26,7 +26,7 @@ import java.util.Map;
 public class AnonymousFactorySessions extends AbstractCount {
 
     public AnonymousFactorySessions() {
-        super(MetricType.ANONYMOUS_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
+        super(MetricType.ANONYMOUS_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
 
     @Override

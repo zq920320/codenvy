@@ -97,7 +97,7 @@ com.codenvy.analytics.metrics.CreatedFactories
 com.codenvy.analytics.metrics.CreatedFactoriesList
 com.codenvy.analytics.metrics.CreatedTemporaryWorkspaces
 com.codenvy.analytics.metrics.FactorySessions
-com.codenvy.analytics.metrics.ProductUsageFactorySessions
+com.codenvy.analytics.metrics.ProductUsageFactorySessionsList
 com.codenvy.analytics.metrics.AnonymousFactorySessions
 com.codenvy.analytics.metrics.AuthenticatedFactorySessions
 com.codenvy.analytics.metrics.AbandonedFactorySessions
