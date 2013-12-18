@@ -6,7 +6,7 @@ include_once("utils.jag");
 var queryParams = extractUrlParamsForRestService(request.getQueryString());
 
 // table names in order of receiving from server
-var userTableNames = ["Workspaces", "User Logs", "Sessions"];
+var userTableNames = ["User Statistics", "Workspaces", "User Logs", "Sessions"];
 
 // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
 if (typeof queryParams["FROM_DATE"] != "undefined") {

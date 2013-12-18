@@ -554,7 +554,9 @@
                 <parameter key="columns" value="1"/>
             </row>
         </section>
+    </view>
 
+    <view time-unit="lifetime" name="user-statistics" on-demand="true">
         <section name="user_data" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
@@ -568,9 +570,7 @@
                 <parameter key="columns" value="1"/>
             </row>
         </section>
-    </view>
-
-    <view time-unit="lifetime" name="user-statistics" on-demand="true">
+        
         <section name="workspace_data" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Name,Sessions,Time"/>

@@ -4,7 +4,7 @@
 include_once("utils.jag");
 
 var USER_PROFILE_TABLE_NAME = 0;
-var USER_DATA_TABLE_NAME = 1;
+//var USER_DATA_TABLE_NAME = 1;
 
 var queryParams = extractUrlParamsForRestService(request.getQueryString());
 
@@ -23,9 +23,9 @@ print("<div class='item'>");
 printTableVerticalRow(data[USER_PROFILE_TABLE_NAME]);
 print("</div>");
 
-print("<div class='item'>");
-printTableVerticalRow(data[USER_DATA_TABLE_NAME]);
-print("</div>");
+//print("<div class='item'>");
+//printTableVerticalRow(data[USER_DATA_TABLE_NAME]);
+//print("</div>");
 
 print("</div>");
 print("</div>");

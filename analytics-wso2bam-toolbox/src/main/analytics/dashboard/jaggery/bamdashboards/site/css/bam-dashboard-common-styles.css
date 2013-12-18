@@ -99,7 +99,7 @@ div.jqplot-table-legend-swatch-outline {
     max-width: 180px;
 }
 
-input.text-box {
+input.text-box, input.date-box {
   padding: 2px;
   margin: 0px;
 }
