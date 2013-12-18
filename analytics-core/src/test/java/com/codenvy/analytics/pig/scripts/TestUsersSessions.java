@@ -106,6 +106,9 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("end_time").getAsString(), "2013-11-01 20:05:00");
         assertEquals(items.getAll().get("session_id").getAsString(), "2");
         assertEquals(items.getAll().get("value").getAsString(), "300");
+
+        metric = new TestNumberOfUsersOfSessions();
+        assertEquals(metric.getValue(context).getAsString(), "1");
     }
 
     @Test
@@ -119,10 +122,19 @@ public class TestUsersSessions extends BaseTest {
 
         ListValueData valueData = (ListValueData)metric.getValue(context);
         assertEquals(0, valueData.size());
+
+        metric = new TestNumberOfUsersOfSessions();
+        assertEquals(metric.getValue(context).getAsString(), "0");
+    }
+
+    public class TestNumberOfUsersOfSessions extends NumberOfUsersSessions {
+        @Override
+        public String getStorageTable() {
+            return "testuserssessions-raw";
+        }
     }
 
     public class TestListValueResulted extends AbstractListValueResulted {
-
 
         public TestListValueResulted() {
             super(MetricType.USERS_SESSIONS);

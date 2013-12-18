@@ -18,14 +18,14 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactorySessions extends AbstractCount {
+public class NumberOfUsersSessions extends AbstractCount {
 
-    public FactorySessions() {
-        super(MetricType.FACTORY_SESSIONS, MetricType.FACTORY_SESSIONS_LIST);
+    public NumberOfUsersSessions() {
+        super(MetricType.NUMBER_OF_USERS_SESSIONS, MetricType.USERS_SESSIONS);
     }
 
     @Override
     public String getDescription() {
-        return "The total number of sessions in temporary workspaces";
+        return "The total number of users sessions";
     }
 }

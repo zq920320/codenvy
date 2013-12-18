@@ -21,12 +21,14 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.NumberOfUsersActivity;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.UsersActivity;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -76,6 +78,16 @@ public class TestUsersActivity extends BaseTest {
         ListValueData value = (ListValueData)metric.getValue(context);
 
         assertEquals(value.size(), 2);
+
+        metric = new TestNumberOfUsersOfActivity();
+        Assert.assertEquals(metric.getValue(context).getAsString(), "2");
+    }
+
+    public class TestNumberOfUsersOfActivity extends NumberOfUsersActivity {
+        @Override
+        public String getStorageTable() {
+            return "testusersactivity";
+        }
     }
 
     public class TestListValueResulted extends UsersActivity {
