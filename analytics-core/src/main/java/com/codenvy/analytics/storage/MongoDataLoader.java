@@ -44,7 +44,6 @@ public class MongoDataLoader implements DataLoader {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException {
         DBCollection dbCollection = db.getCollection(getStorageTable(metric, clauses));
@@ -56,12 +55,16 @@ public class MongoDataLoader implements DataLoader {
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
 
             return createdValueData(metric, aggregation.results().iterator());
-
         } catch (ParseException e) {
             throw new IOException(e);
         }
     }
 
+    /**
+     * TODO comment
+     *
+     * @see com.codenvy.analytics.metrics.ReadBasedMetric#getStorageTable()
+     */
     private String getStorageTable(ReadBasedMetric metric, Map<String, String> clauses) {
         if (metric.isSingleTable() || Utils.isSimpleContext(clauses)) {
             return metric.getStorageTable();
@@ -74,26 +77,26 @@ public class MongoDataLoader implements DataLoader {
         Class<? extends ValueData> clazz = metric.getValueDataClass();
 
         if (clazz == LongValueData.class) {
-            return createLongValueData(iterator);
+            return createLongValueData(iterator, metric.getTrackedFields());
 
         } else if (clazz == DoubleValueData.class) {
-            return createDoubleValueData(iterator);
+            return createDoubleValueData(iterator, metric.getTrackedFields());
 
         } else if (clazz == MapValueData.class) {
-            return createMapValueData(iterator);
+            return createMapValueData(iterator, metric.getTrackedFields());
 
         } else if (clazz == SetValueData.class) {
-            return createSetValueData(iterator);
+            return createSetValueData(iterator, metric.getTrackedFields());
 
         } else if (clazz == ListValueData.class) {
-            return createListValueData(iterator);
+            return createListValueData(iterator, metric.getTrackedFields());
         }
 
         throw new IllegalArgumentException("Unknown class " + clazz.getName());
     }
 
-    private ValueData createListValueData(Iterator<DBObject> iterator) {
-        return doCreateValueData(iterator, ListValueData.class, new Action() {
+    private ValueData createListValueData(Iterator<DBObject> iterator, String[] fields) {
+        return doCreateValueData(iterator, fields, ListValueData.class, new Action() {
             Map<String, ValueData> values = new HashMap<>();
 
             @Override
@@ -112,15 +115,13 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
-    private ValueData createSetValueData(Iterator<DBObject> iterator) {
-        return doCreateValueData(iterator, SetValueData.class, new Action() {
+    private ValueData createSetValueData(Iterator<DBObject> iterator, String[] fields) {
+        return doCreateValueData(iterator, fields, SetValueData.class, new Action() {
             Set<ValueData> values = new HashSet<>();
 
             @Override
             public void accumulate(String key, Object value) {
-                if (key.equals("value")) {
-                    this.values.add(ValueDataFactory.createValueData(value));
-                }
+                this.values.add(ValueDataFactory.createValueData(value));
             }
 
             @Override
@@ -134,15 +135,13 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
-    private ValueData createMapValueData(Iterator<DBObject> iterator) {
-        return doCreateValueData(iterator, MapValueData.class, new Action() {
+    private ValueData createMapValueData(Iterator<DBObject> iterator, String[] fields) {
+        return doCreateValueData(iterator, fields, MapValueData.class, new Action() {
             Map<String, ValueData> values = new HashMap<>();
 
             @Override
             public void accumulate(String key, Object value) {
-                if (!allFilters.contains(key)) {
-                    this.values.put(key, ValueDataFactory.createValueData(value));
-                }
+                this.values.put(key, ValueDataFactory.createValueData(value));
             }
 
             @Override
@@ -156,15 +155,13 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
-    private ValueData createLongValueData(Iterator<DBObject> iterator) {
-        return doCreateValueData(iterator, LongValueData.class, new Action() {
+    private ValueData createLongValueData(Iterator<DBObject> iterator, String[] fields) {
+        return doCreateValueData(iterator, fields, LongValueData.class, new Action() {
             long value = 0;
 
             @Override
             public void accumulate(String key, Object value) {
-                if (!allFilters.contains(key)) {
-                    this.value += ((Number)value).longValue();
-                }
+                this.value += ((Number)value).longValue();
             }
 
             @Override
@@ -178,15 +175,13 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
-    private ValueData createDoubleValueData(Iterator<DBObject> iterator) {
-        return doCreateValueData(iterator, LongValueData.class, new Action() {
+    private ValueData createDoubleValueData(Iterator<DBObject> iterator, String[] fields) {
+        return doCreateValueData(iterator, fields, LongValueData.class, new Action() {
             double value = 0;
 
             @Override
             public void accumulate(String key, Object value) {
-                if (key.equals("value")) {
-                    this.value += ((Number)value).doubleValue();
-                }
+                this.value += ((Number)value).doubleValue();
             }
 
             @Override
@@ -200,7 +195,18 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
+    /**
+     * @param iterator
+     *         the iterator over result set
+     * @param fields
+     *         the list of fields indicate what data to read from resulted item
+     * @param clazz
+     *         the resulted class of {@link ValueData}
+     * @param action
+     *         the delegated action, contains behavior how to created needed result depending on given clazz
+     */
     private ValueData doCreateValueData(Iterator<DBObject> iterator,
+                                        String[] fields,
                                         Class<? extends ValueData> clazz,
                                         Action action) {
 
@@ -209,8 +215,14 @@ public class MongoDataLoader implements DataLoader {
         while (iterator.hasNext()) {
             DBObject dbObject = iterator.next();
 
-            for (String key : dbObject.keySet()) {
-                action.accumulate(key, dbObject.get(key));
+            if (fields.length == 0) {
+                for (String key : dbObject.keySet()) {
+                    action.accumulate(key, dbObject.get(key));
+                }
+            } else {
+                for (String key : fields) {
+                    action.accumulate(key, dbObject.get(key));
+                }
             }
 
             result = result.union(action.pull());
@@ -221,8 +233,22 @@ public class MongoDataLoader implements DataLoader {
 
     /** Create value action. */
     private interface Action {
+
+        /**
+         * Accumulates every key-value pair over every entry for single resulted item
+         *
+         * @param key
+         *         the key
+         * @param value
+         *         the corresponding value
+         */
         void accumulate(String key, Object value);
 
+        /**
+         * Creates a {@link ValueData}.
+         *
+         * @return the {@link ValueData}
+         */
         ValueData pull();
     }
 }

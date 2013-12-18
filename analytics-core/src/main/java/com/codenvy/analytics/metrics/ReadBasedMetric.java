@@ -23,7 +23,6 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.pig.udf.CutQueryParam;
 import com.codenvy.analytics.storage.DataLoader;
 import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.BasicDBObject;
@@ -61,11 +60,32 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     // --------------------------------------------- storage related methods -------------
 
-    /** Returns the name of collection in term of mongoDB to read data from. */
+    /**
+     * For most metrics data can be stored in two collections. The fist collection contains summarized data per day
+     * for performance purpose. The second one contains detailed data, the filters can be used here.
+     *
+     * @return true if data of the metric contain in two collections
+     */
+    public abstract boolean isSupportMultipleTables();
+
+    /**
+     * @return the fields are interested in by given metric. In other words, they are valuable for given metric. It
+     *         might returns empty array to read all available fields
+     */
+    public abstract String[] getTrackedFields();
+
+    /**
+     * The name of first one is basically derived from the name
+     * of metric itself. The name of second one can be obtained by adding specific suffix to the end.
+     * {@link com.codenvy.analytics.storage.MongoDataLoader#EXT_COLLECTION_NAME_SUFFIX}.
+     * <p/>
+     * Returns the name of collection in term of mongoDB to read data from.
+     */
     public String getStorageTable() {
         return getName().toLowerCase();
     }
 
+    // TODO comment
     public boolean isSingleTable() {
         return false;
     }
@@ -122,65 +142,66 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return result;
     }
 
-    private String[] getFFF(Map<String, String> context) throws IOException {
-
-        for (MetricFilter filter : Utils.getFilters(context)) {
-            switch (filter) {
-                case AFFILIATE_ID:
-                case ORG_ID:
-                case REFERRER:
-                case FACTORY:
-                    if (filter == MetricFilter.FACTORY) {
-                        String factoryUrls = removeProjectTypeParamFromFactoryUrl(filter.get(context));
-                        context = Utils.clone(context);
-
-                        filter.put(context, factoryUrls);
-                    }
-
-//                    MetricFactory.getMetric(MT.FA)
-//                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
-//                                                             .getValue(context)).getAll();
-//                case WS:
-//                case USERS:
-//                case PROJECT_TYPE:
-//                case REPOSITORY_URL:
-//                    SetStringValueData factoryUrl =
-//                            (SetStringValueData)MetricFactory.createMetric(MetricType.SET_FACTORY_CREATED)
-//                                                             .getValue(context);
+//    private String[] getFFF(Map<String, String> context) throws IOException {
 //
-//                    context = Utils.cloneAndClearFilters(context);
-//                    MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrl.getAll().toString()));
+//        for (MetricFilter filter : Utils.getFilters(context)) {
+//            switch (filter) {
+//                case AFFILIATE_ID:
+//                case ORG_ID:
+//                case REFERRER:
+//                case FACTORY:
+//                    if (filter == MetricFilter.FACTORY) {
+//                        String factoryUrls = removeProjectTypeParamFromFactoryUrl(filter.get(context));
+//                        context = Utils.clone(context);
 //
-//                    context = removePTypeParamFromFactoryUrl(context);
+//                        filter.put(context, factoryUrls);
+//                    }
 //
-//                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
-//                                                             .getValue(context)).getAll();
-
-                default:
-                    throw new IOException("Unknown filter " + filter);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * We have to remove 'ptype' query param from factorUrl in queries. Because old factoryUrl had different structures
-     * in different events. So, just try to meet them the same requirements.
-     */
-    private String removeProjectTypeParamFromFactoryUrl(String factoryUrl) {
-        StringBuilder builder = new StringBuilder();
-
-        for (String factory : factoryUrl.split(",")) {
-            if (builder.length() > 0) {
-                builder.append(",");
-            }
-
-            builder.append(CutQueryParam.doCut(factory, "ptype"));
-        }
-
-        return builder.toString();
-    }
+////                    MetricFactory.getMetric(MT.FA)
+////                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
+////                                                             .getValue(context)).getAll();
+////                case WS:
+////                case USERS:
+////                case PROJECT_TYPE:
+////                case REPOSITORY_URL:
+////                    SetStringValueData factoryUrl =
+////                            (SetStringValueData)MetricFactory.createMetric(MetricType.SET_FACTORY_CREATED)
+////                                                             .getValue(context);
+////
+////                    context = Utils.cloneAndClearFilters(context);
+////                    MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrl.getAll().toString()));
+////
+////                    context = removePTypeParamFromFactoryUrl(context);
+////
+////                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
+////                                                             .getValue(context)).getAll();
+//
+//                default:
+//                    throw new IOException("Unknown filter " + filter);
+//            }
+//        }
+//
+//        return null;
+//    }
+//
+//    /**
+//     * We have to remove 'ptype' query param from factorUrl in queries. Because old factoryUrl had different
+// structures
+//     * in different events. So, just try to meet them the same requirements.
+//     */
+//    private String removeProjectTypeParamFromFactoryUrl(String factoryUrl) {
+//        StringBuilder builder = new StringBuilder();
+//
+//        for (String factory : factoryUrl.split(",")) {
+//            if (builder.length() > 0) {
+//                builder.append(",");
+//            }
+//
+//            builder.append(CutQueryParam.doCut(factory, "ptype"));
+//        }
+//
+//        return builder.toString();
+//    }
 
     /**
      * Returns the sequences of operations upon data have been retrieved out of storage.
@@ -195,11 +216,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                                  getSpecificDBOperations(clauses));
     }
 
-    /**
-     * Provides sorting and pagination support.
-     *
-     * @return basic DB operations
-     */
+    /** Provides basic DB operations: sorting and pagination. */
     private DBObject[] getBasicDBOperations(Map<String, String> clauses) {
         boolean sortExists = Parameters.SORT.exists(clauses);
         boolean pageExists = Parameters.PAGE.exists(clauses);
@@ -237,5 +254,6 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     /** @return DB operations specific for given metric */
     protected abstract DBObject[] getSpecificDBOperations(Map<String, String> clauses);
+
 }
 

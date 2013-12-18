@@ -23,7 +23,7 @@ if (user != null) {
     queryParams["domain"] = domain;
 
 } else if (company != null) {
-    queryParams["company"] = company;
+    queryParams["user_company"] = company;
 }
 
 loadCssStyles();
