@@ -49,16 +49,16 @@ import java.util.regex.Pattern;
  */
 public class PigServer {
 
-    /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PigServer.class);
 
-    private static final String              LOGS_DIR    = Configurator.getString("analytics.logs.dir");
-    private static final String              SCRIPTS_DIR = Configurator.getString("pig.scripts.dir");
-    private static final String              BIN_DIR     = Configurator.getString("pig.bin.dir");
-    private static final boolean             EMBEDDED    = Configurator.getBoolean("pig.embedded");
-    private static final Map<String, String> PROPERTIES  = Configurator.getAll("pig.property");
+    private static final String              LOGS_DIR        = Configurator.getString("analytics.logs.dir");
+    private static final String              SCRIPTS_DIR     = Configurator.getString("pig.scripts.dir");
+    private static final String              BIN_DIR         = Configurator.getString("pig.bin.dir");
+    private static final boolean             EMBEDDED        = Configurator.getBoolean("pig.embedded");
+    private static final Map<String, String> PROPERTIES      = Configurator.getAll("pig.property");
+    private static final Calendar            OLD_SCRIPT_DATE = Calendar.getInstance();
 
-    private static final Calendar OLD_SCRIPT_DATE = Calendar.getInstance();
+    private static org.apache.pig.PigServer server;
 
     static {
         try {
@@ -68,9 +68,7 @@ public class PigServer {
         }
 
         if (EMBEDDED) {
-            for (Map.Entry<String, String> entry : Configurator.getAll("pig.embedded.property").entrySet()) {
-                System.setProperty(entry.getKey(), entry.getValue());
-            }
+            initEmbeddedServer();
         } else {
             try {
                 checkIfMongoIsStarted();
@@ -80,12 +78,34 @@ public class PigServer {
         }
     }
 
+    private static void initEmbeddedServer() {
+        for (Map.Entry<String, String> entry : Configurator.getAll("pig.embedded.property").entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
+        }
+
+        try {
+            server = initializeServer();
+            server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                LOG.info("Embedded PigServer is shutting down");
+                server.shutdown();
+            }
+        });
+    }
+
     private static void checkIfMongoIsStarted() throws IOException {
         MongoDataStorage.openConnection().close();
     }
 
     /**
-     * Run the script. Mostly for testing purpose.
+     * Run the script.
      *
      * @param scriptType
      *         specific script type to execute
@@ -115,16 +135,13 @@ public class PigServer {
     }
 
     private static void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context) throws IOException {
-        org.apache.pig.PigServer server = initializeServer();
-
         String script = readScriptContent(scriptType, context);
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
-            server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-            server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            server.setBatchOn();
             server.registerScript(scriptContent, context);
+            server.executeBatch();
         } finally {
-            server.shutdown();
             LOG.info("Execution " + scriptType + " has finished");
         }
     }
@@ -181,7 +198,7 @@ public class PigServer {
             builder.append("-param ");
             builder.append(entry.getKey());
             builder.append("=");
-            builder.append("'").append(entry.getValue()).append("'");
+            builder.append(entry.getValue());
         }
 
         builder.append(' ');
