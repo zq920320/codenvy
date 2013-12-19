@@ -161,7 +161,7 @@
 
                 if (isWebsocketEnabled()){
                     var loginUrl = "/site/api/user/authenticate";
-                    var successUrl = "../site/private/select-tenant?" + window.location.search.substring(1);
+                    var successUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
                     var data = {username: email, password: password};
                  $.ajax({
                     url : loginUrl,
@@ -185,7 +185,7 @@
 
             createTenant : function(email,domain,success,error){
                 var data = {email: email.toLowerCase(), workspacename: domain.toLowerCase()};
-                var emailValidateUrl = "/site/rest/email/validate" + window.location.search.substring(1);
+                var emailValidateUrl = "/site/rest/email/validate?" + window.location.search.substring(1);
                 $.ajax({
                     url : emailValidateUrl,
                     type : "POST",
