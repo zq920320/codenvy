@@ -52,7 +52,7 @@
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
                     <button class="btn">Email</button>
                     <button class="btn">First Name</button>
-                    <button class="btn">Second Name</button>                
+                    <button class="btn">Last Name</button>                
                     <button class="btn">Company</button>
                     <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>
                 </div>

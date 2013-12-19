@@ -203,27 +203,35 @@ function loadDashboardWidget(gadgetUrl, widgetId, isNeedToSaveInHistory) {
       return;
    }
 
-   var params = extractUrlParams(window.location.href);
+   var div = jQuery("#" + widgetId);
    
+   var params = extractUrlParams(window.location.href);
+
+   updateCommandButtonsState(params);
+      
    if (params != null && Object.keys(params).length > 0) {
       var absUrlArray = window.location.href.split('?');
       var urlParamsString = absUrlArray[1];
 
-      var div = jQuery("#" + widgetId);
       var callback = function() {};
       if (typeof urlParamsString != "undefined") {
          gadgetUrl += "?" + urlParamsString;
+         
+         if (typeof isNeedToSaveInHistory != "undefined" && !isNeedToSaveInHistory) {
+            currentAjaxRequest = reloadThroughAjax(div, gadgetUrl);
+            return;
+         }
+         
       } else if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
          callback = function() {
             // rewrite page location to make it possible to navigate new url through the browser's history
             window.history.pushState({}, document.title, window.location.href);
          };
+         
+         currentAjaxRequest = reloadThroughAjax(div, gadgetUrl, callback);
       }
-      
-      currentAjaxRequest = reloadThroughAjax(div, gadgetUrl, callback);
    }
       
-   updateCommandButtonsState(params);
    
    if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
       // update div when navigating in history
