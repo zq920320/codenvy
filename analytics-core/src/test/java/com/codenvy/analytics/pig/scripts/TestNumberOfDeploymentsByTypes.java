@@ -194,9 +194,6 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         MetricFilter.USER.put(context, "user4@gmail.com");
         values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 0);
-
-        metric = new TestAbstractProjectPaas(new  String[]{"paas3"});
-        assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
     @Test

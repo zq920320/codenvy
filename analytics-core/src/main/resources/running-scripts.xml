@@ -108,7 +108,7 @@
         <parameter key="EVENT" value="file-manipulation"/>
         <parameter key="STORAGE_TABLE" value="file_manipulations"/>
     </script>
-    <script name="active_entities_list">
+    <script name="active_entities">
         <description>Active workspaces</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="PERSISTENT"/>
@@ -116,7 +116,7 @@
         <parameter key="PARAM" value="ws"/>
         <parameter key="STORAGE_TABLE" value="active_workspaces_set"/>
     </script>
-    <script name="active_entities_list">
+    <script name="active_entities">
         <description>Active users</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
@@ -195,7 +195,7 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="created_users_from_factory"/>
     </script>
-    <script name="factory_created_list">
+    <script name="created_factories">
         <description>Created factories</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
@@ -241,19 +241,19 @@
         <description>Users' profiles</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="users_profiles"/>
+        <parameter key="STORAGE_TABLE" value="users_profiles_list"/>
     </script>
     <script name="users_statistics">
         <description>Users' statistics</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="users_statistics"/>
+        <parameter key="STORAGE_TABLE" value="users_statistics_list"/>
     </script>
     <script name="users_activity">
         <description>Users' raw log</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="users_activity"/>
+        <parameter key="STORAGE_TABLE" value="users_activity_list"/>
     </script>
 </scripts>
 

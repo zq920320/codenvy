@@ -27,8 +27,6 @@ import java.util.Map;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public abstract class AbstractProjectPaas extends ReadBasedMetric {
 
-    public static final String VALUE            = "value";
-
     private final String[] types;
 
     protected AbstractProjectPaas(String metricName, String[] types) {
@@ -56,7 +54,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{VALUE};
+        return types;
     }
 
     @Override

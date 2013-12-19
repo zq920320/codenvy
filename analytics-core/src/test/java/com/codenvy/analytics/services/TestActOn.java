@@ -56,7 +56,7 @@ public class TestActOn extends BaseTest {
         Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
 
         Parameters.STORAGE_TABLE.put(context, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
-        PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, context);
+        PigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USER_UPDATE_PROFILE, context);
@@ -71,7 +71,7 @@ public class TestActOn extends BaseTest {
         Parameters.TO_DATE.put(context, "20131102");
 
         Parameters.STORAGE_TABLE.put(context, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
-        PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, context);
+        PigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USER_UPDATE_PROFILE, context);

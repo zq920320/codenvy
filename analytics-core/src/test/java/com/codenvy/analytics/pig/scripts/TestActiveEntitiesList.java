@@ -71,7 +71,7 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testsetofactiveentities");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, params);
+        PigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
@@ -92,12 +92,12 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.ACTIVE_ENTITIES_LIST, params);
+        PigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
     }
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.ACTIVE_ENTITIES_LIST, params);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.ACTIVE_ENTITIES, params);
 
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();

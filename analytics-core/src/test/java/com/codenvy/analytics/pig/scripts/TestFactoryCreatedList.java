@@ -71,12 +71,12 @@ public class TestFactoryCreatedList extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testfactorycreatedlist");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.FACTORY_CREATED_LIST, params);
+        PigServer.execute(ScriptType.CREATED_FACTORIES, params);
     }
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.FACTORY_CREATED_LIST, params);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.CREATED_FACTORIES, params);
 
         assertTrue(iterator.hasNext());
         Tuple tuple = iterator.next();
