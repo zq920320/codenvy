@@ -17,25 +17,6 @@
  */
 package com.codenvy.analytics.storage;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.URI;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.metrics.Parameters;
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
-
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -46,6 +27,21 @@ import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.RuntimeConfig;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
+
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.metrics.Parameters;
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.*;
+import java.util.Map;
 
 /**
  * Utility class. Provides connection with underlying storage.
@@ -59,34 +55,58 @@ public class MongoDataStorage {
     private static final String  URL      = Configurator.getString("analytics.storage.url");
     private static final boolean EMBEDDED = Configurator.getBoolean("analytics.storage.embedded");
 
-    private static final MongoClientURI clientURI;
-    private static       MongodProcess  mongodProcess;
+    private static final MongoClientURI uri;
+    private static final MongoClient    client;
+
+    private static MongodProcess embeddedMongoProcess;
 
     static {
-        clientURI = new MongoClientURI(URL);
+        uri = new MongoClientURI(URL);
 
         if (EMBEDDED) {
             initEmbeddedStorage();
         }
+
+        try {
+            client = initializeClient();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+
+    /** Singleton client. Don't close after usage. */
+    public static MongoClient getClient() throws IOException {
+        return client;
     }
 
     /**
-     * Initialize Mongo client. Should be closed after usage.
+     * Initialize Mongo client.
      *
      * @throws IOException
      */
-    public static MongoClient openConnection() throws IOException {
-        MongoClient mongoClient = new MongoClient(clientURI);
+    private static MongoClient initializeClient() throws IOException {
+        final MongoClient mongoClient = new MongoClient(uri);
         try {
-            DB db = mongoClient.getDB(clientURI.getDatabase());
+            DB db = mongoClient.getDB(uri.getDatabase());
 
-            if (isAuthRequired(clientURI)) {
-                db.authenticate(clientURI.getUsername(), clientURI.getPassword());
+            if (isAuthRequired(uri)) {
+                db.authenticate(uri.getUsername(), uri.getPassword());
             }
         } catch (Exception e) {
             mongoClient.close();
             throw new IOException(e);
         }
+
+        LOG.info("Mongo client connected to server");
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                mongoClient.close();
+                LOG.info("Mongo client disconnected from server");
+            }
+        });
 
         return mongoClient;
     }
@@ -100,26 +120,25 @@ public class MongoDataStorage {
         return clientURI.getUsername() != null && !clientURI.getUsername().isEmpty();
     }
 
-
     public static DataLoader createdDataLoader() {
         try {
-            return new MongoDataLoader(openConnection());
+            return new MongoDataLoader(getClient());
         } catch (MongoException | IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
     public static void putStorageParameters(Map<String, String> context) {
-        if (clientURI.getUsername() == null) {
-            Parameters.STORAGE_URL.put(context, clientURI.toString());
+        if (uri.getUsername() == null) {
+            Parameters.STORAGE_URL.put(context, uri.toString());
             Parameters.STORAGE_USER.put(context, "''");
             Parameters.STORAGE_PASSWORD.put(context, "''");
         } else {
-            String password = new String(clientURI.getPassword());
-            String serverUrlNoPassword = clientURI.toString().replace(clientURI.getUsername() + ":" +
-                                                                      password + "@", "");
+            String password = new String(uri.getPassword());
+            String serverUrlNoPassword = uri.toString().replace(uri.getUsername() + ":" +
+                                                                password + "@", "");
             Parameters.STORAGE_URL.put(context, serverUrlNoPassword);
-            Parameters.STORAGE_USER.put(context, clientURI.getUsername());
+            Parameters.STORAGE_USER.put(context, uri.getUsername());
             Parameters.STORAGE_PASSWORD.put(context, password);
         }
     }
@@ -133,7 +152,7 @@ public class MongoDataStorage {
         if (!dirTemp.exists() && !dirTemp.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + dirTemp.getAbsolutePath());
         }
-        
+
         File databaseDir = new File(Configurator.getTmpDir(), "embedded-mongoDb-database");
         if (!databaseDir.exists() && !databaseDir.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + databaseDir.getAbsolutePath());
@@ -143,14 +162,14 @@ public class MongoDataStorage {
 
         RuntimeConfig config = new RuntimeConfig();
         config.setTempDirFactory(new FixedPath(dirTemp.getAbsolutePath()));
-        
+
         Net net = new Net(null, 12000, false);
         Storage storage = new Storage(databaseDir.getAbsolutePath(), null, 0);
-        
+
         MongodStarter starter = MongodStarter.getInstance(config);
         MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, net, storage, new Timeout()));
         try {
-            mongodProcess = mongoExe.start();
+            embeddedMongoProcess = mongoExe.start();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -161,7 +180,7 @@ public class MongoDataStorage {
             @Override
             public void run() {
                 LOG.info("Embedded MongoDB is shutting down");
-                mongodProcess.stop();
+                embeddedMongoProcess.stop();
             }
         });
     }
@@ -172,18 +191,16 @@ public class MongoDataStorage {
      */
     private static boolean isStarted() {
         try {
-            Socket sock = new Socket();
-            try {
+            try (Socket sock = new Socket()) {
                 URI url = new URI(URL);
+
+                int timeout = 500;
                 InetAddress addr = InetAddress.getByName(url.getHost());
                 SocketAddress sockaddr = new InetSocketAddress(addr, url.getPort());
-                int timeout = 500;   
-                sock.connect(sockaddr, timeout);
 
-            } finally {
-                sock.close();
+                sock.connect(sockaddr, timeout);
             }
-            
+
         } catch (Throwable e) {
             return false;
         }

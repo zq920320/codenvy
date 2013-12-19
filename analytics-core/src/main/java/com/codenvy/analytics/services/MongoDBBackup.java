@@ -67,10 +67,10 @@ public class MongoDBBackup implements Feature {
     }
 
     private void doExecute() throws IOException {
-        LOG.info("MongoDBBackup is started ");
+        LOG.info("MongoDBBackup is started");
         long start = System.currentTimeMillis();
 
-        MongoClient mongoClient = MongoDataStorage.openConnection();
+        MongoClient mongoClient = MongoDataStorage.getClient();
         try {
             DB db = MongoDataStorage.getUsedDB(mongoClient);
 
@@ -81,8 +81,7 @@ public class MongoDBBackup implements Feature {
                 backup(src, dst);
             }
         } finally {
-            mongoClient.close();
-            LOG.info("MongoDBBackup was finished  in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            LOG.info("MongoDBBackup is finished  in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 

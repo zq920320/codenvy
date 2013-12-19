@@ -101,7 +101,7 @@ public class PigServer {
     }
 
     private static void checkIfMongoIsStarted() throws IOException {
-        MongoDataStorage.openConnection().close();
+        MongoDataStorage.getClient();
     }
 
     /**

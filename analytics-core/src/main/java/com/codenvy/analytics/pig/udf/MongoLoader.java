@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
+import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.*;
 
 import org.apache.hadoop.conf.Configuration;
@@ -39,7 +40,7 @@ import java.util.List;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoLoader extends LoadFunc implements LoadMetadata {
 
-    public static final String SERVER_URL_PARAM      = "server.url";
+    public static final String SERVER_URL_PARAM = "server.url";
 
     private final String user;
     private final String password;
@@ -161,13 +162,9 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
 
         public MongoReader(String location) throws IOException {
             MongoClientURI uri = new MongoClientURI(location);
-            mongoClient = new MongoClient(uri);
+            MongoClient mongoClient = MongoDataStorage.getClient();
 
-            DB db = mongoClient.getDB(uri.getDatabase());
-            if (uri.getUsername() != null && !uri.getUsername().isEmpty()) {
-                db.authenticate(uri.getUsername(), uri.getPassword());
-            }
-
+            DB db = MongoDataStorage.getUsedDB(mongoClient);
             dbCursor = db.getCollection(uri.getCollection()).find();
         }
 
@@ -194,12 +191,12 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
 
         @Override
         public float getProgress() throws IOException, InterruptedException {
-            return progress / dbCursor.size();
+            int size = dbCursor.size();
+            return size == 0 ? 0 : progress / dbCursor.size();
         }
 
         @Override
         public void close() throws IOException {
-            mongoClient.close();
         }
     }
 

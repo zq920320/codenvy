@@ -37,7 +37,7 @@ public class TestMongoDBBackup extends BaseTest {
     public void prepare() throws Exception {
         collectionNames = new String[]{"test1_statistics", "test2_statistics"};
 
-        MongoClient mongoClient = MongoDataStorage.openConnection();
+        MongoClient mongoClient = MongoDataStorage.getClient();
         DB db = MongoDataStorage.getUsedDB(mongoClient);
 
         for (String collectionName : collectionNames) {
@@ -49,21 +49,17 @@ public class TestMongoDBBackup extends BaseTest {
                 dbCollection.insert(dbObject);
             }
         }
-
-        mongoClient.close();
     }
 
     @AfterClass
     public void tearDown() throws Exception {
-        MongoClient mongoClient = MongoDataStorage.openConnection();
+        MongoClient mongoClient = MongoDataStorage.getClient();
         DB db = MongoDataStorage.getUsedDB(mongoClient);
 
         for (String collectionName : collectionNames) {
             db.getCollection(collectionName).drop();
             db.getCollection(collectionName + MongoDBBackup.BACKUP_SUFFIX).drop();
         }
-
-        mongoClient.close();
     }
 
     @Test
@@ -71,7 +67,7 @@ public class TestMongoDBBackup extends BaseTest {
         MongoDBBackup job = new MongoDBBackup();
         job.forceExecute(null);
 
-        MongoClient mongoClient = MongoDataStorage.openConnection();
+        MongoClient mongoClient = MongoDataStorage.getClient();
         DB db = MongoDataStorage.getUsedDB(mongoClient);
 
         // check
@@ -103,7 +99,5 @@ public class TestMongoDBBackup extends BaseTest {
             assertEquals(1050, db.getCollection(collectionName).count());
             assertEquals(1050, db.getCollection(collectionName + MongoDBBackup.BACKUP_SUFFIX).count());
         }
-
-        mongoClient.close();
     }
 }

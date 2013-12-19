@@ -28,7 +28,6 @@ import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.*;
 
 import org.apache.pig.data.Tuple;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -42,10 +41,9 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestMongoStorage extends BaseTest {
 
-    private Map<String, String> params = new HashMap<>();
-    private MongoClient  mongoClient;
     private DBCollection dbCollection;
     private DBCollection dbCollectionRaw;
+    private Map<String, String> params = new HashMap<>();
 
     @BeforeClass
     public void prepare() throws IOException {
@@ -65,15 +63,9 @@ public class TestMongoStorage extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testmongostorage");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        mongoClient = MongoDataStorage.openConnection();
-        DB db = MongoDataStorage.getUsedDB(mongoClient);
+        DB db = MongoDataStorage.getUsedDB(MongoDataStorage.getClient());
         dbCollection = db.getCollection("testmongostorage");
         dbCollectionRaw = db.getCollection("testmongostorage-raw");
-    }
-
-    @AfterClass
-    public void cleanup() throws IOException {
-        mongoClient.close();
     }
 
     @Test

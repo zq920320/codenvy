@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
+import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.*;
 
 import org.apache.hadoop.conf.Configuration;
@@ -96,18 +97,11 @@ public class MongoStorage extends StoreFunc {
         /** Collection to write data in. */
         protected DBCollection dbCollection;
 
-        /** Mongo client. Have to be closed. */
-        protected MongoClient mongoClient;
-
         public MongoWriter(Configuration configuration) throws IOException {
             MongoClientURI uri = new MongoClientURI(configuration.get(SERVER_URL_PARAM));
-            mongoClient = new MongoClient(uri);
+            MongoClient mongoClient = MongoDataStorage.getClient();
 
-            DB db = mongoClient.getDB(uri.getDatabase());
-            if (uri.getUsername() != null && !uri.getUsername().isEmpty()) {
-                db.authenticate(uri.getUsername(), uri.getPassword());
-            }
-
+            DB db = MongoDataStorage.getUsedDB(mongoClient);
             db.setWriteConcern(WriteConcern.ACKNOWLEDGED);
 
             this.dbCollection = db.getCollection(uri.getCollection());
@@ -132,7 +126,6 @@ public class MongoStorage extends StoreFunc {
         /** {@inheritDoc) */
         @Override
         public void close(TaskAttemptContext context) throws IOException, InterruptedException {
-            mongoClient.close();
         }
     }
 
