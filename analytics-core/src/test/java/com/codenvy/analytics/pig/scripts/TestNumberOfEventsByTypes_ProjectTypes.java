@@ -213,7 +213,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
     private class TestProjectTypes extends ProjectTypes {
         @Override
         public String getStorageTableBaseName() {
-            return "testnumberofeventsbytypessimplevaluedata";
+            return "testnumberofeventsbytypes_projecttypes";
         }
     }
 
