@@ -18,15 +18,15 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveWorkspacesList extends AbstractSetValueResulted {
+public class ActiveUsersSet extends AbstractSetValueResulted {
 
-    public ActiveWorkspacesList() {
-        super(MetricType.ACTIVE_WORKSPACES_LIST);
+    public ActiveUsersSet() {
+        super(MetricType.ACTIVE_USERS_SET);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Active workspaces list";
+        return "Active users list";
     }
 }

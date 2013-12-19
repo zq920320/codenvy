@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class CreatedFactories extends AbstractActiveEntities {
 
     public CreatedFactories() {
-        super(MetricType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_LIST);
+        super(MetricType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_SET);
     }
 
     @Override

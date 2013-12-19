@@ -18,14 +18,19 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class BuildsTime extends AbstractTimeSpentInAction {
+public class CreatedFactoriesSet extends AbstractSetValueResulted {
 
-    public BuildsTime() {
-        super(MetricType.BUILDS_TIME);
+    public CreatedFactoriesSet() {
+        super(MetricType.CREATED_FACTORIES_SET);
     }
 
     @Override
     public String getDescription() {
-        return "The total time of all builds in minutes";
+        return "The list of created factories.";
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageFactorySessionsList.FACTORY};
     }
 }

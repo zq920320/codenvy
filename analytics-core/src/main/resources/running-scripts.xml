@@ -114,7 +114,7 @@
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="*"/>
         <parameter key="PARAM" value="ws"/>
-        <parameter key="STORAGE_TABLE" value="active_workspaces_list"/>
+        <parameter key="STORAGE_TABLE" value="active_workspaces_set"/>
     </script>
     <script name="active_entities_list">
         <description>Active users</description>
@@ -122,7 +122,7 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="*"/>
         <parameter key="PARAM" value="user"/>
-        <parameter key="STORAGE_TABLE" value="active_users_list"/>
+        <parameter key="STORAGE_TABLE" value="active_users_set"/>
     </script>
     <script name="number_of_events_by_types">
         <description>Project created by types</description>
@@ -199,7 +199,7 @@
         <description>Created factories</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="created_factories_list"/>
+        <parameter key="STORAGE_TABLE" value="created_factories_set"/>
     </script>
     <script name="number_of_events">
         <description>The number of created temporary workspaces</description>

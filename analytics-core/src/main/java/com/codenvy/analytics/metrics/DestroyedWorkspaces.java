@@ -26,7 +26,6 @@ public class DestroyedWorkspaces extends AbstractLongValueResulted {
         super(MetricType.DESTROYED_WORKSPACES);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of destroyed persistent workspaces";

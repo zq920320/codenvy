@@ -199,7 +199,7 @@ public class ActOn implements Feature {
         Parameters.TO_DATE.putDefaultValue(context);
         Utils.putFromDate(context, calendar);
 
-        Metric activeUsersList = MetricFactory.getMetric(MetricType.ACTIVE_USERS_LIST);
+        Metric activeUsersList = MetricFactory.getMetric(MetricType.ACTIVE_USERS_SET);
         SetValueData valueData = (SetValueData)activeUsersList.getValue(context);
 
         return valueData.getAll();

@@ -19,10 +19,6 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -121,44 +117,5 @@ public class TestNumberOfFactorySessionsAndEvent extends BaseTest {
         assertEquals(tuple.get(1).toString(), "(value,1)");
 
         assertFalse(iterator.hasNext());
-    }
-
-    @Test
-    public void testSingleDateFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-
-        Metric metric = new TestLongValuedMetric();
-        assertEquals(metric.getValue(context), new LongValueData(1));
-    }
-
-    @Test
-    public void testUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.WS.put(context, "tmp-1");
-
-        Metric metric = new TestLongValuedMetric();
-        assertEquals(metric.getValue(context), new LongValueData(1));
-
-        MetricFilter.WS.put(context, "tmp-2");
-
-        metric = new TestLongValuedMetric();
-        assertEquals(metric.getValue(context), new LongValueData(0));
-    }
-
-
-    private class TestLongValuedMetric extends AbstractLongValueResulted {
-
-        private TestLongValuedMetric() {
-            super("testnumberoffactorysessionsandevent");
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }

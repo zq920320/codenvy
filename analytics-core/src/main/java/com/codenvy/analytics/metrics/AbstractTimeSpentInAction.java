@@ -17,16 +17,31 @@
  */
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActiveUsersList extends AbstractSetValueResulted {
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-    public ActiveUsersList() {
-        super(MetricType.ACTIVE_USERS_LIST);
+import java.io.IOException;
+import java.util.Map;
+
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public abstract class AbstractTimeSpentInAction extends AbstractLongValueResulted {
+
+    public AbstractTimeSpentInAction(MetricType metricType) {
+        super(metricType);
     }
 
-    /** {@inheritDoc} */
+    public AbstractTimeSpentInAction(String metricName) {
+        super(metricName);
+    }
+
     @Override
-    public String getDescription() {
-        return "Active users list";
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        LongValueData valueData = (LongValueData)super.getValue(context);
+        return new LongValueData(valueData.getAsLong() / 60);
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageSessionsList.TIME};
     }
 }

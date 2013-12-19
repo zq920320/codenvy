@@ -22,9 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ProjectPaases;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -46,12 +44,10 @@ import static org.testng.Assert.*;
 public class TestNumberOfDeploymentsByTypes extends BaseTest {
 
     private Map<String, String> params;
-    private TestProjectPaases   metric;
 
     @BeforeClass
     public void init() throws IOException {
         params = Utils.newContext();
-        metric = new TestProjectPaases();
 
         List<Event> events = new ArrayList<>();
 
@@ -161,6 +157,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
+        Metric metric = new TestProjectPaases();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 3);
         assertEquals(values.get("local"), new LongValueData(1));
@@ -173,6 +170,8 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
+
+        Metric metric = new TestProjectPaases();
 
         MetricFilter.USER.put(context, "user1@gmail.com");
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
@@ -195,6 +194,9 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         MetricFilter.USER.put(context, "user4@gmail.com");
         values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 0);
+
+        metric = new TestAbstractProjectPaas(new  String[]{"paas3"});
+        assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
     @Test
@@ -205,10 +207,14 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
         MetricFilter.WS.put(context, "ws3");
 
+        Metric metric = new TestProjectPaases();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 2);
         assertEquals(values.get("paas1"), new LongValueData(1));
         assertEquals(values.get("paas3"), new LongValueData(1));
+
+        metric = new TestAbstractProjectPaas(new  String[]{"paas1"});
+        assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
     private class TestProjectPaases extends ProjectPaases {
@@ -221,6 +227,23 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         @Override
         public String[] getTrackedFields() {
             return new String[]{"paas1", "pass2", "paas3", "local"};
+        }
+    }
+
+    private class TestAbstractProjectPaas extends AbstractProjectPaas {
+
+        protected TestAbstractProjectPaas(String[] types) {
+            super("testnumberofdeploymentsbytypes", types);
+        }
+
+        @Override
+        public String getStorageTableBaseName() {
+            return "testnumberofdeploymentsbytypes";
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
         }
     }
 }

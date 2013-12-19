@@ -22,7 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.CreatedFactoriesList;
+import com.codenvy.analytics.metrics.CreatedFactoriesSet;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
@@ -141,7 +141,7 @@ public class TestFactoryCreatedList extends BaseTest {
                      new SetValueData(Arrays.<ValueData>asList(new StringValueData("factory3"))));
     }
 
-    public class TestSetValueResulted extends CreatedFactoriesList {
+    public class TestSetValueResulted extends CreatedFactoriesSet {
 
         @Override
         public String getStorageTableBaseName() {

@@ -19,9 +19,6 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -43,12 +40,10 @@ import static org.testng.Assert.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfUsersFromFactory extends BaseTest {
 
-    private TestLongValueResulted metric;
     private Map<String, String>   params;
 
     @BeforeClass
     public void prepare() throws IOException {
-        metric = new TestLongValueResulted();
         params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
@@ -93,65 +88,5 @@ public class TestNumberOfUsersFromFactory extends BaseTest {
         assertEquals(tuple.get(1).toString(), "(value,1)");
 
         assertFalse(iterator.hasNext());
-    }
-
-    @Test
-    public void testSingleDateFilterSingleParam() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-
-        assertEquals(metric.getValue(context), new LongValueData(1L));
-    }
-
-    @Test
-    public void testSingleDateFilterDoubleParam() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130102");
-        Parameters.TO_DATE.put(context, "20130102");
-
-        assertEquals(metric.getValue(context), new LongValueData(0L));
-    }
-
-    @Test
-    public void testSingleUserFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user4@gmail.com");
-
-        assertEquals(metric.getValue(context), new LongValueData(1L));
-    }
-
-    @Test
-    public void testSingleUserFilterShouldReturnZero() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130102");
-        MetricFilter.USER.put(context, "user2@gmail.com");
-
-        assertEquals(metric.getValue(context), new LongValueData(0L));
-    }
-
-    @Test
-    public void testNonExistedFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130101");
-        Parameters.TO_DATE.put(context, "20130101");
-        MetricFilter.WS.put(context, "ws1");
-
-        assertEquals(metric.getValue(context), new LongValueData(0L));
-    }
-
-    private class TestLongValueResulted extends AbstractLongValueResulted {
-
-        private TestLongValueResulted() {
-            super("testnumberofusersfromfactory");
-        }
-
-        @Override
-        public String getDescription() {
-            return null;
-        }
     }
 }

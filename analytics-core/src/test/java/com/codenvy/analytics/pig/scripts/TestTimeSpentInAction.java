@@ -22,10 +22,10 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.metrics.AbstractTimeSpentInAction;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.RunsTime;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -165,11 +165,20 @@ public class TestTimeSpentInAction extends BaseTest {
         Assert.assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
-    private class TestLongValueResulted extends RunsTime {
+    private class TestLongValueResulted extends AbstractTimeSpentInAction {
+
+        public TestLongValueResulted() {
+            super("testtimespentinaction");
+        }
 
         @Override
         public String getStorageTableBaseName() {
             return "testtimespentinaction";
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
         }
     }
 }

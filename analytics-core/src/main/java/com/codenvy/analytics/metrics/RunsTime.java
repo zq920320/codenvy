@@ -17,28 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.io.IOException;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class RunsTime extends AbstractLongValueResulted {
+public class RunsTime extends AbstractTimeSpentInAction {
 
     public RunsTime() {
         super(MetricType.RUNS_TIME);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData valueData = (LongValueData)super.getValue(context);
-        return new LongValueData(valueData.getAsLong() / 60);
-    }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{ProductUsageSessionsList.TIME};
     }
 
     @Override

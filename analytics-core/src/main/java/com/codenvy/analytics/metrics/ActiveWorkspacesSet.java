@@ -18,19 +18,15 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CreatedFactoriesList extends AbstractSetValueResulted {
+public class ActiveWorkspacesSet extends AbstractSetValueResulted {
 
-    public CreatedFactoriesList() {
-        super(MetricType.CREATED_FACTORIES_LIST);
+    public ActiveWorkspacesSet() {
+        super(MetricType.ACTIVE_WORKSPACES_SET);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The list of created factories.";
-    }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.FACTORY};
+        return "Active workspaces list";
     }
 }
