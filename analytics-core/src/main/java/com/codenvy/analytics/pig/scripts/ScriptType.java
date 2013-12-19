@@ -66,7 +66,7 @@ public enum ScriptType {
         }
     },
     FACTORY_CREATED_LIST,
-    FACTORY_ACCEPTED_LIST,
+    ACCEPTED_FACTORIES,
     PRODUCT_USAGE_FACTORY_SESSIONS {
         @Override
         public Set<Parameters> getParams() {

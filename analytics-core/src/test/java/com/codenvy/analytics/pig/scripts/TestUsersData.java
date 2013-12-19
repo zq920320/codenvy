@@ -108,7 +108,7 @@ public class TestUsersData extends BaseTest {
     public void testSingleProfile() throws Exception {
         Map<String, String> context = Utils.newContext();
 
-        Metric metric = new TestUsersStatistics();
+        Metric metric = new TestUsersStatisticsList();
         ListValueData value = (ListValueData)metric.getValue(context);
 
         assertEquals(value.size(), 4);
@@ -232,13 +232,13 @@ public class TestUsersData extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "company1");
 
-        TestUsersStatistics metric = new TestUsersStatistics();
+        TestUsersStatisticsList metric = new TestUsersStatisticsList();
         ListValueData valueData = (ListValueData)metric.getValue(context);
 
         assertEquals(valueData.size(), 2);
     }
 
-    public class TestUsersTimeInWorkspaces extends UsersTimeInWorkspaces {
+    private class TestUsersTimeInWorkspaces extends UsersTimeInWorkspaces {
 
         @Override
         public String getStorageTableBaseName() {
@@ -246,7 +246,7 @@ public class TestUsersData extends BaseTest {
         }
     }
 
-    public class TestUsersStatistics extends UsersStatisticsList {
+    private class TestUsersStatisticsList extends UsersStatisticsList {
 
         @Override
         public String getStorageTableBaseName() {

@@ -74,7 +74,7 @@ public class TestUsersActivity extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestListValueResulted();
+        Metric metric = new TestUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
 
         assertEquals(value.size(), 2);
@@ -83,14 +83,14 @@ public class TestUsersActivity extends BaseTest {
         Assert.assertEquals(metric.getValue(context).getAsString(), "2");
     }
 
-    public class TestNumberOfUsersOfActivity extends UsersActivity {
+    private class TestNumberOfUsersOfActivity extends UsersActivity {
         @Override
         public String getStorageTableBaseName() {
             return "testusersactivity";
         }
     }
 
-    public class TestListValueResulted extends UsersActivityList {
+    private class TestUsersActivityList extends UsersActivityList {
 
         @Override
         public String getStorageTableBaseName() {

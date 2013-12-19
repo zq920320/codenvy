@@ -77,7 +77,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions_factories");
         Parameters.LOG.put(params, log.getAbsolutePath());
-        PigServer.execute(ScriptType.FACTORY_ACCEPTED_LIST, params);
+        PigServer.execute(ScriptType.ACCEPTED_FACTORIES, params);
 
         Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions");

@@ -94,7 +94,6 @@ com.codenvy.analytics.metrics.CodeCompletions
 com.codenvy.analytics.metrics.FileManipulations
 
 com.codenvy.analytics.metrics.CreatedFactories
-com.codenvy.analytics.metrics.CreatedFactoriesList
 com.codenvy.analytics.metrics.CreatedTemporaryWorkspaces
 com.codenvy.analytics.metrics.FactorySessions
 com.codenvy.analytics.metrics.ProductUsageFactorySessionsList

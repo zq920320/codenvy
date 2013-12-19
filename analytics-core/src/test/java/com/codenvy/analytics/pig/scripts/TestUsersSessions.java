@@ -94,7 +94,7 @@ public class TestUsersSessions extends BaseTest {
         Parameters.TO_DATE.put(context, "20131101");
         MetricFilter.USER.put(context, "user@gmail.com");
 
-        Metric metric = new TestListValueResulted();
+        Metric metric = new TestProductUsageSessionsList();
 
         ListValueData valueData = (ListValueData)metric.getValue(context);
         assertEquals(1, valueData.size());
@@ -105,7 +105,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("session_id").getAsString(), "2");
         assertEquals(items.getAll().get("time").getAsString(), "300");
 
-        metric = new TestNumberOfUsersOfSessions();
+        metric = new TestProductUsageSessions();
         assertEquals(metric.getValue(context).getAsString(), "1");
     }
 
@@ -116,23 +116,23 @@ public class TestUsersSessions extends BaseTest {
         Parameters.TO_DATE.put(context, "20131101");
         MetricFilter.USER.put(context, "user@gmail");
 
-        Metric metric = new TestListValueResulted();
+        Metric metric = new TestProductUsageSessionsList();
 
         ListValueData valueData = (ListValueData)metric.getValue(context);
         assertEquals(0, valueData.size());
 
-        metric = new TestNumberOfUsersOfSessions();
+        metric = new TestProductUsageSessions();
         assertEquals(metric.getValue(context).getAsString(), "0");
     }
 
-    public class TestNumberOfUsersOfSessions extends ProductUsageSessions {
+    private class TestProductUsageSessions extends ProductUsageSessions {
         @Override
         public String getStorageTableBaseName() {
             return "testuserssessions-raw";
         }
     }
 
-    public class TestListValueResulted extends ProductUsageSessionsList {
+    private class TestProductUsageSessionsList extends ProductUsageSessionsList {
 
         @Override
         public String getStorageTableBaseName() {
