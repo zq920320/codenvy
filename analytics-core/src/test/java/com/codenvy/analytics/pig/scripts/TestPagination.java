@@ -78,7 +78,7 @@ public class TestPagination extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.SORT.put(context, "+_id");
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 5);
@@ -106,7 +106,7 @@ public class TestPagination extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.SORT.put(context, "-_id");
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 5);
@@ -136,7 +136,7 @@ public class TestPagination extends BaseTest {
         Parameters.PAGE.put(context, "1");
         Parameters.PER_PAGE.put(context, "1");
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
@@ -154,7 +154,7 @@ public class TestPagination extends BaseTest {
         Parameters.PAGE.put(context, "3");
         Parameters.PER_PAGE.put(context, "1");
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
@@ -172,7 +172,7 @@ public class TestPagination extends BaseTest {
         Parameters.PAGE.put(context, "5");
         Parameters.PER_PAGE.put(context, "1");
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
@@ -190,13 +190,13 @@ public class TestPagination extends BaseTest {
         Parameters.PAGE.put(context, "6");
         Parameters.PER_PAGE.put(context, "1");
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 0);
     }
 
-    public class TestUserProfile extends UsersProfilesList {
+    public class TestUsersProfilesList extends UsersProfilesList {
 
         @Override
         public String getStorageTableBaseName() {

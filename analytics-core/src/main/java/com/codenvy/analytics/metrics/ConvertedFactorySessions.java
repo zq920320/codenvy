@@ -17,24 +17,30 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.io.IOException;
-import java.util.Map;
+import com.codenvy.analytics.storage.MongoDataLoader;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ConvertedFactorySessions extends AbstractCount {
+public class ConvertedFactorySessions extends AbstractLongValueResulted {
 
     public ConvertedFactorySessions() {
-        super(MetricType.CONVERTED_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        super(MetricType.CONVERTED_FACTORY_SESSIONS);
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricFilter.CONVERTED_FACTORY_SESSION.put(context, "true");
-        return super.getValue(context);
+    public boolean isSupportMultipleTables() {
+        return false;
     }
 
+    @Override
+    public String getStorageTableBaseName() {
+        return MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.name().toLowerCase() +
+               MongoDataLoader.EXT_COLLECTION_NAME_SUFFIX;
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageFactorySessionsList.CONVERTED_SESSION};
+    }
 
     @Override
     public String getDescription() {

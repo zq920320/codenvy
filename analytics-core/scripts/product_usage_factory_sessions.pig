@@ -41,7 +41,7 @@ d1 = JOIN i BY user LEFT, c BY user;
 d = FOREACH d1 GENERATE i::dt AS dt, i::tmpWs AS tmpWs, (c::user IS NULL ? i::user : c::anomUser) AS user;
 
 s1 = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
-s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 'false' : 'true') AS auth;
+s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) AS auth;
 
 -- founds out the corresponding referrer and factoryUrl
 s3 = JOIN s2 BY tmpWs, u BY tmpWs;
@@ -53,9 +53,9 @@ s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
 
 s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factoryUrl AS factoryUrl, s4::referrer AS referrer,
                         s4::auth AS auth, s4::tmpWs AS ws, s4::user AS user,
-			            (d::tmpWs IS NULL ? 'false' :
-			                                (SecondsBetween(s4::dt, d::dt) < 0 AND SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 'true' :
-			                                                                                                                                                        'false' )) AS conv;
+			            (d::tmpWs IS NULL ? 0 :
+			                                (SecondsBetween(s4::dt, d::dt) < 0 AND SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 :
+			                                                                                                                                                        0 )) AS conv;
 
 result = FOREACH s GENERATE ToMilliSeconds(dt), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

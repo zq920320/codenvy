@@ -115,6 +115,15 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         Metric metric = new TestFactorySessionsProductUsageTotal();
         assertEquals(metric.getValue(context), new LongValueData(30));
+
+        metric = new TestFactorySessions();
+        assertEquals(metric.getValue(context), new LongValueData(3));
+
+        metric = new TestAuthenticatedFactorySessions();
+        assertEquals(metric.getValue(context), new LongValueData(2));
+
+        metric = new TestConvertedFactorySessions();
+        assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
     @Test
@@ -129,28 +138,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
     }
 
     @Test
-    public void testConvFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.CONVERTED_FACTORY_SESSION.put(context, "true");
-
-        Metric metric = new TestFactorySessionsProductUsageTotal();
-        assertEquals(metric.getValue(context), new LongValueData(5));
-    }
-
-    @Test
-    public void testAuthFilter() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.AUTHENTICATED_FACTORY_SESSION.put(context, "false");
-
-        Metric metric = new TestFactorySessionsProductUsageTotal();
-        assertEquals(metric.getValue(context), new LongValueData(15));
-    }
-
-    @Test
     public void testAbstractFactorySessions() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130210");
@@ -160,6 +147,13 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
+    private class TestFactorySessions extends FactorySessions {
+        @Override
+        public String getStorageTableBaseName() {
+            return "testproductusagefactorysessions";
+        }
+    }
+
     private class TestFactorySessionsProductUsageTotal extends FactorySessionsProductUsageTotal {
 
         @Override
@@ -167,6 +161,21 @@ public class TestProductUsageFactorySessions extends BaseTest {
             return "testproductusagefactorysessions";
         }
     }
+
+    private class TestAuthenticatedFactorySessions extends AuthenticatedFactorySessions {
+        @Override
+        public String getStorageTableBaseName() {
+            return "testproductusagefactorysessions-raw";
+        }
+    }
+
+    private class TestConvertedFactorySessions extends ConvertedFactorySessions {
+        @Override
+        public String getStorageTableBaseName() {
+            return "testproductusagefactorysessions-raw";
+        }
+    }
+
 
     private class TestAbstractFactorySessions extends AbstractFactorySessions {
 

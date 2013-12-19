@@ -183,11 +183,11 @@
     </script>
 
     <!-- Scripts for factory timeline -->
-    <script name="factory_accepted_list">
+    <script name="accepted_factories">
         <description>Accepted factories</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="STORAGE_TABLE" value="factory_accepted_list"/>
+        <parameter key="STORAGE_TABLE" value="accepted_factories_set"/>
     </script>
     <script name="number_of_users_from_factory">
         <description>The number of created users from factory</description>

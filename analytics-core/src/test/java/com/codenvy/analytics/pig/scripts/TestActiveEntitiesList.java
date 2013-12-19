@@ -126,7 +126,7 @@ public class TestActiveEntitiesList extends BaseTest {
         Metric metric = new TestSetValueResulted();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws2"))));
-        metric = new TestActiveUsersMetric();
+        metric = new TestActiveWorkspaces();
         assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
@@ -142,7 +142,7 @@ public class TestActiveEntitiesList extends BaseTest {
                                                                                          new StringValueData("ws3"),
                                                                                          new StringValueData("ws4"))));
 
-        metric = new TestActiveUsersMetric();
+        metric = new TestActiveWorkspaces();
         assertEquals(metric.getValue(context), new LongValueData(4));
     }
 
@@ -157,7 +157,7 @@ public class TestActiveEntitiesList extends BaseTest {
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws3"))));
 
-        metric = new TestActiveUsersMetric();
+        metric = new TestActiveWorkspaces();
         assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
@@ -173,7 +173,7 @@ public class TestActiveEntitiesList extends BaseTest {
                                                                                          new StringValueData("ws2"),
                                                                                          new StringValueData("ws3"))));
 
-        metric = new TestActiveUsersMetric();
+        metric = new TestActiveWorkspaces();
         assertEquals(metric.getValue(context), new LongValueData(3));
     }
 
@@ -188,7 +188,7 @@ public class TestActiveEntitiesList extends BaseTest {
         Metric metric = new TestSetValueResulted();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws2"))));
 
-        metric = new TestActiveUsersMetric();
+        metric = new TestActiveWorkspaces();
         assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
@@ -209,15 +209,10 @@ public class TestActiveEntitiesList extends BaseTest {
         }
     }
 
-    public class TestActiveUsersMetric extends AbstractActiveEntities {
-
-        public TestActiveUsersMetric() {
-            super("testsetofactiveentities", "testsetofactiveentities");
-        }
-
+    public class TestActiveWorkspaces extends ActiveWorkspaces {
         @Override
-        public String getDescription() {
-            return null;
+        public String getStorageTableBaseName() {
+            return "testsetofactiveentities";
         }
     }
 }

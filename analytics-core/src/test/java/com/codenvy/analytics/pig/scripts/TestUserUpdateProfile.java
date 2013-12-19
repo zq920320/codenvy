@@ -99,7 +99,7 @@ public class TestUserUpdateProfile extends BaseTest {
     public void testAllProfiles() throws Exception {
         Map<String, String> context = Utils.newContext();
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 4);
@@ -139,7 +139,7 @@ public class TestUserUpdateProfile extends BaseTest {
             }
         }
 
-        metric = new TestNumberOfProfiles();
+        metric = new TestUsersProfiles();
         assertEquals(metric.getValue(context).getAsString(), "4");
     }
 
@@ -148,7 +148,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER.put(context, "user1@gmail.com");
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
@@ -169,7 +169,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "company");
 
-        Metric metric = new TestUserProfile();
+        Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 2);
@@ -195,7 +195,7 @@ public class TestUserUpdateProfile extends BaseTest {
         }
     }
 
-    public class TestNumberOfProfiles extends UsersProfiles {
+    public class TestUsersProfiles extends UsersProfiles {
         @Override
         public String getStorageTableBaseName() {
             return "testuserupdateprofile";
@@ -203,7 +203,7 @@ public class TestUserUpdateProfile extends BaseTest {
     }
 
 
-    public class TestUserProfile extends UsersProfilesList {
+    public class TestUsersProfilesList extends UsersProfilesList {
 
         @Override
         public String getStorageTableBaseName() {

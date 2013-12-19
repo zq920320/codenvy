@@ -22,9 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.UsersAddedToWorkspaces;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -43,12 +41,10 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
 
-    private TestUsersAddedToWorkspaces metric;
 
     @BeforeClass
     public void init() throws IOException {
         Map<String, String> params = Utils.newContext();
-        metric = new TestUsersAddedToWorkspaces();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserAddedToWsEvent("user1@gmail.com", "ws1", "", "", "", "website")
@@ -83,10 +79,14 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130102");
         Parameters.TO_DATE.put(context, "20130102");
 
+        Metric metric = new TestUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 2);
         assertEquals(values.get("website"), new LongValueData(2));
         assertEquals(values.get("invite"), new LongValueData(1));
+
+        metric = new TestAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context).getAsString(), "2");
     }
 
     @Test
@@ -96,9 +96,13 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
+        Metric metric = new TestUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("website"), new LongValueData(1));
+
+        metric = new TestAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context).getAsString(), "1");
     }
 
     @Test
@@ -107,8 +111,12 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
+        Metric metric = new TestUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 0);
+
+        metric = new TestAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context).getAsString(), "0");
     }
 
     @Test
@@ -119,12 +127,34 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
         MetricFilter.WS.put(context, "ws1,ws2");
 
+        Metric metric = new TestUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 1);
         assertEquals(values.get("website"), new LongValueData(1));
+
+        metric = new TestAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context).getAsString(), "1");
     }
 
-    public class TestUsersAddedToWorkspaces extends UsersAddedToWorkspaces {
+
+    private class TestAbstractUsersAddedToWorkspaces extends AbstractUsersAddedToWorkspaces {
+
+        private TestAbstractUsersAddedToWorkspaces() {
+            super("testnumberofusersbytypes_usersaddedtoworkspaces", new String[]{"website"});
+        }
+
+        @Override
+        public String getStorageTableBaseName() {
+            return "testnumberofusersbytypes_usersaddedtoworkspaces";
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+    }
+
+    private class TestUsersAddedToWorkspaces extends UsersAddedToWorkspaces {
         @Override
         public String getStorageTableBaseName() {
             return "testnumberofusersbytypes_usersaddedtoworkspaces";

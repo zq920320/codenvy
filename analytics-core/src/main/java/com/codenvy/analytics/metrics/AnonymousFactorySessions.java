@@ -17,24 +17,32 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 import java.io.IOException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class AnonymousFactorySessions extends AbstractCount {
+public class AnonymousFactorySessions extends CalculatedMetric {
 
     public AnonymousFactorySessions() {
-        super(MetricType.ANONYMOUS_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+        super(MetricType.ANONYMOUS_FACTORY_SESSIONS, new MetricType[]{MetricType.FACTORY_SESSIONS,
+                                                                      MetricType.AUTHENTICATED_FACTORY_SESSIONS});
     }
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        MetricFilter.AUTHENTICATED_FACTORY_SESSION.put(context, "false");
-        return super.getValue(context);
+        LongValueData total = (LongValueData)basedMetric[0].getValue(context);
+        LongValueData auth = (LongValueData)basedMetric[1].getValue(context);
+
+        return new LongValueData(total.getAsLong() - auth.getAsLong());
     }
 
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
+    }
 
     @Override
     public String getDescription() {
