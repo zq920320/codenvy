@@ -19,7 +19,9 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = combineSmallSessions(l, 'session-started', 'session-finished');
+
+f1 = combineSmallSessions(l, 'session-started', 'session-finished');
+f = FOREACH f1 GENERATE *, '' AS id;
 
 result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
