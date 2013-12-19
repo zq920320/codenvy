@@ -16,7 +16,7 @@ var DEFAULT_ORDER_PREFIX = ASCENDING_ORDER_PREFIX;
 var databaseToUIMap = {
     databaseTableColumns: ["_id",   "user_first_name", "user_last_name", "user_company",   "user_job"],
     uiTableColumns:       ["Email", "First Name",      "Last Name",      "Company",        "Job"],
-    jagQueryParameters:   ["Email", "First Name",      "Second Name",    "Company"]
+    jagQueryParameters:   ["Email", "First Name",      "Last Name",    "Company"]
 }
 
 // process filter-by parameters
