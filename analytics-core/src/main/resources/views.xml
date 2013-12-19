@@ -541,7 +541,7 @@
         </section>
     </view>
 
-    <view time-unit="lifetime" name="user-overview" on-demand="true">
+    <view time-unit="lifetime" name="user_profile" on-demand="true">
         <section name="user_profile">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Email,First Name,Last Name,Company,Phone,Job"/>
@@ -556,7 +556,7 @@
         </section>
     </view>
 
-    <view time-unit="lifetime" name="user-statistics" on-demand="true">
+    <view time-unit="lifetime" name="user_data" on-demand="true">
         <section name="user_data" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
@@ -570,7 +570,9 @@
                 <parameter key="columns" value="1"/>
             </row>
         </section>
+    </view>
 
+    <view time-unit="lifetime" name="user-sessions" on-demand="true">
         <section name="user_sessions" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Id,Workspace,Start Time,End Time,Duration"/>
@@ -582,8 +584,10 @@
                 <parameter key="columns" value="1"/>
             </row>
         </section>
-        
-        <section name="workspace_data" time-unit="lifetime">
+    </view>
+
+    <view time-unit="lifetime" name="user_workspace_data" on-demand="true">        
+        <section name="user_workspace_data" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Name,Sessions,Time"/>
                 <parameter key="columns" value="3"/>
@@ -594,7 +598,9 @@
                 <parameter key="columns" value="1"/>
             </row>
         </section>
+    </view>
 
+    <view time-unit="lifetime" name="user_activity" on-demand="true">
         <section name="user_activity" time-unit="lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Console Log"/>

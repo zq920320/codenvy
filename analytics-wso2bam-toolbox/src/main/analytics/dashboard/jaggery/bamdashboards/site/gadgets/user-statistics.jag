@@ -3,10 +3,17 @@
 
 include_once("utils.jag");
 
+var ONE_PAGE_ROWS_COUNT = 20;
+var USERS_OVERVIEW_PAGE_LINK = "user-view.jsp";
+
 var queryParams = extractUrlParamsForRestService(request.getQueryString());
 
 // table names in order of receiving from server
-var userTableNames = ["User Statistics", "Sessions", "Workspaces", "User Logs"];
+var databaseToUIMap = {
+   databaseViews: ["user_data", "user-sessions", "user_workspace_data", "user_activity"],
+   tablePageCountResources: [undefined, "product_usage_sessions", undefined, "users_activity"],
+   uiTables: ["User Statistics", "Sessions", "Workspaces", "User Logs"]
+};
 
 // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
 if (typeof queryParams["FROM_DATE"] != "undefined") {
@@ -16,19 +23,39 @@ if (typeof queryParams["TO_DATE"] != "undefined") {
    queryParams["TO_DATE"] = queryParams["TO_DATE"].replace(/-/g, "");
 }
 
-var data = getAllResults("user-statistics", queryParams);
+queryParams.per_page = ONE_PAGE_ROWS_COUNT;
 
 loadCssStyles();
-
 print("<div class='view'>");
-
 print("<div class='tables'>");
 
-for (var i = 0; i < userTableNames.length; i++) { 
+for (var i = 0; i < databaseToUIMap.databaseViews.length; i++) {
    print("<div class='item'>");
-   print("<div class='header'>" + userTableNames[i] + "</div>");
+   print("<div class='header'>" + databaseToUIMap.uiTables[i] + "</div>");
    print("<div class='body'>");
-   printTable(data[i], false);
+
+   if (typeof databaseToUIMap.tablePageCountResources[i] != "undefined") {
+      //process pagination
+      var currentPageNumber = queryParams[databaseToUIMap.databaseViews[i]];  // search on table page number in parameter "{ui_table_name}={page_number}"
+      if (typeof currentPageNumber == "undefined") {
+         currentPageNumber = 1;
+      } else {
+         currentPageNumber = new Number(currentPageNumber);
+         delete queryParams[databaseToUIMap.databaseViews[i]];
+      }
+      queryParams.page = currentPageNumber;
+      
+      var data = getAllResults(databaseToUIMap.databaseViews[i], queryParams);
+      printTable(data[0], false);
+      
+      delete queryParams.page;
+      printTableNavigation(databaseToUIMap.tablePageCountResources[i], currentPageNumber, queryParams, databaseToUIMap.databaseViews[i]);
+      
+   } else {
+      var data = getAllResults(databaseToUIMap.databaseViews[i], queryParams);
+      printTable(data[0], false);      
+   }
+   
    print("</div>");
    print("</div>");
    print("<br />");
@@ -38,4 +65,14 @@ loadTableHandlers(false);
 
 print("</div>");
 print("</div>");
+
+function printTableNavigation(tablePageCountResource, currentPageNumber, queryParams, tableName) {
+   var pageCount = Math.ceil(getMetricValue(tablePageCountResource, queryParams) / ONE_PAGE_ROWS_COUNT);  // TODO uncomment   
+   if (pageCount > 1) {
+      var queryString = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
+
+      printBottomPageNavigator(pageCount, currentPageNumber, queryString, tableName);
+   }
+}
+
 %>

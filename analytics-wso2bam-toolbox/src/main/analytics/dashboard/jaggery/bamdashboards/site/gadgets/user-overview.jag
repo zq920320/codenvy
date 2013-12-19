@@ -8,7 +8,7 @@ var USER_PROFILE_TABLE_NAME = 0;
 
 var queryParams = extractUrlParamsForRestService(request.getQueryString());
 
-var data = getAllResults("user-overview", queryParams);
+var data = getAllResults("user_profile", queryParams);
 
 loadCssStyles();
 

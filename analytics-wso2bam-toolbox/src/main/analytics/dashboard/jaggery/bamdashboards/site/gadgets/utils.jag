@@ -225,7 +225,7 @@ function loadTableHandlers(ignoreLastRow) {
 /**
  * currentPageNumber is 1-based
  */
-function printBottomPageNavigator(pageCount, currentPageNumber, queryString) {
+function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pageQueryParameter) {
     if (typeof pageCount == "undefined" || pageCount <= 0) {
         return;
     }
@@ -235,7 +235,7 @@ function printBottomPageNavigator(pageCount, currentPageNumber, queryString) {
     
     // print "previous page" link
     if (currentPageNumber > 1) {
-        var previousPageLink = getPageNavigationUrl(queryString, currentPageNumber - 1);
+        var previousPageLink = getPageNavigationUrl(queryString, currentPageNumber - 1, pageQueryParameter);
         
         print("<a class='page-link previous' href='" + previousPageLink + "'>&lt;</a>");
     }
@@ -244,7 +244,7 @@ function printBottomPageNavigator(pageCount, currentPageNumber, queryString) {
     for (var i = 0; i < pageCount; i++) {
         var pageNumber = (i + 1);
         
-        var href = getPageNavigationUrl(queryString, pageNumber);
+        var href = getPageNavigationUrl(queryString, pageNumber, pageQueryParameter);
         
         var elementClass = "page-link";
 
@@ -257,7 +257,7 @@ function printBottomPageNavigator(pageCount, currentPageNumber, queryString) {
 
     // print "next page" link
     if (currentPageNumber < pageCount) {
-        var nextPageLink = getPageNavigationUrl(queryString, currentPageNumber + 1);
+        var nextPageLink = getPageNavigationUrl(queryString, currentPageNumber + 1, pageQueryParameter);
         
         print("<a class='page-link next' href='" + nextPageLink + "'>&gt;</a>");
     } else {
@@ -268,15 +268,13 @@ function printBottomPageNavigator(pageCount, currentPageNumber, queryString) {
 }
 
 
-function getPageNavigationUrl(baseQueryString, pageNumber) {   
-   var CURRENT_PAGE_QUERY_PARAMETER = "page";
-   
+function getPageNavigationUrl(baseQueryString, pageNumber, pageQueryParameter) {   
    var paramDelimeter = "&";
    if (baseQueryString.indexOf("?") < 0) {
       paramDelimeter = "?";
    }
    
-   var url = baseQueryString + paramDelimeter + CURRENT_PAGE_QUERY_PARAMETER + "=" + pageNumber;
+   var url = baseQueryString + paramDelimeter + pageQueryParameter + "=" + pageNumber;
    
    return url;
 }
@@ -347,7 +345,7 @@ function mapQueryParametersFromDatabaseToUI(params) {
 /**
  * Construct url parameters String based on parameters from params object
  * @param params object like {user_email: "test@gmail.com"} }
- * @returns url like "user%20email=test%40gmail.com"
+ * @returns url like "user_email=test%40gmail.com"
  */
 function constructRequestQueryString(params) {
    var params = params || {};
@@ -356,7 +354,7 @@ function constructRequestQueryString(params) {
    for (var paramName in params) {
       if (params.hasOwnProperty(paramName) 
             && typeof params[paramName] != "undefined") {
-         urlParamsString += "&" + encodeURIComponent(paramName) + "=" + encodeURIComponent(params[paramName]);
+         urlParamsString += "&" + paramName + "=" + encodeURIComponent(params[paramName]);
       }
    }
    
@@ -368,7 +366,7 @@ function constructRequestQueryString(params) {
 /**
  * Extract url parameters from Query String
  * @param queryString like "timeGroup=Month&Email=test%40gmail.com"
- * @returns params object with param names in upper case like {TIMEGROUP: Month, EMAIL: "test@gmail.com"}
+ * @returns params object with param names like {timeGroup: Month, Email: "test@gmail.com"}
  */
 function extractUrlParamsForRestService(queryString) {   
    var urlParamsArray = queryString.split("&");
@@ -376,7 +374,7 @@ function extractUrlParamsForRestService(queryString) {
    
    for (var i = 0; i < urlParamsArray.length; i++) {
       var paramArray = urlParamsArray[i].split("=");
-      var paramName = decodeURIComponent(paramArray[0]).toUpperCase();
+      var paramName = paramArray[0];
       var paramValue = null;
       
       if (paramArray.length > 1) {

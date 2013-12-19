@@ -101,7 +101,7 @@ if (pageCount > 1) {
 
    var queryString = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
 
-   printBottomPageNavigator(pageCount, currentPageNumber, queryString);
+   printBottomPageNavigator(pageCount, currentPageNumber, queryString, CURRENT_PAGE_QUERY_PARAMETER);
 }
 
 
