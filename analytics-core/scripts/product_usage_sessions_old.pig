@@ -19,8 +19,9 @@
 IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+
 f1 = productUsageTimeList(t, '10');
-f = foreach f1 generate *, '' AS id;
+f = FOREACH f1 GENERATE *, '' AS id;
 
 result = FOREACH f GENERATE ToMilliSeconds(dt), TOTUPLE('user', user), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
