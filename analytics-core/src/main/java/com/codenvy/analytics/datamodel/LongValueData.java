@@ -38,43 +38,40 @@ public class LongValueData extends AbstractValueData {
         this.value = value;
     }
 
-    /** {@inheritDoc} */
+    public static LongValueData valueOf(long value) {
+        return new LongValueData(value);
+    }
+
     @Override
     public String getAsString() {
         return Long.toString(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getType() {
         return ValueDataTypes.LONG.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
         return value == ((LongValueData)valueData).value;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
         return (int)value;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
         return new LongValueData(value + ((LongValueData)valueData).value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeLong(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         value = in.readLong();

@@ -17,20 +17,30 @@
  */
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.storage.MongoDataLoader;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactorySessionsWithRun extends AbstractFactorySessionsWithEvent {
+public abstract class AbstractFactorySessionsWithEvent extends AbstractLongValueResulted {
 
-    public FactorySessionsWithRun() {
-        super(MetricType.FACTORY_SESSIONS_WITH_RUN);
+    public AbstractFactorySessionsWithEvent(MetricType metricType) {
+        super(metricType);
+    }
+
+    public AbstractFactorySessionsWithEvent(String metricName) {
+        super(metricName);
     }
 
     @Override
-    public String getDescription() {
-        return "The number of sessions where user run an application";
+    public boolean isSupportMultipleTables() {
+        return false;
     }
 
     @Override
-    public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.RUN};
+    public String getStorageTableBaseName() {
+        return MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.name().toLowerCase() +
+               MongoDataLoader.EXT_COLLECTION_NAME_SUFFIX;
     }
+
+    @Override
+    public abstract String[] getTrackedFields();
 }

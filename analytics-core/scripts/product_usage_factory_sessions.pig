@@ -62,11 +62,30 @@ s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory
 			                                (SecondsBetween(s4::dt, d::dt) < 0 AND SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 :
 			                                                                                                                                                        0 )) AS conv;
 
-result = FOREACH s GENERATE ToMilliSeconds(dt), TOTUPLE('time', delta);
+-- sessions with events
+k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');
+k = FOREACH k1 GENERATE t::s::dt AS dt, t::s::delta AS delta, t::s::factory AS factory, t::s::referrer AS referrer,
+                        t::s::orgId AS orgId, t::s::affiliateId AS affiliateId, t::s::auth AS auth, t::s::ws AS ws,
+                        t::s::user AS user, t::s::conv AS conv, t::run AS run;
+
+m1 = addEventIndicator(k, l,  'project-deployed,application-created', 'deploy', '$inactiveInterval');
+m = FOREACH m1 GENERATE t::k::dt AS dt, t::k::delta AS delta, t::k::factory AS factory, t::k::referrer AS referrer,
+                        t::k::orgId AS orgId, t::k::affiliateId AS affiliateId, t::k::auth AS auth, t::k::ws AS ws,
+                        t::k::user AS user, t::k::conv AS conv, t::k::run AS run, t::deploy AS deploy;
+
+n1 = addEventIndicator(m, l,  'project-built,project-deployed,application-created,build-started', 'build', '$inactiveInterval');
+n = FOREACH n1 GENERATE t::m::dt AS dt, t::m::delta AS delta, t::m::factory AS factory, t::m::referrer AS referrer,
+                        t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::auth AS auth, t::m::ws AS ws,
+                        t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build;
+
+result = FOREACH n GENERATE ToMilliSeconds(dt), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
-r1 = FOREACH s GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factory, referrer, auth, conv, orgId, affiliateId, delta;
+r1 = FOREACH n GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factory, referrer, auth, conv,
+                        orgId, affiliateId, delta, deploy, build, run;
+
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
-                        TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiiateId', affiliateId),
+                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build),
+                        TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                         TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

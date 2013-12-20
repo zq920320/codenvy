@@ -18,7 +18,7 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactorySessionsWithBuild extends AbstractLongValueResulted {
+public class FactorySessionsWithBuild extends AbstractFactorySessionsWithEvent {
 
     public FactorySessionsWithBuild() {
         super(MetricType.FACTORY_SESSIONS_WITH_BUILD);
@@ -27,5 +27,10 @@ public class FactorySessionsWithBuild extends AbstractLongValueResulted {
     @Override
     public String getDescription() {
         return "The number of sessions where user built an application";
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageFactorySessionsList.BUILD};
     }
 }

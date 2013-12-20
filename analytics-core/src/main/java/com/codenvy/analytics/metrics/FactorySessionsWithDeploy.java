@@ -18,7 +18,7 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class FactorySessionsWithDeploy extends AbstractLongValueResulted {
+public class FactorySessionsWithDeploy extends AbstractFactorySessionsWithEvent {
 
     public FactorySessionsWithDeploy() {
         super(MetricType.FACTORY_SESSIONS_WITH_DEPLOY);
@@ -27,5 +27,10 @@ public class FactorySessionsWithDeploy extends AbstractLongValueResulted {
     @Override
     public String getDescription() {
         return "The number of sessions where user deploy an application";
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageFactorySessionsList.DEPLOY};
     }
 }

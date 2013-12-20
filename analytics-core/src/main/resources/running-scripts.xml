@@ -215,27 +215,6 @@
         <parameter key="WS" value="TEMPORARY"/>
         <parameter key="STORAGE_TABLE" value="product_usage_factory_sessions_list"/>
     </script>
-    <script name="number_of_factory_sessions_with_event">
-        <description>Factory sessions with build</description>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="EVENT" value="project-built,project-deployed,application-created,build-started"/>
-        <parameter key="STORAGE_TABLE" value="factory_sessions_with_build"/>
-    </script>
-    <script name="number_of_factory_sessions_with_event">
-        <description>Factory sessions with run</description>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="EVENT" value="run-started"/>
-        <parameter key="STORAGE_TABLE" value="factory_sessions_with_run"/>
-    </script>
-    <script name="number_of_factory_sessions_with_event">
-        <description>Factory sessions with deploy</description>
-        <parameter key="USER" value="ANY"/>
-        <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="EVENT" value="project-deployed,application-created"/>
-        <parameter key="STORAGE_TABLE" value="factory_sessions_with_deploy"/>
-    </script>
 
     <!-- Scripts for user's view -->
     <script name="user_update_profile">

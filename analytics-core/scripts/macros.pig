@@ -398,22 +398,23 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------------------------
--- Adds field which is indicator if event was happened during session or wasn't
+-- Adds field which is indicator if event has happened during session or hasn't
 -- @return {*, $fieldParam: int}
 ---------------------------------------------------------------------------------------------
-DEFINE addEventIndicator(S, X,  eventParam, fieldParam, inactiveIntervalParam) RETURNS Y {
-  i1 = filterByEvent($X, '$eventParam');
-  i = FOREACH i1 GENERATE ws, user, dt;
+DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) RETURNS Y {
+  z1 = filterByEvent($X, '$eventParam');
+  z = FOREACH z1 GENERATE ws, user, dt;
 
   -- finds out if event was inside session
-  x1 = JOIN $S BY (ws, user) LEFT, i BY (ws, user);
-  x2 = FOREACH x1 GENERATE *, (i::ws IS NULL ? 0 : (SecondsBetween($S::dt, i::dt) < 0 AND SecondsBetween($S::dt, i::dt) + $S::delta + (long) $inactiveIntervalParam * 60  > 0 ? 1 : 0 )) AS $fieldParam;
-
+  x1 = JOIN $W BY (ws, user) LEFT, z BY (ws, user);
+  x2 = FOREACH x1 GENERATE *, (z::ws IS NULL ? 0
+                                             : (SecondsBetween($W::dt, z::dt) < 0 AND SecondsBetween($W::dt, z::dt) + $W::delta + (long) $inactiveIntervalParam * 60  > 0 ? 1
+                                                                                                                                                                            : 0 )) AS $fieldParam;
   -- if several events were occurred then keep only one
-  x3 = GROUP x2 BY id;
+  x3 = GROUP x2 BY $W::dt;
   $Y = FOREACH x3 {
-	t = LIMIT x2 1;
-	GENERATE FLATTEN(t);
+    	t = LIMIT x2 1;
+	    GENERATE FLATTEN(t);
     }
 };
 

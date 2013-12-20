@@ -77,6 +77,10 @@ public class TestProductUsageFactorySessions extends BaseTest {
                      .withDate("2013-02-10").withTime("11:00:02").build());
 
 
+        // run event for session #1
+        events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type")
+                        .withDate("2013-02-10").withTime("10:03:00").build());
+
         File log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130210");
@@ -233,10 +237,41 @@ public class TestProductUsageFactorySessions extends BaseTest {
                 new StringValueData("tmp-3")})));
     }
 
+    @Test
+    public void testShouldReturnCountSessionsWithRun() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130210");
+        Parameters.TO_DATE.put(context, "20130210");
+
+        Metric metric = new TestAbstractFactorySessionsWithEvent();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+    }
+
     private class TestActiveTemporaryWorkspacesSet extends ActiveTemporaryWorkspacesSet {
         @Override
         public String getStorageTableBaseName() {
-            return "testproductusagefactorysessions_acceptedfactories-raw";
+            return "testproductusagefactorysessions-raw";
+        }
+    }
+
+    private class TestAbstractFactorySessionsWithEvent extends AbstractFactorySessionsWithEvent {
+        public TestAbstractFactorySessionsWithEvent() {
+            super("testproductusagefactorysessions");
+        }
+
+        @Override
+        public String getStorageTableBaseName() {
+            return "testproductusagefactorysessions-raw";
+        }
+
+        @Override
+        public String[] getTrackedFields() {
+            return new String[]{"run"};
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
         }
     }
 
