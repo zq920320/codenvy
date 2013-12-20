@@ -21,16 +21,22 @@ IMPORT 'macros.pig';
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = filterByEvent(l, 'factory-created');
-a2 = extractUrlParam(a1, 'FACTORY-URL', 'factoryUrl');
+a2 = extractUrlParam(a1, 'FACTORY-URL', 'factory');
 a3 = extractParam(a2, 'TYPE', 'projectType');
-a4 = extractUrlParam(a3, 'REPO-URL', 'repoUrl');
-a = FOREACH a4 GENERATE dt, ws, user, factoryUrl, repoUrl, projectType;
+a4 = extractUrlParam(a3, 'REPO-URL', 'repository');
+a5 = extractUrlParam(a4, 'ORG-ID', 'orgId');
+a6 = extractUrlParam(a5, 'AFFILIATE-ID', 'affiliateId');
 
-result = FOREACH a GENERATE ToMilliSeconds(dt), TOTUPLE('factory', factoryUrl);
+a = FOREACH a6 GENERATE dt, ws, user, factory, repository, (orgId == '}' ? '' : orgId) AS orgId,
+                (affiliateId == '}' ? '' : affiliateId) AS affiliateId, projectType;
+
+result = FOREACH a GENERATE ToMilliSeconds(dt), TOTUPLE('factory', factory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
-r1 = FOREACH a GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factoryUrl, repoUrl, projectType;
+r1 = FOREACH a GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factory, repository,
+                orgId, affiliateId, projectType;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
-                    TOTUPLE('repository', repoUrl), TOTUPLE('project_type', projectType), TOTUPLE('factory', factoryUrl);
+                    TOTUPLE('orgId', orgId), TOTUPLE('affiliateId', affiliateId),
+                    TOTUPLE('repository', repository), TOTUPLE('project_type', projectType), TOTUPLE('factory', factory);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 

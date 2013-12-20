@@ -20,6 +20,13 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class CreatedFactoriesSet extends AbstractSetValueResulted {
 
+    public static final String WS           = "ws";
+    public static final String USER         = "user";
+    public static final String FACTORY      = "factory";
+    public static final String ORG_ID       = "org_id";
+    public static final String AFFILIATE_ID = "affiliate_id";
+    public static final String REPOSITORY   = "repository";
+
     public CreatedFactoriesSet() {
         super(MetricType.CREATED_FACTORIES_SET);
     }
@@ -31,6 +38,6 @@ public class CreatedFactoriesSet extends AbstractSetValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.FACTORY};
+        return new String[]{FACTORY};
     }
 }

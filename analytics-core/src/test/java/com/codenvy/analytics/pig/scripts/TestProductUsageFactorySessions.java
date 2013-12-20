@@ -20,9 +20,6 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -34,7 +31,10 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
@@ -160,84 +160,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
     }
 
     @Test
-    public void testShouldReturnAllTemporaryWorkspaces() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-
-        Metric metric = new TestActiveTemporaryWorkspacesSet();
-        SetValueData valueData = (SetValueData)metric.getValue(context);
-
-        assertEquals(valueData.size(), 3);
-        assertEquals(valueData, new SetValueData(Arrays.asList(new ValueData[]{
-                new StringValueData("tmp-1"),
-                new StringValueData("tmp-2"),
-                new StringValueData("tmp-3")})));
-    }
-
-    @Test
-    public void testShouldReturnAllTemporaryWorkspacesForSpecificOrgId() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.ORG_ID.put(context, "org1");
-
-        Metric metric = new TestActiveTemporaryWorkspacesSet();
-        SetValueData valueData = (SetValueData)metric.getValue(context);
-
-        assertEquals(valueData.size(), 1);
-        assertEquals(valueData, new SetValueData(Arrays.asList(new ValueData[]{new StringValueData("tmp-1")})));
-    }
-
-    @Test
-    public void testShouldReturnAllTemporaryWorkspacesForSpecificAffiliateId() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.AFFILIATE_ID.put(context, "affiliate1");
-
-        Metric metric = new TestActiveTemporaryWorkspacesSet();
-        SetValueData valueData = (SetValueData)metric.getValue(context);
-
-        assertEquals(valueData.size(), 2);
-        assertEquals(valueData, new SetValueData(Arrays.asList(new ValueData[]{
-                new StringValueData("tmp-1"),
-                new StringValueData("tmp-2")})));
-    }
-
-    @Test
-    public void testShouldReturnAllTemporaryWorkspacesForSpecificReferrer() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.REFERRER.put(context, "referrer2");
-
-        Metric metric = new TestActiveTemporaryWorkspacesSet();
-        SetValueData valueData = (SetValueData)metric.getValue(context);
-
-        assertEquals(valueData.size(), 1);
-        assertEquals(valueData, new SetValueData(Arrays.asList(new ValueData[]{new StringValueData("tmp-2")})));
-    }
-
-
-    @Test
-    public void testShouldReturnAllTemporaryWorkspacesForSpecificFactory() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        Parameters.FROM_DATE.put(context, "20130210");
-        Parameters.TO_DATE.put(context, "20130210");
-        MetricFilter.FACTORY.put(context, "factoryUrl1");
-
-        Metric metric = new TestActiveTemporaryWorkspacesSet();
-        SetValueData valueData = (SetValueData)metric.getValue(context);
-
-        assertEquals(valueData.size(), 3);
-        assertEquals(valueData, new SetValueData(Arrays.asList(new ValueData[]{
-                new StringValueData("tmp-1"),
-                new StringValueData("tmp-2"),
-                new StringValueData("tmp-3")})));
-    }
-
-    @Test
     public void testShouldReturnCountSessionsWithRun() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130210");
@@ -245,13 +167,6 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         Metric metric = new TestAbstractFactorySessionsWithEvent();
         assertEquals(metric.getValue(context), LongValueData.valueOf(1));
-    }
-
-    private class TestActiveTemporaryWorkspacesSet extends ActiveTemporaryWorkspacesSet {
-        @Override
-        public String getStorageTableBaseName() {
-            return "testproductusagefactorysessions-raw";
-        }
     }
 
     private class TestAbstractFactorySessionsWithEvent extends AbstractFactorySessionsWithEvent {

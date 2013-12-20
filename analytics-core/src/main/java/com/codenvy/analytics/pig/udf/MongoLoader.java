@@ -193,7 +193,7 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
         @Override
         public float getProgress() throws IOException, InterruptedException {
             int size = dbCursor.size();
-            return size == 0 ? 0 : progress / dbCursor.size();
+            return size == 0 ? 0 : progress / size;
         }
 
         @Override
