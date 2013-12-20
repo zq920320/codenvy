@@ -76,6 +76,7 @@ public enum ScriptType {
             return params;
         }
     },
+    TEMPORARY_WORKSPACES_CREATED,
     USER_UPDATE_PROFILE,
     USERS_STATISTICS,
     USERS_ACTIVITY,

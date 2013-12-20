@@ -42,7 +42,6 @@ public enum Parameters {
     STORAGE_PASSWORD,
     STORAGE_TABLE,
     STORAGE_TABLE_USERS_STATISTICS,
-    STORAGE_TABLE_ACCEPTED_FACTORIES,
 
     TIME_UNIT {
         @Override

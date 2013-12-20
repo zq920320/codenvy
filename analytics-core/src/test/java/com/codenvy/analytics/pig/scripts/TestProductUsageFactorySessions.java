@@ -76,6 +76,10 @@ public class TestProductUsageFactorySessions extends BaseTest {
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer3", "org3", "affiliate2")
                      .withDate("2013-02-10").withTime("11:00:02").build());
 
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")
+                        .withDate("2013-02-10").withTime("12:00:00").build());
+        events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1")
+                        .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
         events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type")
@@ -93,8 +97,12 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions");
-        Parameters.STORAGE_TABLE_ACCEPTED_FACTORIES.put(params, "testproductusagefactorysessions_factories");
         PigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
+
+        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
+        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
+        Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions-tmpws");
+        PigServer.execute(ScriptType.TEMPORARY_WORKSPACES_CREATED, params);
     }
 
     @Test
@@ -169,6 +177,39 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(metric.getValue(context), LongValueData.valueOf(1));
     }
 
+    @Test
+    public void testShouldReturnAllTWC() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130210");
+        Parameters.TO_DATE.put(context, "20130210");
+
+        Metric metric = new TestTemporaryWorkspacesCreated();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(2));
+    }
+
+    @Test
+    public void testShouldReturnTWCForSpecificOrgId() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130210");
+        Parameters.TO_DATE.put(context, "20130210");
+        MetricFilter.ORG_ID.put(context, "org1");
+
+        Metric metric = new TestTemporaryWorkspacesCreated();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+    }
+
+    @Test
+    public void testShouldReturnTWCForSpecificAffiliateId() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130210");
+        Parameters.TO_DATE.put(context, "20130210");
+        MetricFilter.AFFILIATE_ID.put(context, "affiliate1");
+
+        Metric metric = new TestTemporaryWorkspacesCreated();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(2));
+    }
+
+
     private class TestAbstractFactorySessionsWithEvent extends AbstractFactorySessionsWithEvent {
         public TestAbstractFactorySessionsWithEvent() {
             super("testproductusagefactorysessions");
@@ -187,6 +228,13 @@ public class TestProductUsageFactorySessions extends BaseTest {
         @Override
         public String getDescription() {
             return null;
+        }
+    }
+
+    private class TestTemporaryWorkspacesCreated extends TemporaryWorkspacesCreated {
+        @Override
+        public String getStorageTableBaseName() {
+            return "testproductusagefactorysessions-tmpws";
         }
     }
 

@@ -202,12 +202,11 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="created_factories_set"/>
     </script>
-    <script name="number_of_events">
+    <script name="temporary_workspaces_created">
         <description>The number of created temporary workspaces</description>
         <parameter key="USER" value="ANY"/>
-        <parameter key="WS" value="TEMPORARY"/>
-        <parameter key="EVENT" value="tenant-created"/>
-        <parameter key="STORAGE_TABLE" value="created_temporary_workspaces"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="temporary_workspaces_created"/>
     </script>
     <script name="product_usage_factory_sessions">
         <description>Factory sessions</description>

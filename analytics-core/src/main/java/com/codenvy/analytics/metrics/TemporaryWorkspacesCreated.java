@@ -18,10 +18,10 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CreatedTemporaryWorkspaces extends AbstractLongValueResulted {
+public class TemporaryWorkspacesCreated extends AbstractLongValueResulted {
 
-    public CreatedTemporaryWorkspaces() {
-        super(MetricType.CREATED_TEMPORARY_WORKSPACES);
+    public TemporaryWorkspacesCreated() {
+        super(MetricType.TEMPORARY_WORKSPACES_CREATED);
     }
 
     @Override
