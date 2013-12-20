@@ -22,7 +22,9 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.pig.udf.CutQueryParam;
 import com.codenvy.analytics.storage.DataLoader;
 import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.BasicDBObject;
@@ -97,15 +99,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      */
     public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
         BasicDBObject match = new BasicDBObject();
-
-        DBObject idFilter = new BasicDBObject();
-        idFilter.put("$gte", Parameters.FROM_DATE.exists(clauses) ? Utils.getFromDate(clauses).getTimeInMillis()
-                                                                  : 0);
-        idFilter.put("$lt", Parameters.TO_DATE.exists(clauses) ? Utils.getToDate(clauses).getTimeInMillis() +
-                                                                 DAY_IN_MILLISECONDS
-                                                               : Long.MAX_VALUE);
-        match.put("_id", idFilter);
-
+        setDateFilter(clauses, match);
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values;
@@ -121,6 +115,24 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return new BasicDBObject("$match", match);
     }
 
+    /**
+     * The _id field as a rule contains the date of the event. The only exceptions related to user's profile
+     * metrics.
+     *
+     * @see AbstractUsersProfile
+     */
+    private void setDateFilter(Map<String, String> clauses, BasicDBObject match) throws ParseException {
+        DBObject idFilter = new BasicDBObject();
+        match.put("_id", idFilter);
+
+        idFilter.put("$gte", Parameters.FROM_DATE.exists(clauses)
+                             ? Utils.getFromDate(clauses).getTimeInMillis()
+                             : 0);
+        idFilter.put("$lt", Parameters.TO_DATE.exists(clauses)
+                            ? Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS
+                            : Long.MAX_VALUE);
+    }
+
     private String[] getUsersInCompany(String company) throws IOException {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, company);
@@ -133,72 +145,72 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             MapValueData user = (MapValueData)users.get(i);
             Map<String, ValueData> profile = user.getAll();
 
-            result[i] = profile.get(UsersProfilesList.USER_EMAIL).getAsString();
+            result[i] = profile.get(AbstractUsersProfile.USER_EMAIL).getAsString();
         }
 
         return result;
     }
 
-//    private String[] getFFF(Map<String, String> context) throws IOException {
+    private String[] getCorrespondingTemporaryWorkspaces(Map<String, String> context) throws IOException {
+
+        for (MetricFilter filter : Utils.getFilters(context)) {
+            switch (filter) {
+                case AFFILIATE_ID:
+                case ORG_ID:
+                case REFERRER:
+                case FACTORY:
+                    if (filter == MetricFilter.FACTORY) {
+                        String factoryUrls = removeProjectTypeParamFromFactoryUrl(filter.get(context));
+                        context = Utils.clone(context);
+
+                        filter.put(context, factoryUrls);
+                    }
+
+                    Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_TEMPORARY_WORKSPACES_SET);
+                    SetValueData value = (SetValueData)metric.getValue(context);
+//                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
+//                                                             .getValue(context)).getAll();
+                case WS:
+                case USER:
+                case PROJECT_TYPE:
+                case REPOSITORY:
+//                    SetStringValueData factoryUrl =
+//                            (SetStringValueData)MetricFactory.createMetric(MetricType.SET_FACTORY_CREATED)
+//                                                             .getValue(context);
 //
-//        for (MetricFilter filter : Utils.getFilters(context)) {
-//            switch (filter) {
-//                case AFFILIATE_ID:
-//                case ORG_ID:
-//                case REFERRER:
-//                case FACTORY:
-//                    if (filter == MetricFilter.FACTORY) {
-//                        String factoryUrls = removeProjectTypeParamFromFactoryUrl(filter.get(context));
-//                        context = Utils.clone(context);
+//                    context = Utils.cloneAndClearFilters(context);
+//                    MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrl.getAll().toString()));
 //
-//                        filter.put(context, factoryUrls);
-//                    }
+//                    context = removePTypeParamFromFactoryUrl(context);
 //
-////                    MetricFactory.getMetric(MT.FA)
-////                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
-////                                                             .getValue(context)).getAll();
-////                case WS:
-////                case USERS:
-////                case PROJECT_TYPE:
-////                case REPOSITORY_URL:
-////                    SetStringValueData factoryUrl =
-////                            (SetStringValueData)MetricFactory.createMetric(MetricType.SET_FACTORY_CREATED)
-////                                                             .getValue(context);
-////
-////                    context = Utils.cloneAndClearFilters(context);
-////                    MetricFilter.FACTORY_URL.put(context, Utils.removeBracket(factoryUrl.getAll().toString()));
-////
-////                    context = removePTypeParamFromFactoryUrl(context);
-////
-////                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
-////                                                             .getValue(context)).getAll();
-//
-//                default:
-//                    throw new IOException("Unknown filter " + filter);
-//            }
-//        }
-//
-//        return null;
-//    }
-//
-//    /**
-//     * We have to remove 'ptype' query param from factorUrl in queries. Because old factoryUrl had different
-// structures
-//     * in different events. So, just try to meet them the same requirements.
-//     */
-//    private String removeProjectTypeParamFromFactoryUrl(String factoryUrl) {
-//        StringBuilder builder = new StringBuilder();
-//
-//        for (String factory : factoryUrl.split(",")) {
-//            if (builder.length() > 0) {
-//                builder.append(",");
-//            }
-//
-//            builder.append(CutQueryParam.doCut(factory, "ptype"));
-//        }
-//
-//        return builder.toString();
-//    }
+//                    return ((SetStringValueData)MetricFactory.createMetric(MetricType.FACTORY_URL_ACCEPTED)
+//                                                             .getValue(context)).getAll();
+
+                default:
+                    throw new IOException("Unknown filter " + filter);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * We have to remove 'ptype' query param from factorUrl in queries. Because old factoryUrl had different
+     * structures in different events. So, just try to meet them the same requirements.
+     */
+    private String removeProjectTypeParamFromFactoryUrl(String factoryUrl) {
+        StringBuilder builder = new StringBuilder();
+
+        for (String factory : factoryUrl.split(",")) {
+            if (builder.length() > 0) {
+                builder.append(",");
+            }
+
+            builder.append(CutQueryParam.doCut(factory, "ptype"));
+        }
+
+        return builder.toString();
+    }
 
     /**
      * Returns the sequences of operations upon data have been retrieved out of storage.

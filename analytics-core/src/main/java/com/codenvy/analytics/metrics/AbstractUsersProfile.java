@@ -27,6 +27,13 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 abstract public class AbstractUsersProfile extends ReadBasedMetric {
 
+    public static final String USER_EMAIL      = "_id";
+    public static final String USER_FIRST_NAME = "user_first_name";
+    public static final String USER_LAST_NAME  = "user_last_name";
+    public static final String USER_COMPANY    = "user_company";
+    public static final String USER_JOB        = "user_job";
+    public static final String USER_PHONE      = "user_phone";
+
     public AbstractUsersProfile(MetricType metricType) {
         super(metricType);
     }
@@ -37,7 +44,7 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values = filter.get(clauses).split(",");
-            String key = filter == MetricFilter.USER ? "_id" : filter.name().toLowerCase();
+            String key = filter == MetricFilter.USER ? USER_EMAIL : filter.name().toLowerCase();
 
             match.put(key, new BasicDBObject("$in", values));
         }

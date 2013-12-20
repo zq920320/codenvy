@@ -30,7 +30,6 @@ import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.DBObject;
 
 import org.apache.pig.ExecType;
-import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,8 +84,6 @@ public class PigServer {
 
         try {
             server = initializeServer();
-            server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-            server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -146,12 +143,18 @@ public class PigServer {
         }
     }
 
-    private static org.apache.pig.PigServer initializeServer() throws ExecException {
+    private static org.apache.pig.PigServer initializeServer() throws IOException {
         for (Map.Entry<String, String> entry : PROPERTIES.entrySet()) {
             System.setProperty(entry.getKey(), entry.getValue());
         }
 
-        return new org.apache.pig.PigServer(ExecType.LOCAL);
+        org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
+
+        server.debugOff();
+        server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+
+        return server;
     }
 
     private static synchronized void executeOnDedicatedServer(ScriptType scriptType, Map<String, String> context)

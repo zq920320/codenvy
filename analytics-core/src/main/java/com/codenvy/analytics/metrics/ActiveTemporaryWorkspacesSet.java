@@ -17,33 +17,32 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.storage.MongoDataLoader;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersProfilesList extends AbstractUsersProfile {
+public class ActiveTemporaryWorkspacesSet extends AbstractSetValueResulted {
 
-    public UsersProfilesList() {
-        super(MetricType.USERS_PROFILES_LIST);
+    public ActiveTemporaryWorkspacesSet() {
+        super(MetricType.ACTIVE_TEMPORARY_WORKSPACES_SET);
     }
 
     @Override
-    public String getDescription() {
-        return "Users' profiles";
+    public boolean isSupportMultipleTables() {
+        return false;
+    }
+
+    @Override
+    public String getStorageTableBaseName() {
+        return MetricType.ACCEPTED_FACTORIES_LIST.name().toLowerCase() + MongoDataLoader.EXT_COLLECTION_NAME_SUFFIX;
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{USER_EMAIL,
-                            USER_FIRST_NAME,
-                            USER_LAST_NAME,
-                            USER_COMPANY,
-                            USER_JOB,
-                            USER_PHONE};
+        return new String[]{AcceptedFactoriesList.TMP_WS};
     }
 
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
+    public String getDescription() {
+        return "Temporary workspaces";
     }
 }

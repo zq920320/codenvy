@@ -17,33 +17,31 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersProfilesList extends AbstractUsersProfile {
+public class AcceptedFactoriesList extends AbstractListValueResulted {
 
-    public UsersProfilesList() {
-        super(MetricType.USERS_PROFILES_LIST);
-    }
+    public static final String TMP_WS       = "ws";
+    public static final String USER         = "user";
+    public static final String FACTORY      = "factory";
+    public static final String ORG_ID       = "org_id";
+    public static final String AFFILIATE_ID = "affiliate_id";
+    public static final String REFERRER     = "referrer";
 
-    @Override
-    public String getDescription() {
-        return "Users' profiles";
+    public AcceptedFactoriesList() {
+        super(MetricType.ACCEPTED_FACTORIES_LIST);
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{USER_EMAIL,
-                            USER_FIRST_NAME,
-                            USER_LAST_NAME,
-                            USER_COMPANY,
-                            USER_JOB,
-                            USER_PHONE};
+        return new String[]{USER,
+                            FACTORY,
+                            ORG_ID,
+                            AFFILIATE_ID,
+                            REFERRER};
     }
 
     @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
+    public String getDescription() {
+        return "The list of accepted factories";
     }
 }

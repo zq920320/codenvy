@@ -93,6 +93,7 @@ com.codenvy.analytics.metrics.CodeRefactorings
 com.codenvy.analytics.metrics.CodeCompletions
 com.codenvy.analytics.metrics.FileManipulations
 
+com.codenvy.analytics.metrics.AcceptedFactoriesList
 com.codenvy.analytics.metrics.CreatedFactories
 com.codenvy.analytics.metrics.CreatedTemporaryWorkspaces
 com.codenvy.analytics.metrics.FactorySessions

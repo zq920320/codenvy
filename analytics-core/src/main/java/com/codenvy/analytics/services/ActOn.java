@@ -224,7 +224,7 @@ public class ActOn implements Feature {
 
         for (ValueData object : valueData.getAll()) {
             Map<String, ValueData> profile = ((MapValueData)object).getAll();
-            result.put(profile.get(UsersProfilesList.USER_EMAIL), profile);
+            result.put(profile.get(AbstractUsersProfile.USER_EMAIL), profile);
         }
 
         return result;
@@ -236,19 +236,19 @@ public class ActOn implements Feature {
                                  Map<String, ValueData> profile,
                                  boolean isActive) throws IOException {
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_EMAIL));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_EMAIL));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_FIRST_NAME));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_FIRST_NAME));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_LAST_NAME));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_LAST_NAME));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_PHONE));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_PHONE));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(UsersProfilesList.USER_COMPANY));
+        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_COMPANY));
         out.write(",");
 
         writeInt(out, stat.get(UsersStatisticsList.PROJECTS));
