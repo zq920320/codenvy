@@ -420,7 +420,7 @@
                 <parameter key="description" value="Factories Created"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_temporary_workspaces"/>
+                <parameter key="name" value="temporary_workspaces_created"/>
                 <parameter key="description" value="Temporary Workspaces Created"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
