@@ -312,11 +312,15 @@ public class Event {
 
         public static Builder createFactoryUrlAcceptedEvent(String tempWs,
                                                             String factoryUrl,
-                                                            String referrerUrl) {
+                                                            String referrerUrl,
+                                                            String orgId,
+                                                            String affiliateId) {
             return new Builder().withParam("EVENT", EventType.FACTORY_URL_ACCEPTED.toString())
                                 .withParam("WS", tempWs)
                                 .withParam("REFERRER", referrerUrl)
-                                .withParam("FACTORY-URL", factoryUrl);
+                                .withParam("FACTORY-URL", factoryUrl)
+                                .withParam("ORG-ID", orgId)
+                                .withParam("AFFILIATE-ID", affiliateId);
         }
     }
 

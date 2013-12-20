@@ -22,8 +22,12 @@ IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
-u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_FACTORY_SESSIONS-raw' USING MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'ws: chararray, referrer: chararray, factory: chararray');
-u = FOREACH u1 GENERATE ws AS tmpWs, (referrer IS NULL ? '' : referrer) AS referrer, factory AS factoryUrl;
+u1 = filterByEvent(l, 'factory-url-accepted');
+u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
+u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
+u4 = extractUrlParam(u3, 'ORG-ID', 'orgId');
+u5 = extractUrlParam(u4, 'AFFILIATE-ID', 'affiliateId');
+u = FOREACH u5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
 
 ---- finds out all imported projects
 i1 = filterByEvent(l, 'factory-project-imported');
@@ -41,18 +45,19 @@ d1 = JOIN i BY user LEFT, c BY user;
 d = FOREACH d1 GENERATE i::dt AS dt, i::tmpWs AS tmpWs, (c::user IS NULL ? i::user : c::anomUser) AS user;
 
 s1 = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
-s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) AS auth;
+s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user AS tmpUser, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) AS auth;
 
 -- founds out the corresponding referrer and factoryUrl
 s3 = JOIN s2 BY tmpWs, u BY tmpWs;
-s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::user AS user, s2::delta AS delta, u::factoryUrl AS factoryUrl, u::referrer AS referrer, s2::auth AS auth;
+s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::tmpUser AS user, s2::delta AS delta, s2::auth AS auth,
+        u::factory AS factory, u::referrer AS referrer, u::orgId AS orgId, u::affiliateId AS affiliateId;
 
 -- founds out if factory session was converted or not
 -- (if importing operation was inside a session)
 s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
 
-s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factoryUrl AS factoryUrl, s4::referrer AS referrer,
-                        s4::auth AS auth, s4::tmpWs AS ws, s4::user AS user,
+s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory, s4::referrer AS referrer,
+                        s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::auth AS auth, s4::tmpWs AS ws, s4::user AS user,
 			            (d::tmpWs IS NULL ? 0 :
 			                                (SecondsBetween(s4::dt, d::dt) < 0 AND SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 :
 			                                                                                                                                                        0 )) AS conv;
@@ -60,8 +65,8 @@ s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factoryUrl AS fact
 result = FOREACH s GENERATE ToMilliSeconds(dt), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
-r1 = FOREACH s GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factoryUrl, referrer, auth, conv, delta;
+r1 = FOREACH s GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factory, referrer, auth, conv, orgId, affiliateId, delta;
 r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
-                        TOTUPLE('factory', factoryUrl), TOTUPLE('referrer', referrer),
+                        TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiiateId', affiliateId),
                         TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

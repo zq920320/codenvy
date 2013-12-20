@@ -67,14 +67,7 @@ public enum ScriptType {
     },
     CREATED_FACTORIES,
     ACCEPTED_FACTORIES,
-    PRODUCT_USAGE_FACTORY_SESSIONS {
-        @Override
-        public Set<Parameters> getParams() {
-            Set<Parameters> params = super.getParams();
-            params.add(Parameters.STORAGE_TABLE_FACTORY_SESSIONS);
-            return params;
-        }
-    },
+    PRODUCT_USAGE_FACTORY_SESSIONS,
     NUMBER_OF_FACTORY_SESSIONS_WITH_EVENT {
         @Override
         public Set<Parameters> getParams() {

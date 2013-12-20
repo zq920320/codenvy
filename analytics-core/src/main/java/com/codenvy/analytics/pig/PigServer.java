@@ -269,11 +269,6 @@ public class PigServer {
 
         MongoDataStorage.putStorageParameters(context);
 
-        if (!Parameters.STORAGE_TABLE_FACTORY_SESSIONS.exists(context)) {
-            Parameters.STORAGE_TABLE_FACTORY_SESSIONS
-                      .put(context, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.name().toLowerCase());
-        }
-
         if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {
             setOptimizedPaths(context);
         }
