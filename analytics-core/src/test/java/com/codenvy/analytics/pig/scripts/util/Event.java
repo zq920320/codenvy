@@ -181,14 +181,16 @@ public class Event {
         public static Builder createApplicationCreatedEvent(String user, String ws, String session, String project,
                                                             String type,
                                                             String paas) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "application-created")
+            return new Builder().withContext(user, ws, session)
+                                .withParam("EVENT", EventType.APPLICATION_CREATED.toString())
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
         }
 
         /** Create 'project-deployed' event. */
         public static Builder createProjectDeployedEvent(String user, String ws, String session, String project,
                                                          String type, String paas) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "project-deployed")
+            return new Builder().withContext(user, ws, session)
+                                .withParam("EVENT", EventType.PROJECT_DEPLOYED.toString())
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
         }
 
@@ -212,13 +214,13 @@ public class Event {
         }
 
         public static Builder createUserInviteEvent(String user, String ws, String session, String email) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "user-invite")
+            return new Builder().withContext(user, ws, session).withParam("EVENT", EventType.USER_INVITE.toString())
                                 .withParam("EMAIL", email);
         }
 
         public static Builder createProjectCreatedEvent(String user, String ws, String session, String project,
                                                         String type) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
+            return new Builder().withContext(user, ws, session).withParam("EVENT", EventType.PROJECT_CREATED.toString())
                                 .withParam("PROJECT", project).withParam("TYPE", type);
         }
 
@@ -250,48 +252,6 @@ public class Event {
                                 .withParam("COMPANY", company)
                                 .withParam("PHONE", phone)
                                 .withParam("JOBTITLE", jobTitle);
-        }
-
-        public static Builder createJRebelUserProfileInfo(String user,
-                                                          String ws,
-                                                          String userId,
-                                                          String firstName,
-                                                          String lastName,
-                                                          String phone) {
-            return new Builder().withContext(user, ws, UUID.randomUUID().toString())
-                                .withParam("EVENT", "jrebel-user-profile-info")
-                                .withParam("USER_ID", userId).withParam("FIRSTNAME", firstName)
-                                .withParam("LASTNAME", lastName)
-                                .withParam("PHONE", phone);
-        }
-
-        public static Builder createJRebelProjectEvent(String user,
-                                                       String ws,
-                                                       String session,
-                                                       String projecrt,
-                                                       String projectType,
-                                                       boolean isJRebel) {
-            return new Builder().withContext(user, ws, session)
-                                .withParam("EVENT", "jrebel-usage")
-                                .withParam("USER", user)
-                                .withParam("PROJECT", projecrt)
-                                .withParam("TYPE", projectType)
-                                .withParam("JREBEL", Boolean.toString(isJRebel));
-        }
-
-        public static Builder createUserCodeRefactorEvent(String ws,
-                                                          String user,
-                                                          String project,
-                                                          String type,
-                                                          String feature) {
-            return new Builder().withContext(user, ws, UUID.randomUUID().toString())
-                                .withParam("EVENT", EventType.USER_CODE_REFACTOR.toString())
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("PROJECT", project)
-                                .withParam("TYPE", type)
-                                .withParam("FEATURE", feature);
-
         }
 
         public static Builder createFactoryCreatedEvent(String ws,

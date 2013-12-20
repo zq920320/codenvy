@@ -19,7 +19,10 @@ package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.storage.MongoDataStorage;
-import com.mongodb.*;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -70,9 +73,8 @@ public class MongoDBBackup implements Feature {
         LOG.info("MongoDBBackup is started");
         long start = System.currentTimeMillis();
 
-        MongoClient mongoClient = MongoDataStorage.getClient();
         try {
-            DB db = MongoDataStorage.getUsedDB(mongoClient);
+            DB db = MongoDataStorage.getDb();
 
             for (String name : COLLECTIONS) {
                 DBCollection src = db.getCollection(name);

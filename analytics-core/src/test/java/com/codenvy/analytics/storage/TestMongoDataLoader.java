@@ -27,7 +27,6 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
 
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
@@ -46,8 +45,7 @@ public class TestMongoDataLoader extends BaseTest {
     public void prepare() throws Exception {
         dataLoader = MongoDataStorage.createdDataLoader();
         
-        MongoClient mongoClient = MongoDataStorage.getClient();
-        DB db = MongoDataStorage.getUsedDB(mongoClient);
+        DB db = MongoDataStorage.getDb();
         DBCollection dbCollection = db.getCollection("test");
 
         BasicDBObject dbObject = new BasicDBObject();

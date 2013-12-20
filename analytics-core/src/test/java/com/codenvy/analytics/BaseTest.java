@@ -71,7 +71,7 @@ public class BaseTest {
 
     @BeforeTest
     public void setUp() throws Exception {
-        File dirTemp = new File(Configurator.getTmpDir(), "embedded-mongoDb-tmp");
+        File dirTemp = new File(Configurator.getTmpDir(), "embedded-getDb-tmp");
         dirTemp.mkdirs();
 
         RuntimeConfig config = new RuntimeConfig();

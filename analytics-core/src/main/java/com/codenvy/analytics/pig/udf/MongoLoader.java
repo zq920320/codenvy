@@ -18,7 +18,10 @@
 package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.storage.MongoDataStorage;
-import com.mongodb.*;
+import com.mongodb.DB;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClientURI;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
@@ -156,15 +159,13 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
     private class MongoReader extends RecordReader {
 
         private DBCursor    dbCursor;
-        private MongoClient mongoClient;
         private int         progress;
 
 
         public MongoReader(String location) throws IOException {
             MongoClientURI uri = new MongoClientURI(location);
-            MongoClient mongoClient = MongoDataStorage.getClient();
 
-            DB db = MongoDataStorage.getUsedDB(mongoClient);
+            DB db = MongoDataStorage.getDb();
             dbCursor = db.getCollection(uri.getCollection()).find();
         }
 

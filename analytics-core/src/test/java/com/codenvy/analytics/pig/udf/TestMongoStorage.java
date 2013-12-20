@@ -63,7 +63,7 @@ public class TestMongoStorage extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testmongostorage");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        DB db = MongoDataStorage.getUsedDB(MongoDataStorage.getClient());
+        DB db = MongoDataStorage.getDb();
         dbCollection = db.getCollection("testmongostorage");
         dbCollectionRaw = db.getCollection("testmongostorage-raw");
     }

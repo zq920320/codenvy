@@ -20,7 +20,10 @@ package com.codenvy.analytics.storage;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.mongodb.*;
+import com.mongodb.AggregationOutput;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -33,8 +36,8 @@ public class MongoDataLoader implements DataLoader {
 
     private final DB db;
 
-    MongoDataLoader(MongoClient mongoClient) throws IOException {
-        db = MongoDataStorage.getUsedDB(mongoClient);
+    MongoDataLoader() throws IOException {
+        this.db = MongoDataStorage.getDb();
     }
 
     @Override

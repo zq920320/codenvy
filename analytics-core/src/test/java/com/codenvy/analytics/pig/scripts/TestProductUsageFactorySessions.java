@@ -147,6 +147,13 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
+    private class TestActiveTemporaryWorkspacesSet extends ActiveTemporaryWorkspacesSet {
+        @Override
+        public String getStorageTableBaseName() {
+            return "testproductusagefactorysessions-raw";
+        }
+    }
+
     private class TestFactorySessions extends FactorySessions {
         @Override
         public String getStorageTableBaseName() {

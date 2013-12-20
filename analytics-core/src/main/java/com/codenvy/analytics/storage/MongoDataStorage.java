@@ -57,6 +57,7 @@ public class MongoDataStorage {
 
     private static final MongoClientURI uri;
     private static final MongoClient    client;
+    private static final DB             mongoDb;
 
     private static MongodProcess embeddedMongoProcess;
 
@@ -69,6 +70,7 @@ public class MongoDataStorage {
 
         try {
             client = initializeClient();
+            mongoDb = client.getDB(uri.getDatabase());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -112,8 +114,8 @@ public class MongoDataStorage {
     }
 
     /** @return database to which connection was opened */
-    public static DB getUsedDB(MongoClient mongoClient) {
-        return mongoClient.getUsedDatabases().iterator().next();
+    public static DB getDb() {
+        return mongoDb;
     }
 
     private static boolean isAuthRequired(MongoClientURI clientURI) {
@@ -122,7 +124,7 @@ public class MongoDataStorage {
 
     public static DataLoader createdDataLoader() {
         try {
-            return new MongoDataLoader(getClient());
+            return new MongoDataLoader();
         } catch (MongoException | IOException e) {
             throw new IllegalStateException(e);
         }
@@ -148,12 +150,12 @@ public class MongoDataStorage {
             return;
         }
 
-        File dirTemp = new File(Configurator.getTmpDir(), "embedded-mongoDb-tmp");
+        File dirTemp = new File(Configurator.getTmpDir(), "embedded-getDb-tmp");
         if (!dirTemp.exists() && !dirTemp.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + dirTemp.getAbsolutePath());
         }
 
-        File databaseDir = new File(Configurator.getTmpDir(), "embedded-mongoDb-database");
+        File databaseDir = new File(Configurator.getTmpDir(), "embedded-getDb-database");
         if (!databaseDir.exists() && !databaseDir.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + databaseDir.getAbsolutePath());
         }

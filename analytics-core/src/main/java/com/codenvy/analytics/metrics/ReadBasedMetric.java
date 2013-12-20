@@ -137,8 +137,9 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, company);
 
-        List<ValueData> users =
-                ((ListValueData)MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST).getValue(context)).getAll();
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+        List<ValueData> users = ((ListValueData)metric.getValue(context)).getAll();
+
         String[] result = new String[users.size()];
 
         for (int i = 0; i < users.size(); i++) {

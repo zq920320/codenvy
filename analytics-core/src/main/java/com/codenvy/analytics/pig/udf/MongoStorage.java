@@ -99,9 +99,8 @@ public class MongoStorage extends StoreFunc {
 
         public MongoWriter(Configuration configuration) throws IOException {
             MongoClientURI uri = new MongoClientURI(configuration.get(SERVER_URL_PARAM));
-            MongoClient mongoClient = MongoDataStorage.getClient();
 
-            DB db = MongoDataStorage.getUsedDB(mongoClient);
+            DB db = MongoDataStorage.getDb();
             db.setWriteConcern(WriteConcern.ACKNOWLEDGED);
 
             this.dbCollection = db.getCollection(uri.getCollection());

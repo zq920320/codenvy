@@ -50,18 +50,20 @@ public class PigServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PigServer.class);
 
-    private static final String              LOGS_DIR        = Configurator.getString("analytics.logs.dir");
-    private static final String              SCRIPTS_DIR     = Configurator.getString("pig.scripts.dir");
-    private static final String              BIN_DIR         = Configurator.getString("pig.bin.dir");
-    private static final boolean             EMBEDDED        = Configurator.getBoolean("pig.embedded");
-    private static final Map<String, String> PROPERTIES      = Configurator.getAll("pig.property");
-    private static final Calendar            OLD_SCRIPT_DATE = Calendar.getInstance();
+    private static final String              LOGS_DIR    = Configurator.getString("analytics.logs.dir");
+    private static final String              SCRIPTS_DIR = Configurator.getString("pig.scripts.dir");
+    private static final String              BIN_DIR     = Configurator.getString("pig.bin.dir");
+    private static final boolean             EMBEDDED    = Configurator.getBoolean("pig.embedded");
+    private static final Map<String, String> PROPERTIES  = Configurator.getAll("pig.property");
+
+    private static final Calendar OLD_SCRIPT_THRESHOLD_DATE;
 
     private static org.apache.pig.PigServer server;
 
     static {
         try {
-            OLD_SCRIPT_DATE.setTime(new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT).parse("20130822"));
+            OLD_SCRIPT_THRESHOLD_DATE = Calendar.getInstance();
+            OLD_SCRIPT_THRESHOLD_DATE.setTime(new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT).parse("20130822"));
         } catch (ParseException e) {
             throw new IllegalStateException(e);
         }
@@ -98,7 +100,7 @@ public class PigServer {
     }
 
     private static void checkIfMongoIsStarted() throws IOException {
-        MongoDataStorage.getClient();
+        MongoDataStorage.getDb();
     }
 
     /**
@@ -291,7 +293,7 @@ public class PigServer {
     /** @return the script file name */
     private static File getScriptFileName(ScriptType scriptType, Map<String, String> context) {
         try {
-            if (Utils.getToDate(context).before(OLD_SCRIPT_DATE)) {
+            if (Utils.getToDate(context).before(OLD_SCRIPT_THRESHOLD_DATE)) {
                 File oldScriptFile = new File(SCRIPTS_DIR, scriptType.toString().toLowerCase() + "_old.pig");
                 if (oldScriptFile.exists()) {
                     LOG.info("Old script will be used instead of " + scriptType);

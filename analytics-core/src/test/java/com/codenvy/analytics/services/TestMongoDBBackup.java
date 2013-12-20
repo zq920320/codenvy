@@ -19,7 +19,10 @@ package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.storage.MongoDataStorage;
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -37,8 +40,7 @@ public class TestMongoDBBackup extends BaseTest {
     public void prepare() throws Exception {
         collectionNames = new String[]{"test1_statistics", "test2_statistics"};
 
-        MongoClient mongoClient = MongoDataStorage.getClient();
-        DB db = MongoDataStorage.getUsedDB(mongoClient);
+        DB db = MongoDataStorage.getDb();
 
         for (String collectionName : collectionNames) {
             DBCollection dbCollection = db.getCollection(collectionName);
@@ -53,8 +55,7 @@ public class TestMongoDBBackup extends BaseTest {
 
     @AfterClass
     public void tearDown() throws Exception {
-        MongoClient mongoClient = MongoDataStorage.getClient();
-        DB db = MongoDataStorage.getUsedDB(mongoClient);
+        DB db = MongoDataStorage.getDb();
 
         for (String collectionName : collectionNames) {
             db.getCollection(collectionName).drop();
@@ -67,8 +68,7 @@ public class TestMongoDBBackup extends BaseTest {
         MongoDBBackup job = new MongoDBBackup();
         job.forceExecute(null);
 
-        MongoClient mongoClient = MongoDataStorage.getClient();
-        DB db = MongoDataStorage.getUsedDB(mongoClient);
+        DB db = MongoDataStorage.getDb();
 
         // check
         for (String collectionName : collectionNames) {
