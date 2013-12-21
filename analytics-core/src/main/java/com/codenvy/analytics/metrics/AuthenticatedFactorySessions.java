@@ -17,8 +17,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.storage.MongoDataLoader;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
@@ -27,14 +25,8 @@ public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.name().toLowerCase() +
-               MongoDataLoader.EXT_COLLECTION_NAME_SUFFIX;
-    }
-
-    @Override
-    public boolean isSupportMultipleTables() {
-        return false;
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
 
     @Override

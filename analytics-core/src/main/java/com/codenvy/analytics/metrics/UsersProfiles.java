@@ -34,7 +34,7 @@ public class UsersProfiles extends AbstractUsersProfile {
     }
 
     @Override
-    public String getStorageTableBaseName() {
+    public String getStorageCollectionName() {
         return MetricType.USERS_PROFILES_LIST.name().toLowerCase();
     }
 

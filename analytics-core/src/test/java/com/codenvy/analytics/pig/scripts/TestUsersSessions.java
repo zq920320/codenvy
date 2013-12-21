@@ -127,16 +127,16 @@ public class TestUsersSessions extends BaseTest {
 
     private class TestProductUsageSessions extends ProductUsageSessions {
         @Override
-        public String getStorageTableBaseName() {
-            return "testuserssessions-raw";
+        public String getStorageCollectionName() {
+            return "testuserssessions";
         }
     }
 
     private class TestProductUsageSessionsList extends ProductUsageSessionsList {
 
         @Override
-        public String getStorageTableBaseName() {
-            return "testuserssessions-raw";
+        public String getStorageCollectionName() {
+            return "testuserssessions";
         }
     }
 }

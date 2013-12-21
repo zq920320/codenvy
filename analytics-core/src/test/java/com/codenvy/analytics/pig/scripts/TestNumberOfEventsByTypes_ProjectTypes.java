@@ -27,18 +27,16 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
@@ -87,25 +85,6 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
-    }
-
-    @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
-
-        assertTrue(iterator.hasNext());
-
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 2);
-        assertEquals(tuple.get(0), dateFormat.parse("20130102").getTime());
-        assertEquals(tuple.get(1).toString(), "(jar,1)");
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 2);
-        assertEquals(tuple.get(0), dateFormat.parse("20130102").getTime());
-        assertEquals(tuple.get(1).toString(), "(war,1)");
-
-        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -212,7 +191,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
     private class TestProjectTypes extends ProjectTypes {
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testnumberofeventsbytypes_projecttypes";
         }
     }
@@ -224,7 +203,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testnumberofeventsbytypes_projecttypes";
         }
 

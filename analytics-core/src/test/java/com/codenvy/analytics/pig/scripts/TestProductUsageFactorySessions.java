@@ -25,18 +25,16 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsageFactorySessions extends BaseTest {
@@ -102,29 +100,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions-tmpws");
-        PigServer.execute(ScriptType.TEMPORARY_WORKSPACES_CREATED, params);
-    }
-
-    @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
-
-        assertTrue(iterator.hasNext());
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130210 10:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(time,300)");
-
-        assertTrue(iterator.hasNext());
-        tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130210 10:20:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(time,600)");
-
-        assertTrue(iterator.hasNext());
-        tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130210 11:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(time,900)");
-
-        assertFalse(iterator.hasNext());
+        PigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, params);
     }
 
     @Test
@@ -216,8 +192,8 @@ public class TestProductUsageFactorySessions extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
-            return "testproductusagefactorysessions-raw";
+        public String getStorageCollectionName() {
+            return "testproductusagefactorysessions";
         }
 
         @Override
@@ -233,14 +209,14 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
     private class TestTemporaryWorkspacesCreated extends TemporaryWorkspacesCreated {
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testproductusagefactorysessions-tmpws";
         }
     }
 
     private class TestFactorySessions extends FactorySessions {
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testproductusagefactorysessions";
         }
     }
@@ -248,22 +224,22 @@ public class TestProductUsageFactorySessions extends BaseTest {
     private class TestFactorySessionsProductUsageTotal extends FactorySessionsProductUsageTotal {
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testproductusagefactorysessions";
         }
     }
 
     private class TestAuthenticatedFactorySessions extends AuthenticatedFactorySessions {
         @Override
-        public String getStorageTableBaseName() {
-            return "testproductusagefactorysessions-raw";
+        public String getStorageCollectionName() {
+            return "testproductusagefactorysessions";
         }
     }
 
     private class TestConvertedFactorySessions extends ConvertedFactorySessions {
         @Override
-        public String getStorageTableBaseName() {
-            return "testproductusagefactorysessions-raw";
+        public String getStorageCollectionName() {
+            return "testproductusagefactorysessions";
         }
     }
 
@@ -276,7 +252,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testproductusagefactorysessions";
         }
 

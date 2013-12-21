@@ -199,7 +199,7 @@ public class TestPagination extends BaseTest {
     public class TestUsersProfilesList extends UsersProfilesList {
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testpagination";
         }
     }

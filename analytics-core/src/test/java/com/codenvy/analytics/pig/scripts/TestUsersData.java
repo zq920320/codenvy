@@ -241,15 +241,15 @@ public class TestUsersData extends BaseTest {
     private class TestUsersTimeInWorkspaces extends UsersTimeInWorkspaces {
 
         @Override
-        public String getStorageTableBaseName() {
-            return "testusersdata-sessions-raw";
+        public String getStorageCollectionName() {
+            return "testusersdata-sessions";
         }
     }
 
     private class TestUsersStatisticsList extends UsersStatisticsList {
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testusersdata";
         }
     }

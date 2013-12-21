@@ -25,18 +25,16 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsageTime extends BaseTest {
@@ -88,35 +86,6 @@ public class TestProductUsageTime extends BaseTest {
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
-    }
-
-    @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
-
-        assertTrue(iterator.hasNext());
-
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20131101 20:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,user@gmail.com)");
-        assertEquals(tuple.get(2).toString(), "(time,300)");
-
-        assertTrue(iterator.hasNext());
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20131101 19:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(time,240)");
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 3);
-        assertEquals(tuple.get(0), timeFormat.parse("20131101 18:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(user,ANONYMOUSUSER_user11)");
-        assertEquals(tuple.get(2).toString(), "(time,120)");
-
-        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -259,7 +228,7 @@ public class TestProductUsageTime extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testproductusagesessions";
         }
 
@@ -277,7 +246,7 @@ public class TestProductUsageTime extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testproductusagesessions";
         }
 
@@ -294,7 +263,7 @@ public class TestProductUsageTime extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testproductusagesessions";
         }
 

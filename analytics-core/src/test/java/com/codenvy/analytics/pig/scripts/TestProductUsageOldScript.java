@@ -24,14 +24,12 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -87,13 +85,7 @@ public class TestProductUsageOldScript extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
-
-        assertTuples(iterator, new String[]{
-                "(" + timeFormat.parse("20130101 20:00:00").getTime() + ",(user,user@gmail.com),(time,300))",
-                "(" + timeFormat.parse("20130101 20:25:00").getTime() + ",(user,user@gmail.com),(time,0))",
-                "(" + timeFormat.parse("20130101 19:00:00").getTime() + ",(user,ANONYMOUSUSER_user11),(time,240))",
-                "(" + timeFormat.parse("20130101 18:00:00").getTime() + ",(user,ANONYMOUSUSER_user11),(time,120))"});
+        PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
     }
 
 }

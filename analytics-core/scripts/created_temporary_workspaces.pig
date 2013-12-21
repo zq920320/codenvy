@@ -34,16 +34,10 @@ w3 = JOIN w2 BY tmpWs, u BY tmpWs;
 w = FOREACH w3 GENERATE w2::dt AS dt, w2::tmpWs AS ws, w2::user AS user, u::referrer AS referrer, u::factory AS factory,
                 u::orgId AS orgId, u::affiliateId AS affiliateId;
 
-a1 = FOREACH w GENERATE ws;
-a = countAll(a1);
-
-result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
-
 r1 = FOREACH w GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain,
                         orgId, affiliateId, factory, referrer;
-r = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
+result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
                     TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                     TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('value', 1);
-STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 

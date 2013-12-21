@@ -42,18 +42,13 @@ public abstract class AbstractLoggedInType extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSupportMultipleTables() {
-        return true;
-    }
-
-    @Override
     public String[] getTrackedFields() {
         return types;
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return MetricType.USERS_LOGGED_IN_TYPES.name().toLowerCase();
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.USERS_LOGGED_IN_TYPES);
     }
 
     @Override

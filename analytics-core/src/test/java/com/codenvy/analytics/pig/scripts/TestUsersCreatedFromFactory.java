@@ -28,18 +28,16 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersCreatedFromFactory extends BaseTest {
@@ -87,19 +85,6 @@ public class TestUsersCreatedFromFactory extends BaseTest {
     }
 
     @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.USERS_CREATED_FROM_FACTORY, params);
-
-        assertTrue(iterator.hasNext());
-
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0), dateFormat.parse("20130101").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,1)");
-
-        assertFalse(iterator.hasNext());
-    }
-
-    @Test
     public void shouldReturnAllUsers() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
@@ -144,7 +129,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
 
     private class TestedUsersCreatedFromFactory extends UsersCreatedFromFactory {
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testuserscreatedfromfactory";
         }
     }

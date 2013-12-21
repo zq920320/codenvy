@@ -62,18 +62,13 @@ public abstract class AbstractFactorySessions extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSupportMultipleTables() {
-        return true;
-    }
-
-    @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST.name().toLowerCase();
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
 
     @Override

@@ -42,7 +42,6 @@ import static org.testng.AssertJUnit.assertEquals;
 public class TestMongoStorage extends BaseTest {
 
     private DBCollection dbCollection;
-    private DBCollection dbCollectionRaw;
     private Map<String, String> params = new HashMap<>();
 
     @BeforeClass
@@ -65,7 +64,6 @@ public class TestMongoStorage extends BaseTest {
 
         DB db = MongoDataStorage.getDb();
         dbCollection = db.getCollection("testmongostorage");
-        dbCollectionRaw = db.getCollection("testmongostorage-raw");
     }
 
     @Test
@@ -79,12 +77,6 @@ public class TestMongoStorage extends BaseTest {
         assertEquals(dbCursor.size(), 1);
 
         DBObject next = dbCursor.next();
-        assertEquals(next.get("value"), 1L);
-
-        dbCursor = dbCollectionRaw.find(dbObject);
-        assertEquals(dbCursor.size(), 1);
-
-        next = dbCursor.next();
         assertEquals(next.get("ws"), "ws1");
         assertEquals(next.get("user"), "user1@gmail.com");
         assertEquals(next.get("domain"), "gmail.com");

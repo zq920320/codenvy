@@ -85,7 +85,7 @@ public class TestUsersActivity extends BaseTest {
 
     private class TestNumberOfUsersOfActivity extends UsersActivity {
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testusersactivity";
         }
     }
@@ -93,7 +93,7 @@ public class TestUsersActivity extends BaseTest {
     private class TestUsersActivityList extends UsersActivityList {
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testusersactivity";
         }
 

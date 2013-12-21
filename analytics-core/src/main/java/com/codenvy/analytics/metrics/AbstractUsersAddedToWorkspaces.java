@@ -48,18 +48,13 @@ public abstract class AbstractUsersAddedToWorkspaces extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSupportMultipleTables() {
-        return true;
-    }
-
-    @Override
     public String[] getTrackedFields() {
         return types;
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return MetricType.USERS_ADDED_TO_WORKSPACES.name().toLowerCase();
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.USERS_ADDED_TO_WORKSPACES);
     }
 
     @Override

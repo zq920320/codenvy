@@ -27,18 +27,16 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfDeploymentsByTypes extends BaseTest {
@@ -127,31 +125,6 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
     }
 
     @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.NUMBER_OF_DEPLOYMENTS_BY_TYPES, params);
-
-        assertTrue(iterator.hasNext());
-
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.size(), 2);
-        assertEquals(tuple.get(0), dateFormat.parse("20130101").getTime());
-        assertEquals(tuple.get(1).toString(), "(local,1)");
-        assertTrue(iterator.hasNext());
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 2);
-        assertEquals(tuple.get(0), dateFormat.parse("20130101").getTime());
-        assertEquals(tuple.get(1).toString(), "(paas1,1)");
-        assertTrue(iterator.hasNext());
-
-        tuple = iterator.next();
-        assertEquals(tuple.size(), 2);
-        assertEquals(tuple.get(0), dateFormat.parse("20130101").getTime());
-        assertEquals(tuple.get(1).toString(), "(paas3,2)");
-        assertFalse(iterator.hasNext());
-    }
-
-    @Test
     public void testSingleDateFilterSingleParam() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20130101");
@@ -217,7 +190,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
     private class TestProjectPaases extends ProjectPaases {
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testnumberofdeploymentsbytypes";
         }
 
@@ -234,7 +207,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testnumberofdeploymentsbytypes";
         }
 

@@ -46,13 +46,8 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return basedMetricName.toLowerCase();
-    }
-
-    @Override
-    public boolean isSupportMultipleTables() {
-        return true;
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(basedMetricName);
     }
 
     @Override

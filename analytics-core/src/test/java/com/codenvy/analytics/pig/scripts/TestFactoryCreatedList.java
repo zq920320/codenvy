@@ -30,15 +30,17 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestFactoryCreatedList extends BaseTest {
@@ -72,33 +74,6 @@ public class TestFactoryCreatedList extends BaseTest {
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.CREATED_FACTORIES, params);
-    }
-
-    @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.CREATED_FACTORIES, params);
-
-        assertTrue(iterator.hasNext());
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 13:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(factory,factory1)");
-
-        assertTrue(iterator.hasNext());
-        tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 14:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(factory,factory2)");
-
-        assertTrue(iterator.hasNext());
-        tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 15:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(factory,factory3)");
-
-        assertTrue(iterator.hasNext());
-        tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130101 16:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(factory,factory4)");
-
-        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -144,7 +119,7 @@ public class TestFactoryCreatedList extends BaseTest {
     public class TestSetValueResulted extends CreatedFactoriesSet {
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testfactorycreatedlist";
         }
     }

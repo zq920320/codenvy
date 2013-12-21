@@ -68,15 +68,7 @@ public enum ScriptType {
     CREATED_FACTORIES,
     ACCEPTED_FACTORIES,
     PRODUCT_USAGE_FACTORY_SESSIONS,
-    NUMBER_OF_FACTORY_SESSIONS_WITH_EVENT {
-        @Override
-        public Set<Parameters> getParams() {
-            Set<Parameters> params = super.getParams();
-            params.add(Parameters.EVENT);
-            return params;
-        }
-    },
-    TEMPORARY_WORKSPACES_CREATED,
+    CREATED_TEMPORARY_WORKSPACES,
     USER_UPDATE_PROFILE,
     USERS_STATISTICS,
     USERS_ACTIVITY,
@@ -88,7 +80,7 @@ public enum ScriptType {
                     Arrays.asList(new Parameters[]{Parameters.WS,
                                                    Parameters.USER,
                                                    Parameters.TO_DATE,
-                                                   Parameters.FROM_DATE,}));
+                                                   Parameters.FROM_DATE}));
         }
     },
     CHECK_LOGS_2 {
@@ -98,7 +90,7 @@ public enum ScriptType {
                     Arrays.asList(new Parameters[]{Parameters.WS,
                                                    Parameters.USER,
                                                    Parameters.TO_DATE,
-                                                   Parameters.FROM_DATE,}));
+                                                   Parameters.FROM_DATE}));
         }
     },
 
@@ -128,12 +120,6 @@ public enum ScriptType {
                                                Parameters.STORAGE_URL,
                                                Parameters.STORAGE_USER,
                                                Parameters.STORAGE_PASSWORD,
-                                               Parameters.STORAGE_TABLE,
-                                               Parameters.STORAGE_TABLE_USERS_STATISTICS}));
-    }
-
-    /** @return true if script requires {@link com.codenvy.analytics.metrics.Parameters#LOG} being  executed. */
-    public boolean isLogRequired() {
-        return true;
+                                               Parameters.STORAGE_TABLE}));
     }
 }

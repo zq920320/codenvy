@@ -28,15 +28,17 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestActiveEntitiesList extends BaseTest {
@@ -93,28 +95,6 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
-    }
-
-    @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.ACTIVE_ENTITIES, params);
-
-        assertTrue(iterator.hasNext());
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130102 10:00:00").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,ws2)");
-
-        assertTrue(iterator.hasNext());
-        tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130102 10:00:01").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,ws3)");
-
-        assertTrue(iterator.hasNext());
-        tuple = iterator.next();
-        assertEquals(tuple.get(0), timeFormat.parse("20130102 10:00:02").getTime());
-        assertEquals(tuple.get(1).toString(), "(value,ws4)");
-
-        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -199,7 +179,7 @@ public class TestActiveEntitiesList extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testsetofactiveentities";
         }
 

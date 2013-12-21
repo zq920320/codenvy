@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.storage;
 
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.AggregationOutput;
@@ -32,8 +31,6 @@ import java.util.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoDataLoader implements DataLoader {
 
-    public static final String EXT_COLLECTION_NAME_SUFFIX = "-raw";
-
     private final DB db;
 
     MongoDataLoader() throws IOException {
@@ -42,7 +39,7 @@ public class MongoDataLoader implements DataLoader {
 
     @Override
     public ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException {
-        DBCollection dbCollection = db.getCollection(getCollectionName(metric, clauses));
+        DBCollection dbCollection = db.getCollection(metric.getStorageCollectionName());
 
         try {
             DBObject filter = metric.getFilter(clauses);
@@ -53,22 +50,6 @@ public class MongoDataLoader implements DataLoader {
             return createdValueData(metric, aggregation.results().iterator());
         } catch (ParseException e) {
             throw new IOException(e);
-        }
-    }
-
-    /**
-     * @return the collection name to retrieve data from. If filters are used, the extended collection might be used
-     * @see com.codenvy.analytics.metrics.ReadBasedMetric#getStorageTableBaseName()
-     */
-    private String getCollectionName(ReadBasedMetric metric, Map<String, String> clauses) {
-        if (metric.isSupportMultipleTables()) {
-            if (Utils.isSimpleContext(clauses)) {
-                return metric.getStorageTableBaseName();
-            } else {
-                return metric.getStorageTableBaseName() + EXT_COLLECTION_NAME_SUFFIX;
-            }
-        } else {
-            return metric.getStorageTableBaseName();
         }
     }
 

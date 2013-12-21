@@ -21,10 +21,7 @@ package com.codenvy.analytics.pig;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.DBObject;
@@ -119,7 +116,7 @@ public class PigServer {
 
         LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
         try {
-            if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
+            if (Parameters.LOG.get(context).isEmpty()) {
                 return;
             }
 
@@ -236,7 +233,7 @@ public class PigServer {
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
 
-            if (scriptType.isLogRequired() && Parameters.LOG.get(context).isEmpty()) {
+            if (Parameters.LOG.get(context).isEmpty()) {
                 return Collections.emptyIterator();
             }
 
@@ -261,15 +258,9 @@ public class PigServer {
     private static Map<String, String> validateAndAdjustContext(ScriptType scriptType,
                                                                 Map<String, String> context) throws IOException {
         context = Utils.clone(context);
-
-        if (!Parameters.STORAGE_TABLE_USERS_STATISTICS.exists(context)) {
-            ReadBasedMetric usersStatistic = (ReadBasedMetric)MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
-            Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, usersStatistic.getStorageTableBaseName());
-        }
-
         MongoDataStorage.putStorageParameters(context);
 
-        if (!Parameters.LOG.exists(context) && scriptType.isLogRequired()) {
+        if (!Parameters.LOG.exists(context)) {
             setOptimizedPaths(context);
         }
 

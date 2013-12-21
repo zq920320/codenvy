@@ -53,11 +53,6 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSupportMultipleTables() {
-        return false;
-    }
-
-    @Override
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         return new DBObject[0];
     }

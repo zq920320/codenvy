@@ -138,7 +138,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
 
     private class TestUsersLoggedInTypes extends UsersLoggedInTypes {
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testnumberofusersbytypes_usersloggedintypes";
         }
     }
@@ -151,7 +151,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
 
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testnumberofusersbytypes_usersloggedintypes";
         }
 

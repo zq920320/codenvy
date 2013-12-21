@@ -30,15 +30,15 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.*;
-
-import static org.testng.AssertJUnit.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestTimeSpentInAction extends BaseTest {
@@ -96,18 +96,6 @@ public class TestTimeSpentInAction extends BaseTest {
         Parameters.STORAGE_TABLE.put(context, "testtimespentinaction");
 
         PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, context);
-    }
-
-    @Test
-    public void testExecuteTestScript() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TIME_SPENT_IN_ACTION, context);
-        assertTrue(iterator.hasNext());
-
-        Tuple tuple = iterator.next();
-        assertEquals(tuple.get(0), dateFormat.parse("20130101").getTime());
-        assertEquals(tuple.get(1).toString(), "(time,540)");
-
-        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -172,7 +160,7 @@ public class TestTimeSpentInAction extends BaseTest {
         }
 
         @Override
-        public String getStorageTableBaseName() {
+        public String getStorageCollectionName() {
             return "testtimespentinaction";
         }
 

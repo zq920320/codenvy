@@ -43,13 +43,8 @@ public abstract class AbstractProjectType extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return MetricType.PROJECT_TYPES.name().toLowerCase();
-    }
-
-    @Override
-    public boolean isSupportMultipleTables() {
-        return true;
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PROJECT_TYPES);
     }
 
     @Override

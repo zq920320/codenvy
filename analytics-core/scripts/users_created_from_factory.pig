@@ -54,17 +54,10 @@ z2 = FILTER z1 BY MilliSecondsBetween(y::dt, x::dt) >= 0;
 z = FOREACH z2 GENERATE y::dt AS dt, y::user AS user, x::tmpWs AS tmpWs;
 
 
-a1 = FOREACH z GENERATE user;
-a2 = DISTINCT a1;
-a = countAll(a2);
-
-result = FOREACH a GENERATE ToMilliSeconds(ToDate('$TO_DATE', 'yyyyMMdd')), TOTUPLE('value', countAll);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
-
 r1 = JOIN z BY tmpWs, u BY tmpWs;
 r2 = FOREACH r1 GENERATE z::dt AS dt, z::user AS user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain,
         z::tmpWs AS ws, u::referrer AS referrer, u::factory AS factory, u::orgId AS orgId, u::affiliateId AS affiliateId;
-r = FOREACH r2 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
+result = FOREACH r2 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
             TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('org_id', orgId),
             TOTUPLE('affiliate_id', affiliateId), TOTUPLE('value', 1L);
-STORE r INTO '$STORAGE_URL.$STORAGE_TABLE-raw' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

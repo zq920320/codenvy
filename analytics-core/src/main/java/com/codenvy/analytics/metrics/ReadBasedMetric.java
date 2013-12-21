@@ -61,30 +61,21 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     // --------------------------------------------- storage related methods -------------
 
     /**
-     * For most metrics data can be stored in two collections. The fist collection contains summarized data per day to
-     * retrieve for performance purpose. The second one contains detailed data. In case of using filters, only this
-     * table will be used.
-     *
-     * @return true if data of the metric are stored in multiple tables
-     */
-    public abstract boolean isSupportMultipleTables();
-
-    /**
      * @return the fields are interested in by given metric. In other words, they are valuable for given metric. It
      *         might returns empty array to read all available fields
      */
     public abstract String[] getTrackedFields();
 
-    /**
-     * For most metrics data can be stored in two collections. The name of first one is basically derived from the name
-     * of metric itself. The name of second one can be obtained by adding specific suffix to the end.
-     * {@link com.codenvy.analytics.storage.MongoDataLoader#EXT_COLLECTION_NAME_SUFFIX}.
-     *
-     * @return the name of collection. if metric supports multiple tables, the name of the second collection will be
-     *         evaluated automatically.
-     */
-    public String getStorageTableBaseName() {
+    public String getStorageCollectionName() {
         return getName().toLowerCase();
+    }
+
+    protected String getStorageCollectionName(MetricType metricType) {
+        return MetricFactory.getMetric(metricType).getName().toLowerCase();
+    }
+
+    protected String getStorageCollectionName(String metricName) {
+        return metricName.toLowerCase();
     }
 
     /**

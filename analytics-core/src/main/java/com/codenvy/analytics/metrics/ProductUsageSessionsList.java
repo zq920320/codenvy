@@ -17,8 +17,6 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.storage.MongoDataLoader;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProductUsageSessionsList extends AbstractListValueResulted {
 
@@ -44,8 +42,8 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return super.getStorageTableBaseName() + MongoDataLoader.EXT_COLLECTION_NAME_SUFFIX;
+    public String getStorageCollectionName() {
+        return super.getStorageCollectionName();
     }
 
     @Override

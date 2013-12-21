@@ -48,18 +48,13 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSupportMultipleTables() {
-        return true;
-    }
-
-    @Override
     public String[] getTrackedFields() {
         return types;
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return MetricType.PROJECT_PAASES.name().toLowerCase();
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PROJECT_PAASES);
     }
 
     @Override

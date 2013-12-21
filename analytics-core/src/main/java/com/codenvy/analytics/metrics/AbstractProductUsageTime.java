@@ -67,18 +67,13 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase();
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
     }
 
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
-    }
-
-    @Override
-    public boolean isSupportMultipleTables() {
-        return true;
     }
 
     @Override

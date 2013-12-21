@@ -35,11 +35,6 @@ public abstract class AbstractMapValueResulted extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSupportMultipleTables() {
-        return true;
-    }
-
-    @Override
     public Class<? extends ValueData> getValueDataClass() {
         return MapValueData.class;
     }

@@ -63,11 +63,6 @@ public class TestReadBasedMetric extends BaseTest {
         }
 
         @Override
-        public boolean isSupportMultipleTables() {
-            return true;
-        }
-
-        @Override
         public String[] getTrackedFields() {
             return new String[0];
         }

@@ -159,6 +159,7 @@
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="product_usage_sessions_list"/>
+        <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics_list"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all builds</description>
@@ -202,7 +203,7 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="created_factories_set"/>
     </script>
-    <script name="temporary_workspaces_created">
+    <script name="created_temporary_workspaces">
         <description>The number of created temporary workspaces</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="ANY"/>

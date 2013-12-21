@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.storage.MongoDataLoader;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -37,13 +36,8 @@ public class UsersTimeInWorkspaces extends ReadBasedMetric {
     }
 
     @Override
-    public String getStorageTableBaseName() {
-        return MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase() + MongoDataLoader.EXT_COLLECTION_NAME_SUFFIX;
-    }
-
-    @Override
-    public boolean isSupportMultipleTables() {
-        return false;
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
     }
 
     @Override

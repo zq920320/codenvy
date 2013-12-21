@@ -38,11 +38,6 @@ public abstract class AbstractSetValueResulted extends ReadBasedMetric {
     }
 
     @Override
-    public boolean isSupportMultipleTables() {
-        return true;
-    }
-
-    @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
