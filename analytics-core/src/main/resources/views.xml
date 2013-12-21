@@ -593,7 +593,7 @@
                 <parameter key="columns" value="3"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_time_in_workspaces"/>
+                <parameter key="name" value="users_time_in_workspaces_list"/>
                 <parameter key="fields" value="_id,sessions,time"/>
                 <parameter key="columns" value="1"/>
             </row>
