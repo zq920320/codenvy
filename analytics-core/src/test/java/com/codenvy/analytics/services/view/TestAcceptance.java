@@ -187,393 +187,393 @@ public class TestAcceptance extends BaseTest {
     private void assertFactoryProductUsageDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Product Usage Mins"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("1,396"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("1,396"), sectionData.get(1).get(1));
     }
 
     private void assertFactoryUsersSessionsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factory Sessions"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("233"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("233"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("< 10 Mins"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("202"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("202"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 10 Mins"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("31"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("31"), sectionData.get(3).get(1));
     }
 
     private void assertFactorySessionsIdeUsageEventsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factory Sessions"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("233"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("233"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("% Built"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("19%"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("19%"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("% Run"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("23%"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("23%"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("% Deployed"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("14%"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("14%"), sectionData.get(4).get(1));
     }
 
     private void assertConvertedFactorySessionsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factory Sessions"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("233"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("233"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Abandoned Sessions"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("223"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("223"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Converted Sessions"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("10"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("10"), sectionData.get(3).get(1));
     }
 
     private void assertAuthenticatedFactorySessionsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factory Sessions"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("233"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("233"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Anonymous Sessions"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("210"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("210"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Authenticated Sessions"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("23"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("23"), sectionData.get(3).get(1));
     }
 
     private void assertFactoryiesDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factories Created"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("12"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("12"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Temporary Workspaces Created"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("280"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("280"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Accounts Created From Factories"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("15"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("15"), sectionData.get(3).get(1));
     }
 
     private void assertProjectsPaasDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("390"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("390"), sectionData.get(1).get(1)); //399 TODO OLD SCRIPTS
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("AWS"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("AppFog"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("16"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("16"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("CloudBees"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(4).get(1));
 
         row = sectionData.get(5).get(0).getAsString();
         aggregateResult(row, new StringValueData("CloudFoundry"), sectionData.get(5).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(5).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(5).get(1));
 
         row = sectionData.get(6).get(0).getAsString();
         aggregateResult(row, new StringValueData("GAE"), sectionData.get(6).get(0));
-        aggregateResult(row, new StringValueData("7"), sectionData.get(6).get(2)); //14 TODO OLD SCRIPTS
+        aggregateResult(row, new StringValueData("7"), sectionData.get(6).get(1)); //14 TODO OLD SCRIPTS
 
         row = sectionData.get(7).get(0).getAsString();
         aggregateResult(row, new StringValueData("Heroku"), sectionData.get(7).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(7).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(7).get(1));
 
         row = sectionData.get(8).get(0).getAsString();
         aggregateResult(row, new StringValueData("OpenShift"), sectionData.get(8).get(0));
-        aggregateResult(row, new StringValueData("7"), sectionData.get(8).get(2));
+        aggregateResult(row, new StringValueData("7"), sectionData.get(8).get(1));
 
         row = sectionData.get(9).get(0).getAsString();
         aggregateResult(row, new StringValueData("Tier3"), sectionData.get(9).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(9).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(9).get(1));
 
         row = sectionData.get(10).get(0).getAsString();
         aggregateResult(row, new StringValueData("Manyamo"), sectionData.get(10).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(10).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(10).get(1));
 
         row = sectionData.get(11).get(0).getAsString();
         aggregateResult(row, new StringValueData("No PaaS Defined"), sectionData.get(11).get(0));
-        aggregateResult(row, new StringValueData("360"), sectionData.get(11).get(2)); //353 TODO OLD SCRIPTS
+        aggregateResult(row, new StringValueData("360"), sectionData.get(11).get(1)); //356 TODO OLD SCRIPTS
     }
 
     private void assertProjectsTypesDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("390"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("398"), sectionData.get(1).get(1)); 
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Java Jar"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("29"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("29"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Java War"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("4"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("4"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Java JSP"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("31"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("31"), sectionData.get(4).get(1));
 
         row = sectionData.get(5).get(0).getAsString();
         aggregateResult(row, new StringValueData("Java Spring"), sectionData.get(5).get(0));
-        aggregateResult(row, new StringValueData("8"), sectionData.get(5).get(2));
+        aggregateResult(row, new StringValueData("8"), sectionData.get(5).get(1));
 
         row = sectionData.get(6).get(0).getAsString();
         aggregateResult(row, new StringValueData("PHP"), sectionData.get(6).get(0));
-        aggregateResult(row, new StringValueData("96"), sectionData.get(6).get(2));
+        aggregateResult(row, new StringValueData("102"), sectionData.get(6).get(1));
 
         row = sectionData.get(7).get(0).getAsString();
         aggregateResult(row, new StringValueData("Python"), sectionData.get(7).get(0));
-        aggregateResult(row, new StringValueData("47"), sectionData.get(7).get(2));
+        aggregateResult(row, new StringValueData("47"), sectionData.get(7).get(1));
 
         row = sectionData.get(8).get(0).getAsString();
         aggregateResult(row, new StringValueData("JavaScript"), sectionData.get(8).get(0));
-        aggregateResult(row, new StringValueData("64"), sectionData.get(8).get(2));
+        aggregateResult(row, new StringValueData("64"), sectionData.get(8).get(1));
 
         row = sectionData.get(9).get(0).getAsString();
         aggregateResult(row, new StringValueData("Ruby"), sectionData.get(9).get(0));
-        aggregateResult(row, new StringValueData("16"), sectionData.get(9).get(2));
+        aggregateResult(row, new StringValueData("16"), sectionData.get(9).get(1));
 
         row = sectionData.get(10).get(0).getAsString();
         aggregateResult(row, new StringValueData("Maven Multi Project"), sectionData.get(10).get(0));
-        aggregateResult(row, new StringValueData("1"), sectionData.get(10).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(10).get(1));
 
         row = sectionData.get(11).get(0).getAsString();
         aggregateResult(row, new StringValueData("Node.js"), sectionData.get(11).get(0));
-        aggregateResult(row, new StringValueData("19"), sectionData.get(11).get(2));
+        aggregateResult(row, new StringValueData("19"), sectionData.get(11).get(1));
 
         row = sectionData.get(12).get(0).getAsString();
         aggregateResult(row, new StringValueData("Android"), sectionData.get(12).get(0));
-        aggregateResult(row, new StringValueData("75"), sectionData.get(12).get(2));
+        aggregateResult(row, new StringValueData("75"), sectionData.get(12).get(1));
 
         row = sectionData.get(13).get(0).getAsString();
         aggregateResult(row, new StringValueData("Django"), sectionData.get(13).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(13).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(13).get(1));
 
         row = sectionData.get(14).get(0).getAsString();
         aggregateResult(row, new StringValueData("Others"), sectionData.get(14).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(14).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(14).get(1));
     }
 
     private void assertUsersEngagementDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("202"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("202"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("< 10 Min"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("110"), sectionData.get(2).get(2)); //112 TODO OLD SCRIPTS
+        aggregateResult(row, new StringValueData("110"), sectionData.get(2).get(1)); //112 TODO OLD SCRIPTS
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData(">= 10 And < 60 Mins"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("61"), sectionData.get(3).get(2)); //59 TODO OLD SCRIPTS
+        aggregateResult(row, new StringValueData("61"), sectionData.get(3).get(1)); //59 TODO OLD SCRIPTS
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData(">= 60 And < 300 Mins"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("29"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("29"), sectionData.get(4).get(1));
 
         row = sectionData.get(5).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 300 Mins"), sectionData.get(5).get(0));
-        aggregateResult(row, new StringValueData("2"), sectionData.get(5).get(2));
+        aggregateResult(row, new StringValueData("2"), sectionData.get(5).get(1));
     }
 
     private void assertAuthenticationsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Google Auth"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("66%"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("66%"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Github Auth"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("10%"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("10%"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Form Auth"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("24%"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("24%"), sectionData.get(3).get(1));
     }
 
     private void assertUserSessionsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("700"), sectionData.get(1).get(2)); //702 TODO OLD SCRIPTS
+        aggregateResult(row, new StringValueData("700"), sectionData.get(1).get(1)); //702 TODO OLD SCRIPTS
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("<= 1 Min"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("218"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("218"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 1 And < 10 Mins"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("296"), sectionData.get(3).get(2)); //298 TODO OLD SCRIPTS
+        aggregateResult(row, new StringValueData("296"), sectionData.get(3).get(1)); //298 TODO OLD SCRIPTS
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("154"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("154"), sectionData.get(4).get(1));
 
         row = sectionData.get(5).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 60 Mins"), sectionData.get(5).get(0));
-        aggregateResult(row, new StringValueData("32"), sectionData.get(5).get(2));
+        aggregateResult(row, new StringValueData("32"), sectionData.get(5).get(1));
     }
 
     private void assertWorkspaceUsageDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("83"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("83"), sectionData.get(1).get(1)); //82 TODO OLD SCRIPTS
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("New Active Workspaces"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("73"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("73"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Returning Active Workspaces"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("408"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("408"), sectionData.get(3).get(1)); //414 TODO OLD SCRIPTS
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Workspaces"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("-398"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("-398"), sectionData.get(4).get(1)); //-405 TODO OLD SCRIPTS
     }
 
     private void assertUsageTimeDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("8,338"), sectionData.get(1).get(2)); //8,568 TODO OLD SCRIPTS
+        aggregateResult(row, new StringValueData("8,338"), sectionData.get(1).get(1)); //8,568 TODO OLD SCRIPTS
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("<= 1 Min"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("218"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("218"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 1 And < 10 Mins"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("1,206"), sectionData.get(3).get(2)); //1,436 TODO OLD SCRIPTS
+        aggregateResult(row, new StringValueData("1,206"), sectionData.get(3).get(1)); //1,436 TODO OLD SCRIPTS
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData(">= 10 And <= 60 Mins"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("3,584"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("3,584"), sectionData.get(4).get(1));
 
         row = sectionData.get(5).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 60 Mins"), sectionData.get(5).get(0));
-        aggregateResult(row, new StringValueData("3,330"), sectionData.get(5).get(2));
+        aggregateResult(row, new StringValueData("3,330"), sectionData.get(5).get(1));
     }
 
     private void assertIdeUsageDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Refactors"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Code Completions"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("289"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("289"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Builds"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("567"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("567"), sectionData.get(3).get(1)); //573 TODO OLD SCRIPTS
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Runs"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("314"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("314"), sectionData.get(4).get(1));
 
         row = sectionData.get(5).get(0).getAsString();
         aggregateResult(row, new StringValueData("# Debugs"), sectionData.get(5).get(0));
-        aggregateResult(row, new StringValueData("2"), sectionData.get(5).get(2));
+        aggregateResult(row, new StringValueData("2"), sectionData.get(5).get(1));
     }
 
     private void assertUsersDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total Created"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("76"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("76"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created From Factory"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("15"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("15"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created From Form / oAuth"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("61"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("61"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("96"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("96"), sectionData.get(4).get(1));
     }
 
     private void assertUsersUsageDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("96"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("96"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("New Active Users"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("76"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("76"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Returning Active Users"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("126"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("126"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Users"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("-106"), sectionData.get(4).get(2));
+        aggregateResult(row, new StringValueData("-106"), sectionData.get(4).get(1));
     }
 
     private void assertProjectsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("390"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("390"), sectionData.get(1).get(1)); //398 TODO OLD SCRIPTS
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Destroyed"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("84"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("84"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("336"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("336"), sectionData.get(3).get(1)); //344 TODO OLD SCRIPTS
     }
 
     private void assertWorkspacesDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("73"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("73"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Destroyed"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("1"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("83"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("82"), sectionData.get(3).get(1));
     }
 
     private void assertTimeSpentDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Builds"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("60"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("60"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Runs"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("415"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("415"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Debugs"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("4"), sectionData.get(3).get(2));
+        aggregateResult(row, new StringValueData("4"), sectionData.get(3).get(1));
     }
 
     private void assertInvitationsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Sent"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("5"), sectionData.get(1).get(2));
+        aggregateResult(row, new StringValueData("5"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Accepted"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("100%"), sectionData.get(2).get(2));
+        aggregateResult(row, new StringValueData("100%"), sectionData.get(2).get(1));
     }
 
     private void aggregateResult(String row, ValueData expected, ValueData actual) {
