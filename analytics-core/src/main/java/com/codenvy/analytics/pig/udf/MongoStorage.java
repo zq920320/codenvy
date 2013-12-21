@@ -31,7 +31,7 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
 
-    public static final String SERVER_URL_PARAM      = "server.url";
+    public static final String SERVER_URL_PARAM = "server.url";
 
     private final String user;
     private final String password;
@@ -113,7 +113,11 @@ public class MongoStorage extends StoreFunc {
 
             for (int i = 1; i < value.size(); i++) {
                 Tuple tuple = (Tuple)value.get(i);
-                dbObject.put(tuple.get(0).toString(), tuple.get(1));
+
+                Object data = tuple.get(1);
+                if (data != null) {
+                    dbObject.put(tuple.get(0).toString(), data);
+                }
             }
 
             dbCollection.update(new BasicDBObject("_id", value.get(0)),
