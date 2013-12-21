@@ -28,7 +28,7 @@ public class CreatedUsersFromAuth extends CalculatedMetric {
 
     public CreatedUsersFromAuth() {
         super(MetricType.CREATED_USERS_FROM_AUTH, new MetricType[]{MetricType.CREATED_USERS,
-                                                                   MetricType.CREATED_USERS_FROM_FACTORY});
+                                                                   MetricType.USERS_CREATED_FROM_FACTORY});
     }
 
     @Override
