@@ -101,7 +101,7 @@ public class TestUsersData extends BaseTest {
         PigServer.execute(ScriptType.USERS_STATISTICS, params);
 
         Parameters.STORAGE_TABLE.put(params, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
+        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
     }
 
     @Test
@@ -238,7 +238,7 @@ public class TestUsersData extends BaseTest {
         assertEquals(valueData.size(), 2);
     }
 
-    private class TestUsersTimeInWorkspaces extends UsersTimeInWorkspaces {
+    private class TestUsersTimeInWorkspaces extends UsersTimeInWorkspacesList {
 
         @Override
         public String getStorageCollectionName() {

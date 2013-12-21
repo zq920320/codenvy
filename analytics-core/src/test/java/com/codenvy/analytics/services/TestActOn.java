@@ -59,7 +59,7 @@ public class TestActOn extends BaseTest {
         PigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.USER_UPDATE_PROFILE, context);
+        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
 
         Parameters.STORAGE_TABLE.put(context, "product_usage_sessions");
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
@@ -74,7 +74,7 @@ public class TestActOn extends BaseTest {
         PigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.USER_UPDATE_PROFILE, context);
+        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
 
         Parameters.STORAGE_TABLE.put(context, "product_usage_sessions");
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);

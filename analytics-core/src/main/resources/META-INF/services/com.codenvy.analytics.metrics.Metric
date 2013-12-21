@@ -8,7 +8,7 @@ com.codenvy.analytics.metrics.NewActiveWorkspaces
 com.codenvy.analytics.metrics.ReturningActiveWorkspaces
 
 com.codenvy.analytics.metrics.CreatedUsers
-com.codenvy.analytics.metrics.UsersCreatedFromFactory
+com.codenvy.analytics.metrics.CreatedUsersFromFactory
 com.codenvy.analytics.metrics.CreatedUsersFromAuth
 com.codenvy.analytics.metrics.RemovedUsers
 com.codenvy.analytics.metrics.TotalUsers
@@ -117,4 +117,4 @@ com.codenvy.analytics.metrics.UsersProfiles
 com.codenvy.analytics.metrics.UsersActivityList
 com.codenvy.analytics.metrics.UsersActivity
 com.codenvy.analytics.metrics.UsersStatisticsList
-com.codenvy.analytics.metrics.UsersTimeInWorkspaces
+com.codenvy.analytics.metrics.UsersTimeInWorkspacesList

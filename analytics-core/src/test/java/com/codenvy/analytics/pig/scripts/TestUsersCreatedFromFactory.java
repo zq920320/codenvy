@@ -20,10 +20,10 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.metrics.CreatedUsersFromFactory;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.UsersCreatedFromFactory;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -81,7 +81,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testuserscreatedfromfactory");
 
-        PigServer.execute(ScriptType.USERS_CREATED_FROM_FACTORY, params);
+        PigServer.execute(ScriptType.CREATED_USERS_FROM_FACTORY, params);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         assertEquals(metric.getValue(context), LongValueData.valueOf(0));
     }
 
-    private class TestedUsersCreatedFromFactory extends UsersCreatedFromFactory {
+    private class TestedUsersCreatedFromFactory extends CreatedUsersFromFactory {
         @Override
         public String getStorageCollectionName() {
             return "testuserscreatedfromfactory";

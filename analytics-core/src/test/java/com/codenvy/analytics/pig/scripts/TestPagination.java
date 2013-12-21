@@ -70,7 +70,7 @@ public class TestPagination extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testpagination");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
+        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
     }
 
     @Test

@@ -70,7 +70,7 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofusersbytypes_usersaddedtoworkspaces");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
+        PigServer.execute(ScriptType.EVENTS_BY_TYPES, params);
     }
 
     @Test

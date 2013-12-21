@@ -61,7 +61,7 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofevents");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.execute(ScriptType.EVENTS, params);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@gmail.com")
@@ -78,11 +78,11 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.execute(ScriptType.EVENTS, params);
     }
 
     @Test
     public void testExecute() throws Exception {
-        PigServer.executeAndReturn(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.executeAndReturn(ScriptType.EVENTS, params);
     }
 }

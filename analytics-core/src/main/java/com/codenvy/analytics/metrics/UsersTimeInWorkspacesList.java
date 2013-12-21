@@ -17,22 +17,20 @@
  */
 package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersTimeInWorkspaces extends ReadBasedMetric {
+public class UsersTimeInWorkspacesList extends AbstractListValueResulted {
 
     public static final String WS       = "_id";
     public static final String SESSIONS = "sessions";
     public static final String TIME     = "time";
 
-    public UsersTimeInWorkspaces() {
-        super(MetricType.USERS_TIME_IN_WORKSPACES);
+    public UsersTimeInWorkspacesList() {
+        super(MetricType.USERS_TIME_IN_WORKSPACES_LIST);
     }
 
     @Override
@@ -54,11 +52,6 @@ public class UsersTimeInWorkspaces extends ReadBasedMetric {
         BasicDBObject opCount = new BasicDBObject("$group", group);
 
         return new DBObject[]{opCount};
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
     }
 
     @Override

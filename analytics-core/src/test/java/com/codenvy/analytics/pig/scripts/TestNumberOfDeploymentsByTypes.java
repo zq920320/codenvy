@@ -121,7 +121,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofdeploymentsbytypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_DEPLOYMENTS_BY_TYPES, params);
+        PigServer.execute(ScriptType.DEPLOYMENTS_BY_TYPES, params);
     }
 
     @Test

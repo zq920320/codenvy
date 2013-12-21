@@ -18,10 +18,10 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersCreatedFromFactory extends AbstractLongValueResulted {
+public class CreatedUsersFromFactory extends AbstractLongValueResulted {
 
-    public UsersCreatedFromFactory() {
-        super(MetricType.USERS_CREATED_FROM_FACTORY);
+    public CreatedUsersFromFactory() {
+        super(MetricType.CREATED_USERS_FROM_FACTORY);
     }
 
     @Override

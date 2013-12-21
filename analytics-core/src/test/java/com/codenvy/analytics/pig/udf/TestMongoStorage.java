@@ -68,7 +68,7 @@ public class TestMongoStorage extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS, params);
+        PigServer.execute(ScriptType.EVENTS, params);
 
         BasicDBObject dbObject = new BasicDBObject();
         dbObject.put("_id", dateFormat.parse("20130102").getTime());

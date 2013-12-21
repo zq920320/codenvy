@@ -69,7 +69,7 @@
                 <parameter key="description" value="Total Created"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_created_from_factory"/>
+                <parameter key="name" value="created_users_from_factory"/>
                 <parameter key="description" value="Created From Factory"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -424,7 +424,7 @@
                 <parameter key="description" value="Temporary Workspaces Created"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="users_created_from_factory"/>
+                <parameter key="name" value="created_users_from_factory"/>
                 <parameter key="description" value="Accounts Created From Factories"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>

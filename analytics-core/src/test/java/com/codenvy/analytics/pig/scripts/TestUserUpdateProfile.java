@@ -64,7 +64,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
+        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
 
 
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company-2", "22", "2")
@@ -79,12 +79,12 @@ public class TestUserUpdateProfile extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USER_UPDATE_PROFILE, params);
+        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
     }
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.USER_UPDATE_PROFILE, params);
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.USERS_UPDATE_PROFILES, params);
 
         assertTuples(iterator, new String[]{
                 "(user1@gmail.com,(user_first_name,f3),(user_last_name,l3)," +

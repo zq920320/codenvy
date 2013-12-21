@@ -27,7 +27,7 @@ import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum ScriptType {
-    NUMBER_OF_EVENTS {
+    EVENTS {
         @Override
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();
@@ -35,7 +35,7 @@ public enum ScriptType {
             return params;
         }
     },
-    NUMBER_OF_EVENTS_BY_TYPES {
+    EVENTS_BY_TYPES {
         @Override
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();
@@ -44,8 +44,8 @@ public enum ScriptType {
             return params;
         }
     },
-    NUMBER_OF_DEPLOYMENTS_BY_TYPES,
-    USERS_CREATED_FROM_FACTORY,
+    DEPLOYMENTS_BY_TYPES,
+    CREATED_USERS_FROM_FACTORY,
     PRODUCT_USAGE_SESSIONS,
     PRODUCT_USAGE_SESSIONS_OLD,
     ACTIVE_ENTITIES {
@@ -69,7 +69,7 @@ public enum ScriptType {
     ACCEPTED_FACTORIES,
     PRODUCT_USAGE_FACTORY_SESSIONS,
     CREATED_TEMPORARY_WORKSPACES,
-    USER_UPDATE_PROFILE,
+    USERS_UPDATE_PROFILES,
     USERS_STATISTICS,
     USERS_ACTIVITY,
 

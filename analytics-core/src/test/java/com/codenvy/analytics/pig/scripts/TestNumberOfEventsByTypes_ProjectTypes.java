@@ -67,7 +67,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofeventsbytypes_projecttypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
+        PigServer.execute(ScriptType.EVENTS_BY_TYPES, params);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "", "jar")
@@ -84,7 +84,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.NUMBER_OF_EVENTS_BY_TYPES, params);
+        PigServer.execute(ScriptType.EVENTS_BY_TYPES, params);
     }
 
     @Test

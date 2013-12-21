@@ -161,7 +161,7 @@ public class TestAcceptance extends BaseTest {
                     assertProjectsPaasDay(sectionData);
                     break;
                 case "factories_day":
-                    assertFactoryiesDay(sectionData);
+                    assertFactoriesDay(sectionData);
                     break;
                 case "authenticated_factory_sessions_day":
                     assertAuthenticatedFactorySessionsDay(sectionData);
@@ -250,7 +250,7 @@ public class TestAcceptance extends BaseTest {
         aggregateResult(row, new StringValueData("23"), sectionData.get(3).get(1));
     }
 
-    private void assertFactoryiesDay(List<List<ValueData>> sectionData) {
+    private void assertFactoriesDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factories Created"), sectionData.get(1).get(0));
         aggregateResult(row, new StringValueData("12"), sectionData.get(1).get(1));
