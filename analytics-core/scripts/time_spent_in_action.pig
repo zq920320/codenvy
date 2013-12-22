@@ -23,6 +23,6 @@ l = FOREACH l1 GENERATE *, '' AS id; -- it requires 'id' field in scheme
 
 f = combineClosestEvents(l, '$EVENT-started', '$EVENT-finished');
 
-r1 = FOREACH f GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, delta;
-result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('time', delta);
+r1 = FOREACH f GENERATE dt, ws, user, delta;
+result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

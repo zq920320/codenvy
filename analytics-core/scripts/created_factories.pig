@@ -30,9 +30,9 @@ a6 = extractUrlParam(a5, 'AFFILIATE-ID', 'affiliateId');
 a = FOREACH a6 GENERATE dt, ws, user, factory, repository, (orgId == '}' ? '' : orgId) AS orgId,
                 (affiliateId == '}' ? '' : affiliateId) AS affiliateId, projectType;
 
-r1 = FOREACH a GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain, factory, repository,
+r1 = FOREACH a GENERATE dt, ws, user, factory, repository,
                 orgId, affiliateId, projectType;
-result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
+result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user),
                     TOTUPLE('orgId', orgId), TOTUPLE('affiliateId', affiliateId),
                     TOTUPLE('repository', repository), TOTUPLE('project_type', projectType), TOTUPLE('factory', factory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

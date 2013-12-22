@@ -79,7 +79,6 @@ public class TestMongoStorage extends BaseTest {
         DBObject next = dbCursor.next();
         assertEquals(next.get("ws"), "ws1");
         assertEquals(next.get("user"), "user1@gmail.com");
-        assertEquals(next.get("domain"), "gmail.com");
         assertEquals(next.get("value"), 1L);
 
         Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_MONGO_LOADER, params);

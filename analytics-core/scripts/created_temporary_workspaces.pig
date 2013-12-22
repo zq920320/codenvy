@@ -34,9 +34,8 @@ w3 = JOIN w2 BY tmpWs, u BY tmpWs;
 w = FOREACH w3 GENERATE w2::dt AS dt, w2::tmpWs AS ws, w2::user AS user, u::referrer AS referrer, u::factory AS factory,
                 u::orgId AS orgId, u::affiliateId AS affiliateId;
 
-r1 = FOREACH w GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain,
-                        orgId, affiliateId, factory, referrer;
-result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain),
+r1 = FOREACH w GENERATE dt, ws, user, orgId, affiliateId, factory, referrer;
+result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user),
                     TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                     TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('value', 1);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

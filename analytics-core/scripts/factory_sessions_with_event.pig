@@ -30,7 +30,7 @@ c2 = FILTER c1 BY MilliSecondsBetween(a::dt, b::dt) > 0 AND SecondsBetween(a::dt
 c3 = FOREACH c2 GENERATE b::dt AS dt, a::ws AS ws, a::user AS user;
 c = DISTINCT c3;
 
-r1 = FOREACH c GENERATE dt, ws, user, LOWER(REGEX_EXTRACT(user, '.*@(.*)', 1)) AS domain;
-result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('domain', domain), TOTUPLE('value', 1);
+r1 = FOREACH c GENERATE dt, ws, user;
+result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('value', 1);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 

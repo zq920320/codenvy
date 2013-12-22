@@ -20,16 +20,14 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
 
-    public static final String USER                  = "user";
     public static final String WS                    = "ws";
+    public static final String USER                  = "user";
     public static final String TIME                  = "time";
-    public static final String ORG_ID                = "orgId";
-    public static final String AFFILIATE_ID          = "affiliateId";
-    public static final String CONVERTED             = "conv";
+    public static final String ORG_ID                = "org_id";
+    public static final String AFFILIATE_ID          = "affiliate_id";
     public static final String BUILD                 = "build";
     public static final String DEPLOY                = "deploy";
     public static final String RUN                   = "run";
-    public static final String AUTHENTICATED         = "auth";
     public static final String REFERRER              = "referrer";
     public static final String FACTORY               = "factory";
     public static final String AUTHENTICATED_SESSION = "authenticated_factory_session";

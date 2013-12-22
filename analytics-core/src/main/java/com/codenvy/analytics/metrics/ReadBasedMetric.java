@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * It is supposed to load calculated value {@link com.codenvy.analytics.datamodel.ValueData} from the storage.
@@ -92,9 +93,15 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values;
+
             if (filter == MetricFilter.USER_COMPANY) {
-                values = getUsersInCompany(filter.get(clauses));
+                values = getUsersInCompanies(filter.get(clauses));
                 match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
+
+            } else if (filter == MetricFilter.DOMAIN) {
+                String[] domains = filter.get(clauses).split(",");
+                match.put(MetricFilter.USER.name().toLowerCase(), getUsersInDomains(domains));
+
             } else {
                 values = filter.get(clauses).split(",");
                 match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
@@ -122,7 +129,24 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                             : Long.MAX_VALUE);
     }
 
-    private String[] getUsersInCompany(String company) throws IOException {
+    private Pattern getUsersInDomains(String[] domains) {
+        StringBuilder builder = new StringBuilder();
+        for (String domain : domains) {
+            if (builder.length() != 0) {
+                builder.append("|");
+            }
+
+            builder.append(".*");
+            if (!domain.startsWith("@")) {
+                builder.append("@");
+            }
+            builder.append(domain);
+        }
+
+        return Pattern.compile(builder.toString(), Pattern.CASE_INSENSITIVE);
+    }
+
+    private String[] getUsersInCompanies(String company) throws IOException {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, company);
 

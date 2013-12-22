@@ -24,24 +24,20 @@ import java.util.Map;
 public enum MetricFilter {
     _ID,
 
-    USER,
-    USER_FIRST_NAME,
-    USER_LAST_NAME,
-    USER_COMPANY,
-
     WS,
+    USER,
     DOMAIN,
+    USER_COMPANY,
+    USER_LAST_NAME,
+    USER_FIRST_NAME,
 
     ORG_ID,
-    AFFILIATE_ID,
-    REFERRER,
     FACTORY,
+    REFERRER,
     REPOSITORY,
-
-    PROJECT_TYPE,
+    AFFILIATE_ID,
     CONVERTED_FACTORY_SESSION,
     AUTHENTICATED_FACTORY_SESSION;
-
 
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {
