@@ -407,7 +407,7 @@ public class TestAcceptance extends BaseTest {
     private void assertUserSessionsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("70"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("700"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("<= 1 Min"), sectionData.get(2).get(0));
