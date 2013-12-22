@@ -19,6 +19,7 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
@@ -106,7 +107,8 @@ public class TestAcceptance extends BaseTest {
 
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        for (Map<String, List<List<ValueData>>> actualData : viewData.getAllValues()) { System.out.println(viewData.getAllValues().toString());
+        for (Map<String, List<List<ValueData>>> actualData : viewData.getAllValues()) {
+            System.out.println(viewData.getAllValues().toString());
             for (Map.Entry<String, List<List<ValueData>>> entry : actualData.entrySet()) {
                 acceptResult(entry.getKey(), entry.getValue());
             }
@@ -181,7 +183,24 @@ public class TestAcceptance extends BaseTest {
                 default:
                     fail("Unknown table name " + tableName);
             }
+        } else if (tableName.endsWith("lifetime")) {
+            switch (tableName) {
+                case "user_profile_lifetime":
+                    assertUsersProfiles(sectionData);
+                    break;
+            }
         }
+    }
+
+    private void assertUsersProfiles(List<List<ValueData>> sectionData) {
+        aggregateResult("User's profiles", new StringValueData("Email"), sectionData.get(0).get(0));
+        aggregateResult("User's profiles", new StringValueData("First Name"), sectionData.get(0).get(1));
+        aggregateResult("User's profiles", new StringValueData("Last Name"), sectionData.get(0).get(2));
+        aggregateResult("User's profiles", new StringValueData("Company"), sectionData.get(0).get(3));
+        aggregateResult("User's profiles", new StringValueData("Job"), sectionData.get(0).get(4));
+
+        aggregateResult("User's profiles", LongValueData.valueOf(102), LongValueData.valueOf(sectionData.size()));
+
     }
 
     private void assertFactoryProductUsageDay(List<List<ValueData>> sectionData) {
