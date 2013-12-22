@@ -183,7 +183,7 @@
         <parameter key="STORAGE_TABLE" value="debugs_time"/>
     </script>
 
-    <!-- Scripts for factory timeline -->
+     Scripts for factory timeline
      <script name="accepted_factories">
         <description>Accepted factories</description>
         <parameter key="USER" value="ANY"/>
@@ -216,7 +216,7 @@
     </script>
 
     <!-- Scripts for user's view -->
-    <!--script name="users_update_profiles">
+    <script name="users_update_profiles">
         <description>Users' profiles</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
@@ -233,5 +233,5 @@
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_activity_list"/>
-    </script-->
+    </script>
 </scripts>

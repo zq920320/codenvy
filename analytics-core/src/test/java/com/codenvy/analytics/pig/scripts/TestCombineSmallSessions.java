@@ -104,7 +104,7 @@ public class TestCombineSmallSessions extends BaseTest {
         expected.add("(user1,360)");
         expected.add("(user2,120)");
         expected.add("(user3,300)");
-        expected.add("(user4,30)");
+        expected.add("(user4,60)");
 
         assertEquals(actual, expected);
     }

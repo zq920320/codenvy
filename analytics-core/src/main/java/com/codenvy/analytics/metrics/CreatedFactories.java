@@ -18,7 +18,7 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CreatedFactories extends AbstractActiveEntities {
+public class CreatedFactories extends AbstractCount {
 
     public CreatedFactories() {
         super(MetricType.CREATED_FACTORIES, MetricType.CREATED_FACTORIES_SET);
