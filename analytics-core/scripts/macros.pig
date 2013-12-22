@@ -325,7 +325,7 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     u2 = combineClosestEvents(u1, '$startEvent', '$finishEvent');
 
     -- considering sessions less than 1 min as 1 min columns
-    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, delta AS delta, id AS id;
+    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, (delta < 60 ? 60 : delta) AS delta, id AS id;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -373,8 +373,7 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
   -- finds out if event was inside session
   x1 = JOIN $W BY (ws, user) LEFT, z BY (ws, user);
   x2 = FOREACH x1 GENERATE *, (z::ws IS NULL ? 0
-                                             : (SecondsBetween($W::dt, z::dt) < 0 AND SecondsBetween($W::dt, z::dt) + $W::delta + (long) $inactiveIntervalParam * 60  > 0 ? 1
-                                                                                                                                                                            : 0 )) AS $fieldParam;
+                                             : (MilliSecondsBetween(z::dt, $W::dt) > 0 AND SecondsBetween(z::dt, $W::dt) <= $W::delta + (int) $inactiveIntervalParam * 60 ? 1 : 0 )) AS $fieldParam;
   -- if several events were occurred then keep only one
   x3 = GROUP x2 BY $W::dt;
   $Y = FOREACH x3 {

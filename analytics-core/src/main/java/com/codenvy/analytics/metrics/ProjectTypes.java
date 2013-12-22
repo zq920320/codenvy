@@ -33,7 +33,7 @@ public class ProjectTypes extends AbstractMapValueResulted {
     public static final String ANDROID       = "android";
     public static final String GOOGLE_MBS    = "google-mbs-client-android";
     public static final String OTHER_NULL    = "null";
-    public static final String OTHER_DEFAULT = "defauult";
+    public static final String OTHER_DEFAULT = "default";
     public static final String OTHER_SERV    = "serv";
     public static final String OTHER_EXO     = "exo";
     public static final String RUBY          = "ruby";

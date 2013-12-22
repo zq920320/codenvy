@@ -164,33 +164,32 @@
     <script name="time_spent_in_action">
         <description>Time of all builds</description>
         <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="build"/>
         <parameter key="STORAGE_TABLE" value="builds_time"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all runs</description>
         <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="run"/>
         <parameter key="STORAGE_TABLE" value="runs_time"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all debugs</description>
         <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="ANY"/>
+        <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="debug"/>
         <parameter key="STORAGE_TABLE" value="debugs_time"/>
     </script>
 
     <!-- Scripts for factory timeline -->
-    <script name="accepted_factories">
+     <script name="accepted_factories">
         <description>Accepted factories</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>
         <parameter key="STORAGE_TABLE" value="accepted_factories_list"/>
     </script>
-
     <script name="created_users_from_factory">
         <description>The number of created users from factory</description>
         <parameter key="USER" value="ANY"/>
@@ -217,7 +216,7 @@
     </script>
 
     <!-- Scripts for user's view -->
-    <script name="users_update_profiles">
+    <!--script name="users_update_profiles">
         <description>Users' profiles</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
@@ -234,5 +233,5 @@
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_activity_list"/>
-    </script>
+    </script-->
 </scripts>

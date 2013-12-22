@@ -27,8 +27,8 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
     public static final String AFFILIATE_ID          = "affiliateId";
     public static final String CONVERTED             = "conv";
     public static final String BUILD                 = "build";
-    public static final String DEPLOY                = "run";
-    public static final String RUN                   = "deploy";
+    public static final String DEPLOY                = "deploy";
+    public static final String RUN                   = "run";
     public static final String AUTHENTICATED         = "auth";
     public static final String REFERRER              = "referrer";
     public static final String FACTORY               = "factory";

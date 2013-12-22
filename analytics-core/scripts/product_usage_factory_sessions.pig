@@ -31,36 +31,41 @@ u = FOREACH u5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
 
 ---- finds out all imported projects
 i1 = filterByEvent(l, 'factory-project-imported');
-i = FOREACH i1 GENERATE dt, ws AS tmpWs, user;
+i2 = FOREACH i1 GENERATE dt, ws AS tmpWs, user;
+i3 = GROUP i2 BY (tmpWs, user);
+i = FOREACH i3 GENERATE MIN(i2.dt) AS dt, group.tmpWs AS tmpWs, group.user AS user;
 
--- finds out users who changed their names
+-- users could work anonymously and their factory sessions associated with those names
+-- so, lets find their name before 'user-changed-name' has been occurred
 c1 = filterByEvent(l, 'user-changed-name');
 c2 = extractParam(c1, 'OLD-USER', oldUser);
 c3 = extractParam(c2, 'NEW-USER', newUser);
 c = FOREACH c3 GENERATE oldUser AS anomUser, newUser AS user;
 
--- we need to know anonymous user name instead of registered one
--- since in factory sessions we have deal with anonymous ones only
+-- associating anonymous names with 'factory-project-imported' events
 d1 = JOIN i BY user LEFT, c BY user;
-d = FOREACH d1 GENERATE i::dt AS dt, i::tmpWs AS tmpWs, (c::user IS NULL ? i::user : c::anomUser) AS user;
+d2 = FOREACH d1 GENERATE i::dt AS dt, i::tmpWs AS tmpWs, (c::user IS NULL ? i::user : c::anomUser) AS user;
 
+-- combining all possible combination, redundant ones will be screened later
+d3 = UNION d2, i;
+d = DISTINCT d3;
+
+-- factory sessions themselves
 s1 = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
 s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user AS tmpUser, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) AS auth;
 
--- founds out the corresponding referrer and factoryUrl
-s3 = JOIN s2 BY tmpWs, u BY tmpWs;
+-- founds out the corresponding referrer and factory
+s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
 s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::tmpUser AS user, s2::delta AS delta, s2::auth AS auth,
         u::factory AS factory, u::referrer AS referrer, u::orgId AS orgId, u::affiliateId AS affiliateId;
 
--- founds out if factory session was converted or not
+-- founds out if factory session was converted or wasn't
 -- (if importing operation was inside a session)
 s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
-
-s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory, s4::referrer AS referrer,
-                        s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::auth AS auth, s4::tmpWs AS ws, s4::user AS user,
-			            (d::tmpWs IS NULL ? 0 :
-			                                (SecondsBetween(s4::dt, d::dt) < 0 AND SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 :
-			                                                                                                                                                        0 )) AS conv;
+s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory, s4::referrer AS referrer, s4::user AS user,
+                        s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::auth AS auth, s4::tmpWs AS ws,
+			            (d::tmpWs IS NULL ? 0
+			                              : (SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 : 0 )) AS conv;
 
 -- sessions with events
 k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');
