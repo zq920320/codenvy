@@ -41,6 +41,11 @@ public class VariableHelper {
                             }
                             if ("replace".equals(entry.getKey())) {
                                 replacement.setReplace((String)entry.getValue());
+                                continue;
+                            }
+
+                            if ("replacemode".equals(entry.getKey())) {
+                                replacement.setReplacemode((String)entry.getValue());
                             }
                         }
                         replacements.add(replacement);
@@ -69,6 +74,7 @@ public class VariableHelper {
                 BasicDBObject BasicDBReplacement = new BasicDBObject();
                 BasicDBReplacement.put("find", replacement.getFind());
                 BasicDBReplacement.put("replace", replacement.getReplace());
+                BasicDBReplacement.put("replacemode", replacement.getReplacemode());
                 basicDBReplacements.add(BasicDBReplacement);
             }
 
