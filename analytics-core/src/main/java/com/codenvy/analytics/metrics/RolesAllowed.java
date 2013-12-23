@@ -15,25 +15,15 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
 package com.codenvy.analytics.metrics;
 
+import java.lang.annotation.*;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"analytics-users"})
-public abstract class AbstractMetric implements Metric {
-
-    protected final String metricName;
-
-    public AbstractMetric(String metricName) {
-        this.metricName = metricName.toLowerCase();
-    }
-
-    public AbstractMetric(MetricType metricType) {
-        this(metricType.toString());
-    }
-
-    @Override
-    public String getName() {
-        return metricName;
-    }
+@Target(value = ElementType.TYPE)
+@Retention(value = RetentionPolicy.RUNTIME)
+@Inherited
+public @interface RolesAllowed {
+    public abstract String[] value() default {};
 }
+

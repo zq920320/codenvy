@@ -22,11 +22,10 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.RolesAllowed;
 import com.codenvy.analytics.util.MetricDTOFactory;
 import com.codenvy.api.analytics.MetricHandler;
-import com.codenvy.api.analytics.dto.MetricInfoDTO;
-import com.codenvy.api.analytics.dto.MetricInfoListDTO;
-import com.codenvy.api.analytics.dto.MetricValueDTO;
+import com.codenvy.api.analytics.dto.*;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
 import com.codenvy.api.core.rest.ServiceContext;
 import com.codenvy.dto.server.DtoFactory;
@@ -39,14 +38,15 @@ import java.util.Map;
 /**
  * Metric handler implementation base on data stored in files on file system. Which should be preliminary prepared by
  * calling appropriate scripts.
- *
+ *z
  * @author <a href="mailto:dkuleshov@codenvy.com">Dmitry Kuleshov</a>
  */
 public class FileBasedMetricHandler implements MetricHandler {
 
-    public MetricValueDTO getValue(String metricName, Map<String, String> executionContext,
-                                   ServiceContext serviceContext)
-            throws MetricNotFoundException {
+    @Override
+    public MetricValueDTO getValue(String metricName,
+                                   Map<String, String> executionContext,
+                                   ServiceContext serviceContext) throws MetricNotFoundException {
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
         try {
             ValueData vd = getMetricValue(metricName, executionContext);
@@ -60,6 +60,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         return metricValueDTO;
     }
 
+    @Override
     public MetricInfoDTO getInfo(String metricName, ServiceContext serviceContext) throws MetricNotFoundException {
         try {
             Metric metric = MetricFactory.getMetric(metricName);
@@ -69,6 +70,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         }
     }
 
+    @Override
     public MetricInfoListDTO getAllInfo(ServiceContext serviceContext) {
         List<MetricInfoDTO> metricInfoDTOs = new ArrayList<>();
 
@@ -81,6 +83,26 @@ public class FileBasedMetricHandler implements MetricHandler {
         return metricInfoListDTO;
     }
 
+    @Override
+    public MetricRolesAllowedListDTO getRolesAllowed(String metricName, ServiceContext serviceContext) {
+        Metric metric = MetricFactory.getMetric(metricName);
+        RolesAllowed rolesAllowed = metric.getClass().getAnnotation(RolesAllowed.class);
+
+        List<MetricRolesAllowedDTO> roleDTOs = new ArrayList<>(rolesAllowed.value().length);
+
+        for (String role : rolesAllowed.value()) {
+            MetricRolesAllowedDTO roleDTO = DtoFactory.getInstance().createDto(MetricRolesAllowedDTO.class);
+            roleDTO.setRolesAllowed(role);
+
+            roleDTOs.add(roleDTO);
+        }
+
+        MetricRolesAllowedListDTO rolesListDTO = DtoFactory.getInstance().createDto(MetricRolesAllowedListDTO.class);
+        rolesListDTO.setRolesAllowed(roleDTOs);
+
+        return rolesListDTO;
+    }
+
     protected ValueData getMetricValue(String metricName, Map<String, String> executionContext) throws IOException {
         if (executionContext.get(Parameters.FROM_DATE.name()) == null) {
             Parameters.FROM_DATE.putDefaultValue(executionContext);
@@ -89,6 +111,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         if (executionContext.get(Parameters.TO_DATE.name()) == null) {
             Parameters.TO_DATE.putDefaultValue(executionContext);
         }
+
         return MetricFactory.getMetric(metricName).getValue(executionContext);
     }
 }
