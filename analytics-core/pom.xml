@@ -225,9 +225,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <excludes>
-                                <exclude>com/codenvy/analytics/**/TestLogCollector.java</exclude>
-                            </excludes>
+                            <includes>
+                                <include>com/codenvy/analytics/services/view/TestAcceptance.java</include>
+                            </includes>
                         </configuration>
                     </plugin>
                 </plugins>
