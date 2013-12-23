@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Calendar;
@@ -42,11 +41,11 @@ import java.util.Calendar;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class Scheduler implements ServletContextListener {
 
-    private static final Logger LOGGER                         = LoggerFactory.getLogger(Scheduler.class);
-    private static final String FEATURE_FORCE_RUN_CONDITION    = "feature.force.run.condition";
-    private static final String FEATURE_FORCE_RUN_CLASS        = "feature.force.run.class";
-    private static final String FEATURE_FORCE_RUN_ASYNCHRONOUS = "feature.force.run.asynchronous";
-    private static final String FEATURES_CRON_TIMETABLE        = "features.cron.timetable";
+    private static final Logger LOG                              = LoggerFactory.getLogger(Scheduler.class);
+    private static final String SCHEDULER_FORCE_RUN_CONDITION    = "scheduler.force.run.condition";
+    private static final String SCHEDULER_FORCE_RUN_CLASS        = "scheduler.force.run.class";
+    private static final String SCHEDULER_FORCE_RUN_ASYNCHRONOUS = "scheduler.force.run.asynchronous";
+    private static final String SCHEDULER_CRON_TIMETABLE         = "scheduler.cron.timetable";
 
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
     private static final String FORCE_RUN_CONDITION_LASTDAY = "LASTDAY";
@@ -66,7 +65,7 @@ public class Scheduler implements ServletContextListener {
         try {
             scheduler.shutdown();
         } catch (SchedulerException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -75,35 +74,40 @@ public class Scheduler implements ServletContextListener {
     public void contextInitialized(ServletContextEvent context) {
         try {
             CSVReportPersister.restoreBackup();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
 
-        initializeScheduler();
+            initializeScheduler();
 
-        String forceRunCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
-        if (forceRunCondition != null) {
-
-            Thread forceRunJobsThread = new Thread() {
-                @Override
-                public void run() {
-                    forceRunJobs();
-                }
-            };
-
-            if (Configurator.getBoolean(FEATURE_FORCE_RUN_ASYNCHRONOUS)) {
-                forceRunJobsThread.start();
+            if (Configurator.getString(SCHEDULER_FORCE_RUN_CONDITION) != null) {
+                executeSpecificFeature();
             } else {
-                forceRunJobsThread.run();
+                scheduleAllFeatures();
             }
+        } catch (Throwable e) {
+            LOG.error(e.getMessage(), e);
+            throw new IllegalStateException(e);
         }
     }
 
-    private void forceRunJobs() {
+    private void executeSpecificFeature() {
+        Thread forceRunFeatureThread = new Thread() {
+            @Override
+            public void run() {
+                forceRunFeatures();
+            }
+        };
+
+        if (Configurator.getBoolean(SCHEDULER_FORCE_RUN_ASYNCHRONOUS)) {
+            forceRunFeatureThread.start();
+        } else {
+            forceRunFeatureThread.run();
+        }
+    }
+
+    private void forceRunFeatures() {
         try {
-            String forceRunCondition = Configurator.getString(FEATURE_FORCE_RUN_CONDITION);
+            String forceRunCondition = Configurator.getString(SCHEDULER_FORCE_RUN_CONDITION);
             Set<String> forceRunFeature =
-                    new HashSet<>(Arrays.asList(Configurator.getString(FEATURE_FORCE_RUN_CLASS).split(",")));
+                    new HashSet<>(Arrays.asList(Configurator.getString(SCHEDULER_FORCE_RUN_CLASS).split(",")));
 
             for (Class jobClass : features) {
                 Feature job = (Feature)jobClass.getConstructor().newInstance();
@@ -111,38 +115,38 @@ public class Scheduler implements ServletContextListener {
                 if (forceRunFeature.isEmpty() || forceRunFeature.contains(job.getClass().getName())) {
                     switch (forceRunCondition.toUpperCase()) {
                         case FORCE_RUN_CONDITION_LASTDAY:
-                            executeLastDay(job);
+                            executeForLastDay(job);
                             break;
 
                         case FORCE_RUN_CONDITION_ALLTIME:
-                            executeAllTime(job);
+                            executeForAllTime(job);
                             break;
 
                         default:
-                            executeSpecificPeriod(job, forceRunCondition);
+                            executeForSpecificPeriod(job, forceRunCondition);
                             break;
                     }
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Unable to force job run: " + e.getMessage(), e);
+            LOG.error("Unable to force job run: " + e.getMessage(), e);
         }
     }
 
-    private void executeSpecificPeriod(Feature job, String runCondition) throws Exception {
+    private void executeForSpecificPeriod(Feature job, String runCondition) throws Exception {
         if (runCondition.contains(",")) {
             String[] dates = runCondition.split(",");
-            execute(job, dates[0], dates[1]);
+            doExecute(job, dates[0], dates[1]);
         } else {
-            execute(job, runCondition, runCondition);
+            doExecute(job, runCondition, runCondition);
         }
     }
 
-    private void executeAllTime(Feature job) throws Exception {
-        execute(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
+    private void executeForAllTime(Feature job) throws Exception {
+        doExecute(job, Parameters.FROM_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
     }
 
-    private void execute(Feature job, String fromDateParam, String toDateParam) throws Exception {
+    private void doExecute(Feature job, String fromDateParam, String toDateParam) throws Exception {
         Map<String, String> context = Utils.newContext();
 
         Calendar fromDate = Utils.parseDate(fromDateParam);
@@ -162,37 +166,34 @@ public class Scheduler implements ServletContextListener {
         } while (!Utils.getFromDate(context).after(toDate));
     }
 
-    private void executeLastDay(Feature job) throws Exception {
-        execute(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
+    private void executeForLastDay(Feature job) throws Exception {
+        doExecute(job, Parameters.TO_DATE.getDefaultValue(), Parameters.TO_DATE.getDefaultValue());
     }
 
     /** Creates scheduler and adds available jobs. */
-    public void initializeScheduler() {
-        try {
-            scheduler = new StdSchedulerFactory().getScheduler();
-
-            List<JobDetail> jobDetails = new ArrayList<>(2);
-
-            for (Class feature : features) {
-                addJobDetail(feature, jobDetails);
-            }
-
-            scheduleJobs(jobDetails);
-            ensureRunOrder(jobDetails);
-
-            scheduler.start();
-        } catch (Exception e) {
-            LOGGER.error("Scheduler was not initialized properly", e);
-        }
+    public void initializeScheduler() throws SchedulerException {
+        scheduler = new StdSchedulerFactory().getScheduler();
+        scheduler.start();
     }
 
-    private void scheduleJobs(List<JobDetail> jobDetails) throws SchedulerException {
+    private void scheduleAllFeatures() throws SchedulerException {
+        List<JobDetail> jobDetails = new ArrayList<>(2);
+
+        for (Class feature : features) {
+            addJobDetail(feature, jobDetails);
+        }
+
+        scheduleFeature(jobDetails);
+        ensureRunOrder(jobDetails);
+    }
+
+    private void scheduleFeature(List<JobDetail> jobDetails) throws SchedulerException {
         scheduler.scheduleJob(jobDetails.get(0), createTrigger());
-        LOGGER.info(jobDetails.get(0).getJobClass() + " initialized");
+        LOG.info(jobDetails.get(0).getJobClass() + " initialized");
 
         for (int i = 1; i < jobDetails.size(); i++) {
             scheduler.addJob(jobDetails.get(i), true);
-            LOGGER.info(jobDetails.get(i).getJobClass() + " initialized");
+            LOG.info(jobDetails.get(i).getJobClass() + " initialized");
         }
     }
 
@@ -208,7 +209,7 @@ public class Scheduler implements ServletContextListener {
 
     private CronTrigger createTrigger() {
         return TriggerBuilder.newTrigger().withSchedule(
-                CronScheduleBuilder.cronSchedule(Configurator.getString(FEATURES_CRON_TIMETABLE))).build();
+                CronScheduleBuilder.cronSchedule(Configurator.getString(SCHEDULER_CRON_TIMETABLE))).build();
     }
 
     private void addJobDetail(Class<? extends Feature> clazz, List<JobDetail> jobDetails) {
