@@ -335,8 +335,8 @@ function mapQueryParametersFromDatabaseToUI(params) {
 
 /**
  * Construct url parameters String based on parameters from params object
- * @param params object like {user_email: "test@gmail.com"} }
- * @returns url like "user_email=test%40gmail.com"
+ * @param params object like user_email: "test@gmail.com"
+ * @returns url like "user_email=test@gmail.com"
  */
 function constructRequestQueryString(params) {
    var params = params || {};
@@ -356,7 +356,7 @@ function constructRequestQueryString(params) {
 
 /**
  * Extract url parameters from Query String
- * @param queryString like "timeGroup=Month&Email=test%40gmail.com"
+ * @param queryString like "timeGroup=Month&Email=test@gmail.com"
  * @returns params object with param names like {timeGroup: Month, Email: "test@gmail.com"}
  */
 function extractUrlParamsForRestService(queryString) {   
