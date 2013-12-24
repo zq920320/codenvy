@@ -137,7 +137,8 @@ public class MongoDBFactoryStoreTest {
         BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(attrs);
 
         List<Variable> variables = Collections.singletonList(
-                new Variable(Collections.singletonList("glob"), Collections.singletonList(new Variable.Replacement("find", "replace"))));
+                new Variable(Collections.singletonList("glob"),
+                             Collections.singletonList(new Variable.Replacement("find", "replace", "text_multipass"))));
 
         List<DBObject> imageList = new ArrayList<>();
 
