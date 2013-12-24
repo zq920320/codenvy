@@ -251,7 +251,7 @@ function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pag
             }
             print("<a class='page-link' href='" + href + "'>" + i + "</a>");
 
-        } else if (i + 3 >= currentPageNumber && currentPageNumber + 3 >= i) {
+        } else if (i + 3 >= currentPageNumber && currentPageNumber >= i - 3) {
             print("<a class='page-link' href='" + href + "'>" + i + "</a>");
         }
     }
