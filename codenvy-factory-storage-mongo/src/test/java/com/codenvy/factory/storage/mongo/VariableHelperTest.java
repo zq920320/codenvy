@@ -17,7 +17,7 @@ public class VariableHelperTest {
     @Test
     public void testFromBasicDBFormat() throws Exception {
         List<Variable> variables = new ArrayList<>();
-        Variable.Replacement replacement = new Variable.Replacement("findText", "replaceText");
+        Variable.Replacement replacement = new Variable.Replacement("findText", "replaceText", "text_multipass");
         variables.add(new Variable(Collections.singletonList("glob_pattern"), Collections.singletonList(replacement)));
 
         BasicDBList basicDBVariables = VariableHelper.toBasicDBFormat(variables);
@@ -32,7 +32,7 @@ public class VariableHelperTest {
     @Test
     public void testToBasicDBFormat() throws Exception {
         List<Variable> variables = new ArrayList<>();
-        Variable.Replacement replacement = new Variable.Replacement("findText", "replaceText");
+        Variable.Replacement replacement = new Variable.Replacement("findText", "replaceText", "text_multipass");
         variables.add(new Variable(Collections.singletonList("glob_pattern"), Collections.singletonList(replacement)));
 
 
@@ -75,7 +75,8 @@ public class VariableHelperTest {
                 JsonValue entryValue = entriesIterator.next();
                 if (entryValue.isObject()) {
                     resultReplacements.add(new Variable.Replacement(entryValue.getElement("find").getStringValue(),
-                                                                    entryValue.getElement("replace").getStringValue()));
+                                                                    entryValue.getElement("replace").getStringValue(),
+                                                                    entryValue.getElement("replacemode").getStringValue()));
                 }
             }
 
