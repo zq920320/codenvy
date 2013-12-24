@@ -203,9 +203,9 @@
 
             createWorkspace : function(username,bearertoken,workspace,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
-                var waitUrl = "../wait-for-tenant?type=create&redirect_url=" +
-                    window.location.protocol + "//" + window.location.host +
-                    "/ide/"+ workspace + "&tenantName=" + workspace;
+                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ide/" + workspace + "?" +
+                    window.location.search.substring(1);
+                var waitUrl = "../wait-for-tenant?type=create&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
                 var workspaceName = {name: workspace};
                 var authenticateUrl = "/site/rest/token/validate";
                 var createWSUrl = "/site/rest/private/organization/workspaces/create";
@@ -245,9 +245,8 @@
 
             joinWorkspace : function(username,bearertoken,workspace,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
-                var waitUrl = "../wait-for-tenant?type=start&redirect_url=" +
-                    window.location.protocol + "//" + window.location.host +
-                    "/ide/"+ workspace + "&tenantName=" + workspace;
+                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ide/" + workspace;
+                var waitUrl = "../wait-for-tenant?type=start&tenantName=" + workspace + "redirect_url=" + encodeURIComponent(destinationUrl);
                 //var workspaceName = {name: workspace};
                 var authenticateUrl = "/site/rest/token/validate";
                 $.ajax({
