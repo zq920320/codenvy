@@ -102,7 +102,7 @@ function convertJsonToTables(data) {
     return result;
 }
 
-function printTable(table, isDisplaySpecificFirstCell) {   
+function printTable(table, isDisplaySpecificFirstCell) {
     print('<table cellspacing="0" class="database-table" align="center">');
     print('<thead aria-hidden="false">');
     print('<tr>');
@@ -131,9 +131,9 @@ function printTable(table, isDisplaySpecificFirstCell) {
 
         var firstCellClass = "cell";
         if (typeof isDisplaySpecificFirstCell != "undefined" && isDisplaySpecificFirstCell) {
-           firstCellClass += " first-cell text-cursor";
+            firstCellClass += " first-cell text-cursor";
         }
-        
+
         // print first cell
         print('<td class="' + firstCellClass + '">');
         print('<div style="outline-style: none;" tabindex="0">');
@@ -191,13 +191,13 @@ function printTableVerticalRow(table) {
         print(table.columns[i] + ":");
         print("</th>");
 
-        if (typeof table.rows != "undefined" 
-              && typeof table.rows[0] != "undefined"
-              && typeof table.rows[0][i] != "undefined") {
-           print("<td class='cell'>");
-           print(table.rows[0][i]);
-           print("</td>");
-           print("</tr>");
+        if (typeof table.rows != "undefined"
+                && typeof table.rows[0] != "undefined"
+                && typeof table.rows[0][i] != "undefined") {
+            print("<td class='cell'>");
+            print(table.rows[0][i]);
+            print("</td>");
+            print("</tr>");
         }
     }
 
@@ -224,122 +224,113 @@ function loadTableHandlers(ignoreLastRow) {
 
 /**
  * currentPageNumber is 1-based
+ * prints page navigator, meets the requirements: 1 ... 4 5 6 /7/ 9 10 11 ... 100
  */
 function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pageQueryParameter) {
     if (typeof pageCount == "undefined" || pageCount <= 0) {
         return;
     }
-    
+
     print("<div class='bottom-page-navigator'>");
 
-    
-    // print "previous page" link
-    if (currentPageNumber > 1) {
-        var previousPageLink = getPageNavigationUrl(queryString, currentPageNumber - 1, pageQueryParameter);
-        
-        print("<a class='page-link previous' href='" + previousPageLink + "'>&lt;</a>");
-    }
+    for (var i = 1; i < pageCount + 1; i++) {
+        var href = getPageNavigationUrl(queryString, i, pageQueryParameter);
 
-    // print all pages links
-    for (var i = 0; i < pageCount; i++) {
-        var pageNumber = (i + 1);
-        
-        var href = getPageNavigationUrl(queryString, pageNumber, pageQueryParameter);
-        
-        var elementClass = "page-link";
+        if (i == currentPageNumber) {
+            print("<a class='page-link current' href='" + href + "'>" + i + "</a>");
 
-        if (pageNumber == currentPageNumber) {
-            elementClass += " current";
+        } else if (i == 1) {
+            print("<a class='page-link' href='" + href + "'>" + i + "</a>");
+            if (currentPageNumber > 4) {
+                print(' ... ')
+            }
+
+        } else if (i == pageCount) {
+            if (currentPageNumber < pageCount - 4) {
+                print(' ... ')
+            }
+            print("<a class='page-link' href='" + href + "'>" + i + "</a>");
+
+        } else if (i + 3 >= currentPageNumber && currentPageNumber + 3 >= i) {
+            print("<a class='page-link' href='" + href + "'>" + i + "</a>");
         }
-
-        print("<a class='" + elementClass + "' href='" + href + "'>" + pageNumber + "</a>");
     }
-
-    // print "next page" link
-    if (currentPageNumber < pageCount) {
-        var nextPageLink = getPageNavigationUrl(queryString, currentPageNumber + 1, pageQueryParameter);
-        
-        print("<a class='page-link next' href='" + nextPageLink + "'>&gt;</a>");
-    } else {
-        print("<div class='page-link empty'></div>");
-    }
-
     print("</div>");
 }
 
 
-function getPageNavigationUrl(baseQueryString, pageNumber, pageQueryParameter) {   
-   var paramDelimeter = "&";
-   if (baseQueryString.indexOf("?") < 0) {
-      paramDelimeter = "?";
-   }
-   
-   var url = baseQueryString + paramDelimeter + pageQueryParameter + "=" + pageNumber;
-   
-   return url;
+function getPageNavigationUrl(baseQueryString, pageNumber, pageQueryParameter) {
+    var paramDelimeter = "&";
+    if (baseQueryString.indexOf("?") < 0) {
+        paramDelimeter = "?";
+    }
+
+    var url = baseQueryString + paramDelimeter + pageQueryParameter + "=" + pageNumber;
+
+    return url;
 }
 
 /**
  * Return encoded parameter name according to mapping rules defined in databaseToUIMap, for example: "First Name" => "user_first_name"
  */
 function mapTableFromUIToDatabase(uiTableColumnName) {
-   var uiTableColumns = databaseToUIMap.uiTableColumns;
-   for (var i = 0; i < uiTableColumns.length; i++) {
-      if (uiTableColumnName == uiTableColumns[i]) {
-         return databaseToUIMap.databaseTableColumns[i];
-      }
-   }
-   
-   return null;
+    var uiTableColumns = databaseToUIMap.uiTableColumns;
+    for (var i = 0; i < uiTableColumns.length; i++) {
+        if (uiTableColumnName == uiTableColumns[i]) {
+            return databaseToUIMap.databaseTableColumns[i];
+        }
+    }
+
+    return null;
 }
 
 /**
  * Return decoded parameter name according to mapping rules defined in databaseToUIMap, for example: "user_first_name" => "First Name"
  */
 function mapTableFromDatabaseToUI(databaseTableColumnName) {
-   var databaseTableColumns = databaseToUIMap.databaseTableColumns;
-   for (var i = 0; i < databaseTableColumns.length; i++) {
-      if (databaseTableColumnName == databaseTableColumns[i]) {
-         return databaseToUIMap.uiTableColumns[i];
-      }
-   }
-   
-   return null;
+    var databaseTableColumns = databaseToUIMap.databaseTableColumns;
+    for (var i = 0; i < databaseTableColumns.length; i++) {
+        if (databaseTableColumnName == databaseTableColumns[i]) {
+            return databaseToUIMap.uiTableColumns[i];
+        }
+    }
+
+    return null;
 }
 
 /**
  * Return query parameters object for rest-service according to mapping jag request query to rest-service request query rules defined in databaseToUIMap
  */
 function mapQueryParametersFromUIToDatabase(request) {
-   var restServiceRequestQueryParameters = {};
-   var jagRequestParameters = databaseToUIMap.jagQueryParameters;
-   for (var i = 0; i < jagRequestParameters.length; i++) {
-      var jagRequestParameterValue = request.getParameter(jagRequestParameters[i]);
-      if (jagRequestParameterValue != null) {
-         restServiceRequestQueryParameters[databaseToUIMap.databaseTableColumns[i]] = jagRequestParameterValue;
-      }
-   }
-   
-   return restServiceRequestQueryParameters;
+    var restServiceRequestQueryParameters = {};
+    var jagRequestParameters = databaseToUIMap.jagQueryParameters;
+    for (var i = 0; i < jagRequestParameters.length; i++) {
+        var jagRequestParameterValue = request.getParameter(jagRequestParameters[i]);
+        if (jagRequestParameterValue != null) {
+            restServiceRequestQueryParameters[databaseToUIMap.databaseTableColumns[i]] = jagRequestParameterValue;
+        }
+    }
+
+    return restServiceRequestQueryParameters;
 }
 
 /**
  * Return query parameters object for rest-service according to mapping jag request query to rest-service request query rules defined in databaseToUIMap
  */
 function mapQueryParametersFromDatabaseToUI(params) {
-   var params = params || {};
-   
-   var jagRequestParameters = databaseToUIMap.jagQueryParameters;
-   for (var i = 0; i < jagRequestParameters.length; i++) {
-      var databaseParameterName = databaseToUIMap.databaseTableColumns[i];
-      var paramValue = params[databaseParameterName];      
-      if (typeof paramValue != "undefined") {
-         delete params[databaseParameterName];
-         params[jagRequestParameters[i]] = paramValue;
-      }
-   }
-   
-   return params;
+    var params = params || {};
+
+    var jagRequestParameters = databaseToUIMap.jagQueryParameters;
+    for (var i = 0; i < jagRequestParameters.length; i++) {
+        var databaseParameterName = databaseToUIMap.databaseTableColumns[i];
+        var paramValue = params[databaseParameterName];
+        if (typeof paramValue != "undefined") {
+            delete params[databaseParameterName];
+            params[jagRequestParameters[i]] = paramValue;
+        }
+    }
+
+    return params;
 }
 
 /**
