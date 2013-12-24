@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.pig;
 
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.collection.IndexOperations;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -41,7 +42,7 @@ public class PigRunner implements Feature {
     private static final Logger LOG = LoggerFactory.getLogger(PigRunner.class);
 
     private final ConfigurationManager<PigRunnerConfiguration> configurationManager;
-
+    
     public PigRunner() {
         this.configurationManager = new XmlConfigurationManager<>(PigRunnerConfiguration.class);
     }
@@ -79,6 +80,8 @@ public class PigRunner implements Feature {
         long start = System.currentTimeMillis();
 
         try {
+            IndexOperations.dropIndexes();
+            
             PigRunnerConfiguration configuration = configurationManager.loadConfiguration("running-scripts.xml");
 
             for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {
@@ -90,6 +93,8 @@ public class PigRunner implements Feature {
 
                 PigServer.execute(scriptType, parameters);
             }
+            
+            IndexOperations.ensureIndexes();
         } finally {
             LOG.info("PigRunner is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
