@@ -29,7 +29,7 @@
             return response;
             },
             
-			urlRoot : "/site/rest/private/organization/users",
+			urlRoot : "/api/user",
 
             fetch : function(options){ // fetch is asynchronous function
             var dfd = $.Deferred();

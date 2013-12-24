@@ -160,7 +160,7 @@
             login : function(email, password, success, error){
 
                 if (isWebsocketEnabled()){
-                    var loginUrl = "/site/api/user/authenticate";
+                    var loginUrl = "/api/auth/login";
                     var successUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
                     var data = {username: email, password: password};
                  $.ajax({
@@ -185,7 +185,7 @@
 
             createTenant : function(email,domain,success,error){
                 var data = {email: email.toLowerCase(), workspacename: domain.toLowerCase()};
-                var emailValidateUrl = "/site/rest/email/validate?" + window.location.search.substring(1);
+                var emailValidateUrl = "/api/internal/email/validate?" + window.location.search.substring(1);
                 $.ajax({
                     url : emailValidateUrl,
                     type : "POST",
@@ -207,8 +207,8 @@
                     window.location.search.substring(1);
                 var waitUrl = "../wait-for-tenant?type=create&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
                 var workspaceName = {name: workspace};
-                var authenticateUrl = "/site/rest/token/validate";
-                var createWSUrl = "/site/rest/private/organization/workspaces/create";
+                var authenticateUrl = "/api/internal/token/validate";
+                var createWSUrl = "/api/workspace/create";
                 var selectWsUrl = "/site/private/select-tenant";
                 $.ajax({
                     url : authenticateUrl,
@@ -248,7 +248,7 @@
                 var destinationUrl = window.location.protocol + "//" + window.location.host + "/ide/" + workspace;
                 var waitUrl = "../wait-for-tenant?type=start&tenantName=" + workspace + "redirect_url=" + encodeURIComponent(destinationUrl);
                 //var workspaceName = {name: workspace};
-                var authenticateUrl = "/site/rest/token/validate";
+                var authenticateUrl = "/api/internal/token/validate";
                 $.ajax({
                     url : authenticateUrl,
                     type : "POST",
