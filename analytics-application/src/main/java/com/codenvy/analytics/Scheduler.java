@@ -42,7 +42,7 @@ import java.util.Calendar;
 public class Scheduler implements ServletContextListener {
 
     private static final Logger LOG                              = LoggerFactory.getLogger(Scheduler.class);
-    private static final String SCHEDULER_FORCE_RUN_CONDITION    = "scheduler.force.run.condition";
+    private static final String SCHEDULER_FORCE_RUN_PERIOD       = "scheduler.force.run.period";
     private static final String SCHEDULER_FORCE_RUN_CLASS        = "scheduler.force.run.class";
     private static final String SCHEDULER_FORCE_RUN_ASYNCHRONOUS = "scheduler.force.run.asynchronous";
     private static final String SCHEDULER_CRON_TIMETABLE         = "scheduler.cron.timetable";
@@ -77,7 +77,7 @@ public class Scheduler implements ServletContextListener {
 
             initializeScheduler();
 
-            if (Configurator.getString(SCHEDULER_FORCE_RUN_CONDITION) != null) {
+            if (Configurator.getString(SCHEDULER_FORCE_RUN_PERIOD) != null) {
                 executeSpecificFeature();
             } else {
                 scheduleAllFeatures();
@@ -105,7 +105,7 @@ public class Scheduler implements ServletContextListener {
 
     private void forceRunFeatures() {
         try {
-            String forceRunCondition = Configurator.getString(SCHEDULER_FORCE_RUN_CONDITION);
+            String forceRunPeriod = Configurator.getString(SCHEDULER_FORCE_RUN_PERIOD);
             Set<String> forceRunFeature =
                     new HashSet<>(Arrays.asList(Configurator.getString(SCHEDULER_FORCE_RUN_CLASS).split(",")));
 
@@ -113,7 +113,7 @@ public class Scheduler implements ServletContextListener {
                 Feature job = (Feature)jobClass.getConstructor().newInstance();
 
                 if (forceRunFeature.isEmpty() || forceRunFeature.contains(job.getClass().getName())) {
-                    switch (forceRunCondition.toUpperCase()) {
+                    switch (forceRunPeriod.toUpperCase()) {
                         case FORCE_RUN_CONDITION_LASTDAY:
                             executeForLastDay(job);
                             break;
@@ -123,7 +123,7 @@ public class Scheduler implements ServletContextListener {
                             break;
 
                         default:
-                            executeForSpecificPeriod(job, forceRunCondition);
+                            executeForSpecificPeriod(job, forceRunPeriod);
                             break;
                     }
                 }

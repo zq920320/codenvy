@@ -1,8 +1,8 @@
+# Common configuration
 analytics.logs.dir=$HOME/logs-production
 analytics.home.dir=$HOME/wso2bam-analytics
 analytics.tmp.dir=${analytics.home.dir}/tmp
-analytics.reports.dir=${analytics.home.dir}/repository/deployment/server/webapps/analytics/reports
-
+analytics.reports.dir=${analytics.home.dir}repository/deployment/server/webapps/analytics/reports
 analytics.backup.reports.dir=$HOME/analytics_data/reports
 analytics.backup.collections=
 
@@ -12,38 +12,39 @@ pig.bin.dir=${analytics.home.dir}/pig/bin
 pig.scripts.dir=${analytics.home.dir}/pig/scripts
 pig.property.udf.import.list=com.codenvy.analytics.pig.udf
 
-# data storage properties
+# MongoDB storage configuration
 analytics.storage.embedded=false
-analytics.storage.url=mongodb://analytics_user:...@localhost:27017/analytics_data
+analytics.storage.url=
 
-# JDBC data manager properties
+# JDBC data persister configuration
 jdbc.data-persister.datasource=WSO2BAM_DATASOURCE
 
-# Metrics initial values
+# Metrics initial values configuration
 initial.value.date=2013-01-01
 initial.value.metrics=total_workspaces,total_users,total_projects
 initial.value.metric.total_workspaces=0
 initial.value.metric.total_users=0
 initial.value.metric.total_projects=0
 
+# Scheduler configuration
 scheduler.cron.timetable=0 0 1 ? * *
 # scheduler.force.run.class=com.codenvy.analytics.services.pig.PigRunner
 # scheduler.force.run.class=com.codenvy.analytics.services.view.ViewBuilder
-# scheduler.force.run.class=com.codenvy.analytics.services.MongoDBBackup
 # scheduler.force.run.class=com.codenvy.analytics.services.LogChecker
 # scheduler.force.run.class=com.codenvy.analytics.services.WeeklyReport
 # scheduler.force.run.class=com.codenvy.analytics.services.ActOn
-# scheduler.force.run.condition=alltime|lastday|20131201,20131231
+# scheduler.force.run.class=com.codenvy.analytics.services.MongoDBBackup
+# scheduler.force.run.period=alltime|lastday|20131201,20131231
 # scheduler.force.run.asynchronous=false|true
 
-# MetricHandler properties
+# MetricHandler configuration
 com.codenvy.api.analytics.MetricHandler=com.codenvy.analytics.impl.FileBasedMetricHandler
 
 # Common mail configuration
-mail.smtp.auth=
-mail.smtp.starttls.enable=
-mail.smtp.host=
-mail.smtp.port=
+mail.smtp.auth=true
+mail.smtp.starttls.enable=true
+mail.smtp.host=smtp.gmail.com
+mail.smtp.port=465
 mail.user=
 mail.password=
 
@@ -64,10 +65,10 @@ acton.available=true
 acton.mail.text=Hi.\n\nNew file was transferred to ActOn.\n\nBest regards, Analytics Team.
 acton.mail.subject=ActOn is updated
 acton.mail.to=
-acton.ftp.server=
-acton.ftp.port=
+acton.ftp.server=ftp2.actonsoftware.com
+acton.ftp.port=21
 acton.ftp.login=
 acton.ftp.password=
-acton.ftp.timeout=
-acton.ftp.auth=
-acton.ftp.maxEfforts=
+acton.ftp.timeout=5000
+acton.ftp.auth=TLS
+acton.ftp.maxEfforts=5
