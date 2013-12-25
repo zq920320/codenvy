@@ -17,11 +17,10 @@
  */
 package com.codenvy.analytics.storage;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import java.util.List;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 @XmlRootElement(name = "collections")

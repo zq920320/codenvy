@@ -20,6 +20,8 @@ package com.codenvy.analytics.storage;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -30,7 +32,9 @@ import com.mongodb.DBCollection;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class LoadTestMongoIndexes extends BaseTest {
-
+    /** Logger. */
+    protected static final Logger LOG = LoggerFactory.getLogger(LoadTestMongoIndexes.class);
+    
     private DB db;
     
     private int count = 2000000;
@@ -47,21 +51,21 @@ public class LoadTestMongoIndexes extends BaseTest {
         
         DBCollection dbCollection = db.getCollection(collectionName);
 
-        System.out.printf("INFO(%s) start creating index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start creating index at %s \n", collectionName, new Date().toString()));
         addCompoundIndex(dbCollection, indexName);
-        System.out.printf("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString()));
         
-        System.out.printf("INFO(%s) start adding data at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start adding data at %s \n", collectionName, new Date().toString()));
         for (int i = 0; i < count; i++) {
             BasicDBObject dbObject = getDBObjectWithTestData(count);            
 
             dbCollection.save(dbObject);
             
             if ((i % 10000) == 0) {
-                System.out.printf("INFO(%s) adding document number %d at %s \n", collectionName, i, new Date().toString());
+                LOG.info(String.format("INFO(%s) adding document number %d at %s \n", collectionName, i, new Date().toString()));
             }
         }
-        System.out.printf("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString()));
     }
 
     @Test
@@ -71,21 +75,21 @@ public class LoadTestMongoIndexes extends BaseTest {
         
         DBCollection dbCollection = db.getCollection(collectionName);
         
-        System.out.printf("INFO(%s) start adding data at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start adding data at %s \n", collectionName, new Date().toString()));
         for (int i = 0; i < count; i++) {
             BasicDBObject dbObject = getDBObjectWithTestData(count);            
 
             dbCollection.save(dbObject);
             
             if ((i % 10000) == 0) {
-                System.out.printf("INFO(%s) adding document number %d at %s \n", collectionName, i, new Date().toString());
+                LOG.info(String.format("INFO(%s) adding document number %d at %s \n", collectionName, i, new Date().toString()));
             }
         }
-        System.out.printf("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString()));
 
-        System.out.printf("INFO(%s) start creating index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start creating index at %s \n", collectionName, new Date().toString()));
         addCompoundIndex(dbCollection, indexName);
-        System.out.printf("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString()));
     }
 
     @Test
@@ -95,43 +99,43 @@ public class LoadTestMongoIndexes extends BaseTest {
         
         DBCollection dbCollection = db.getCollection(collectionName);
         
-        System.out.printf("INFO(%s) start adding data at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start adding data at %s \n", collectionName, new Date().toString()));
         for (int i = 0; i < count / 2; i++) {
             BasicDBObject dbObject = getDBObjectWithTestData(count);            
 
             dbCollection.save(dbObject);
             
             if ((i % 100000) == 0) {
-                System.out.printf("INFO(%s) adding document number %d at %s \n", collectionName, i, new Date().toString());
+                LOG.info(String.format("INFO(%s) adding document number %d at %s \n", collectionName, i, new Date().toString()));
             }
         }
-        System.out.printf("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString()));
 
-        System.out.printf("INFO(%s) start creating index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start creating index at %s \n", collectionName, new Date().toString()));
         addCompoundIndex(dbCollection, indexName);
-        System.out.printf("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString()));
         
 
-        System.out.printf("INFO(%s) start clearing index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start clearing index at %s \n", collectionName, new Date().toString()));
         dbCollection.dropIndex(indexName);
-        System.out.printf("INFO(%s) finish clearing index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish clearing index at %s \n", collectionName, new Date().toString()));
 
         
-        System.out.printf("INFO(%s) start adding data at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start adding data at %s \n", collectionName, new Date().toString()));
         for (int i = count / 2; i < count; i++) {
             BasicDBObject dbObject = getDBObjectWithTestData(count);            
 
             dbCollection.save(dbObject);
             
             if ((i % 100000) == 0) {
-                System.out.printf("INFO(%s) adding document number %d at %s \n", collectionName, i, new Date().toString());
+                LOG.info(String.format("INFO(%s) adding document number %d at %s \n", collectionName, i, new Date().toString()));
             }
         }
-        System.out.printf("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString()));
 
-        System.out.printf("INFO(%s) start creating index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) start creating index at %s \n", collectionName, new Date().toString()));
         addCompoundIndex(dbCollection, indexName);
-        System.out.printf("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString());
+        LOG.info(String.format("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString()));
         
     }
     
