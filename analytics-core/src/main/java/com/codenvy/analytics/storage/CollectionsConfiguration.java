@@ -15,20 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.collection;
+package com.codenvy.analytics.storage;
 
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import java.util.List;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public class IndexFieldConfiguration {
-    private String field;
+@XmlRootElement(name = "collections")
+public class CollectionsConfiguration {
+    private List<CollectionConfiguration> collections;
     
-    @XmlValue
-    public void setField(String field) {
-        this.field = field;
+    public List<CollectionConfiguration> getCollections() {
+        return collections;
     }
-    
-    public String getField() {
-        return this.field;
+
+    @XmlElement(name = "collection")
+    public void setCollections(List<CollectionConfiguration> collections) {
+        this.collections = collections;
     }
 }

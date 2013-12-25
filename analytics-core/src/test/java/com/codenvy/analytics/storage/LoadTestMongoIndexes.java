@@ -18,15 +18,15 @@
 
 package com.codenvy.analytics.storage;
 
-import com.codenvy.analytics.BaseTest;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
+import java.util.Date;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Date;
+import com.codenvy.analytics.BaseTest;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class LoadTestMongoIndexes extends BaseTest {
@@ -40,7 +40,7 @@ public class LoadTestMongoIndexes extends BaseTest {
         db = MongoDataStorage.getDb();
     }
 
-//    @Test
+    @Test
     public void loadTestPreExistCompoundIndex() throws Exception {
         String collectionName = "test-pre-exist-compound-index";
         String indexName = collectionName;
@@ -64,7 +64,7 @@ public class LoadTestMongoIndexes extends BaseTest {
         System.out.printf("INFO(%s) finish adding data at %s \n", collectionName, new Date().toString());
     }
 
-//    @Test
+    @Test
     public void loadTestPostExistCompoundIndex() throws Exception {
         String collectionName = "test-post-exist-compound-index";
         String indexName = collectionName;
@@ -88,7 +88,7 @@ public class LoadTestMongoIndexes extends BaseTest {
         System.out.printf("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString());
     }
 
-//     @Test
+    @Test
     public void loadTestPostExistClearThenPostExistCompoundIndex() throws Exception {
         String collectionName = "test-post-create-clear-post-create-compound-index";
         String indexName = collectionName;

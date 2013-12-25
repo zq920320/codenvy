@@ -15,8 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.collection;
+package com.codenvy.analytics.storage;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -28,9 +29,9 @@ import java.util.List;
 public class CompoundIndexConfiguration {
     private String name;
 
-    private List<IndexFieldConfiguration> fields = new ArrayList<>();
+    private List<FieldConfiguration> fields = new ArrayList<>();
 
-    @XmlElement(name = "name")
+    @XmlAttribute(name = "name")
     public void setName(String name) {
         this.name = name;
     }
@@ -40,11 +41,11 @@ public class CompoundIndexConfiguration {
     }
     
     @XmlElement(name = "field")
-    public void setFields(List<IndexFieldConfiguration> fields) {
+    public void setFields(List<FieldConfiguration> fields) {
         this.fields = fields;
     }
 
-    public List<IndexFieldConfiguration> getFields() {
+    public List<FieldConfiguration> getFields() {
         return this.fields;
     }
 }

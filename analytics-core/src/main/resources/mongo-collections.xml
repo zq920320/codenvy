@@ -17,24 +17,24 @@
          from Codenvy S.A..
 -->
 <collections>
-   <collection>
-      <name>users_profiles_list</name>
-      <compound-index>
-         <name>all-metrix</name>
-         <field>_id</field>
-         <field>user_first_name</field>
-         <field>user_last_name</field>
-         <field>user_company</field>
-      </compound-index>
+   <collection name="users_profiles_list">
+   	  <compound-indexes>
+	      <compound-index name="all-metrics">
+	         <field>_id</field>
+	         <field>user_first_name</field>
+	         <field>user_last_name</field>
+	         <field>user_company</field>
+	      </compound-index>
+	  </compound-indexes>
    </collection>
-   <collection>
-      <name>active_workspaces_set</name>
-      <compound-index>
-         <name>all-metrix</name>
-         <field>_id</field>
-         <field>user</field>
-         <field>ws</field>
-         <field>domain</field>
-      </compound-index>
+   <collection name="active_workspaces_set">
+      <compound-indexes>
+         <compound-index name="all-metrics">
+	         <field>_id</field>
+	         <field>user</field>
+	         <field>ws</field>
+	         <field>domain</field>
+	      </compound-index>
+      </compound-indexes>
    </collection>
 </collections>

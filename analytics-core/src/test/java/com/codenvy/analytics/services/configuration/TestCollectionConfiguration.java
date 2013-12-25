@@ -17,10 +17,11 @@
  */
 package com.codenvy.analytics.services.configuration;
 
-import com.codenvy.analytics.collection.DBCollectionsConfiguration;
-import com.codenvy.analytics.collection.CompoundIndexConfiguration;
-import com.codenvy.analytics.collection.IndexFieldConfiguration;
-import com.codenvy.analytics.collection.CollectionConfiguration;
+import com.codenvy.analytics.storage.CollectionConfiguration;
+import com.codenvy.analytics.storage.CompoundIndexConfiguration;
+import com.codenvy.analytics.storage.CollectionsConfiguration;
+import com.codenvy.analytics.storage.CompoundIndexesConfiguration;
+import com.codenvy.analytics.storage.FieldConfiguration;
 
 import org.testng.annotations.Test;
 
@@ -39,38 +40,40 @@ public class TestCollectionConfiguration {
     // test content of collections configuration file
     private static final String RESOURCE = 
             "<collections>" +
-    		"   <collection>" +
-    		"      <name>users_profiles_list</name>" +
-    		"      <compound-index>" +
-    		"         <name>all-metrix</name>" +
-    		"         <field>user_first_name</field>" +
-    		"         <field>user_last_name</field>" +
-    		"         <field>user_company</field>" +
-    		"      </compound-index>" +
+    		"   <collection name=\"users_profiles_list\">" +
+    		"      <compound-indexes>" +
+    		"         <compound-index name=\"all-metrics\">" +
+    		"            <field>user_first_name</field>" +
+    		"            <field>user_last_name</field>" +
+    		"            <field>user_company</field>" +
+    		"         </compound-index>" +
+    		"      </compound-indexes>" +
     		"   </collection>" +
     		"</collections>";
    
     @Test
     public void testParsingIndexConfiguration() throws Exception {
-        XmlConfigurationManager<DBCollectionsConfiguration> spyService = spy(new XmlConfigurationManager<>(DBCollectionsConfiguration.class));
+        XmlConfigurationManager<CollectionsConfiguration> spyService = spy(new XmlConfigurationManager<>(CollectionsConfiguration.class));
 
         doReturn(new ByteArrayInputStream(RESOURCE.getBytes("UTF-8"))).when(spyService).openResource(anyString());
-
-        DBCollectionsConfiguration configuration = spyService.loadConfiguration(anyString());
+        
+        CollectionsConfiguration configuration = spyService.loadConfiguration(anyString());
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getCollections().size());
 
-        CollectionConfiguration indexerConfiguration = configuration.getCollections().get(0);
-        assertEquals("users_profiles_list", indexerConfiguration.getName());
+        CollectionConfiguration collectionConfiguration = configuration.getCollections().get(0);
+        assertEquals("users_profiles_list", collectionConfiguration.getName());
 
-        List<CompoundIndexConfiguration> compoundIndexes = indexerConfiguration.getCompoundIndexes();
+        CompoundIndexesConfiguration compoundIndexesConfiguration = collectionConfiguration.getCompoundIndexes();
+        
+        List<CompoundIndexConfiguration> compoundIndexes = compoundIndexesConfiguration.getCompoundIndexes();
         assertEquals(1, compoundIndexes.size());
         
         CompoundIndexConfiguration compoundIndex = compoundIndexes.get(0);
-        assertEquals("all-metrix", compoundIndex.getName());
+        assertEquals("all-metrics", compoundIndex.getName());
         
-        List<IndexFieldConfiguration> compoundIndexFields = compoundIndex.getFields();
+        List<FieldConfiguration> compoundIndexFields = compoundIndex.getFields();
         assertEquals(3, compoundIndexFields.size());
         assertEquals("user_first_name", compoundIndexFields.get(0).getField());
         assertEquals("user_last_name", compoundIndexFields.get(1).getField());
