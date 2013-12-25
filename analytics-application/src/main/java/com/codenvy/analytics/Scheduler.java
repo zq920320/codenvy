@@ -76,11 +76,10 @@ public class Scheduler implements ServletContextListener {
             CSVReportPersister.restoreBackup();
 
             initializeScheduler();
+            scheduleAllFeatures();
 
             if (Configurator.getString(SCHEDULER_FORCE_RUN_PERIOD) != null) {
                 executeSpecificFeature();
-            } else {
-                scheduleAllFeatures();
             }
         } catch (Throwable e) {
             LOG.error(e.getMessage(), e);
