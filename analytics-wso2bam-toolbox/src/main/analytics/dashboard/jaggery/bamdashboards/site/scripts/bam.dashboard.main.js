@@ -177,7 +177,15 @@ function reloadDiv(params, targetDiv, isNeedToSaveInHistory) {
 function reloadThroughAjax(containerToReload, url, callback) {
    containerToReload.empty();  // clear container
    
-   displayLoader(); // display loader
+   var needLoader = true;
+   
+   // display loader after the 2 seconds of timeout
+   var timeoutInMillisec = 2000;
+   setTimeout(function() {
+      if (needLoader) {
+    	  displayLoader(); // display loader
+      }
+   }, timeoutInMillisec);
    
    var ajaxRequest = $.ajax({
       url: url
@@ -187,7 +195,8 @@ function reloadThroughAjax(containerToReload, url, callback) {
        containerToReload.html("Error of processing request: " + textStatus);
        
     }).done(function(data) {
-      hideLoader(); // display loader
+      needLoader = false;
+      hideLoader(); // hide loader
       
       containerToReload.html(data);  // update div with response
  
@@ -490,18 +499,9 @@ if (! loader.doesExist()) {
 
 
 function displayLoader() {
-   needLoader = true;
-     
-   // display loader after the 2 seconds of timeout
-   var timeoutInMillisec = 2000;
-   setTimeout(function() {
-      if (needLoader) {
-         loader.show();
-      }
-   }, timeoutInMillisec);
+   loader.show();
 }
 
 function hideLoader() {
-   needLoader = false;
    loader.hide();
 }
