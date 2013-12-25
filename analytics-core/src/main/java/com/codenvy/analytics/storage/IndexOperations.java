@@ -31,7 +31,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.MongoException;
 
 /**
- * Utililty class to perform MongoDB index management operations like dropping or ensuring indexes based on configuration defined in collections configuration file.
+ * Utility class to perform MongoDB index management operations like dropping or ensuring indexes based on configuration defined in collections configuration file.
  * 
  * 
  * * @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
@@ -136,7 +136,16 @@ public class IndexOperations {
 	        dbCollection.dropIndex(indexName);
 	    } catch(MongoException me) {
 	        // ignore "index not found" exception
-	        LOG.info(me.getMessage());
+	        if (isIndexNotFoundExceptionType(me)) {
+	            LOG.info(me.getMessage());
+	        } else {
+	            throw me;
+	        }
 	    }
+    }
+    
+    private static boolean isIndexNotFoundExceptionType(MongoException me) {
+        return me.getCode() == -5 
+            && me.getMessage().indexOf("index not found") >= 0;
     }
 }
