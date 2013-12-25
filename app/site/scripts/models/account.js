@@ -84,9 +84,9 @@
         var loginWithGoogle = function(page,callback){
             if (isWebsocketEnabled()) {
                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/site/rest/ide/oauth/authenticate?oauth_provider=google&mode=federated_login" +
+                var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" +
                    "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email"+
-                   "&redirect_after_login=" + encodeURIComponent("/site/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
+                   "&redirect_after_login=" + encodeURIComponent("/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=google");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -97,8 +97,8 @@
         var loginWithGithub = function(page,callback){
             if (isWebsocketEnabled()) {
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var url = "/site/rest/ide/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" +
-                "&redirect_after_login=" + encodeURIComponent("/site/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
+                var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user&scope=repo" +
+                "&redirect_after_login=" + encodeURIComponent("/api/oauth?" + window.location.search.substring(1) + "&oauth_provider=github");
 
                 if(typeof callback !== 'undefined'){
                     callback(url);
@@ -269,7 +269,7 @@
                 //implementation based on this:
                 //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/recover-password.js
 
-                var passwordRecoveryUrl = "/site/rest/password/recover/" + email;
+                var passwordRecoveryUrl = "/api/password/recover/" + email;
 
                 $.ajax({
                     url : passwordRecoveryUrl,
@@ -292,7 +292,7 @@
                 // just like with setupPassword, we expect the id to be in the url:
                 // https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
-                var confirmSetupPasswordUrl = "/site/rest/password/verify",
+                var confirmSetupPasswordUrl = "/api/password/verify",
                     id = getQueryParameterByName("id");
 
                 if(typeof id === 'undefined'){
@@ -325,7 +325,7 @@
                 // We assume that uid is part of the url :
                 //  https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
 
-                var setupPasswordUrl = "/site/rest/password/setup",
+                var setupPasswordUrl = "/api/password/setup",
                     id = getQueryParameterByName("id");
 
 
@@ -346,7 +346,7 @@
             // change password in Profile page
             changePassword : function(password,success,error){
 
-                var changePasswordUrl = "/site/rest/private/password/change",
+                var changePasswordUrl = "/api/password/change",
                     id = getQueryParameterByName("id");
 
                 $.ajax({
