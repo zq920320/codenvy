@@ -241,12 +241,14 @@ function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pag
 
         } else if (i == 1) {
             print("<a class='page-link' href='" + href + "'>" + i + "</a>");
-            if (currentPageNumber > 4) {
+            if (currentPageNumber > 4            		
+            		&& pageCount > 5) {   // don't display "..." if pageCount < (2 * 3)
                 print(' ... ')
             }
 
         } else if (i == pageCount) {
-            if (currentPageNumber < pageCount - 4) {
+            if (currentPageNumber < pageCount - 4 
+            		&& pageCount > 5) {   // don't display "..." if pageCount < (2 * 3)
                 print(' ... ')
             }
             print("<a class='page-link' href='" + href + "'>" + i + "</a>");
