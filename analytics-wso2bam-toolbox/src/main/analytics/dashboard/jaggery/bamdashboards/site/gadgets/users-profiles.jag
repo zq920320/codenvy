@@ -44,11 +44,9 @@ if (sortingParameterValue != null) {
 
 var data = getAllResults("users-profiles", queryParams);
 
-// TODO fix
 var table;
 for (var i in data) {
     table = data[i];
-    break;
 }
 
 // make user id in first column as linked 
@@ -98,10 +96,18 @@ loadTableHandlers(false);
 if (pageCount > 1) {
    // remove page parameter
    delete queryParams["page"];
+   
+   // restore initial sort parameter value from URL
+   if (sortingParameterValue != null) {
+	   queryParams["sort"] = sortingParameterValue;
+   } else {
+	   delete queryParams["sort"];
+   }
 
    var queryString = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
 
    printBottomPageNavigator(pageCount, currentPageNumber, queryString, CURRENT_PAGE_QUERY_PARAMETER);
+   loadPageNavigationHandlers("reloadDivOnPageNavigation", "dashboardWidget");
 }
 
 

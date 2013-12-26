@@ -261,6 +261,22 @@ function printBottomPageNavigator(pageCount, currentPageNumber, queryString, pag
 }
 
 
+// load page navigation handlers
+function loadPageNavigationHandlers(pageNavigatorLinkClickHandlerName, dashboardWidgetId) {
+	var pageNavigatorLinkClickHandler;
+	if (typeof pageNavigatorLinkClickHandlerName != "undefined") {
+		pageNavigatorLinkClickHandler = "function(pageNavigationLinkElement) {" 
+			   + pageNavigatorLinkClickHandlerName + "(pageNavigationLinkElement, '" + dashboardWidgetId + "'); " 
+	        + "}";
+	} else {
+		pageNavigatorLinkClickHandler = "function() {}";
+		
+	}
+	
+    print("<script src='scripts/page-navigation.js'></script>");
+    print("<script>pageNavigation.setupHandlers(" + pageNavigatorLinkClickHandler + ");</script>");
+}
+
 function getPageNavigationUrl(baseQueryString, pageNumber, pageQueryParameter) {
     var paramDelimeter = "&";
     if (baseQueryString.indexOf("?") < 0) {
