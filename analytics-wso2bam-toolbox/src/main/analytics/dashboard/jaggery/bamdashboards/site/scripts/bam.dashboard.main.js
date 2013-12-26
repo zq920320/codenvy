@@ -42,9 +42,9 @@ $(function () {
         $("#filter-by button").removeClass('btn-primary');
         $("#filter-by input[name='keyword']").val("");
         
-        var targetDiv = $("#filter-by").attr("target");
-        if (typeof targetDiv != "undefined") {
-           triggerCollect(targetDiv);
+        var targetDivId = $("#filter-by").attr("target");
+        if (typeof targetDivId != "undefined") {
+           triggerCollect(targetDivId);
         }
         
         // "Date range" group
@@ -52,9 +52,9 @@ $(function () {
         $("#date-range input[name='from_date']").val("");
         $("#date-range input[name='to_date']").val("");
         
-        var targetDiv = $("#date-range").attr("target");
-        if (typeof targetDiv != "undefined") {
-           triggerCollect(targetDiv);
+        var targetDivId = $("#date-range").attr("target");
+        if (typeof targetDivId != "undefined") {
+           triggerCollect(targetDivId);
         }
     });
     
@@ -63,9 +63,9 @@ $(function () {
         $("#timely-dd button").removeClass('btn-primary');
         $(this).addClass('btn-primary');
         
-        var targetDiv = $("#timely-dd").attr("target");
-        if (typeof targetDiv != "undefined") {
-           triggerCollect(targetDiv);
+        var targetDivId = $("#timely-dd").attr("target");
+        if (typeof targetDivId != "undefined") {
+           triggerCollect(targetDivId);
         }
     });
     
@@ -76,9 +76,9 @@ $(function () {
           $(this).addClass('btn-primary');
        }
        
-       var targetDiv = $("#filter-by").attr("target");
-       if (typeof targetDiv != "undefined") {
-          triggerCollect(targetDiv);
+       var targetDivId = $("#filter-by").attr("target");
+       if (typeof targetDivId != "undefined") {
+          triggerCollect(targetDivId);
        }
     });
     
@@ -90,14 +90,14 @@ $(function () {
           $(this).addClass('btn-primary');
        }
        
-       var targetDiv = $("#date-range").attr("target");
-       if (typeof targetDiv != "undefined") {
-          triggerCollect(targetDiv);
+       var targetDivId = $("#date-range").attr("target");
+       if (typeof targetDivId != "undefined") {
+          triggerCollect(targetDivId);
        }
     });
 });
 
-function triggerCollect(targetDiv) {   
+function triggerCollect(targetDivId) {   
     var params = {};
     
     // process time selector
@@ -133,11 +133,25 @@ function triggerCollect(targetDiv) {
        params["user"] = urlParams["user"];       
     }
     
-    reloadDiv(params, targetDiv, true);
+    reloadDiv(params, targetDivId, true);
 };
 
-function reloadDiv(params, targetDiv, isNeedToSaveInHistory) {
-   var div = jQuery("#" + targetDiv);
+/**
+ * Reload div on clicking on page navigation links at the bottom of the tables
+ * @param pageNavigationLinkElement dom-element
+ * @param dashboardWidgetId id of div to reload
+ */
+function reloadDivOnPageNavigation(pageNavigationLinkElement, dashboardWidgetId) {
+	var jQueryPageLinkElement = jQuery(pageNavigationLinkElement);
+    var href = jQueryPageLinkElement.attr("href");
+    
+    var urlParams = extractUrlParams(href);
+    
+    reloadDiv(urlParams, dashboardWidgetId, true);
+}
+
+function reloadDiv(params, targetDivId, isNeedToSaveInHistory) {
+   var div = jQuery("#" + targetDivId);
    
    var divUrl = div.attr('src');
 
@@ -154,19 +168,19 @@ function reloadDiv(params, targetDiv, isNeedToSaveInHistory) {
 
    currentAjaxRequest = reloadThroughAjax(div, newDivUrl, function(data) {
       // rewrite page location to make it possible to navigate new url through the browser's history
-      var pageUrl = window.location.href;
-      if (pageUrl.indexOf('?')) {
-         var absUrl = pageUrl .split('?');
-         pageUrl = absUrl[0];
-      }
- 
-      var newPageUrl = pageUrl;
-      var urlParams = constructUrlParams(params);
-      if (urlParams != null) {
-         newPageUrl += "?" + urlParams;
-      }
+	  if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
+	     var pageUrl = window.location.href;
+	     if (pageUrl.indexOf('?')) {
+	        var absUrl = pageUrl .split('?');
+	        pageUrl = absUrl[0];
+	     }
+	 	 
+	     var newPageUrl = pageUrl;
+	     var urlParams = constructUrlParams(params);
+	     if (urlParams != null) {
+	        newPageUrl += "?" + urlParams;
+         }
       
-      if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
          window.history.pushState({}, document.title, newPageUrl);
       }
    });
@@ -175,6 +189,8 @@ function reloadDiv(params, targetDiv, isNeedToSaveInHistory) {
 
 
 function reloadThroughAjax(containerToReload, url, callback) {
+   var callback = callback || function(){};
+	
    containerToReload.empty();  // clear container
    
    var needLoader = true;
@@ -222,36 +238,31 @@ function loadDashboardWidget(gadgetUrl, widgetId, isNeedToSaveInHistory) {
       var absUrlArray = window.location.href.split('?');
       var urlParamsString = absUrlArray[1];
 
-      var callback = function() {};
       if (typeof urlParamsString != "undefined") {
          gadgetUrl += "?" + urlParamsString;
-         
-         if (typeof isNeedToSaveInHistory != "undefined" && !isNeedToSaveInHistory) {
-            currentAjaxRequest = reloadThroughAjax(div, gadgetUrl);
-            return;
-         }
-         
-      } else if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
-         callback = function() {
-            // rewrite page location to make it possible to navigate new url through the browser's history
-            window.history.pushState({}, document.title, window.location.href);
-         };
-         
-         currentAjaxRequest = reloadThroughAjax(div, gadgetUrl, callback);
-      }
+      }   
    }
-      
    
-   if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {
-      // update div when navigating in history
-      window.addEventListener('popstate', function(event) {
-         // update parameter buttons selection
-         var params = extractUrlParams(window.location.href);
-         updateCommandButtonsState(params);
+   if (typeof isNeedToSaveInHistory != "undefined" && isNeedToSaveInHistory) {       
+       // update div when navigating in history
+       var everPushedSomething = false;
+       var initialUrl = window.location.href;
+       window.addEventListener('popstate', function(event) {
+     	 if (! everPushedSomething 
+     			 && window.location.href == initialUrl) {
+     		 everPushedSomething = true;
+     		 return;
+     	 }
+     	 
+          // update parameter buttons selection
+          var params = extractUrlParams(window.location.href);
+          updateCommandButtonsState(params);
 
-         reloadDiv(params, widgetId, false);
-      });
+          reloadDiv(params, widgetId, false);
+       });
    }
+   
+   currentAjaxRequest = reloadThroughAjax(div, gadgetUrl);
 }
 
 function updateCommandButtonsState(params) {
@@ -373,23 +384,23 @@ function populateCombo(id, data) {
 }
 
 $(document).ready(function () {
-    $.ajax({
-        url: 'populate_combos_ajaxprocessor.jag',
-        dataType: 'json',
-        success: function (result) {
-
-            var options = "<option value='__default__'></option>";
-            for (var i = 0; i < result.length; i++) {
-                var data = result[i];
-                for (var key in data) {
-                    options = options + "<option>" + data[key] + "</option>"
-                }
-            }
-            $("#server-dd").find('option').remove();
-            $("#server-dd").append(options);
-        }
-
-    });
+//    $.ajax({
+//        url: 'populate_combos_ajaxprocessor.jag',
+//        dataType: 'json',
+//        success: function (result) {
+//
+//            var options = "<option value='__default__'></option>";
+//            for (var i = 0; i < result.length; i++) {
+//                var data = result[i];
+//                for (var key in data) {
+//                    options = options + "<option>" + data[key] + "</option>"
+//                }
+//            }
+//            $("#server-dd").find('option').remove();
+//            $("#server-dd").append(options);
+//        }
+//
+//    });
 
     //If no user action, reload page to prevent session timeout.
     var wintimeout;

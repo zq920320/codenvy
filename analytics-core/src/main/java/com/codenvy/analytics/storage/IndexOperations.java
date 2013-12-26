@@ -31,16 +31,17 @@ import com.mongodb.DBCollection;
 import com.mongodb.MongoException;
 
 /**
- * Utility class to perform MongoDB index management operations like dropping or ensuring indexes based on configuration defined in collections configuration file.
+ * Utility class to perform MongoDB index management operations like dropping or ensuring indexes based on configuration
+ * defined in collections configuration file.
  * 
- * 
- * * @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
+ * @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a>
+ */
 public class IndexOperations {
 
     /** Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(IndexOperations.class);
 
-    private static final ConfigurationManager<CollectionsConfiguration> configurationManager = new XmlConfigurationManager<>(CollectionsConfiguration.class);;
+    private static final ConfigurationManager<CollectionsConfiguration> configurationManager = new XmlConfigurationManager<>(CollectionsConfiguration.class);
 
     private static DB db = MongoDataStorage.getDb();
 
