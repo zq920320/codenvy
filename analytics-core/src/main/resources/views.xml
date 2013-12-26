@@ -580,7 +580,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions_list"/>
-                <parameter key="fields" value="session_id,ws,start_time,end_time,value"/>
+                <parameter key="fields" value="session_id,ws,start_time,end_time,time"/>
                 <parameter key="columns" value="1"/>
             </row>
         </section>
