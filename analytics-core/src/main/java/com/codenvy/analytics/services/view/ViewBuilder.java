@@ -20,11 +20,11 @@ package com.codenvy.analytics.services.view;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.persistent.DataPersister;
+import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.configuration.ConfigurationManager;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
-import com.codenvy.analytics.storage.DataPersister;
-import com.codenvy.analytics.storage.JdbcDataPersisterFactory;
 import com.codenvy.dto.server.JsonStringMapImpl;
 
 import org.quartz.JobExecutionContext;
@@ -59,7 +59,7 @@ import java.util.concurrent.TimeUnit;
 public class ViewBuilder implements Feature {
 
     private static final Logger        LOG           = LoggerFactory.getLogger(ViewBuilder.class);
-    private static final String        VIEW_RESOURCE = "views.xml";
+    private static final String        CONFIGURATION = "views.xml";
     private static final DecimalFormat decimalFormat = new DecimalFormat("00");
 
     private final DataPersister                              jdbcPersister;
@@ -67,7 +67,7 @@ public class ViewBuilder implements Feature {
     private final CSVReportPersister                         csvReportPersister;
 
     public ViewBuilder() {
-        this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class);
+        this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class, CONFIGURATION);
         this.jdbcPersister = JdbcDataPersisterFactory.getDataPersister();
         this.csvReportPersister = new CSVReportPersister();
     }
@@ -83,7 +83,7 @@ public class ViewBuilder implements Feature {
     @Produces({"application/json"})
     public Response build(@PathParam("name") String name, @Context UriInfo uriInfo) {
         try {
-            DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration(VIEW_RESOURCE);
+            DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
             ViewConfiguration viewConfiguration = displayConfiguration.getView(name);
 
             Map<String, String> context = extractContext(uriInfo);
@@ -228,7 +228,7 @@ public class ViewBuilder implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            computeDisplayData(configurationManager.loadConfiguration(VIEW_RESOURCE));
+            computeDisplayData(configurationManager.loadConfiguration());
         } finally {
             LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }

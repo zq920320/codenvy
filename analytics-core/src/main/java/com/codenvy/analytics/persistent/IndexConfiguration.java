@@ -15,36 +15,35 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.storage;
+package com.codenvy.analytics.persistent;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-@XmlRootElement(name = "collection")
-public class CollectionConfiguration {
+@XmlRootElement(name = "index")
+public class IndexConfiguration {
     private String name;
-    private CompoundIndexesConfiguration compoundIndexes;
+    private List<FieldConfiguration> fields = new ArrayList<>();
 
     @XmlAttribute(name = "name")
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getName() {
         return name;
     }
-    
-    @XmlElement(name = "compound-indexes")
-    public void setCompoundIndexes(CompoundIndexesConfiguration compoundIndexes) {
-        this.compoundIndexes = compoundIndexes;
+
+    @XmlElement(name = "field")
+    public void setFields(List<FieldConfiguration> fields) {
+        this.fields = fields;
     }
 
-    public CompoundIndexesConfiguration getCompoundIndexes() {
-        return compoundIndexes;
+    public List<FieldConfiguration> getFields() {
+        return this.fields;
     }
 }
-
-
-

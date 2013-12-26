@@ -15,26 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.configuration;
+package com.codenvy.analytics.persistent;
 
-import java.io.IOException;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface ConfigurationManager<T> {
+/** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
+@XmlRootElement(name = "collections")
+public class CollectionsConfiguration {
+    private List<CollectionConfiguration> collections;
+    
+    public List<CollectionConfiguration> getCollections() {
+        return collections;
+    }
 
-    /**
-     * Loads a configuration.
-     *
-     * @throws IOException
-     *         if an error occurred during reading
-     */
-    T loadConfiguration() throws IOException;
-
-    /**
-     * Stores a configuration.
-     *
-     * @throws IOException
-     *         if an error occurred during storing
-     */
-    void storeConfiguration(T configuration) throws IOException;
+    @XmlElement(name = "collection")
+    public void setCollections(List<CollectionConfiguration> collections) {
+        this.collections = collections;
+    }
 }

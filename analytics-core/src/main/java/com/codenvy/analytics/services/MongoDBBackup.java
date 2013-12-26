@@ -18,7 +18,7 @@
 package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.storage.MongoDataStorage;
+import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;

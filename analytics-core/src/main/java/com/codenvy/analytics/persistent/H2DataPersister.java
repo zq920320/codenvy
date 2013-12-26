@@ -15,21 +15,18 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.storage;
+package com.codenvy.analytics.persistent;
 
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import javax.sql.DataSource;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface DataPersister {
+public class H2DataPersister extends AbstractJDBCDataPersister {
 
-    List<List<ValueData>> loadData(String tableName) throws SQLException, IOException;
+    public H2DataPersister(String url, String user, String password) {
+        super(url, user, password);
+    }
 
-    void storeData(Map<String, List<List<ValueData>>> viewData,
-                   Map<String, String> context) throws SQLException, IOException;
-
+    public H2DataPersister(DataSource ds) {
+        super(ds);
+    }
 }

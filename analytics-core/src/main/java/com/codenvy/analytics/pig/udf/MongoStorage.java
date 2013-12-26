@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
-import com.codenvy.analytics.storage.MongoDataStorage;
+import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.*;
 
 import org.apache.hadoop.conf.Configuration;

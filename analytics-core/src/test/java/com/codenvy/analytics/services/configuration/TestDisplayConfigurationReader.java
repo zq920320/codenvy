@@ -17,46 +17,53 @@
  */
 package com.codenvy.analytics.services.configuration;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.services.view.DisplayConfiguration;
 import com.codenvy.analytics.services.view.RowConfiguration;
 import com.codenvy.analytics.services.view.SectionConfiguration;
 import com.codenvy.analytics.services.view.ViewConfiguration;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 import static com.mongodb.util.MyAsserts.assertFalse;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.testng.AssertJUnit.assertEquals;
 
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class TestDisplayConfigurationReader {
+public class TestDisplayConfigurationReader extends BaseTest {
 
-    private static final String RESOURCE = "<display>" +
-                                           "    <view time-unit=\"day,week\" columns=\"20\">" +
-                                           "        <section name=\"workspaces\">" +
-                                           "            <description>desc</description>" +
-                                           "            <row class=\"Date.class\">" +
-                                           "                <parameter key=\"format\" value=\"dd MMM\"/>" +
-                                           "            </row>" +
-                                           "            <row class=\"Empty.class\" />" +
-                                           "        </section>" +
-                                           "    </view>" +
-                                           "</display>";
+    private static final String FILE          = BASE_DIR + "/resource";
+    private static final String CONFIGURATION = "<display>" +
+                                                "    <view time-unit=\"day,week\" columns=\"20\">" +
+                                                "        <section name=\"workspaces\">" +
+                                                "            <description>desc</description>" +
+                                                "            <row class=\"Date.class\">" +
+                                                "                <parameter key=\"format\" value=\"dd MMM\"/>" +
+                                                "            </row>" +
+                                                "            <row class=\"Empty.class\" />" +
+                                                "        </section>" +
+                                                "    </view>" +
+                                                "</display>";
+
+    private XmlConfigurationManager<DisplayConfiguration> configurationManager;
+
+    @BeforeClass
+    public void prepare() throws Exception {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(FILE))) {
+            out.write(CONFIGURATION);
+        }
+
+        configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class, FILE);
+    }
 
     @Test
     public void testParsingConfig() throws Exception {
-        XmlConfigurationManager<DisplayConfiguration> spyService =
-                spy(new XmlConfigurationManager<>(DisplayConfiguration.class));
-
-        doReturn(new ByteArrayInputStream(RESOURCE.getBytes("UTF-8"))).when(spyService).openResource(anyString());
-
-        DisplayConfiguration displayConfiguration = spyService.loadConfiguration(anyString());
+        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
         Assert.assertEquals(1, displayConfiguration.getViews().size());
 
         ViewConfiguration viewConfiguration = displayConfiguration.getViews().get(0);

@@ -16,7 +16,7 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.analytics.storage;
+package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;

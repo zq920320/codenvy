@@ -183,8 +183,8 @@
         <parameter key="STORAGE_TABLE" value="debugs_time"/>
     </script>
 
-     Scripts for factory timeline
-     <script name="accepted_factories">
+    <!-- Scripts for factory timeline -->
+    <script name="accepted_factories">
         <description>Accepted factories</description>
         <parameter key="USER" value="ANY"/>
         <parameter key="WS" value="TEMPORARY"/>

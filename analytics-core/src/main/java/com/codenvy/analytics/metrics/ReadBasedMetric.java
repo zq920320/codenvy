@@ -23,8 +23,8 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.storage.DataLoader;
-import com.codenvy.analytics.storage.MongoDataStorage;
+import com.codenvy.analytics.persistent.DataLoader;
+import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 

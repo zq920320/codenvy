@@ -15,18 +15,24 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.storage;
+package com.codenvy.analytics.persistent;
 
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
-import java.io.IOException;
-import java.util.Map;
+/** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
+@XmlRootElement(name = "indexes")
+public class IndexesConfiguration {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface DataLoader {
+    private List<IndexConfiguration> indexes;
 
-    /** Loads value from the storage. */
-    ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException;
+    @XmlElement(name = "index")
+    public void setIndexes(List<IndexConfiguration> indexes) {
+        this.indexes = indexes;
+    }
 
+    public List<IndexConfiguration> getIndexes() {
+        return indexes;
+    }
 }

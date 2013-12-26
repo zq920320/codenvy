@@ -27,14 +27,12 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.apache.pig.data.Tuple;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -80,19 +78,6 @@ public class TestUserUpdateProfile extends BaseTest {
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
-    }
-
-    @Test
-    public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.USERS_UPDATE_PROFILES, params);
-
-        assertTuples(iterator, new String[]{
-                "(user1@gmail.com,(user_first_name,f3),(user_last_name,l3)," +
-                "(user_company,company-2),(user_phone,22),(user_job,2))",
-                "(user3@gmail.com,(user_first_name,f4),(user_last_name,l4)," +
-                "(user_company,company-2),(user_phone,22),(user_job,2))",
-                "(user4@gmail.com,(user_first_name,f4),(user_last_name,l4)," +
-                "(user_company,company),(user_phone,22),(user_job,))"});
     }
 
     @Test

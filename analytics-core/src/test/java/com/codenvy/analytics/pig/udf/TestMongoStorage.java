@@ -19,12 +19,12 @@ package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.EventType;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.*;
 
 import org.apache.pig.data.Tuple;

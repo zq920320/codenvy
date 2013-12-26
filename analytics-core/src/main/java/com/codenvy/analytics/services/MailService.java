@@ -17,7 +17,9 @@
  */
 
 
-package com.codenvy.analytics;
+package com.codenvy.analytics.services;
+
+import com.codenvy.analytics.Configurator;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;

@@ -45,33 +45,36 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestViewBuilder extends BaseTest {
 
-    private String RESOURCE = "<display>\n" +
-                              "     <view time-unit=\"day\" name=\"view\" columns=\"3\">\n" +
-                              "         <section name=\"workspaces\">\n" +
-                              "             <row class=\"com.codenvy.analytics.services.view.DateRow\">\n" +
-                              "                 <parameter key=\"section-name\" value=\"desc\"/>\n" +
-                              "             </row>\n" +
-                              "             <row class=\"com.codenvy.analytics.services.view" +
-                              ".TestViewBuilder$TestMetricRow\">\n" +
-                              "                 <parameter key=\"name\" value=\"CREATED_WORKSPACES\"/>\n" +
-                              "                 <parameter key=\"description\" value=\"Created Workspaces\"/>\n" +
-                              "             </row>\n" +
-                              "             <row class=\"com.codenvy.analytics.services.view.EmptyRow\"/>\n" +
-                              "         </section>\n" +
-                              "     </view>" +
-                              "</display>";
+    private static final String FILE          = BASE_DIR + "/resource";
+    private static final String CONFIGURATION = "<display>\n" +
+                                                "     <view time-unit=\"day\" name=\"view\" columns=\"3\">\n" +
+                                                "         <section name=\"workspaces\">\n" +
+                                                "             <row class=\"com.codenvy.analytics.services.view" +
+                                                ".DateRow\">\n" +
+                                                "                 <parameter key=\"section-name\" value=\"desc\"/>\n" +
+                                                "             </row>\n" +
+                                                "             <row class=\"com.codenvy.analytics.services.view" +
+                                                ".TestViewBuilder$TestMetricRow\">\n" +
+                                                "                 <parameter key=\"name\" " +
+                                                "value=\"CREATED_WORKSPACES\"/>\n" +
+                                                "                 <parameter key=\"description\" value=\"Created " +
+                                                "Workspaces\"/>\n" +
+                                                "             </row>\n" +
+                                                "             <row class=\"com.codenvy.analytics.services.view" +
+                                                ".EmptyRow\"/>\n" +
+                                                "         </section>\n" +
+                                                "     </view>" +
+                                                "</display>";
 
-    private DisplayConfiguration displayConfiguration;
+    private XmlConfigurationManager<DisplayConfiguration> configurationManager;
 
     @BeforeClass
     public void prepare() throws Exception {
-        File view = new File(BASE_DIR, "view.xml");
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(view))) {
-            out.write(RESOURCE);
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(FILE))) {
+            out.write(CONFIGURATION);
         }
 
-        displayConfiguration = new XmlConfigurationManager<>(DisplayConfiguration.class)
-                .loadConfiguration(view.getAbsolutePath());
+        configurationManager = spy(new XmlConfigurationManager<>(DisplayConfiguration.class, FILE));
     }
 
     @Test
@@ -87,6 +90,8 @@ public class TestViewBuilder extends BaseTest {
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Map> viewData = ArgumentCaptor.forClass(Map.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
+
+        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
 
         spyBuilder.computeDisplayData(displayConfiguration);
         verify(spyBuilder).retainViewData(viewId.capture(), viewData.capture(), context.capture());
@@ -109,6 +114,8 @@ public class TestViewBuilder extends BaseTest {
 
     @Test
     public void testQueryViewData() throws Exception {
+        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
+
         Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
 
         ViewBuilder viewBuilder = new ViewBuilder();

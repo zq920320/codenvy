@@ -18,7 +18,6 @@
 package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.view.CSVReportPersister;

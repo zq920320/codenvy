@@ -24,15 +24,17 @@ import java.io.*;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class XmlConfigurationManager<T> implements ConfigurationManager<T> {
 
-    private Class<T> clazz;
+    private final Class<T> clazz;
+    private final String   resource;
 
-    public XmlConfigurationManager(Class<T> clazz) {
+    public XmlConfigurationManager(Class<T> clazz, String resource) {
         this.clazz = clazz;
+        this.resource = resource;
     }
 
     /** {@inheritDoc} */
     @Override
-    public T loadConfiguration(String resource) throws ConfigurationManagerException {
+    public T loadConfiguration() throws ConfigurationManagerException {
         try (InputStream in = openResource(resource)) {
             JAXBContext jc = JAXBContext.newInstance(clazz);
             return (T)jc.createUnmarshaller().unmarshal(in);

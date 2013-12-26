@@ -22,8 +22,8 @@ package com.codenvy.analytics.pig;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.storage.MongoDataStorage;
 import com.mongodb.DBObject;
 
 import org.apache.pig.ExecType;

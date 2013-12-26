@@ -26,26 +26,24 @@ import de.flapdoodle.embed.mongo.config.RuntimeConfig;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
 
+import com.codenvy.analytics.persistent.LoadTestMongoIndexes;
 import com.mongodb.MongoException;
 
-import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import static com.mongodb.util.MyAsserts.assertTrue;
-import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
+
+    public static final Logger LOG      = LoggerFactory.getLogger(LoadTestMongoIndexes.class);
+    public static final String BASE_DIR = "target";
 
     protected final TupleFactory     tupleFactory = TupleFactory.getInstance();
     protected final DateFormat       dateFormat   = new SimpleDateFormat("yyyyMMdd");
@@ -53,21 +51,7 @@ public class BaseTest {
     protected final SimpleDateFormat dirFormat    =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
-    public static final String BASE_DIR = "target";
     private MongodProcess embeddedMongoProcess;
-
-    protected void assertTuples(Iterator<Tuple> iter, String[] tuplesAsString) {
-        Set<String> tuples = new HashSet<>(Arrays.asList(tuplesAsString));
-
-        int count = 0;
-        while (iter.hasNext()) {
-            count++;
-            String tuple = iter.next().toString();
-            assertTrue(tuples.contains(tuple), tuple);
-        }
-
-        assertEquals(tuples.size(), count);
-    }
 
     @BeforeTest
     public void setUp() throws Exception {

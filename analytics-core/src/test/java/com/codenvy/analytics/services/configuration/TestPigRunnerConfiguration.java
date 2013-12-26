@@ -17,40 +17,48 @@
  */
 package com.codenvy.analytics.services.configuration;
 
+import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.services.pig.PigRunnerConfiguration;
 import com.codenvy.analytics.services.pig.ScriptConfiguration;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.Map;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertEquals;
 
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class TestPigRunnerConfiguration {
+public class TestPigRunnerConfiguration extends BaseTest {
 
-    private static final String RESOURCE = "<scripts>" +
-                                           "    <script name=\"test1\">" +
-                                           "        <description>desc</description>" +
-                                           "        <parameter key=\"USER\" value=\"REGISTERED\" />" +
-                                           "        <parameter key=\"WS\" value=\"PERSISTENT\" />" +
-                                           "    </script>" +
-                                           "</scripts>";
+    private static final String FILE          = BASE_DIR + "/resource";
+    private static final String CONFIGURATION = "<scripts>" +
+                                                "    <script name=\"test1\">" +
+                                                "        <description>desc</description>" +
+                                                "        <parameter key=\"USER\" value=\"REGISTERED\" />" +
+                                                "        <parameter key=\"WS\" value=\"PERSISTENT\" />" +
+                                                "    </script>" +
+                                                "</scripts>";
+
+    private XmlConfigurationManager<PigRunnerConfiguration> configurationManager;
+
+    @BeforeClass
+    public void prepare() throws Exception {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(FILE))) {
+            out.write(CONFIGURATION);
+        }
+
+        configurationManager = new XmlConfigurationManager<>(PigRunnerConfiguration.class, FILE);
+    }
+
 
     @Test
     public void testParsingConfig() throws Exception {
-        XmlConfigurationManager<PigRunnerConfiguration> spyService =
-                spy(new XmlConfigurationManager<>(PigRunnerConfiguration.class));
-
-        doReturn(new ByteArrayInputStream(RESOURCE.getBytes("UTF-8"))).when(spyService).openResource(anyString());
-
-        PigRunnerConfiguration configuration = spyService.loadConfiguration(anyString());
+        PigRunnerConfiguration configuration = configurationManager.loadConfiguration();
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getScripts().size());

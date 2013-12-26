@@ -19,12 +19,12 @@ package com.codenvy.analytics.services.pig;
 
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.configuration.ConfigurationManager;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
-import com.codenvy.analytics.storage.IndexOperations;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -38,13 +38,15 @@ import java.util.Map;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class PigRunner implements Feature {
 
-    /** Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(PigRunner.class);
+    private static final Logger LOG           = LoggerFactory.getLogger(PigRunner.class);
+    private static final String CONFIGURATION = "scripts.xml";
 
     private final ConfigurationManager<PigRunnerConfiguration> configurationManager;
-    
+    private final CollectionsManagement                        collectionsManagement;
+
     public PigRunner() {
-        this.configurationManager = new XmlConfigurationManager<>(PigRunnerConfiguration.class);
+        this.configurationManager = new XmlConfigurationManager<>(PigRunnerConfiguration.class, CONFIGURATION);
+        this.collectionsManagement = new CollectionsManagement();
     }
 
     /** {@inheritDoc} */
@@ -80,9 +82,9 @@ public class PigRunner implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            IndexOperations.dropIndexes();
-            
-            PigRunnerConfiguration configuration = configurationManager.loadConfiguration("running-scripts.xml");
+            collectionsManagement.dropIndexes();
+
+            PigRunnerConfiguration configuration = configurationManager.loadConfiguration();
 
             for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {
                 String scriptName = scriptConfiguration.getName();
@@ -93,8 +95,8 @@ public class PigRunner implements Feature {
 
                 PigServer.execute(scriptType, parameters);
             }
-            
-            IndexOperations.ensureIndexes();
+
+            collectionsManagement.ensureIndexes();
         } finally {
             LOG.info("PigRunner is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
