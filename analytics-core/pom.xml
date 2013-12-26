@@ -192,6 +192,7 @@
                             <excludes>
                                 <exclude>com/codenvy/analytics/**/TestLogCollector.java</exclude>
                                 <exclude>com/codenvy/analytics/**/TestAcceptance.java</exclude>
+                                <exclude>com/codenvy/analytics/**/LoadTestMongoIndexes.java</exclude>                                
                             </excludes>
                         </configuration>
                     </plugin>
