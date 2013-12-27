@@ -189,7 +189,8 @@
                 $.ajax({
                     url : emailValidateUrl,
                     type : "POST",
-                    data: data,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
                     success : function(){
                         success({url: '../site/thank-you'});
                     },
@@ -207,7 +208,7 @@
                     window.location.search.substring(1);
                 var waitUrl = "../wait-for-tenant?type=create&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
                 var workspaceName = {name: workspace};
-                var authenticateUrl = "/api/internal/token/validate";
+                var authenticateUrl = "/api/internal/token/authenticate";
                 var createWSUrl = "/api/workspace/create";
                 var selectWsUrl = "/site/private/select-tenant";
                 $.ajax({
@@ -248,7 +249,7 @@
                 var destinationUrl = window.location.protocol + "//" + window.location.host + "/ide/" + workspace;
                 var waitUrl = "../wait-for-tenant?type=start&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
                 //var workspaceName = {name: workspace};
-                var authenticateUrl = "/api/internal/token/validate";
+                var authenticateUrl = "/api/internal/token/authenticate";
                 $.ajax({
                     url : authenticateUrl,
                     type : "POST",
