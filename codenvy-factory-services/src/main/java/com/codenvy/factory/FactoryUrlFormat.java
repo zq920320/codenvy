@@ -31,7 +31,7 @@ public interface FactoryUrlFormat {
      *         - factory url to parse
      * @return <code>FactoryUrl</code> with factory url parameters if url is valid
      * @throws FactoryUrlInvalidArgumentException
-     *         - if url satisfy format, but arguments is invalid
+     *         - if url satisfy format, but arguments are invalid
      * @throws FactoryUrlInvalidFormatException
      *         - if url doesn't satisfy format
      * @throws FactoryUrlException

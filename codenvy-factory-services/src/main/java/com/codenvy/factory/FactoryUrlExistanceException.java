@@ -17,22 +17,19 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
 
-import java.net.URL;
+/**
+ * Exception thrown if factory url doesn't exist.
+ *
+ * @author Alexander Garagatyi
+ */
+public class FactoryUrlExistanceException extends FactoryUrlException {
+    public FactoryUrlExistanceException(String message) {
+        super(message);
+    }
 
-/** Allows to get factory from factories storage. */
-public interface FactoryClient {
-    /**
-     * Get factory from storage by id.
-     *
-     * @param factoryUrl
-     *         - factory URL
-     * @param id
-     *         - factory id
-     * @return - stored factory if id is correct, null otherwise
-     * @throws FactoryUrlException
-     */
-    public AdvancedFactoryUrl getFactory(URL factoryUrl, String id) throws FactoryUrlException;
+    public FactoryUrlExistanceException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

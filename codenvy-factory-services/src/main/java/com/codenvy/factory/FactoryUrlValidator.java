@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Validate factory url.
+ *
  * @author Alexander Garagatyi
  */
 public class FactoryUrlValidator {

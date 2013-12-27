@@ -29,9 +29,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 
 /** Retrieve factory parameters over http connection. */
 public class HttpFactoryClient implements FactoryClient {
@@ -53,6 +51,11 @@ public class HttpFactoryClient implements FactoryClient {
             if (responseCode / 100 != 2) {
                 InputStream errorStream = conn.getErrorStream();
                 String message = errorStream != null ? IoUtil.readAndCloseQuietly(errorStream) : "";
+
+                if (String.format("Factory URL with id %s is not found.", id).equals(message)) {
+                    return null;
+                }
+
                 throw new FactoryUrlException(responseCode, message);
             }
 

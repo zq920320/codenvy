@@ -23,9 +23,7 @@ import com.codenvy.api.factory.FactoryUrlException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Listeners;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -78,8 +76,8 @@ public class AdvancedFactoryUrlFormatTest {
         factoryUrlFormat.parse(factoryUrl);
     }
 
-    @Test(expectedExceptions = FactoryUrlInvalidArgumentException.class)
-    public void shouldThrowFactoryUrlInvalidArgumentExceptionIfFactoryWithSuchIdIsNotFound()
+    @Test(expectedExceptions = FactoryUrlExistanceException.class)
+    public void shouldThrowFactoryUrlExistenceExceptionIfFactoryWithSuchIdIsNotFound()
             throws Exception {
         //given
         URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
