@@ -19,6 +19,9 @@ package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Configurator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,21 +31,40 @@ import java.sql.SQLException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class JdbcDataPersisterFactory {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcDataPersisterFactory.class);
+
     public static final String JDBC_DATA_PERSISTER_DATASOURCE = "jdbc.data-persister.datasource";
     public static final String JDBC_DATA_PERSISTER_URL        = "jdbc.data-persister.url";
     public static final String JDBC_DATA_PERSISTER_USER       = "jdbc.data-persister.user";
     public static final String JDBC_DATA_PERSISTER_PASSWORD   = "jdbc.data-persister.password";
 
+    private static final DataSource datasource;
+
+    static {
+        if (Configurator.exists(JDBC_DATA_PERSISTER_DATASOURCE)) {
+            String dsName = Configurator.getString(JDBC_DATA_PERSISTER_DATASOURCE);
+            try {
+                datasource = getDataSource(dsName);
+            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                    InvocationTargetException | InstantiationException e) {
+                LOG.error(e.getMessage(), e);
+                throw new IllegalStateException(e);
+            }
+
+            LOG.info("Datasource " + dsName + " will be used");
+        } else {
+            datasource = null;
+        }
+    }
+
     public static DataPersister getDataPersister() {
         try {
             if (Configurator.exists(JDBC_DATA_PERSISTER_DATASOURCE)) {
-                String dsName = Configurator.getString(JDBC_DATA_PERSISTER_DATASOURCE);
-                DataSource ds = getDataSource(dsName);
-                String vendor = getVendor(ds);
+                String vendor = getVendor(datasource);
 
                 switch (vendor) {
                     case "H2":
-                        return new H2DataPersister(ds);
+                        return new H2DataPersister(datasource);
                     default:
                         throw new IllegalStateException("Vendor " + vendor + " is not supported");
                 }
