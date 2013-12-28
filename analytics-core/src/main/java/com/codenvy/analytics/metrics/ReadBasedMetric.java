@@ -174,12 +174,12 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * @return {@link DBObject}
      */
     public final DBObject[] getDBOperations(Map<String, String> clauses) {
-        return unionDBOperations(getBasicDBOperations(clauses),
-                                 getSpecificDBOperations(clauses));
+        return unionDBOperations(getSpecificDBOperations(clauses),
+                                 getPaginationDBOperations(clauses));
     }
 
     /** Provides basic DB operations: sorting and pagination. */
-    private DBObject[] getBasicDBOperations(Map<String, String> clauses) {
+    private DBObject[] getPaginationDBOperations(Map<String, String> clauses) {
         boolean sortExists = Parameters.SORT.exists(clauses);
         boolean pageExists = Parameters.PAGE.exists(clauses);
 
