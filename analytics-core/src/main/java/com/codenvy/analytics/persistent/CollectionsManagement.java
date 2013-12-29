@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ public class CollectionsManagement {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionsManagement.class);
 
     private final static String CONFIGURATION         = "collections.xml";
+    private static final String BACKUP_SUFFIX         = "_backup";
     private final static int    ASCENDING_INDEX_MARK  = 1;
     private final static int    DESCENDING_INDEX_MARK = -1;
 
@@ -136,6 +138,38 @@ public class CollectionsManagement {
             }
         } finally {
             LOG.info("Finish removing data in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+        }
+    }
+
+    /**
+     * Copy data from collectionName to collectionName_backup.
+     *
+     * @param collectionName
+     *         the collection name to backup data from
+     * @throws IOException
+     */
+    public void backup(String collectionName) throws IOException {
+        DBCollection src = db.getCollection(collectionName);
+        DBCollection dst = db.getCollection(collectionName + BACKUP_SUFFIX);
+
+        try {
+            dst.drop();
+        } catch (MongoException e) {
+            throw new IOException("Backup failed. Can't drop " + dst.getName(), e);
+        }
+
+        try {
+            Iterator<DBObject> it = src.find().iterator();
+            while (it.hasNext()) {
+                dst.insert(it.next());
+            }
+        } catch (MongoException e) {
+            throw new IOException("Backup failed. Can't copy data from " + src.getName() + " to " + dst.getName(), e);
+        }
+
+        if (src.count() != dst.count()) {
+            throw new IOException(
+                    "Backup failed. Wrong records count between " + src.getName() + " and " + dst.getName());
         }
     }
 

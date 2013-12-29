@@ -168,6 +168,27 @@ public class TestCollectionsManagement extends BaseTest {
         assertRowsCount(collectionSuffix, 0);
     }
 
+    @Test
+    public void testBackup() throws Exception {
+        String collectionSuffix = "8";
+
+        assertRowsCount(collectionSuffix, 0);
+
+        fillData(collectionSuffix, "20131101", 10);
+        assertRowsCount(collectionSuffix, 10);
+
+        backup(collectionSuffix);
+        assertRowsCount(collectionSuffix + "_backup", 10);
+
+        backup(collectionSuffix);
+        assertRowsCount(collectionSuffix + "_backup", 10);
+    }
+
+    private void backup(String collectionSuffix) throws Exception {
+        CollectionsManagement collectionsManagement = initCollectionManagement(collectionSuffix);
+        collectionsManagement.backup(COLLECTION_NAME + collectionSuffix);
+    }
+
     private void removeData(String collectionSuffix, String fromDate, String toDate) throws Exception {
         CollectionsManagement collectionsManagement = initCollectionManagement(collectionSuffix);
 

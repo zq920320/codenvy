@@ -4,7 +4,7 @@ analytics.home.dir=$HOME/wso2bam-analytics
 analytics.tmp.dir=${analytics.home.dir}/tmp
 analytics.reports.dir=${analytics.home.dir}repository/deployment/server/webapps/analytics/reports
 analytics.backup.reports.dir=$HOME/analytics_data/reports
-analytics.backup.collections=
+#analytics.backup.collections=
 
 # Pig server configuration
 pig.embedded=true

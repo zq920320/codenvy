@@ -18,11 +18,7 @@
 package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.persistent.MongoDataStorage;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.MongoException;
+import com.codenvy.analytics.persistent.CollectionsManagement;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -30,16 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 /** @author Alexander Reshetnyak */
 public class MongoDBBackup implements Feature {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDBBackup.class);
+    private static final Logger LOG         = LoggerFactory.getLogger(MongoDBBackup.class);
+    private static final String COLLECTIONS = "analytics.backup.collections";
 
-    public static final  String   BACKUP_SUFFIX = "_backup";
-    private static final String[] COLLECTIONS   = Configurator.getArray("analytics.backup.collections");
+    private final CollectionsManagement collectionsManagement;
+
+    public MongoDBBackup() {
+        collectionsManagement = new CollectionsManagement();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -58,7 +57,6 @@ public class MongoDBBackup implements Feature {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void forceExecute(Map<String, String> context) throws JobExecutionException {
         try {
@@ -74,38 +72,15 @@ public class MongoDBBackup implements Feature {
         long start = System.currentTimeMillis();
 
         try {
-            DB db = MongoDataStorage.getDb();
-
-            for (String name : COLLECTIONS) {
-                DBCollection src = db.getCollection(name);
-                DBCollection dst = db.getCollection(name + BACKUP_SUFFIX);
-
-                backup(src, dst);
+            if (Configurator.exists(COLLECTIONS)) {
+                for (String name : Configurator.getArray(COLLECTIONS)) {
+                    if (!name.isEmpty()) {
+                        collectionsManagement.backup(name);
+                    }
+                }
             }
         } finally {
             LOG.info("MongoDBBackup is finished  in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
-        }
-    }
-
-    private void backup(DBCollection src, DBCollection dst) throws IOException {
-        try {
-            dst.drop();
-        } catch (MongoException e) {
-            throw new IOException("Backup failed. Can't drop " + dst.getName(), e);
-        }
-
-        try {
-            Iterator<DBObject> it = src.find().iterator();
-            while (it.hasNext()) {
-                dst.insert(it.next());
-            }
-        } catch (MongoException e) {
-            throw new IOException("Backup failed. Can't copy data from " + src.getName() + " to " + dst.getName(), e);
-        }
-
-        if (src.count() != dst.count()) {
-            throw new IOException(
-                    "Backup failed. Wrong records count between " + src.getName() + " and " + dst.getName());
         }
     }
 }
