@@ -280,7 +280,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Accounts Created From Factories"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("15"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("21"), sectionData.get(3).get(1));
     }
 
     private void assertProjectsPaasDay(List<List<ValueData>> sectionData) {
@@ -514,11 +514,11 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created From Factory"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("15"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("21"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Created From Form / oAuth"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("61"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("55"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total"), sectionData.get(4).get(0));

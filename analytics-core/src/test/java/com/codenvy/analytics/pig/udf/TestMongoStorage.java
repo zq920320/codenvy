@@ -71,7 +71,7 @@ public class TestMongoStorage extends BaseTest {
         PigServer.execute(ScriptType.EVENTS, params);
 
         BasicDBObject dbObject = new BasicDBObject();
-        dbObject.put("_id", dateFormat.parse("20130102").getTime());
+        dbObject.put("date", dateFormat.parse("20130102").getTime());
 
         DBCursor dbCursor = dbCollection.find(dbObject);
         assertEquals(dbCursor.size(), 1);

@@ -17,6 +17,9 @@
  */
 package com.codenvy.analytics.persistent;
 
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.services.configuration.ConfigurationManager;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.mongodb.*;
@@ -25,7 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class to perform MongoDB index management operations like dropping or ensuring indexes based on
@@ -110,6 +115,41 @@ public class CollectionsManagement {
         }
     }
 
+    /**
+     * Removes data from all collection satisfying given date interval. The date interval is represented by two
+     * parameters: {@link Parameters#FROM_DATE} and {@link Parameters#TO_DATE}.
+     *
+     * @throws IOException
+     */
+    public void removeData(Map<String, String> context) throws IOException, ParseException {
+        long start = System.currentTimeMillis();
+
+        LOG.info("Start removing data...");
+
+        try {
+            CollectionsConfiguration configuration = configurationManager.loadConfiguration();
+            DBObject dateFilter = getDateFilter(context);
+
+            for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
+                String collectionName = collectionConfiguration.getName();
+                db.getCollection(collectionName).remove(dateFilter);
+            }
+        } finally {
+            LOG.info("Finish removing data in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+        }
+    }
+
+    private DBObject getDateFilter(Map<String, String> context) throws ParseException {
+        DBObject dateFilter = new BasicDBObject();
+        dateFilter.put("$gte", Parameters.FROM_DATE.exists(context)
+                               ? Utils.getFromDate(context).getTimeInMillis()
+                               : 0);
+        dateFilter.put("$lt", Parameters.TO_DATE.exists(context)
+                              ? Utils.getToDate(context).getTimeInMillis() + ReadBasedMetric.DAY_IN_MILLISECONDS
+                              : Long.MAX_VALUE);
+
+        return new BasicDBObject(ReadBasedMetric.DATE, dateFilter);
+    }
 
     /**
      * Ensures index in collection.

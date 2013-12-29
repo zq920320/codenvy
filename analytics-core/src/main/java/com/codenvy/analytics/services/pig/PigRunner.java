@@ -60,7 +60,7 @@ public class PigRunner implements Feature {
     public void forceExecute(Map<String, String> context) throws JobExecutionException {
         try {
             doExecute(context);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             LOG.error(e.getMessage(), e);
             throw new JobExecutionException(e);
         }
@@ -77,11 +77,12 @@ public class PigRunner implements Feature {
         }
     }
 
-    protected void doExecute(Map<String, String> context) throws IOException {
+    protected void doExecute(Map<String, String> context) throws IOException, ParseException {
         LOG.info("PigRunner is started");
         long start = System.currentTimeMillis();
 
         try {
+            collectionsManagement.removeData(context);
             collectionsManagement.dropIndexes();
 
             PigRunnerConfiguration configuration = configurationManager.loadConfiguration();

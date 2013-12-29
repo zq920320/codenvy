@@ -55,9 +55,9 @@ z = FOREACH z2 GENERATE y::dt AS dt, y::user AS user, x::tmpWs AS tmpWs;
 
 
 r1 = JOIN z BY tmpWs, u BY tmpWs;
-r2 = FOREACH r1 GENERATE z::dt AS dt, z::user AS user,
-        z::tmpWs AS ws, u::referrer AS referrer, u::factory AS factory, u::orgId AS orgId, u::affiliateId AS affiliateId;
-result = FOREACH r2 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user),
+r2 = FOREACH r1 GENERATE z::dt AS dt, z::user AS user, z::tmpWs AS ws, u::referrer AS referrer, u::factory AS factory, u::orgId AS orgId, u::affiliateId AS affiliateId;
+result = FOREACH r2 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
             TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('org_id', orgId),
             TOTUPLE('affiliate_id', affiliateId), TOTUPLE('value', 1L);
+
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');

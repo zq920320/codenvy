@@ -291,7 +291,8 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
 
     -- joins $startEvent and $finishEvent by same id, removes events without corresponding pair
     c1 = JOIN a BY id LEFT, b BY id;
-    c = removeEmptyField(c1, 'b::id');
+    c2 = FILTER c1 BY a::dt <= b::dt;
+    c = removeEmptyField(c2, 'b::id');
 
     -- split them back
     d1 = FOREACH c GENERATE *, FLATTEN(TOKENIZE('$startEvent,$finishEvent', ',')) AS event;

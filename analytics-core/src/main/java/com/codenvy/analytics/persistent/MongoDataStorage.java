@@ -30,10 +30,7 @@ import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Parameters;
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
+import com.mongodb.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +68,7 @@ public class MongoDataStorage {
         try {
             client = initializeClient();
             mongoDb = client.getDB(uri.getDatabase());
+            mongoDb.setWriteConcern(WriteConcern.ACKNOWLEDGED);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

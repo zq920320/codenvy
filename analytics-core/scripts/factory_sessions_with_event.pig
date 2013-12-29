@@ -31,6 +31,7 @@ c3 = FOREACH c2 GENERATE b::dt AS dt, a::ws AS ws, a::user AS user;
 c = DISTINCT c3;
 
 r1 = FOREACH c GENERATE dt, ws, user;
-result = FOREACH r1 GENERATE ToMilliSeconds(dt), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('value', 1);
+result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('value', 1);
+
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 

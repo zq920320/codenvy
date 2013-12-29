@@ -526,7 +526,7 @@
         </section>
     </view>
 
-    <view time-unit="lifetime" name="users-profiles">
+    <view time-unit="lifetime" name="users-profiles" on-demand="true">
         <section name="user_profile">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Email,First Name,Last Name,Company,Job"/>
@@ -550,7 +550,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_profiles_list"/>
                 <parameter key="fields"
-                           value="_id,user_first_name,user_last_name,user_company,user_phone,user_job"/>
+                           value="date,user_first_name,user_last_name,user_company,user_phone,user_job"/>
                 <parameter key="columns" value="1"/>
             </row>
         </section>
@@ -594,7 +594,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_time_in_workspaces_list"/>
-                <parameter key="fields" value="_id,sessions,time"/>
+                <parameter key="fields" value="date,sessions,time"/>
                 <parameter key="columns" value="1"/>
             </row>
         </section>

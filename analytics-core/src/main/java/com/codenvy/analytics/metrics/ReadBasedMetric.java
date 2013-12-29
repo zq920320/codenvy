@@ -41,7 +41,9 @@ import java.util.regex.Pattern;
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
 
-    private static final long DAY_IN_MILLISECONDS = 86400000L;
+    /** The field name in collection containing the date of events. */
+    public static final String DATE                = "date";
+    public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
     protected final DataLoader dataLoader;
 
@@ -112,21 +114,21 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /**
-     * The _id field as a rule contains the date of the event. The only exceptions related to user's profile
+     * The date field contains the date of the event. The only exceptions related to user's profile
      * metrics.
      *
      * @see AbstractUsersProfile
      */
     private void setDateFilter(Map<String, String> clauses, BasicDBObject match) throws ParseException {
-        DBObject idFilter = new BasicDBObject();
-        match.put("_id", idFilter);
+        DBObject dateFilter = new BasicDBObject();
+        match.put(DATE, dateFilter);
 
-        idFilter.put("$gte", Parameters.FROM_DATE.exists(clauses)
-                             ? Utils.getFromDate(clauses).getTimeInMillis()
-                             : 0);
-        idFilter.put("$lt", Parameters.TO_DATE.exists(clauses)
-                            ? Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS
-                            : Long.MAX_VALUE);
+        dateFilter.put("$gte", Parameters.FROM_DATE.exists(clauses)
+                               ? Utils.getFromDate(clauses).getTimeInMillis()
+                               : 0);
+        dateFilter.put("$lt", Parameters.TO_DATE.exists(clauses)
+                              ? Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS
+                              : Long.MAX_VALUE);
     }
 
     private Pattern getUsersInDomains(String[] domains) {

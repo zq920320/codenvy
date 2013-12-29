@@ -33,6 +33,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -49,11 +50,13 @@ public class TestMongoDataLoader extends BaseTest {
         DBCollection dbCollection = db.getCollection("test");
 
         BasicDBObject dbObject = new BasicDBObject();
-        dbObject.put("_id", dateFormat.parse("20130910").getTime());
+        dbObject.put("_id", UUID.randomUUID().toString());
+        dbObject.put("date", dateFormat.parse("20130910").getTime());
         dbObject.put("value", 100L);
         dbCollection.save(dbObject);
 
-        dbObject.put("_id", dateFormat.parse("20130911").getTime());
+        dbObject.put("_id", UUID.randomUUID().toString());
+        dbObject.put("date", dateFormat.parse("20130911").getTime());
         dbCollection.save(dbObject);
     }
 

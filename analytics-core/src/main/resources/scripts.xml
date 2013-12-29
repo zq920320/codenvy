@@ -187,7 +187,7 @@
     <script name="accepted_factories">
         <description>Accepted factories</description>
         <parameter key="USER" value="ANY"/>
-        <parameter key="WS" value="TEMPORARY"/>
+        <parameter key="WS" value="TEMPORARY"/>PATTERN
         <parameter key="STORAGE_TABLE" value="accepted_factories_list"/>
     </script>
     <script name="created_users_from_factory">

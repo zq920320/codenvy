@@ -101,8 +101,6 @@ public class MongoStorage extends StoreFunc {
             MongoClientURI uri = new MongoClientURI(configuration.get(SERVER_URL_PARAM));
 
             DB db = MongoDataStorage.getDb();
-            db.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-
             this.dbCollection = db.getCollection(uri.getCollection());
         }
 
