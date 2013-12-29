@@ -90,7 +90,7 @@ public class LogChecker implements Feature {
             File reportFile = getReport(context);
 
             Calendar toDate = Utils.getToDate(context);
-            String date = new SimpleDateFormat("yyyy-mm-dd").format(toDate.getTime());
+            String date = new SimpleDateFormat("yyyy-MM-dd").format(toDate.getTime());
 
             sendReport(reportFile, date);
         } catch (ParseException e) {
