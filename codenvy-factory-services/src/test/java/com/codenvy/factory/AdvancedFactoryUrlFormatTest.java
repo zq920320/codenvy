@@ -18,6 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.AdvancedFactoryUrlValidator;
 import com.codenvy.api.factory.FactoryUrlException;
 
 import org.mockito.InjectMocks;
@@ -45,12 +46,13 @@ public class AdvancedFactoryUrlFormatTest {
     public void shouldBeAbleToParseValidUrl() throws Exception {
         //given
         AdvancedFactoryUrl expectedFactoryUrl =
-                new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null, "newBranch",
+                new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null,
+                                       null, "newBranch",
                                        null, null);
         expectedFactoryUrl.setId("123456789");
 
         URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
-        when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(expectedFactoryUrl);
+        when(factoryClient.getFactory("123456789")).thenReturn(expectedFactoryUrl);
 
         //when
         AdvancedFactoryUrl actualFactoryUrl = factoryUrlFormat.parse(factoryUrl);
@@ -59,39 +61,41 @@ public class AdvancedFactoryUrlFormatTest {
         assertEquals(actualFactoryUrl, expectedFactoryUrl);
     }
 
-    @Test(expectedExceptions = FactoryUrlInvalidFormatException.class)
+    @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldThrowFactoryUrlIllegalFormatExceptionIfIdIsMissing() throws Exception {
         factoryUrlFormat.parse(new URL("http://codenvy.com/factory"));
     }
 
-    @Test(expectedExceptions = FactoryUrlInvalidFormatException.class)
+    @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldThrowFactoryUrlIllegalFormatExceptionIfVInFactoryObjectIsMissing() throws Exception {
         //given
         URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
         AdvancedFactoryUrl storedFactoryUrl =
-                new AdvancedFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null, "newBranch",
+                new AdvancedFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null,
+                                       null, "newBranch",
                                        null, null);
-        when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(storedFactoryUrl);
+        when(factoryClient.getFactory("123456789")).thenReturn(storedFactoryUrl);
         //when
         factoryUrlFormat.parse(factoryUrl);
     }
 
-    @Test(expectedExceptions = FactoryUrlExistanceException.class)
+    @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldThrowFactoryUrlExistenceExceptionIfFactoryWithSuchIdIsNotFound()
             throws Exception {
         //given
         URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
-        when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(null);
+        when(factoryClient.getFactory("123456789")).thenReturn(null);
         //when
         factoryUrlFormat.parse(factoryUrl);
     }
 
-    @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlInvalidArgumentException.class)
-    public void shouldThrowFactoryUrlInvalidArgumentExceptionIfFactoryHasInvalidFields(AdvancedFactoryUrl storedFactoryUrl)
+    @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
+    public void shouldThrowFactoryUrlInvalidArgumentExceptionIfFactoryHasInvalidFields(
+            AdvancedFactoryUrl storedFactoryUrl)
             throws Exception {
         //given
         URL factoryUrl = new URL("http://codenvy.com/factory?id=123456789");
-        when(factoryClient.getFactory(factoryUrl, "123456789")).thenReturn(storedFactoryUrl);
+        when(factoryClient.getFactory("123456789")).thenReturn(storedFactoryUrl);
         //when
         factoryUrlFormat.parse(factoryUrl);
     }
@@ -99,27 +103,32 @@ public class AdvancedFactoryUrlFormatTest {
     @DataProvider(name = "badAdvancedFactoryUrlProvider")
     public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
         return new Object[][]{
-                {new AdvancedFactoryUrl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
+                {new AdvancedFactoryUrl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false,
+                                        null, null,
                                         "newBranch", null, null)},
                 // invalid vcs
-                {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null, null)},
+                {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null, null,
+                                        "newBranch", null, null)},
                 // invalid vcsurl
-                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null, null)}
+                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch",
+                                        null, null)}
                 // invalid vcsurl
         };
     }
 
     @Test
     public void shouldBeAbleToValidateAdvancedFactoryUrlObject() throws FactoryUrlException {
-        new AdvancedFactoryUrlFormat()
+        AdvancedFactoryUrlValidator
                 .validate(
-                        new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "123456789", null, null, false, null, null, "newBranch",
+                        new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "123456789", null, null, false, null,
+                                               null, "newBranch",
                                                null, null));
     }
 
     @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
-    public void shouldThrowExceptionIfObjectInvalidOnValidating(AdvancedFactoryUrl factoryUrl) throws FactoryUrlException {
-        new AdvancedFactoryUrlFormat().validate(factoryUrl);
+    public void shouldThrowExceptionIfObjectInvalidOnValidating(AdvancedFactoryUrl factoryUrl)
+            throws FactoryUrlException {
+        AdvancedFactoryUrlValidator.validate(factoryUrl);
     }
 
 

@@ -34,13 +34,23 @@ import java.net.*;
 /** Retrieve factory parameters over http connection. */
 public class HttpFactoryClient implements FactoryClient {
     private static final Logger LOG = LoggerFactory.getLogger(HttpFactoryClient.class);
+    private final String protocol;
+    private final String host;
+    private final int    port;
+
+
+    public HttpFactoryClient(String protocol, String host, int port) {
+        this.protocol = protocol;
+        this.host = host;
+        this.port = port;
+    }
 
     @Override
-    public AdvancedFactoryUrl getFactory(URL factoryUrl, String id) throws FactoryUrlException {
+    public AdvancedFactoryUrl getFactory(String factoryId) throws FactoryUrlException {
         HttpURLConnection conn = null;
         try {
-            conn = (HttpURLConnection)UriBuilder.fromUri(factoryUrl.toURI()).replacePath("/api/factory").path(id).replaceQuery(null).build()
-                                                .toURL().openConnection();
+
+            conn = (HttpURLConnection)new URL(protocol, host, port, "/api/factory/" + factoryId).openConnection();
             conn.setRequestMethod("GET");
             conn.setDoOutput(true);
             conn.setConnectTimeout(5000);
@@ -52,16 +62,16 @@ public class HttpFactoryClient implements FactoryClient {
                 InputStream errorStream = conn.getErrorStream();
                 String message = errorStream != null ? IoUtil.readAndCloseQuietly(errorStream) : "";
 
-                if (String.format("Factory URL with id %s is not found.", id).equals(message)) {
+                if (String.format("Factory URL with id %s is not found.", factoryId).equals(message)) {
                     return null;
                 }
 
                 throw new FactoryUrlException(responseCode, message);
             }
 
-            AdvancedFactoryUrl factory = JsonHelper.fromJson(conn.getInputStream(), AdvancedFactoryUrl.class, null);
-            return factory;
-        } catch (IOException | URISyntaxException | JsonParseException e) {
+            return JsonHelper.fromJson(conn.getInputStream(), AdvancedFactoryUrl.class, null);
+
+        } catch (IOException | JsonParseException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new FactoryUrlException(e.getLocalizedMessage(), e);
         } finally {

@@ -23,19 +23,16 @@ import com.codenvy.api.factory.SimpleFactoryUrl;
 import java.net.URL;
 
 /** Provide a way of factory url parameters validation and parsing */
-public interface FactoryUrlFormat {
+public interface FactoryUrlFormat<T> {
     /**
      * Parse factory url parameters
      *
      * @param url
      *         - factory url to parse
      * @return <code>FactoryUrl</code> with factory url parameters if url is valid
-     * @throws FactoryUrlInvalidArgumentException
-     *         - if url satisfy format, but arguments are invalid
-     * @throws FactoryUrlInvalidFormatException
-     *         - if url doesn't satisfy format
+
      * @throws FactoryUrlException
-     *         - if other exceptions occurs
+     *         - if url satisfy format, but arguments are invalid or url doesn't satisfy format
      */
-    public SimpleFactoryUrl parse(URL url) throws FactoryUrlException;
+    public T parse(URL url) throws FactoryUrlException;
 }

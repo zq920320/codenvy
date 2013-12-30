@@ -35,7 +35,7 @@ import java.util.*;
  * Simple version of <code>FactoryUrlFormat</code>.
  * This implementation suggest that factory url contain all required parameters
  */
-public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
+public class SimpleFactoryUrlFormat implements FactoryUrlFormat<SimpleFactoryUrl> {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleFactoryUrlFormat.class);
 
     protected static final String SUPPORT_EMAIL   = "support@codenvy.com";
@@ -60,34 +60,35 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             // check API version first
             List<String> versionValues = params.get("v");
             if (versionValues != null && versionValues.size() > 1) {
-                throw new FactoryUrlInvalidArgumentException(DEFAULT_MESSAGE);
+                throw new FactoryUrlException(DEFAULT_MESSAGE);
             } else if (versionValues == null || !"1.0".equals(versionValues.iterator().next())) {
-                throw new FactoryUrlInvalidFormatException(DEFAULT_MESSAGE);
+                throw new FactoryUrlException(DEFAULT_MESSAGE);
             }
 
             // check mandatory parameters
             for (String paramToCheck : mandatoryParameters) {
                 List<String> values = params.get(paramToCheck);
                 if (values == null) {
-                    throw new FactoryUrlInvalidArgumentException(DEFAULT_MESSAGE);
+                    throw new FactoryUrlException(DEFAULT_MESSAGE);
                 } else {
                     // throw exception if parameter quantity greater than one
                     // Also throw exception if parameter value is null or empty
                     String value = values.size() == 1 ? values.iterator().next() : null;
                     if (value == null || value.isEmpty()) {
-                        throw new FactoryUrlInvalidArgumentException(DEFAULT_MESSAGE);
+                        throw new FactoryUrlException(DEFAULT_MESSAGE);
                     }
 
                     // check that vcs value is correct (only git is supported for now)
                     if ("vcs".equals(paramToCheck) && !"git".equals(value)) {
-                        throw new FactoryUrlInvalidArgumentException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
+                        throw new FactoryUrlException(
+                                "Parameter vcs has illegal value. Only \"git\" is supported for now.");
                     }
                 }
             }
 
             // check that vcs value is correct (only git is supported for now)
             if (!"git".equals(params.get("vcs").iterator().next())) {
-                throw new FactoryUrlInvalidArgumentException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
+                throw new FactoryUrlException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
             }
 
             SimpleFactoryUrl factoryUrl = new SimpleFactoryUrl();
@@ -127,7 +128,8 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat {
             factoryUrl.setProjectattributes(projectAttributes);
 
             if ((values = params.get("variables")) != null && !values.isEmpty()) {
-                factoryUrl.setVariables(Arrays.asList(JsonHelper.fromJson(values.iterator().next(), Variable[].class, null)));
+                factoryUrl.setVariables(
+                        Arrays.asList(JsonHelper.fromJson(values.iterator().next(), Variable[].class, null)));
             }
 
             return factoryUrl;

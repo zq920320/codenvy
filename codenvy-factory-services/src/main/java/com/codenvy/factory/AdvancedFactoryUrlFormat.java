@@ -27,20 +27,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import static com.codenvy.api.factory.AdvancedFactoryUrlValidator.validate;
+
 /**
  * Advanced version of <code>FactoryUrlFormat</code>.
  * This implementation suggest that factory url contain id
  */
-public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFactoryUrlValidator {
+public class AdvancedFactoryUrlFormat implements FactoryUrlFormat<AdvancedFactoryUrl> {
     private static final Logger LOG = LoggerFactory.getLogger(AdvancedFactoryUrlFormat.class);
     // client for retrieving factory parameters from storage
     private final FactoryClient factoryClient;
 
-    public AdvancedFactoryUrlFormat() {
-        this.factoryClient = new HttpFactoryClient();
-    }
 
-    AdvancedFactoryUrlFormat(FactoryClient factoryClient) {
+    public AdvancedFactoryUrlFormat(FactoryClient factoryClient) {
         this.factoryClient = factoryClient;
     }
 
@@ -52,10 +51,10 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFacto
             if (values != null && !values.isEmpty()) {
                 factoryId = values.iterator().next();
             } else {
-                throw new FactoryUrlInvalidFormatException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
+                throw new FactoryUrlException(SimpleFactoryUrlFormat.DEFAULT_MESSAGE);
             }
 
-            AdvancedFactoryUrl factoryUrl = factoryClient.getFactory(url, factoryId);
+            AdvancedFactoryUrl factoryUrl = factoryClient.getFactory(factoryId);
 
             if (factoryUrl == null) {
                 throw new FactoryUrlExistanceException("Can't find factory with id " + factoryId + ".");
@@ -70,19 +69,4 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat, AdvancedFacto
         }
     }
 
-    @Override
-    public void validate(AdvancedFactoryUrl factoryUrl) throws FactoryUrlException {
-        // check mandatory parameters
-        if (!"1.1".equals(factoryUrl.getV())) {
-            throw new FactoryUrlInvalidFormatException("Version has illegal value. Version must be equal to '1.1'");
-        }
-        // check that vcs value is correct (only git is supported for now)
-        if (!"git".equals(factoryUrl.getVcs())) {
-            throw new FactoryUrlInvalidArgumentException(
-                    "Parameter vcs has illegal value. Only \"git\" is supported for now.");
-        }
-        if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
-            throw new FactoryUrlInvalidArgumentException("Vcsurl is null or empty.");
-        }
-    }
 }

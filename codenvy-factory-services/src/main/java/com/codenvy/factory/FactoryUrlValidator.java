@@ -37,7 +37,8 @@ public class FactoryUrlValidator {
 
             FactoryUrlFormat factoryUrlFormat;
             if (params.get("id") != null) {
-                factoryUrlFormat = new AdvancedFactoryUrlFormat();
+                factoryUrlFormat = new AdvancedFactoryUrlFormat(
+                        new HttpFactoryClient(factoryUrl.getProtocol(), factoryUrl.getHost(), factoryUrl.getPort()));
             } else {
                 factoryUrlFormat = new SimpleFactoryUrlFormat();
             }

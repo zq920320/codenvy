@@ -17,6 +17,7 @@
  */
 package com.codenvy.factory;
 
+import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.SimpleFactoryUrl;
 import com.codenvy.api.factory.Variable;
 
@@ -56,7 +57,7 @@ public class SimpleFactoryUrlFormatTest {
         assertEquals(factoryUrl, expectedFactoryUrl);
     }
 
-    @Test(dataProvider = "badUrlProvider-InvalidFormat", expectedExceptions = FactoryUrlInvalidFormatException.class)
+    @Test(dataProvider = "badUrlProvider-InvalidFormat", expectedExceptions = FactoryUrlException.class)
     public void shouldThrowFactoryUrlIllegalFormatExceptionIfUrlParametersIsMissing(String url) throws Exception {
         factoryUrlFormat.parse(new URL(url));
     }
@@ -71,7 +72,7 @@ public class SimpleFactoryUrlFormatTest {
         };
     }
 
-    @Test(dataProvider = "badUrlProvider-InvalidArgument", expectedExceptions = FactoryUrlInvalidArgumentException.class)
+    @Test(dataProvider = "badUrlProvider-InvalidArgument", expectedExceptions = FactoryUrlException.class)
     public void shouldThrowFactoryUrlInvalidArgumentExceptionIfUrlHasInvalidParameters(String url) throws Exception {
         factoryUrlFormat.parse(new URL(url));
     }
