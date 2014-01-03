@@ -28,9 +28,10 @@ import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public abstract class AbstractTopMetrics extends ReadBasedMetric {
-    private int dayCount;
+    public static final String VALUE = "value";    
+    protected static int LIFE_TIME_PERIOD = -1;
     
-    private static int LIFE_TIME_PERIOD = -1;
+    private int dayCount;
 
     public AbstractTopMetrics(MetricType metricType, int dayCount) {
         super(metricType);
@@ -44,8 +45,11 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
 
     @Override
     public String[] getTrackedFields() {
-        // TODO Auto-generated method stub
-        return null;
+        return new String[]{ProductUsageFactorySessionsList.TIME, 
+                            ProductUsageFactorySessionsList.FACTORY,
+                            ProductUsageFactorySessionsList.REFERRER, 
+                            ProductUsageFactorySessionsList.AUTHENTICATED_SESSION,
+                            ProductUsageFactorySessionsList.CONVERTED_SESSION};
     }
 
     @Override
@@ -59,8 +63,9 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
      * Setup proper FROM_DATE = (yesterday - dayCount)
      * @param context
      * @param dayCount
+     * @throws IOException 
      */
-    private void initContext(Map<String, String> context, int countOfDays) {
+    private void initContext(Map<String, String> context, int countOfDays) throws IOException {
         Parameters.TO_DATE.putDefaultValue(context);
     
         Calendar date = Calendar.getInstance();
@@ -71,7 +76,7 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
             try {
                 date = Utils.getToDate(context);
             } catch (ParseException e) {
-                throw new IllegalArgumentException("The illegal TO_DATE context parameter value '" + date);
+                throw new IOException(e);
             }
     
             date.add(Calendar.DAY_OF_MONTH, 1 - countOfDays);   // starting from yesterday

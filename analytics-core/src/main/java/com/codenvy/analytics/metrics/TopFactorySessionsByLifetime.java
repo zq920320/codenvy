@@ -21,7 +21,7 @@ package com.codenvy.analytics.metrics;
 public class TopFactorySessionsByLifetime extends AbstractTopSessions {
 
     public TopFactorySessionsByLifetime() {
-        super(MetricType.TOP_FACTORY_SESSIONS_BY_LIFETIME, -1);
+        super(MetricType.TOP_FACTORY_SESSIONS_BY_LIFETIME, LIFE_TIME_PERIOD);
     }
 
     @Override
