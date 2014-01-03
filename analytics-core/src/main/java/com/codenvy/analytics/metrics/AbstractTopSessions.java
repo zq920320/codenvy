@@ -32,23 +32,18 @@ import com.mongodb.DBObject;
 public abstract class AbstractTopSessions extends AbstractTopMetrics {   
     private int dayCount;
 
-    private static final String KEY_FIELD = ProductUsageFactorySessionsList.TIME;
-    private static final MetricType METRIC_TYPE = MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST;
-    private static final int LIFE_TIME_PERIOD = -1;
     private static final long MAX_DOCUMENT_COUNT = 100;
     
     public AbstractTopSessions(MetricType factoryMetricType, int dayCount) {
         super(factoryMetricType);
+        this.dayCount = dayCount;
     }
 
     @Override
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject[] dbOperations = new DBObject[2];
-        
-        // sort     
-        dbOperations[0] = new BasicDBObject("$sort", new BasicDBObject(KEY_FIELD, 1));
-
-        // get first 100 documents
+             
+        dbOperations[0] = new BasicDBObject("$sort", new BasicDBObject(ProductUsageFactorySessionsList.TIME, 1));
         dbOperations[1] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
 
         return dbOperations;
@@ -57,12 +52,27 @@ public abstract class AbstractTopSessions extends AbstractTopMetrics {
     
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        InitialValueContainer.validateExistenceInitialValueBefore(context);
+        initContext(context, this.dayCount);
+        
+        return super.getValue(context);
+    }
+    
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
+    }
 
+    /**
+     * Setup proper FROM_DATE = (yesterday - dayCount)
+     * @param context
+     * @param dayCount
+     */
+    private void initContext(Map<String, String> context, int countOfDays) {
         Parameters.TO_DATE.putDefaultValue(context);
 
+        int LIFE_TIME_PERIOD = -1;
         Calendar date = Calendar.getInstance();
-
+        
         if (this.dayCount == LIFE_TIME_PERIOD) {
             Parameters.FROM_DATE.putDefaultValue(context);
         } else {
@@ -72,17 +82,9 @@ public abstract class AbstractTopSessions extends AbstractTopMetrics {
                 throw new IllegalArgumentException("The illegal TO_DATE context parameter value '" + date);
             }
 
-            date.add(Calendar.DAY_OF_MONTH, 1 - this.dayCount);   // starting from yesterday
+            date.add(Calendar.DAY_OF_MONTH, 1 - countOfDays);   // starting from yesterday
 
             Utils.putFromDate(context, date);
         }
-        
-        return super.getValue(context);
     }
-    
-    @Override
-    public String getStorageCollectionName() {
-        return getStorageCollectionName(METRIC_TYPE);
-    }
-    
 }
