@@ -17,26 +17,18 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Map;
 
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public abstract class AbstractTopSessions extends AbstractTopMetrics {   
-    private int dayCount;
-
     private static final long MAX_DOCUMENT_COUNT = 100;
     
     public AbstractTopSessions(MetricType factoryMetricType, int dayCount) {
-        super(factoryMetricType);
-        this.dayCount = dayCount;
+        super(factoryMetricType, dayCount);
     }
 
     @Override
@@ -51,40 +43,7 @@ public abstract class AbstractTopSessions extends AbstractTopMetrics {
 
     
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        initContext(context, this.dayCount);
-        
-        return super.getValue(context);
-    }
-    
-    @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
-    }
-
-    /**
-     * Setup proper FROM_DATE = (yesterday - dayCount)
-     * @param context
-     * @param dayCount
-     */
-    private void initContext(Map<String, String> context, int countOfDays) {
-        Parameters.TO_DATE.putDefaultValue(context);
-
-        int LIFE_TIME_PERIOD = -1;
-        Calendar date = Calendar.getInstance();
-        
-        if (this.dayCount == LIFE_TIME_PERIOD) {
-            Parameters.FROM_DATE.putDefaultValue(context);
-        } else {
-            try {
-                date = Utils.getToDate(context);
-            } catch (ParseException e) {
-                throw new IllegalArgumentException("The illegal TO_DATE context parameter value '" + date);
-            }
-
-            date.add(Calendar.DAY_OF_MONTH, 1 - countOfDays);   // starting from yesterday
-
-            Utils.putFromDate(context, date);
-        }
     }
 }
