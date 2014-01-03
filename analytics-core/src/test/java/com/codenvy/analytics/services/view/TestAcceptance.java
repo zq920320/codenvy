@@ -99,7 +99,7 @@ public class TestAcceptance extends BaseTest {
     public void test() throws Exception {
         ViewBuilder viewBuilder = spy(new ViewBuilder());
 
-        viewBuilder.forceExecute(Utils.newContext());
+        viewBuilder.forceExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
 
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Map> viewData = ArgumentCaptor.forClass(Map.class);
