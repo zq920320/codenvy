@@ -78,13 +78,13 @@ public class TestViewBuilder extends BaseTest {
     }
 
     @Test
-    public void testBuildAll() throws Exception {
+    public void testIfShippedConfigurationCorrect() throws Exception {
         ViewBuilder viewBuilder = new ViewBuilder();
         viewBuilder.doExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
     }
 
     @Test
-    public void shouldReturnCorrectData() throws Exception {
+    public void testLastDayPeriod() throws Exception {
         ViewBuilder spyBuilder = spy(new ViewBuilder());
 
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
@@ -98,7 +98,7 @@ public class TestViewBuilder extends BaseTest {
 
         Map<String, List<List<ValueData>>> actualData = viewData.getValue();
         assertEquals(actualData.size(), 1);
-        assertValueData(actualData.values().iterator().next());
+        assertLastDayData(actualData.values().iterator().next());
 
         Calendar calendar = Utils.getToDate(Utils.initializeContext(Parameters.TimeUnit.DAY));
 
@@ -113,11 +113,30 @@ public class TestViewBuilder extends BaseTest {
     }
 
     @Test
-    public void testQueryViewData() throws Exception {
+    public void testSpecificDayPeriod() throws Exception {
+        ViewBuilder spyBuilder = spy(new ViewBuilder());
+
+        ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> viewData = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
+
+        Map<String, String> executionContext = Utils.newContext();
+        Parameters.TO_DATE.put(executionContext, "20130930");
+        Parameters.FROM_DATE.put(executionContext, "20130930");
         DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
 
-        Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+        spyBuilder.computeDisplayData(displayConfiguration, executionContext);
+        verify(spyBuilder).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
+        Map<String, List<List<ValueData>>> actualData = viewData.getValue();
+        assertEquals(actualData.size(), 1);
+        assertSpecificDayData(actualData.values().iterator().next());
+    }
+
+    @Test
+    public void testQueryViewData() throws Exception {
+        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
+        Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
         ViewBuilder viewBuilder = new ViewBuilder();
         viewBuilder.computeDisplayData(displayConfiguration, context);
 
@@ -125,10 +144,32 @@ public class TestViewBuilder extends BaseTest {
                 viewBuilder.queryViewData(displayConfiguration.getView("view"), context);
 
         assertEquals(actualData.size(), 1);
-        assertValueData(actualData.values().iterator().next());
+        assertLastDayData(actualData.values().iterator().next());
     }
 
-    private void assertValueData(List<List<ValueData>> data) {
+    private void assertSpecificDayData(List<List<ValueData>> data) {
+        assertEquals(3, data.size());
+
+        List<ValueData> dateRow = data.get(0);
+        assertEquals(3, dateRow.size());
+        assertEquals(new StringValueData("desc"), dateRow.get(0));
+        assertTrue(dateRow.get(1).getAsString().contains("30"));
+        assertTrue(dateRow.get(2).getAsString().contains("29"));
+
+        List<ValueData> metricRow = data.get(1);
+        assertEquals(3, metricRow.size());
+        assertEquals(new StringValueData("Created Workspaces"), metricRow.get(0));
+        assertEquals(new StringValueData("5"), metricRow.get(1));
+        assertEquals(new StringValueData("5"), metricRow.get(2));
+
+        List<ValueData> emptyRow = data.get(2);
+        assertEquals(3, emptyRow.size());
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(0));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(1));
+        assertEquals(StringValueData.DEFAULT, emptyRow.get(2));
+    }
+
+    private void assertLastDayData(List<List<ValueData>> data) {
         Calendar day1 = Calendar.getInstance();
         day1.add(Calendar.DAY_OF_MONTH, -1);
 
@@ -147,7 +188,7 @@ public class TestViewBuilder extends BaseTest {
         assertEquals(3, metricRow.size());
         assertEquals(new StringValueData("Created Workspaces"), metricRow.get(0));
         assertEquals(new StringValueData("10"), metricRow.get(1));
-        assertEquals(new StringValueData("10"), metricRow.get(2));
+        assertEquals(new StringValueData("5"), metricRow.get(2));
 
         List<ValueData> emptyRow = data.get(2);
         assertEquals(3, emptyRow.size());
@@ -164,7 +205,11 @@ public class TestViewBuilder extends BaseTest {
 
         @Override
         protected ValueData getMetricValue(Map<String, String> context) throws IOException {
-            return new StringValueData("10");
+            if (Parameters.TO_DATE.get(context).equals(Parameters.TO_DATE.getDefaultValue())) {
+                return new StringValueData("10");
+            } else {
+                return new StringValueData("5");
+            }
         }
     }
 

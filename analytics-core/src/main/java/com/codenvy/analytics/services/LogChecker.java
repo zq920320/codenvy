@@ -85,20 +85,22 @@ public class LogChecker extends Feature {
     private File getReport(Map<String, String> context) throws IOException {
         File reportFile = new File(Configurator.getTmpDir(), "report.txt");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(reportFile))) {
-
-            Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.CHECK_LOGS_1, context);
-            while (iterator.hasNext()) {
-                out.write(iterator.next().toString());
-                out.newLine();
-            }
-
-            iterator = PigServer.executeAndReturn(ScriptType.CHECK_LOGS_2, context);
-            while (iterator.hasNext()) {
-                out.write(iterator.next().toString());
-                out.newLine();
-            }
+            writeReport(ScriptType.CHECK_LOGS_1, context, out);
+            writeReport(ScriptType.CHECK_LOGS_2, context, out);
         }
+
         return reportFile;
+    }
+
+    private void writeReport(ScriptType scriptType,
+                             Map<String, String> context,
+                             BufferedWriter out) throws IOException {
+
+        Iterator<Tuple> iterator = PigServer.executeAndReturn(scriptType, context);
+        while (iterator.hasNext()) {
+            out.write(iterator.next().toString());
+            out.newLine();
+        }
     }
 
     private void sendReport(File reportFile, String date) throws IOException {
