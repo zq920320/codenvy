@@ -23,7 +23,7 @@ import com.codenvy.api.factory.SimpleFactoryUrl;
 import java.net.URL;
 
 /** Provide a way of factory url parameters validation and parsing */
-public interface FactoryUrlFormat<T> {
+public interface FactoryUrlFormat<T extends SimpleFactoryUrl> {
     /**
      * Parse factory url parameters
      *
