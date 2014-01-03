@@ -194,7 +194,7 @@ public class Scheduler implements ServletContextListener {
 
         for (int i = 1; i < jobDetails.size(); i++) {
             scheduler.addJob(jobDetails.get(i), true);
-            LOG.info(jobDetails.get(i).getJobClass()A + " initialized");
+            LOG.info(jobDetails.get(i).getJobClass() + " initialized");
         }
     }
 
