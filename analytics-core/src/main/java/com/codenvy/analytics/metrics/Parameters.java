@@ -43,6 +43,8 @@ public enum Parameters {
     STORAGE_TABLE,
     STORAGE_TABLE_USERS_STATISTICS,
 
+    REPORT_DATE,
+
     TIME_UNIT {
         @Override
         public void validate(String value, Map<String, String> context) throws IllegalArgumentException {
@@ -152,6 +154,13 @@ public enum Parameters {
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {
         context.put(name(), value);
+    }
+
+    /** Puts value into execution context */
+    public Map<String, String> cloneAndPut(Map<String, String> context, String value) {
+        context = Utils.clone(context);
+        context.put(name(), value);
+        return context;
     }
 
     /** Puts default value into execution context */

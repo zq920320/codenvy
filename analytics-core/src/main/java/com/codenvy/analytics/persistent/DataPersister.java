@@ -29,7 +29,6 @@ public interface DataPersister {
 
     List<List<ValueData>> loadData(String tableName) throws SQLException, IOException;
 
-    void storeData(Map<String, List<List<ValueData>>> viewData,
-                   Map<String, String> context) throws SQLException, IOException;
+    void storeData(Map<String, List<List<ValueData>>> viewData) throws SQLException, IOException;
 
 }

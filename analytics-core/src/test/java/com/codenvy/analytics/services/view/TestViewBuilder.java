@@ -36,8 +36,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -47,7 +46,7 @@ public class TestViewBuilder extends BaseTest {
 
     private static final String FILE          = BASE_DIR + "/resource";
     private static final String CONFIGURATION = "<display>\n" +
-                                                "     <view time-unit=\"day\" name=\"view\" columns=\"3\">\n" +
+                                                "     <view time-unit=\"day,week,month,lifetime\" name=\"view\" columns=\"3\">\n" +
                                                 "         <section name=\"workspaces\">\n" +
                                                 "             <row class=\"com.codenvy.analytics.services.view" +
                                                 ".DateRow\">\n" +
@@ -94,9 +93,9 @@ public class TestViewBuilder extends BaseTest {
         DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
 
         spyBuilder.computeDisplayData(displayConfiguration, Utils.initializeContext(Parameters.TimeUnit.DAY));
-        verify(spyBuilder).retainViewData(viewId.capture(), viewData.capture(), context.capture());
+        verify(spyBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        Map<String, List<List<ValueData>>> actualData = viewData.getValue();
+        Map<String, List<List<ValueData>>> actualData = viewData.getAllValues().get(0);
         assertEquals(actualData.size(), 1);
         assertLastDayData(actualData.values().iterator().next());
 
@@ -105,9 +104,14 @@ public class TestViewBuilder extends BaseTest {
         File csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_day.csv");
         assertTrue(csvReport.exists());
 
-        File csvBackupReport =
-                new File("./target/backup/reports/" + dirFormat.format(calendar.getTime()) + "/view_day.csv");
-        assertTrue(csvBackupReport.exists());
+        csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_week.csv");
+        assertTrue(csvReport.exists());
+
+        csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_month.csv");
+        assertTrue(csvReport.exists());
+
+        csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_lifetime.csv");
+        assertTrue(csvReport.exists());
 
         CSVReportPersister.restoreBackup();
     }
@@ -126,11 +130,23 @@ public class TestViewBuilder extends BaseTest {
         DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
 
         spyBuilder.computeDisplayData(displayConfiguration, executionContext);
-        verify(spyBuilder).retainViewData(viewId.capture(), viewData.capture(), context.capture());
+        verify(spyBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        Map<String, List<List<ValueData>>> actualData = viewData.getValue();
+        Map<String, List<List<ValueData>>> actualData = viewData.getAllValues().get(0);
         assertEquals(actualData.size(), 1);
         assertSpecificDayData(actualData.values().iterator().next());
+
+        File csvReport = new File("./target/reports/2013/09/30/view_day.csv");
+        assertTrue(csvReport.exists());
+
+        new File("./target/reports/2013/09/30/view_week.csv");
+        assertTrue(csvReport.exists());
+
+        new File("./target/reports/2013/09/30/view_month.csv");
+        assertTrue(csvReport.exists());
+
+        new File("./target/reports/2013/09/30/view_lifetime.csv");
+        assertTrue(csvReport.exists());
     }
 
     @Test

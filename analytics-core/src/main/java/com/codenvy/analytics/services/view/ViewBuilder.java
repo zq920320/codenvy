@@ -34,7 +34,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
@@ -55,14 +58,17 @@ public class ViewBuilder extends Feature {
         this.csvReportPersister = new CSVReportPersister();
     }
 
-    public Map<String, List<List<ValueData>>> getViewData(String name, Map<String, String> context) throws IOException {
+    public Map<String, List<List<ValueData>>> getViewData(String name, Map<String, String> context)
+            throws IOException, ParseException {
+
         DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
         ViewConfiguration view = displayConfiguration.getView(name);
 
         if (Utils.isSimpleContext(context)) {
             return queryViewData(view, context);
         } else {
-            return computeViewData(view, context);
+            ComputeViewDataAction computeViewDataAction = new ComputeViewDataAction(view, context);
+            return computeViewDataAction.doCompute(view, context);
         }
     }
 
@@ -101,9 +107,9 @@ public class ViewBuilder extends Feature {
         for (ViewConfiguration viewConfiguration : displayConfiguration.getViews()) {
             if (!viewConfiguration.isOnDemand()) {
                 for (String timeUnitParam : viewConfiguration.getTimeUnit().split(",")) {
-                    Parameters.TimeUnit timeUnit = Parameters.TimeUnit.valueOf(timeUnitParam.toUpperCase());
+                    context = Parameters.TIME_UNIT.cloneAndPut(context, timeUnitParam.toUpperCase());
 
-                    ComputeViewDataAction task = new ComputeViewDataAction(viewConfiguration, timeUnit, context);
+                    ComputeViewDataAction task = new ComputeViewDataAction(viewConfiguration, context);
                     forkJoinPool.submit(task);
 
                     tasks.add(task);
@@ -142,79 +148,78 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    /** Compute data for specific view. */
-    protected Map<String, List<List<ValueData>>> computeViewData(ViewConfiguration viewConfiguration,
-                                                                 Map<String, String> context) throws IOException {
-        try {
-            Map<String, List<List<ValueData>>> viewData = new LinkedHashMap<>(viewConfiguration.getSections().size());
-            Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
-
-            for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
-
-                List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
-
-                for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
-                    Constructor<?> constructor = Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
-                    Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
-
-                    int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : viewConfiguration.getColumns();
-                    sectionData.addAll(row.getData(context, rowCount));
-                }
-
-                String sectionId = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
-                viewData.put(sectionId, sectionData);
-            }
-
-            return viewData;
-        } catch (NoSuchMethodException | ClassCastException | ClassNotFoundException | InvocationTargetException |
-                IllegalAccessException | InstantiationException e) {
-            throw new IOException(e);
-        }
-    }
-
     protected void retainViewData(String viewId,
                                   Map<String, List<List<ValueData>>> viewData,
                                   Map<String, String> context) throws SQLException, IOException {
-        jdbcPersister.storeData(viewData, context);
+        jdbcPersister.storeData(viewData);
         csvReportPersister.storeData(viewId, viewData, context);
     }
 
     private class ComputeViewDataAction extends RecursiveAction {
 
         private final ViewConfiguration   viewConfiguration;
-        private final Parameters.TimeUnit timeUnit;
         private final Map<String, String> context;
 
         private ComputeViewDataAction(ViewConfiguration viewConfiguration,
-                                      Parameters.TimeUnit timeUnit,
                                       Map<String, String> context) throws ParseException {
-            this.timeUnit = timeUnit;
             this.viewConfiguration = viewConfiguration;
-            this.context = overrideContext(context, timeUnit);
+            this.context = initializeFirstInterval(context);
         }
 
         @Override
         protected void compute() {
             try {
+                Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
                 String viewId = viewConfiguration.getName() + "_" + timeUnit.name().toLowerCase();
-                Map<String, List<List<ValueData>>> viewData = computeViewData(viewConfiguration, context);
+                Map<String, List<List<ValueData>>> viewData = doCompute(viewConfiguration, context);
 
-                retainViewData(viewId, viewData, Utils.initializeContext(Parameters.TimeUnit.DAY));
-            } catch (IOException | ParseException | SQLException e) {
+                retainViewData(viewId, viewData, context);
+            } catch (IOException | SQLException e) {
                 LOG.error(e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
         }
 
-        private Map<String, String> overrideContext(Map<String, String> context,
-                                                    Parameters.TimeUnit timeUnit) throws ParseException {
-            context = Utils.clone(context);
+        private Map<String, List<List<ValueData>>> doCompute(ViewConfiguration viewConfiguration,
+                                                             Map<String, String> context) throws IOException {
+            try {
+                context = initializeFirstInterval(context);
 
-            Utils.putTimeUnit(context, timeUnit);
-            Calendar toDate = Utils.getToDate(context);
-            Utils.initDateInterval(toDate, context);
+                Map<String, List<List<ValueData>>> viewData =
+                        new LinkedHashMap<>(viewConfiguration.getSections().size());
+                Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
 
-            return context;
+                for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
+
+                    List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
+
+                    for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
+                        Constructor<?> constructor =
+                                Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
+                        Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
+
+                        int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : viewConfiguration.getColumns();
+                        sectionData.addAll(row.getData(context, rowCount));
+                    }
+
+                    String sectionId = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
+                    viewData.put(sectionId, sectionData);
+                }
+
+                return viewData;
+            } catch (NoSuchMethodException | ClassCastException | ClassNotFoundException | InvocationTargetException |
+                    IllegalAccessException | InstantiationException | ParseException e) {
+                throw new IOException(e);
+            }
         }
+    }
+
+    private Map<String, String> initializeFirstInterval(Map<String, String> context) throws ParseException {
+        String toDate = Parameters.TO_DATE.get(context);
+
+        context = Parameters.REPORT_DATE.cloneAndPut(context, toDate);
+        Utils.initDateInterval(Utils.parseDate(toDate), context);
+
+        return context;
     }
 }

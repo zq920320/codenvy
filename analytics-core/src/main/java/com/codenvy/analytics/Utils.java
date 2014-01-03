@@ -70,6 +70,10 @@ public class Utils {
         return parseDate(Parameters.TO_DATE.get(context));
     }
 
+    public static Calendar getReportDate(Map<String, String> context) throws ParseException {
+        return parseDate(Parameters.REPORT_DATE.get(context));
+    }
+
     /** Puts {@link Parameters#FROM_DATE} parameter into context. */
     public static void putFromDate(Map<String, String> context, Calendar fromDate) {
         Parameters.FROM_DATE.put(context, formatDate(fromDate));

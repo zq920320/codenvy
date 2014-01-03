@@ -64,12 +64,12 @@ public class CSVReportPersister {
     }
 
     protected File getFile(String viewId, String reportsDir, Map<String, String> context) throws ParseException {
-        Calendar toDate = Utils.getToDate(context);
+        Calendar reportDate = Utils.getReportDate(context);
 
         StringBuilder filePath = new StringBuilder();
         filePath.append(reportsDir);
         filePath.append(File.separatorChar);
-        filePath.append(dirFormat.format(toDate.getTime()));
+        filePath.append(dirFormat.format(reportDate.getTime()));
         filePath.append(File.separatorChar);
         filePath.append(viewId.toLowerCase());
         filePath.append(".csv");

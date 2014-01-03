@@ -94,8 +94,7 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
     }
 
     @Override
-    public void storeData(Map<String, List<List<ValueData>>> viewData,
-                          Map<String, String> context) throws SQLException {
+    public void storeData(Map<String, List<List<ValueData>>> viewData) throws SQLException {
         Connection connection = openConnection();
         try {
             for (Map.Entry<String, List<List<ValueData>>> section : viewData.entrySet()) {
