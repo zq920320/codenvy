@@ -93,7 +93,7 @@ public class TestViewBuilder extends BaseTest {
 
         DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
 
-        spyBuilder.computeDisplayData(displayConfiguration);
+        spyBuilder.computeDisplayData(displayConfiguration, Utils.initializeContext(Parameters.TimeUnit.DAY));
         verify(spyBuilder).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         Map<String, List<List<ValueData>>> actualData = viewData.getValue();
@@ -119,7 +119,7 @@ public class TestViewBuilder extends BaseTest {
         Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
 
         ViewBuilder viewBuilder = new ViewBuilder();
-        viewBuilder.computeDisplayData(displayConfiguration);
+        viewBuilder.computeDisplayData(displayConfiguration, context);
 
         Map<String, List<List<ValueData>>> actualData =
                 viewBuilder.queryViewData(displayConfiguration.getView("view"), context);

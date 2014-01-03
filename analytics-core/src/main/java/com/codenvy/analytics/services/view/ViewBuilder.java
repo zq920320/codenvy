@@ -34,10 +34,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
@@ -51,13 +48,11 @@ public class ViewBuilder extends Feature {
     private final DataPersister                              jdbcPersister;
     private final ConfigurationManager<DisplayConfiguration> configurationManager;
     private final CSVReportPersister                         csvReportPersister;
-    private final ForkJoinPool                               forkJoinPool;
 
     public ViewBuilder() {
         this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class, CONFIGURATION);
         this.jdbcPersister = JdbcDataPersisterFactory.getDataPersister();
         this.csvReportPersister = new CSVReportPersister();
-        this.forkJoinPool = new ForkJoinPool();
     }
 
     public Map<String, List<List<ValueData>>> getViewData(String name, Map<String, String> context) throws IOException {
@@ -91,13 +86,14 @@ public class ViewBuilder extends Feature {
         long start = System.currentTimeMillis();
 
         try {
-            computeDisplayData(configurationManager.loadConfiguration());
+            computeDisplayData(configurationManager.loadConfiguration(), context);
         } finally {
             LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
-    protected void computeDisplayData(DisplayConfiguration displayConfiguration) throws Exception {
+    protected void computeDisplayData(DisplayConfiguration displayConfiguration,
+                                      Map<String, String> context) throws Exception {
         List<RecursiveAction> tasks = new ArrayList<>();
 
         ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -107,7 +103,7 @@ public class ViewBuilder extends Feature {
                 for (String timeUnitParam : viewConfiguration.getTimeUnit().split(",")) {
                     Parameters.TimeUnit timeUnit = Parameters.TimeUnit.valueOf(timeUnitParam.toUpperCase());
 
-                    ComputeViewDataAction task = new ComputeViewDataAction(viewConfiguration, timeUnit);
+                    ComputeViewDataAction task = new ComputeViewDataAction(viewConfiguration, timeUnit, context);
                     forkJoinPool.submit(task);
 
                     tasks.add(task);
@@ -187,18 +183,20 @@ public class ViewBuilder extends Feature {
 
         private final ViewConfiguration   viewConfiguration;
         private final Parameters.TimeUnit timeUnit;
+        private final Map<String, String> context;
 
-        private ComputeViewDataAction(ViewConfiguration viewConfiguration, Parameters.TimeUnit timeUnit) {
-            this.viewConfiguration = viewConfiguration;
+        private ComputeViewDataAction(ViewConfiguration viewConfiguration,
+                                      Parameters.TimeUnit timeUnit,
+                                      Map<String, String> context) throws ParseException {
             this.timeUnit = timeUnit;
+            this.viewConfiguration = viewConfiguration;
+            this.context = overrideContext(context, timeUnit);
         }
 
         @Override
         protected void compute() {
             try {
-                String viewId = viewConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
-                Map<String, String> context = Utils.initializeContext(timeUnit);
-
+                String viewId = viewConfiguration.getName() + "_" + timeUnit.name().toLowerCase();
                 Map<String, List<List<ValueData>>> viewData = computeViewData(viewConfiguration, context);
 
                 retainViewData(viewId, viewData, Utils.initializeContext(Parameters.TimeUnit.DAY));
@@ -206,6 +204,17 @@ public class ViewBuilder extends Feature {
                 LOG.error(e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
+        }
+
+        private Map<String, String> overrideContext(Map<String, String> context,
+                                                    Parameters.TimeUnit timeUnit) throws ParseException {
+            context = Utils.clone(context);
+
+            Utils.putTimeUnit(context, timeUnit);
+            Calendar toDate = Utils.getToDate(context);
+            Utils.initDateInterval(toDate, context);
+
+            return context;
         }
     }
 }

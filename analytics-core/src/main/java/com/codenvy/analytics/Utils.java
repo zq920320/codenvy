@@ -80,6 +80,11 @@ public class Utils {
         Parameters.TO_DATE.put(context, formatDate(toDate));
     }
 
+    /** Puts {@link Parameters#TIME_UNIT} parameter into context. */
+    public static void putTimeUnit(Map<String, String> context, Parameters.TimeUnit timeUnit) {
+        Parameters.TIME_UNIT.put(context, timeUnit.name());
+    }
+
     /** Initialize date interval accordingly to passed {@link Parameters#TIME_UNIT} */
     public static void initDateInterval(Calendar date, Map<String, String> context) throws ParseException {
         Parameters.TimeUnit timeUnit = getTimeUnit(context);

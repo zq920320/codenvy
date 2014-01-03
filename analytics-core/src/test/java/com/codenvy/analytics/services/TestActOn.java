@@ -61,7 +61,7 @@ public class TestActOn extends BaseTest {
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
 
-        Parameters.STORAGE_TABLE.put(context, "product_usage_sessions");
+        Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase());
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
@@ -76,7 +76,7 @@ public class TestActOn extends BaseTest {
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
 
-        Parameters.STORAGE_TABLE.put(context, "product_usage_sessions");
+        Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase());
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
@@ -84,10 +84,14 @@ public class TestActOn extends BaseTest {
     }
 
     @Test
-    public void testPrepareFile() throws Exception {
+    public void testWholePeriod() throws Exception {
         ActOn job = new ActOn();
 
-        File jobFile = job.prepareFile(Utils.initializeContext(Parameters.TimeUnit.LIFETIME));
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131102");
+
+        File jobFile = job.prepareFile(context);
         assertEquals(jobFile.getName(), ActOn.FILE_NAME);
 
         Set<String> content = read(jobFile);
@@ -95,9 +99,30 @@ public class TestActOn extends BaseTest {
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
                 "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive"));
-        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"false\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"false\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"false\""));
+        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\""));
+    }
+
+    @Test
+    public void testOneDayPeriod() throws Exception {
+        ActOn job = new ActOn();
+
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
+
+        File jobFile = job.prepareFile(context);
+        assertEquals(jobFile.getName(), ActOn.FILE_NAME);
+
+        Set<String> content = read(jobFile);
+
+        assertEquals(content.size(), 4);
+        assertTrue(content.contains(
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive"));
+        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\""));
     }
 
     private Set<String> read(File jobFile) throws IOException {

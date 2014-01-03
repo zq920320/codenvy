@@ -156,28 +156,50 @@ public class ActOn extends Feature {
     protected File prepareFile(Map<String, String> context) throws IOException, ParseException {
         File file = new File(Configurator.getTmpDir(), FILE_NAME);
 
-        Set<ValueData> activeUsers = getActiveUsersDuringMonth(context);
         List<ValueData> usersStatistics = getUsersStatistics(context);
+        Set<ValueData> activeUsers = getActiveUsersLastMonth(context);
         Map<ValueData, Map<String, ValueData>> usersProfiles = getUsersProfiles();
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeader(out);
-
-            for (ValueData object : usersStatistics) {
-                Map<String, ValueData> stat = ((MapValueData)object).getAll();
-                ValueData userEmail = stat.get(UsersStatisticsList.USER);
-
-                Map<String, ValueData> profile = usersProfiles.get(userEmail);
-                boolean isActive = activeUsers.contains(userEmail);
-
-                writeStatistics(out, stat, profile, isActive);
-            }
+            writeUsersWithStatistics(activeUsers, usersStatistics, usersProfiles, out);
+            writeUsersWithoutStatistics(usersProfiles, out);
         }
 
         return file;
     }
 
-    private Set<ValueData> getActiveUsersDuringMonth(Map<String, String> context) throws ParseException, IOException {
+    private void writeUsersWithoutStatistics(Map<ValueData, Map<String, ValueData>> usersProfiles,
+                                             BufferedWriter out) throws IOException {
+
+        for (Map.Entry<ValueData, Map<String, ValueData>> entry : usersProfiles.entrySet()) {
+            writeStatistics(out,
+                            Collections.<String, ValueData>emptyMap(),
+                            entry.getValue(),
+                            false);
+        }
+    }
+
+    private void writeUsersWithStatistics(Set<ValueData> activeUsers,
+                                          List<ValueData> usersStatistics,
+                                          Map<ValueData, Map<String, ValueData>> usersProfiles,
+                                          BufferedWriter out) throws IOException {
+
+        for (ValueData object : usersStatistics) {
+            Map<String, ValueData> stat = ((MapValueData)object).getAll();
+            ValueData userEmail = stat.get(UsersStatisticsList.USER);
+
+            Map<String, ValueData> profile = usersProfiles.remove(userEmail);
+            boolean isActive = activeUsers.contains(userEmail);
+
+            writeStatistics(out,
+                            stat,
+                            profile == null ? Collections.<String, ValueData>emptyMap() : profile,
+                            isActive);
+        }
+    }
+
+    private Set<ValueData> getActiveUsersLastMonth(Map<String, String> context) throws ParseException, IOException {
         context = Utils.clone(context);
 
         Calendar calendar = Utils.getToDate(context);
@@ -219,19 +241,19 @@ public class ActOn extends Feature {
                                  Map<String, ValueData> profile,
                                  boolean isActive) throws IOException {
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_EMAIL));
+        writeString(out, profile.get(AbstractUsersProfile.USER_EMAIL));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_FIRST_NAME));
+        writeString(out, profile.get(AbstractUsersProfile.USER_FIRST_NAME));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_LAST_NAME));
+        writeString(out, profile.get(AbstractUsersProfile.USER_LAST_NAME));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_PHONE));
+        writeString(out, profile.get(AbstractUsersProfile.USER_PHONE));
         out.write(",");
 
-        writeString(out, profile == null ? StringValueData.DEFAULT : profile.get(AbstractUsersProfile.USER_COMPANY));
+        writeString(out, profile.get(AbstractUsersProfile.USER_COMPANY));
         out.write(",");
 
         writeInt(out, stat.get(UsersStatisticsList.PROJECTS));
