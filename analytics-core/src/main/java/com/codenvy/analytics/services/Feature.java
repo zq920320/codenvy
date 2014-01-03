@@ -86,5 +86,5 @@ public abstract class Feature implements Job {
     protected abstract void doExecute(Map<String, String> context) throws Exception;
 
     /** @return true if feature can be executed on regular basis. */
-    protected abstract boolean isAvailable();
+    public abstract boolean isAvailable();
 }
