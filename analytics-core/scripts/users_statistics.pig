@@ -44,6 +44,6 @@ n1 = filterByEvent(l, 'project-created');
 n = FOREACH n1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('projects', 1);
 STORE n INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 
-m1 = filterByEvent(l, 'project-destoryed');
+m1 = filterByEvent(l, 'project-destroyed');
 m = FOREACH m1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('projects', -1);
 STORE m INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
