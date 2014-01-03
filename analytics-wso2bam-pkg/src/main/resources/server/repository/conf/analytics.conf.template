@@ -4,7 +4,6 @@ analytics.home.dir=$HOME/wso2bam-analytics
 analytics.tmp.dir=${analytics.home.dir}/tmp
 analytics.reports.dir=${analytics.home.dir}repository/deployment/server/webapps/analytics/reports
 analytics.backup.reports.dir=$HOME/analytics_data/reports
-#analytics.backup.collections=
 
 # Pig server configuration
 pig.embedded=true
@@ -33,7 +32,6 @@ scheduler.cron.timetable=0 0 1 ? * *
 # scheduler.force.run.class=com.codenvy.analytics.services.LogChecker
 # scheduler.force.run.class=com.codenvy.analytics.services.WeeklyReport
 # scheduler.force.run.class=com.codenvy.analytics.services.ActOn
-# scheduler.force.run.class=com.codenvy.analytics.services.MongoDBBackup
 # scheduler.force.run.period=alltime|lastday|20131201,20131231
 # scheduler.force.run.asynchronous=false|true
 

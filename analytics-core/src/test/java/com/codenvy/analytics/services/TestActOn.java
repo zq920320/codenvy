@@ -87,7 +87,7 @@ public class TestActOn extends BaseTest {
     public void testPrepareFile() throws Exception {
         ActOn job = new ActOn();
 
-        File jobFile = job.prepareFile();
+        File jobFile = job.prepareFile(Utils.initializeContext(Parameters.TimeUnit.LIFETIME));
         assertEquals(jobFile.getName(), ActOn.FILE_NAME);
 
         Set<String> content = read(jobFile);

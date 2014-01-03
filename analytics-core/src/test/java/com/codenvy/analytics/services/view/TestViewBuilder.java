@@ -80,7 +80,7 @@ public class TestViewBuilder extends BaseTest {
     @Test
     public void testBuildAll() throws Exception {
         ViewBuilder viewBuilder = new ViewBuilder();
-        viewBuilder.doExecute();
+        viewBuilder.doExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
     }
 
     @Test

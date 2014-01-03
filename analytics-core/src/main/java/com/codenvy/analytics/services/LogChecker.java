@@ -24,8 +24,6 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 
 import org.apache.pig.data.Tuple;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +38,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class LogChecker implements Feature {
+public class LogChecker extends Feature {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogChecker.class);
 
@@ -55,34 +53,18 @@ public class LogChecker implements Feature {
     }
 
     @Override
-    public void forceExecute(Map<String, String> context) throws JobExecutionException {
-        try {
-            Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
-            Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
-            
-            doExecute(context);
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
-        }
+    protected Map<String, String> initializeDefaultContext() throws ParseException {
+        return Utils.initializeContext(Parameters.TimeUnit.DAY);
     }
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
-        try {
-            Map<String, String> executionContext = Utils.initializeContext(Parameters.TimeUnit.DAY);
-            Parameters.USER.put(executionContext, Parameters.USER_TYPES.ANY.name());
-            Parameters.WS.put(executionContext, Parameters.WS_TYPES.ANY.name());
-
-            doExecute(executionContext);
-        } catch (IOException | ParseException e) {
-            LOG.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
-        }
+    protected void putParametersInContext(Map<String, String> context) {
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
+        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());
     }
 
-
-    private void doExecute(Map<String, String> context) throws IOException {
+    @Override
+    protected void doExecute(Map<String, String> context) throws IOException {
         LOG.info("LogChecker is started");
         long start = System.currentTimeMillis();
 

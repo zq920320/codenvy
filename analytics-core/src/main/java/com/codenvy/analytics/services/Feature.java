@@ -19,9 +19,15 @@
 
 package com.codenvy.analytics.services;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionException;
+import com.codenvy.analytics.Utils;
 
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.ParseException;
 import java.util.Map;
 
 /**
@@ -29,14 +35,56 @@ import java.util.Map;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-public interface Feature extends Job {
+public abstract class Feature implements Job {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Feature.class);
 
     /**
-     * Some feature might be skipped depending on packaging.
+     * Forcing job execution.
      *
-     * @return true if feature can be added to scheduler and false if feature has to be ignored
+     * @param context
+     *         the execution context
+     * @throws JobExecutionException
      */
-    boolean isAvailable();
+    public void forceExecute(Map<String, String> context) throws JobExecutionException {
+        try {
+            Map<String, String> newContext = Utils.clone(context);
+            putParametersInContext(newContext);
 
-    void forceExecute(Map<String, String> context) throws JobExecutionException;
+            doExecute(newContext);
+        } catch (Throwable e) {
+            LOG.error(e.getMessage(), e);
+            throw new JobExecutionException(e);
+        }
+    }
+
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        try {
+            Map<String, String> newContext = initializeDefaultContext();
+            putParametersInContext(newContext);
+
+            doExecute(newContext);
+        } catch (Throwable e) {
+            LOG.error(e.getMessage(), e);
+            throw new JobExecutionException(e);
+        }
+    }
+
+    /** Initialize context if job is being executed on regular basis */
+    protected abstract Map<String, String> initializeDefaultContext() throws ParseException;
+
+    /** If need to override context or put additional parameters to it, */
+    protected abstract void putParametersInContext(Map<String, String> context);
+
+    /**
+     * Execution.
+     *
+     * @param context
+     *         the execution context
+     */
+    protected abstract void doExecute(Map<String, String> context) throws Exception;
+
+    /** @return true if feature can be executed on regular basis. */
+    protected abstract boolean isAvailable();
 }

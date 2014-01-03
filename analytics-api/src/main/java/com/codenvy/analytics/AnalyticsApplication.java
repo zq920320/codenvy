@@ -19,7 +19,6 @@
 package com.codenvy.analytics;
 
 
-import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.api.analytics.AnalyticsService;
 
 import javax.ws.rs.core.Application;
@@ -36,7 +35,7 @@ public class AnalyticsApplication extends Application {
         singletons = new HashSet<Object>();
         classes = new HashSet<Class<?>>();
         classes.add(AnalyticsService.class);
-        classes.add(ViewBuilder.class);
+        classes.add(View.class);
     }
 
     /** {@inheritDoc} */

@@ -26,8 +26,6 @@ import com.codenvy.analytics.metrics.*;
 
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +35,7 @@ import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ActOn implements Feature {
+public class ActOn extends Feature {
     public static final String FILE_NAME = "ideuserupdate.csv";
 
     private static final String AVAILABLE = "acton.available";
@@ -62,31 +60,21 @@ public class ActOn implements Feature {
     }
 
     @Override
-    public void forceExecute(Map<String, String> context) throws JobExecutionException {
-        try {
-            doExecute();
-        } catch (IOException | ParseException e) {
-            LOG.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
-        }
+    protected Map<String, String> initializeDefaultContext() throws ParseException {
+        return Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
     }
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
-        try {
-            doExecute();
-        } catch (IOException | ParseException e) {
-            LOG.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
-        }
+    protected void putParametersInContext(Map<String, String> context) {
     }
 
-    private void doExecute() throws IOException, ParseException {
+    @Override
+    protected void doExecute(Map<String, String> context) throws IOException, ParseException {
         LOG.info("ActOn is started");
         long start = System.currentTimeMillis();
 
         try {
-            File file = prepareFile();
+            File file = prepareFile(context);
 
             transferToFtp(file);
             sendNotificationMail();
@@ -165,11 +153,11 @@ public class ActOn implements Feature {
         }
     }
 
-    protected File prepareFile() throws IOException, ParseException {
+    protected File prepareFile(Map<String, String> context) throws IOException, ParseException {
         File file = new File(Configurator.getTmpDir(), FILE_NAME);
 
-        Set<ValueData> activeUsers = getActiveUsersDuringMonth();
-        List<ValueData> usersStatistics = getUsersStatistics();
+        Set<ValueData> activeUsers = getActiveUsersDuringMonth(context);
+        List<ValueData> usersStatistics = getUsersStatistics(context);
         Map<ValueData, Map<String, ValueData>> usersProfiles = getUsersProfiles();
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
@@ -189,13 +177,11 @@ public class ActOn implements Feature {
         return file;
     }
 
-    private Set<ValueData> getActiveUsersDuringMonth() throws ParseException, IOException {
-        Map<String, String> context = Utils.newContext();
+    private Set<ValueData> getActiveUsersDuringMonth(Map<String, String> context) throws ParseException, IOException {
+        context = Utils.clone(context);
 
-        Calendar calendar = Utils.parseDate(Parameters.TO_DATE.getDefaultValue());
+        Calendar calendar = Utils.getToDate(context);
         calendar.add(Calendar.DAY_OF_MONTH, -29);
-
-        Parameters.TO_DATE.putDefaultValue(context);
         Utils.putFromDate(context, calendar);
 
         Metric activeUsersList = MetricFactory.getMetric(MetricType.ACTIVE_USERS_SET);
@@ -204,9 +190,7 @@ public class ActOn implements Feature {
         return valueData.getAll();
     }
 
-    private List<ValueData> getUsersStatistics() throws IOException, ParseException {
-        Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
-
+    private List<ValueData> getUsersStatistics(Map<String, String> context) throws IOException, ParseException {
         Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData valueData = (ListValueData)usersStatistics.getValue(context);
 

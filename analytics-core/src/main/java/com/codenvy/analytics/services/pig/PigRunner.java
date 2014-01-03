@@ -26,8 +26,6 @@ import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.configuration.ConfigurationManager;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +34,7 @@ import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-public class PigRunner implements Feature {
+public class PigRunner extends Feature {
 
     private static final Logger LOG           = LoggerFactory.getLogger(PigRunner.class);
     private static final String CONFIGURATION = "scripts.xml";
@@ -49,34 +47,21 @@ public class PigRunner implements Feature {
         this.collectionsManagement = new CollectionsManagement();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isAvailable() {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void forceExecute(Map<String, String> context) throws JobExecutionException {
-        try {
-            doExecute(context);
-        } catch (IOException | ParseException e) {
-            LOG.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
-        }
+    protected void putParametersInContext(Map<String, String> context) {
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        try {
-            doExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
-        } catch (IOException | ParseException e) {
-            LOG.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
-        }
+    protected Map<String, String> initializeDefaultContext() throws ParseException {
+        return Utils.initializeContext(Parameters.TimeUnit.DAY);
     }
 
+    @Override
     protected void doExecute(Map<String, String> context) throws IOException, ParseException {
         LOG.info("PigRunner is started");
         long start = System.currentTimeMillis();

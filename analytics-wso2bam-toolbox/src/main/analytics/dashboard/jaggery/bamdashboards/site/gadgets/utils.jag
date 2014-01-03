@@ -7,7 +7,7 @@ function getMetricValue(metric, queryParams) {
 
 
 function getAllResults(viewName, queryParams) {
-    var data = get('https://localhost:9443/api/view/build/' + viewName, queryParams, 'json');
+    var data = get('https://localhost:9443/api/view/get/' + viewName, queryParams, 'json');
     return convertJsonToTables(data['data']);
 }
 

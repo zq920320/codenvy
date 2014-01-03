@@ -22,8 +22,6 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +31,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Map;
 
-public class WeeklyReport implements Feature {
+public class WeeklyReport extends Feature {
 
     private static final Logger LOG = LoggerFactory.getLogger(WeeklyReport.class);
 
@@ -49,26 +47,16 @@ public class WeeklyReport implements Feature {
     }
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
-        try {
-            doExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
-        } catch (ParseException | IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
-        }
+    protected void putParametersInContext(Map<String, String> context) {
     }
 
     @Override
-    public void forceExecute(Map<String, String> context) throws JobExecutionException {
-        try {
-            doExecute(context);
-        } catch (ParseException | IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new JobExecutionException(e);
-        }
+    protected Map<String, String> initializeDefaultContext() throws ParseException {
+        return Utils.initializeContext(Parameters.TimeUnit.DAY);
     }
 
-    private void doExecute(Map<String, String> context) throws IOException, ParseException {
+    @Override
+    protected void doExecute(Map<String, String> context) throws IOException, ParseException {
         LOG.info("WeeklyReport is started");
         long start = System.currentTimeMillis();
 
