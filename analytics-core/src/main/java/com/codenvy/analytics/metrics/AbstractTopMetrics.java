@@ -17,40 +17,18 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Map;
-
-import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public class AbstractTopMetrics extends ReadBasedMetric {
-    private MetricType metricType;
-    private String keyField;
-    private int dayCount;
-    
-    private static final int LIFE_TIME_PERIOD = -1;
-    private static final long DOCUMENT_COUNT = 100;
-    
-    public AbstractTopMetrics(MetricType metricType, int dayCount) {
+public abstract class AbstractTopMetrics extends ReadBasedMetric {
+    public AbstractTopMetrics(MetricType metricType) {
         super(metricType);
-        this.dayCount = dayCount;
     }
 
     @Override
     public Class< ? extends ValueData> getValueDataClass() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getDescription() {
-        // TODO Auto-generated method stub
-        return null;
+        return ListValueData.class;
     }
 
     @Override
@@ -59,56 +37,5 @@ public class AbstractTopMetrics extends ReadBasedMetric {
         return null;
     }
 
-    @Override
-    protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
-        DBObject[] dbOperations = new DBObject[2];
-        
-        // sort
-        boolean isAsc = true;        
-        dbOperations[0] = new BasicDBObject("$sort", new BasicDBObject(keyField, isAsc ? 1 : -1));
 
-        // get first 100 documents
-        dbOperations[1] = new BasicDBObject("$limit", DOCUMENT_COUNT);
-
-        return dbOperations;
-    }
-
-    
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        InitialValueContainer.validateExistenceInitialValueBefore(context);
-
-        Parameters.TO_DATE.putDefaultValue(context);
-
-        Calendar date = Calendar.getInstance();
-
-        if (this.dayCount == LIFE_TIME_PERIOD) {
-            Parameters.FROM_DATE.putDefaultValue(context);
-        } else {
-            try {
-                date = Utils.getToDate(context);
-            } catch (ParseException e) {
-                throw new IllegalArgumentException("The illegal TO_DATE context parameter value '" + date);
-            }
-
-            date.add(Calendar.DAY_OF_MONTH, 1 - this.dayCount);   // starting from yesterday
-
-            Utils.putFromDate(context, date);
-        }
-        
-        return super.getValue(context);
-    }
-    
-    @Override
-    public String getStorageCollectionName() {
-        return getStorageCollectionName(metricType);
-    }
-    
-    public void setMetricType(MetricType metricType) {
-        this.metricType = metricType;
-    }
-
-    public void setKeyField(String keyField) {
-        this.keyField = keyField;
-    }
 }

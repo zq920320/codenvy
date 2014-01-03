@@ -21,11 +21,11 @@ package com.codenvy.analytics.metrics;
 public class TopFactorySessionsBy365Day extends AbstractTopSessions {
 
     public TopFactorySessionsBy365Day() {
-        super(MetricType.TOP_FACTORY_SESSIONS_BY_365DAY, 30);
+        super(MetricType.TOP_FACTORY_SESSIONS_BY_365DAY, 365);
     }
 
     @Override
     public String getDescription() {
-        return "The top 100 factories sorted by duration of session in period of time during 365 days from yesterday";
+        return "The top 100 factory sessions sorted by duration of session in period of time during 365 days from yesterday";
     }
 }
