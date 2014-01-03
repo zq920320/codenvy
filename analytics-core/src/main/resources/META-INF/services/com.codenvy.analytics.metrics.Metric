@@ -118,3 +118,11 @@ com.codenvy.analytics.metrics.UsersActivityList
 com.codenvy.analytics.metrics.UsersActivity
 com.codenvy.analytics.metrics.UsersStatisticsList
 com.codenvy.analytics.metrics.UsersTimeInWorkspacesList
+
+com.codenvy.analytics.metrics.TopFactorySessionsBy1Day
+com.codenvy.analytics.metrics.TopFactorySessionsBy7Day
+com.codenvy.analytics.metrics.TopFactorySessionsBy30Day
+com.codenvy.analytics.metrics.TopFactorySessionsBy60Day
+com.codenvy.analytics.metrics.TopFactorySessionsBy90Day
+com.codenvy.analytics.metrics.TopFactorySessionsBy365Day
+com.codenvy.analytics.metrics.TopFactorySessionsByLifetime
