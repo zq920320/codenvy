@@ -24,19 +24,24 @@ import com.mongodb.DBObject;
 
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public abstract class AbstractTopSessions extends AbstractTopMetrics {   
+public abstract class AbstractTopFactories extends AbstractTopMetrics {   
     private static final long MAX_DOCUMENT_COUNT = 100;
     
-    public AbstractTopSessions(MetricType factoryMetricType, int dayCount) {
+    public AbstractTopFactories(MetricType factoryMetricType, int dayCount) {
         super(factoryMetricType, dayCount);
     }
 
     @Override
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
-        DBObject[] dbOperations = new DBObject[2];
-        
-        dbOperations[0] = new BasicDBObject("$sort", new BasicDBObject(ProductUsageFactorySessionsList.TIME, -1));
-        dbOperations[1] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
+        DBObject[] dbOperations = new DBObject[3];
+
+        // operations 'db.product_usage_factory_sessions_list.aggregate([{$group: {_id: "$factory", count: {$sum:1}}},
+        // {$sort:{count: -1}}, {$limit: 100}])'
+        dbOperations[0] = new BasicDBObject("$group",
+                                            new BasicDBObject("_id", "$" + ProductUsageFactorySessionsList.FACTORY)
+                                                      .append("count", new BasicDBObject("$sum", 1))); 
+        dbOperations[1] = new BasicDBObject("$sort", new BasicDBObject("count", -1));
+        dbOperations[2] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
 
         return dbOperations;
     }

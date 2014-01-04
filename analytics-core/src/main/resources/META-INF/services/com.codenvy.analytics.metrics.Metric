@@ -126,3 +126,11 @@ com.codenvy.analytics.metrics.TopFactorySessionsBy60Day
 com.codenvy.analytics.metrics.TopFactorySessionsBy90Day
 com.codenvy.analytics.metrics.TopFactorySessionsBy365Day
 com.codenvy.analytics.metrics.TopFactorySessionsByLifetime
+
+com.codenvy.analytics.metrics.TopFactoriesBy1Day
+com.codenvy.analytics.metrics.TopFactoriesBy7Day
+com.codenvy.analytics.metrics.TopFactoriesBy30Day
+com.codenvy.analytics.metrics.TopFactoriesBy60Day
+com.codenvy.analytics.metrics.TopFactoriesBy90Day
+com.codenvy.analytics.metrics.TopFactoriesBy365Day
+com.codenvy.analytics.metrics.TopFactoriesByLifetime

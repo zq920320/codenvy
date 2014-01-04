@@ -557,7 +557,7 @@
     </view>
 
     <view time-unit="lifetime" name="user_data" on-demand="true">
-        <section name="user_data" time-unit="lifetime">
+        <section name="user_data">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
                            value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
@@ -573,7 +573,7 @@
     </view>
 
     <view time-unit="lifetime" name="user-sessions" on-demand="true">
-        <section name="user_sessions" time-unit="lifetime">
+        <section name="user_sessions">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Id,Workspace,Start Time,End Time,Duration"/>
                 <parameter key="columns" value="5"/>
@@ -587,7 +587,7 @@
     </view>
 
     <view time-unit="lifetime" name="user_workspace_data" on-demand="true">        
-        <section name="user_workspace_data" time-unit="lifetime">
+        <section name="user_workspace_data">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Name,Sessions,Time"/>
                 <parameter key="columns" value="3"/>
@@ -601,7 +601,7 @@
     </view>
 
     <view time-unit="lifetime" name="user_activity" on-demand="true">
-        <section name="user_activity" time-unit="lifetime">
+        <section name="user_activity">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Console Log"/>
                 <parameter key="columns" value="1"/>
@@ -613,4 +613,104 @@
             </row>
         </section>
     </view>
+    
+    <view time-unit="lifetime" name="top_factory_sessions_by_1day">        
+        <section name="top_factory_sessions_by_1day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="columns" value="5"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factory_sessions_by_1day"/>
+                <parameter key="fields" value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>
+                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>                
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factory_sessions_by_7day">        
+        <section name="top_factory_sessions_by_7day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="columns" value="5"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factory_sessions_by_7day"/>
+                <parameter key="fields" value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>                
+                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>    
+    <view time-unit="lifetime" name="top_factory_sessions_by_30day">        
+        <section name="top_factory_sessions_by_30day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="columns" value="5"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factory_sessions_by_30day"/>
+                <parameter key="fields" value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>                
+                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factory_sessions_by_60day">        
+        <section name="top_factory_sessions_by_60day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="columns" value="5"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factory_sessions_by_60day"/>
+                <parameter key="fields" value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>                
+                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factory_sessions_by_90day">        
+        <section name="top_factory_sessions_by_90day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="columns" value="5"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factory_sessions_by_90day"/>
+                <parameter key="fields" value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>                
+                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factory_sessions_by_365day">        
+        <section name="top_factory_sessions_by_365day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="columns" value="5"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factory_sessions_by_365day"/>
+                <parameter key="fields" value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>                
+                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factory_sessions_by_lifetime">        
+        <section name="top_factory_sessions_by_lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="columns" value="5"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factory_sessions_by_lifetime"/>
+                <parameter key="fields" value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>                
+                <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    
 </display>

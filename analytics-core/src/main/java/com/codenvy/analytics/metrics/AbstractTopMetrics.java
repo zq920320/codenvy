@@ -29,7 +29,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public abstract class AbstractTopMetrics extends ReadBasedMetric {
     public static final String VALUE = "value";    
-    protected static int LIFE_TIME_PERIOD = -1;
+    public static int LIFE_TIME_PERIOD = -1;
     
     private int dayCount;
 

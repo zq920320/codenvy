@@ -41,10 +41,12 @@ public class MetricRow extends AbstractRow {
     private static final String DEFAULT_FORMAT = "%,.0f";
     private static final String DESCRIPTION    = "description";
     private static final String FIELDS         = "fields";
+    private static final String BOOLEAN_FIELDS = "boolean-fields";
 
     private final Metric   metric;
     private final String   format;
     private final String[] fields;
+    private final List<String> booleanFields;
 
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
@@ -52,6 +54,7 @@ public class MetricRow extends AbstractRow {
         metric = MetricFactory.getMetric(parameters.get(NAME));
         format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_FORMAT;
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
+        booleanFields = parameters.containsKey(BOOLEAN_FIELDS) ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(",")) : new ArrayList<String>();
     }
 
     @Override
@@ -135,9 +138,12 @@ public class MetricRow extends AbstractRow {
 
             List<ValueData> singleValue = new ArrayList<>();
             for (String field : fields) {
-                formatAndAddSingleValue(items.containsKey(field) ? items.get(field)
-                                                                 : StringValueData.DEFAULT,
-                                        singleValue);
+                ValueData item = items.containsKey(field) ? items.get(field) : StringValueData.DEFAULT;
+                if (booleanFields.contains(field)) {
+                    formatAndAddBooleanValue(item, singleValue);
+                } else {
+                    formatAndAddSingleValue(item, singleValue);
+                }
             }
 
             multipleValues.add(singleValue);
@@ -149,6 +155,18 @@ public class MetricRow extends AbstractRow {
         } else {
             throw new IOException("Unsupported class " + clazz);
         }
+    }
+
+    /**
+     * TODO use special data type BooleanValueData instead of "boolean-fields" element of views.xml and move formatting into the formatAndAddSingleValue() method
+     * @param valueData
+     * @param singleValue
+     */
+    private void formatAndAddBooleanValue(ValueData valueData, List<ValueData> singleValue) {
+        String value = valueData.getAsString();
+        String formattedValue = value.equals("1") ? "yes" : "no";
+
+        singleValue.add(new StringValueData(formattedValue));
     }
 
     protected ValueData getMetricValue(Map<String, String> context) throws IOException {
