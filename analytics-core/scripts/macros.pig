@@ -17,6 +17,10 @@
  * from Codenvy S.A..
  */
 
+DEFINE URLDecode com.codenvy.analytics.pig.udf.URLDecode;
+DEFINE GetQueryValue com.codenvy.analytics.pig.udf.GetQueryValue;
+DEFINE CutQueryParam com.codenvy.analytics.pig.udf.CutQueryParam;
+
 ---------------------------------------------------------------------------
 -- Loads resources.
 -- @return {ip : bytearray, dt : datetime,  event : bytearray, message : chararray, user : bytearray, ws : bytearray} 

@@ -15,6 +15,9 @@
  * from Codenvy S.A..
  */
 
+DEFINE MongoStorage com.codenvy.analytics.pig.udf.MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
+
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
@@ -33,5 +36,5 @@ c = DISTINCT c3;
 r1 = FOREACH c GENERATE dt, ws, user;
 result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('value', 1);
 
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

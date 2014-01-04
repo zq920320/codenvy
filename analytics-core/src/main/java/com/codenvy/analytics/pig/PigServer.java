@@ -25,6 +25,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 
 import org.apache.pig.ExecType;
 import org.apache.pig.data.Tuple;
@@ -51,7 +52,6 @@ public class PigServer {
     private static final String              SCRIPTS_DIR = Configurator.getString("pig.scripts.dir");
     private static final String              BIN_DIR     = Configurator.getString("pig.bin.dir");
     private static final boolean             EMBEDDED    = Configurator.getBoolean("pig.embedded");
-    private static final Map<String, String> PROPERTIES  = Configurator.getAll("pig.property");
 
     private static final Calendar OLD_SCRIPT_THRESHOLD_DATE;
 
@@ -65,22 +65,11 @@ public class PigServer {
             throw new IllegalStateException(e);
         }
 
-        if (EMBEDDED) {
-            initEmbeddedServer();
-        } else {
-            try {
-                checkIfMongoIsStarted();
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }
+        initEmbeddedServer();
+        checkIfMongoIsStarted();
     }
 
     private static void initEmbeddedServer() {
-        for (Map.Entry<String, String> entry : Configurator.getAll("pig.embedded.property").entrySet()) {
-            System.setProperty(entry.getKey(), entry.getValue());
-        }
-
         try {
             server = initializeServer();
         } catch (IOException e) {
@@ -96,8 +85,12 @@ public class PigServer {
         });
     }
 
-    private static void checkIfMongoIsStarted() throws IOException {
-        MongoDataStorage.getDb();
+    private static void checkIfMongoIsStarted() {
+        try {
+            MongoDataStorage.getDb();
+        } catch (MongoException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -126,7 +119,7 @@ public class PigServer {
                 executeOnDedicatedServer(scriptType, context);
             }
         } finally {
-            LOG.info("Execution " + scriptType + " has finished");
+            LOG.info("Execution " + scriptType + " is finished");
         }
     }
 
@@ -138,15 +131,11 @@ public class PigServer {
             server.registerScript(scriptContent, context);
             server.executeBatch();
         } finally {
-            LOG.info("Execution " + scriptType + " has finished");
+            LOG.info("Execution " + scriptType + " is finished");
         }
     }
 
     private static org.apache.pig.PigServer initializeServer() throws IOException {
-        for (Map.Entry<String, String> entry : PROPERTIES.entrySet()) {
-            System.setProperty(entry.getKey(), entry.getValue());
-        }
-
         org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
 
         server.debugOff();
@@ -226,8 +215,6 @@ public class PigServer {
 
         LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
 
-        org.apache.pig.PigServer server = new org.apache.pig.PigServer(ExecType.LOCAL);
-
         String script = readScriptContent(scriptType, context);
         script = removeRedundantCode(script);
 
@@ -237,8 +224,7 @@ public class PigServer {
                 return Collections.emptyIterator();
             }
 
-            server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-
+            server.setBatchOn();
             server.registerScript(scriptContent, context);
             Iterator<Tuple> iterator = server.openIterator("result");
 
@@ -247,15 +233,16 @@ public class PigServer {
                 tuples.add(iterator.next());
             }
 
+            server.executeBatch();
+
             return tuples.iterator();
         } finally {
-            server.shutdown();
             LOG.info("Execution " + scriptType + " has finished");
         }
     }
 
     /** Checks if all parameters that are needed to script execution are added to context; */
-    private static Map<String, String> validateAndAdjustContext(ScriptType scriptType,
+    private static Map<String, String>  validateAndAdjustContext(ScriptType scriptType,
                                                                 Map<String, String> context) throws IOException {
         context = Utils.clone(context);
         MongoDataStorage.putStorageParameters(context);

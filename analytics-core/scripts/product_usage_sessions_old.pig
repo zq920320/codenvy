@@ -16,6 +16,9 @@
  * from Codenvy S.A..
  */
 
+DEFINE MongoStorage com.codenvy.analytics.pig.udf.MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
+
 IMPORT 'macros.pig';
 
 t = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
@@ -28,10 +31,10 @@ result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPL
             TOTUPLE('session_id', id), TOTUPLE('start_time', ToString(dt, 'yyyy-MM-dd HH:mm:ss')),
             TOTUPLE('end_time', ToString(ToDate(ToMilliSeconds(dt) + delta * 1000), 'yyyy-MM-dd HH:mm:ss')),
             TOTUPLE('time', delta);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 ---------------------------------------
 -- USERS: The total time of the sessions
 ---------------------------------------
 x = FOREACH f GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('time', delta), TOTUPLE('sessions', 1);
-STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;
