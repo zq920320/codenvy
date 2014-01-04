@@ -72,7 +72,7 @@ public class TestTopMetrics extends BaseTest {
                         .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "referrer1", "org1", "affiliate1")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "referrer1", "org1", "affiliate1")
                      .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "referrer2", "org2", "affiliate1")
@@ -120,7 +120,7 @@ public class TestTopMetrics extends BaseTest {
         List<ValueData> all = value.getAll();       
         checkTopSessionDataItem((MapValueData)all.get(0), "900", "factoryUrl1", "referrer3", "0", "0");
         checkTopSessionDataItem((MapValueData)all.get(1), "600", "factoryUrl1", "referrer2", "0", "1");
-        checkTopSessionDataItem((MapValueData)all.get(2), "300", "factoryUrl1", "referrer1", "1", "1");
+        checkTopSessionDataItem((MapValueData)all.get(2), "300", "factoryUrl0", "referrer1", "1", "1");
     }
 
     @Test
@@ -132,15 +132,12 @@ public class TestTopMetrics extends BaseTest {
         AbstractTopFactories metric = new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
 
         ListValueData value = (ListValueData)metric.getValue(context);
+
+        assertEquals(value.size(), 2);
         
-//        System.out.println("testAbstractTopFactories: " + value.getAsString());
-//
-//        assertEquals(value.size(), 3);
-//        
-//        List<ValueData> all = value.getAll();       
-//        checkTopSessionDataItem((MapValueData)all.get(0), "900", "factoryUrl1", "referrer3", "0", "0");
-//        checkTopSessionDataItem((MapValueData)all.get(1), "600", "factoryUrl1", "referrer2", "0", "1");
-//        checkTopSessionDataItem((MapValueData)all.get(2), "300", "factoryUrl1", "referrer1", "1", "1");
+        List<ValueData> all = value.getAll();       
+        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1500", "2");
+        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "300", "1");
     }
     
     private void checkTopSessionDataItem(MapValueData item, String time, String factory, String referrer, String convertedSession, String authenticatedSession) {
@@ -149,6 +146,12 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.REFERRER).getAsString(), referrer);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.CONVERTED_SESSION).getAsString(), convertedSession);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.AUTHENTICATED_SESSION).getAsString(), authenticatedSession);
+    }
+    
+    private void checkTopFactoriesDataItem(MapValueData item, String factory, String time, String count) {
+        assertEquals(item.getAll().get(ProductUsageFactorySessionsList.FACTORY).getAsString(), factory);
+        assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
+        assertEquals(item.getAll().get(AbstractTopFactories.COUNT).getAsString(), count);
     }
     
     private class TestAbstractTopSessions extends AbstractTopSessions {

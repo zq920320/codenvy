@@ -192,11 +192,15 @@ public class MongoDataLoader implements DataLoader {
 
         ValueData result = ValueDataFactory.createDefaultValue(clazz);
 
+        outer:
         while (iterator.hasNext()) {
             DBObject dbObject = iterator.next();
 
             for (String key : trackedFields) {
                 if (dbObject.containsField(key)) {
+                    if (dbObject.get(key) == null) {
+                        continue outer;
+                    }
                     action.accumulate(key, dbObject.get(key));
                 }
             }

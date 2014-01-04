@@ -44,15 +44,6 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
     }
 
     @Override
-    public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.TIME, 
-                            ProductUsageFactorySessionsList.FACTORY,
-                            ProductUsageFactorySessionsList.REFERRER, 
-                            ProductUsageFactorySessionsList.AUTHENTICATED_SESSION,
-                            ProductUsageFactorySessionsList.CONVERTED_SESSION};
-    }
-
-    @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         initContext(context, this.dayCount);
         

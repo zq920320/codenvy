@@ -207,8 +207,10 @@ function reloadThroughAjax(containerToReload, url, callback) {
       url: url
       
     }).fail(function(data, textStatus) {
-       hideLoader();
-       containerToReload.html("Error of processing request: " + textStatus);
+      needLoader = false;
+      hideLoader();
+       
+      containerToReload.html("Error of processing request: " + textStatus);
        
     }).done(function(data) {
       needLoader = false;
@@ -496,7 +498,7 @@ if (! loader.doesExist()) {
    
    loader = jQuery("#loader");
    
-   // add hendler of pressing "Esc" button
+   // add handler of pressing "Esc" button
    $(document).keydown(function(event) {
       var escKeyCode = 27;
       if (event.which == escKeyCode) {
