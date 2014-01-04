@@ -65,6 +65,7 @@ public class MongoDataStorage {
             initEmbeddedStorage();
         }
 
+
         try {
             client = initializeClient();
             mongoDb = client.getDB(uri.getDatabase());
@@ -72,12 +73,6 @@ public class MongoDataStorage {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-
-    /** Singleton client. Don't close after usage. */
-    public static MongoClient getClient() throws IOException {
-        return client;
     }
 
     /**

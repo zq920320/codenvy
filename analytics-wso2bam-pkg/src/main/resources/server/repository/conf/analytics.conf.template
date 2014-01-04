@@ -30,7 +30,7 @@ scheduler.cron.timetable=0 0 1 ? * *
 # scheduler.force.run.class=com.codenvy.analytics.services.pig.PigRunner
 # scheduler.force.run.class=com.codenvy.analytics.services.view.ViewBuilder
 # scheduler.force.run.class=com.codenvy.analytics.services.LogChecker
-# scheduler.force.run.class=com.codenvy.analytics.services.WeeklyReport
+# scheduler.force.run.class=com.codenvy.analytics.services.ReportSender
 # scheduler.force.run.class=com.codenvy.analytics.services.ActOn
 # scheduler.force.run.period=alltime|lastday|20131201,20131231
 # scheduler.force.run.asynchronous=false|true
@@ -49,14 +49,15 @@ mail.password=
 # LogChecker configuration
 log-checker.available=true
 log-checker.mail.text=Hi.\n\nBest regards, Analytics Team.
-log-checker.mail.subject=Log checking for /date/
+log-checker.mail.subject=Log checking for [date]
 log-checker.mail.to=
 
-# WeeklyReport configuration
-weekly-report.available=true
-weekly-report.mail.text=Hi.\n\nBest regards, Analytics Team.
-weekly-report.mail.subject=Weekly Analytics report
-weekly-report.mail.to=
+# Reports configuration
+reports.available=true
+reports.configuration=reports.xml
+reports.recipients.configuration=recipients.xml
+reports.mail.text=Hi.\n\nBest regards, Analytics Team.
+reports.mail.subject=[period] Analytics reports
 
 # ActOn configuration
 acton.available=true

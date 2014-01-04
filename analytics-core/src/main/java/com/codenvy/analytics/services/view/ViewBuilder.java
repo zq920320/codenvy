@@ -50,12 +50,10 @@ public class ViewBuilder extends Feature {
 
     private final DataPersister                              jdbcPersister;
     private final ConfigurationManager<DisplayConfiguration> configurationManager;
-    private final CSVReportPersister                         csvReportPersister;
 
     public ViewBuilder() {
         this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class, CONFIGURATION);
         this.jdbcPersister = JdbcDataPersisterFactory.getDataPersister();
-        this.csvReportPersister = new CSVReportPersister();
     }
 
     public Map<String, List<List<ValueData>>> getViewData(String name, Map<String, String> context)
@@ -152,7 +150,7 @@ public class ViewBuilder extends Feature {
                                   Map<String, List<List<ValueData>>> viewData,
                                   Map<String, String> context) throws SQLException, IOException {
         jdbcPersister.storeData(viewData);
-        csvReportPersister.storeData(viewId, viewData, context);
+        CSVReportPersister.storeData(viewId, viewData, context);
     }
 
     private class ComputeViewDataAction extends RecursiveAction {

@@ -21,6 +21,9 @@ package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Configurator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.*;
@@ -37,6 +40,8 @@ import java.util.Properties;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MailService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
 
     private static final String SMTP_AUTH            = "mail.smtp.auth";
     private static final String SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
@@ -58,6 +63,10 @@ public class MailService {
     }
 
     public void send() throws IOException {
+        send(false);
+    }
+
+    public void send(boolean deleteAttaches) throws IOException {
         try {
             Multipart multipart = new MimeMultipart();
             prepareTextPart(multipart);
@@ -71,6 +80,14 @@ public class MailService {
             Transport.send(message);
         } catch (MessagingException e) {
             throw new IOException(e);
+        }
+
+        if (deleteAttaches) {
+            for (File file : attaches) {
+                if (!file.delete()) {
+                    LOG.warn("File " + file.getPath() + " can't be deleted");
+                }
+            }
         }
     }
 
@@ -86,6 +103,15 @@ public class MailService {
 
         public MailService build() {
             return new MailService(subject, text, to, attaches);
+        }
+
+        public Builder addTo(String to) {
+            if (this.to == null) {
+                return setTo(to);
+            }
+
+            this.to += "," + to;
+            return this;
         }
 
         public Builder setTo(String to) {

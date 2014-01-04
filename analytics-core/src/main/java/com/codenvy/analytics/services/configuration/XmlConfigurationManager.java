@@ -17,12 +17,21 @@
  */
 package com.codenvy.analytics.services.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class XmlConfigurationManager<T> implements ConfigurationManager<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XmlConfigurationManager.class);
 
     private final Class<T> clazz;
     private final String   resource;
@@ -32,7 +41,6 @@ public class XmlConfigurationManager<T> implements ConfigurationManager<T> {
         this.resource = resource;
     }
 
-    /** {@inheritDoc} */
     @Override
     public T loadConfiguration() throws ConfigurationManagerException {
         try (InputStream in = openResource(resource)) {
@@ -43,26 +51,25 @@ public class XmlConfigurationManager<T> implements ConfigurationManager<T> {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void storeConfiguration(T configuration) throws IOException {
         throw new UnsupportedOperationException();
     }
 
-    protected InputStream openResource(String resource) throws ConfigurationManagerException, FileNotFoundException {
-        InputStream in;
-
+    protected InputStream openResource(String resource) throws IOException {
         File file = new File(resource);
         if (file.exists()) {
-            in = new FileInputStream(file);
-        } else {
-            in = getClass().getClassLoader().getResourceAsStream(resource);
+            LOG.info("Configuration is found in " + file.getPath());
+            return new FileInputStream(file);
 
-            if (in == null) {
+        } else {
+            URL url = getClass().getClassLoader().getResource(resource);
+            if (url == null) {
                 throw new ConfigurationManagerException("Resource " + resource + " not found");
             }
-        }
 
-        return in;
+            LOG.info("Configuration is found in " + url.getPath());
+            return url.openStream();
+        }
     }
 }

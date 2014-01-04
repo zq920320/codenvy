@@ -42,9 +42,9 @@ public class CSVReportPersister {
     private static final SimpleDateFormat dirFormat          =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
-    public void storeData(String viewId,
-                          Map<String, List<List<ValueData>>> viewData,
-                          Map<String, String> context) throws IOException {
+    public static void storeData(String viewId,
+                                 Map<String, List<List<ValueData>>> viewData,
+                                 Map<String, String> context) throws IOException {
         try {
             File csvFile = getFile(viewId, REPORTS_DIR, context);
             createParentDirIfNotExists(csvFile);
@@ -59,11 +59,11 @@ public class CSVReportPersister {
         }
     }
 
-    public File getReport(String viewId, Map<String, String> context) throws ParseException {
-        return getFile(viewId, BACKUP_REPORTS_DIR, context);
+    public static void storeData(File file, Map<String, List<List<ValueData>>> viewData) throws IOException {
+        doStore(file, viewData);
     }
 
-    protected File getFile(String viewId, String reportsDir, Map<String, String> context) throws ParseException {
+    protected static File getFile(String viewId, String reportsDir, Map<String, String> context) throws ParseException {
         Calendar reportDate = Utils.getReportDate(context);
 
         StringBuilder filePath = new StringBuilder();
@@ -77,7 +77,7 @@ public class CSVReportPersister {
         return new File(filePath.toString());
     }
 
-    protected void createParentDirIfNotExists(File csvFile) throws IOException {
+    protected static void createParentDirIfNotExists(File csvFile) throws IOException {
         File parentDir = csvFile.getParentFile();
         if (!parentDir.exists()) {
             if (!parentDir.mkdirs()) {
@@ -100,7 +100,7 @@ public class CSVReportPersister {
         }
     }
 
-    protected void doStore(File csvFile, Map<String, List<List<ValueData>>> viewData) throws IOException {
+    protected static void doStore(File csvFile, Map<String, List<List<ValueData>>> viewData) throws IOException {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "UTF-8"))) {
             for (List<List<ValueData>> sectionData : viewData.values()) {
                 for (List<ValueData> rowData : sectionData) {
@@ -108,9 +108,11 @@ public class CSVReportPersister {
                 }
             }
         }
+
+        LOG.info(csvFile.getPath() + " report is created");
     }
 
-    protected String getDataAsString(List<ValueData> data) {
+    protected static String getDataAsString(List<ValueData> data) {
         StringBuilder builder = new StringBuilder();
 
         for (ValueData valueData : data) {

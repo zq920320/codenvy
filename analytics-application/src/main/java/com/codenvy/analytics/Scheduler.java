@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.ActOn;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.LogChecker;
-import com.codenvy.analytics.services.WeeklyReport;
+import com.codenvy.analytics.services.ReportSender;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
@@ -58,10 +58,9 @@ public class Scheduler implements ServletContextListener {
     private static final Class[] features = new Class[]{PigRunner.class,
                                                         ViewBuilder.class,
                                                         LogChecker.class,
-                                                        WeeklyReport.class,
+                                                        ReportSender.class,
                                                         ActOn.class};
 
-    /** {@inheritDoc} */
     @Override
     public void contextDestroyed(ServletContextEvent context) {
         try {
@@ -71,7 +70,6 @@ public class Scheduler implements ServletContextListener {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void contextInitialized(ServletContextEvent context) {
         try {

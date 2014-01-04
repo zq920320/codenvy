@@ -106,7 +106,7 @@ public class LogChecker extends Feature {
     private void sendReport(File reportFile, String date) throws IOException {
         MailService.Builder builder = new MailService.Builder();
         builder.attach(reportFile);
-        builder.setSubject(Configurator.getString(MAIL_SUBJECT).replace("/date/", date));
+        builder.setSubject(Configurator.getString(MAIL_SUBJECT).replace("[date]", date));
         builder.setText(Configurator.getString(MAIL_TEXT));
         builder.setTo(Configurator.getString(MAIL_TO));
         MailService mailService = builder.build();
