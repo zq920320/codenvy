@@ -18,7 +18,7 @@
 package com.codenvy.analytics.metrics;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public class TopFactoriesBy90Day extends AbstractTopSessions {
+public class TopFactoriesBy90Day extends AbstractTopFactories {
 
     public TopFactoriesBy90Day() {
         super(MetricType.TOP_FACTORIES_BY_90DAY, 90);
@@ -26,6 +26,6 @@ public class TopFactoriesBy90Day extends AbstractTopSessions {
 
     @Override
     public String getDescription() {
-        return "The top 100 factories sorted by duration of session in period of time during yesterday";
+        return "The top factories with the same url sorted by overall duration of session in period of time during 90 days yesterday";
     }
 }

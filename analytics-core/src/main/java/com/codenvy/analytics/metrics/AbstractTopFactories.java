@@ -27,21 +27,41 @@ import com.mongodb.DBObject;
 public abstract class AbstractTopFactories extends AbstractTopMetrics {   
     private static final long MAX_DOCUMENT_COUNT = 100;
     
+    public static final String COUNT = "count";
+    
     public AbstractTopFactories(MetricType factoryMetricType, int dayCount) {
         super(factoryMetricType, dayCount);
+    }
+    
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{ProductUsageFactorySessionsList.FACTORY, 
+                            ProductUsageFactorySessionsList.TIME,
+                            COUNT};
     }
 
     @Override
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
-        DBObject[] dbOperations = new DBObject[3];
+        DBObject[] dbOperations = new DBObject[4];
 
-        // operations 'db.product_usage_factory_sessions_list.aggregate([{$group: {_id: "$factory", count: {$sum:1}}},
-        // {$sort:{count: -1}}, {$limit: 100}])'
+        // operations: db.product_usage_factory_sessions_list.aggregate([
+        // {$group: {_id: "$factory", count: {$sum:1}, time: {$sum:"$time"}}},
+        // {$project:{"time": 1, "count":1, "factory": "$_id", "_id": 0}},
+        // {$sort:{time: -1}},
+        // {$limit: 100}])
         dbOperations[0] = new BasicDBObject("$group",
                                             new BasicDBObject("_id", "$" + ProductUsageFactorySessionsList.FACTORY)
-                                                      .append("count", new BasicDBObject("$sum", 1))); 
-        dbOperations[1] = new BasicDBObject("$sort", new BasicDBObject("count", -1));
-        dbOperations[2] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
+                                                      .append(COUNT, new BasicDBObject("$sum", 1))
+                                                      .append(ProductUsageFactorySessionsList.TIME, new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.TIME)));
+        
+        dbOperations[1] = new BasicDBObject("$sort", new BasicDBObject(ProductUsageFactorySessionsList.TIME, -1));
+        
+        dbOperations[2] = new BasicDBObject("$project", new BasicDBObject(ProductUsageFactorySessionsList.TIME, 1)
+                                                                  .append(COUNT, 1)
+                                                                  .append(ProductUsageFactorySessionsList.FACTORY, "$_id")
+                                                                  .append("_id", 0));
+        
+        dbOperations[3] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
 
         return dbOperations;
     }

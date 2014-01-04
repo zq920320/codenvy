@@ -712,5 +712,97 @@
             </row>
         </section>
     </view>
+
+    <view time-unit="lifetime" name="top_factories_by_1day">        
+        <section name="top_factories_by_1day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Factory,Time,Count"/>
+                <parameter key="columns" value="3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factories_by_1day"/>
+                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factories_by_7day">        
+        <section name="top_factories_by_7day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Factory,Time,Count"/>
+                <parameter key="columns" value="3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factories_by_7day"/>
+                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factories_by_30day">        
+        <section name="top_factories_by_30day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Factory,Time,Count"/>
+                <parameter key="columns" value="3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factories_by_30day"/>
+                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factories_by_60day">        
+        <section name="top_factories_by_60day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Factory,Time,Count"/>
+                <parameter key="columns" value="3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factories_by_60day"/>
+                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factories_by_90day">        
+        <section name="top_factories_by_90day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Factory,Time,Count"/>
+                <parameter key="columns" value="3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factories_by_90day"/>
+                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factories_by_365day">        
+        <section name="top_factories_by_365day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Factory,Time,Count"/>
+                <parameter key="columns" value="3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factories_by_365day"/>
+                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
+    <view time-unit="lifetime" name="top_factories_by_timeline">        
+        <section name="top_factories_by_timeline">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Factory,Time,Count"/>
+                <parameter key="columns" value="3"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_factories_by_timeline"/>
+                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="columns" value="1"/>
+            </row>
+        </section>
+    </view>
     
 </display>
