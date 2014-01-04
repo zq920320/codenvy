@@ -7,9 +7,9 @@ analytics.backup.reports.dir=$HOME/analytics_data/reports
 
 # Pig server configuration
 pig.embedded=true
+pig.property.embedded.udf.import.list=com.codenvy.analytics.pig.udf
 pig.bin.dir=${analytics.home.dir}/pig/bin
 pig.scripts.dir=${analytics.home.dir}/pig/scripts
-pig.property.udf.import.list=com.codenvy.analytics.pig.udf
 
 # MongoDB storage configuration
 analytics.storage.embedded=false
