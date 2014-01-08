@@ -17,6 +17,7 @@
  */
 package com.codenvy.factory;
 
+import com.codenvy.api.factory.AdvancedFactoryUrlValidator;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.SimpleFactoryUrl;
 import com.codenvy.api.factory.Variable;
@@ -119,7 +120,12 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat<SimpleFactoryUrl
 
             Map<String, String> projectAttributes = new HashMap<>();
             if ((values = params.get("pname")) != null && !values.isEmpty()) {
-                projectAttributes.put("pname", values.iterator().next());
+                String pname = values.iterator().next();
+                if (!AdvancedFactoryUrlValidator.isProjectNameValid(pname)) {
+                    throw new FactoryUrlException(DEFAULT_MESSAGE);
+                }
+
+                projectAttributes.put("pname", pname);
             }
             if ((values = params.get("ptype")) != null && !values.isEmpty()) {
                 projectAttributes.put("ptype", values.iterator().next());
@@ -138,6 +144,4 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat<SimpleFactoryUrl
             throw new FactoryUrlException(DEFAULT_MESSAGE);
         }
     }
-
-
 }

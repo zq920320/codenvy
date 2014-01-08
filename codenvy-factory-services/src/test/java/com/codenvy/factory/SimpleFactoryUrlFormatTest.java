@@ -91,7 +91,15 @@ public class SimpleFactoryUrlFormatTest {
                                enc(VALID_REPOSITORY_URL)}, // vcs par is missing
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt"}, // vcsurl par is missing
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc(VALID_REPOSITORY_URL) + "&vcsurl=" + enc(VALID_REPOSITORY_URL)} // vcsurl par is duplicated
+                               enc(VALID_REPOSITORY_URL) + "&vcsurl=" + enc(VALID_REPOSITORY_URL)}, // vcsurl par is duplicated
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=_eee&wname=ttt&vcsurl=" +
+                               enc(VALID_REPOSITORY_URL)},
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=.eee&wname=ttt&vcsurl=" +
+                               enc(VALID_REPOSITORY_URL)},
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=-eee&wname=ttt&vcsurl=" +
+                               enc(VALID_REPOSITORY_URL)},
+                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=%eee&wname=ttt&vcsurl=" +
+                               enc(VALID_REPOSITORY_URL)}
         };
     }
 
