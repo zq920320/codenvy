@@ -48,9 +48,9 @@ public class TestReportsConfiguration extends BaseTest {
                                                 "                    <view>timeline</view>\n" +
                                                 "                    <view>factory-timeline</view>\n" +
                                                 "                </views>\n" +
-                                                "                <context-initializer>\n" +
+                                                "                <context-modifier>\n" +
                                                 "                    <class>clazz</class>\n" +
-                                                "                </context-initializer>\n" +
+                                                "                </context-modifier>\n" +
                                                 "            </weekly>\n" +
                                                 "        </frequency>\n" +
                                                 "    </report>\n" +
@@ -101,7 +101,7 @@ public class TestReportsConfiguration extends BaseTest {
         assertEquals("timeline", viewsConfiguration.getViews().get(0));
         assertEquals("factory-timeline", viewsConfiguration.getViews().get(1));
 
-        assertNotNull(weeklyFrequencyConfiguration.getContextInitializer());
-        assertEquals("clazz", weeklyFrequencyConfiguration.getContextInitializer().getClazz());
+        assertNotNull(weeklyFrequencyConfiguration.getContextModifier());
+        assertEquals("clazz", weeklyFrequencyConfiguration.getContextModifier().getClazz());
     }
 }

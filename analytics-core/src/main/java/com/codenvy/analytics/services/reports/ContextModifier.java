@@ -17,21 +17,17 @@
  */
 package com.codenvy.analytics.services.reports;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@XmlRootElement(name = "context-initializer")
-public class ContextInitializerConfiguration {
+public interface ContextModifier {
 
-    private String clazz;
-
-    @XmlElement(name = "class")
-    public void setClazz(String contextInitializer) {
-        this.clazz = contextInitializer;
-    }
-
-    public String getClazz() {
-        return clazz;
-    }
+    /**
+     * Updates execution context.
+     *
+     * @param context
+     *         the execution context, contains {@link com.codenvy.analytics.metrics.Parameters#RECIPIENT} as
+     * @return
+     */
+    Map<String, String> update(Map<String, String> context);
 }

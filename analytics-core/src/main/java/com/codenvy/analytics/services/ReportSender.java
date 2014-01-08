@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,7 +70,13 @@ public class ReportSender extends Feature {
         return Configurator.getBoolean(AVAILABLE);
     }
 
-    protected void doExecute(Map<String, String> context) throws IOException, ParseException {
+    protected void doExecute(Map<String, String> context) throws IOException,
+                                                                 ParseException,
+                                                                 ClassNotFoundException,
+                                                                 NoSuchMethodException,
+                                                                 InstantiationException,
+                                                                 IllegalAccessException,
+                                                                 InvocationTargetException {
         LOG.info("ReportSender is started");
         long start = System.currentTimeMillis();
 
@@ -80,12 +87,9 @@ public class ReportSender extends Feature {
                 for (FrequencyConfiguration frequencyConfiguration : reportConfiguration.getFrequencies()) {
                     for (AbstractFrequencyConfiguration frequency : frequencyConfiguration.frequencies()) {
                         if (frequency != null && isAppropriateDayToSendReport(frequency, context)) {
-
-                            List<File> reports = getReports(context, frequency);
-                            sendReport(reports,
-                                       getPeriod(frequency),
+                            sendReport(context,
+                                       frequency,
                                        reportConfiguration.getRecipients());
-                            remove(reports);
                         }
                     }
                 }
@@ -95,17 +99,17 @@ public class ReportSender extends Feature {
         }
     }
 
-    private void remove(List<File> reports) {
-        for (File report : reports) {
-            if (!report.delete()) {
-                LOG.warn("File can't be deleted " + report.getPath());
-            }
-        }
-    }
+    protected void sendReport(Map<String, String> context,
+                              AbstractFrequencyConfiguration frequency,
+                              RecipientsConfiguration recipients) throws IOException,
+                                                                         ParseException,
+                                                                         ClassNotFoundException,
+                                                                         NoSuchMethodException,
+                                                                         InvocationTargetException,
+                                                                         InstantiationException,
+                                                                         IllegalAccessException {
 
-    protected void sendReport(List<File> reports, String period, RecipientsConfiguration recipients)
-            throws IOException, ParseException {
-        String subject = Configurator.getString(MAIL_SUBJECT).replace("[period]", period);
+        String subject = Configurator.getString(MAIL_SUBJECT).replace("[period]", getPeriod(frequency));
 
         for (String recipient : recipients.getRecipients()) {
             for (String email : recipientsHolder.getEmails(recipient)) {
@@ -114,18 +118,29 @@ public class ReportSender extends Feature {
                 builder.setSubject(subject);
                 builder.setTo(email);
 
+                List<File> reports = getReports(context, email, frequency);
                 for (File report : reports) {
                     builder.attach(report);
                 }
 
                 MailService mailService = builder.build();
                 mailService.send();
+
+                remove(reports);
             }
         }
     }
 
     private List<File> getReports(Map<String, String> context,
-                                  AbstractFrequencyConfiguration frequency) throws IOException, ParseException {
+                                  String recipient,
+                                  AbstractFrequencyConfiguration frequency) throws IOException,
+                                                                                   ParseException,
+                                                                                   ClassNotFoundException,
+                                                                                   NoSuchMethodException,
+                                                                                   IllegalAccessException,
+                                                                                   InvocationTargetException,
+                                                                                   InstantiationException {
+        context = updateContext(context, recipient, frequency);
 
         ViewsConfiguration viewsConfiguration = frequency.getViews();
         List<File> reports = new ArrayList<>(viewsConfiguration.getViews().size());
@@ -142,14 +157,36 @@ public class ReportSender extends Feature {
         return reports;
     }
 
-    private String getPeriod(AbstractFrequencyConfiguration frequencyConfiguration) {
-        if (frequencyConfiguration instanceof DailyFrequencyConfiguration) {
+    private Map<String, String> updateContext(Map<String, String> context,
+                                              String recipient,
+                                              AbstractFrequencyConfiguration frequency) throws ClassNotFoundException,
+                                                                                               InstantiationException,
+                                                                                               IllegalAccessException,
+                                                                                               InvocationTargetException,
+                                                                                               NoSuchMethodException {
+        String clazzName = frequency.getContextModifier().getClazz();
+        Class<?> clazz = Class.forName(clazzName);
+        ContextModifier contextModifier = (ContextModifier)clazz.getConstructor().newInstance();
+
+        return contextModifier.update(context);
+    }
+
+    private void remove(List<File> reports) {
+        for (File report : reports) {
+            if (!report.delete()) {
+                LOG.warn("File can't be deleted " + report.getPath());
+            }
+        }
+    }
+
+    private String getPeriod(AbstractFrequencyConfiguration frequency) {
+        if (frequency instanceof DailyFrequencyConfiguration) {
             return "Daily";
 
-        } else if (frequencyConfiguration instanceof WeeklyFrequencyConfiguration) {
+        } else if (frequency instanceof WeeklyFrequencyConfiguration) {
             return "Weekly";
 
-        } else if (frequencyConfiguration instanceof MonthlyFrequencyConfiguration) {
+        } else if (frequency instanceof MonthlyFrequencyConfiguration) {
             return "Monthly";
 
         }

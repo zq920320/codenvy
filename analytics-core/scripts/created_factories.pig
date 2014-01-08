@@ -35,6 +35,7 @@ a = FOREACH a6 GENERATE dt, ws, user, factory, repository, (orgId == '}' ? '' : 
 
 r1 = FOREACH a GENERATE dt, ws, user, factory, repository,
                 orgId, affiliateId, projectType;
+
 result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
                     TOTUPLE('orgId', orgId), TOTUPLE('affiliateId', affiliateId),
                     TOTUPLE('repository', repository), TOTUPLE('project_type', projectType), TOTUPLE('factory', factory);

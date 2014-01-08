@@ -18,28 +18,20 @@
 package com.codenvy.analytics.services.reports;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractFrequencyConfiguration {
+@XmlRootElement(name = "context-initializer")
+public class ContextModifierConfiguration {
 
-    private ViewsConfiguration           views;
-    private ContextModifierConfiguration contextModifier;
+    private String clazz;
 
-    @XmlElement(name = "views")
-    public void setViews(ViewsConfiguration views) {
-        this.views = views;
+    @XmlElement(name = "class")
+    public void setClazz(String contextInitializer) {
+        this.clazz = contextInitializer;
     }
 
-    public ViewsConfiguration getViews() {
-        return views;
-    }
-
-    @XmlElement(name = "context-modifier")
-    public void setContextModifier(ContextModifierConfiguration contextModifier) {
-        this.contextModifier = contextModifier;
-    }
-
-    public ContextModifierConfiguration getContextModifier() {
-        return contextModifier;
+    public String getClazz() {
+        return clazz;
     }
 }

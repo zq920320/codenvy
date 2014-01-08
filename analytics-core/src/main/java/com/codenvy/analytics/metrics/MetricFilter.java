@@ -18,6 +18,8 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.Utils;
+
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -52,6 +54,13 @@ public enum MetricFilter {
     /** @return true if context contains given parameter */
     public boolean exists(Map<String, String> context) {
         return context.get(name()) != null;
+    }
+
+    /** Puts value into execution context */
+    public Map<String, String> cloneAndPut(Map<String, String> context, String value) {
+        context = Utils.clone(context);
+        context.put(name(), value);
+        return context;
     }
 }
 

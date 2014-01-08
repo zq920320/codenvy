@@ -44,6 +44,8 @@ public enum Parameters {
     STORAGE_TABLE_USERS_STATISTICS,
 
     REPORT_DATE,
+    RECIPIENT,
+    VIEW,
 
     TIME_UNIT {
         @Override

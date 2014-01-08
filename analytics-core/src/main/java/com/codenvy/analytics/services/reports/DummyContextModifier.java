@@ -17,29 +17,13 @@
  */
 package com.codenvy.analytics.services.reports;
 
-import javax.xml.bind.annotation.XmlElement;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public abstract class AbstractFrequencyConfiguration {
+public class DummyContextModifier implements ContextModifier {
 
-    private ViewsConfiguration           views;
-    private ContextModifierConfiguration contextModifier;
-
-    @XmlElement(name = "views")
-    public void setViews(ViewsConfiguration views) {
-        this.views = views;
-    }
-
-    public ViewsConfiguration getViews() {
-        return views;
-    }
-
-    @XmlElement(name = "context-modifier")
-    public void setContextModifier(ContextModifierConfiguration contextModifier) {
-        this.contextModifier = contextModifier;
-    }
-
-    public ContextModifierConfiguration getContextModifier() {
-        return contextModifier;
+    @Override
+    public Map<String, String> update(Map<String, String> context) {
+        return context;
     }
 }
