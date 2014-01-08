@@ -28,6 +28,7 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
                     Account.getQueryParameterByName('username'),
                     Account.getQueryParameterByName('bearertoken'),
                     Account.getQueryParameterByName('workspace'),
+                    Account.getQueryParameterByName('redirect_url'),
                     _.bind(function(d){
                         this.trigger("success",d);
                     },this),
