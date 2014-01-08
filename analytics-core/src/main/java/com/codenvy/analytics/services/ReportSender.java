@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +80,12 @@ public class ReportSender extends Feature {
                 for (FrequencyConfiguration frequencyConfiguration : reportConfiguration.getFrequencies()) {
                     for (AbstractFrequencyConfiguration frequency : frequencyConfiguration.frequencies()) {
                         if (frequency != null && isAppropriateDayToSendReport(frequency, context)) {
-                            sendReport(context,
-                                       frequency,
+
+                            List<File> reports = getReports(context, frequency);
+                            sendReport(reports,
+                                       getPeriod(frequency),
                                        reportConfiguration.getRecipients());
+                            remove(reports);
                         }
                     }
                 }
@@ -91,23 +95,40 @@ public class ReportSender extends Feature {
         }
     }
 
-    protected void sendReport(Map<String, String> context,
-                              AbstractFrequencyConfiguration frequencyConfiguration,
-                              RecipientsConfiguration recipients) throws IOException, ParseException {
+    private void remove(List<File> reports) {
+        for (File report : reports) {
+            if (!report.delete()) {
+                LOG.warn("File can't be deleted " + report.getPath());
+            }
+        }
+    }
 
-        String subject = Configurator.getString(MAIL_SUBJECT).replace("[period]", getPeriod(frequencyConfiguration));
-
-        MailService.Builder builder = new MailService.Builder();
-        builder.setText(Configurator.getString(MAIL_TEXT));
-        builder.setSubject(subject);
+    protected void sendReport(List<File> reports, String period, RecipientsConfiguration recipients)
+            throws IOException, ParseException {
+        String subject = Configurator.getString(MAIL_SUBJECT).replace("[period]", period);
 
         for (String recipient : recipients.getRecipients()) {
             for (String email : recipientsHolder.getEmails(recipient)) {
-                builder.addTo(email);
+                MailService.Builder builder = new MailService.Builder();
+                builder.setText(Configurator.getString(MAIL_TEXT));
+                builder.setSubject(subject);
+                builder.setTo(email);
+
+                for (File report : reports) {
+                    builder.attach(report);
+                }
+
+                MailService mailService = builder.build();
+                mailService.send();
             }
         }
+    }
 
-        ViewsConfiguration viewsConfiguration = frequencyConfiguration.getViews();
+    private List<File> getReports(Map<String, String> context,
+                                  AbstractFrequencyConfiguration frequency) throws IOException, ParseException {
+
+        ViewsConfiguration viewsConfiguration = frequency.getViews();
+        List<File> reports = new ArrayList<>(viewsConfiguration.getViews().size());
 
         for (String view : viewsConfiguration.getViews()) {
             Map<String, List<List<ValueData>>> viewData = viewBuilder.getViewData(view, context);
@@ -115,12 +136,10 @@ public class ReportSender extends Feature {
             File report = new File(Configurator.getTmpDir(), view + ".csv");
             CSVReportPersister.storeData(report, viewData);
 
-            builder.attach(report);
+            reports.add(report);
         }
 
-
-        MailService mailService = builder.build();
-        mailService.send(true);
+        return reports;
     }
 
     private String getPeriod(AbstractFrequencyConfiguration frequencyConfiguration) {

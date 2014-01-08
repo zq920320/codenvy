@@ -36,11 +36,7 @@ public class NonActiveUsers extends CalculatedMetric {
         LongValueData active = (LongValueData)basedMetric[0].getValue(context);
         LongValueData total = (LongValueData)basedMetric[1].getValue(context);
 
-        if (active.getAsLong() > total.getAsLong()) {
-            return LongValueData.DEFAULT;
-        } else {
-            return new LongValueData(total.getAsLong() - active.getAsLong());
-        }
+        return new LongValueData(total.getAsLong() - active.getAsLong());
     }
 
     @Override

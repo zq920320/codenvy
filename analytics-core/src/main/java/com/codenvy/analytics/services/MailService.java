@@ -63,10 +63,6 @@ public class MailService {
     }
 
     public void send() throws IOException {
-        send(false);
-    }
-
-    public void send(boolean deleteAttaches) throws IOException {
         try {
             Multipart multipart = new MimeMultipart();
             prepareTextPart(multipart);
@@ -80,14 +76,6 @@ public class MailService {
             Transport.send(message);
         } catch (MessagingException e) {
             throw new IOException(e);
-        }
-
-        if (deleteAttaches) {
-            for (File file : attaches) {
-                if (!file.delete()) {
-                    LOG.warn("File " + file.getPath() + " can't be deleted");
-                }
-            }
         }
     }
 
@@ -103,15 +91,6 @@ public class MailService {
 
         public MailService build() {
             return new MailService(subject, text, to, attaches);
-        }
-
-        public Builder addTo(String to) {
-            if (this.to == null) {
-                return setTo(to);
-            }
-
-            this.to += "," + to;
-            return this;
         }
 
         public Builder setTo(String to) {
