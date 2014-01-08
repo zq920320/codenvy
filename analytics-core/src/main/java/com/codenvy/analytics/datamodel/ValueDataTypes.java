@@ -22,7 +22,7 @@ public enum ValueDataTypes {
     DOUBLE,
     LONG,
     STRING,
-    ROW,
+    MAP,
     LIST,
     SET
 }

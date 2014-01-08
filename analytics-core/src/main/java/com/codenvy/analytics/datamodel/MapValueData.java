@@ -82,7 +82,7 @@ public class MapValueData extends AbstractValueData {
     /** {@inheritDoc} */
     @Override
     public String getType() {
-        return ValueDataTypes.ROW.toString();
+        return ValueDataTypes.MAP.toString();
     }
 
     /** {@inheritDoc} */
