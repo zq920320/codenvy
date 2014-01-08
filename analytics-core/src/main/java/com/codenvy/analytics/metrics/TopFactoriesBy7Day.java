@@ -26,6 +26,6 @@ public class TopFactoriesBy7Day extends AbstractTopFactories {
 
     @Override
     public String getDescription() {
-        return "The top factories with the same url sorted by overall duration of session in period of time during 7 days yesterday";
+        return "The top factories with the same url sorted by overall duration of session in period of time during 7 days before today";
     }
 }

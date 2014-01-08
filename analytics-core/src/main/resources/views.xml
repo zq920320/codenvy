@@ -17,6 +17,7 @@
          from Codenvy S.A..
 -->
 <display>
+
     <view time-unit="day,week,month,lifetime" name="timeline" columns="15">
         <section name="workspaces">
             <row class="com.codenvy.analytics.services.view.DateRow">
@@ -409,7 +410,6 @@
         </section>
     </view>
 
-    <!-- Factory Timeline -->
     <view time-unit="day,week,month,lifetime" name="factory-timeline" columns="15">
         <section name="factories">
             <row class="com.codenvy.analytics.services.view.DateRow">
@@ -716,12 +716,12 @@
     <view time-unit="lifetime" name="top_factories_by_1day">        
         <section name="top_factories_by_1day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory,Time,Count"/>
-                <parameter key="columns" value="3"/>
+                <parameter key="titles" value="Factory,Time,Factory Count,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                <parameter key="columns" value="10"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_1day"/>
-                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="fields" value="factory,time,factory_count,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>                
                 <parameter key="columns" value="1"/>
             </row>
         </section>
@@ -729,12 +729,12 @@
     <view time-unit="lifetime" name="top_factories_by_7day">        
         <section name="top_factories_by_7day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory,Time,Count"/>
-                <parameter key="columns" value="3"/>
+                <parameter key="titles" value="Factory,Time,Factory Count,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                <parameter key="columns" value="10"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_7day"/>
-                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="fields" value="factory,time,factory_count,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>                
                 <parameter key="columns" value="1"/>
             </row>
         </section>
@@ -742,12 +742,12 @@
     <view time-unit="lifetime" name="top_factories_by_30day">        
         <section name="top_factories_by_30day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory,Time,Count"/>
-                <parameter key="columns" value="3"/>
+                <parameter key="titles" value="Factory,Time,Factory Count,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                <parameter key="columns" value="10"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_30day"/>
-                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="fields" value="factory,time,factory_count,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>                
                 <parameter key="columns" value="1"/>
             </row>
         </section>
@@ -755,12 +755,12 @@
     <view time-unit="lifetime" name="top_factories_by_60day">        
         <section name="top_factories_by_60day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory,Time,Count"/>
-                <parameter key="columns" value="3"/>
+                <parameter key="titles" value="Factory,Time,Factory Count,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                <parameter key="columns" value="10"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_60day"/>
-                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="fields" value="factory,time,factory_count,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>                
                 <parameter key="columns" value="1"/>
             </row>
         </section>
@@ -768,12 +768,12 @@
     <view time-unit="lifetime" name="top_factories_by_90day">        
         <section name="top_factories_by_90day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory,Time,Count"/>
-                <parameter key="columns" value="3"/>
+                <parameter key="titles" value="Factory,Time,Factory Count,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                <parameter key="columns" value="10"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_90day"/>
-                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="fields" value="factory,time,factory_count,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>                
                 <parameter key="columns" value="1"/>
             </row>
         </section>
@@ -781,12 +781,12 @@
     <view time-unit="lifetime" name="top_factories_by_365day">        
         <section name="top_factories_by_365day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory,Time,Count"/>
-                <parameter key="columns" value="3"/>
+                <parameter key="titles" value="Factory,Time,Factory Count,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                <parameter key="columns" value="10"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_365day"/>
-                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="fields" value="factory,time,factory_count,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>                
                 <parameter key="columns" value="1"/>
             </row>
         </section>
@@ -794,12 +794,12 @@
     <view time-unit="lifetime" name="top_factories_by_lifetime">        
         <section name="top_factories_by_lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory,Time,Count"/>
-                <parameter key="columns" value="3"/>
+                <parameter key="titles" value="Factory,Time,Factory Count,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
+                <parameter key="columns" value="10"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_lifetime"/>
-                <parameter key="fields" value="factory,time,count"/>                
+                <parameter key="fields" value="factory,time,factory_count,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>                
                 <parameter key="columns" value="1"/>
             </row>
         </section>

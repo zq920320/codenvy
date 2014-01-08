@@ -25,8 +25,6 @@ import com.mongodb.DBObject;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public abstract class AbstractTopSessions extends AbstractTopMetrics {   
-    private static final long MAX_DOCUMENT_COUNT = 100;
-    
     public AbstractTopSessions(MetricType factoryMetricType, int dayCount) {
         super(factoryMetricType, dayCount);
     }

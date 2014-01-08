@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.pig.scripts;
+package com.codenvy.analytics.metrics;
 
 import static org.testng.Assert.assertEquals;
 
@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -33,19 +35,16 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AbstractTopFactories;
-import com.codenvy.analytics.metrics.AbstractTopMetrics;
-import com.codenvy.analytics.metrics.AbstractTopSessions;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.ProductUsageFactorySessionsList;
 import com.codenvy.analytics.pig.PigServer;
+import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestTopMetrics extends BaseTest {
-
+    /** Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(TestTopMetrics.class);
+    
     private Map<String, String> params;
 
     @BeforeClass
@@ -89,7 +88,18 @@ public class TestTopMetrics extends BaseTest {
         // run event for session #1
         events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type")
                         .withDate("2013-02-10").withTime("10:03:00").build());
+        
+        events.add(Event.Builder.createProjectDeployedEvent("user1", "tmp-1", "session", "project", "type",
+            "local")
+        .withDate("2013-02-10")
+        .withTime("10:04:00")
+        .build());
 
+        events.add(Event.Builder.createProjectBuiltEvent("user1", "tmp-1", "session", "project", "type")
+        .withDate("2013-02-10")
+        .withTime("10:04:00")
+        .build());
+                
         File log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130210");
@@ -114,7 +124,7 @@ public class TestTopMetrics extends BaseTest {
         AbstractTopSessions metric = new TestAbstractTopSessions(MetricType.TOP_FACTORY_SESSIONS_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
 
         ListValueData value = (ListValueData)metric.getValue(context);
-
+        
         assertEquals(value.size(), 3);
         
         List<ValueData> all = value.getAll();       
@@ -129,15 +139,17 @@ public class TestTopMetrics extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130210");
         Parameters.TO_DATE.put(context, "20130210");
 
-        AbstractTopFactories metric = new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
+        AbstractTopMetrics metric = new TestAbstractTopFactories(MetricType.TOP_FACTORIES_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
 
         ListValueData value = (ListValueData)metric.getValue(context);
 
+//        LOG.info("[INFO] testAbstractTopFactories test values:" + value.getAll());
+        
         assertEquals(value.size(), 2);
         
-        List<ValueData> all = value.getAll();       
-        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1500", "2");
-        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "300", "1");
+        List<ValueData> all = value.getAll();        
+        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1500", "2", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0");
+        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "300", "1", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0");
     }
     
     private void checkTopSessionDataItem(MapValueData item, String time, String factory, String referrer, String convertedSession, String authenticatedSession) {
@@ -148,10 +160,27 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.AUTHENTICATED_SESSION).getAsString(), authenticatedSession);
     }
     
-    private void checkTopFactoriesDataItem(MapValueData item, String factory, String time, String count) {
+    private void checkTopFactoriesDataItem(MapValueData item, 
+                                           String factory, 
+                                           String time, 
+                                           String factoryCount,
+                                           String buildRate,
+                                           String runRate,
+                                           String deployRate,
+                                           String anonymousFactorySessionRate,
+                                           String authenticatedFactorySessionRate,
+                                           String abandonFactorySessionRate,
+                                           String convertedFactorySessionRate) {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.FACTORY).getAsString(), factory);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
-        assertEquals(item.getAll().get(AbstractTopFactories.COUNT).getAsString(), count);
+        assertEquals(item.getAll().get(AbstractTopFactories.FACTORY_COUNT).getAsString(), factoryCount);
+        assertEquals(item.getAll().get(AbstractTopFactories.BUILD_RATE).getAsString(), buildRate);
+        assertEquals(item.getAll().get(AbstractTopFactories.RUN_RATE).getAsString(), runRate);
+        assertEquals(item.getAll().get(AbstractTopFactories.DEPLOY_RATE).getAsString(), deployRate);
+        assertEquals(item.getAll().get(AbstractTopFactories.ANONYMOUS_FACTORY_SESSION_RATE).getAsString(), anonymousFactorySessionRate);
+        assertEquals(item.getAll().get(AbstractTopFactories.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(), authenticatedFactorySessionRate);
+        assertEquals(item.getAll().get(AbstractTopFactories.ABANDON_FACTORY_SESSION_RATE).getAsString(), abandonFactorySessionRate);
+        assertEquals(item.getAll().get(AbstractTopFactories.CONVERTED_FACTORY_SESSION_RATE).getAsString(), convertedFactorySessionRate);
     }
     
     private class TestAbstractTopSessions extends AbstractTopSessions {

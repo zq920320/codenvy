@@ -199,7 +199,7 @@ public class MongoDataLoader implements DataLoader {
             for (String key : trackedFields) {
                 if (dbObject.containsField(key)) {
                     if (dbObject.get(key) == null) {
-                        continue outer;
+                        continue outer;  // goto processing another record
                     }
                     action.accumulate(key, dbObject.get(key));
                 }

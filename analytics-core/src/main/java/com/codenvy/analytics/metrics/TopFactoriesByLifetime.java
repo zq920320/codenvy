@@ -26,6 +26,6 @@ public class TopFactoriesByLifetime extends AbstractTopFactories {
 
     @Override
     public String getDescription() {
-        return "The top factories with the same url sorted by overall duration of session in period of time during all time from yesterday";
+        return "The top factories with the same url sorted by overall duration of session in period of time during all time before today";
     }
 }

@@ -26,6 +26,6 @@ public class TopFactorySessionsBy365Day extends AbstractTopSessions {
 
     @Override
     public String getDescription() {
-        return "The top 100 factory sessions sorted by duration of session in period of time during 365 days from yesterday";
+        return "The top factory sessions sorted by duration of session in period of time during 365 days before today";
     }
 }

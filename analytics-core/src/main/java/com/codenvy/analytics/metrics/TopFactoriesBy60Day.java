@@ -26,6 +26,6 @@ public class TopFactoriesBy60Day extends AbstractTopFactories {
 
     @Override
     public String getDescription() {
-        return "The top factories with the same url sorted by overall duration of session in period of time during 60 days yesterday";
+        return "The top factories with the same url sorted by overall duration of session in period of time during 60 days before today";
     }
 }

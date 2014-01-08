@@ -23,6 +23,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -30,7 +32,9 @@ import java.util.Date;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class LoadTestMongoIndexes extends BaseTest {
-
+    /** Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(LoadTestMongoIndexes.class);
+    
     private static final int count = 2000000;
 
     private DB db;

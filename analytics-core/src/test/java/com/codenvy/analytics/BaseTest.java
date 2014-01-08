@@ -41,8 +41,6 @@ import java.text.SimpleDateFormat;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
-
-    public static final Logger LOG      = LoggerFactory.getLogger(LoadTestMongoIndexes.class);
     public static final String BASE_DIR = "target";
 
     protected final TupleFactory     tupleFactory = TupleFactory.getInstance();

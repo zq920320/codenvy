@@ -27,8 +27,9 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
-public abstract class AbstractTopMetrics extends ReadBasedMetric {
-    public static final String VALUE = "value";    
+public abstract class AbstractTopMetrics extends ReadBasedMetric {    
+    protected static final long MAX_DOCUMENT_COUNT = 100;
+
     public static int LIFE_TIME_PERIOD = -1;
     
     private int dayCount;
@@ -45,18 +46,15 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        initContext(context, this.dayCount);
+        fixFromDateParameter(context, this.dayCount);
         
         return super.getValue(context);
     }
 
     /**
      * Setup proper FROM_DATE = (yesterday - dayCount)
-     * @param context
-     * @param dayCount
-     * @throws IOException 
      */
-    private void initContext(Map<String, String> context, int countOfDays) throws IOException {
+    private void fixFromDateParameter(Map<String, String> context, int countOfDays) throws IOException {
         Parameters.TO_DATE.putDefaultValue(context);
     
         Calendar date = Calendar.getInstance();
@@ -70,7 +68,7 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
                 throw new IOException(e);
             }
     
-            date.add(Calendar.DAY_OF_MONTH, 1 - countOfDays);   // starting from yesterday
+            date.add(Calendar.DAY_OF_MONTH, 1 - countOfDays);   // going back from yesterday
     
             Utils.putFromDate(context, date);
         }

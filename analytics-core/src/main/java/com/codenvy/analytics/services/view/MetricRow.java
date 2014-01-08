@@ -164,7 +164,7 @@ public class MetricRow extends AbstractRow {
      */
     private void formatAndAddBooleanValue(ValueData valueData, List<ValueData> singleValue) {
         String value = valueData.getAsString();
-        String formattedValue = value.equals("1") ? "yes" : "no";
+        String formattedValue = value.equals("1") ? "Yes" : "No";
 
         singleValue.add(new StringValueData(formattedValue));
     }
