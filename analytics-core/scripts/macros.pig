@@ -278,7 +278,7 @@ DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------------------------
--- Combines small sessions into big one if time between them is less than $inactiveInterval
+-- The list of created temporary workspaces
 -- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray}
 ---------------------------------------------------------------------------------------------
 DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
@@ -296,6 +296,49 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
     y1 = JOIN w BY tmpWs, x BY tmpWs;
     $Y = FOREACH y1 GENERATE w::dt AS dt, w::tmpWs AS ws, w::user AS user, x::referrer AS referrer, x::factory AS factory,
                 x::orgId AS orgId, x::affiliateId AS affiliateId;
+};
+
+---------------------------------------------------------------------------------------------
+-- The list of users created from factory
+-- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray}
+---------------------------------------------------------------------------------------------
+DEFINE usersCreatedFromFactory(X) RETURNS Y {
+    u1 = filterByEvent($X, 'factory-url-accepted');
+    u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
+    u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
+    u4 = extractUrlParam(u3, 'ORG-ID', 'orgId');
+    u5 = extractUrlParam(u4, 'AFFILIATE-ID', 'affiliateId');
+    u = FOREACH u5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+
+    -- finds in which temporary workspaces anonymous users have worked
+    x1 = filterByEvent($X, 'user-added-to-ws');
+    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, UPPER(user) AS tmpUser;
+    x = FILTER x2 BY INDEXOF(tmpUser, 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(tmpWs), 'TMP-', 0) == 0;
+
+    -- finds all anonymous users have become registered (created their accounts or just logged in)
+    t1 = filterByEvent($X, 'user-changed-name');
+    t2 = extractParam(t1, 'OLD-USER', 'old');
+    t3 = extractParam(t2, 'NEW-USER', 'new');
+    t4 = FILTER t3 BY INDEXOF(UPPER(old), 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(new), 'ANONYMOUSUSER_', 0) < 0;
+    t = FOREACH t4 GENERATE dt, UPPER(old) AS tmpUser, new AS user;
+
+    -- finds created users
+    k1 = filterByEvent($X, 'user-created');
+    k2 = FILTER k1 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
+    k = FOREACH k2 GENERATE dt, user;
+
+    -- finds which created users worked as anonymous
+    y1 = JOIN k BY user, t BY user;
+    y = FOREACH y1 GENERATE k::dt AS dt, k::user AS user, t::tmpUser AS tmpUser;
+
+    -- finds in which temporary workspaces registered users have worked
+    z1 = JOIN y BY tmpUser, x BY tmpUser;
+    z2 = FILTER z1 BY MilliSecondsBetween(y::dt, x::dt) >= 0;
+    z = FOREACH z2 GENERATE y::dt AS dt, y::user AS user, x::tmpWs AS tmpWs, y::tmpUser AS tmpUser;
+
+    r1 = JOIN z BY tmpWs, u BY tmpWs;
+    $Y = FOREACH r1 GENERATE z::dt AS dt, z::user AS user, z::tmpWs AS ws, u::referrer AS referrer, u::factory AS factory,
+        u::orgId AS orgId, u::affiliateId AS affiliateId, z::tmpUser AS tmpUser;
 };
 
 ---------------------------------------------------------------------------------------------

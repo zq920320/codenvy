@@ -107,12 +107,44 @@ z2 = FOREACH z1 GENERATE (n::ws IS NULL ? w::dt : n::dt) AS dt,
 -- finds the first started sessions and keep indicator only there
 z3 = GROUP z2 BY (ws, user);
 z4 = FOREACH z3 GENERATE group.ws AS ws, group.user AS user, MIN(z2.dt) AS minDT, FLATTEN(z2);
-z = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory AS factory,
+z5 = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory AS factory,
     z2::referrer AS referrer, z2::orgId AS orgId, z2::affiliateId AS affiliateId,
     z2::auth AS auth, z2::conv AS conv, z2::run AS run, z2::deploy AS deploy, z2::build AS build,
     (z2::dt == minDT ? z2::ws_created : 0) AS ws_created;
+z = FOREACH z5 GENERATE ws, LOWER(user) AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, build, ws_created;
 
-result = FOREACH z GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+-- add user created from factory indicator
+ls1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
+ls2 = usersCreatedFromFactory(ls1);
+ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, LOWER(tmpUser) AS tmpUser;
+
+p1 = JOIN z BY (ws, user) FULL, ls BY (ws, tmpUser);
+p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
+    (z::ws IS NULL ? 0 : z::delta) AS delta,
+    (z::ws IS NULL ? ls::factory : z::factory) AS factory,
+    (z::ws IS NULL ? ls::referrer : z::referrer) AS referrer,
+    (z::ws IS NULL ? ls::orgId : z::orgId) AS orgId,
+    (z::ws IS NULL ? ls::affiliateId : z::affiliateId) AS affiliateId,
+    (z::ws IS NULL ? 0 : z::auth) AS auth,
+    (z::ws IS NULL ? ls::ws : z::ws) AS ws,
+    (z::ws IS NULL ? ls::tmpUser : z::user) AS user,
+    (z::ws IS NULL ? 0 : z::conv) AS conv,
+    (z::ws IS NULL ? 0 : z::run) AS run,
+    (z::ws IS NULL ? 0 : z::deploy) AS deploy,
+    (z::ws IS NULL ? 0 : z::build) AS build,
+    (z::ws IS NULL ? 0 : z::ws_created) AS ws_created,
+    (ls::ws IS NULL ? 0 : 1) AS user_created;
+
+
+-- finds the first started sessions and keep indicator only there
+p3 = GROUP p2 BY (ws, user);
+p4 = FOREACH p3 GENERATE group.ws AS ws, group.user AS user, MIN(p2.dt) AS minDT, FLATTEN(p2);
+p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory AS factory,
+    p2::referrer AS referrer, p2::orgId AS orgId, p2::affiliateId AS affiliateId,
+    p2::auth AS auth, p2::conv AS conv, p2::run AS run, p2::deploy AS deploy, p2::build AS build,
+    p2::ws_created AS ws_created, (p2::dt == minDT ? p2::user_created : 0) AS user_created;
+
+result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
                         TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created),
                         TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                         TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);
