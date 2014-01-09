@@ -212,11 +212,11 @@ public class TestAcceptance extends BaseTest {
     private void assertFactoryUsersSessionsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factory Sessions"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("234"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("314"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("< 10 Mins"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("203"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("283"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("> 10 Mins"), sectionData.get(3).get(0));
@@ -226,29 +226,29 @@ public class TestAcceptance extends BaseTest {
     private void assertFactorySessionsIdeUsageEventsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factory Sessions"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("234"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("314"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("% Built"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("19%"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("14%"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("% Run"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("22%"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("16%"), sectionData.get(3).get(1));
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("% Deployed"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("13%"), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("10%"), sectionData.get(4).get(1));
     }
 
     private void assertConvertedFactorySessionsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factory Sessions"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("234"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("314"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Abandoned Sessions"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("220"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("300"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Converted Sessions"), sectionData.get(3).get(0));
@@ -258,15 +258,15 @@ public class TestAcceptance extends BaseTest {
     private void assertAuthenticatedFactorySessionsDay(List<List<ValueData>> sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Factory Sessions"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("234"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("314"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Anonymous Sessions"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("211"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("287"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Authenticated Sessions"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("23"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("27"), sectionData.get(3).get(1));
     }
 
     private void assertFactoriesDay(List<List<ValueData>> sectionData) {
@@ -460,7 +460,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Workspaces"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("-405"), sectionData.get(4).get(1));
     }
 
     private void assertUsageTimeDay(List<List<ValueData>> sectionData) {
@@ -540,7 +540,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Users"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData("0"), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("-106"), sectionData.get(4).get(1));
     }
 
     private void assertProjectsDay(List<List<ValueData>> sectionData) {

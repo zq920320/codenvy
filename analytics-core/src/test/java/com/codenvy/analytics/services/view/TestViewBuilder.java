@@ -96,6 +96,12 @@ public class TestViewBuilder extends BaseTest {
         verify(spyBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         Map<String, List<List<ValueData>>> actualData = viewData.getAllValues().get(0);
+        for (int i = 1; i < 4; i++) {
+            if (viewData.getAllValues().get(1).containsKey("workspaces_day")) {
+                actualData = viewData.getAllValues().get(i);
+            }
+        }
+
         assertEquals(actualData.size(), 1);
         assertLastDayData(actualData.values().iterator().next());
 
@@ -133,6 +139,12 @@ public class TestViewBuilder extends BaseTest {
         verify(spyBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         Map<String, List<List<ValueData>>> actualData = viewData.getAllValues().get(0);
+        for (int i = 1; i < 4; i++) {
+            if (viewData.getAllValues().get(1).containsKey("workspaces_day")) {
+                actualData = viewData.getAllValues().get(i);
+            }
+        }
+
         assertEquals(actualData.size(), 1);
         assertSpecificDayData(actualData.values().iterator().next());
 

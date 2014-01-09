@@ -86,11 +86,34 @@ n = FOREACH n1 GENERATE t::m::dt AS dt, t::m::delta AS delta, t::m::factory AS f
                         t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::auth AS auth, t::m::ws AS ws,
                         t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build;
 
-r1 = FOREACH n GENERATE dt, ws, user, factory, referrer, auth, conv,
-                        orgId, affiliateId, delta, deploy, build, run;
+-- add created temporary session indicator
+w = createdTemporaryWorkspaces(l);
+z1 = JOIN n BY (ws, user) FULL, w BY (ws, user);
+z2 = FOREACH z1 GENERATE (n::ws IS NULL ? w::dt : n::dt) AS dt,
+    (n::ws IS NULL ? 0 : n::delta) AS delta,
+    (n::ws IS NULL ? w::factory : n::factory) AS factory,
+    (n::ws IS NULL ? w::referrer : n::referrer) AS referrer,
+    (n::ws IS NULL ? w::orgId : n::orgId) AS orgId,
+    (n::ws IS NULL ? w::affiliateId : n::affiliateId) AS affiliateId,
+    (n::ws IS NULL ? (INDEXOF(UPPER(w::user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) : n::auth) AS auth,
+    (n::ws IS NULL ? w::ws : n::ws) AS ws,
+    (n::ws IS NULL ? w::user : n::user) AS user,
+    (n::ws IS NULL ? 0 : n::conv) AS conv,
+    (n::ws IS NULL ? 0 : n::run) AS run,
+    (n::ws IS NULL ? 0 : n::deploy) AS deploy,
+    (n::ws IS NULL ? 0 : n::build) AS build,
+    (w::ws IS NULL ? 0 : 1) AS ws_created;
 
-result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build),
+-- finds the first started sessions and keep indicator only there
+z3 = GROUP z2 BY (ws, user);
+z4 = FOREACH z3 GENERATE group.ws AS ws, group.user AS user, MIN(z2.dt) AS minDT, FLATTEN(z2);
+z = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory AS factory,
+    z2::referrer AS referrer, z2::orgId AS orgId, z2::affiliateId AS affiliateId,
+    z2::auth AS auth, z2::conv AS conv, z2::run AS run, z2::deploy AS deploy, z2::build AS build,
+    (z2::dt == minDT ? z2::ws_created : 0) AS ws_created;
+
+result = FOREACH z GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created),
                         TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                         TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

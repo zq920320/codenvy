@@ -22,23 +22,9 @@ DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
+r = createdTemporaryWorkspaces(l);
 
-u1 = filterByEvent(l, 'factory-url-accepted');
-u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
-u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
-u4 = extractUrlParam(u3, 'ORG-ID', 'orgId');
-u5 = extractUrlParam(u4, 'AFFILIATE-ID', 'affiliateId');
-u = FOREACH u5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
-
--- created temporary workspaces
-w1 = filterByEvent(l, 'tenant-created');
-w2 = FOREACH w1 GENERATE dt, ws AS tmpWs, user;
-w3 = JOIN w2 BY tmpWs, u BY tmpWs;
-w = FOREACH w3 GENERATE w2::dt AS dt, w2::tmpWs AS ws, w2::user AS user, u::referrer AS referrer, u::factory AS factory,
-                u::orgId AS orgId, u::affiliateId AS affiliateId;
-
-r1 = FOREACH w GENERATE dt, ws, user, orgId, affiliateId, factory, referrer;
-result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
                     TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                     TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('value', 1);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

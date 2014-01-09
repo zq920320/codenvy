@@ -279,6 +279,27 @@ DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
 
 ---------------------------------------------------------------------------------------------
 -- Combines small sessions into big one if time between them is less than $inactiveInterval
+-- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray}
+---------------------------------------------------------------------------------------------
+DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
+    x1 = filterByEvent($X, 'factory-url-accepted');
+    x2 = extractUrlParam(x1, 'REFERRER', 'referrer');
+    x3 = extractUrlParam(x2, 'FACTORY-URL', 'factory');
+    x4 = extractUrlParam(x3, 'ORG-ID', 'orgId');
+    x5 = extractUrlParam(x4, 'AFFILIATE-ID', 'affiliateId');
+    x = FOREACH x5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+
+    -- created temporary workspaces
+    w1 = filterByEvent($X, 'tenant-created');
+    w = FOREACH w1 GENERATE dt, ws AS tmpWs, user;
+
+    y1 = JOIN w BY tmpWs, x BY tmpWs;
+    $Y = FOREACH y1 GENERATE w::dt AS dt, w::tmpWs AS ws, w::user AS user, x::referrer AS referrer, x::factory AS factory,
+                x::orgId AS orgId, x::affiliateId AS affiliateId;
+};
+
+---------------------------------------------------------------------------------------------
+-- Combines small sessions into big one if time between them is less than $inactiveInterval
 -- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
 ---------------------------------------------------------------------------------------------
 DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
