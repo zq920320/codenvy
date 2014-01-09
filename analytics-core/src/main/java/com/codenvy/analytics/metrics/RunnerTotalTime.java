@@ -22,7 +22,7 @@ public class RunnerTotalTime extends AbstractLongValueResulted {
 
     private static final String TIME = "time";
 
-    protected RunnerTotalTime() {
+    public RunnerTotalTime() {
         super(MetricType.RUNNER_TOTAL_TIME);
     }
 
