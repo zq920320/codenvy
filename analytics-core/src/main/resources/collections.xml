@@ -496,4 +496,17 @@
             </index>
         </indexes>
     </collection>
+
+    <collection name="runner_total_time">
+        <indexes>
+            <index name="user">
+                <field>date</field>
+                <field>user</field>
+            </index>
+            <index name="ws">
+                <field>date</field>
+                <field>ws</field>
+            </index>
+        </indexes>
+    </collection>
 </collections>

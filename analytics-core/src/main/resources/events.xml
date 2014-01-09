@@ -342,4 +342,12 @@
             <param>JOBTITLE</param>
         </parameters>
     </event>
+    <event name="runner-total-time">
+        <description/>
+        <parameters>
+            <param>USER</param>
+            <param>WS</param>
+            <param>TIME</param>
+        </parameters>
+    </event>
 </events>

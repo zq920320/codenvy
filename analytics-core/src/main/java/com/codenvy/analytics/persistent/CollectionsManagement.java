@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +58,19 @@ public class CollectionsManagement {
     public CollectionsManagement(ConfigurationManager<CollectionsConfiguration> configurationManager) {
         this.db = MongoDataStorage.getDb();
         this.configurationManager = configurationManager;
+    }
+
+    /** @return true if collection exists in configuration */
+    public boolean isCollectionExists(String collectionName) throws IOException {
+        CollectionsConfiguration configuration = configurationManager.loadConfiguration();
+
+        for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
+            if (collectionConfiguration.getName().equals(collectionName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -159,9 +171,8 @@ public class CollectionsManagement {
         }
 
         try {
-            Iterator<DBObject> it = src.find().iterator();
-            while (it.hasNext()) {
-                dst.insert(it.next());
+            for (Object o : src.find()) {
+                dst.insert((DBObject)o);
             }
         } catch (MongoException e) {
             throw new IOException("Backup failed. Can't copy data from " + src.getName() + " to " + dst.getName(), e);

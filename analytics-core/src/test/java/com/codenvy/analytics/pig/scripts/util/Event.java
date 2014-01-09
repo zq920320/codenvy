@@ -18,8 +18,6 @@
 
 package com.codenvy.analytics.pig.scripts.util;
 
-import com.codenvy.analytics.pig.scripts.EventType;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -124,12 +122,17 @@ public class Event {
             return new Event(date, time, context, params);
         }
 
-        /** Create 'tenant-created' event. */
         public static Builder createTenantCreatedEvent(String ws, String user) {
             return new Builder().withParam("EVENT", "tenant-created").withParam("WS", ws).withParam("USER", user);
         }
 
-        /** Create 'project-built' event. */
+        public static Builder createRunnerTotalTimeEvent(String ws, String user, String time) {
+            return new Builder().withParam("EVENT", "runner-total-time")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("TIME", time);
+        }
+
         public static Builder createProjectBuiltEvent(String user, String ws, String session, String project,
                                                       String type) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "project-built")
@@ -137,7 +140,7 @@ public class Event {
         }
 
         public static Builder createSessionStartedEvent(String user, String ws, String window, String sessionId) {
-            return new Builder().withParam("EVENT", EventType.SESSION_STARTED.toString())
+            return new Builder().withParam("EVENT", "session-started")
                                 .withParam("SESSION-ID", sessionId)
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
@@ -145,7 +148,7 @@ public class Event {
         }
 
         public static Builder createSessionFinishedEvent(String user, String ws, String window, String sessionId) {
-            return new Builder().withParam("EVENT", EventType.SESSION_FINISHED.toString())
+            return new Builder().withParam("EVENT", "session-finished")
                                 .withParam("SESSION-ID", sessionId)
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
@@ -153,7 +156,7 @@ public class Event {
         }
 
         public static Builder createRunStartedEvent(String user, String ws, String project, String type) {
-            return new Builder().withParam("EVENT", EventType.RUN_STARTED.toString())
+            return new Builder().withParam("EVENT", "run-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
@@ -161,7 +164,7 @@ public class Event {
         }
 
         public static Builder createDebugStartedEvent(String user, String ws, String project, String type) {
-            return new Builder().withParam("EVENT", EventType.DEBUG_STARTED.toString())
+            return new Builder().withParam("EVENT", "debug-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
@@ -169,7 +172,7 @@ public class Event {
         }
 
         public static Builder createRunFinishedEvent(String user, String ws, String project, String type) {
-            return new Builder().withParam("EVENT", EventType.RUN_FINISHED.toString())
+            return new Builder().withParam("EVENT", "run-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
@@ -177,24 +180,21 @@ public class Event {
         }
 
 
-        /** Create 'application-created' event. */
         public static Builder createApplicationCreatedEvent(String user, String ws, String session, String project,
                                                             String type,
                                                             String paas) {
             return new Builder().withContext(user, ws, session)
-                                .withParam("EVENT", EventType.APPLICATION_CREATED.toString())
+                                .withParam("EVENT", "application-created")
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
         }
 
-        /** Create 'project-deployed' event. */
         public static Builder createProjectDeployedEvent(String user, String ws, String session, String project,
                                                          String type, String paas) {
             return new Builder().withContext(user, ws, session)
-                                .withParam("EVENT", EventType.PROJECT_DEPLOYED.toString())
+                                .withParam("EVENT", "project-deployed")
                                 .withParam("PROJECT", project).withParam("TYPE", type).withParam("PAAS", paas);
         }
 
-        /** Create 'user-added-to-ws' event. */
         public static Builder createUserAddedToWsEvent(String user,
                                                        String ws,
                                                        String session,
@@ -202,7 +202,7 @@ public class Event {
                                                        String userParam,
                                                        String from) {
             return new Builder().withContext(user, ws, session)
-                                .withParam("EVENT", EventType.USER_ADDED_TO_WS.toString())
+                                .withParam("EVENT", "user-added-to-ws")
                                 .withParam("WS", wsParam)
                                 .withParam("USER", userParam)
                                 .withParam("FROM", from);
@@ -213,27 +213,22 @@ public class Event {
                                 .withParam("USER", user);
         }
 
-        public static Builder createUserInviteEvent(String user, String ws, String session, String email) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", EventType.USER_INVITE.toString())
-                                .withParam("EMAIL", email);
-        }
-
         public static Builder createProjectCreatedEvent(String user, String ws, String session, String project,
                                                         String type) {
-            return new Builder().withContext(user, ws, session).withParam("EVENT", EventType.PROJECT_CREATED.toString())
+            return new Builder().withContext(user, ws, session).withParam("EVENT", "project-created")
                                 .withParam("PROJECT", project).withParam("TYPE", type);
         }
 
         public static Builder createUserCreatedEvent(String userId,
                                                      String aliases) {
-            return new Builder().withParam("EVENT", EventType.USER_CREATED.toString())
+            return new Builder().withParam("EVENT", "user-created")
                                 .withParam("USER-ID", userId)
                                 .withParam("ALIASES", aliases);
         }
 
         public static Builder createUserChangedNameEvent(String oldUser,
                                                          String newUser) {
-            return new Builder().withParam("EVENT", EventType.USER_CHANGED_NAME.toString())
+            return new Builder().withParam("EVENT", "user-changed-name")
                                 .withParam("OLD-USER", oldUser)
                                 .withParam("NEW-USER", newUser);
         }
@@ -263,7 +258,7 @@ public class Event {
                                                         String orgId,
                                                         String affiliateId) {
             return new Builder().withContext(user, ws, UUID.randomUUID().toString())
-                                .withParam("EVENT", EventType.FACTORY_CREATED.toString())
+                                .withParam("EVENT", "factory-created")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
@@ -280,7 +275,7 @@ public class Event {
                                                                String tempUser,
                                                                String auth,
                                                                String userAgent) {
-            return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_STARTED.toString())
+            return new Builder().withParam("EVENT", "session-factory-started")
                                 .withParam("SESSION-ID", sessionId)
                                 .withParam("WS", tempWs)
                                 .withParam("USER", tempUser)
@@ -293,7 +288,7 @@ public class Event {
                                                                 String user,
                                                                 String project,
                                                                 String type) {
-            return new Builder().withParam("EVENT", EventType.FACTORY_PROJECT_IMPORTED.toString())
+            return new Builder().withParam("EVENT", "factory-project-imported")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
@@ -304,7 +299,7 @@ public class Event {
         public static Builder createSessionFactoryStoppedEvent(String sessionId,
                                                                String tempWs,
                                                                String tempUser) {
-            return new Builder().withParam("EVENT", EventType.SESSION_FACTORY_STOPPED.toString())
+            return new Builder().withParam("EVENT", "session-factory-stopped")
                                 .withParam("SESSION-ID", sessionId)
                                 .withParam("WS", tempWs)
                                 .withParam("USER", tempUser);
@@ -315,7 +310,7 @@ public class Event {
                                                             String referrerUrl,
                                                             String orgId,
                                                             String affiliateId) {
-            return new Builder().withParam("EVENT", EventType.FACTORY_URL_ACCEPTED.toString())
+            return new Builder().withParam("EVENT", "factory-url-accepted")
                                 .withParam("WS", tempWs)
                                 .withParam("REFERRER", referrerUrl)
                                 .withParam("FACTORY-URL", factoryUrl)

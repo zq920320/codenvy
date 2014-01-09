@@ -234,4 +234,11 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="users_activity_list"/>
     </script>
+
+    <script name="runner_total_time">
+        <description>Total time of runners</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="runner_total_time"/>
+    </script>
 </scripts>

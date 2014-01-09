@@ -41,11 +41,9 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
-    private Map<String, String> params;
-
     @BeforeClass
     public void init() throws IOException {
-        params = Utils.newContext();
+        Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "", "jar")
@@ -63,7 +61,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Parameters.PARAM.put(params, "TYPE");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, EventType.PROJECT_CREATED.toString());
+        Parameters.EVENT.put(params, "project-created");
         Parameters.STORAGE_TABLE.put(params, "testnumberofeventsbytypes_projecttypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 

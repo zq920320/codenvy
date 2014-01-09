@@ -72,6 +72,7 @@ public enum ScriptType {
     USERS_UPDATE_PROFILES,
     USERS_STATISTICS,
     USERS_ACTIVITY,
+    RUNNER_TOTAL_TIME,
 
     CHECK_LOGS_1 {
         @Override

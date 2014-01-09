@@ -71,7 +71,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         Parameters.PARAM.put(params, "USING");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, EventType.USER_SSO_LOGGED_IN.toString());
+        Parameters.EVENT.put(params, "user-sso-logged-in");
         Parameters.STORAGE_TABLE.put(params, "testnumberofusersbytypes_usersloggedintypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 

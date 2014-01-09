@@ -61,7 +61,7 @@ public class TestActOn extends BaseTest {
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase());
+        Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
@@ -76,7 +76,7 @@ public class TestActOn extends BaseTest {
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
 
-        Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS.name().toLowerCase());
+        Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
         PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());

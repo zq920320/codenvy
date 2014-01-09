@@ -66,7 +66,7 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.PARAM.put(params, "FROM");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, EventType.USER_ADDED_TO_WS.toString());
+        Parameters.EVENT.put(params, "user-added-to-ws");
         Parameters.STORAGE_TABLE.put(params, "testnumberofusersbytypes_usersaddedtoworkspaces");
         Parameters.LOG.put(params, log.getAbsolutePath());
 

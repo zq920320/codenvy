@@ -43,11 +43,9 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestActiveEntitiesList extends BaseTest {
 
-    private Map<String, String> params;
-
     @BeforeClass
     public void init() throws IOException {
-        params = Utils.newContext();
+        Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
@@ -68,7 +66,7 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
+        Parameters.EVENT.put(params, "tenant-created");
         Parameters.PARAM.put(params, "ws");
         Parameters.STORAGE_TABLE.put(params, "testsetofactiveentities");
         Parameters.LOG.put(params, log.getAbsolutePath());

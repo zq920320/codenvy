@@ -19,7 +19,9 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.RunnerTotalTime;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -33,56 +35,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestNumberOfEvents extends BaseTest {
+import static org.testng.AssertJUnit.assertEquals;
 
-    private Map<String, String> params;
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class TestRunnerTotalTime extends BaseTest {
 
     @BeforeClass
     public void init() throws IOException {
-        params = Utils.newContext();
+        Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
+        events.add(Event.Builder.createRunnerTotalTimeEvent("ws1", "user1@gmail.com", "5")
                         .withDate("2013-01-01")
                         .withTime("10:00:00")
                         .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@yahoo.com")
+        events.add(Event.Builder.createRunnerTotalTimeEvent("ws1", "user1@gmail.com", "2")
                         .withDate("2013-01-01")
-                        .withTime("10:00:01")
+                        .withTime("11:00:00")
                         .build());
         File log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130101");
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
-        Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, "tenant-created");
-        Parameters.STORAGE_TABLE.put(params, "testnumberofevents");
+        Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
+        Parameters.EVENT.put(params, "runner-total-time");
+        Parameters.STORAGE_TABLE.put(params, "testrunnertotaltime");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.EVENTS, params);
-
-        events = new ArrayList<>();
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@gmail.com")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:00")
-                        .build());
-        events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@yahoo.com")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:01")
-                        .build());
-        log = LogGenerator.generateLog(events);
-
-        Parameters.FROM_DATE.put(params, "20130102");
-        Parameters.TO_DATE.put(params, "20130102");
-        Parameters.LOG.put(params, log.getAbsolutePath());
-
-        PigServer.execute(ScriptType.EVENTS, params);
+        PigServer.execute(ScriptType.RUNNER_TOTAL_TIME, params);
     }
 
     @Test
     public void testExecute() throws Exception {
-        PigServer.executeAndReturn(ScriptType.EVENTS, params);
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130101");
+        Parameters.TO_DATE.put(context, "20130101");
+
+        Metric metric = new TestedRunnerTotalTime();
+
+        assertEquals(metric.getValue(context).getAsString(), "7");
+    }
+
+    private class TestedRunnerTotalTime extends RunnerTotalTime {
+        @Override
+        public String getStorageCollectionName() {
+            return "testrunnertotaltime";
+        }
     }
 }

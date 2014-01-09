@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
+import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.*;
 
@@ -101,6 +102,14 @@ public class MongoStorage extends StoreFunc {
             MongoClientURI uri = new MongoClientURI(configuration.get(SERVER_URL_PARAM));
 
             DB db = MongoDataStorage.getDb();
+
+            CollectionsManagement collectionsManagement = new CollectionsManagement();
+            if (!uri.getCollection().startsWith("test") &&
+                !collectionsManagement.isCollectionExists(uri.getCollection())) {
+
+                throw new IOException("Collection " + uri.getCollection() + " doesn't exist in configuration");
+            }
+
             this.dbCollection = db.getCollection(uri.getCollection());
         }
 

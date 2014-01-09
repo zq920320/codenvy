@@ -44,7 +44,7 @@ public class EventsHolder {
         }
     }
 
-    public static boolean eventExists(String eventName) {
+    public static boolean isEventExists(String eventName) {
         for (EventConfiguration eventConfiguration : configuration.getEvents()) {
             if (eventConfiguration.getName().equals(eventName)) {
                 return true;

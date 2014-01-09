@@ -21,7 +21,6 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
-import com.codenvy.analytics.pig.scripts.EventType;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -58,7 +57,7 @@ public class TestMongoStorage extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, EventType.TENANT_CREATED.toString());
+        Parameters.EVENT.put(params, "tenant-created");
         Parameters.STORAGE_TABLE.put(params, "testmongostorage");
         Parameters.LOG.put(params, log.getAbsolutePath());
 

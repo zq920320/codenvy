@@ -33,7 +33,7 @@ public class EventExists extends FilterFunc {
 
         if (!eventNames.equals("*")) {
             for (String event : eventNames.split(",")) {
-                if (!EventsHolder.eventExists(event)) {
+                if (!EventsHolder.isEventExists(event)) {
                     throw new IOException("Unknown event " + event);
                 }
             }
