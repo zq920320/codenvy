@@ -17,6 +17,10 @@
  * from Codenvy S.A..
  */
 
+DEFINE URLDecode com.codenvy.analytics.pig.udf.URLDecode;
+DEFINE GetQueryValue com.codenvy.analytics.pig.udf.GetQueryValue;
+DEFINE CutQueryParam com.codenvy.analytics.pig.udf.CutQueryParam;
+
 ---------------------------------------------------------------------------
 -- Loads resources.
 -- @return {ip : bytearray, dt : datetime,  event : bytearray, message : chararray, user : bytearray, ws : bytearray} 
@@ -77,12 +81,12 @@ DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
 -- @return {fieldName1 : chararray, {(fieldName2 : chararray)}}
 ---------------------------------------------------------------------------
 DEFINE setByField(X, fieldName1, fieldName2) RETURNS Y {
-	x1 = GROUP $X BY $fieldName1;
-	$Y = FOREACH x1 {
-		t1 = FOREACH $X GENERATE $fieldName2;
-		t = DISTINCT t1;
-		GENERATE group, t;
-	}
+    x1 = GROUP $X BY $fieldName1;
+    $Y = FOREACH x1 {
+        t1 = FOREACH $X GENERATE $fieldName2;
+        t = DISTINCT t1;
+        GENERATE group, t;
+    }
 };
 
 ---------------------------------------------------------------------------
@@ -90,8 +94,8 @@ DEFINE setByField(X, fieldName1, fieldName2) RETURNS Y {
 -- @return {countAll : long}
 ---------------------------------------------------------------------------
 DEFINE countAll(X) RETURNS Y {
-	x1 = GROUP $X ALL;
-	$Y = FOREACH x1 GENERATE COUNT($X.$0) AS countAll;
+    x1 = GROUP $X ALL;
+    $Y = FOREACH x1 GENERATE COUNT($X.$0) AS countAll;
 };
 
 ---------------------------------------------------------------------------
@@ -99,8 +103,8 @@ DEFINE countAll(X) RETURNS Y {
 -- @return {fieldNameParam : chararray, countAll : long}
 ---------------------------------------------------------------------------
 DEFINE countByField(X, fieldNameParam) RETURNS Y {
-	x1 = GROUP $X BY $fieldNameParam;
-	$Y = FOREACH x1 GENERATE group AS $fieldNameParam, COUNT($X.$0) AS countAll;
+    x1 = GROUP $X BY $fieldNameParam;
+    $Y = FOREACH x1 GENERATE group AS $fieldNameParam, COUNT($X.$0) AS countAll;
 };
 
 ---------------------------------------------------------------------------
@@ -127,8 +131,8 @@ DEFINE extractWs(X, wsType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws2, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws1;
   x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws;
   $Y = FILTER x2 BY '$wsType' == 'ANY' OR  ws == 'default' OR
-		    ('$wsType' == 'TEMPORARY' AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0) OR 
-		    ('$wsType' == 'PERSISTENT' AND INDEXOF(UPPER(ws), 'TMP-', 0) < 0);
+            ('$wsType' == 'TEMPORARY' AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0) OR 
+            ('$wsType' == 'PERSISTENT' AND INDEXOF(UPPER(ws), 'TMP-', 0) < 0);
 };
 
 ---------------------------------------------------------------------------
@@ -137,13 +141,13 @@ DEFINE extractWs(X, wsType) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractUser(X, userType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user1,
-			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2,
-			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
+                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2,
+                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
   x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS newUser;
   x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(newUser, ',')) AS user;
   $Y = FILTER x3 BY '$userType' == 'ANY' OR user == 'default' OR
-		    ('$userType' == 'ANTONYMOUS' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0) OR
-		    ('$userType' == 'REGISTERED' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0);
+            ('$userType' == 'ANTONYMOUS' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0) OR
+            ('$userType' == 'REGISTERED' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0);
 };
 
 ---------------------------------------------------------------------------
@@ -232,9 +236,9 @@ DEFINE productUsageTimeList(X, inactiveIntervalParam) RETURNS Y {
   ---------------------------------------------------------------------------------------------
   k2 = FOREACH k1 GENERATE ws, user, dt, (before IS NULL ? -999999999 : before) AS before, (after IS NULL ? 999999999 : after) AS after;
   k3 = FOREACH k2 GENERATE ws, user, dt, (before < -(long)$inactiveIntervalParam*60*1000 ? (after <= (long)$inactiveIntervalParam*60*1000 ? 'start'
-										          			    : 'single')
-									     : (after <= (long)$inactiveIntervalParam*60*1000 ? 'none'
-														    : 'end')) AS flag;
+                                                                : 'single')
+                                         : (after <= (long)$inactiveIntervalParam*60*1000 ? 'none'
+                                                            : 'end')) AS flag;
   kR = FILTER k3 BY flag == 'start' OR flag == 'end';
 
   k4 = FILTER k3 BY flag == 'single';
@@ -271,6 +275,70 @@ DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
     x1 = filterByEvent($X, '$eventParam');
     x2 = extractParam(x1, 'SESSION-ID', id);
     $Y = FOREACH x2 GENERATE user, ws, id, dt;
+};
+
+---------------------------------------------------------------------------------------------
+-- The list of created temporary workspaces
+-- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray}
+---------------------------------------------------------------------------------------------
+DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
+    x1 = filterByEvent($X, 'factory-url-accepted');
+    x2 = extractUrlParam(x1, 'REFERRER', 'referrer');
+    x3 = extractUrlParam(x2, 'FACTORY-URL', 'factory');
+    x4 = extractUrlParam(x3, 'ORG-ID', 'orgId');
+    x5 = extractUrlParam(x4, 'AFFILIATE-ID', 'affiliateId');
+    x = FOREACH x5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+
+    -- created temporary workspaces
+    w1 = filterByEvent($X, 'tenant-created');
+    w = FOREACH w1 GENERATE dt, ws AS tmpWs, user;
+
+    y1 = JOIN w BY tmpWs, x BY tmpWs;
+    $Y = FOREACH y1 GENERATE w::dt AS dt, w::tmpWs AS ws, w::user AS user, x::referrer AS referrer, x::factory AS factory,
+                x::orgId AS orgId, x::affiliateId AS affiliateId;
+};
+
+---------------------------------------------------------------------------------------------
+-- The list of users created from factory
+-- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray}
+---------------------------------------------------------------------------------------------
+DEFINE usersCreatedFromFactory(X) RETURNS Y {
+    u1 = filterByEvent($X, 'factory-url-accepted');
+    u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
+    u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
+    u4 = extractUrlParam(u3, 'ORG-ID', 'orgId');
+    u5 = extractUrlParam(u4, 'AFFILIATE-ID', 'affiliateId');
+    u = FOREACH u5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+
+    -- finds in which temporary workspaces anonymous users have worked
+    x1 = filterByEvent($X, 'user-added-to-ws');
+    x2 = FOREACH x1 GENERATE dt, ws AS tmpWs, UPPER(user) AS tmpUser;
+    x = FILTER x2 BY INDEXOF(tmpUser, 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(tmpWs), 'TMP-', 0) == 0;
+
+    -- finds all anonymous users have become registered (created their accounts or just logged in)
+    t1 = filterByEvent($X, 'user-changed-name');
+    t2 = extractParam(t1, 'OLD-USER', 'old');
+    t3 = extractParam(t2, 'NEW-USER', 'new');
+    t4 = FILTER t3 BY INDEXOF(UPPER(old), 'ANONYMOUSUSER_', 0) == 0 AND INDEXOF(UPPER(new), 'ANONYMOUSUSER_', 0) < 0;
+    t = FOREACH t4 GENERATE dt, UPPER(old) AS tmpUser, new AS user;
+
+    -- finds created users
+    k1 = filterByEvent($X, 'user-created');
+    k2 = FILTER k1 BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
+    k = FOREACH k2 GENERATE dt, user;
+
+    -- finds which created users worked as anonymous
+    y1 = JOIN k BY user, t BY user;
+    y = FOREACH y1 GENERATE k::dt AS dt, k::user AS user, t::tmpUser AS tmpUser;
+
+    -- finds in which temporary workspaces registered users have worked
+    z1 = JOIN y BY tmpUser, x BY tmpUser;
+    z2 = FILTER z1 BY MilliSecondsBetween(y::dt, x::dt) >= 0;
+    z = FOREACH z2 GENERATE y::dt AS dt, y::user AS user, x::tmpWs AS tmpWs, y::tmpUser AS tmpUser;
+
+    r1 = JOIN z BY tmpWs, u BY tmpWs;
+    $Y = FOREACH r1 GENERATE z::dt AS dt, z::user AS user, z::tmpWs AS ws, u::referrer AS referrer, u::factory AS factory,
+        u::orgId AS orgId, u::affiliateId AS affiliateId, z::tmpUser AS tmpUser;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -378,8 +446,8 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
   -- if several events were occurred then keep only one
   x3 = GROUP x2 BY $W::dt;
   $Y = FOREACH x3 {
-    	t = LIMIT x2 1;
-	    GENERATE FLATTEN(t);
+        t = LIMIT x2 1;
+        GENERATE FLATTEN(t);
     }
 };
 

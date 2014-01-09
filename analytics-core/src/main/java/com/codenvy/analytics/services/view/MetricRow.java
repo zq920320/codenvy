@@ -28,8 +28,11 @@ import com.codenvy.analytics.metrics.MetricFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -42,11 +45,13 @@ public class MetricRow extends AbstractRow {
     private static final String DESCRIPTION    = "description";
     private static final String FIELDS         = "fields";
     private static final String BOOLEAN_FIELDS = "boolean-fields";
+    private static final String DATE_FIELDS = "date-fields";
 
     private final Metric   metric;
     private final String   format;
     private final String[] fields;
     private final List<String> booleanFields;
+    private final List<String> dateFields;
 
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
@@ -55,6 +60,7 @@ public class MetricRow extends AbstractRow {
         format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_FORMAT;
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
         booleanFields = parameters.containsKey(BOOLEAN_FIELDS) ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(",")) : new ArrayList<String>();
+        dateFields = parameters.containsKey(DATE_FIELDS) ? Arrays.asList(parameters.get(DATE_FIELDS).split(",")) : new ArrayList<String>();
     }
 
     @Override
@@ -141,6 +147,8 @@ public class MetricRow extends AbstractRow {
                 ValueData item = items.containsKey(field) ? items.get(field) : StringValueData.DEFAULT;
                 if (booleanFields.contains(field)) {
                     formatAndAddBooleanValue(item, singleValue);
+                } else if (dateFields.contains(field)) {
+                    formatAndAddDateValue(item, singleValue);
                 } else {
                     formatAndAddSingleValue(item, singleValue);
                 }
@@ -159,8 +167,6 @@ public class MetricRow extends AbstractRow {
 
     /**
      * TODO use special data type BooleanValueData instead of "boolean-fields" element of views.xml and move formatting into the formatAndAddSingleValue() method
-     * @param valueData
-     * @param singleValue
      */
     private void formatAndAddBooleanValue(ValueData valueData, List<ValueData> singleValue) {
         String value = valueData.getAsString();
@@ -169,6 +175,17 @@ public class MetricRow extends AbstractRow {
         singleValue.add(new StringValueData(formattedValue));
     }
 
+    /**
+     * TODO use special data type DateValueData instead of "date-fields" element of views.xml and move formatting into the formatAndAddSingleValue() method
+     */
+    private void formatAndAddDateValue(ValueData valueData, List<ValueData> singleValue) {
+        Long value = new Long(valueData.getAsString());
+        String formattedValue = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
+
+        singleValue.add(new StringValueData(formattedValue));
+    }
+
+    
     protected ValueData getMetricValue(Map<String, String> context) throws IOException {
         return metric.getValue(context);
     }

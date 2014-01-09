@@ -16,6 +16,9 @@
  * from Codenvy S.A..
  */
 
+DEFINE MongoStorage com.codenvy.analytics.pig.udf.MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
+
 IMPORT 'macros.pig';
 
 %DEFAULT inactiveInterval '10';
@@ -64,8 +67,8 @@ s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::tmpUser AS user, 
 s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
 s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory, s4::referrer AS referrer, s4::user AS user,
                         s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::auth AS auth, s4::tmpWs AS ws,
-			            (d::tmpWs IS NULL ? 0
-			                              : (SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 : 0 )) AS conv;
+                        (d::tmpWs IS NULL ? 0
+                                          : (SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 : 0 )) AS conv;
 
 -- sessions with events
 k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');
@@ -83,11 +86,66 @@ n = FOREACH n1 GENERATE t::m::dt AS dt, t::m::delta AS delta, t::m::factory AS f
                         t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::auth AS auth, t::m::ws AS ws,
                         t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build;
 
-r1 = FOREACH n GENERATE dt, ws, user, factory, referrer, auth, conv,
-                        orgId, affiliateId, delta, deploy, build, run;
+-- add created temporary session indicator
+w = createdTemporaryWorkspaces(l);
+z1 = JOIN n BY (ws, user) FULL, w BY (ws, user);
+z2 = FOREACH z1 GENERATE (n::ws IS NULL ? w::dt : n::dt) AS dt,
+    (n::ws IS NULL ? 0 : n::delta) AS delta,
+    (n::ws IS NULL ? w::factory : n::factory) AS factory,
+    (n::ws IS NULL ? w::referrer : n::referrer) AS referrer,
+    (n::ws IS NULL ? w::orgId : n::orgId) AS orgId,
+    (n::ws IS NULL ? w::affiliateId : n::affiliateId) AS affiliateId,
+    (n::ws IS NULL ? (INDEXOF(UPPER(w::user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) : n::auth) AS auth,
+    (n::ws IS NULL ? w::ws : n::ws) AS ws,
+    (n::ws IS NULL ? w::user : n::user) AS user,
+    (n::ws IS NULL ? 0 : n::conv) AS conv,
+    (n::ws IS NULL ? 0 : n::run) AS run,
+    (n::ws IS NULL ? 0 : n::deploy) AS deploy,
+    (n::ws IS NULL ? 0 : n::build) AS build,
+    (w::ws IS NULL ? 0 : 1) AS ws_created;
 
-result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build),
+-- finds the first started sessions and keep indicator only there
+z3 = GROUP z2 BY (ws, user);
+z4 = FOREACH z3 GENERATE group.ws AS ws, group.user AS user, MIN(z2.dt) AS minDT, FLATTEN(z2);
+z5 = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory AS factory,
+    z2::referrer AS referrer, z2::orgId AS orgId, z2::affiliateId AS affiliateId,
+    z2::auth AS auth, z2::conv AS conv, z2::run AS run, z2::deploy AS deploy, z2::build AS build,
+    (z2::dt == minDT ? z2::ws_created : 0) AS ws_created;
+z = FOREACH z5 GENERATE ws, LOWER(user) AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, build, ws_created;
+
+-- add user created from factory indicator
+ls1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
+ls2 = usersCreatedFromFactory(ls1);
+ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, LOWER(tmpUser) AS tmpUser;
+
+p1 = JOIN z BY (ws, user) FULL, ls BY (ws, tmpUser);
+p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
+    (z::ws IS NULL ? 0 : z::delta) AS delta,
+    (z::ws IS NULL ? ls::factory : z::factory) AS factory,
+    (z::ws IS NULL ? ls::referrer : z::referrer) AS referrer,
+    (z::ws IS NULL ? ls::orgId : z::orgId) AS orgId,
+    (z::ws IS NULL ? ls::affiliateId : z::affiliateId) AS affiliateId,
+    (z::ws IS NULL ? 0 : z::auth) AS auth,
+    (z::ws IS NULL ? ls::ws : z::ws) AS ws,
+    (z::ws IS NULL ? ls::tmpUser : z::user) AS user,
+    (z::ws IS NULL ? 0 : z::conv) AS conv,
+    (z::ws IS NULL ? 0 : z::run) AS run,
+    (z::ws IS NULL ? 0 : z::deploy) AS deploy,
+    (z::ws IS NULL ? 0 : z::build) AS build,
+    (z::ws IS NULL ? 0 : z::ws_created) AS ws_created,
+    (ls::ws IS NULL ? 0 : 1) AS user_created;
+
+
+-- finds the first started sessions and keep indicator only there
+p3 = GROUP p2 BY (ws, user);
+p4 = FOREACH p3 GENERATE group.ws AS ws, group.user AS user, MIN(p2.dt) AS minDT, FLATTEN(p2);
+p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory AS factory,
+    p2::referrer AS referrer, p2::orgId AS orgId, p2::affiliateId AS affiliateId,
+    p2::auth AS auth, p2::conv AS conv, p2::run AS run, p2::deploy AS deploy, p2::build AS build,
+    p2::ws_created AS ws_created, (p2::dt == minDT ? p2::user_created : 0) AS user_created;
+
+result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created), TOTUPLE('user_created', user_created),
                         TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                         TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

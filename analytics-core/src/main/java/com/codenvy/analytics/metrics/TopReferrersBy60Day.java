@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,14 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
-IMPORT 'macros.pig';
+/** @author Dmytro Nochevnov */
+public class TopReferrersBy60Day extends AbstractTopReferrers {
 
-l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-r = usersCreatedFromFactory(l);
+    public TopReferrersBy60Day() {
+        super(MetricType.TOP_REFERRERS_BY_60DAY, 60);
+    }
 
-result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-            TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('org_id', orgId),
-            TOTUPLE('affiliate_id', affiliateId), TOTUPLE('value', 1L);
-
-STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
+    @Override
+    public String getDescription() {
+        return "The top referrers sorted by overall duration of session in period of time during 60 days before today";
+    }
+}

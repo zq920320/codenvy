@@ -77,7 +77,7 @@ public class TestTopMetrics extends BaseTest {
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "referrer2", "org2", "affiliate1")
                      .withDate("2013-02-10").withTime("11:00:01").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer3", "org3", "affiliate2")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer2", "org3", "affiliate2")
                      .withDate("2013-02-10").withTime("11:00:02").build());
 
         events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")
@@ -99,6 +99,20 @@ public class TestTopMetrics extends BaseTest {
         .withDate("2013-02-10")
         .withTime("10:04:00")
         .build());
+        
+        
+        // TODO doesn't work create user
+        events.add(Event.Builder.createUserCreatedEvent("user1", "user1@gmail.com")
+        .withDate("2013-02-10")
+        .withTime("10:04:00")
+        .build());
+        
+        events.add(Event.Builder.createUserAddedToWsEvent("user1", "tmp-1", "id1", "tmp-1", "user1@gmail.com", "website")
+        .withDate("2013-01-01")
+        .withTime("10:04:00")
+        .build());
+        
+
                 
         File log = LogGenerator.generateLog(events);
 
@@ -128,7 +142,7 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(value.size(), 3);
         
         List<ValueData> all = value.getAll();       
-        checkTopSessionDataItem((MapValueData)all.get(0), "900", "factoryUrl1", "referrer3", "0", "0");
+        checkTopSessionDataItem((MapValueData)all.get(0), "900", "factoryUrl1", "referrer2", "0", "0");
         checkTopSessionDataItem((MapValueData)all.get(1), "600", "factoryUrl1", "referrer2", "0", "1");
         checkTopSessionDataItem((MapValueData)all.get(2), "300", "factoryUrl0", "referrer1", "1", "1");
     }
@@ -143,13 +157,13 @@ public class TestTopMetrics extends BaseTest {
 
         ListValueData value = (ListValueData)metric.getValue(context);
 
-//        LOG.info("[INFO] testAbstractTopFactories test values:" + value.getAll());
+        LOG.info("[INFO] testAbstractTopFactories test values:" + value.getAll());
         
         assertEquals(value.size(), 2);
         
         List<ValueData> all = value.getAll();        
-        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1500", "2", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0");
-        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "300", "1", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0");
+        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1500", "2", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
+        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "300", "1", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
     }
     
     private void checkTopSessionDataItem(MapValueData item, String time, String factory, String referrer, String convertedSession, String authenticatedSession) {
@@ -159,7 +173,7 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.CONVERTED_SESSION).getAsString(), convertedSession);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.AUTHENTICATED_SESSION).getAsString(), authenticatedSession);
     }
-    
+       
     private void checkTopFactoriesDataItem(MapValueData item, 
                                            String factory, 
                                            String time, 
@@ -170,7 +184,9 @@ public class TestTopMetrics extends BaseTest {
                                            String anonymousFactorySessionRate,
                                            String authenticatedFactorySessionRate,
                                            String abandonFactorySessionRate,
-                                           String convertedFactorySessionRate) {
+                                           String convertedFactorySessionRate,
+                                           String firstSessionDate,
+                                           String lastSessionDate) {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.FACTORY).getAsString(), factory);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
         assertEquals(item.getAll().get(AbstractTopFactories.FACTORY_COUNT).getAsString(), factoryCount);
@@ -181,6 +197,54 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(item.getAll().get(AbstractTopFactories.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(), authenticatedFactorySessionRate);
         assertEquals(item.getAll().get(AbstractTopFactories.ABANDON_FACTORY_SESSION_RATE).getAsString(), abandonFactorySessionRate);
         assertEquals(item.getAll().get(AbstractTopFactories.CONVERTED_FACTORY_SESSION_RATE).getAsString(), convertedFactorySessionRate);
+        assertEquals(item.getAll().get(AbstractTopFactories.FIRST_SESSION_DATE).getAsString(), firstSessionDate);
+        assertEquals(item.getAll().get(AbstractTopFactories.LAST_SESSION_DATE).getAsString(), lastSessionDate);        
+    }
+    
+    @Test
+    public void testAbstractTopReferrers() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130210");
+        Parameters.TO_DATE.put(context, "20130210");
+
+        AbstractTopMetrics metric = new TestAbstractTopReferrers(MetricType.TOP_REFERRERS_BY_LIFETIME, AbstractTopMetrics.LIFE_TIME_PERIOD);
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+
+        LOG.info("[INFO] testAbstractTopReferrers test values:" + value.getAll());
+        
+        assertEquals(value.size(), 2);
+        
+        List<ValueData> all = value.getAll();        
+        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1500", "2", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
+        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "300", "1", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
+    }
+    
+    private void checkTopReferrersDataItem(MapValueData item, 
+                                           String referrer, 
+                                           String time, 
+                                           String referrerCount,
+                                           String buildRate,
+                                           String runRate,
+                                           String deployRate,
+                                           String anonymousFactorySessionRate,
+                                           String authenticatedFactorySessionRate,
+                                           String abandonFactorySessionRate,
+                                           String convertedFactorySessionRate,
+                                           String firstSessionDate,
+                                           String lastSessionDate) {
+        assertEquals(item.getAll().get(ProductUsageFactorySessionsList.REFERRER).getAsString(), referrer);
+        assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
+        assertEquals(item.getAll().get(AbstractTopReferrers.REFERRER_COUNT).getAsString(), referrerCount);
+        assertEquals(item.getAll().get(AbstractTopReferrers.BUILD_RATE).getAsString(), buildRate);
+        assertEquals(item.getAll().get(AbstractTopReferrers.RUN_RATE).getAsString(), runRate);
+        assertEquals(item.getAll().get(AbstractTopReferrers.DEPLOY_RATE).getAsString(), deployRate);
+        assertEquals(item.getAll().get(AbstractTopReferrers.ANONYMOUS_FACTORY_SESSION_RATE).getAsString(), anonymousFactorySessionRate);
+        assertEquals(item.getAll().get(AbstractTopReferrers.AUTHENTICATED_FACTORY_SESSION_RATE).getAsString(), authenticatedFactorySessionRate);
+        assertEquals(item.getAll().get(AbstractTopReferrers.ABANDON_FACTORY_SESSION_RATE).getAsString(), abandonFactorySessionRate);
+        assertEquals(item.getAll().get(AbstractTopReferrers.CONVERTED_FACTORY_SESSION_RATE).getAsString(), convertedFactorySessionRate);
+        assertEquals(item.getAll().get(AbstractTopReferrers.FIRST_SESSION_DATE).getAsString(), firstSessionDate);
+        assertEquals(item.getAll().get(AbstractTopReferrers.LAST_SESSION_DATE).getAsString(), lastSessionDate);        
     }
     
     private class TestAbstractTopSessions extends AbstractTopSessions {
@@ -204,6 +268,24 @@ public class TestTopMetrics extends BaseTest {
     private class TestAbstractTopFactories extends AbstractTopFactories {
 
         public TestAbstractTopFactories(MetricType metricType, int dayCount) {
+            super(metricType, dayCount);
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+        
+        
+        @Override
+        public String getStorageCollectionName() {
+            return "testtopmetrics";
+        }
+    }
+    
+    private class TestAbstractTopReferrers extends AbstractTopReferrers {
+
+        public TestAbstractTopReferrers(MetricType metricType, int dayCount) {
             super(metricType, dayCount);
         }
 

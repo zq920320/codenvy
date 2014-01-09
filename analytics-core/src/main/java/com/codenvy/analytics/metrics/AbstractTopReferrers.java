@@ -27,8 +27,8 @@ import com.mongodb.DBObject;
 
 
 /** @author Dmytro Nochevnov */
-public abstract class AbstractTopFactories extends AbstractTopMetrics {   
-    public static final String FACTORY_COUNT = "factory_count";
+public abstract class AbstractTopReferrers extends AbstractTopMetrics {   
+    public static final String REFERRER_COUNT = "referrer_count";
     public static final String BUILD_RATE = "build_rate";
     public static final String RUN_RATE = "run_rate";
     public static final String DEPLOY_RATE = "deploy_rate";
@@ -39,17 +39,17 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
     public static final String FIRST_SESSION_DATE = "first_session_date";
     public static final String LAST_SESSION_DATE = "last_session_date";
     
-    public AbstractTopFactories(MetricType factoryMetricType, int dayCount) {
+    public AbstractTopReferrers(MetricType factoryMetricType, int dayCount) {
         super(factoryMetricType, dayCount);
     }
     
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.FACTORY,
+        return new String[]{ProductUsageFactorySessionsList.REFERRER, 
                             ProductUsageFactorySessionsList.WS_CREATED,
-                            ProductUsageFactorySessionsList.USER_CREATED,                            
+                            ProductUsageFactorySessionsList.USER_CREATED,
                             ProductUsageFactorySessionsList.TIME,
-                            FACTORY_COUNT,
+                            REFERRER_COUNT,
                             BUILD_RATE,
                             RUN_RATE,
                             DEPLOY_RATE,
@@ -63,12 +63,16 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
     }
 
     /**
+     * Filter documents with non-exists referrer field, or referrer = "". 
 db.product_usage_factory_sessions_list.aggregate([
+              {$match: {$and: [{referrer: {$exists: true}}, 
+                               {referrer: {$ne: ""}}]}
+              },
               {$group: 
-                      {_id: "$factory", 
+                      {_id: "$referrer",
                        ws_created: {$sum: "$ws_created"},
                        user_created: {$sum: "$user_created"},
-                       factory_count: {$sum: 1}, 
+                       referrer_count: {$sum: 1}, 
                        time: {$sum:"$time"},
                        build_count: {$sum:"$build"},
                        run_count: {$sum: "$run"},
@@ -80,32 +84,32 @@ db.product_usage_factory_sessions_list.aggregate([
                       }
               },
               {$project: {
-                         factory: "$_id",
+                         referrer: "$_id", 
                          ws_created: 1,
                          user_created: 1,
                          time: 1, 
-                         factory_count:1, 
+                         referrer_count:1, 
                          _id: 0,
                          build_rate: {$multiply: [100, 
-                                                  {$divide: ["$build_count", "$factory_count"]}]},
+                                                  {$divide: ["$build_count", "$referrer_count"]}]},
                          run_rate: {$multiply: [100, 
-                                                {$divide: ["$run_count", "$factory_count"]}]},
+                                                {$divide: ["$run_count", "$referrer_count"]}]},
                          deploy_rate: {$multiply: [100, 
-                                                   {$divide: ["$deploy_count", "$factory_count"]}]},
+                                                   {$divide: ["$deploy_count", "$referrer_count"]}]},
                          authenticated_factory_session_rate: {$multiply: [100, 
-                                                                         {$divide: ["$authenticated_factory_session_count", "$factory_count"]}]},
+                                                                         {$divide: ["$authenticated_factory_session_count", "$referrer_count"]}]},
                          converted_factory_session_rate: {$multiply: [100, 
-                                                   {$divide: ["$converted_factory_session_count", "$factory_count"]}]},
+                                                   {$divide: ["$converted_factory_session_count", "$referrer_count"]}]},
                          first_session_date: 1,
                          last_session_date: 1
                       }
               },
               {$project: {
-                         factory:1,
+                         referrer:1,
                          ws_created: 1,
-                         user_created: 1,                         
-                         time: 1,                          
-                         factory_count:1, 
+                         user_created: 1,
+                         time: 1, 
+                         referrer_count:1, 
                          build_rate:1,
                          run_rate:1,
                          deploy_rate:1,
@@ -126,11 +130,16 @@ db.product_usage_factory_sessions_list.aggregate([
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
 
+        dbOperations.add(new BasicDBObject("$match",
+            getAndOperation(new BasicDBObject(ProductUsageFactorySessionsList.REFERRER, new BasicDBObject("$exists", true)),  
+                            new BasicDBObject(ProductUsageFactorySessionsList.REFERRER, new BasicDBObject("$ne", "")))                              
+        ));
+        
         dbOperations.add(new BasicDBObject("$group",
-            new BasicDBObject("_id", "$" + ProductUsageFactorySessionsList.FACTORY)
+            new BasicDBObject("_id", "$" + ProductUsageFactorySessionsList.REFERRER)
                       .append(ProductUsageFactorySessionsList.WS_CREATED, new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.WS_CREATED))
                       .append(ProductUsageFactorySessionsList.USER_CREATED, new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.USER_CREATED))
-                      .append(FACTORY_COUNT, new BasicDBObject("$sum", 1))
+                      .append(REFERRER_COUNT, new BasicDBObject("$sum", 1))
                       .append(ProductUsageFactorySessionsList.TIME, new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.TIME))
                       .append(ProductUsageFactorySessionsList.BUILD + "_count", new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.BUILD))
                       .append(ProductUsageFactorySessionsList.RUN + "_count", new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.RUN))
@@ -147,27 +156,27 @@ db.product_usage_factory_sessions_list.aggregate([
             new BasicDBObject(ProductUsageFactorySessionsList.TIME, 1)
                       .append(ProductUsageFactorySessionsList.WS_CREATED, 1)
                       .append(ProductUsageFactorySessionsList.USER_CREATED, 1)
-                      .append(FACTORY_COUNT, 1)
-                      .append(ProductUsageFactorySessionsList.FACTORY, "$_id")
+                      .append(REFERRER_COUNT, 1)
+                      .append(ProductUsageFactorySessionsList.REFERRER, "$_id")
                       .append("_id", 0)
-                      .append(BUILD_RATE, getRateOperation("$" + ProductUsageFactorySessionsList.BUILD + "_count", "$" + FACTORY_COUNT))
-                      .append(RUN_RATE, getRateOperation("$" + ProductUsageFactorySessionsList.RUN + "_count", "$" + FACTORY_COUNT))
-                      .append(DEPLOY_RATE, getRateOperation("$" + ProductUsageFactorySessionsList.DEPLOY + "_count", "$" + FACTORY_COUNT))
+                      .append(BUILD_RATE, getRateOperation("$" + ProductUsageFactorySessionsList.BUILD + "_count", "$" + REFERRER_COUNT))
+                      .append(RUN_RATE, getRateOperation("$" + ProductUsageFactorySessionsList.RUN + "_count", "$" + REFERRER_COUNT))
+                      .append(DEPLOY_RATE, getRateOperation("$" + ProductUsageFactorySessionsList.DEPLOY + "_count", "$" + REFERRER_COUNT))
                       .append(AUTHENTICATED_FACTORY_SESSION_RATE,
-                              getRateOperation("$" + ProductUsageFactorySessionsList.AUTHENTICATED_SESSION + "_count", "$" + FACTORY_COUNT))
+                              getRateOperation("$" + ProductUsageFactorySessionsList.AUTHENTICATED_SESSION + "_count", "$" + REFERRER_COUNT))
                       .append(CONVERTED_FACTORY_SESSION_RATE, 
-                              getRateOperation("$" + ProductUsageFactorySessionsList.CONVERTED_SESSION + "_count", "$" + FACTORY_COUNT))
+                              getRateOperation("$" + ProductUsageFactorySessionsList.CONVERTED_SESSION + "_count", "$" + REFERRER_COUNT))
                       .append(FIRST_SESSION_DATE, 1)
                       .append(LAST_SESSION_DATE, 1)
                               
                       ));
 
         dbOperations.add(new BasicDBObject("$project", 
-            new BasicDBObject(ProductUsageFactorySessionsList.FACTORY, 1)
+            new BasicDBObject(ProductUsageFactorySessionsList.REFERRER, 1)
                       .append(ProductUsageFactorySessionsList.WS_CREATED, 1)
                       .append(ProductUsageFactorySessionsList.USER_CREATED, 1)
                       .append(ProductUsageFactorySessionsList.TIME, 1)
-                      .append(FACTORY_COUNT, 1)
+                      .append(REFERRER_COUNT, 1)
                       .append(BUILD_RATE, 1)
                       .append(RUN_RATE, 1)
                       .append(DEPLOY_RATE, 1)                      
@@ -183,6 +192,18 @@ db.product_usage_factory_sessions_list.aggregate([
         dbOperations.add(new BasicDBObject("$limit", MAX_DOCUMENT_COUNT));
 
         return dbOperations.toArray(new DBObject[0]);
+    }
+
+    private BasicDBObject getAndOperation(BasicDBObject... predicates) {
+        BasicDBList andArgs = new BasicDBList();
+
+        for (BasicDBObject predicate: predicates) {
+            andArgs.add(predicate);
+        }
+        
+        BasicDBObject andOperation = new BasicDBObject("$and", andArgs);
+        
+        return andOperation;
     }
 
     /**

@@ -134,3 +134,10 @@ com.codenvy.analytics.metrics.TopFactoriesBy60Day
 com.codenvy.analytics.metrics.TopFactoriesBy90Day
 com.codenvy.analytics.metrics.TopFactoriesBy365Day
 com.codenvy.analytics.metrics.TopFactoriesByLifetime
+
+com.codenvy.analytics.metrics.TopReferrersBy1Day
+com.codenvy.analytics.metrics.TopReferrersBy7Day
+com.codenvy.analytics.metrics.TopReferrersBy30Day
+com.codenvy.analytics.metrics.TopReferrersBy60Day
+com.codenvy.analytics.metrics.TopReferrersBy90Day
+com.codenvy.analytics.metrics.TopReferrersBy365Day
