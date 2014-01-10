@@ -48,7 +48,7 @@
         <div class="span10">
             <div class="well topFilteringPanel">
                 <div id="timely-dd" class="btn-group timely-dd-btns left" target="dashboardWidget">
-                    <button class="btn">Day</button>
+                    <button class="btn" default>Day</button>
                     <button class="btn">Week</button>
                     <button class="btn">Month</button>
                     <button class="btn">LifeTime</button>

@@ -258,8 +258,7 @@ function updateCommandButtonsState(params) {
    // update time selection buttons
    var timeUnitButtons = jQuery("#timely-dd button"); 
    if (timeUnitButtons.doesExist()) {
-      timeUnitButtons.removeClass('btn-primary');
-      jQuery("#timely-dd button:contains('" + params["timeGroup"] + "')").addClass('btn-primary');
+	  setPrimaryButton(timeUnitButtons, params["timeGroup"]);
    }
    
    // update filter-by group
@@ -315,8 +314,31 @@ function updateCommandButtonsState(params) {
    // update metric selection buttons
    var metricButtons = jQuery("#metric button"); 
    if (metricButtons.doesExist()) {
-	  metricButtons.removeClass('btn-primary');
-      jQuery("#metric button:contains('" + params["metric"] + "')").addClass('btn-primary');
+	   setPrimaryButton(metricButtons, params["metric"]);
+   }
+}
+
+
+function setPrimaryButton(buttonGroup, parameter) {
+   buttonGroup.removeClass('btn-primary');
+   if (typeof parameter != "undefined") {
+	   // set as primary the button with label = parameter 
+	   for (var i = 0; i < buttonGroup.size(); i++) {
+		  var button = jQuery(buttonGroup[i]);
+		  if (button.text() == parameter) {
+		     button.addClass("btn-primary");
+		     break;
+		  }
+       }
+   } else {
+	  // restore default primary button
+	  for (var i = 0; i < buttonGroup.size(); i++) {
+		  var button = jQuery(buttonGroup[i]);
+		  if (typeof button.attr("default") != "undefined") {
+		     button.addClass("btn-primary");
+		     break;
+		  }
+	  }
    }
 }
 

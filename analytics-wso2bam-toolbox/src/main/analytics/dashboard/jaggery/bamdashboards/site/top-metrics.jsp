@@ -48,12 +48,12 @@
         <div class="span10">
             <div class="well topFilteringPanel">
                 <div id="metric" class="btn-group metric-btns left" target="dashboardWidget">
-                    <button class="btn">Top Factory Sessions</button>
+                    <button class="btn" default>Top Factory Sessions</button>
                     <button class="btn">Top Factories</button>
                     <button class="btn">Top Referrers</button>
                 </div>            
                 <div id="timely-dd" class="btn-group timely-dd-btns right" target="dashboardWidget">
-                    <button class="btn">1 Day</button>
+                    <button class="btn" default>1 Day</button>
                     <button class="btn">7 Days</button>
                     <button class="btn">30 Days</button>
                     <button class="btn">60 Days</button>
