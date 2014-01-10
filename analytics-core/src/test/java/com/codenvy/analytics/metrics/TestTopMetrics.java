@@ -101,14 +101,14 @@ public class TestTopMetrics extends BaseTest {
         .build());
         
         
-//        // TODO doesn't work create user
-//        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-1", "anonymoususer_1", "website")
-//                   .withDate("2013-02-10").build());
-//
-//        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user4@gmail.com").withDate("2013-02-10")
-//                   .build());
-//   
-//        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com").withDate("2013-02-10").build());
+        // create user
+        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-3", "anonymoususer_1", "website")
+                   .withDate("2013-02-10").build());
+
+        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user4@gmail.com").withDate("2013-02-10")
+                   .build());
+   
+        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com").withDate("2013-02-10").build());
         
                 
         File log = LogGenerator.generateLog(events);
@@ -136,6 +136,8 @@ public class TestTopMetrics extends BaseTest {
 
         ListValueData value = (ListValueData)metric.getValue(context);
         
+//        LOG.info("[INFO] testAbstractTopSessions test values:" + value.getAll());
+        
         assertEquals(value.size(), 3);
         
         List<ValueData> all = value.getAll();       
@@ -154,13 +156,13 @@ public class TestTopMetrics extends BaseTest {
 
         ListValueData value = (ListValueData)metric.getValue(context);
 
-        LOG.info("[INFO] testAbstractTopFactories test values:" + value.getAll());
+//        LOG.info("[INFO] testAbstractTopFactories test values:" + value.getAll());
         
         assertEquals(value.size(), 2);
         
         List<ValueData> all = value.getAll();        
-        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1500", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
-        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "300", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
+        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1", "1", "1500", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
+        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
     }
     
     private void checkTopSessionDataItem(MapValueData item, String time, String factory, String referrer, String convertedSession, String authenticatedSession) {
@@ -173,6 +175,8 @@ public class TestTopMetrics extends BaseTest {
        
     private void checkTopFactoriesDataItem(MapValueData item, 
                                            String factory, 
+                                           String wsCreated,
+                                           String userCreated,
                                            String time, 
                                            String buildRate,
                                            String runRate,
@@ -184,6 +188,8 @@ public class TestTopMetrics extends BaseTest {
                                            String firstSessionDate,
                                            String lastSessionDate) {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.FACTORY).getAsString(), factory);
+        assertEquals(item.getAll().get(ProductUsageFactorySessionsList.WS_CREATED).getAsString(), wsCreated);
+        assertEquals(item.getAll().get(ProductUsageFactorySessionsList.USER_CREATED).getAsString(), userCreated);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
         assertEquals(item.getAll().get(AbstractTopFactories.BUILD_RATE).getAsString(), buildRate);
         assertEquals(item.getAll().get(AbstractTopFactories.RUN_RATE).getAsString(), runRate);
@@ -206,17 +212,19 @@ public class TestTopMetrics extends BaseTest {
 
         ListValueData value = (ListValueData)metric.getValue(context);
 
-        LOG.info("[INFO] testAbstractTopReferrers test values:" + value.getAll());
+//        LOG.info("[INFO] testAbstractTopReferrers test values:" + value.getAll());
         
         assertEquals(value.size(), 2);
         
         List<ValueData> all = value.getAll();        
-        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1500", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
-        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "300", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
+        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1", "1", "1500", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
+        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "1", "0", "300", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
     }
     
     private void checkTopReferrersDataItem(MapValueData item, 
                                            String referrer, 
+                                           String wsCreated,
+                                           String userCreated,
                                            String time, 
                                            String buildRate,
                                            String runRate,
@@ -228,6 +236,8 @@ public class TestTopMetrics extends BaseTest {
                                            String firstSessionDate,
                                            String lastSessionDate) {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.REFERRER).getAsString(), referrer);
+        assertEquals(item.getAll().get(ProductUsageFactorySessionsList.WS_CREATED).getAsString(), wsCreated);
+        assertEquals(item.getAll().get(ProductUsageFactorySessionsList.USER_CREATED).getAsString(), userCreated);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
         assertEquals(item.getAll().get(AbstractTopReferrers.BUILD_RATE).getAsString(), buildRate);
         assertEquals(item.getAll().get(AbstractTopReferrers.RUN_RATE).getAsString(), runRate);
