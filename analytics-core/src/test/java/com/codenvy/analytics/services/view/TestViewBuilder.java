@@ -98,7 +98,7 @@ public class TestViewBuilder extends BaseTest {
 
         ViewData actualData = viewData.getAllValues().get(0);
         for (int i = 1; i < 4; i++) {
-            if (viewData.getAllValues().get(1).containsKey("workspaces_day")) {
+            if (viewData.getAllValues().get(i).containsKey("workspaces_day")) {
                 actualData = viewData.getAllValues().get(i);
             }
         }
@@ -141,7 +141,7 @@ public class TestViewBuilder extends BaseTest {
 
         ViewData actualData = viewData.getAllValues().get(0);
         for (int i = 1; i < 4; i++) {
-            if (viewData.getAllValues().get(1).containsKey("workspaces_day")) {
+            if (viewData.getAllValues().get(i).containsKey("workspaces_day")) {
                 actualData = viewData.getAllValues().get(i);
             }
         }
@@ -209,6 +209,7 @@ public class TestViewBuilder extends BaseTest {
         List<ValueData> dateRow = data.get(0);
         assertEquals(3, dateRow.size());
         assertEquals(new StringValueData("desc"), dateRow.get(0));
+
         assertTrue(dateRow.get(1).getAsString().contains("" + day1.get(Calendar.DAY_OF_MONTH)));
         assertTrue(dateRow.get(2).getAsString().contains("" + day2.get(Calendar.DAY_OF_MONTH)));
 
