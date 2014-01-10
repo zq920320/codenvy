@@ -20,8 +20,16 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>Codenvy - Loading...</title>
     <link rel="shortcut icon" href="/images/favicon.ico"/>
+    
+    <meta content="referer" name="wait-for-tenant.html" />
 </head>
 <body>
-    <script src="/ide-resources/initializer/initializer.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var po = document.createElement("script");
+        po.type = "text/javascript";
+        po.async = true;
+        po.src = "/ide-resources/initializer/init.js?" + new Date().getTime();
+        document.getElementsByTagName('head')[0].appendChild(po);
+    </script>
 </body>
 </html>
