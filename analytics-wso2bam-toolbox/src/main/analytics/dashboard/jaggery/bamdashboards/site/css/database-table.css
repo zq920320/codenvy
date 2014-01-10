@@ -12,6 +12,7 @@
    font-size: 13px;
    min-width: 45px;
    font-family: Times New Roman;
+   line-height: 1;
 }
 
 .database-table .header {
@@ -61,14 +62,16 @@
    background: #d9e4f6 !important;
    min-width: 180px;
    /* border-bottom: 1px solid #ededed;*/ 
-   border: none;   
+   border: none;
+   word-break: break-all;   
 }
 
 .database-table .cell {
    overflow: hidden;
    padding: 3px 10px;
    height: 23px;
-   font-family: Arial, Verdana, sans-serif;   
+   font-family: Arial, Verdana, sans-serif;  
+   word-break: break-all; 
 }
 
 .database-table .cell a {

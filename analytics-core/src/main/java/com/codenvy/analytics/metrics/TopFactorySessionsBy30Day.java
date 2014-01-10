@@ -15,21 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
+/** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
+public class TopFactorySessionsBy30Day extends AbstractTopSessions {
 
-package com.codenvy.analytics.services.view;
+    public TopFactorySessionsBy30Day() {
+        super(MetricType.TOP_FACTORY_SESSIONS_BY_30DAY, 30);
+    }
 
-
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface Row {
-
-    /** @return row data depending on execution context */
-    List<List<ValueData>> getData(Map<String, String> initialContext, int iterationsCount) throws IOException;
-
+    @Override
+    public String getDescription() {
+        return "The top factory sessions sorted by duration of session in period of time during 30 days before today";
+    }
 }

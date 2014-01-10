@@ -36,10 +36,10 @@ class EmptyRow extends AbstractRow {
     }
 
     @Override
-    public List<List<ValueData>> getData(Map<String, String> initialContext, int columns) throws IOException {
-        List<ValueData> result = new ArrayList<>(columns);
+    public List<List<ValueData>> getData(Map<String, String> initialContext, int iterationsCount) throws IOException {
+        List<ValueData> result = new ArrayList<>(iterationsCount);
 
-        for (int i = 0; i < getOverriddenColumnsCount(columns); i++) {
+        for (int i = 0; i < iterationsCount; i++) {
             result.add(StringValueData.DEFAULT);
         }
 

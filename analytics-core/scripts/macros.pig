@@ -82,12 +82,12 @@ DEFINE filterByDate(X, fromDateParam, toDateParam) RETURNS Y {
 -- @return {fieldName1 : chararray, {(fieldName2 : chararray)}}
 ---------------------------------------------------------------------------
 DEFINE setByField(X, fieldName1, fieldName2) RETURNS Y {
-	x1 = GROUP $X BY $fieldName1;
-	$Y = FOREACH x1 {
-		t1 = FOREACH $X GENERATE $fieldName2;
-		t = DISTINCT t1;
-		GENERATE group, t;
-	}
+    x1 = GROUP $X BY $fieldName1;
+    $Y = FOREACH x1 {
+        t1 = FOREACH $X GENERATE $fieldName2;
+        t = DISTINCT t1;
+        GENERATE group, t;
+    }
 };
 
 ---------------------------------------------------------------------------
@@ -95,8 +95,8 @@ DEFINE setByField(X, fieldName1, fieldName2) RETURNS Y {
 -- @return {countAll : long}
 ---------------------------------------------------------------------------
 DEFINE countAll(X) RETURNS Y {
-	x1 = GROUP $X ALL;
-	$Y = FOREACH x1 GENERATE COUNT($X.$0) AS countAll;
+    x1 = GROUP $X ALL;
+    $Y = FOREACH x1 GENERATE COUNT($X.$0) AS countAll;
 };
 
 ---------------------------------------------------------------------------
@@ -104,8 +104,8 @@ DEFINE countAll(X) RETURNS Y {
 -- @return {fieldNameParam : chararray, countAll : long}
 ---------------------------------------------------------------------------
 DEFINE countByField(X, fieldNameParam) RETURNS Y {
-	x1 = GROUP $X BY $fieldNameParam;
-	$Y = FOREACH x1 GENERATE group AS $fieldNameParam, COUNT($X.$0) AS countAll;
+    x1 = GROUP $X BY $fieldNameParam;
+    $Y = FOREACH x1 GENERATE group AS $fieldNameParam, COUNT($X.$0) AS countAll;
 };
 
 ---------------------------------------------------------------------------
@@ -132,8 +132,8 @@ DEFINE extractWs(X, wsType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws2, FLATTEN(REGEX_EXTRACT_ALL(message, '.*WS\\#([^\\#]*)\\#.*')) AS ws1;
   x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws;
   $Y = FILTER x2 BY '$wsType' == 'ANY' OR  ws == 'default' OR
-		    ('$wsType' == 'TEMPORARY' AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0) OR 
-		    ('$wsType' == 'PERSISTENT' AND INDEXOF(UPPER(ws), 'TMP-', 0) < 0);
+            ('$wsType' == 'TEMPORARY' AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0) OR 
+            ('$wsType' == 'PERSISTENT' AND INDEXOF(UPPER(ws), 'TMP-', 0) < 0);
 };
 
 ---------------------------------------------------------------------------
@@ -142,13 +142,13 @@ DEFINE extractWs(X, wsType) RETURNS Y {
 ---------------------------------------------------------------------------
 DEFINE extractUser(X, userType) RETURNS Y {
   x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*USER\\#([^\\#]*)\\#.*')) AS user1,
-			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2,
-			      FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
+                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2,
+                  FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
   x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS newUser;
   x3 = FOREACH x2 GENERATE *, FLATTEN(TOKENIZE(newUser, ',')) AS user;
   $Y = FILTER x3 BY '$userType' == 'ANY' OR user == 'default' OR
-		    ('$userType' == 'ANTONYMOUS' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0) OR
-		    ('$userType' == 'REGISTERED' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0);
+            ('$userType' == 'ANTONYMOUS' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0) OR
+            ('$userType' == 'REGISTERED' AND INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0);
 };
 
 ---------------------------------------------------------------------------
@@ -237,9 +237,9 @@ DEFINE productUsageTimeList(X, inactiveIntervalParam) RETURNS Y {
   ---------------------------------------------------------------------------------------------
   k2 = FOREACH k1 GENERATE ws, user, dt, (before IS NULL ? -999999999 : before) AS before, (after IS NULL ? 999999999 : after) AS after;
   k3 = FOREACH k2 GENERATE ws, user, dt, (before < -(long)$inactiveIntervalParam*60*1000 ? (after <= (long)$inactiveIntervalParam*60*1000 ? 'start'
-										          			    : 'single')
-									     : (after <= (long)$inactiveIntervalParam*60*1000 ? 'none'
-														    : 'end')) AS flag;
+                                                                : 'single')
+                                         : (after <= (long)$inactiveIntervalParam*60*1000 ? 'none'
+                                                            : 'end')) AS flag;
   kR = FILTER k3 BY flag == 'start' OR flag == 'end';
 
   k4 = FILTER k3 BY flag == 'single';
@@ -447,8 +447,8 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
   -- if several events were occurred then keep only one
   x3 = GROUP x2 BY $W::dt;
   $Y = FOREACH x3 {
-    	t = LIMIT x2 1;
-	    GENERATE FLATTEN(t);
+        t = LIMIT x2 1;
+        GENERATE FLATTEN(t);
     }
 };
 

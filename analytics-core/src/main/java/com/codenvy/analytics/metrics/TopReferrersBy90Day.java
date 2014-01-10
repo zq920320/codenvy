@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,21 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics;
 
+/** @author Dmytro Nochevnov */
+public class TopReferrersBy90Day extends AbstractTopReferrers {
 
-package com.codenvy.analytics.services.view;
+    public TopReferrersBy90Day() {
+        super(MetricType.TOP_REFERRERS_BY_90DAY, 90);
+    }
 
-
-import com.codenvy.analytics.datamodel.ValueData;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface Row {
-
-    /** @return row data depending on execution context */
-    List<List<ValueData>> getData(Map<String, String> initialContext, int iterationsCount) throws IOException;
-
+    @Override
+    public String getDescription() {
+        return "The top referrers sorted by overall duration of session in period of time during 90 days before today";
+    }
 }

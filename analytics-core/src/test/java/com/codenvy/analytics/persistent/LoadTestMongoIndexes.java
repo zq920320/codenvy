@@ -31,7 +31,7 @@ import java.util.Date;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class LoadTestMongoIndexes extends BaseTest {
 
-    private static final int count = 2000000;
+    private static final int COUNT = 2000000;
 
     private DB db;
 
@@ -52,8 +52,8 @@ public class LoadTestMongoIndexes extends BaseTest {
         LOG.info(String.format("INFO(%s) finish creating index at %s \n", collectionName, new Date().toString()));
 
         LOG.info(String.format("INFO(%s) start adding data at %s \n", collectionName, new Date().toString()));
-        for (int i = 0; i < count; i++) {
-            BasicDBObject dbObject = getDBObjectWithTestData(count);
+        for (int i = 0; i < COUNT; i++) {
+            BasicDBObject dbObject = getDBObjectWithTestData(COUNT);
 
             dbCollection.save(dbObject);
 
@@ -73,8 +73,8 @@ public class LoadTestMongoIndexes extends BaseTest {
         DBCollection dbCollection = db.getCollection(collectionName);
 
         LOG.info(String.format("INFO(%s) start adding data at %s \n", collectionName, new Date().toString()));
-        for (int i = 0; i < count; i++) {
-            BasicDBObject dbObject = getDBObjectWithTestData(count);
+        for (int i = 0; i < COUNT; i++) {
+            BasicDBObject dbObject = getDBObjectWithTestData(COUNT);
 
             dbCollection.save(dbObject);
 
@@ -98,8 +98,8 @@ public class LoadTestMongoIndexes extends BaseTest {
         DBCollection dbCollection = db.getCollection(collectionName);
 
         LOG.info(String.format("INFO(%s) start adding data at %s \n", collectionName, new Date().toString()));
-        for (int i = 0; i < count / 2; i++) {
-            BasicDBObject dbObject = getDBObjectWithTestData(count);
+        for (int i = 0; i < COUNT / 2; i++) {
+            BasicDBObject dbObject = getDBObjectWithTestData(COUNT);
 
             dbCollection.save(dbObject);
 
@@ -121,8 +121,8 @@ public class LoadTestMongoIndexes extends BaseTest {
 
 
         LOG.info(String.format("INFO(%s) start adding data at %s \n", collectionName, new Date().toString()));
-        for (int i = count / 2; i < count; i++) {
-            BasicDBObject dbObject = getDBObjectWithTestData(count);
+        for (int i = COUNT / 2; i < COUNT; i++) {
+            BasicDBObject dbObject = getDBObjectWithTestData(COUNT);
 
             dbCollection.save(dbObject);
 

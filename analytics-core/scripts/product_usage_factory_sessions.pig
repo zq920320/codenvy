@@ -60,15 +60,16 @@ s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user AS tmpUser, delta, (INDEXOF(UPPER
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
 s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::tmpUser AS user, s2::delta AS delta, s2::auth AS auth,
-        u::factory AS factory, u::referrer AS referrer, u::orgId AS orgId, u::affiliateId AS affiliateId;
+        (u::tmpWs IS NULL ? '' : u::factory) AS factory, (u::tmpWs IS NULL ? '' : u::referrer) AS referrer,
+        (u::tmpWs IS NULL ? '' : u::orgId) AS orgId,  (u::tmpWs IS NULL ? '' : u::affiliateId) AS affiliateId;
 
 -- founds out if factory session was converted or wasn't
 -- (if importing operation was inside a session)
 s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
 s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory, s4::referrer AS referrer, s4::user AS user,
                         s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::auth AS auth, s4::tmpWs AS ws,
-			            (d::tmpWs IS NULL ? 0
-			                              : (SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 : 0 )) AS conv;
+                        (d::tmpWs IS NULL ? 0
+                                          : (SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 : 0 )) AS conv;
 
 -- sessions with events
 k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');
@@ -145,7 +146,8 @@ p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory 
     p2::ws_created AS ws_created, (p2::dt == minDT ? p2::user_created : 0) AS user_created;
 
 result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created),
+                        TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created), TOTUPLE('user_created', user_created),
                         TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                         TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+

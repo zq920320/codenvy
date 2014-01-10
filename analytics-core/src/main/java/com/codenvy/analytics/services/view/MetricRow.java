@@ -28,6 +28,7 @@ import com.codenvy.analytics.metrics.MetricFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,43 +37,60 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricRow extends AbstractRow {
 
+    private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
+    public static final  String DATE_FORMAT            = "yyyy-MM-dd HH:mm:ss";
+
     private static final String NAME                 = "name";
     private static final String FORMAT               = "format";
-    private static final String DEFAULT_FORMAT       = "%,.0f";
     private static final String DESCRIPTION          = "description";
     private static final String FIELDS               = "fields";
     private static final String HIDE_NEGATIVE_VALUES = "hide-negative-values";
+    private static final String BOOLEAN_FIELDS       = "boolean-fields";
+    private static final String DATE_FIELDS          = "date-fields";
 
-    private final Metric   metric;
-    private final String   format;
-    private final String[] fields;
-    private final boolean  hideNegativeValues;
+    private final Metric       metric;
+    private final String       format;
+    private final String[]     fields;
+    private final boolean      hideNegativeValues;
+    private final List<String> booleanFields;
+    private final List<String> dateFields;
 
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
 
         metric = MetricFactory.getMetric(parameters.get(NAME));
-        format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_FORMAT;
+        format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_NUMERIC_FORMAT;
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
+
         hideNegativeValues = parameters.containsKey(HIDE_NEGATIVE_VALUES) &&
                              Boolean.parseBoolean(parameters.get(HIDE_NEGATIVE_VALUES));
+        booleanFields =
+                parameters.containsKey(BOOLEAN_FIELDS) ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(","))
+                                                       : new ArrayList<String>();
+        dateFields = parameters.containsKey(DATE_FIELDS) ? Arrays.asList(parameters.get(DATE_FIELDS).split(","))
+                                                         : new ArrayList<String>();
     }
 
     @Override
-    public List<List<ValueData>> getData(Map<String, String> initialContext, int columns) throws IOException {
+    public List<List<ValueData>> getData(Map<String, String> initialContext, int iterationsCount) throws IOException {
         try {
-            if (fields.length == 0) {
-                return Arrays.asList(getSingleRow(initialContext, columns));
+            if (isMultipleColumnsMetric()) {
+                return getMultipleValues(initialContext);
             } else {
-                return getMultipleRows(initialContext, columns);
+                return getSingleValue(initialContext, iterationsCount);
             }
         } catch (ParseException e) {
             throw new IOException(e);
         }
     }
 
-    private List<ValueData> getSingleRow(Map<String, String> initialContext, int columns) throws IOException,
-                                                                                                 ParseException {
+    private boolean isMultipleColumnsMetric() {
+        return metric.getValueDataClass() == ListValueData.class;
+    }
+
+    private List<List<ValueData>> getSingleValue(Map<String, String> initialContext,
+                                                 int iterationsCount) throws IOException,
+                                                                             ParseException {
         List<ValueData> result = new ArrayList<>();
 
         boolean descriptionExists = parameters.containsKey(DESCRIPTION);
@@ -80,7 +98,7 @@ public class MetricRow extends AbstractRow {
             result.add(new StringValueData(parameters.get(DESCRIPTION)));
         }
 
-        for (int i = descriptionExists ? 1 : 0; i < getOverriddenColumnsCount(columns); i++) {
+        for (int i = descriptionExists ? 1 : 0; i < iterationsCount; i++) {
             try {
                 formatAndAddSingleValue(getMetricValue(initialContext), result);
             } catch (InitialValueNotFoundException e) {
@@ -90,20 +108,7 @@ public class MetricRow extends AbstractRow {
             initialContext = Utils.prevDateInterval(initialContext);
         }
 
-        return result;
-    }
-
-    private List<List<ValueData>> getMultipleRows(Map<String, String> initialContext, int columns) throws
-                                                                                                   IOException,
-                                                                                                   ParseException {
-        List<List<ValueData>> result = new ArrayList<>();
-
-        for (int i = 0; i < getOverriddenColumnsCount(columns); i++) {
-            formatAndAddMultipleValues(getMetricValue(initialContext), result);
-            initialContext = Utils.prevDateInterval(initialContext);
-        }
-
-        return result;
+        return Arrays.asList(result);
     }
 
     private void formatAndAddSingleValue(ValueData valueData, List<ValueData> singleValue) throws IOException {
@@ -140,6 +145,16 @@ public class MetricRow extends AbstractRow {
         }
     }
 
+    private List<List<ValueData>> getMultipleValues(Map<String, String> initialContext) throws
+                                                                                        IOException,
+                                                                                        ParseException {
+        List<List<ValueData>> result = new ArrayList<>();
+        formatAndAddMultipleValues(getMetricValue(initialContext), result);
+
+        return result;
+    }
+
+
     private void formatAndAddMultipleValues(ValueData valueData, List<List<ValueData>> multipleValues) throws
                                                                                                        IOException {
         Class<? extends ValueData> clazz = valueData.getClass();
@@ -149,9 +164,14 @@ public class MetricRow extends AbstractRow {
 
             List<ValueData> singleValue = new ArrayList<>();
             for (String field : fields) {
-                formatAndAddSingleValue(items.containsKey(field) ? items.get(field)
-                                                                 : StringValueData.DEFAULT,
-                                        singleValue);
+                ValueData item = items.containsKey(field) ? items.get(field) : StringValueData.DEFAULT;
+                if (booleanFields.contains(field)) {
+                    formatAndAddBooleanValue(item, singleValue);
+                } else if (dateFields.contains(field)) {
+                    formatAndAddDateValue(item, singleValue);
+                } else {
+                    formatAndAddSingleValue(item, singleValue);
+                }
             }
 
             multipleValues.add(singleValue);
@@ -164,6 +184,21 @@ public class MetricRow extends AbstractRow {
             throw new IOException("Unsupported class " + clazz);
         }
     }
+
+    private void formatAndAddBooleanValue(ValueData valueData, List<ValueData> singleValue) {
+        String value = valueData.getAsString();
+        String formattedValue = value.equals("1") ? "Yes" : "No";
+
+        singleValue.add(new StringValueData(formattedValue));
+    }
+
+    private void formatAndAddDateValue(ValueData valueData, List<ValueData> singleValue) {
+        Long value = new Long(valueData.getAsString());
+        String formattedValue = new SimpleDateFormat(DATE_FORMAT).format(value);
+
+        singleValue.add(new StringValueData(formattedValue));
+    }
+
 
     protected ValueData getMetricValue(Map<String, String> context) throws IOException {
         return metric.getValue(context);

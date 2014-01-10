@@ -24,25 +24,9 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractRow implements Row {
 
-    protected static final String COLUMNS = "columns";
-
     protected final Map<String, String> parameters;
 
     protected AbstractRow(Map<String, String> parameters) {
         this.parameters = parameters;
-    }
-
-    /**
-     * @return the count of the columns in the row, taking into account the possibility of overriding the global
-     *         parameter by specific row
-     */
-    protected int getOverriddenColumnsCount(int columns) {
-        String columnsParam = parameters.get(COLUMNS);
-        if (columnsParam != null) {
-            return Integer.parseInt(columnsParam);
-
-        } else {
-            return columns;
-        }
     }
 }

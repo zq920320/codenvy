@@ -41,9 +41,8 @@ import java.text.SimpleDateFormat;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
-
-    public static final Logger LOG      = LoggerFactory.getLogger(LoadTestMongoIndexes.class);
-    public static final String BASE_DIR = "target";
+    public static final    String BASE_DIR = "target";
+    protected static final Logger LOG      = LoggerFactory.getLogger(LoadTestMongoIndexes.class);
 
     protected final TupleFactory     tupleFactory = TupleFactory.getInstance();
     protected final DateFormat       dateFormat   = new SimpleDateFormat("yyyyMMdd");
