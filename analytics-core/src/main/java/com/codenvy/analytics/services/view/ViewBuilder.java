@@ -18,7 +18,6 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.DataPersister;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
@@ -35,7 +34,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
@@ -56,13 +54,11 @@ public class ViewBuilder extends Feature {
         this.jdbcPersister = JdbcDataPersisterFactory.getDataPersister();
     }
 
-    public Map<String, List<List<ValueData>>> getViewData(String name, Map<String, String> context)
-            throws IOException, ParseException {
-
+    public ViewData getViewData(String name, Map<String, String> context) throws IOException, ParseException {
         DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
         ViewConfiguration view = displayConfiguration.getView(name);
 
-        if (Utils.isSimpleContext(context)) {
+        if (!view.isOnDemand() && Utils.isSimpleContext(context)) {
             return queryViewData(view, context);
         } else {
             ComputeViewDataAction computeViewDataAction = new ComputeViewDataAction(view, context);
@@ -96,21 +92,28 @@ public class ViewBuilder extends Feature {
         }
     }
 
-    protected void computeDisplayData(DisplayConfiguration displayConfiguration,
+    protected void computeDisplayData(DisplayConfiguration displayConf,
                                       Map<String, String> context) throws Exception {
         List<RecursiveAction> tasks = new ArrayList<>();
 
         ForkJoinPool forkJoinPool = new ForkJoinPool();
 
-        for (ViewConfiguration viewConfiguration : displayConfiguration.getViews()) {
-            if (!viewConfiguration.isOnDemand()) {
-                for (String timeUnitParam : viewConfiguration.getTimeUnit().split(",")) {
-                    context = Parameters.TIME_UNIT.cloneAndPut(context, timeUnitParam.toUpperCase());
-
-                    ComputeViewDataAction task = new ComputeViewDataAction(viewConfiguration, context);
+        for (ViewConfiguration viewConf : displayConf.getViews()) {
+            if (!viewConf.isOnDemand()) {
+                if (viewConf.getTimeUnit() == null) {
+                    ComputeViewDataAction task = new ComputeViewDataAction(viewConf, context);
                     forkJoinPool.submit(task);
 
                     tasks.add(task);
+                } else {
+                    for (String timeUnitParam : viewConf.getTimeUnit().split(",")) {
+                        context = Parameters.TIME_UNIT.cloneAndPut(context, timeUnitParam.toUpperCase());
+
+                        ComputeViewDataAction task = new ComputeViewDataAction(viewConf, context);
+                        forkJoinPool.submit(task);
+
+                        tasks.add(task);
+                    }
                 }
             }
         }
@@ -129,15 +132,14 @@ public class ViewBuilder extends Feature {
     }
 
     /** Query data for specific view. */
-    protected Map<String, List<List<ValueData>>> queryViewData(ViewConfiguration viewConfiguration,
-                                                               Map<String, String> context) throws IOException {
+    protected ViewData queryViewData(ViewConfiguration viewConf, Map<String, String> context)
+            throws IOException {
         try {
-            Map<String, List<List<ValueData>>> viewData = new LinkedHashMap<>(viewConfiguration.getSections().size());
-            Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
+            ViewData viewData = new ViewData(viewConf.getSections().size());
 
-            for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
-                String sectionId = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
-                viewData.put(sectionConfiguration.getName(), jdbcPersister.loadData(sectionId));
+            for (SectionConfiguration sectionConf : viewConf.getSections()) {
+                String sectionId = getId(sectionConf.getName(), context);
+                viewData.put(sectionConf.getName(), jdbcPersister.loadData(sectionId));
             }
 
             return viewData;
@@ -147,7 +149,7 @@ public class ViewBuilder extends Feature {
     }
 
     protected void retainViewData(String viewId,
-                                  Map<String, List<List<ValueData>>> viewData,
+                                  ViewData viewData,
                                   Map<String, String> context) throws SQLException, IOException {
         jdbcPersister.storeData(viewData);
         CSVReportPersister.storeData(viewId, viewData, context);
@@ -167,9 +169,8 @@ public class ViewBuilder extends Feature {
         @Override
         protected void compute() {
             try {
-                Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
-                String viewId = viewConfiguration.getName() + "_" + timeUnit.name().toLowerCase();
-                Map<String, List<List<ValueData>>> viewData = doCompute(viewConfiguration, context);
+                String viewId = getId(viewConfiguration.getName(), context);
+                ViewData viewData = doCompute(viewConfiguration, context);
 
                 retainViewData(viewId, viewData, context);
             } catch (IOException | SQLException e) {
@@ -178,29 +179,23 @@ public class ViewBuilder extends Feature {
             }
         }
 
-        private Map<String, List<List<ValueData>>> doCompute(ViewConfiguration viewConfiguration,
-                                                             Map<String, String> context) throws IOException {
+        private ViewData doCompute(ViewConfiguration viewConf, Map<String, String> context) throws IOException {
             try {
                 context = initializeFirstInterval(context);
+                ViewData viewData = new ViewData(viewConf.getSections().size());
 
-                Map<String, List<List<ValueData>>> viewData =
-                        new LinkedHashMap<>(viewConfiguration.getSections().size());
-                Parameters.TimeUnit timeUnit = Utils.getTimeUnit(context);
+                for (SectionConfiguration sectionConf : viewConf.getSections()) {
+                    SectionData sectionData = new SectionData(sectionConf.getRows().size());
 
-                for (SectionConfiguration sectionConfiguration : viewConfiguration.getSections()) {
+                    for (RowConfiguration rowConf : sectionConf.getRows()) {
+                        Constructor<?> constructor = Class.forName(rowConf.getClazz()).getConstructor(Map.class);
+                        Row row = (Row)constructor.newInstance(rowConf.getParamsAsMap());
 
-                    List<List<ValueData>> sectionData = new ArrayList<>(sectionConfiguration.getRows().size());
-
-                    for (RowConfiguration rowConfiguration : sectionConfiguration.getRows()) {
-                        Constructor<?> constructor =
-                                Class.forName(rowConfiguration.getClazz()).getConstructor(Map.class);
-                        Row row = (Row)constructor.newInstance(rowConfiguration.getParamsAsMap());
-
-                        int rowCount = timeUnit == Parameters.TimeUnit.LIFETIME ? 2 : viewConfiguration.getColumns();
+                        int rowCount = getRowCount(viewConf.getColumns(), context);
                         sectionData.addAll(row.getData(context, rowCount));
                     }
 
-                    String sectionId = sectionConfiguration.getName() + "_" + timeUnit.toString().toLowerCase();
+                    String sectionId = getId(sectionConf.getName(), context);
                     viewData.put(sectionId, sectionData);
                 }
 
@@ -219,5 +214,22 @@ public class ViewBuilder extends Feature {
         Utils.initDateInterval(Utils.parseDate(toDate), context);
 
         return context;
+    }
+
+    private int getRowCount(int rowCountFromConf, Map<String, String> context) {
+        if (Parameters.TIME_UNIT.exists(context) && Utils.getTimeUnit(context) == Parameters.TimeUnit.LIFETIME) {
+            return 2;
+        } else {
+            return rowCountFromConf;
+        }
+    }
+
+    private String getId(String idFromConf, Map<String, String> context) {
+        String id = idFromConf;
+        if (Parameters.TIME_UNIT.exists(context)) {
+            id += "_" + Parameters.TIME_UNIT.get(context).toLowerCase();
+        }
+
+        return id;
     }
 }

@@ -19,6 +19,8 @@ package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.services.view.SectionData;
+import com.codenvy.analytics.services.view.ViewData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +74,8 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
     }
 
     @Override
-    public List<List<ValueData>> loadData(String tableName) throws SQLException, IOException {
-        List<List<ValueData>> result = new ArrayList<>();
+    public SectionData loadData(String tableName) throws SQLException, IOException {
+        SectionData result = new SectionData();
 
         try (Connection connection = openConnection()) {
             ResultSet resultSet = selectData(connection, tableName);
@@ -94,12 +96,12 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
     }
 
     @Override
-    public void storeData(Map<String, List<List<ValueData>>> viewData) throws SQLException {
+    public void storeData(ViewData viewData) throws SQLException {
         Connection connection = openConnection();
         try {
-            for (Map.Entry<String, List<List<ValueData>>> section : viewData.entrySet()) {
+            for (Map.Entry<String, SectionData> section : viewData.entrySet()) {
                 String tableName = section.getKey();
-                List<List<ValueData>> data = section.getValue();
+                SectionData data = section.getValue();
 
                 dropTableIfExists(connection, tableName);
                 createTable(connection, tableName, data);
@@ -134,7 +136,7 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
 
     private void insertData(Connection connection,
                             String tableName,
-                            List<List<ValueData>> data) throws SQLException {
+                            SectionData data) throws SQLException {
 
         PreparedStatement statement = connection.prepareStatement(getInsertQuery(tableName, data.get(0).size()));
 
@@ -173,13 +175,13 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
 
     private void createTable(Connection connection,
                              String tableName,
-                             List<List<ValueData>> data) throws SQLException {
+                             SectionData data) throws SQLException {
 
         Statement statement = connection.createStatement();
         statement.executeUpdate(getCreateTableQuery(tableName, data));
     }
 
-    private String getCreateTableQuery(String tableName, List<List<ValueData>> data) {
+    private String getCreateTableQuery(String tableName, SectionData data) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("CREATE TABLE ");
@@ -204,7 +206,7 @@ public abstract class AbstractJDBCDataPersister implements DataPersister {
         return builder.toString();
     }
 
-    private int getMaxLength(List<List<ValueData>> data, int column) {
+    private int getMaxLength(SectionData data, int column) {
         int length = 0;
 
         for (List<ValueData> rowData : data) {

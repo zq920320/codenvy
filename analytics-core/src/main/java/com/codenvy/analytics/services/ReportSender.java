@@ -19,13 +19,13 @@ package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.configuration.ConfigurationManagerException;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.reports.*;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
+import com.codenvy.analytics.services.view.ViewData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +146,7 @@ public class ReportSender extends Feature {
         List<File> reports = new ArrayList<>(viewsConfiguration.getViews().size());
 
         for (String view : viewsConfiguration.getViews()) {
-            Map<String, List<List<ValueData>>> viewData = viewBuilder.getViewData(view, context);
+            ViewData viewData = viewBuilder.getViewData(view, context);
 
             File report = new File(Configurator.getTmpDir(), view + ".csv");
             CSVReportPersister.storeData(report, viewData);

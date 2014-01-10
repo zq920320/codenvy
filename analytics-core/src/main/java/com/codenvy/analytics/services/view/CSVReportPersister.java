@@ -43,7 +43,7 @@ public class CSVReportPersister {
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     public static void storeData(String viewId,
-                                 Map<String, List<List<ValueData>>> viewData,
+                                 ViewData viewData,
                                  Map<String, String> context) throws IOException {
         try {
             File csvFile = getFile(viewId, REPORTS_DIR, context);
@@ -59,7 +59,7 @@ public class CSVReportPersister {
         }
     }
 
-    public static void storeData(File file, Map<String, List<List<ValueData>>> viewData) throws IOException {
+    public static void storeData(File file, ViewData viewData) throws IOException {
         doStore(file, viewData);
     }
 
@@ -100,9 +100,9 @@ public class CSVReportPersister {
         }
     }
 
-    protected static void doStore(File csvFile, Map<String, List<List<ValueData>>> viewData) throws IOException {
+    protected static void doStore(File csvFile, ViewData viewData) throws IOException {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "UTF-8"))) {
-            for (List<List<ValueData>> sectionData : viewData.values()) {
+            for (SectionData sectionData : viewData.values()) {
                 for (List<ValueData> rowData : sectionData) {
                     writer.write(getDataAsString(rowData));
                 }

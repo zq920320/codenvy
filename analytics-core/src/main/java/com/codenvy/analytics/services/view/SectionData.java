@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,19 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.persistent;
+package com.codenvy.analytics.services.view;
 
-import com.codenvy.analytics.services.view.SectionData;
-import com.codenvy.analytics.services.view.ViewData;
+import com.codenvy.analytics.datamodel.ValueData;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface DataPersister {
+/** @author Anatoliy Bazko */
+public class SectionData extends ArrayList<List<ValueData>> {
 
-    SectionData loadData(String tableName) throws SQLException, IOException;
+    public SectionData(int initialCapacity) {
+        super(initialCapacity);
+    }
 
-    void storeData(ViewData viewData) throws SQLException, IOException;
+    public SectionData() {
+    }
 
+    public SectionData(Collection<? extends List<ValueData>> c) {
+        super(c);
+    }
 }

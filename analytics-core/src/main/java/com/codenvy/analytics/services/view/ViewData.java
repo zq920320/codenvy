@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,19 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.persistent;
+package com.codenvy.analytics.services.view;
 
-import com.codenvy.analytics.services.view.SectionData;
-import com.codenvy.analytics.services.view.ViewData;
+import java.util.LinkedHashMap;
 
-import java.io.IOException;
-import java.sql.SQLException;
+/** @author Anatoliy Bazko */
+public class ViewData extends LinkedHashMap<String, SectionData> {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface DataPersister {
+    public ViewData() {
+    }
 
-    SectionData loadData(String tableName) throws SQLException, IOException;
-
-    void storeData(ViewData viewData) throws SQLException, IOException;
-
-}
+    public ViewData(int initialCapacity) {
+        super(initialCapacity);
+    }
+} 

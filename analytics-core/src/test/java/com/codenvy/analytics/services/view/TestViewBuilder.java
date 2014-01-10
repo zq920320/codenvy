@@ -46,7 +46,8 @@ public class TestViewBuilder extends BaseTest {
 
     private static final String FILE          = BASE_DIR + "/resource";
     private static final String CONFIGURATION = "<display>\n" +
-                                                "     <view time-unit=\"day,week,month,lifetime\" name=\"view\" columns=\"3\">\n" +
+                                                "     <view time-unit=\"day,week,month," +
+                                                "lifetime\" name=\"view\" columns=\"3\">\n" +
                                                 "         <section name=\"workspaces\">\n" +
                                                 "             <row class=\"com.codenvy.analytics.services.view" +
                                                 ".DateRow\">\n" +
@@ -87,7 +88,7 @@ public class TestViewBuilder extends BaseTest {
         ViewBuilder spyBuilder = spy(new ViewBuilder());
 
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Map> viewData = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
         DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
@@ -95,7 +96,7 @@ public class TestViewBuilder extends BaseTest {
         spyBuilder.computeDisplayData(displayConfiguration, Utils.initializeContext(Parameters.TimeUnit.DAY));
         verify(spyBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        Map<String, List<List<ValueData>>> actualData = viewData.getAllValues().get(0);
+        ViewData actualData = viewData.getAllValues().get(0);
         for (int i = 1; i < 4; i++) {
             if (viewData.getAllValues().get(1).containsKey("workspaces_day")) {
                 actualData = viewData.getAllValues().get(i);
@@ -127,7 +128,7 @@ public class TestViewBuilder extends BaseTest {
         ViewBuilder spyBuilder = spy(new ViewBuilder());
 
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Map> viewData = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
         Map<String, String> executionContext = Utils.newContext();
@@ -138,7 +139,7 @@ public class TestViewBuilder extends BaseTest {
         spyBuilder.computeDisplayData(displayConfiguration, executionContext);
         verify(spyBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
-        Map<String, List<List<ValueData>>> actualData = viewData.getAllValues().get(0);
+        ViewData actualData = viewData.getAllValues().get(0);
         for (int i = 1; i < 4; i++) {
             if (viewData.getAllValues().get(1).containsKey("workspaces_day")) {
                 actualData = viewData.getAllValues().get(i);
@@ -168,8 +169,7 @@ public class TestViewBuilder extends BaseTest {
         ViewBuilder viewBuilder = new ViewBuilder();
         viewBuilder.computeDisplayData(displayConfiguration, context);
 
-        Map<String, List<List<ValueData>>> actualData =
-                viewBuilder.queryViewData(displayConfiguration.getView("view"), context);
+        ViewData actualData = viewBuilder.queryViewData(displayConfiguration.getView("view"), context);
 
         assertEquals(actualData.size(), 1);
         assertLastDayData(actualData.values().iterator().next());
