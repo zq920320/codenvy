@@ -8,7 +8,7 @@ uiToDatabaseMap.metricPrefix = {
 	"TOP FACTORIES": "top_factories",
 	"TOP REFERRERS": "top_referrers"
 };
-var DEFAULT_METRIC_VALUE = "Top Factory Sessions";
+var DEFAULT_METRIC_VALUE = "TOP FACTORY SESSIONS";
 var metric = request.getParameter("metric");
 if (metric == null) {
 	metric = DEFAULT_METRIC_VALUE;

@@ -49,7 +49,6 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
                             ProductUsageFactorySessionsList.WS_CREATED,
                             ProductUsageFactorySessionsList.USER_CREATED,
                             ProductUsageFactorySessionsList.TIME,
-                            REFERRER_COUNT,
                             BUILD_RATE,
                             RUN_RATE,
                             DEPLOY_RATE,
@@ -88,7 +87,6 @@ db.product_usage_factory_sessions_list.aggregate([
                          ws_created: 1,
                          user_created: 1,
                          time: 1, 
-                         referrer_count:1, 
                          _id: 0,
                          build_rate: {$multiply: [100, 
                                                   {$divide: ["$build_count", "$referrer_count"]}]},
@@ -109,7 +107,6 @@ db.product_usage_factory_sessions_list.aggregate([
                          ws_created: 1,
                          user_created: 1,
                          time: 1, 
-                         referrer_count:1, 
                          build_rate:1,
                          run_rate:1,
                          deploy_rate:1,
@@ -156,7 +153,6 @@ db.product_usage_factory_sessions_list.aggregate([
             new BasicDBObject(ProductUsageFactorySessionsList.TIME, 1)
                       .append(ProductUsageFactorySessionsList.WS_CREATED, 1)
                       .append(ProductUsageFactorySessionsList.USER_CREATED, 1)
-                      .append(REFERRER_COUNT, 1)
                       .append(ProductUsageFactorySessionsList.REFERRER, "$_id")
                       .append("_id", 0)
                       .append(BUILD_RATE, getRateOperation("$" + ProductUsageFactorySessionsList.BUILD + "_count", "$" + REFERRER_COUNT))
@@ -176,7 +172,6 @@ db.product_usage_factory_sessions_list.aggregate([
                       .append(ProductUsageFactorySessionsList.WS_CREATED, 1)
                       .append(ProductUsageFactorySessionsList.USER_CREATED, 1)
                       .append(ProductUsageFactorySessionsList.TIME, 1)
-                      .append(REFERRER_COUNT, 1)
                       .append(BUILD_RATE, 1)
                       .append(RUN_RATE, 1)
                       .append(DEPLOY_RATE, 1)                      

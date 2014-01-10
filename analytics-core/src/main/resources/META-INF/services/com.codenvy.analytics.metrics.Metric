@@ -141,3 +141,4 @@ com.codenvy.analytics.metrics.TopReferrersBy30Day
 com.codenvy.analytics.metrics.TopReferrersBy60Day
 com.codenvy.analytics.metrics.TopReferrersBy90Day
 com.codenvy.analytics.metrics.TopReferrersBy365Day
+com.codenvy.analytics.metrics.TopReferrersByLifetime

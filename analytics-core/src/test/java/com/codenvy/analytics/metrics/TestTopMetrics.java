@@ -159,8 +159,8 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(value.size(), 2);
         
         List<ValueData> all = value.getAll();        
-        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1500", "2", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
-        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "300", "1", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
+        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1500", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
+        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "300", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
     }
     
     private void checkTopSessionDataItem(MapValueData item, String time, String factory, String referrer, String convertedSession, String authenticatedSession) {
@@ -174,7 +174,6 @@ public class TestTopMetrics extends BaseTest {
     private void checkTopFactoriesDataItem(MapValueData item, 
                                            String factory, 
                                            String time, 
-                                           String factoryCount,
                                            String buildRate,
                                            String runRate,
                                            String deployRate,
@@ -186,7 +185,6 @@ public class TestTopMetrics extends BaseTest {
                                            String lastSessionDate) {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.FACTORY).getAsString(), factory);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
-        assertEquals(item.getAll().get(AbstractTopFactories.FACTORY_COUNT).getAsString(), factoryCount);
         assertEquals(item.getAll().get(AbstractTopFactories.BUILD_RATE).getAsString(), buildRate);
         assertEquals(item.getAll().get(AbstractTopFactories.RUN_RATE).getAsString(), runRate);
         assertEquals(item.getAll().get(AbstractTopFactories.DEPLOY_RATE).getAsString(), deployRate);
@@ -213,14 +211,13 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(value.size(), 2);
         
         List<ValueData> all = value.getAll();        
-        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1500", "2", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
-        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "300", "1", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
+        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1500", "0.0", "0.0", "0.0", "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
+        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "300", "100.0", "100.0", "100.0", "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
     }
     
     private void checkTopReferrersDataItem(MapValueData item, 
                                            String referrer, 
                                            String time, 
-                                           String referrerCount,
                                            String buildRate,
                                            String runRate,
                                            String deployRate,
@@ -232,7 +229,6 @@ public class TestTopMetrics extends BaseTest {
                                            String lastSessionDate) {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.REFERRER).getAsString(), referrer);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.TIME).getAsString(), time);
-        assertEquals(item.getAll().get(AbstractTopReferrers.REFERRER_COUNT).getAsString(), referrerCount);
         assertEquals(item.getAll().get(AbstractTopReferrers.BUILD_RATE).getAsString(), buildRate);
         assertEquals(item.getAll().get(AbstractTopReferrers.RUN_RATE).getAsString(), runRate);
         assertEquals(item.getAll().get(AbstractTopReferrers.DEPLOY_RATE).getAsString(), deployRate);
