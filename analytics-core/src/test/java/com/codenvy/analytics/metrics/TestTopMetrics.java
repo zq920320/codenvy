@@ -154,9 +154,11 @@ public class TestTopMetrics extends BaseTest {
 
         List<ValueData> all = value.getAll();
         checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1", "1", "1500", "0.0", "0.0", "0.0",
-                                  "50.0", "50.0", "100.0", "0.0", "1360484400000", "1360486800000");
+                                  "50.0", "50.0", "100.0", "0.0",  "" + timeFormat.parse("20130210 10:20:00").getTime(),
+                                  "" + timeFormat.parse("20130210 11:00:00").getTime());
         checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300", "100.0", "100.0", "100.0",
-                                  "0.0", "100.0", "0.0", "100.0", "1360483200000", "1360483200000");
+                                  "0.0", "100.0", "0.0", "100.0",  "" + timeFormat.parse("20130210 10:00:00").getTime(),
+                                  "" + timeFormat.parse("20130210 10:00:00").getTime());
     }
 
     private void checkTopSessionDataItem(MapValueData item, String time, String factory, String referrer,
