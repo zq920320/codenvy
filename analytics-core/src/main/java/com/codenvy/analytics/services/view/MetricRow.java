@@ -36,15 +36,17 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricRow extends AbstractRow {
 
-    private static final String NAME           = "name";
-    private static final String FORMAT         = "format";
-    private static final String DEFAULT_FORMAT = "%,.0f";
-    private static final String DESCRIPTION    = "description";
-    private static final String FIELDS         = "fields";
+    private static final String NAME                 = "name";
+    private static final String FORMAT               = "format";
+    private static final String DEFAULT_FORMAT       = "%,.0f";
+    private static final String DESCRIPTION          = "description";
+    private static final String FIELDS               = "fields";
+    private static final String HIDE_NEGATIVE_VALUES = "hide-negative-values";
 
     private final Metric   metric;
     private final String   format;
     private final String[] fields;
+    private final boolean  hideNegativeValues;
 
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
@@ -52,6 +54,8 @@ public class MetricRow extends AbstractRow {
         metric = MetricFactory.getMetric(parameters.get(NAME));
         format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_FORMAT;
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
+        hideNegativeValues = parameters.containsKey(HIDE_NEGATIVE_VALUES) &&
+                             Boolean.parseBoolean(parameters.get(HIDE_NEGATIVE_VALUES));
     }
 
     @Override
@@ -110,17 +114,27 @@ public class MetricRow extends AbstractRow {
 
         } else if (clazz == LongValueData.class) {
             double value = ((LongValueData)valueData).getAsDouble();
-            String formattedValue = value == 0 ? "" : String.format(format, value);
 
-            singleValue.add(new StringValueData(formattedValue));
+            ValueData formattedValue;
+            if (value == 0 || (value < 0 && hideNegativeValues)) {
+                formattedValue = StringValueData.DEFAULT;
+            } else {
+                formattedValue = new StringValueData(String.format(format, value));
+            }
+
+            singleValue.add(formattedValue);
 
         } else if (clazz == DoubleValueData.class) {
             double value = ((DoubleValueData)valueData).getAsDouble();
-            String formattedValue = value == 0 || Double.isInfinite(value) || Double.isNaN(value)
-                                    ? ""
-                                    : String.format(format, value);
 
-            singleValue.add(new StringValueData(formattedValue));
+            ValueData formattedValue;
+            if (value == 0 || Double.isInfinite(value) || Double.isNaN(value) || (value < 0 && hideNegativeValues)) {
+                formattedValue = StringValueData.DEFAULT;
+            } else {
+                formattedValue = new StringValueData(String.format(format, value));
+            }
+
+            singleValue.add(formattedValue);
         } else {
             throw new IOException("Unsupported class " + clazz);
         }
