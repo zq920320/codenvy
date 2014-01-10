@@ -101,18 +101,15 @@ public class TestTopMetrics extends BaseTest {
         .build());
         
         
-        // TODO doesn't work create user
-        events.add(Event.Builder.createUserCreatedEvent("user1", "user1@gmail.com")
-        .withDate("2013-02-10")
-        .withTime("10:04:00")
-        .build());
+//        // TODO doesn't work create user
+//        events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-1", "anonymoususer_1", "website")
+//                   .withDate("2013-02-10").build());
+//
+//        events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user4@gmail.com").withDate("2013-02-10")
+//                   .build());
+//   
+//        events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com").withDate("2013-02-10").build());
         
-        events.add(Event.Builder.createUserAddedToWsEvent("user1", "tmp-1", "id1", "tmp-1", "user1@gmail.com", "website")
-        .withDate("2013-01-01")
-        .withTime("10:04:00")
-        .build());
-        
-
                 
         File log = LogGenerator.generateLog(events);
 

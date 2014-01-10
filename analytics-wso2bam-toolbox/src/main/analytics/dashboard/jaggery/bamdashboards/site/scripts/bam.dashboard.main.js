@@ -5,39 +5,7 @@ jQuery.fn.doesExist = function(){
 var currentAjaxRequest = null;
 
 $(function () {
-//    $("#server-dd").change(function () {
-//        var selectedServer = $("#server-dd option:selected").text();
-//        $("#service-dd").find('option').remove();
-//        $("#operation-dd").find('option').remove();
-//        if (selectedServer == '') {
-//            triggerCollect();
-//        }
-//        else {
-//            populateServicesCombo(selectedServer);
-//        }
-//    });
-//    $("#service-dd").change(function () {
-//        var selectedServer = $("#server-dd option:selected").text();
-//        var selectedService = $("#service-dd option:selected").text();
-//        $("#operation-dd").find('option').remove();
-//        if (selectedService == '') {
-//            triggerCollect();
-//        }
-//        else {
-//            populateOperationsCombo(selectedServer, selectedService);
-//        }
-//    });
-//    $("#operation-dd").change(function () {
-//        triggerCollect();
-//    });
     $("#clearSelectionBtn").click(function () {
-//        $("#server-dd option:first-child").attr("selected", "selected");
-//        $("#service-dd").find('option').remove();
-//        $("#operation-dd").find('option').remove();
-//        triggerCollect();
-//        $("#service-dd").find('option').remove();
-//        $("#operation-dd").find('option').remove();
-
         // "Filter by" group
         $("#filter-by button").removeClass('btn-primary');
         $("#filter-by input[name='keyword']").val("");
@@ -95,6 +63,17 @@ $(function () {
           triggerCollect(targetDivId);
        }
     });
+    
+    // Metric selectors group
+    $("#metric button").click(function () {
+        $("#metric button").removeClass('btn-primary');
+        $(this).addClass('btn-primary');
+        
+        var targetDivId = $("#metric").attr("target");
+        if (typeof targetDivId != "undefined") {
+           triggerCollect(targetDivId);
+        }
+    });
 });
 
 function triggerCollect(targetDivId) {   
@@ -132,6 +111,12 @@ function triggerCollect(targetDivId) {
           && typeof urlParams["user"] != "undefined") {
        params["user"] = urlParams["user"];       
     }
+    
+    // process metric selector
+    var selectedMetricButton = $("#metric button.btn-primary");
+    if (selectedMetricButton.doesExist()) {
+       params.metric = selectedMetricButton.text();       
+    }    
     
     reloadDiv(params, targetDivId, true);
 };
@@ -326,6 +311,13 @@ function updateCommandButtonsState(params) {
       jQuery("#date-range button").removeClass('btn-primary');
       dateRangeButton.addClass('btn-primary');
    }
+   
+   // update metric selection buttons
+   var metricButtons = jQuery("#metric button"); 
+   if (metricButtons.doesExist()) {
+	  metricButtons.removeClass('btn-primary');
+      jQuery("#metric button:contains('" + params["metric"] + "')").addClass('btn-primary');
+   }
 }
 
 /**
@@ -386,24 +378,6 @@ function populateCombo(id, data) {
 }
 
 $(document).ready(function () {
-//    $.ajax({
-//        url: 'populate_combos_ajaxprocessor.jag',
-//        dataType: 'json',
-//        success: function (result) {
-//
-//            var options = "<option value='__default__'></option>";
-//            for (var i = 0; i < result.length; i++) {
-//                var data = result[i];
-//                for (var key in data) {
-//                    options = options + "<option>" + data[key] + "</option>"
-//                }
-//            }
-//            $("#server-dd").find('option').remove();
-//            $("#server-dd").append(options);
-//        }
-//
-//    });
-
     //If no user action, reload page to prevent session timeout.
     var wintimeout;
 
@@ -417,64 +391,6 @@ $(document).ready(function () {
     });
     setWinTimeout();
 });
-function populateServicesCombo(server) {
-    $.ajax({
-        url: 'populate_combos_ajaxprocessor.jag?server=' + server + '',
-        dataType: 'json',
-        success: function (result) {
-
-            var options = "<option value='__default__'></option>";
-            for (var i = 0; i < result.length; i++) {
-                var data = result[i];
-                for (var key in data) {
-                    options = options + "<option>" + data[key] + "</option>"
-                }
-            }
-
-            $("#service-dd").append(options);
-            triggerCollect();//$("#service-dd").ufd({log:true,addEmphasis: true});
-        }
-
-
-    });
-
-};
-function populateOperationsCombo(server, service) {
-
-    $.ajax({
-        url: 'populate_combos_ajaxprocessor.jag?server=' + server + '&service=' + service + '',
-        dataType: 'json',
-        success: function (result) {
-
-            var options = "<option value='__default__'></option>";
-            for (var i = 0; i < result.length; i++) {
-                var data = result[i];
-                for (var key in data) {
-                    if (data[key] !== null) {
-                        options = options + "<option>" + data[key] + "</option>";
-                    }
-                }
-            }
-
-            $("#operation-dd").append(options);
-            triggerCollect();    //$("#operation-dd").ufd({log:true,addEmphasis: true});
-        }
-    });
-};
-
-
-function reloadIFrame(param) {
-   $("iframe").each(function () {
-       var currentUrl = $(this).attr('src');
-       if (currentUrl.indexOf('?')) {
-           var absUrl = currentUrl.split('?');
-           currentUrl = absUrl[0];
-       }
-       var newUrl = currentUrl + "?timeGroup=" + param.timeGroup;
-       $(this).attr('src', newUrl);
-   });
-};
-
 
 /**
  * Loader

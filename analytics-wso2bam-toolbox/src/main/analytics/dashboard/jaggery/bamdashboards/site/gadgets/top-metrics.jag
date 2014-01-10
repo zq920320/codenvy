@@ -1,0 +1,52 @@
+<%
+include_once("utils.jag");
+
+var uiToDatabaseMap = {}
+
+uiToDatabaseMap.metricPrefix = {
+	"TOP FACTORY SESSIONS": "top_factory_sessions",
+	"TOP FACTORIES": "top_factories",
+	"TOP REFERRERS": "top_referrers"
+};
+var DEFAULT_METRIC_VALUE = "Top Factory Sessions";
+var metric = request.getParameter("metric");
+if (metric == null) {
+	metric = DEFAULT_METRIC_VALUE;
+} else {
+	metric = metric.toUpperCase();
+}
+
+
+uiToDatabaseMap.timeunitSuffix = {
+	"1 DAY": "1day",
+	"7 DAYS": "7day",
+	"30 DAYS": "30day",
+	"60 DAYS": "60day",	
+	"90 DAYS": "90day",	
+	"1 YEAR": "365day",
+	"LIFETIME": "lifetime"
+};
+var DEFAULT_TIME_UNIT_VALUE = "1 DAY";
+var timeGroup = request.getParameter("timeGroup");
+if (timeGroup == null) {
+    timeGroup = DEFAULT_TIME_UNIT_VALUE;
+} else {
+	timeGroup = timeGroup.toUpperCase();
+}
+
+
+var databaseTableMetricPrefix = uiToDatabaseMap.metricPrefix[metric] || uiToDatabaseMap.metricPrefix[DEFAULT_METRIC_VALUE];
+var databaseTableTimeunitSuffix = uiToDatabaseMap.timeunitSuffix[timeGroup] || uiToDatabaseMap.timeunitSuffix[DEFAULT_TIME_UNIT_VALUE];
+var databaseTable = databaseTableMetricPrefix + "_by_" + databaseTableTimeunitSuffix;
+
+var data = getAllResults(databaseTable);
+
+loadCssStyles();
+
+for (var table in data) {
+    printTable(data[table], false);
+}
+
+loadTableHandlers(false);
+
+%>

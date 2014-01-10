@@ -47,7 +47,12 @@
         </div>
         <div class="span10">
             <div class="well topFilteringPanel">
-                <div id="timely-dd" class="btn-group timely-dd-btns left" target="dashboardWidget">
+                <div id="metric" class="btn-group metric-btns left" target="dashboardWidget">
+                    <button class="btn">Top Factory Sessions</button>
+                    <button class="btn">Top Factories</button>
+                    <button class="btn">Top Referrers</button>
+                </div>            
+                <div id="timely-dd" class="btn-group timely-dd-btns right" target="dashboardWidget">
                     <button class="btn">1 Day</button>
                     <button class="btn">7 Days</button>
                     <button class="btn">30 Days</button>
@@ -58,7 +63,7 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/top-factories.jag"></div>
+                <div id="dashboardWidget" class="single-column-gadget" src="gadgets/top-metrics.jag"></div>
             </div>
         </div>
     </div>
@@ -70,7 +75,7 @@
 <script type="text/javascript" src="../navigation.populator.js"></script>
 
 <script>
-   loadDashboardWidget("gadgets/top-factories.jag", "dashboardWidget", true);
+   loadDashboardWidget("gadgets/top-metrics.jag", "dashboardWidget", true);
 </script>
 
 </body>
