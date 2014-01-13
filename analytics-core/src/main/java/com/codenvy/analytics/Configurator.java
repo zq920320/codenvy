@@ -129,6 +129,11 @@ public class Configurator {
         return Integer.parseInt(getString(key));
     }
 
+    /** @return value of the property of the int type it exists in configuration */
+    public static int getInt(String key, int defaultValue) {
+        return exists(key) ? Integer.parseInt(getString(key)) : defaultValue;
+    }
+
     public static Map<String, String> getAll(String keyPrefix) {
         Map<String, String> result = new HashMap<>();
 

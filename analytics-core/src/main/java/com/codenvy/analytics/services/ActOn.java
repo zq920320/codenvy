@@ -19,47 +19,29 @@
 
 package com.codenvy.analytics.services;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketTimeoutException;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.metrics.*;
 
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AbstractUsersProfile;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.UsersStatisticsList;
+import java.io.*;
+import java.net.SocketTimeoutException;
+import java.text.ParseException;
+import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ActOn extends Feature {
-    public static final String FILE_NAME = "ideuserupdate.csv";
+    private static final Logger LOG = LoggerFactory.getLogger(ActOn.class);
+
+    public static final  String FILE_NAME = "ideuserupdate.csv";
+    private static final int    PAGE_SIZE = Configurator.getInt("acton.page.size", 1000);
 
     private static final String AVAILABLE = "acton.available";
-    
-    private static final String PAGE_SIZE_PARAMETER = "acton.page.size";
 
     private static final String MAIL_TEXT    = "acton.mail.text";
     private static final String MAIL_SUBJECT = "acton.mail.subject";
@@ -73,18 +55,7 @@ public class ActOn extends Feature {
     private static final String FTP_MAX_EFFORTS = "acton.ftp.maxEfforts";
     private static final String FTP_AUTH        = "acton.ftp.auth";
 
-    private static final int PAGE_SIZE; 
-    
-    private static final Logger LOG = LoggerFactory.getLogger(ActOn.class);
 
-    static {
-        if (Configurator.exists(PAGE_SIZE_PARAMETER)) {
-            PAGE_SIZE = Configurator.getInt(PAGE_SIZE_PARAMETER);
-        } else {
-            PAGE_SIZE = 1000;
-        }
-    }
-    
     @Override
     public boolean isAvailable() {
         return Configurator.getBoolean(AVAILABLE);
@@ -182,39 +153,37 @@ public class ActOn extends Feature {
                 throw new IOException("File " + file.getName() + " was not transferred to the server");
             }
         }
-    } 
-    
+    }
+
     protected File prepareFile(Map<String, String> context) throws IOException, ParseException {
         File file = new File(Configurator.getTmpDir(), FILE_NAME);
 
-        int currentPage = 1;        
-        Parameters.PER_PAGE.put(context, "" + PAGE_SIZE);        
-
         Map<ValueData, Map<String, ValueData>> usersProfiles = getUsersProfiles();
-        
+        Set<ValueData> activeUsers = getActiveUsersLastMonth(context);
+
+        context = Parameters.PER_PAGE.cloneAndPut(context, "" + PAGE_SIZE);
+
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeader(out);
-            
-            while(true) {
+
+            for (int currentPage = 1; ; currentPage++) {
                 Parameters.PAGE.put(context, "" + currentPage++);
+
                 List<ValueData> usersStatistics = getUsersStatistics(context);
-                        
-                Set<ValueData> activeUsers = getActiveUsersLastMonth(context);
-        
                 writeUsersWithStatistics(activeUsers, usersStatistics, usersProfiles, out);
-    
+
                 if (usersStatistics.size() < PAGE_SIZE) {
                     break;
                 }
             }
-            
+
             writeUsersWithoutStatistics(usersProfiles, out);
         }
-        
+
         return file;
-    }  
-    
-    
+    }
+
+
     private void writeUsersWithoutStatistics(Map<ValueData, Map<String, ValueData>> usersProfiles,
                                              BufferedWriter out) throws IOException {
 
