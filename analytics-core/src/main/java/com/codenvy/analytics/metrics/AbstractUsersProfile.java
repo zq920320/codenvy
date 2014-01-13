@@ -23,6 +23,7 @@ import com.mongodb.DBObject;
 
 import java.text.ParseException;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 abstract public class AbstractUsersProfile extends ReadBasedMetric {
@@ -44,9 +45,17 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
 
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values = filter.get(clauses).split(",");
-            String key = filter == MetricFilter.USER ? USER_EMAIL : filter.name().toLowerCase();
 
-            match.put(key, new BasicDBObject("$in", values));
+            if (filter == MetricFilter.USER) {
+                match.put(USER_EMAIL, new BasicDBObject("$in", values));
+
+            } else if (filter == MetricFilter.USER_COMPANY) {
+                Pattern company = Pattern.compile(filter.get(clauses).replace(",", "|"), Pattern.CASE_INSENSITIVE);
+                match.put(USER_COMPANY, company);
+
+            } else {
+                match.put(filter.toString().toLowerCase(), new BasicDBObject("$in", values));
+            }
         }
 
         return new BasicDBObject("$match", match);
