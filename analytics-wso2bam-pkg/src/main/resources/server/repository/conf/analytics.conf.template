@@ -60,6 +60,7 @@ reports.mail.subject=[period] Analytics reports
 
 # ActOn configuration
 acton.available=true
+acton.page.size=1000
 acton.mail.text=Hi.\n\nNew file was transferred to ActOn.\n\nBest regards, Analytics Team.
 acton.mail.subject=ActOn is updated
 acton.mail.to=
