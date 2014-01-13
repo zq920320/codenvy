@@ -180,8 +180,11 @@ function reloadThroughAjax(containerToReload, url, callback) {
    
    var needLoader = true;
    
+   var ABORT_LOADING_MESSAGE = "(<i>loading has been aborted</i>)";
+   
    // display loader after the 2 seconds of timeout
    var timeoutInMillisec = 2000;
+      
    setTimeout(function() {
       if (needLoader) {
     	  displayLoader(); // display loader
@@ -194,8 +197,12 @@ function reloadThroughAjax(containerToReload, url, callback) {
     }).fail(function(data, textStatus) {
       needLoader = false;
       hideLoader();
-       
-      containerToReload.html("Error of processing request: " + textStatus);
+      
+      if (textStatus == "abort") {
+    	  containerToReload.html(ABORT_LOADING_MESSAGE);
+      } else {
+    	  containerToReload.html("Error of processing request: " + textStatus);
+      }
        
     }).done(function(data) {
       needLoader = false;
