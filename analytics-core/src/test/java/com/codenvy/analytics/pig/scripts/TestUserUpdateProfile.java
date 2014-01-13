@@ -49,9 +49,9 @@ public class TestUserUpdateProfile extends BaseTest {
 
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company2", "11", "1")
                         .withDate("2013-01-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
                         .withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
@@ -65,11 +65,11 @@ public class TestUserUpdateProfile extends BaseTest {
         PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
 
 
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company-2", "22", "2")
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company1", "22", "2")
                         .withDate("2013-01-02").build());
-        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company-2", "22", "2")
+        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company3", "22", "2")
                         .withDate("2013-01-02").build());
-        events.add(Event.Builder.createUserUpdateProfile("user4@gmail.com", "f4", "l4", "company", "22", "")
+        events.add(Event.Builder.createUserUpdateProfile("user4@gmail.com", "f4", "l4", "company4", "22", "")
                         .withDate("2013-01-02").build());
         log = LogGenerator.generateLog(events);
 
@@ -97,28 +97,28 @@ public class TestUserUpdateProfile extends BaseTest {
 
             if (userEmail.getAsString().equals("user1@gmail.com")) {
                 assertEquals(all.get("user_last_name").getAsString(), "l3");
-                assertEquals(all.get("user_company").getAsString(), "company-2");
+                assertEquals(all.get("user_company").getAsString(), "company1");
                 assertEquals(all.get("user_phone").getAsString(), "22");
                 assertEquals(all.get("user_job").getAsString(), "2");
 
             } else if (userEmail.getAsString().equals("user2@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f2");
                 assertEquals(all.get("user_last_name").getAsString(), "l2");
-                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_company").getAsString(), "company2");
                 assertEquals(all.get("user_phone").getAsString(), "11");
                 assertEquals(all.get("user_job").getAsString(), "1");
 
             } else if (userEmail.getAsString().equals("user3@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
                 assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company-2");
+                assertEquals(all.get("user_company").getAsString(), "company3");
                 assertEquals(all.get("user_phone").getAsString(), "22");
                 assertEquals(all.get("user_job").getAsString(), "2");
 
             } else if (userEmail.getAsString().equals("user4@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
                 assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company");
+                assertEquals(all.get("user_company").getAsString(), "company4");
                 assertEquals(all.get("user_phone").getAsString(), "22");
                 assertEquals(all.get("user_job").getAsString(), "");
             }
@@ -144,41 +144,89 @@ public class TestUserUpdateProfile extends BaseTest {
         assertEquals(all.get("_id").getAsString(), "user1@gmail.com");
         assertEquals(all.get("user_first_name").getAsString(), "f3");
         assertEquals(all.get("user_last_name").getAsString(), "l3");
-        assertEquals(all.get("user_company").getAsString(), "company-2");
+        assertEquals(all.get("user_company").getAsString(), "company1");
         assertEquals(all.get("user_phone").getAsString(), "22");
         assertEquals(all.get("user_job").getAsString(), "2");
     }
 
     @Test
-    public void testUsersByCompany() throws Exception {
+    public void testSearchUsersByCompany() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, "company1");
+
+        Metric metric = new TestUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 1);
+    }
+
+    @Test
+    public void testSearchUsersByCompanyWildCardsUseCase1() throws Exception {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "company");
 
         Metric metric = new TestUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
-        assertEquals(value.size(), 2);
-
-        for (ValueData object : value.getAll()) {
-            MapValueData item = (MapValueData)object;
-            Map<String, ValueData> all = item.getAll();
-
-            if (all.get("_id").getAsString().equals("user2@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f2");
-                assertEquals(all.get("user_last_name").getAsString(), "l2");
-                assertEquals(all.get("user_company").getAsString(), "company");
-                assertEquals(all.get("user_phone").getAsString(), "11");
-                assertEquals(all.get("user_job").getAsString(), "1");
-
-            } else if (all.get("_id").getAsString().equals("user4@gmail.com")) {
-                assertEquals(all.get("user_first_name").getAsString(), "f4");
-                assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company");
-                assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "");
-            }
-        }
+        assertEquals(value.size(), 4);
     }
+
+    @Test
+    public void testSearchUsersByCompanyWildCardsUseCase2() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, "comp.ny");
+
+        Metric metric = new TestUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 4);
+    }
+
+    @Test
+    public void testSearchUsersByCompanyWildCardsUseCase3() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, ".*cOmp.n");
+
+        Metric metric = new TestUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 4);
+    }
+
+    @Test
+    public void testSearchUsersByCompanyWildCardsUseCase4() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, "comp..ny");
+
+        Metric metric = new TestUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 0);
+    }
+
+    @Test
+    public void testSearchUsersByCompanyCaseInsensitive() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, "COMPANY2");
+
+        Metric metric = new TestUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 1);
+    }
+
+
+    @Test
+    public void testSearchUsersByCompanyWildCardsUseCase5() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, "company1,company2");
+
+        Metric metric = new TestUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 2);
+    }
+
 
     public class TestUsersProfiles extends UsersProfiles {
         @Override
