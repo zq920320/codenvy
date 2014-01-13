@@ -28,13 +28,13 @@
 		position:relative;
 		float:left;
 		width:68%;
+	    border-right:2px dotted #C8B4B4;
 	}
 	#dashboardLogin{
 		position:relative;
 		float:right;
 		width:27%;
 		min-width:240px;
-		border-left:2px dotted #C8B4B4;
 	}
 	#btnSignIn{
 		font-family:"Calibri","Lucida Grande","Lucida Sans","Microsoft Sans Serif","Lucida Sans Unicode","Verdana","Sans-serif","trebuchet ms" !important;
@@ -102,8 +102,17 @@
 							<img src="site/images/user-guide.gif"></a>
 					</span>	
 					<div class="descFeature">
-						<h5><a href="http://docs.codenvy.com/" target="_blank">User Guide</a></h5>
+						<h5><a href="http://docs.codenvy.com/" target="_blank">Codenvy Docs</a></h5>
 						<p>Codenvy documentation.</p>
+					</div>
+				</div>
+				<div class="featureItem">
+					<span class="imgIconHolder">
+						<a class="imgIcon" href="https://groups.google.com/a/codenvy.com/forum/#!forum/codenvy" target="_blank"><img src="site/images/user-guide.gif"></a>
+					</span>	
+					<div class="descFeature">
+						<h5><a href="https://groups.google.com/a/codenvy.com/forum/#!forum/codenvy" target="_blank">Knowledge Base</a></h5>
+						<p>For immediate guidance on many common questions, including those regarding setup, configuration, and maintenance.</p>
 					</div>
 				</div>
 				<div class="featureItem">
@@ -117,12 +126,20 @@
 				</div>
 				<div class="featureItem">
 					<span class="imgIconHolder">
-						<a class="imgIcon" href="https://wso2.org/jira/browse/BAM" target="_blank"><img src="site/images/issue-tracker.gif"></a>
+						<a class="imgIcon" href="https://codenvy.uservoice.com/forums/183121-general" target="_blank"><img src="site/images/issue-tracker.gif"></a>
 					</span>	
 					<div class="descFeature">
-						<h5><a href="https://wso2.org/jira/browse/BAM" target="_blank">
-                                        Issue Tracker</a></h5>
-                                    <p>Users are encouraged to report issues &amp; suggest improvements using the JIRA issue tracker. In addition, users can observe the status of the reported issues in progress.</p>
+						<h5><a href="https://codenvy.uservoice.com/forums/183121-general" target="_blank">Feature Vote</a></h5>
+						<p>For those who have an enhancement request.</p>
+					</div>
+				</div>
+				<div class="featureItem">
+					<span class="imgIconHolder">
+						<a class="imgIcon" href="http://status.codenvy.com/" target="_blank"><img src="site/images/issue-tracker.gif"></a>
+					</span>	
+					<div class="descFeature">
+						<h5><a href="http://status.codenvy.com/" target="_blank">Status Page</a></h5>
+						<p>Please check our status page for the latest updates on our operational activity, maintenance windows, and incidents.</p>
 					</div>
 				</div>
 				<div class="featureItem">
@@ -130,10 +147,8 @@
 						<a class="imgIcon" href="https://codenvy.com/contact/" target="_blank"><img src="site/images/mailing-list.gif"></a>
 					</span>	
 					<div class="descFeature">
-						<h5><a href="https://codenvy.com/contact/" target="_blank">
-                                        Contact Us</a></h5>
-
-                                    <p>Report issues, provide feedback &amp; get help.</p>
+						<h5><a href="https://codenvy.com/contact/" target="_blank">Contact Us</a></h5>
+						<p>Report issues, provide feedback &amp; get help.</p>
 					</div>
 				</div>
 			</div>
