@@ -85,20 +85,7 @@
         <span class="icon-bar"></span>
       </a>
 
-      <a class="brand" href="#"><img src="site/images/bamlogo.png" alt=""><span style="color: #B4D8FF;margin: 0 10px;">Dashboard</span></a>
-      <!--<div class="btn-group pull-right">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          <i class="icon-user"></i> Username
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="#">Profile</a></li>
-          <li class="divider"></li>
-          <li><a href="#">Sign Out</a></li>
-        </ul>
-      </div>
-      <div class="nav-collapse">
-      </div>--><!--/.nav-collapse -->
+      <a class="brand" href="https://codenvy.com"><img src="site/images/codenvy-logo.png" alt=""></a>
     </div>
   </div>
 </div>
@@ -111,20 +98,20 @@
 			<div id="dashboardDeatils">
 				<div class="featureItem">
 					<span class="imgIconHolder">
-						<a class="imgIcon" href="http://docs.wso2.org/wiki/display/BAM230/WSO2+Business+Activity+Monitor+Documentation" target="_blank">
+						<a class="imgIcon" href="http://docs.codenvy.com/" target="_blank">
 							<img src="site/images/user-guide.gif"></a>
 					</span>	
 					<div class="descFeature">
-						<h5><a href="http://docs.wso2.org/wiki/display/BAM230/WSO2+Business+Activity+Monitor+Documentation" target="_blank">User Guide</a></h5>
-						<p>WSO2 Carbon user guide.</p>
+						<h5><a href="http://docs.codenvy.com/" target="_blank">User Guide</a></h5>
+						<p>Codenvy documentation.</p>
 					</div>
 				</div>
 				<div class="featureItem">
 					<span class="imgIconHolder">
-						<a class="imgIcon" href="http://wso2.org/forum/967" target="_blank"><img src="site/images/forum.gif"></a>
+						<a class="imgIcon" href="http://blog.codenvy.com/" target="_blank"><img src="site/images/forum.gif"></a>
 					</span>
 					<div class="descFeature">
-						<h5><a href="http://wso2.org/forum/967" target="_blank">Forum</a></h5>
+						<h5><a href="http://blog.codenvy.com/" target="_blank">Blog</a></h5>
 						<p>The interactive message board for sharing information, questions and comments about WSO2 products.</p>
 					</div>
 				</div>
@@ -140,13 +127,13 @@
 				</div>
 				<div class="featureItem">
 					<span class="imgIconHolder">
-						<a class="imgIcon" href="http://wso2.org/mail" target="_blank"><img src="site/images/mailing-list.gif"></a>
+						<a class="imgIcon" href="https://codenvy.com/contact/" target="_blank"><img src="site/images/mailing-list.gif"></a>
 					</span>	
 					<div class="descFeature">
-						<h5><a href="http://wso2.org/mail" target="_blank">
-                                        Mailing Lists</a></h5>
+						<h5><a href="https://codenvy.com/contact/" target="_blank">
+                                        Contact Us</a></h5>
 
-                                    <p>Report issues, provide feedback &amp; get help from our mailing lists.</p>
+                                    <p>Report issues, provide feedback &amp; get help.</p>
 					</div>
 				</div>
 			</div>
@@ -157,18 +144,10 @@
 			</div>
 		</div>
 	</div>
-      
+
     </div><!--/span-->
   </div><!--/row-->
   <hr>
-
-  <footer>
-    <p class="wso2copyRight_footer">&copy; <a href="http://wso2.org">WSO2</a> Inc</p>
-    <span class="wso2Logo_footer">
-        <a class="wso2" target="_blank" href="http://www.wso2.com"></a>
-    </span>
-  </footer>
-	
 </div><!--/.fluid-container-->
 
 <!-- Le javascript
