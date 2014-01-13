@@ -24,6 +24,7 @@ import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricFilter {
+    _ID,
     DATE,
 
     WS,

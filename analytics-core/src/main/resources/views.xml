@@ -549,7 +549,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_profiles_list"/>
                 <parameter key="fields"
-                           value="date,user_first_name,user_last_name,user_company,user_phone,user_job"/>
+                           value="_id,user_first_name,user_last_name,user_company,user_phone,user_job"/>
             </row>
         </section>
     </view>

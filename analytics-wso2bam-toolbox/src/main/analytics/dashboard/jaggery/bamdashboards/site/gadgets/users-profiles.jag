@@ -14,7 +14,7 @@ var DEFAULT_ORDER_PREFIX = ASCENDING_ORDER_PREFIX;
 
 /** see server-side mapping at the analytics-core/src/main/resources/views.xml in view element with name "users-profiles" */
 var databaseToUIMap = {
-    databaseTableColumns: ["date",  "user_first_name", "user_last_name", "user_company",   "user_job"],
+    databaseTableColumns: ["_id",   "user_first_name", "user_last_name", "user_company",   "user_job"],
     uiTableColumns:       ["Email", "First Name",      "Last Name",      "Company",        "Job"],
     jagQueryParameters:   ["Email", "First Name",      "Last Name",    "Company"]
 }
