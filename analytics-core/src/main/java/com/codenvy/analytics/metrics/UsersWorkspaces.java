@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,22 +17,15 @@
  */
 package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class UsersActivityList extends AbstractListValueResulted {
+/** @author Dmytro Nochevnov */
+public class UsersWorkspaces extends AbstractCount {
 
-    public static final String MESSAGE = "message";
-
-    public UsersActivityList() {
-        super(MetricType.USERS_ACTIVITY_LIST);
-    }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{DATE,MESSAGE};
+    public UsersWorkspaces() {
+        super(MetricType.USERS_WORKSPACES, MetricType.USERS_TIME_IN_WORKSPACES_LIST);
     }
 
     @Override
     public String getDescription() {
-        return "Users' actions";
+        return "The total number of users workspaces";
     }
 }

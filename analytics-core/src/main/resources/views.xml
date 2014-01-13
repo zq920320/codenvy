@@ -587,7 +587,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_time_in_workspaces_list"/>
-                <parameter key="fields" value="date,sessions,time"/>
+                <parameter key="fields" value="_id,sessions,time"/>
             </row>
         </section>
     </view>
@@ -595,12 +595,13 @@
     <view name="user_activity" on-demand="true">
         <section name="user_activity">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Console Log"/>
+                <parameter key="titles" value="Date,Console Log"/>
 
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_activity_list"/>
-                <parameter key="fields" value="message"/>
+                <parameter key="fields" value="date,message"/>
+                <parameter key="date-fields" value="date"/>
             </row>
         </section>
     </view>

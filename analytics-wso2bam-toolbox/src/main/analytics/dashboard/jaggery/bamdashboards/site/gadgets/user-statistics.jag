@@ -11,8 +11,9 @@ var queryParams = extractUrlParamsForRestService(request.getQueryString());
 // table names in order of receiving from server
 var databaseToUIMap = {
    databaseViews: ["user_data", "user-sessions", "user_workspace_data", "user_activity"],
-   tablePageCountResources: [undefined, "product_usage_sessions", undefined, "users_activity"],
-   uiTables: ["User Statistics", "Sessions", "Workspaces", "User Logs"]
+   tablePageCountResources: [undefined, "product_usage_sessions", "users_workspaces", "users_activity"],
+   uiTables: ["User Statistics", "Sessions", "Workspaces", "User Logs"],
+   sort: [undefined, "-date", undefined, "-date"]
 };
 
 // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
@@ -34,6 +35,11 @@ for (var i = 0; i < databaseToUIMap.databaseViews.length; i++) {
    print("<div class='header'>" + databaseToUIMap.uiTables[i] + "</div>");
    print("<div class='body'>");
 
+   // process sorting
+   if (typeof databaseToUIMap.sort[i] != "undefined") {
+  	 queryParams.sort = databaseToUIMap.sort[i];
+    }
+   
    if (typeof databaseToUIMap.tablePageCountResources[i] != "undefined") {
       //process pagination
       var currentPageNumber = queryParams[databaseToUIMap.databaseViews[i]];  // search on table page number in parameter "{ui_table_name}={page_number}"
@@ -68,7 +74,7 @@ print("</div>");
 print("</div>");
 
 function printTableNavigation(tablePageCountResource, currentPageNumber, queryParams, tableName) {
-   var pageCount = Math.ceil(getMetricValue(tablePageCountResource, queryParams) / ONE_PAGE_ROWS_COUNT);  // TODO uncomment   
+   var pageCount = Math.ceil(getMetricValue(tablePageCountResource, queryParams) / ONE_PAGE_ROWS_COUNT);
    if (pageCount > 1) {
       var queryString = USERS_OVERVIEW_PAGE_LINK + "?" + constructRequestQueryString(queryParams);
 
