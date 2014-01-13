@@ -4,9 +4,9 @@
 <head>
 <title>Business Activity Monitor Dashboard</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" type="text/css" href="resources/bootstrap/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="resources/bootstrap/css/bootstrap-responsive.min.css" />
-<link rel="stylesheet" type="text/css" href="resources/css/bam-dashboard-common-styles.css" />
+<link rel="stylesheet" type="text/css" href="site/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="site/bootstrap/css/bootstrap-responsive.min.css" />
+<link rel="stylesheet" type="text/css" href="site/css/bam-dashboard-common-styles.css" />
 <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -85,7 +85,7 @@
         <span class="icon-bar"></span>
       </a>
 
-      <a class="brand" href="#"><img src="resources/images/bamlogo.png" alt=""><span style="color: #B4D8FF;margin: 0 10px;">Dashboard</span></a>
+      <a class="brand" href="#"><img src="site/images/bamlogo.png" alt=""><span style="color: #B4D8FF;margin: 0 10px;">Dashboard</span></a>
       <!--<div class="btn-group pull-right">
         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
           <i class="icon-user"></i> Username
@@ -112,7 +112,7 @@
 				<div class="featureItem">
 					<span class="imgIconHolder">
 						<a class="imgIcon" href="http://docs.wso2.org/wiki/display/BAM230/WSO2+Business+Activity+Monitor+Documentation" target="_blank">
-							<img src="resources/images/user-guide.gif"></a>
+							<img src="site/images/user-guide.gif"></a>
 					</span>	
 					<div class="descFeature">
 						<h5><a href="http://docs.wso2.org/wiki/display/BAM230/WSO2+Business+Activity+Monitor+Documentation" target="_blank">User Guide</a></h5>
@@ -121,7 +121,7 @@
 				</div>
 				<div class="featureItem">
 					<span class="imgIconHolder">
-						<a class="imgIcon" href="http://wso2.org/forum/967" target="_blank"><img src="resources/images/forum.gif"></a>
+						<a class="imgIcon" href="http://wso2.org/forum/967" target="_blank"><img src="site/images/forum.gif"></a>
 					</span>
 					<div class="descFeature">
 						<h5><a href="http://wso2.org/forum/967" target="_blank">Forum</a></h5>
@@ -130,7 +130,7 @@
 				</div>
 				<div class="featureItem">
 					<span class="imgIconHolder">
-						<a class="imgIcon" href="https://wso2.org/jira/browse/BAM" target="_blank"><img src="resources/images/issue-tracker.gif"></a>
+						<a class="imgIcon" href="https://wso2.org/jira/browse/BAM" target="_blank"><img src="site/images/issue-tracker.gif"></a>
 					</span>	
 					<div class="descFeature">
 						<h5><a href="https://wso2.org/jira/browse/BAM" target="_blank">
@@ -140,7 +140,7 @@
 				</div>
 				<div class="featureItem">
 					<span class="imgIconHolder">
-						<a class="imgIcon" href="http://wso2.org/mail" target="_blank"><img src="resources/images/mailing-list.gif"></a>
+						<a class="imgIcon" href="http://wso2.org/mail" target="_blank"><img src="site/images/mailing-list.gif"></a>
 					</span>	
 					<div class="descFeature">
 						<h5><a href="http://wso2.org/mail" target="_blank">
@@ -174,8 +174,8 @@
 <!-- Le javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script type="text/javascript" src="resources/scripts/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="resources/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="site/scripts/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="site/bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript" src="bamdashboard.js"></script>
 <script type="text/javascript">
 	$(function(){
