@@ -23,6 +23,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.BasicDBObject;
@@ -117,7 +118,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      * The date field contains the date of the event. The only exceptions related to user's profile
      * metrics.
      *
-     * @see AbstractUsersProfile
+     * @see com.codenvy.analytics.metrics.users.AbstractUsersProfile
      */
     private void setDateFilter(Map<String, String> clauses, BasicDBObject match) throws ParseException {
         DBObject dateFilter = new BasicDBObject();

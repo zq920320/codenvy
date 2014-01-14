@@ -38,7 +38,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
     private final Metric addedMetric;
     private final Metric removedMetric;
 
-    CumulativeMetric(MetricType metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
+    public CumulativeMetric(MetricType metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
         super(metricType);
 
         this.addedMetric = addedMetric;
