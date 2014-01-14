@@ -36,10 +36,7 @@ public class MonthlyFrequencyConfiguration extends AbstractFrequencyConfiguratio
     }
 
     @Override
-    public Map<String, String> initContext(Map<String, String> context) throws ParseException {
-        context = Utils.clone(context);
-        Utils.putTimeUnit(context, Parameters.TimeUnit.MONTH);
-        Utils.initDateInterval(Utils.getPrevToDate(context), context);
-        return context;
+    public Parameters.TimeUnit getTimeUnit() {
+        return Parameters.TimeUnit.MONTH;
     }
 }

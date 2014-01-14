@@ -36,10 +36,7 @@ public class WeeklyFrequencyConfiguration extends AbstractFrequencyConfiguration
     }
 
     @Override
-    public Map<String, String> initContext(Map<String, String> context) throws ParseException {
-        context = Utils.clone(context);
-        Utils.putTimeUnit(context, Parameters.TimeUnit.WEEK);
-        Utils.initDateInterval(Utils.getPrevToDate(context), context);
-        return context;
+    public Parameters.TimeUnit getTimeUnit() {
+        return Parameters.TimeUnit.WEEK;
     }
 }

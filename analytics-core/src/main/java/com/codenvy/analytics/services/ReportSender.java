@@ -106,7 +106,7 @@ public class ReportSender extends Feature {
                                                                          InstantiationException,
                                                                          IllegalAccessException {
 
-        String subject = Configurator.getString(MAIL_SUBJECT).replace("[period]", getPeriod(frequency));
+        String subject = Configurator.getString(MAIL_SUBJECT).replace("[period]", frequency.getTimeUnit().name());
 
         for (String recipient : recipients.getRecipients()) {
             for (String email : recipientsHolder.getEmails(recipient, context)) {
@@ -161,21 +161,6 @@ public class ReportSender extends Feature {
         ContextModifier contextModifier = (ContextModifier)clazz.getConstructor().newInstance();
 
         return contextModifier.update(context);
-    }
-
-    private String getPeriod(AbstractFrequencyConfiguration frequency) {
-        if (frequency instanceof DailyFrequencyConfiguration) {
-            return "Daily";
-
-        } else if (frequency instanceof WeeklyFrequencyConfiguration) {
-            return "Weekly";
-
-        } else if (frequency instanceof MonthlyFrequencyConfiguration) {
-            return "Monthly";
-
-        }
-
-        return "";
     }
 
     private ReportsConfiguration readConfiguration() throws ConfigurationManagerException {

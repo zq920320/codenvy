@@ -17,29 +17,70 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
+import com.codenvy.organization.client.AccountManager;
+import com.codenvy.organization.exception.OrganizationServiceException;
+import com.codenvy.organization.model.Account;
+import com.codenvy.organization.model.User;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /** @author Anatoliy Bazko */
 public class ActiveSubscriptionsRecipientGroup extends AbstractRecipientGroup {
+    // TODO configuration
+    private final AccountManager accountManager;
 
-    public ActiveSubscriptionsRecipientGroup(List<ParameterConfiguration> parameters) {
+    public ActiveSubscriptionsRecipientGroup(List<ParameterConfiguration> parameters)
+            throws OrganizationServiceException {
         super(parameters);
+
+        accountManager = new AccountManager();
     }
 
     @Override
     public Set<String> getEmails(Map<String, String> context) throws IOException {
         Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_ORG_ID_SET);
-        ValueData activeOrgId = metric.getValue(context);
+        SetValueData activeOrgId = (SetValueData)metric.getValue(context);
 
-        return null;
+        Set<String> emails = new HashSet<>();
+        for (ValueData valueData : activeOrgId.getAll()) {
+            Account account = getAccountById(valueData);
+
+            if (isActiveSubscriber(account)) {
+                User accountOwner = getAccountOwner(account);
+                Set<String> aliases = accountOwner.getAliases(); // TODO
+            }
+        }
+
+        return emails;
+    }
+
+    private User getAccountOwner(Account account) throws IOException {
+        try {
+            return accountManager.getAccountOwner(account.getName());
+        } catch (OrganizationServiceException e) {
+            throw new IOException(e);
+        }
+    }
+
+    private Account getAccountById(ValueData valueData) throws IOException {
+        try {
+            return accountManager.getAccountById(valueData.getAsString());
+        } catch (OrganizationServiceException e) {
+            throw new IOException(e);
+        }
+    }
+
+    private boolean isActiveSubscriber(Account account) throws IOException {
+        return false;
     }
 }

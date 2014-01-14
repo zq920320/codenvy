@@ -17,6 +17,9 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Parameters;
+
 import javax.xml.bind.annotation.XmlElement;
 import java.text.ParseException;
 import java.util.Map;
@@ -45,7 +48,14 @@ public abstract class AbstractFrequencyConfiguration {
         return contextModifier;
     }
 
+    public Map<String, String> initContext(Map<String, String> context) throws ParseException {
+        context = Utils.clone(context);
+        Utils.putTimeUnit(context, getTimeUnit());
+        Utils.initDateInterval(Utils.getPrevToDate(context), context);
+        return context;
+    }
+
     abstract public boolean isAppropriateDateToSendReport(Map<String, String> context) throws ParseException;
 
-    abstract public Map<String, String> initContext(Map<String, String> context) throws ParseException;
+    abstract public Parameters.TimeUnit getTimeUnit();
 }
