@@ -15,20 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.ide_usage.edit;
 
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
-package com.codenvy.analytics.metrics;
+/** @author Alexander Reshetnyak */
+public class IdeUsageEditRemoveBlockComment extends AbstractIdeUsage {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeJar extends AbstractProjectType {
-
-    public ProjectTypeJar() {
-        super(MetricType.PROJECT_TYPE_JAR, new String[]{ProjectTypes.JAR});
+    public IdeUsageEditRemoveBlockComment() {
+        super(MetricType.IDE_USAGE_EDIT_REMOVE_BLOCK_COMMENT, new String[]{IdeUsageTypes.EDIT_REMOVE_BLOCK_COMMENT});
     }
-
 
     @Override
     public String getDescription() {
-        return "The number of Java Jar projects";
+        return "The number of 'Edit->RemoveBlockComment' operations";
     }
 }

@@ -29,8 +29,16 @@ public class MetricFactory {
     private static final ConcurrentHashMap<String, Metric> metrics = new ConcurrentHashMap<>();
 
     static {
-        for (Metric metric : ServiceLoader.load(Metric.class)) {
-            metrics.put(metric.getName(), metric);
+        try {
+            for (Metric metric : ServiceLoader.load(Metric.class)) {
+                Metric existed = metrics.put(metric.getName(), metric);
+                if (existed != null) {
+                    throw new IllegalStateException("There is 2 metrics with name " + existed.getName());
+                }
+            }
+
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 

@@ -15,20 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.ide_usage.view;
 
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
-package com.codenvy.analytics.metrics;
+/** @author Alexander Reshetnyak */
+public class IdeUsageViewProperties extends AbstractIdeUsage {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeJar extends AbstractProjectType {
-
-    public ProjectTypeJar() {
-        super(MetricType.PROJECT_TYPE_JAR, new String[]{ProjectTypes.JAR});
+    public IdeUsageViewProperties() {
+        super(MetricType.IDE_USAGE_VIEW_PROPERTIES, new String[]{IdeUsageTypes.VIEW_PROPERTIES});
     }
-
 
     @Override
     public String getDescription() {
-        return "The number of Java Jar projects";
+        return "The number of 'View->Properties' operations";
     }
 }

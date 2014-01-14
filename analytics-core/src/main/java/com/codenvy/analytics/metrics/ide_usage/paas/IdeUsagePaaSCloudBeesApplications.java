@@ -15,20 +15,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.ide_usage.paas;
 
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
-package com.codenvy.analytics.metrics;
+/** @author Alexander Reshetnyak */
+public class IdeUsagePaaSCloudBeesApplications extends AbstractIdeUsage {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeJar extends AbstractProjectType {
-
-    public ProjectTypeJar() {
-        super(MetricType.PROJECT_TYPE_JAR, new String[]{ProjectTypes.JAR});
+    public IdeUsagePaaSCloudBeesApplications() {
+        super(MetricType.IDE_USAGE_PAAS_CLOUD_BEES_APPLICATIONS,
+              new String[]{IdeUsageTypes.PAAS_CLOUD_BEES_APPLICATIONS});
     }
-
 
     @Override
     public String getDescription() {
-        return "The number of Java Jar projects";
+        return "The number of 'PaaS->CloudBees->Applications' operations";
     }
 }

@@ -15,20 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.ide_usage.edit;
 
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
-package com.codenvy.analytics.metrics;
+/** @author Alexander Reshetnyak */
+public class IdeUsageEditHideLineNumbers extends AbstractIdeUsage {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeJar extends AbstractProjectType {
-
-    public ProjectTypeJar() {
-        super(MetricType.PROJECT_TYPE_JAR, new String[]{ProjectTypes.JAR});
+    public IdeUsageEditHideLineNumbers() {
+        super(MetricType.IDE_USAGE_EDIT_HIDE_LINE_NUMBERS, new String[]{IdeUsageTypes.EDIT_HIDE_LINE_NUMBERS});
     }
-
 
     @Override
     public String getDescription() {
-        return "The number of Java Jar projects";
+        return "The number of 'Edit->HideLineNumbers' operations";
     }
 }

@@ -15,20 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.ide_usage.run;
 
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
-package com.codenvy.analytics.metrics;
+/** @author Alexander Reshetnyak */
+public class IdeUsageRunStopApplication extends AbstractIdeUsage {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeJar extends AbstractProjectType {
-
-    public ProjectTypeJar() {
-        super(MetricType.PROJECT_TYPE_JAR, new String[]{ProjectTypes.JAR});
+    public IdeUsageRunStopApplication() {
+        super(MetricType.IDE_USAGE_RUN_STOP_APPLICATION, new String[]{IdeUsageTypes.RUN_STOP_APPLICATION});
     }
-
 
     @Override
     public String getDescription() {
-        return "The number of Java Jar projects";
+        return "The number of 'Run->StopApplication' operations";
     }
 }

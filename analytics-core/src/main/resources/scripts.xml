@@ -133,6 +133,14 @@
         <parameter key="STORAGE_TABLE" value="project_types"/>
     </script>
     <script name="events_by_type">
+        <description>IDE user usage</description>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="EVENT" value="ide-usage"/>
+        <parameter key="PARAM" value="ITEM"/>
+        <parameter key="STORAGE_TABLE" value="ide_usages"/>
+    </script>
+    <script name="events_by_type">
         <description>User's authentication types</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>

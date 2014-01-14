@@ -15,20 +15,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.ide_usage.edit;
 
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
+import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
-package com.codenvy.analytics.metrics;
+/** @author Alexander Reshetnyak */
+public class IdeUsageEditSourceGenerateGettesAndSetters extends AbstractIdeUsage {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeJar extends AbstractProjectType {
-
-    public ProjectTypeJar() {
-        super(MetricType.PROJECT_TYPE_JAR, new String[]{ProjectTypes.JAR});
+    public IdeUsageEditSourceGenerateGettesAndSetters() {
+        super(MetricType.IDE_USAGE_EDIT_SOURCE_GENERATE_GETTES_AND_SETTERS,
+              new String[]{IdeUsageTypes.EDIT_SOURCE_GENERATE_GETTES_AND_SETTERS});
     }
-
 
     @Override
     public String getDescription() {
-        return "The number of Java Jar projects";
+        return "The number of 'Edit->Source->GenerateGettesAndSetters' operations";
     }
 }
