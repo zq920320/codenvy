@@ -18,10 +18,10 @@
 package com.codenvy.analytics.metrics;
 
 /** @author Dmytro Nochevnov */
-public class UsersWorkspaces extends AbstractCount {
+public class UsersTimeInWorkspaces extends AbstractCount {
 
-    public UsersWorkspaces() {
-        super(MetricType.USERS_WORKSPACES, MetricType.USERS_TIME_IN_WORKSPACES_LIST);
+    public UsersTimeInWorkspaces() {
+        super(MetricType.USERS_TIME_IN_WORKSPACES, MetricType.USERS_TIME_IN_WORKSPACES_LIST);
     }
 
     @Override

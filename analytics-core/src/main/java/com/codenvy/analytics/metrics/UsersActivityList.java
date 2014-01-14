@@ -28,7 +28,7 @@ public class UsersActivityList extends AbstractListValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{DATE,MESSAGE};
+        return new String[]{DATE, MESSAGE};
     }
 
     @Override
