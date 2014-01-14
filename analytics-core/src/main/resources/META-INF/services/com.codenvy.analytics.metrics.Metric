@@ -12,8 +12,8 @@ com.codenvy.analytics.metrics.users.CreatedUsersFromFactory
 com.codenvy.analytics.metrics.users.CreatedUsersFromAuth
 com.codenvy.analytics.metrics.users.RemovedUsers
 com.codenvy.analytics.metrics.users.TotalUsers
-com.codenvy.analytics.metrics.users.UsersLoggedInWithGooglePercent.ActiveUsersSet
-com.codenvy.analytics.metrics.users.UsersLoggedInWithGooglePercent.ActiveUsers
+com.codenvy.analytics.metrics.users.ActiveUsersSet
+com.codenvy.analytics.metrics.users.ActiveUsers
 com.codenvy.analytics.metrics.users.NonActiveUsers
 com.codenvy.analytics.metrics.users.NewActiveUsers
 com.codenvy.analytics.metrics.users.ReturningActiveUsers

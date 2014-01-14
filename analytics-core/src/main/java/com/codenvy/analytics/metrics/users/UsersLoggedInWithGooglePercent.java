@@ -20,8 +20,6 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AbstractActiveEntities;
-import com.codenvy.analytics.metrics.AbstractSetValueResulted;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.MetricType;
 
@@ -54,30 +52,4 @@ public class UsersLoggedInWithGooglePercent extends CalculatedMetric {
         return "The percent of authentication with Google account";
     }
 
-    /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-    public static class ActiveUsers extends AbstractActiveEntities {
-
-        public ActiveUsers() {
-            super(MetricType.ACTIVE_USERS, MetricType.ACTIVE_USERS_SET);
-        }
-
-        @Override
-        public String getDescription() {
-            return "Active users";
-        }
-    }
-
-    /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-    public static class ActiveUsersSet extends AbstractSetValueResulted {
-
-        public ActiveUsersSet() {
-            super(MetricType.ACTIVE_USERS_SET);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getDescription() {
-            return "Active users list";
-        }
-    }
 }
