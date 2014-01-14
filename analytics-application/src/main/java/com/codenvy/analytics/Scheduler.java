@@ -24,9 +24,11 @@ import com.codenvy.analytics.services.ActOn;
 import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.LogChecker;
 import com.codenvy.analytics.services.ReportSender;
+import com.codenvy.analytics.services.ReportSenderWrapper;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
+import com.codenvy.analytics.services.view.ViewBuilderWrapper;
 
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
@@ -37,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Calendar;
@@ -56,11 +59,12 @@ public class Scheduler implements ServletContextListener {
     private org.quartz.Scheduler scheduler;
 
     private static final Class[] features = new Class[]{PigRunner.class,
-                                                        ViewBuilder.class,
                                                         LogChecker.class,
-                                                        ReportSender.class,
+                                                        ReportSenderWrapper.class,
+                                                        ViewBuilderWrapper.class,
                                                         ActOn.class};
 
+    
     @Override
     public void contextDestroyed(ServletContextEvent context) {
         try {

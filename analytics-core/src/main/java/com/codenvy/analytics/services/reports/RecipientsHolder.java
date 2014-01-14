@@ -30,7 +30,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import javax.inject.Singleton;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@Singleton
 public class RecipientsHolder {
 
     private static final Logger LOG           = LoggerFactory.getLogger(RecipientsHolder.class);
