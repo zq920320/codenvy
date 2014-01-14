@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,27 +17,29 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * All emails are placed into configuration under parameters with 'e-mail' key.
- *
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
- */
-public class ItemizedRecipientGroup extends AbstractRecipientGroup {
+/** @author Anatoliy Bazko */
+public class ActiveSubscriptionsRecipientGroup extends AbstractRecipientGroup {
 
-    private static final String E_MAIL = "e-mail";
-
-    public ItemizedRecipientGroup(List<ParameterConfiguration> parameters) {
+    public ActiveSubscriptionsRecipientGroup(List<ParameterConfiguration> parameters) {
         super(parameters);
     }
 
     @Override
-    public Set<String> getEmails(Map<String, String> context) {
-        return getParameters(E_MAIL);
+    public Set<String> getEmails(Map<String, String> context) throws IOException {
+        Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_ORG_ID_SET);
+        ValueData activeOrgId = metric.getValue(context);
+
+        return null;
     }
 }

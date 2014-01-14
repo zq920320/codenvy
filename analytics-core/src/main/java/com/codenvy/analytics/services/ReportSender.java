@@ -18,7 +18,6 @@
 package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.configuration.ConfigurationManagerException;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
@@ -35,7 +34,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -54,11 +52,6 @@ public class ReportSender extends Feature {
     public ReportSender() {
         this.recipientsHolder = new RecipientsHolder();
         this.viewBuilder = new ViewBuilder();
-    }
-
-    @Override
-    protected Map<String, String> initializeDefaultContext() throws ParseException {
-        return Utils.initializeContext(Parameters.TimeUnit.DAY);
     }
 
     @Override
@@ -86,10 +79,14 @@ public class ReportSender extends Feature {
             for (ReportConfiguration reportConfiguration : configuration.getReports()) {
                 for (FrequencyConfiguration frequencyConfiguration : reportConfiguration.getFrequencies()) {
                     for (AbstractFrequencyConfiguration frequency : frequencyConfiguration.frequencies()) {
-                        if (frequency != null && isAppropriateDayToSendReport(frequency, context)) {
+
+                        if (frequency.isAppropriateDateToSendReport(context)) {
+                            context = frequency.initContext(context);
+                            RecipientsConfiguration recipients = reportConfiguration.getRecipients();
+
                             sendReport(context,
                                        frequency,
-                                       reportConfiguration.getRecipients());
+                                       recipients);
                         }
                     }
                 }
@@ -112,21 +109,13 @@ public class ReportSender extends Feature {
         String subject = Configurator.getString(MAIL_SUBJECT).replace("[period]", getPeriod(frequency));
 
         for (String recipient : recipients.getRecipients()) {
-            for (String email : recipientsHolder.getEmails(recipient)) {
+            for (String email : recipientsHolder.getEmails(recipient, context)) {
                 MailService.Builder builder = new MailService.Builder();
                 builder.setText(Configurator.getString(MAIL_TEXT));
                 builder.setSubject(subject);
                 builder.setTo(email);
-
-                List<File> reports = getReports(context, email, frequency);
-                for (File report : reports) {
-                    builder.attach(report);
-                }
-
-                MailService mailService = builder.build();
-                mailService.send();
-
-                remove(reports);
+                builder.attach(getReports(context, email, frequency));
+                builder.build().send();
             }
         }
     }
@@ -140,43 +129,38 @@ public class ReportSender extends Feature {
                                                                                    IllegalAccessException,
                                                                                    InvocationTargetException,
                                                                                    InstantiationException {
-        context = updateContext(context, recipient, frequency);
 
+        List<File> reports = new ArrayList<>();
         ViewsConfiguration viewsConfiguration = frequency.getViews();
-        List<File> reports = new ArrayList<>(viewsConfiguration.getViews().size());
 
         for (String view : viewsConfiguration.getViews()) {
+            Parameters.VIEW.cloneAndPut(context, view);
+            Parameters.RECIPIENT.put(context, recipient);
+            context = putSpecificParameters(context, frequency);
+
             ViewData viewData = viewBuilder.getViewData(view, context);
+            String viewId = recipient + File.separator + view;
 
-            File report = new File(Configurator.getTmpDir(), view + ".csv");
-            CSVReportPersister.storeData(report, viewData);
-
+            File report = CSVReportPersister.storeData(viewId, viewData, context);
             reports.add(report);
         }
 
         return reports;
     }
 
-    private Map<String, String> updateContext(Map<String, String> context,
-                                              String recipient,
-                                              AbstractFrequencyConfiguration frequency) throws ClassNotFoundException,
-                                                                                               InstantiationException,
-                                                                                               IllegalAccessException,
-                                                                                               InvocationTargetException,
-                                                                                               NoSuchMethodException {
+    private Map<String, String> putSpecificParameters(Map<String, String> context,
+                                                      AbstractFrequencyConfiguration frequency)
+            throws ClassNotFoundException,
+                   InstantiationException,
+                   IllegalAccessException,
+                   InvocationTargetException,
+                   NoSuchMethodException {
+
         String clazzName = frequency.getContextModifier().getClazz();
         Class<?> clazz = Class.forName(clazzName);
         ContextModifier contextModifier = (ContextModifier)clazz.getConstructor().newInstance();
 
         return contextModifier.update(context);
-    }
-
-    private void remove(List<File> reports) {
-        for (File report : reports) {
-            if (!report.delete()) {
-                LOG.warn("File can't be deleted " + report.getPath());
-            }
-        }
     }
 
     private String getPeriod(AbstractFrequencyConfiguration frequency) {
@@ -192,24 +176,6 @@ public class ReportSender extends Feature {
         }
 
         return "";
-    }
-
-    protected boolean isAppropriateDayToSendReport(AbstractFrequencyConfiguration frequencyConfiguration,
-                                                   Map<String, String> context) throws ParseException {
-        Calendar toDate = Utils.getToDate(context);
-
-        if (frequencyConfiguration instanceof DailyFrequencyConfiguration) {
-            return true;
-
-        } else if (frequencyConfiguration instanceof WeeklyFrequencyConfiguration) {
-            return toDate.get(Calendar.DAY_OF_WEEK) == toDate.getActualMinimum(Calendar.DAY_OF_WEEK);
-
-        } else if (frequencyConfiguration instanceof MonthlyFrequencyConfiguration) {
-            return toDate.get(Calendar.DAY_OF_MONTH) == toDate.getActualMinimum(Calendar.DAY_OF_MONTH);
-
-        }
-
-        return false;
     }
 
     private ReportsConfiguration readConfiguration() throws ConfigurationManagerException {

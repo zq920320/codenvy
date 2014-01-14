@@ -67,11 +67,6 @@ public class ActOn extends Feature {
     }
 
     @Override
-    protected Map<String, String> initializeDefaultContext() throws ParseException {
-        return Utils.initializeContext(Parameters.TimeUnit.LIFETIME);
-    }
-
-    @Override
     protected void putParametersInContext(Map<String, String> context) {
     }
 
@@ -233,6 +228,8 @@ public class ActOn extends Feature {
     }
 
     private List<ValueData> getUsersStatistics(Map<String, String> context) throws IOException, ParseException {
+        context = Parameters.FROM_DATE.cloneAndPut(context, Parameters.FROM_DATE.getDefaultValue());
+
         Metric usersStatistics = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         ListValueData valueData = (ListValueData)usersStatistics.getValue(context);
 

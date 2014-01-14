@@ -72,11 +72,6 @@ public class ViewBuilder extends Feature {
     }
 
     @Override
-    protected Map<String, String> initializeDefaultContext() throws ParseException {
-        return Utils.initializeContext(Parameters.TimeUnit.DAY);
-    }
-
-    @Override
     protected void putParametersInContext(Map<String, String> context) {
     }
 

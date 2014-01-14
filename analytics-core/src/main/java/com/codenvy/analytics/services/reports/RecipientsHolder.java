@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 import com.codenvy.analytics.services.configuration.ParametersConfiguration;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
@@ -28,7 +29,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class RecipientsHolder {
@@ -36,14 +40,12 @@ public class RecipientsHolder {
     private static final Logger LOG           = LoggerFactory.getLogger(RecipientsHolder.class);
     private static final String CONFIGURATION = "reports.recipients.configuration";
 
-    private final Map<String, Set<String>> emails;
+    private final RecipientsHolderConfiguration configuration;
 
     public RecipientsHolder(XmlConfigurationManager<RecipientsHolderConfiguration> configurationManager) {
         try {
-            RecipientsHolderConfiguration configuration = configurationManager.loadConfiguration();
-            this.emails = extractEmails(configuration.getGroups());
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
-                | InvocationTargetException | InstantiationException | IOException e) {
+            configuration = configurationManager.loadConfiguration();
+        } catch (IOException e) {
             LOG.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
@@ -54,33 +56,36 @@ public class RecipientsHolder {
                                            Configurator.getString(CONFIGURATION)));
     }
 
-    public Set<String> getEmails(String groupName) {
-        return emails.containsKey(groupName) ? emails.get(groupName)
-                                             : Collections.<String>emptySet();
+    public Set<String> getEmails(String groupName) throws IOException {
+        return doGetEmails(groupName, Utils.newContext());
     }
 
-    protected Map<String, Set<String>> extractEmails(List<GroupConfiguration> groups) throws ClassNotFoundException,
-                                                                                             NoSuchMethodException,
-                                                                                             IllegalAccessException,
-                                                                                             InvocationTargetException,
-                                                                                             InstantiationException,
-                                                                                             IOException {
-        Map<String, Set<String>> results = new HashMap<>();
+    public Set<String> getEmails(String groupName, Map<String, String> context) throws IOException {
+        return doGetEmails(groupName, context);
+    }
 
-        for (GroupConfiguration groupConfiguration : groups) {
-            InitializerConfiguration initializer = groupConfiguration.getInitializer();
+    protected Set<String> doGetEmails(String groupName, Map<String, String> context) throws IOException {
+        try {
+            for (GroupConfiguration groupConf : configuration.getGroups()) {
+                if (groupConf.getName().equals(groupName)) {
+                    InitializerConfiguration initializer = groupConf.getInitializer();
 
-            String clazzName = initializer.getClazz();
-            ParametersConfiguration parametersConfiguration = initializer.getParametersConfiguration();
-            List<ParameterConfiguration> parameters = parametersConfiguration.getParameters();
+                    ParametersConfiguration paramsConf = initializer.getParametersConfiguration();
+                    List<ParameterConfiguration> parameters = paramsConf.getParameters();
 
-            Class<?> clazz = Class.forName(clazzName);
-            Constructor<?> constructor = clazz.getConstructor(List.class);
+                    String clazzName = initializer.getClazz();
+                    Class<?> clazz = Class.forName(clazzName);
+                    Constructor<?> constructor = clazz.getConstructor(List.class);
 
-            RecipientGroup recipientGroup = (RecipientGroup)constructor.newInstance(parameters);
-            results.put(groupConfiguration.getName(), recipientGroup.getEmails());
+                    RecipientGroup recipientGroup = (RecipientGroup)constructor.newInstance(parameters);
+                    return recipientGroup.getEmails(context);
+                }
+            }
+
+            return Collections.emptySet();
+        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException
+                | IllegalAccessException | NoSuchMethodException e) {
+            throw new IOException(e);
         }
-
-        return results;
     }
 }

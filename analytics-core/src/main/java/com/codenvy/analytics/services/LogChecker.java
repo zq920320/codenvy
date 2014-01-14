@@ -53,11 +53,6 @@ public class LogChecker extends Feature {
     }
 
     @Override
-    protected Map<String, String> initializeDefaultContext() throws ParseException {
-        return Utils.initializeContext(Parameters.TimeUnit.DAY);
-    }
-
-    @Override
     protected void putParametersInContext(Map<String, String> context) {
         Parameters.USER.put(context, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(context, Parameters.WS_TYPES.ANY.name());

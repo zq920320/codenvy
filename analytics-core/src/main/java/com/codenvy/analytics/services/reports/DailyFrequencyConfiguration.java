@@ -17,9 +17,27 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Parameters;
+
 import javax.xml.bind.annotation.XmlRootElement;
+import java.text.ParseException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @XmlRootElement(name = "daily")
 public class DailyFrequencyConfiguration extends AbstractFrequencyConfiguration {
+
+    @Override
+    public boolean isAppropriateDateToSendReport(Map<String, String> context) {
+        return true;
+    }
+
+    @Override
+    public Map<String, String> initContext(Map<String, String> context) throws ParseException {
+        context = Utils.clone(context);
+        Utils.putTimeUnit(context, Parameters.TimeUnit.DAY);
+        Utils.initDateInterval(Utils.getPrevToDate(context), context);
+        return context;
+    }
 }

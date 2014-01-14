@@ -70,6 +70,13 @@ public class Utils {
         return parseDate(Parameters.TO_DATE.get(context));
     }
 
+    public static Calendar getPrevToDate(Map<String, String> context) throws ParseException {
+        Calendar toDate = parseDate(Parameters.TO_DATE.get(context));
+        toDate.add(Calendar.DAY_OF_MONTH, -1);
+
+        return toDate;
+    }
+
     public static Calendar getReportDate(Map<String, String> context) throws ParseException {
         return parseDate(Parameters.REPORT_DATE.get(context));
     }

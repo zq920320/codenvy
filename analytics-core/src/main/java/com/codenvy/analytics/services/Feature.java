@@ -20,6 +20,7 @@
 package com.codenvy.analytics.services;
 
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.Parameters;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -48,6 +49,10 @@ public abstract class Feature implements Job {
      */
     public void forceExecute(Map<String, String> context) throws JobExecutionException {
         try {
+            if (Utils.getTimeUnit(context) != Parameters.TimeUnit.DAY) {
+                throw new IllegalStateException("Force execution is allowed only per day");
+            }
+
             Map<String, String> newContext = Utils.clone(context);
             putParametersInContext(newContext);
 
@@ -72,7 +77,9 @@ public abstract class Feature implements Job {
     }
 
     /** Initialize context if job is being executed on regular basis */
-    protected abstract Map<String, String> initializeDefaultContext() throws ParseException;
+    protected Map<String, String> initializeDefaultContext() throws ParseException {
+        return Utils.initializeContext(Parameters.TimeUnit.DAY);
+    }
 
     /** If need to override context or put additional parameters to it, */
     protected abstract void putParametersInContext(Map<String, String> context);

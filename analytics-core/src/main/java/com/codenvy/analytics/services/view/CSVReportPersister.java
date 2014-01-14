@@ -42,28 +42,26 @@ public class CSVReportPersister {
     private static final SimpleDateFormat dirFormat          =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
-    public static void storeData(String viewId,
+    public static File storeData(String viewId,
                                  ViewData viewData,
                                  Map<String, String> context) throws IOException {
         try {
-            File csvFile = getFile(viewId, REPORTS_DIR, context);
-            createParentDirIfNotExists(csvFile);
-
-            File csvBackupFile = getFile(viewId, BACKUP_REPORTS_DIR, context);
+            File csvBackupFile = getFile(BACKUP_REPORTS_DIR, viewId, context);
             createParentDirIfNotExists(csvBackupFile);
+
+            File csvFile = getFile(REPORTS_DIR, viewId, context);
+            createParentDirIfNotExists(csvFile);
 
             doStore(csvBackupFile, viewData);
             Files.copy(csvBackupFile, csvFile);
+
+            return csvFile;
         } catch (ParseException e) {
             throw new IOException(e);
         }
     }
 
-    public static void storeData(File file, ViewData viewData) throws IOException {
-        doStore(file, viewData);
-    }
-
-    protected static File getFile(String viewId, String reportsDir, Map<String, String> context) throws ParseException {
+    protected static File getFile(String reportsDir, String viewId, Map<String, String> context) throws ParseException {
         Calendar reportDate = Utils.getReportDate(context);
 
         StringBuilder filePath = new StringBuilder();

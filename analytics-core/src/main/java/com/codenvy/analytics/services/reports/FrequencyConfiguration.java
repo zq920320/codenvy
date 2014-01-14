@@ -19,6 +19,8 @@ package com.codenvy.analytics.services.reports;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @XmlRootElement(name = "frequency")
@@ -54,7 +56,20 @@ public class FrequencyConfiguration {
         return monthly;
     }
 
-    public AbstractFrequencyConfiguration[] frequencies() {
-        return new AbstractFrequencyConfiguration[]{daily, weekly, monthly};
+    public List<AbstractFrequencyConfiguration> frequencies() {
+        List<AbstractFrequencyConfiguration> result = new ArrayList<>();
+        if (daily != null) {
+            result.add(daily);
+        }
+
+        if (weekly != null) {
+            result.add(weekly);
+        }
+
+        if (monthly != null) {
+            result.add(monthly);
+        }
+
+        return result;
     }
 }

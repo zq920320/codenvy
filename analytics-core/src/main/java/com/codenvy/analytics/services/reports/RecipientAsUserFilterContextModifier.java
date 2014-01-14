@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.services.reports;
 
-import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 
@@ -28,9 +27,6 @@ public class RecipientAsUserFilterContextModifier implements ContextModifier {
 
     @Override
     public Map<String, String> update(Map<String, String> context) {
-        context = Utils.clone(context);
-        MetricFilter.USER.put(context, Parameters.RECIPIENT.get(context));
-
-        return context;
+        return MetricFilter.USER.cloneAndPut(context, Parameters.RECIPIENT.get(context));
     }
 }

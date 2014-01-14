@@ -17,8 +17,6 @@
  */
 package com.codenvy.analytics.services.pig;
 
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -54,11 +52,6 @@ public class PigRunner extends Feature {
 
     @Override
     protected void putParametersInContext(Map<String, String> context) {
-    }
-
-    @Override
-    protected Map<String, String> initializeDefaultContext() throws ParseException {
-        return Utils.initializeContext(Parameters.TimeUnit.DAY);
     }
 
     @Override

@@ -103,6 +103,11 @@ public class MailService {
             return this;
         }
 
+        public Builder attach(List<File> file) {
+            attaches.addAll(file);
+            return this;
+        }
+
         public Builder setSubject(String subject) {
             this.subject = subject;
             return this;

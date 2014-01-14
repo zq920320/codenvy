@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -41,7 +42,7 @@ public class FileStoredRecipientGroup extends AbstractRecipientGroup {
     }
 
     @Override
-    public Set<String> getEmails() throws IOException {
+    public Set<String> getEmails(Map<String, String> context) throws IOException {
         Set<String> emails = new HashSet<>();
         Set<String> files = getParameters(FILE);
 

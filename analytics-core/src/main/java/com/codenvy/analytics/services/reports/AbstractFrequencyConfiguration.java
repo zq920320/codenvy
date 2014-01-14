@@ -18,6 +18,8 @@
 package com.codenvy.analytics.services.reports;
 
 import javax.xml.bind.annotation.XmlElement;
+import java.text.ParseException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractFrequencyConfiguration {
@@ -42,4 +44,8 @@ public abstract class AbstractFrequencyConfiguration {
     public ContextModifierConfiguration getContextModifier() {
         return contextModifier;
     }
+
+    abstract public boolean isAppropriateDateToSendReport(Map<String, String> context) throws ParseException;
+
+    abstract public Map<String, String> initContext(Map<String, String> context) throws ParseException;
 }
