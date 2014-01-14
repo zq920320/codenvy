@@ -911,10 +911,10 @@
                 <parameter key="name" value="ide_usage_git_status"/>
                 <parameter key="description" value="Git->Status"/>
             </row>
-            <!--row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="ide_usage_git_ide_usage_git_url_read_only"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_git_url_read_only"/>
                 <parameter key="description" value="Git->GitURLReadOnly"/>
-            </row-->
+            </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="ide_usage_git_remote_push"/>
                 <parameter key="description" value="Git->Remote->Push"/>
@@ -1041,14 +1041,14 @@
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="IDE User Usage 'Windows->*' Events"/>
             </row>
-            <!--row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="ide_usage_window_show_ide_usage_view_project_explore"/>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_window_show_view_project_explore"/>
                 <parameter key="description" value="Window->ShowView->ProjectExplore"/>
-            </row-->
-            <!--row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="ide_usage_window_show_ide_usage_view_package_explore"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_window_show_view_package_explore"/>
                 <parameter key="description" value="Window->ShowView->PackageExplore"/>
-            </row-->
+            </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="ide_usage_window_navigation_next_editor"/>
                 <parameter key="description" value="Window->Navigation->NextEditor"/>
@@ -1076,10 +1076,10 @@
                 <parameter key="name" value="ide_usage_shell"/>
                 <parameter key="description" value="Shell"/>
             </row>
-            <!--row class="com.codenvy.analytics.services.view.MetricRow">
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="ide_usage_profile"/>
                 <parameter key="description" value="Profile"/>
-            </row-->
+            </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="ide_usage_logout"/>
                 <parameter key="description" value="Logout"/>
