@@ -180,7 +180,7 @@ public class TestAcceptance extends BaseTest {
                     assertFactoryProductUsageDay(sectionData);
                     break;
                 default:
-                    fail("Unknown table name " + tableName);
+                    break;
             }
         } else if (tableName.endsWith("lifetime")) {
             switch (tableName) {
