@@ -1458,7 +1458,7 @@
         </section>
     </view>
 
-    <view tname="top_referrers_by_lifetime">
+    <view name="top_referrers_by_lifetime">
         <section name="top_referrers_by_lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
