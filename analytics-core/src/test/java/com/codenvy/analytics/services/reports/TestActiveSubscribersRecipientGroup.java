@@ -20,17 +20,17 @@ package com.codenvy.analytics.services.reports;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.model.Account;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -47,8 +47,10 @@ public class TestActiveSubscribersRecipientGroup extends BaseTest {
         context = Utils.newContext();
         accountManager = mock(AccountManager.class);
         account = mock(Account.class);
-        group = spy(new ActiveSubscribersRecipientGroup(Collections.<ParameterConfiguration>emptyList(),
-                                                        accountManager));
+
+        Map<String, String> params = new HashMap<>();
+        params.put(ActiveSubscribersRecipientGroup.TARIFF_PLAN, ActiveSubscribersRecipientGroup.TARIFF_MANAGED_FACTORY);
+        group = new ActiveSubscribersRecipientGroup(params, accountManager);
     }
 
     @Test

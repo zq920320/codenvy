@@ -15,20 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.services.Feature;
 import com.codenvy.analytics.services.configuration.ConfigurationManagerException;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
-import com.codenvy.analytics.services.reports.*;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
+import com.codenvy.analytics.util.MailService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -36,9 +39,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 @Singleton
 public class ReportSender extends Feature {

@@ -19,22 +19,19 @@ package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 import com.codenvy.analytics.services.configuration.ParametersConfiguration;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.inject.Singleton;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @Singleton
@@ -74,13 +71,13 @@ public class RecipientsHolder {
                     InitializerConfiguration initializer = groupConf.getInitializer();
 
                     ParametersConfiguration paramsConf = initializer.getParametersConfiguration();
-                    List<ParameterConfiguration> parameters = paramsConf.getParameters();
+                    Map<String, String> params = paramsConf.getParamsAsMap();
 
                     String clazzName = initializer.getClazz();
                     Class<?> clazz = Class.forName(clazzName);
-                    Constructor<?> constructor = clazz.getConstructor(List.class);
+                    Constructor<?> constructor = clazz.getConstructor(Map.class);
 
-                    RecipientGroup recipientGroup = (RecipientGroup)constructor.newInstance(parameters);
+                    RecipientGroup recipientGroup = (RecipientGroup)constructor.newInstance(params);
                     return recipientGroup.getEmails(context);
                 }
             }

@@ -19,7 +19,9 @@ package com.codenvy.analytics.services.configuration;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 @XmlRootElement(name = "parameters")
@@ -34,5 +36,14 @@ public class ParametersConfiguration {
     @XmlElement(name = "parameter")
     public void setParameters(List<ParameterConfiguration> usersGroup) {
         this.parameters = usersGroup;
+    }
+
+    public Map<String, String> getParamsAsMap() {
+        Map<String, String> result = new HashMap<>(parameters.size());
+        for (ParameterConfiguration param : parameters) {
+            result.put(param.getKey(), param.getValue());
+        }
+
+        return result;
     }
 }

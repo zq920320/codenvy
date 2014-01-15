@@ -17,13 +17,10 @@
  */
 package com.codenvy.analytics.services.reports;
 
-import com.codenvy.analytics.services.configuration.ParameterConfiguration;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +34,7 @@ public class FileStoredRecipientGroup extends AbstractRecipientGroup {
 
     private static final String FILE = "file";
 
-    public FileStoredRecipientGroup(List<ParameterConfiguration> parameters) {
+    public FileStoredRecipientGroup(Map<String, String> parameters) {
         super(parameters);
     }
 
