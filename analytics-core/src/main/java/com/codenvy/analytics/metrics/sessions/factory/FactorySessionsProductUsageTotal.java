@@ -17,25 +17,14 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-
-import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class FactorySessionsProductUsageTotal extends AbstractLongValueResulted {
 
     public FactorySessionsProductUsageTotal() {
         super(MetricType.FACTORY_PRODUCT_USAGE_TIME_TOTAL);
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData value = (LongValueData)super.getValue(context);
-        return new LongValueData(value.getAsLong() / 60);
     }
 
     @Override

@@ -64,11 +64,6 @@ public abstract class AbstractProductUsageTime extends ReadBasedMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        return new LongValueData(((LongValueData)super.getValue(context)).getAsLong() / 60L);
-    }
-
-    @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
     }

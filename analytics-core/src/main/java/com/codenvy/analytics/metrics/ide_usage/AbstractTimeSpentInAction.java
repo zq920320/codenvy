@@ -38,12 +38,6 @@ public abstract class AbstractTimeSpentInAction extends AbstractLongValueResulte
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        LongValueData valueData = (LongValueData)super.getValue(context);
-        return new LongValueData(valueData.getAsLong() / 60);
-    }
-
-    @Override
     public String[] getTrackedFields() {
         return new String[]{ProductUsageSessionsList.TIME};
     }

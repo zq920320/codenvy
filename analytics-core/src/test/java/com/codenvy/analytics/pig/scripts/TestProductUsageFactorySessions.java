@@ -113,7 +113,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.TO_DATE.put(context, "20130210");
 
         Metric metric = new TestFactorySessionsProductUsageTotal();
-        assertEquals(metric.getValue(context), new LongValueData(30));
+        assertEquals(metric.getValue(context), new LongValueData(1800L));
 
         metric = new TestFactorySessions();
         assertEquals(metric.getValue(context), new LongValueData(3));
@@ -133,7 +133,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         MetricFilter.REFERRER.put(context, "referrer1");
 
         Metric metric = new TestFactorySessionsProductUsageTotal();
-        assertEquals(metric.getValue(context), new LongValueData(5));
+        assertEquals(metric.getValue(context), new LongValueData(300L));
     }
 
     @Test

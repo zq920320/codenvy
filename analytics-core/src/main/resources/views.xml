@@ -1124,6 +1124,7 @@
                 <parameter key="name" value="users_statistics_list"/>
                 <parameter key="fields"
                            value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>
+                <parameter key="time-fields" value="time,time_build,time_run"/>
             </row>
         </section>
     </view>
@@ -1136,6 +1137,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions_list"/>
                 <parameter key="fields" value="session_id,ws,start_time,end_time,time"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1148,6 +1150,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_time_in_workspaces_list"/>
                 <parameter key="fields" value="_id,sessions,time"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1176,6 +1179,7 @@
                 <parameter key="fields"
                            value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1190,6 +1194,7 @@
                 <parameter key="fields"
                            value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1204,6 +1209,7 @@
                 <parameter key="fields"
                            value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1217,6 +1223,7 @@
                 <parameter key="fields"
                            value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1231,6 +1238,7 @@
                 <parameter key="fields"
                            value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1245,6 +1253,7 @@
                 <parameter key="fields"
                            value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1259,6 +1268,7 @@
                 <parameter key="fields"
                            value="time,factory,referrer,authenticated_factory_session,converted_factory_session"/>
                 <parameter key="boolean-fields" value="authenticated_factory_session,converted_factory_session"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1274,6 +1284,7 @@
                 <parameter key="fields"
                            value="factory,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1289,6 +1300,7 @@
                 <parameter key="fields"
                            value="factory,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1304,6 +1316,7 @@
                 <parameter key="fields"
                            value="factory,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1319,6 +1332,7 @@
                 <parameter key="fields"
                            value="factory,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1334,6 +1348,7 @@
                 <parameter key="fields"
                            value="factory,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1349,6 +1364,7 @@
                 <parameter key="fields"
                            value="factory,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1364,6 +1380,7 @@
                 <parameter key="fields"
                            value="factory,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1379,6 +1396,7 @@
                 <parameter key="fields"
                            value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1394,6 +1412,7 @@
                 <parameter key="fields"
                            value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1409,6 +1428,7 @@
                 <parameter key="fields"
                            value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1424,6 +1444,7 @@
                 <parameter key="fields"
                            value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1439,6 +1460,7 @@
                 <parameter key="fields"
                            value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1454,6 +1476,7 @@
                 <parameter key="fields"
                            value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>
@@ -1469,6 +1492,7 @@
                 <parameter key="fields"
                            value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
                 <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                <parameter key="time-fields" value="time"/>
             </row>
         </section>
     </view>

@@ -47,13 +47,16 @@ public class MetricRow extends AbstractRow {
     private static final String HIDE_NEGATIVE_VALUES = "hide-negative-values";
     private static final String BOOLEAN_FIELDS       = "boolean-fields";
     private static final String DATE_FIELDS          = "date-fields";
+    private static final String TIME_FIELDS          = "time-fields";
+    
 
     private final Metric       metric;
     private final String       format;
     private final String[]     fields;
-    private final boolean      hideNegativeValues;
+    private final boolean     hideNegativeValues;
     private final List<String> booleanFields;
     private final List<String> dateFields;
+    private final List<String> timeFields;
 
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
@@ -69,6 +72,8 @@ public class MetricRow extends AbstractRow {
                                                        : new ArrayList<String>();
         dateFields = parameters.containsKey(DATE_FIELDS) ? Arrays.asList(parameters.get(DATE_FIELDS).split(","))
                                                          : new ArrayList<String>();
+        timeFields = parameters.containsKey(TIME_FIELDS) ? Arrays.asList(parameters.get(TIME_FIELDS).split(","))
+                                                         : new ArrayList<String>();
     }
 
     @Override
@@ -83,6 +88,18 @@ public class MetricRow extends AbstractRow {
             throw new IOException(e);
         }
     }
+    
+    /**
+     * Return time in format 'XX min. XX sec.' 
+     * 
+     * @return StringValueData
+     */
+    private void formatAndAddTimeValue(ValueData valueData, List<ValueData> singleValue)
+    {
+        long timeInSeconds = Long.parseLong(valueData.getAsString());
+        singleValue.add(new StringValueData((timeInSeconds / 60) + " min." + ((timeInSeconds % 60) == 0 ? "" : (timeInSeconds % 60) + " sec.")));
+    }
+    
 
     private boolean isMultipleColumnsMetric() {
         return metric.getValueDataClass() == ListValueData.class;
@@ -169,7 +186,10 @@ public class MetricRow extends AbstractRow {
                     formatAndAddBooleanValue(item, singleValue);
                 } else if (dateFields.contains(field)) {
                     formatAndAddDateValue(item, singleValue);
-                } else {
+                } else if (timeFields.contains(field)) {
+                    formatAndAddTimeValue(item, singleValue);
+                }
+                else {
                     formatAndAddSingleValue(item, singleValue);
                 }
             }
