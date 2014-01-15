@@ -114,8 +114,12 @@ public class ReportSender extends Feature {
                 builder.setText(Configurator.getString(MAIL_TEXT));
                 builder.setSubject(subject);
                 builder.setTo(email);
-                builder.attach(getReports(context, email, frequency));
+
+                List<File> reports = getReports(context, email, frequency);
+                builder.attach(reports);
                 builder.build().send();
+
+                LOG.info("Reports " + reports.toString() + " were send to " + email);
             }
         }
     }

@@ -36,10 +36,11 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class CSVReportPersister {
 
-    private static final Logger           LOG                = LoggerFactory.getLogger(CSVReportPersister.class);
-    private static final String           REPORTS_DIR        = Configurator.getString("analytics.reports.dir");
-    private static final String           BACKUP_REPORTS_DIR = Configurator.getString("analytics.backup.reports.dir");
-    private static final SimpleDateFormat dirFormat          =
+    private static final Logger LOG                = LoggerFactory.getLogger(CSVReportPersister.class);
+    private static final String REPORTS_DIR        = Configurator.getString("analytics.reports.dir");
+    private static final String BACKUP_REPORTS_DIR = Configurator.getString("analytics.backup.reports.dir");
+
+    private static final SimpleDateFormat DIR_FORMAT =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     public static File storeData(String viewId,
@@ -55,6 +56,8 @@ public class CSVReportPersister {
             doStore(csvBackupFile, viewData);
             Files.copy(csvBackupFile, csvFile);
 
+            LOG.info("Report " + csvBackupFile + " was stored");
+
             return csvFile;
         } catch (ParseException e) {
             throw new IOException(e);
@@ -67,7 +70,7 @@ public class CSVReportPersister {
         StringBuilder filePath = new StringBuilder();
         filePath.append(reportsDir);
         filePath.append(File.separatorChar);
-        filePath.append(dirFormat.format(reportDate.getTime()));
+        filePath.append(DIR_FORMAT.format(reportDate.getTime()));
         filePath.append(File.separatorChar);
         filePath.append(viewId.toLowerCase());
         filePath.append(".csv");

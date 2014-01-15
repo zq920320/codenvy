@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@XmlRootElement(name = "context-initializer")
+@XmlRootElement(name = "context-modifier")
 public class ContextModifierConfiguration {
 
     private String clazz;

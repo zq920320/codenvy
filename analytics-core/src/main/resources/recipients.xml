@@ -17,14 +17,22 @@
          from Codenvy S.A..
 -->
 <recipients>
-    <group name="dummy-users">
-        <description>dummy users</description>
+    <group name="analytics-admin">
+        <description>Analytics admin</description>
         <initializer>
             <class>com.codenvy.analytics.services.reports.ItemizedRecipientGroup</class>
             <parameters>
-                <parameter key="e-mail" value="dummy-user@codenvy.com"/>
+                <parameter key="e-mail" value="analytics.codenvy@gmail.com"/>
             </parameters>
         </initializer>
+    </group>
+
+    <group name="active-subscribers-managed-factory">
+        <description>Active subscribers of Managed Factories</description>
+        <class>com.codenvy.analytics.services.reports.ActiveSubscribersRecipientGroup</class>
+        <parameters>
+            <parameter key="tariff_plan" value="Managed Factory"/>
+        </parameters>
     </group>
 </recipients>
 

@@ -19,7 +19,7 @@
 <reports>
     <report>
         <recipients>
-            <recipient>dummy-users</recipient>
+            <recipient>analytics-admin</recipient>
         </recipients>
         <frequency>
             <daily>
@@ -27,7 +27,26 @@
                     <view>timeline</view>
                     <view>factory-timeline</view>
                 </views>
+                <context-modifier>
+                    <class>com.codenvy.analytics.services.reports.DummyContextModifier</class>
+                </context-modifier>
             </daily>
+        </frequency>
+    </report>
+
+    <report>
+        <recipients>
+            <recipient>active-subscribers-managed-factory</recipient>
+        </recipients>
+        <frequency>
+            <monthly>
+                <views>
+                    <view>factory-timeline</view>
+                </views>
+                <context-modifier>
+                    <class>com.codenvy.analytics.services.reports.RecipientAsFilterContextModifier</class>
+                </context-modifier>
+            </monthly>
         </frequency>
     </report>
 </reports>

@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class RecipientAsUserFilterContextModifier implements ContextModifier {
+public class RecipientAsFilterContextModifier implements ContextModifier {
 
     @Override
     public Map<String, String> update(Map<String, String> context) {
