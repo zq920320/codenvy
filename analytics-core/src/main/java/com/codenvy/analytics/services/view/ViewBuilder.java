@@ -40,7 +40,10 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Singleton;
+
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+@Singleton
 public class ViewBuilder extends Feature {
 
     private static final Logger LOG           = LoggerFactory.getLogger(ViewBuilder.class);

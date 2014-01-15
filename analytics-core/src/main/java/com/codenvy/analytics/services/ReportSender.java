@@ -37,6 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class ReportSender extends Feature {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReportSender.class);
@@ -46,14 +50,25 @@ public class ReportSender extends Feature {
     private static final String MAIL_TEXT     = "reports.mail.text";
     private static final String MAIL_SUBJECT  = "reports.mail.subject";
 
-    private final RecipientsHolder recipientsHolder;
-    private final ViewBuilder      viewBuilder;
+    private RecipientsHolder recipientsHolder;
+    private ViewBuilder      viewBuilder;
 
-    public ReportSender() {
-        this.recipientsHolder = new RecipientsHolder();
-        this.viewBuilder = new ViewBuilder();
+//    public ReportSender() {
+//        this.recipientsHolder = new RecipientsHolder();
+//        this.viewBuilder = new ViewBuilder();
+//    }
+
+    @Inject
+    public void setRecipientsHolder(RecipientsHolder recipientsHolder) {
+        this.recipientsHolder = recipientsHolder;
     }
-
+    
+    @Inject
+    public void setViewBuilder(ViewBuilder viewBuilder) {
+        this.viewBuilder = viewBuilder;
+    }
+    
+    
     @Override
     protected void putParametersInContext(Map<String, String> context) {
     }

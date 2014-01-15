@@ -34,7 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@Singleton
 public class RecipientsHolder {
 
     private static final Logger LOG           = LoggerFactory.getLogger(RecipientsHolder.class);
