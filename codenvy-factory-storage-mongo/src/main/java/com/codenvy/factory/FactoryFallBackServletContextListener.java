@@ -58,7 +58,7 @@ public class FactoryFallBackServletContextListener implements ServletContextList
 
         if (System.getProperty("codenvy.local.conf.dir") != null) {
             File dbSettings =
-                    new File(System.getProperty("codenvy.local.conf.dir"), "factory-storage-configuration.json");
+                    new File(System.getProperty("codenvy.local.conf.dir"), "old/factory-storage-configuration.json");
             if (dbSettings.exists() && !dbSettings.isDirectory()) {
                 try (InputStream is = new FileInputStream(dbSettings)) {
                     MongoDbConfiguration mConf = JsonHelper.fromJson(is, MongoDbConfiguration.class, null);
