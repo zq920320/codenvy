@@ -48,12 +48,12 @@ public class MetricRow extends AbstractRow {
     private static final String BOOLEAN_FIELDS       = "boolean-fields";
     private static final String DATE_FIELDS          = "date-fields";
     private static final String TIME_FIELDS          = "time-fields";
-    
+
 
     private final Metric       metric;
     private final String       format;
     private final String[]     fields;
-    private final boolean     hideNegativeValues;
+    private final boolean      hideNegativeValues;
     private final List<String> booleanFields;
     private final List<String> dateFields;
     private final List<String> timeFields;
@@ -88,18 +88,20 @@ public class MetricRow extends AbstractRow {
             throw new IOException(e);
         }
     }
-    
+
     /**
-     * Return time in format 'XX min. XX sec.' 
-     * 
+     * Return time in format 'XX min. XX sec.'
+     *
      * @return StringValueData
      */
-    private void formatAndAddTimeValue(ValueData valueData, List<ValueData> singleValue)
-    {
-        long timeInSeconds = Long.parseLong(valueData.getAsString());
-        singleValue.add(new StringValueData((timeInSeconds / 60) + " min." + ((timeInSeconds % 60) == 0 ? "" : (timeInSeconds % 60) + " sec.")));
+    private void formatAndAddTimeValue(ValueData valueData, List<ValueData> singleValue) {
+        long timeInSeconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
+        singleValue.add(new StringValueData(
+                (timeInSeconds / 60)
+                + " min."
+                + ((timeInSeconds % 60) == 0 ? "" : (timeInSeconds % 60) + " sec.")));
     }
-    
+
 
     private boolean isMultipleColumnsMetric() {
         return metric.getValueDataClass() == ListValueData.class;
@@ -188,8 +190,7 @@ public class MetricRow extends AbstractRow {
                     formatAndAddDateValue(item, singleValue);
                 } else if (timeFields.contains(field)) {
                     formatAndAddTimeValue(item, singleValue);
-                }
-                else {
+                } else {
                     formatAndAddSingleValue(item, singleValue);
                 }
             }
