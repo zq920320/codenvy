@@ -2,6 +2,7 @@ com.codenvy.analytics.metrics.workspaces.CreatedWorkspaces
 com.codenvy.analytics.metrics.workspaces.DestroyedWorkspaces
 com.codenvy.analytics.metrics.workspaces.TotalWorkspaces
 com.codenvy.analytics.metrics.workspaces.ActiveWorkspacesSet
+com.codenvy.analytics.metrics.workspaces.ActiveWsSet
 com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.NewActiveWorkspaces
@@ -94,6 +95,8 @@ com.codenvy.analytics.metrics.ide_usage.CodeCompletions
 com.codenvy.analytics.metrics.ide_usage.FileManipulations
 
 com.codenvy.analytics.metrics.sessions.factory.AcceptedFactoriesList
+com.codenvy.analytics.metrics.sessions.factory.AcceptedFactories
+com.codenvy.analytics.metrics.sessions.factory.FactoryUrlAccepted
 com.codenvy.analytics.metrics.sessions.factory.CreatedFactories
 com.codenvy.analytics.metrics.sessions.factory.TemporaryWorkspacesCreated
 com.codenvy.analytics.metrics.sessions.factory.FactorySessions
