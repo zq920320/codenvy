@@ -26,7 +26,6 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessions;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -86,9 +85,10 @@ public class TestUsersSessions extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testuserssessions");
+        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testuserssessions-stat");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
     }
 
     @Test

@@ -20,13 +20,14 @@ package com.codenvy.analytics.persistent;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.codenvy.analytics.services.configuration.ConfigurationManager;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.mongodb.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
@@ -38,32 +39,27 @@ import java.util.Map;
  *
  * @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a>
  */
+@Singleton
 public class CollectionsManagement {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollectionsManagement.class);
 
-    private final static String CONFIGURATION         = "collections.xml";
-    private static final String BACKUP_SUFFIX         = "_backup";
-    private final static int    ASCENDING_INDEX_MARK  = 1;
-    private final static int    DESCENDING_INDEX_MARK = -1;
+    private final static String CONFIGURATION        = "collections.xml";
+    private static final String BACKUP_SUFFIX        = "_backup";
+    private final static int    ASCENDING_INDEX_MARK = 1;
 
-    private final DB                                             db;
-    private final ConfigurationManager<CollectionsConfiguration> configurationManager;
+    private final DB                       db;
+    private final CollectionsConfiguration configuration;
 
-    public CollectionsManagement() {
-        this.db = MongoDataStorage.getDb();
-        this.configurationManager = new XmlConfigurationManager<>(CollectionsConfiguration.class, CONFIGURATION);
-    }
-
-    public CollectionsManagement(ConfigurationManager<CollectionsConfiguration> configurationManager) {
-        this.db = MongoDataStorage.getDb();
-        this.configurationManager = configurationManager;
+    @Inject
+    public CollectionsManagement(MongoDataStorage mongoDataStorage, XmlConfigurationManager confManager)
+            throws IOException {
+        this.db = mongoDataStorage.getDb();
+        this.configuration = confManager.loadConfiguration(CollectionsConfiguration.class, CONFIGURATION);
     }
 
     /** @return true if collection exists in configuration */
     public boolean isCollectionExists(String collectionName) throws IOException {
-        CollectionsConfiguration configuration = configurationManager.loadConfiguration();
-
         for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
             if (collectionConfiguration.getName().equals(collectionName)) {
                 return true;
@@ -83,8 +79,6 @@ public class CollectionsManagement {
         LOG.info("Start dropping indexing...");
 
         try {
-            CollectionsConfiguration configuration = configurationManager.loadConfiguration();
-
             for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
                 String collectionName = collectionConfiguration.getName();
 
@@ -111,8 +105,6 @@ public class CollectionsManagement {
         LOG.info("Start ensuring indexes...");
 
         try {
-            CollectionsConfiguration configuration = configurationManager.loadConfiguration();
-
             for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {
                 String collectionName = collectionConfiguration.getName();
 
@@ -141,7 +133,6 @@ public class CollectionsManagement {
         LOG.info("Start removing data...");
 
         try {
-            CollectionsConfiguration configuration = configurationManager.loadConfiguration();
             DBObject dateFilter = getDateFilter(context);
 
             for (CollectionConfiguration collectionConfiguration : configuration.getCollections()) {

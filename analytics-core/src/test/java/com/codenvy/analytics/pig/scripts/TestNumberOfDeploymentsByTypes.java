@@ -27,7 +27,6 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.projects.AbstractProjectPaas;
 import com.codenvy.analytics.metrics.projects.ProjectPaases;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -125,7 +124,7 @@ public class TestNumberOfDeploymentsByTypes extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofdeploymentsbytypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.DEPLOYMENTS_BY_TYPES, params);
+        pigServer.execute(ScriptType.DEPLOYMENTS_BY_TYPES, params);
     }
 
     @Test

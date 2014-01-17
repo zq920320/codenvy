@@ -24,7 +24,6 @@ import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -71,7 +70,7 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testsetofactiveentities");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
@@ -92,7 +91,7 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
     }
 
     @Test

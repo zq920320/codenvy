@@ -20,7 +20,6 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -56,12 +55,12 @@ public class TestCheckLogs extends BaseTest {
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         int count = 0;
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.CHECK_LOGS_1, params);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.CHECK_LOGS_1, params);
         for (; iterator.hasNext(); iterator.next()) {
             count++;
         }
         assertEquals(count, 3);
 
-        PigServer.execute(ScriptType.CHECK_LOGS_2, params);
+        pigServer.execute(ScriptType.CHECK_LOGS_2, params);
     }
 }

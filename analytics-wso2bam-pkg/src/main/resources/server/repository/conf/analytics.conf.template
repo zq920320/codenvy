@@ -26,11 +26,11 @@ initial.value.metric.total_projects=0
 
 # Scheduler configuration
 scheduler.cron.timetable=0 0 1 ? * *
-# scheduler.force.run.class=com.codenvy.analytics.services.pig.PigRunner
-# scheduler.force.run.class=com.codenvy.analytics.services.view.ViewBuilder
-# scheduler.force.run.class=com.codenvy.analytics.services.LogChecker
-# scheduler.force.run.class=com.codenvy.analytics.services.ReportSender
-# scheduler.force.run.class=com.codenvy.analytics.services.ActOn
+# scheduler.force.run.class=com.codenvy.analytics.services.PigRunnerFeature
+# scheduler.force.run.class=com.codenvy.analytics.services.ViewBuilderFeature
+# scheduler.force.run.class=com.codenvy.analytics.services.LogCheckerFeature
+# scheduler.force.run.class=com.codenvy.analytics.services.ReportSenderFeature
+# scheduler.force.run.class=com.codenvy.analytics.services.ActOnFeature
 # scheduler.force.run.period=alltime|lastday|20131201,20131231
 # scheduler.force.run.asynchronous=false|true
 

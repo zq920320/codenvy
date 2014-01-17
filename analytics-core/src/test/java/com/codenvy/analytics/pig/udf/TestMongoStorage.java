@@ -19,8 +19,6 @@ package com.codenvy.analytics.pig.udf;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.persistent.MongoDataStorage;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -61,13 +59,13 @@ public class TestMongoStorage extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testmongostorage");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        DB db = MongoDataStorage.getDb();
+        DB db = mongoDataStorage.getDb();
         dbCollection = db.getCollection("testmongostorage");
     }
 
     @Test
     public void testExecute() throws Exception {
-        PigServer.execute(ScriptType.EVENTS, params);
+        pigServer.execute(ScriptType.EVENTS, params);
 
         BasicDBObject dbObject = new BasicDBObject();
         dbObject.put("date", dateFormat.parse("20130102").getTime());
@@ -80,7 +78,7 @@ public class TestMongoStorage extends BaseTest {
         assertEquals(next.get("user"), "user1@gmail.com");
         assertEquals(next.get("value"), 1L);
 
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_MONGO_LOADER, params);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_MONGO_LOADER, params);
         assertTrue(iterator.hasNext());
 
         Tuple tuple = iterator.next();

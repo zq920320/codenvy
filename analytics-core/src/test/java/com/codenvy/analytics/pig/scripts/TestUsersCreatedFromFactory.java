@@ -24,7 +24,6 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.CreatedUsersFromFactory;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -81,7 +80,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testuserscreatedfromfactory");
 
-        PigServer.execute(ScriptType.CREATED_USERS_FROM_FACTORY, params);
+        pigServer.execute(ScriptType.CREATED_USERS_FROM_FACTORY, params);
     }
 
     @Test

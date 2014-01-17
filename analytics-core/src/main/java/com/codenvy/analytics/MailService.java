@@ -17,12 +17,7 @@
  */
 
 
-package com.codenvy.analytics.services;
-
-import com.codenvy.analytics.Configurator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.codenvy.analytics;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -41,8 +36,6 @@ import java.util.Properties;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MailService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
-
     private static final String SMTP_AUTH            = "mail.smtp.auth";
     private static final String SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
     private static final String SMTP_HOST            = "mail.smtp.host";
@@ -55,7 +48,11 @@ public class MailService {
     private final String     to;
     private final List<File> attaches;
 
+    private final Configurator configurator;
+
     private MailService(String subject, String text, String to, List<File> attaches) {
+        this.configurator = Injector.getInstance(Configurator.class);
+
         this.subject = subject;
         this.text = text;
         this.attaches = attaches;
@@ -141,7 +138,7 @@ public class MailService {
     private Message getMessage(Session session) throws MessagingException {
         Message message = new MimeMessage(session);
 
-        message.setFrom(new InternetAddress(Configurator.getString(USER)));
+        message.setFrom(new InternetAddress(configurator.getString(USER)));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         message.setSubject(subject);
         message.setSentDate(new Date());
@@ -151,10 +148,10 @@ public class MailService {
 
     private Session getSession() {
         Properties properties = new Properties();
-        properties.setProperty(SMTP_AUTH, Configurator.getString(SMTP_AUTH));
-        properties.setProperty(SMTP_STARTTLS_ENABLE, Configurator.getString(SMTP_STARTTLS_ENABLE));
-        properties.setProperty(SMTP_HOST, Configurator.getString(SMTP_HOST));
-        properties.setProperty(SMTP_PORT, Configurator.getString(SMTP_PORT));
+        properties.setProperty(SMTP_AUTH, configurator.getString(SMTP_AUTH));
+        properties.setProperty(SMTP_STARTTLS_ENABLE, configurator.getString(SMTP_STARTTLS_ENABLE));
+        properties.setProperty(SMTP_HOST, configurator.getString(SMTP_HOST));
+        properties.setProperty(SMTP_PORT, configurator.getString(SMTP_PORT));
 
         return Session.getInstance(properties, getAuthenticator());
     }
@@ -163,7 +160,7 @@ public class MailService {
         return new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(Configurator.getString(USER), Configurator.getString(PASSWORD));
+                return new PasswordAuthentication(configurator.getString(USER), configurator.getString(PASSWORD));
             }
         };
     }

@@ -23,6 +23,8 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -44,24 +46,27 @@ import java.util.Map;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
+@Singleton
 public class InitialValueContainer {
 
-    private static final String                 INITIAL_VALUE_METRICS = "initial.value.metrics";
-    private static final String                 INITIAL_VALUE_METRIC  = "initial.value.metric.";
-    private static final String                 INITIAL_VALUE_DATE    = "initial.value.date";
-    private static final Calendar               initialValueDate      = Calendar.getInstance();
-    private static final Map<String, ValueData> initialValues         = new HashMap<>();
+    private static final String INITIAL_VALUE_METRICS = "initial.value.metrics";
+    private static final String INITIAL_VALUE_METRIC  = "initial.value.metric.";
+    private static final String INITIAL_VALUE_DATE    = "initial.value.date";
 
-    static {
-        for (String name : Configurator.getArray(INITIAL_VALUE_METRICS)) {
+    private final Calendar               initialValueDate = Calendar.getInstance();
+    private final Map<String, ValueData> initialValues    = new HashMap<>();
+
+    @Inject
+    public InitialValueContainer(Configurator configurator) {
+        for (String name : configurator.getArray(INITIAL_VALUE_METRICS)) {
             String key = INITIAL_VALUE_METRIC + name;
-            LongValueData initialValue = new LongValueData(Configurator.getInt(key));
+            LongValueData initialValue = new LongValueData(configurator.getInt(key));
 
             initialValues.put(name.toLowerCase(), initialValue);
         }
 
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(Configurator.getString(INITIAL_VALUE_DATE));
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(configurator.getString(INITIAL_VALUE_DATE));
             initialValueDate.setTime(date);
         } catch (ParseException e) {
             throw new IllegalArgumentException();
@@ -69,17 +74,17 @@ public class InitialValueContainer {
     }
 
     /** @return the date for initial values */
-    public static Calendar getInitialValueDate() {
+    public Calendar getInitialValueDate() {
         return initialValueDate;
     }
 
     /** @return initial value for give metric or null */
-    public static ValueData getInitialValue(String metricName) throws ParseException {
+    public ValueData getInitialValue(String metricName) throws ParseException {
         return initialValues.get(metricName.toLowerCase());
     }
 
     /** Checks if container contains initial value for given metric below or equal to the given date. */
-    public static void validateExistenceInitialValueBefore(Map<String, String> context)
+    public void validateExistenceInitialValueBefore(Map<String, String> context)
             throws InitialValueNotFoundException {
 
         try {

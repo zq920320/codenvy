@@ -28,7 +28,6 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.metrics.users.UsersTimeInWorkspacesList;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -98,15 +97,15 @@ public class TestUsersData extends BaseTest {
         Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testusersdata");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
 
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testusersdata");
-        PigServer.execute(ScriptType.USERS_STATISTICS, params);
+        pigServer.execute(ScriptType.USERS_STATISTICS, params);
 
         Parameters.STORAGE_TABLE.put(params, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
     }
 
     @Test

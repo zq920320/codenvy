@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -41,7 +42,6 @@ import java.util.zip.ZipInputStream;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestAcceptance extends BaseTest {
@@ -54,7 +54,7 @@ public class TestAcceptance extends BaseTest {
     }
 
     private void runScript() throws Exception {
-        PigRunner pigRunner = new PigRunner();
+        PigRunner pigRunner = Injector.getInstance(PigRunner.class);
         Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -96,7 +96,7 @@ public class TestAcceptance extends BaseTest {
 
     @Test
     public void test() throws Exception {
-        ViewBuilder viewBuilder = spy(new ViewBuilder());
+        ViewBuilder viewBuilder = spy(Injector.getInstance(ViewBuilder.class));
 
         viewBuilder.forceExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
 

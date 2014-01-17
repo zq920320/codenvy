@@ -17,9 +17,10 @@
  */
 
 
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.acton;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.Metric;
@@ -28,23 +29,27 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
+import com.codenvy.analytics.services.Feature;
 
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.*;
 import java.net.SocketTimeoutException;
 import java.text.ParseException;
 import java.util.*;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@Singleton
 public class ActOn extends Feature {
     private static final Logger LOG = LoggerFactory.getLogger(ActOn.class);
 
     public static final  String FILE_NAME = "ideuserupdate.csv";
-    private static final int    PAGE_SIZE = Configurator.getInt("acton.page.size", 1000);
+    private static final String PAGE_SIZE = "acton.page.size";
 
     private static final String AVAILABLE = "acton.available";
 
@@ -60,10 +65,16 @@ public class ActOn extends Feature {
     private static final String FTP_MAX_EFFORTS = "acton.ftp.maxEfforts";
     private static final String FTP_AUTH        = "acton.ftp.auth";
 
+    private final Configurator configurator;
+
+    @Inject
+    public ActOn(Configurator configurator) {
+        this.configurator = configurator;
+    }
 
     @Override
     public boolean isAvailable() {
-        return Configurator.getBoolean(AVAILABLE);
+        return configurator.getBoolean(AVAILABLE);
     }
 
     @Override
@@ -87,9 +98,9 @@ public class ActOn extends Feature {
 
     protected void sendNotificationMail() throws IOException {
         MailService.Builder builder = new MailService.Builder();
-        builder.setSubject(Configurator.getString(MAIL_SUBJECT));
-        builder.setText(Configurator.getString(MAIL_TEXT));
-        builder.setTo(Configurator.getString(MAIL_TO));
+        builder.setSubject(configurator.getString(MAIL_SUBJECT));
+        builder.setText(configurator.getString(MAIL_TEXT));
+        builder.setTo(configurator.getString(MAIL_TO));
         MailService mailService = builder.build();
 
         mailService.send();
@@ -97,8 +108,8 @@ public class ActOn extends Feature {
 
     /** Sends file directly to FTP server. */
     private void transferToFtp(File file) throws IOException {
-        for (int i = 0; i < Configurator.getInt(FTP_MAX_EFFORTS); i++) {
-            FTPSClient ftp = new FTPSClient(Configurator.getString(FTP_AUTH), false);
+        for (int i = 0; i < configurator.getInt(FTP_MAX_EFFORTS); i++) {
+            FTPSClient ftp = new FTPSClient(configurator.getString(FTP_AUTH), false);
 
             try {
                 doOpenConnection(ftp);
@@ -126,8 +137,8 @@ public class ActOn extends Feature {
     }
 
     private void doOpenConnection(FTPSClient ftp) throws IOException {
-        ftp.setDefaultTimeout(Configurator.getInt(FTP_TIMEOUT));
-        ftp.connect(Configurator.getString(FTP_SERVER), Configurator.getInt(FTP_PORT));
+        ftp.setDefaultTimeout(configurator.getInt(FTP_TIMEOUT));
+        ftp.connect(configurator.getString(FTP_SERVER), configurator.getInt(FTP_PORT));
 
         ftp.setSendBufferSize(65536);
         ftp.setBufferSize(65536);
@@ -136,7 +147,7 @@ public class ActOn extends Feature {
             throw new IOException("FTP connection failed");
         }
 
-        if (!ftp.login(Configurator.getString(FTP_LOGIN), Configurator.getString(FTP_PASSWORD))) {
+        if (!ftp.login(configurator.getString(FTP_LOGIN), configurator.getString(FTP_PASSWORD))) {
             ftp.logout();
             throw new IOException("FTP login failed");
         }
@@ -156,12 +167,14 @@ public class ActOn extends Feature {
     }
 
     protected File prepareFile(Map<String, String> context) throws IOException, ParseException {
-        File file = new File(Configurator.getTmpDir(), FILE_NAME);
+        File file = new File(configurator.getTmpDir(), FILE_NAME);
+
+        int pageSize = configurator.getInt(PAGE_SIZE, 1000);
 
         Map<ValueData, Map<String, ValueData>> usersProfiles = getUsersProfiles();
         Set<ValueData> activeUsers = getActiveUsersLastMonth(context);
 
-        context = Parameters.PER_PAGE.cloneAndPut(context, "" + PAGE_SIZE);
+        context = Parameters.PER_PAGE.cloneAndPut(context, "" + pageSize);
 
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
             writeHeader(out);
@@ -172,7 +185,7 @@ public class ActOn extends Feature {
                 List<ValueData> usersStatistics = getUsersStatistics(context);
                 writeUsersWithStatistics(activeUsers, usersStatistics, usersProfiles, out);
 
-                if (usersStatistics.size() < PAGE_SIZE) {
+                if (usersStatistics.size() < pageSize) {
                     break;
                 }
             }

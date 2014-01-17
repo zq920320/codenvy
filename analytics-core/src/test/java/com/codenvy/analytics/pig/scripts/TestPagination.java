@@ -25,7 +25,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -70,7 +69,7 @@ public class TestPagination extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testpagination");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
     }
 
     @Test

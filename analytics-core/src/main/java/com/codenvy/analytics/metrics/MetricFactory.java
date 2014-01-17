@@ -18,6 +18,9 @@
 
 package com.codenvy.analytics.metrics;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ServiceLoader;
@@ -26,14 +29,21 @@ import java.util.concurrent.ConcurrentHashMap;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MetricFactory {
 
+    private static final Logger                            LOG     = LoggerFactory.getLogger(MetricFactory.class);
     private static final ConcurrentHashMap<String, Metric> metrics = new ConcurrentHashMap<>();
 
     static {
-        for (Metric metric : ServiceLoader.load(Metric.class)) {
-            Metric existed = metrics.put(metric.getName(), metric);
-            if (existed != null) {
-                throw new IllegalStateException("There is 2 metrics with name " + existed.getName());
+        try {
+
+            for (Metric metric : ServiceLoader.load(Metric.class)) {
+                Metric existed = metrics.put(metric.getName(), metric);
+                if (existed != null) {
+                    throw new IllegalStateException("There is 2 metrics with name " + existed.getName());
+                }
             }
+        } catch (Throwable e) {
+            LOG.error(e.getMessage(), e);
+            throw e;
         }
     }
 

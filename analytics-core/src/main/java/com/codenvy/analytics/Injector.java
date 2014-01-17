@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,27 +15,20 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics;
 
-package com.codenvy.analytics.metrics;
+import com.google.inject.Guice;
 
-import javax.annotation.security.RolesAllowed;
+/** @author Anatoliy Bazko */
+public class Injector {
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"system/admin", "system/manager"})
-public abstract class AbstractMetric implements Metric {
+    private static final com.google.inject.Injector injector;
 
-    protected final String metricName;
-
-    public AbstractMetric(String metricName) {
-        this.metricName = metricName.toLowerCase();
+    static {
+        injector = Guice.createInjector();
     }
 
-    public AbstractMetric(MetricType metricType) {
-        this(metricType.toString());
-    }
-
-    @Override
-    public String getName() {
-        return metricName;
+    public static <T> T getInstance(Class<T> clazz) {
+        return injector.getInstance(clazz);
     }
 }

@@ -20,7 +20,6 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -61,7 +60,7 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofevents");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.EVENTS, params);
+        pigServer.execute(ScriptType.EVENTS, params);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user1@gmail.com")
@@ -78,11 +77,11 @@ public class TestNumberOfEvents extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.EVENTS, params);
+        pigServer.execute(ScriptType.EVENTS, params);
     }
 
     @Test
     public void testExecute() throws Exception {
-        PigServer.executeAndReturn(ScriptType.EVENTS, params);
+        pigServer.executeAndReturn(ScriptType.EVENTS, params);
     }
 }

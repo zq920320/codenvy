@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,26 +15,19 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.configuration;
+package com.codenvy.analytics;
 
-import java.io.IOException;
+import com.codenvy.inject.DynaModule;
+import com.google.inject.servlet.ServletModule;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface ConfigurationManager<T> {
+import org.everrest.guice.servlet.GuiceEverrestServlet;
 
-    /**
-     * Loads a configuration.
-     *
-     * @throws IOException
-     *         if an error occurred during reading
-     */
-    T loadConfiguration() throws IOException;
+/** @author Anatoliy Bazko */
+@DynaModule
+public class ApiServletModule extends ServletModule {
 
-    /**
-     * Stores a configuration.
-     *
-     * @throws IOException
-     *         if an error occurred during storing
-     */
-    void storeConfiguration(T configuration) throws IOException;
+    @Override
+    protected void configureServlets() {
+        serve("/*").with(GuiceEverrestServlet.class);
+    }
 }

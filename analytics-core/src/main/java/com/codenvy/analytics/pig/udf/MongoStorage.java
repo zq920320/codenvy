@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.*;
@@ -101,9 +102,11 @@ public class MongoStorage extends StoreFunc {
         public MongoWriter(Configuration configuration) throws IOException {
             MongoClientURI uri = new MongoClientURI(configuration.get(SERVER_URL_PARAM));
 
-            DB db = MongoDataStorage.getDb();
+            MongoDataStorage mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
+            CollectionsManagement collectionsManagement = Injector.getInstance(CollectionsManagement.class);
 
-            CollectionsManagement collectionsManagement = new CollectionsManagement();
+            DB db = mongoDataStorage.getDb();
+
             if (!uri.getCollection().startsWith("test") &&
                 !collectionsManagement.isCollectionExists(uri.getCollection())) {
 

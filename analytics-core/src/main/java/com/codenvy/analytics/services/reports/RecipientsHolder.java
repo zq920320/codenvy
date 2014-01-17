@@ -19,17 +19,17 @@ package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 import com.codenvy.analytics.services.configuration.ParametersConfiguration;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,23 +37,14 @@ import java.util.Set;
 @Singleton
 public class RecipientsHolder {
 
-    private static final Logger LOG           = LoggerFactory.getLogger(RecipientsHolder.class);
     private static final String CONFIGURATION = "reports.recipients.configuration";
 
     private final RecipientsHolderConfiguration configuration;
 
-    public RecipientsHolder(XmlConfigurationManager<RecipientsHolderConfiguration> configurationManager) {
-        try {
-            configuration = configurationManager.loadConfiguration();
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public RecipientsHolder() {
-        this(new XmlConfigurationManager<>(RecipientsHolderConfiguration.class,
-                                           Configurator.getString(CONFIGURATION)));
+    @Inject
+    public RecipientsHolder(Configurator configurator, XmlConfigurationManager confManager) throws IOException {
+        configuration = confManager.loadConfiguration(RecipientsHolderConfiguration.class,
+                                                      configurator.getString(CONFIGURATION));
     }
 
     public Set<String> getEmails(String groupName) throws IOException {
@@ -71,13 +62,13 @@ public class RecipientsHolder {
                     InitializerConfiguration initializer = groupConf.getInitializer();
 
                     ParametersConfiguration paramsConf = initializer.getParametersConfiguration();
-                    Map<String, String> params = paramsConf.getParamsAsMap();
+                    List<ParameterConfiguration> parameters = paramsConf.getParameters();
 
                     String clazzName = initializer.getClazz();
                     Class<?> clazz = Class.forName(clazzName);
-                    Constructor<?> constructor = clazz.getConstructor(Map.class);
+                    Constructor<?> constructor = clazz.getConstructor(List.class);
 
-                    RecipientGroup recipientGroup = (RecipientGroup)constructor.newInstance(params);
+                    RecipientGroup recipientGroup = (RecipientGroup)constructor.newInstance(parameters);
                     return recipientGroup.getEmails(context);
                 }
             }

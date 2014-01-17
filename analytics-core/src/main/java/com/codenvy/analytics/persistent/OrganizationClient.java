@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.organization.client.AccountManager;
@@ -24,29 +24,27 @@ import com.codenvy.organization.exception.OrganizationServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /** @author Anatoliy Bazko */
+@Singleton
 public class OrganizationClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OrganizationClient.class);
-
+    private static final Logger LOG                                 = LoggerFactory.getLogger(OrganizationClient.class);
     private static final String ORGANIZATION_APPLICATION_SERVER_URL = "organization.application.server.url";
 
-    private static final AccountManager accountManager;
+    private final AccountManager accountManager;
 
-    static {
+    @Inject
+    public OrganizationClient(Configurator configurator) throws OrganizationServiceException {
         System.setProperty(ORGANIZATION_APPLICATION_SERVER_URL,
-                           Configurator.getString(ORGANIZATION_APPLICATION_SERVER_URL));
+                           configurator.getString(ORGANIZATION_APPLICATION_SERVER_URL));
+        accountManager = new AccountManager();
 
-        try {
-            accountManager = new AccountManager();
-        } catch (OrganizationServiceException e) {
-            LOG.error(e.getMessage(), e);
-            throw new IllegalStateException(e);
-        }
     }
 
-    public static AccountManager getAccountManager() {
+    public AccountManager getAccountManager() {
         return accountManager;
     }
-
 }

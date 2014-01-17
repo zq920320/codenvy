@@ -22,6 +22,8 @@ import com.codenvy.analytics.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,67 +31,69 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@Singleton
 public class JdbcDataPersisterFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcDataPersisterFactory.class);
 
-    public static final String JDBC_DATA_PERSISTER_DATASOURCE = "jdbc.data-persister.datasource";
-    public static final String JDBC_DATA_PERSISTER_URL        = "jdbc.data-persister.url";
-    public static final String JDBC_DATA_PERSISTER_USER       = "jdbc.data-persister.user";
-    public static final String JDBC_DATA_PERSISTER_PASSWORD   = "jdbc.data-persister.password";
+    private static final String JDBC_DATA_PERSISTER_DATASOURCE = "jdbc.data-persister.datasource";
+    private static final String JDBC_DATA_PERSISTER_URL        = "jdbc.data-persister.url";
+    private static final String JDBC_DATA_PERSISTER_USER       = "jdbc.data-persister.user";
+    private static final String JDBC_DATA_PERSISTER_PASSWORD   = "jdbc.data-persister.password";
 
-    private static final DataSource datasource;
+    private final DataPersister dataPersister;
 
-    static {
-        if (Configurator.exists(JDBC_DATA_PERSISTER_DATASOURCE)) {
-            String dsName = Configurator.getString(JDBC_DATA_PERSISTER_DATASOURCE);
-            try {
-                datasource = getDataSource(dsName);
-            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-                    InvocationTargetException | InstantiationException e) {
-                LOG.error(e.getMessage(), e);
-                throw new IllegalStateException(e);
+    @Inject
+    public JdbcDataPersisterFactory(Configurator configurator) throws ClassNotFoundException,
+                                                                      NoSuchMethodException,
+                                                                      InstantiationException,
+                                                                      IllegalAccessException,
+                                                                      InvocationTargetException,
+                                                                      SQLException {
+        dataPersister = initDataPersister(configurator);
+    }
+
+    private DataPersister initDataPersister(Configurator configurator) throws ClassNotFoundException,
+                                                                              NoSuchMethodException,
+                                                                              InvocationTargetException,
+                                                                              InstantiationException,
+                                                                              IllegalAccessException,
+                                                                              SQLException {
+
+        if (configurator.exists(JDBC_DATA_PERSISTER_DATASOURCE)) {
+            String dsName = configurator.getString(JDBC_DATA_PERSISTER_DATASOURCE);
+            LOG.info("Datasource " + dsName + " is used");
+
+            DataSource ds = getDataSource(dsName);
+            switch (getVendor(ds)) {
+                case "H2":
+                    return new H2DataPersister(ds);
+                default:
+                    throw new IllegalStateException("Vendor " + getVendor(ds) + " is not supported");
             }
 
-            LOG.info("Datasource " + dsName + " will be used");
         } else {
-            datasource = null;
-        }
-    }
+            String url = configurator.getString(JDBC_DATA_PERSISTER_URL);
+            String user = configurator.getString(JDBC_DATA_PERSISTER_USER);
+            String password = configurator.getString(JDBC_DATA_PERSISTER_PASSWORD);
 
-    public static DataPersister getDataPersister() {
-        try {
-            if (Configurator.exists(JDBC_DATA_PERSISTER_DATASOURCE)) {
-                String vendor = getVendor(datasource);
-
-                switch (vendor) {
-                    case "H2":
-                        return new H2DataPersister(datasource);
-                    default:
-                        throw new IllegalStateException("Vendor " + vendor + " is not supported");
-                }
-
+            if (url.toUpperCase().contains(":H2:")) {
+                return new H2DataPersister(url, user, password);
             } else {
-                String url = Configurator.getString(JDBC_DATA_PERSISTER_URL);
-                String user = Configurator.getString(JDBC_DATA_PERSISTER_USER);
-                String password = Configurator.getString(JDBC_DATA_PERSISTER_PASSWORD);
-
-                if (url.toUpperCase().contains(":H2:")) {
-                    return new H2DataPersister(url, user, password);
-                } else {
-                    throw new IllegalStateException("Driver for " + url + " not found");
-                }
+                throw new IllegalStateException("Driver for " + url + " not found");
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
         }
     }
 
-    private static DataSource getDataSource(String dataSourceName) throws ClassNotFoundException,
-                                                                          NoSuchMethodException,
-                                                                          IllegalAccessException,
-                                                                          InvocationTargetException,
-                                                                          InstantiationException {
+    public DataPersister getDataPersister() {
+        return dataPersister;
+    }
+
+    private DataSource getDataSource(String dataSourceName) throws ClassNotFoundException,
+                                                                   NoSuchMethodException,
+                                                                   IllegalAccessException,
+                                                                   InvocationTargetException,
+                                                                   InstantiationException {
 
         Class<?> dsServiceClass = Class.forName("org.wso2.carbon.ndatasource.core.DataSourceService");
         Object dsServiceInstance = dsServiceClass.getConstructor().newInstance();
@@ -101,7 +105,7 @@ public class JdbcDataPersisterFactory {
         return (DataSource)getDSObject.invoke(carbonDataSourceInstance);
     }
 
-    private static String getVendor(DataSource dataSource) throws SQLException {
+    private String getVendor(DataSource dataSource) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             return connection.getMetaData().getDatabaseProductName();
         }

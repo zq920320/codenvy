@@ -27,7 +27,6 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.projects.AbstractProjectType;
 import com.codenvy.analytics.metrics.projects.ProjectTypes;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -69,7 +68,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofeventsbytypes_projecttypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
+        pigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "", "", "jar")
@@ -86,7 +85,7 @@ public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
+        pigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
     }
 
     @Test

@@ -46,7 +46,7 @@ public class TestCollectionConfiguration extends BaseTest {
                                                 "   </collection>" +
                                                 "</collections>";
 
-    private XmlConfigurationManager<CollectionsConfiguration> configurationManager;
+    private XmlConfigurationManager configurationManager;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -54,12 +54,13 @@ public class TestCollectionConfiguration extends BaseTest {
             out.write(CONFIGURATION);
         }
 
-        configurationManager = new XmlConfigurationManager<>(CollectionsConfiguration.class, FILE);
+        configurationManager = new XmlConfigurationManager();
     }
 
     @Test
     public void testParsingConfiguration() throws Exception {
-        CollectionsConfiguration configuration = configurationManager.loadConfiguration();
+        CollectionsConfiguration configuration =
+                configurationManager.loadConfiguration(CollectionsConfiguration.class, FILE);
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getCollections().size());

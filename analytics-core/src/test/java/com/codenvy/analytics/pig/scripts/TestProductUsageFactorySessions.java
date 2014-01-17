@@ -24,7 +24,6 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.factory.*;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -94,16 +93,16 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions_acceptedfactories");
         Parameters.LOG.put(params, log.getAbsolutePath());
-        PigServer.execute(ScriptType.ACCEPTED_FACTORIES, params);
+        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, params);
 
         Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions");
-        PigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
 
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagefactorysessions-tmpws");
-        PigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, params);
+        pigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, params);
     }
 
     @Test

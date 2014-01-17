@@ -15,24 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services.configuration;
+package com.codenvy.analytics.services;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import com.codenvy.analytics.services.reports.ReportSender;
 
-/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
-@XmlRootElement(name = "parameters")
-public class ParametersConfiguration {
+/** @author Dmytro Nochevnov */
+public class ReportSenderFeature extends FeatureWrapper {
 
-    private List<ParameterConfiguration> parameters;
-
-    public List<ParameterConfiguration> getParameters() {
-        return parameters;
-    }
-
-    @XmlElement(name = "parameter")
-    public void setParameters(List<ParameterConfiguration> usersGroup) {
-        this.parameters = usersGroup;
+    public ReportSenderFeature() {
+        super(ReportSender.class);
     }
 }

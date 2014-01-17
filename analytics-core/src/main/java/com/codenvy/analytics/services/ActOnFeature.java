@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,15 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics;
+package com.codenvy.analytics.services;
 
-import java.lang.annotation.*;
+import com.codenvy.analytics.services.acton.ActOn;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@Target(value = ElementType.TYPE)
-@Retention(value = RetentionPolicy.RUNTIME)
-@Inherited
-public @interface RolesAllowed {
-    public abstract String[] value() default {};
+/** @author Anatoliy Bazko */
+public class ActOnFeature extends FeatureWrapper {
+
+    public ActOnFeature() {
+        super(ActOn.class);
+    }
 }
-

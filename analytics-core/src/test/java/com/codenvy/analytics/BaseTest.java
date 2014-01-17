@@ -26,7 +26,8 @@ import de.flapdoodle.embed.mongo.config.RuntimeConfig;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
 
-import com.codenvy.analytics.persistent.LoadTestMongoIndexes;
+import com.codenvy.analytics.persistent.MongoDataStorage;
+import com.codenvy.analytics.pig.PigServer;
 import com.mongodb.MongoException;
 
 import org.apache.pig.data.TupleFactory;
@@ -42,7 +43,7 @@ import java.text.SimpleDateFormat;
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
     public static final    String BASE_DIR = "target";
-    protected static final Logger LOG      = LoggerFactory.getLogger(LoadTestMongoIndexes.class);
+    protected static final Logger LOG      = LoggerFactory.getLogger(BaseTest.class);
 
     protected final TupleFactory     tupleFactory = TupleFactory.getInstance();
     protected final DateFormat       dateFormat   = new SimpleDateFormat("yyyyMMdd");
@@ -52,9 +53,19 @@ public class BaseTest {
 
     private MongodProcess embeddedMongoProcess;
 
+    protected final Configurator     configurator;
+    protected final PigServer        pigServer;
+    protected final MongoDataStorage mongoDataStorage;
+
+    public BaseTest() {
+        this.configurator = Injector.getInstance(Configurator.class);
+        this.pigServer = Injector.getInstance(PigServer.class);
+        this.mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
+    }
+
     @BeforeTest
     public void setUp() throws Exception {
-        File dirTemp = new File(Configurator.getTmpDir(), "embedded-getDb-tmp");
+        File dirTemp = new File(configurator.getTmpDir(), "embedded-getDb-tmp");
         dirTemp.mkdirs();
 
         RuntimeConfig config = new RuntimeConfig();

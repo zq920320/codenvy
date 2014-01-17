@@ -27,7 +27,6 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -66,7 +65,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
 
 
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company1", "22", "2")
@@ -81,7 +80,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
     }
 
     @Test

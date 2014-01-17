@@ -20,15 +20,8 @@
 package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.services.ActOn;
-import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.LogChecker;
-import com.codenvy.analytics.services.ReportSender;
-import com.codenvy.analytics.services.ReportSenderWrapper;
-import com.codenvy.analytics.services.pig.PigRunner;
+import com.codenvy.analytics.services.*;
 import com.codenvy.analytics.services.view.CSVReportPersister;
-import com.codenvy.analytics.services.view.ViewBuilder;
-import com.codenvy.analytics.services.view.ViewBuilderWrapper;
 
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
@@ -39,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Calendar;
@@ -56,15 +48,23 @@ public class Scheduler implements ServletContextListener {
     private static final String FORCE_RUN_CONDITION_ALLTIME = "ALLTIME";
     private static final String FORCE_RUN_CONDITION_LASTDAY = "LASTDAY";
 
+    private final Configurator       configurator;
+    private final CSVReportPersister csvReportPersister;
+
     private org.quartz.Scheduler scheduler;
 
-    private static final Class[] features = new Class[]{PigRunner.class,
-                                                        LogChecker.class,
-                                                        ReportSenderWrapper.class,
-                                                        ViewBuilderWrapper.class,
-                                                        ActOn.class};
+    private static final Class[] features = new Class[]{PigRunnerFeature.class,
+                                                        LogCheckerFeature.class,
+                                                        ReportSenderFeature.class,
+                                                        ViewBuilderFeature.class,
+                                                        ActOnFeature.class};
 
-    
+
+    public Scheduler() {
+        configurator = Injector.getInstance(Configurator.class);
+        csvReportPersister = Injector.getInstance(CSVReportPersister.class);
+    }
+
     @Override
     public void contextDestroyed(ServletContextEvent context) {
         try {
@@ -77,12 +77,12 @@ public class Scheduler implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent context) {
         try {
-            CSVReportPersister.restoreBackup();
+            csvReportPersister.restoreBackup();
 
             initializeScheduler();
             scheduleAllFeatures();
 
-            if (Configurator.getString(SCHEDULER_FORCE_RUN_PERIOD) != null) {
+            if (configurator.getString(SCHEDULER_FORCE_RUN_PERIOD) != null) {
                 executeSpecificFeature();
             }
         } catch (Throwable e) {
@@ -99,7 +99,7 @@ public class Scheduler implements ServletContextListener {
             }
         };
 
-        if (Configurator.getBoolean(SCHEDULER_FORCE_RUN_ASYNCHRONOUS)) {
+        if (configurator.getBoolean(SCHEDULER_FORCE_RUN_ASYNCHRONOUS)) {
             forceRunFeatureThread.start();
         } else {
             forceRunFeatureThread.run();
@@ -108,9 +108,9 @@ public class Scheduler implements ServletContextListener {
 
     private void forceRunFeatures() {
         try {
-            String forceRunPeriod = Configurator.getString(SCHEDULER_FORCE_RUN_PERIOD);
+            String forceRunPeriod = configurator.getString(SCHEDULER_FORCE_RUN_PERIOD);
             Set<String> forceRunFeature =
-                    new HashSet<>(Arrays.asList(Configurator.getString(SCHEDULER_FORCE_RUN_CLASS).split(",")));
+                    new HashSet<>(Arrays.asList(configurator.getString(SCHEDULER_FORCE_RUN_CLASS).split(",")));
 
             for (Class jobClass : features) {
                 Feature job = (Feature)jobClass.getConstructor().newInstance();
@@ -212,7 +212,7 @@ public class Scheduler implements ServletContextListener {
 
     private CronTrigger createTrigger() {
         return TriggerBuilder.newTrigger().withSchedule(
-                CronScheduleBuilder.cronSchedule(Configurator.getString(SCHEDULER_CRON_TIMETABLE))).build();
+                CronScheduleBuilder.cronSchedule(configurator.getString(SCHEDULER_CRON_TIMETABLE))).build();
     }
 
     private void addJobDetail(Class<? extends Feature> clazz, List<JobDetail> jobDetails) {

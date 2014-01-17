@@ -21,7 +21,6 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -95,7 +94,7 @@ public class TestCombineSmallSessions extends BaseTest {
     public void testExecuteScript() throws Exception {
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_COMBINE_SMALL_SESSIONS, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_COMBINE_SMALL_SESSIONS, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }

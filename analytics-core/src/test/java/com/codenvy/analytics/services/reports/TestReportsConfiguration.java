@@ -56,7 +56,7 @@ public class TestReportsConfiguration extends BaseTest {
                                                 "    </report>\n" +
                                                 "</reports>\n";
 
-    private XmlConfigurationManager<ReportsConfiguration> configurationManager;
+    private XmlConfigurationManager configurationManager;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -64,12 +64,12 @@ public class TestReportsConfiguration extends BaseTest {
             out.write(CONFIGURATION);
         }
 
-        configurationManager = new XmlConfigurationManager<>(ReportsConfiguration.class, FILE);
+        configurationManager = new XmlConfigurationManager();
     }
 
     @Test
     public void testParsingConfiguration() throws Exception {
-        ReportsConfiguration configuration = configurationManager.loadConfiguration();
+        ReportsConfiguration configuration = configurationManager.loadConfiguration(ReportsConfiguration.class, FILE);
 
         assertNotNull(configuration.getReports());
         assertEquals(1, configuration.getReports().size());

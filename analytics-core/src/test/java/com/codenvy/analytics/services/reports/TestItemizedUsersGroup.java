@@ -20,6 +20,8 @@ package com.codenvy.analytics.services.reports;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -27,6 +29,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Set;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.*;
 
 
@@ -50,7 +56,7 @@ public class TestItemizedUsersGroup extends BaseTest {
                                                 "    </group>\n" +
                                                 "</recipients>";
 
-    private XmlConfigurationManager<RecipientsHolderConfiguration> configurationManager;
+    private RecipientsHolder recipientsHolder;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -58,15 +64,23 @@ public class TestItemizedUsersGroup extends BaseTest {
             out.write(CONFIGURATION);
         }
 
-        configurationManager = new XmlConfigurationManager<>(RecipientsHolderConfiguration.class, FILE);
+        XmlConfigurationManager xmlConfigurationManager = mock(XmlConfigurationManager.class);
+        when(xmlConfigurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                XmlConfigurationManager configurationManager = new XmlConfigurationManager();
+                return configurationManager.loadConfiguration(RecipientsHolderConfiguration.class, FILE);
+            }
+        });
+
+        recipientsHolder = new RecipientsHolder(configurator, xmlConfigurationManager);
     }
 
 
     @Test
     public void testInitializationItemizedUsersGroup() throws Exception {
-        RecipientsHolder recipientsHolder = new RecipientsHolder(configurationManager);
-
         Set<String> emails = recipientsHolder.getEmails("group");
+
         assertNotNull(emails);
         assertEquals(2, emails.size());
         assertTrue(emails.contains("test1@codenvy.com"));

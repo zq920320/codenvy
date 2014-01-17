@@ -22,7 +22,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.RolesAllowed;
 import com.codenvy.analytics.util.MetricDTOFactory;
 import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.dto.*;
@@ -30,6 +29,8 @@ import com.codenvy.api.analytics.exception.MetricNotFoundException;
 import com.codenvy.api.core.rest.ServiceContext;
 import com.codenvy.dto.server.DtoFactory;
 
+import javax.annotation.security.RolesAllowed;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +39,10 @@ import java.util.Map;
 /**
  * Metric handler implementation base on data stored in files on file system. Which should be preliminary prepared by
  * calling appropriate scripts.
- *z
+ *
  * @author <a href="mailto:dkuleshov@codenvy.com">Dmitry Kuleshov</a>
  */
+@Singleton
 public class FileBasedMetricHandler implements MetricHandler {
 
     @Override

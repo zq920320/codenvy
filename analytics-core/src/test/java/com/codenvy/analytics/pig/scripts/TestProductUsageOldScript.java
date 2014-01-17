@@ -20,7 +20,6 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -80,12 +79,13 @@ public class TestProductUsageOldScript extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagesessions");
+        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testproductusagesessions-stat");
         Parameters.LOG.put(params, log.getAbsolutePath());
     }
 
     @Test
     public void testExecute() throws Exception {
-        PigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
+        pigServer.executeAndReturn(ScriptType.PRODUCT_USAGE_SESSIONS, params);
     }
 
 }

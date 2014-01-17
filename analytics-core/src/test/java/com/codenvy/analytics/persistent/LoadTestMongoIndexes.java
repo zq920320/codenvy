@@ -37,7 +37,7 @@ public class LoadTestMongoIndexes extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
-        db = MongoDataStorage.getDb();
+        db = mongoDataStorage.getDb();
     }
 
     @Test

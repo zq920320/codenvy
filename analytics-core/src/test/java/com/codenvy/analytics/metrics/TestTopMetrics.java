@@ -27,7 +27,6 @@ import com.codenvy.analytics.metrics.top.AbstractTopFactories;
 import com.codenvy.analytics.metrics.top.AbstractTopMetrics;
 import com.codenvy.analytics.metrics.top.AbstractTopReferrers;
 import com.codenvy.analytics.metrics.top.AbstractTopSessions;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -118,11 +117,11 @@ public class TestTopMetrics extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testtopmetrics_acceptedfactories");
         Parameters.LOG.put(params, log.getAbsolutePath());
-        PigServer.execute(ScriptType.ACCEPTED_FACTORIES, params);
+        pigServer.execute(ScriptType.ACCEPTED_FACTORIES, params);
 
         Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
         Parameters.STORAGE_TABLE.put(params, "testtopmetrics");
-        PigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
+        pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
     }
 
     @Test

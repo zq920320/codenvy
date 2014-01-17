@@ -18,14 +18,18 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.mockito.ArgumentCaptor;
-import org.testng.annotations.BeforeClass;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.BufferedWriter;
@@ -66,35 +70,42 @@ public class TestViewBuilder extends BaseTest {
                                                 "     </view>" +
                                                 "</display>";
 
-    private XmlConfigurationManager<DisplayConfiguration> configurationManager;
+    private ViewBuilder viewBuilder;
 
-    @BeforeClass
+    @BeforeMethod
     public void prepare() throws Exception {
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(FILE))) {
-            out.write(CONFIGURATION);
-        }
+        XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
+        when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                try (BufferedWriter out = new BufferedWriter(new FileWriter(FILE))) {
+                    out.write(CONFIGURATION);
+                }
 
-        configurationManager = spy(new XmlConfigurationManager<>(DisplayConfiguration.class, FILE));
+                XmlConfigurationManager manager = new XmlConfigurationManager();
+                return manager.loadConfiguration(DisplayConfiguration.class, FILE);
+            }
+        });
+
+        viewBuilder = spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
+                                          Injector.getInstance(CSVReportPersister.class),
+                                          configurationManager));
     }
 
     @Test
     public void testIfShippedConfigurationCorrect() throws Exception {
-        ViewBuilder viewBuilder = new ViewBuilder();
+        ViewBuilder viewBuilder = Injector.getInstance(ViewBuilder.class);
         viewBuilder.doExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
     }
 
     @Test
     public void testLastDayPeriod() throws Exception {
-        ViewBuilder spyBuilder = spy(new ViewBuilder());
-
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
-        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
-
-        spyBuilder.computeDisplayData(displayConfiguration, Utils.initializeContext(Parameters.TimeUnit.DAY));
-        verify(spyBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
+        viewBuilder.computeDisplayData(Utils.initializeContext(Parameters.TimeUnit.DAY));
+        verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         ViewData actualData = viewData.getAllValues().get(0);
         for (int i = 1; i < 4; i++) {
@@ -120,13 +131,12 @@ public class TestViewBuilder extends BaseTest {
         csvReport = new File("./target/reports/" + dirFormat.format(calendar.getTime()) + "/view_lifetime.csv");
         assertTrue(csvReport.exists());
 
-        CSVReportPersister.restoreBackup();
+        CSVReportPersister csvReportPersister = Injector.getInstance(CSVReportPersister.class);
+        csvReportPersister.restoreBackup();
     }
 
     @Test
     public void testSpecificDayPeriod() throws Exception {
-        ViewBuilder spyBuilder = spy(new ViewBuilder());
-
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
@@ -134,10 +144,9 @@ public class TestViewBuilder extends BaseTest {
         Map<String, String> executionContext = Utils.newContext();
         Parameters.TO_DATE.put(executionContext, "20130930");
         Parameters.FROM_DATE.put(executionContext, "20130930");
-        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
 
-        spyBuilder.computeDisplayData(displayConfiguration, executionContext);
-        verify(spyBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
+        viewBuilder.computeDisplayData(executionContext);
+        verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         ViewData actualData = viewData.getAllValues().get(0);
         for (int i = 1; i < 4; i++) {
@@ -164,12 +173,10 @@ public class TestViewBuilder extends BaseTest {
 
     @Test
     public void testQueryViewData() throws Exception {
-        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
         Map<String, String> context = Utils.initializeContext(Parameters.TimeUnit.DAY);
-        ViewBuilder viewBuilder = new ViewBuilder();
-        viewBuilder.computeDisplayData(displayConfiguration, context);
+        viewBuilder.computeDisplayData(context);
 
-        ViewData actualData = viewBuilder.queryViewData(displayConfiguration.getView("view"), context);
+        ViewData actualData = viewBuilder.getViewData("view", context);
 
         assertEquals(actualData.size(), 1);
         assertLastDayData(actualData.values().iterator().next());

@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,27 +15,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics;
 
-package com.codenvy.analytics.metrics;
+import com.codenvy.analytics.impl.FileBasedMetricHandler;
+import com.codenvy.api.analytics.AnalyticsService;
+import com.codenvy.api.analytics.MetricHandler;
+import com.codenvy.inject.DynaModule;
+import com.google.inject.AbstractModule;
 
-import javax.annotation.security.RolesAllowed;
-
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"system/admin", "system/manager"})
-public abstract class AbstractMetric implements Metric {
-
-    protected final String metricName;
-
-    public AbstractMetric(String metricName) {
-        this.metricName = metricName.toLowerCase();
-    }
-
-    public AbstractMetric(MetricType metricType) {
-        this(metricType.toString());
-    }
+/** @author Anatoliy Bazko */
+@DynaModule
+public class ApiModule extends AbstractModule {
 
     @Override
-    public String getName() {
-        return metricName;
+    protected void configure() {
+        bind(MetricHandler.class).toInstance(new FileBasedMetricHandler());
+        bind(View.class);
+        bind(AnalyticsService.class);
     }
 }

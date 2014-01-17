@@ -27,6 +27,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -36,6 +38,10 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 
 /**
@@ -65,7 +71,7 @@ public class TestCollectionsManagement extends BaseTest {
 
     @BeforeClass
     public void prepare() {
-        db = MongoDataStorage.getDb();
+        db = mongoDataStorage.getDb();
     }
 
     @Test
@@ -237,22 +243,25 @@ public class TestCollectionsManagement extends BaseTest {
         assertEquals(collection.getIndexInfo().size(), indexNumber);
     }
 
-    private CollectionsManagement initCollectionManagement(String collectionSuffix) throws Exception {
-        XmlConfigurationManager<CollectionsConfiguration> configurationManager =
-                getConfigurationManager(collectionSuffix);
-        return new CollectionsManagement(configurationManager);
-    }
+    private CollectionsManagement initCollectionManagement(final String collectionSuffix) throws Exception {
+        XmlConfigurationManager confManager = mock(XmlConfigurationManager.class);
+        when(confManager.loadConfiguration(any(Class.class), anyString())).
+                thenAnswer(new Answer() {
+                    @Override
+                    public Object answer(InvocationOnMock invocation) throws Throwable {
+                        String configuration =
+                                CONFIGURATION.replace(COLLECTION_NAME, COLLECTION_NAME + collectionSuffix);
+                        String file = FILE + "_" + collectionSuffix;
 
-    private XmlConfigurationManager<CollectionsConfiguration> getConfigurationManager(String collectionSuffix)
-            throws Exception {
+                        try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
+                            out.write(configuration);
+                        }
 
-        String configuration = CONFIGURATION.replace(COLLECTION_NAME, COLLECTION_NAME + collectionSuffix);
-        String file = FILE + "_" + collectionSuffix;
+                        XmlConfigurationManager manager = new XmlConfigurationManager();
+                        return manager.loadConfiguration(CollectionsConfiguration.class, file);
+                    }
+                });
 
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
-            out.write(configuration);
-        }
-
-        return new XmlConfigurationManager<>(CollectionsConfiguration.class, file);
+        return new CollectionsManagement(mongoDataStorage, confManager);
     }
 }

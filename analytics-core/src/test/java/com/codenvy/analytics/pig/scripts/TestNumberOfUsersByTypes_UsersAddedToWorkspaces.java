@@ -27,7 +27,6 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.AbstractUsersAddedToWorkspaces;
 import com.codenvy.analytics.metrics.users.UsersAddedToWorkspaces;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -74,7 +73,7 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofusersbytypes_usersaddedtoworkspaces");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
+        pigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
     }
 
     @Test

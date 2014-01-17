@@ -77,7 +77,7 @@ public abstract class Feature implements Job {
     }
 
     /** Initialize context if job is being executed on regular basis */
-    protected Map<String, String> initializeDefaultContext() throws ParseException {
+    private Map<String, String> initializeDefaultContext() throws ParseException {
         return Utils.initializeContext(Parameters.TimeUnit.DAY);
     }
 

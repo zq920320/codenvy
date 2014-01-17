@@ -20,6 +20,8 @@ package com.codenvy.analytics.services.reports;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -27,6 +29,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Set;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
@@ -47,30 +51,38 @@ public class TestFileStoredUsersGroup extends BaseTest {
                                                 "    </group>\n" +
                                                 "</recipients>";
 
-    private XmlConfigurationManager<RecipientsHolderConfiguration> configurationManager;
+    private RecipientsHolder recipientsHolder;
 
     @BeforeClass
     public void prepare() throws Exception {
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(FILE))) {
-            out.write(CONFIGURATION);
-        }
+        XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
+        when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                try (BufferedWriter out = new BufferedWriter(new FileWriter(FILE))) {
+                    out.write(CONFIGURATION);
+                }
 
-        configurationManager = new XmlConfigurationManager<>(RecipientsHolderConfiguration.class, FILE);
+                try (BufferedWriter out = new BufferedWriter(new FileWriter("target/file1"))) {
+                    out.write("test1@gmail.com");
+                }
 
-        try (BufferedWriter out = new BufferedWriter(new FileWriter("target/file1"))) {
-            out.write("test1@gmail.com");
-        }
+                try (BufferedWriter out = new BufferedWriter(new FileWriter("target/file2"))) {
+                    out.write("test2@gmail.com");
+                }
 
-        try (BufferedWriter out = new BufferedWriter(new FileWriter("target/file2"))) {
-            out.write("test2@gmail.com");
-        }
+                XmlConfigurationManager manager = new XmlConfigurationManager();
+                return manager.loadConfiguration(RecipientsHolderConfiguration.class, FILE);
+            }
+        });
+
+        recipientsHolder = new RecipientsHolder(configurator, configurationManager);
     }
 
     @Test
     public void testInitializationItemizedUsersGroup() throws Exception {
-        RecipientsHolder recipientsHolder = new RecipientsHolder(configurationManager);
-
         Set<String> emails = recipientsHolder.getEmails("group");
+
         assertNotNull(emails);
         assertEquals(2, emails.size());
         assertTrue(emails.contains("test1@gmail.com"));

@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
@@ -158,14 +159,16 @@ public class MongoLoader extends LoadFunc implements LoadMetadata {
     /** MongoDB implementation for {@link RecordReader} */
     private class MongoReader extends RecordReader {
 
-        private DBCursor    dbCursor;
-        private int         progress;
+        private DBCursor dbCursor;
+        private int      progress;
 
 
         public MongoReader(String location) throws IOException {
             MongoClientURI uri = new MongoClientURI(location);
 
-            DB db = MongoDataStorage.getDb();
+            MongoDataStorage mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
+
+            DB db = mongoDataStorage.getDb();
             dbCursor = db.getCollection(uri.getCollection()).find();
         }
 

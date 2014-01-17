@@ -33,8 +33,8 @@ public class MongoDataLoader implements DataLoader {
 
     private final DB db;
 
-    MongoDataLoader() throws IOException {
-        this.db = MongoDataStorage.getDb();
+    MongoDataLoader(DB db) throws IOException {
+        this.db = db;
     }
 
     @Override

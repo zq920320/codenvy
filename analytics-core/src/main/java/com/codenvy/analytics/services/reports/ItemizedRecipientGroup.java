@@ -17,6 +17,9 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.services.configuration.ParameterConfiguration;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +32,7 @@ public class ItemizedRecipientGroup extends AbstractRecipientGroup {
 
     private static final String E_MAIL = "e-mail";
 
-    public ItemizedRecipientGroup(Map<String, String> parameters) {
+    public ItemizedRecipientGroup(List<ParameterConfiguration> parameters) {
         super(parameters);
     }
 

@@ -18,6 +18,7 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -35,26 +36,30 @@ import java.util.Map;
  */
 public abstract class CumulativeMetric extends AbstractMetric {
 
-    private final Metric addedMetric;
-    private final Metric removedMetric;
+    private final Metric                addedMetric;
+    private final Metric                removedMetric;
+    private final InitialValueContainer initialValueContainer;
+
 
     public CumulativeMetric(MetricType metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
         super(metricType);
 
         this.addedMetric = addedMetric;
         this.removedMetric = removedMetric;
+
+        initialValueContainer = Injector.getInstance(InitialValueContainer.class);
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        InitialValueContainer.validateExistenceInitialValueBefore(context);
+        initialValueContainer.validateExistenceInitialValueBefore(context);
 
         if (!Utils.isSimpleContext(context)) {
             return ValueDataFactory.createDefaultValue(getValueDataClass());
         }
 
-        Calendar fromDate = (Calendar)InitialValueContainer.getInitialValueDate().clone();
+        Calendar fromDate = (Calendar)initialValueContainer.getInitialValueDate().clone();
         fromDate.add(Calendar.DAY_OF_MONTH, 1);
 
         context = Utils.clone(context);
@@ -70,7 +75,7 @@ public abstract class CumulativeMetric extends AbstractMetric {
     private ValueData doGetValue(Map<String, String> context) throws IOException, ParseException {
         LongValueData addedEntity = (LongValueData)addedMetric.getValue(context);
         LongValueData removedEntity = (LongValueData)removedMetric.getValue(context);
-        LongValueData initialValue = (LongValueData)InitialValueContainer.getInitialValue(metricName);
+        LongValueData initialValue = (LongValueData)initialValueContainer.getInitialValue(metricName);
 
         return new LongValueData(initialValue.getAsLong() + addedEntity.getAsLong() - removedEntity.getAsLong());
     }

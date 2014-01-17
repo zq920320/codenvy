@@ -17,13 +17,15 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.services.OrganizationClient;
+import com.codenvy.analytics.persistent.OrganizationClient;
+import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.exception.OrganizationServiceException;
 import com.codenvy.organization.model.Account;
@@ -32,6 +34,7 @@ import com.codenvy.organization.model.User;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,20 +45,20 @@ public class ActiveSubscribersRecipientGroup extends AbstractRecipientGroup {
     public static final String TARIFF_END_TIME        = "tariff_end_time";
     public static final String TARIFF_MANAGED_FACTORY = "Managed Factory";
 
-    private final String tariffPlan;
+    private final Set<String> tariffPlan;
 
     private final AccountManager accountManager;
 
-    public ActiveSubscribersRecipientGroup(Map<String, String> parameters)
+    public ActiveSubscribersRecipientGroup(List<ParameterConfiguration> parameters)
             throws OrganizationServiceException {
-        this(parameters, OrganizationClient.getAccountManager());
+        this(parameters, Injector.getInstance(OrganizationClient.class).getAccountManager());
     }
 
-    public ActiveSubscribersRecipientGroup(Map<String, String> parameters,
+    public ActiveSubscribersRecipientGroup(List<ParameterConfiguration> parameters,
                                            AccountManager accountManager) throws OrganizationServiceException {
         super(parameters);
         this.accountManager = accountManager;
-        this.tariffPlan = parameters.get(TARIFF_PLAN);
+        this.tariffPlan = getParameters(TARIFF_PLAN);
     }
 
     @Override
@@ -98,7 +101,7 @@ public class ActiveSubscribersRecipientGroup extends AbstractRecipientGroup {
     }
 
     protected boolean isActiveSubscriber(Account account, Map<String, String> context) throws IOException {
-        if (tariffPlan.equals(account.getAttribute(TARIFF_PLAN))) {
+        if (tariffPlan.contains(account.getAttribute(TARIFF_PLAN))) {
             String startTimeStr = account.getAttribute(TARIFF_START_TIME);
             String endTimeStr = account.getAttribute(TARIFF_END_TIME);
 

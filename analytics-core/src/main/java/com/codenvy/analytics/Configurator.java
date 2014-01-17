@@ -20,6 +20,7 @@ package com.codenvy.analytics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
+@Singleton
 public class Configurator {
 
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
@@ -41,36 +43,27 @@ public class Configurator {
     private static final Pattern TEMPLATE_PROP_VAR  = Pattern.compile("\\$\\{([^\\}]*)\\}");
     private static final Pattern TEMPLATE_ENV_VAR   = Pattern.compile("\\$([^\\/]*)[\\/]?");
 
-    private static Properties properties = new Properties();
+    private final Properties properties;
 
-    static {
-        try {
-            loadFromResource();
-        } catch (IOException e) {
-            try {
-                loadFromFile();
-            } catch (IOException e1) {
-                throw new IllegalStateException(
-                        "Configurator can't be instantiated. There is no configuration to read from");
-            }
-        }
+    public Configurator() throws IOException {
+        properties = loadProperties();
     }
 
-    public static String getTmpDir() {
+    public String getTmpDir() {
         return getString("analytics.tmp.dir");
     }
 
     /** @return value of the property as the array of String */
-    public static String[] getArray(String key) {
+    public String[] getArray(String key) {
         return getString(key).split(",");
     }
 
-    public static boolean exists(String key) {
+    public boolean exists(String key) {
         return getString(key) != null;
     }
 
     /** @return value of the property of the String type */
-    public static String getString(String key) {
+    public String getString(String key) {
         String currentValue = properties.getProperty(key);
         if (currentValue == null) {
             return null;
@@ -79,7 +72,7 @@ public class Configurator {
         return replaceEnvVariables(replacePropVariables(currentValue));
     }
 
-    private static String replaceEnvVariables(String currentValue) {
+    private String replaceEnvVariables(String currentValue) {
         return doReplaceVariable(TEMPLATE_ENV_VAR, currentValue, new ReplaceVariableAction() {
             @Override
             public String getValue(String template) {
@@ -91,7 +84,7 @@ public class Configurator {
         });
     }
 
-    private static String replacePropVariables(String currentValue) {
+    private String replacePropVariables(String currentValue) {
         return doReplaceVariable(TEMPLATE_PROP_VAR, currentValue, new ReplaceVariableAction() {
             @Override
             public String getValue(String template) {
@@ -101,7 +94,7 @@ public class Configurator {
         });
     }
 
-    private static String doReplaceVariable(Pattern pattern, String currentValue, ReplaceVariableAction action) {
+    private String doReplaceVariable(Pattern pattern, String currentValue, ReplaceVariableAction action) {
         int lastPos = 0;
         StringBuilder value2return = new StringBuilder();
 
@@ -120,21 +113,21 @@ public class Configurator {
     }
 
     /** @return value of the property of the boolean type */
-    public static boolean getBoolean(String key) {
+    public boolean getBoolean(String key) {
         return Boolean.parseBoolean(getString(key));
     }
 
     /** @return value of the property of the int type */
-    public static int getInt(String key) {
+    public int getInt(String key) {
         return Integer.parseInt(getString(key));
     }
 
     /** @return value of the property of the int type it exists in configuration */
-    public static int getInt(String key, int defaultValue) {
+    public int getInt(String key, int defaultValue) {
         return exists(key) ? Integer.parseInt(getString(key)) : defaultValue;
     }
 
-    public static Map<String, String> getAll(String keyPrefix) {
+    public Map<String, String> getAll(String keyPrefix) {
         Map<String, String> result = new HashMap<>();
 
         for (Object obj : properties.keySet()) {
@@ -148,24 +141,39 @@ public class Configurator {
         return result;
     }
 
-    private static void loadFromResource() throws IOException {
+    private Properties loadProperties() throws IOException {
+        try {
+            return loadFromResource();
+        } catch (IOException e) {
+            return loadFromFile();
+        }
+    }
+
+    private Properties loadFromResource() throws IOException {
+        Properties properties = new Properties();
+
         try (InputStream in = Configurator.class.getClassLoader().getResourceAsStream(CONFIGURATION)) {
             if (in == null) {
                 throw new FileNotFoundException("Resource not found " + CONFIGURATION);
             }
 
             properties.load(in);
-            LOG.info("Configuration has been read from resource " + CONFIGURATION);
         }
+
+        LOG.info("Configuration has been read from resource " + CONFIGURATION);
+        return properties;
     }
 
-    private static void loadFromFile() throws IOException {
+    private Properties loadFromFile() throws IOException {
+        Properties properties = new Properties();
         File file = new File(ANALYTICS_CONF_DIR, CONFIGURATION);
 
         try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
             properties.load(in);
-            LOG.info("Configuration has been read from file " + file.getCanonicalPath());
         }
+
+        LOG.info("Configuration has been read from file " + file.getCanonicalPath());
+        return properties;
     }
 
     private interface ReplaceVariableAction {

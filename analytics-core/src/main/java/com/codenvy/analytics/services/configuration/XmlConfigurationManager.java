@@ -29,46 +29,32 @@ import java.io.InputStream;
 import java.net.URL;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class XmlConfigurationManager<T> implements ConfigurationManager<T> {
+public class XmlConfigurationManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlConfigurationManager.class);
 
-    private final Class<T> clazz;
-    private final String   resource;
-
-    public XmlConfigurationManager(Class<T> clazz, String resource) {
-        this.clazz = clazz;
-        this.resource = resource;
-    }
-
-    @Override
-    public T loadConfiguration() throws ConfigurationManagerException {
-        try (InputStream in = openResource(resource)) {
+    public <T> T loadConfiguration(Class<?> clazz, String resource) throws IOException {
+        try (InputStream in = openResource(clazz, resource)) {
             JAXBContext jc = JAXBContext.newInstance(clazz);
             return (T)jc.createUnmarshaller().unmarshal(in);
         } catch (JAXBException | IOException e) {
-            throw new ConfigurationManagerException("Can not read the configuration from " + resource, e);
+            throw new IOException("Can not read the configuration from " + resource, e);
         }
     }
 
-    @Override
-    public void storeConfiguration(T configuration) throws IOException {
-        throw new UnsupportedOperationException();
-    }
-
-    protected InputStream openResource(String resource) throws IOException {
+    protected InputStream openResource(Class<?> clazz, String resource) throws IOException {
         File file = new File(resource);
         if (file.exists()) {
-            LOG.info("Configuration is found in " + file.getPath());
+            LOG.info("Configuration " + clazz.getName() + " is found in " + file.getPath());
             return new FileInputStream(file);
 
         } else {
             URL url = getClass().getClassLoader().getResource(resource);
             if (url == null) {
-                throw new ConfigurationManagerException("Resource " + resource + " not found");
+                throw new IOException("Resource " + resource + " not found");
             }
 
-            LOG.info("Configuration is found in " + url.getPath());
+            LOG.info("Configuration " + clazz.getName() + " is found in " + url.getPath());
             return url.openStream();
         }
     }

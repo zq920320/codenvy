@@ -17,13 +17,13 @@
  */
 
 
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.acton;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -56,36 +56,36 @@ public class TestActOn extends BaseTest {
         Parameters.STORAGE_TABLE_USERS_STATISTICS.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
 
         Parameters.STORAGE_TABLE.put(context, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
-        PigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.USERS_STATISTICS, context);
+        pigServer.execute(ScriptType.USERS_STATISTICS, context);
 
         Parameters.FROM_DATE.put(context, "20131102");
         Parameters.TO_DATE.put(context, "20131102");
 
         Parameters.STORAGE_TABLE.put(context, MetricType.ACTIVE_USERS_SET.name().toLowerCase());
-        PigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
+        pigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_PROFILES_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.PRODUCT_USAGE_SESSIONS_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
+        pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, context);
 
         Parameters.STORAGE_TABLE.put(context, MetricType.USERS_STATISTICS_LIST.name().toLowerCase());
-        PigServer.execute(ScriptType.USERS_STATISTICS, context);
+        pigServer.execute(ScriptType.USERS_STATISTICS, context);
     }
 
     @Test
     public void testWholePeriod() throws Exception {
-        ActOn job = new ActOn();
+        ActOn job = Injector.getInstance(ActOn.class);
 
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20131101");
@@ -106,7 +106,7 @@ public class TestActOn extends BaseTest {
 
     @Test
     public void testOneDayPeriod() throws Exception {
-        ActOn job = new ActOn();
+        ActOn job = Injector.getInstance(ActOn.class);
 
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20131101");

@@ -26,7 +26,6 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -95,7 +94,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Parameters.LOG.put(context, log.getAbsolutePath());
         Parameters.STORAGE_TABLE.put(context, "testtimespentinaction");
 
-        PigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, context);
+        pigServer.execute(ScriptType.TIME_SPENT_IN_ACTION, context);
     }
 
     @Test

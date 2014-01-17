@@ -21,28 +21,35 @@ import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.configuration.ConfigurationManager;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+@Singleton
 public class PigRunner extends Feature {
 
     private static final Logger LOG           = LoggerFactory.getLogger(PigRunner.class);
     private static final String CONFIGURATION = "scripts.xml";
 
-    private final ConfigurationManager<PigRunnerConfiguration> configurationManager;
-    private final CollectionsManagement                        collectionsManagement;
+    private final PigRunnerConfiguration configuration;
+    private final CollectionsManagement  collectionsManagement;
+    private final PigServer              pigServer;
 
-    public PigRunner() {
-        this.configurationManager = new XmlConfigurationManager<>(PigRunnerConfiguration.class, CONFIGURATION);
-        this.collectionsManagement = new CollectionsManagement();
+    @Inject
+    public PigRunner(CollectionsManagement collectionsManagement,
+                     XmlConfigurationManager confManger,
+                     PigServer pigServer) throws IOException {
+        this.configuration = confManger.loadConfiguration(PigRunnerConfiguration.class, CONFIGURATION);
+        this.collectionsManagement = collectionsManagement;
+        this.pigServer = pigServer;
     }
 
     @Override
@@ -63,8 +70,6 @@ public class PigRunner extends Feature {
             collectionsManagement.removeData(context);
             collectionsManagement.dropIndexes();
 
-            PigRunnerConfiguration configuration = configurationManager.loadConfiguration();
-
             for (ScriptConfiguration scriptConfiguration : configuration.getScripts()) {
                 String scriptName = scriptConfiguration.getName();
                 Map<String, String> parameters = scriptConfiguration.getParamsAsMap();
@@ -72,7 +77,7 @@ public class PigRunner extends Feature {
                 ScriptType scriptType = ScriptType.valueOf(scriptName.toUpperCase());
                 parameters.putAll(context);
 
-                PigServer.execute(scriptType, parameters);
+                pigServer.execute(scriptType, parameters);
             }
 
             collectionsManagement.ensureIndexes();

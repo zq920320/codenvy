@@ -20,13 +20,15 @@ package com.codenvy.analytics.services.reports;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.services.configuration.ParameterConfiguration;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.model.Account;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.doReturn;
@@ -39,17 +41,19 @@ public class TestActiveSubscribersRecipientGroup extends BaseTest {
 
     private Map<String, String>             context;
     private Account                         account;
-    private AccountManager                  accountManager;
     private ActiveSubscribersRecipientGroup group;
 
     @BeforeTest
     public void prepare() throws Exception {
+        AccountManager accountManager = mock(AccountManager.class);
         context = Utils.newContext();
-        accountManager = mock(AccountManager.class);
         account = mock(Account.class);
 
-        Map<String, String> params = new HashMap<>();
-        params.put(ActiveSubscribersRecipientGroup.TARIFF_PLAN, ActiveSubscribersRecipientGroup.TARIFF_MANAGED_FACTORY);
+        ParameterConfiguration paramConf = new ParameterConfiguration();
+        paramConf.setKey(ActiveSubscribersRecipientGroup.TARIFF_PLAN);
+        paramConf.setValue(ActiveSubscribersRecipientGroup.TARIFF_MANAGED_FACTORY);
+        List<ParameterConfiguration> params = Arrays.asList(paramConf);
+
         group = new ActiveSubscribersRecipientGroup(params, accountManager);
     }
 

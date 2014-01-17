@@ -63,7 +63,7 @@ public class TestRecipientsHolderConfiguration extends BaseTest {
                                                 "    </group>\n" +
                                                 "</recipients>\n";
 
-    private XmlConfigurationManager<RecipientsHolderConfiguration> configurationManager;
+    private XmlConfigurationManager configurationManager;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -71,12 +71,13 @@ public class TestRecipientsHolderConfiguration extends BaseTest {
             out.write(CONFIGURATION);
         }
 
-        configurationManager = new XmlConfigurationManager<>(RecipientsHolderConfiguration.class, FILE);
+        configurationManager = new XmlConfigurationManager();
     }
 
     @Test
     public void testParsingConfiguration() throws Exception {
-        RecipientsHolderConfiguration configuration = configurationManager.loadConfiguration();
+        RecipientsHolderConfiguration configuration =
+                configurationManager.loadConfiguration(RecipientsHolderConfiguration.class, FILE);
 
         assertNotNull(configuration.getGroups());
         assertEquals(configuration.getGroups().size(), 2);

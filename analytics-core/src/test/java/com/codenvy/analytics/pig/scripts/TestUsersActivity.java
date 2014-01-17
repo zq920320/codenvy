@@ -24,7 +24,6 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersActivity;
 import com.codenvy.analytics.metrics.users.UsersActivityList;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -65,7 +64,7 @@ public class TestUsersActivity extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testusersactivity");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.USERS_ACTIVITY, params);
+        pigServer.execute(ScriptType.USERS_ACTIVITY, params);
     }
 
     @Test

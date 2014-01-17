@@ -50,7 +50,7 @@ public class TestDisplayConfigurationReader extends BaseTest {
                                                 "    </view>" +
                                                 "</display>";
 
-    private XmlConfigurationManager<DisplayConfiguration> configurationManager;
+    private XmlConfigurationManager configurationManager;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -58,12 +58,13 @@ public class TestDisplayConfigurationReader extends BaseTest {
             out.write(CONFIGURATION);
         }
 
-        configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class, FILE);
+        configurationManager = new XmlConfigurationManager();
     }
 
     @Test
     public void testParsingConfig() throws Exception {
-        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
+        DisplayConfiguration displayConfiguration =
+                configurationManager.loadConfiguration(DisplayConfiguration.class, FILE);
         Assert.assertEquals(1, displayConfiguration.getViews().size());
 
         ViewConfiguration viewConfiguration = displayConfiguration.getViews().get(0);

@@ -19,6 +19,7 @@
 package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -44,9 +45,10 @@ public class TestMongoDataLoader extends BaseTest {
 
     @BeforeClass
     public void prepare() throws Exception {
-        dataLoader = MongoDataStorage.createdDataLoader();
-        
-        DB db = MongoDataStorage.getDb();
+        MongoDataStorage mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
+        dataLoader = mongoDataStorage.createdDataLoader();
+
+        DB db = mongoDataStorage.getDb();
         DBCollection dbCollection = db.getCollection("test");
 
         BasicDBObject dbObject = new BasicDBObject();

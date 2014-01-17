@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.pig.udf;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import org.apache.pig.FilterFunc;
@@ -27,13 +28,19 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class EventExists extends FilterFunc {
 
+    private final EventsHolder eventsHolder;
+
+    public EventExists() {
+        eventsHolder = Injector.getInstance(EventsHolder.class);
+    }
+
     @Override
     public Boolean exec(Tuple input) throws IOException {
         String eventNames = (String)input.get(0);
 
         if (!eventNames.equals("*")) {
             for (String event : eventNames.split(",")) {
-                if (!EventsHolder.isEventExists(event)) {
+                if (!eventsHolder.isEventExists(event)) {
                     throw new IOException("Unknown event " + event);
                 }
             }

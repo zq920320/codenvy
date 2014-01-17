@@ -44,7 +44,7 @@ public class TestPigRunnerConfiguration extends BaseTest {
                                                 "    </script>" +
                                                 "</scripts>";
 
-    private XmlConfigurationManager<PigRunnerConfiguration> configurationManager;
+    private XmlConfigurationManager configurationManager;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -52,13 +52,14 @@ public class TestPigRunnerConfiguration extends BaseTest {
             out.write(CONFIGURATION);
         }
 
-        configurationManager = new XmlConfigurationManager<>(PigRunnerConfiguration.class, FILE);
+        configurationManager = new XmlConfigurationManager();
     }
 
 
     @Test
     public void testParsingConfig() throws Exception {
-        PigRunnerConfiguration configuration = configurationManager.loadConfiguration();
+        PigRunnerConfiguration configuration =
+                configurationManager.loadConfiguration(PigRunnerConfiguration.class, FILE);
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getScripts().size());

@@ -20,7 +20,6 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -71,7 +70,7 @@ public class TestFixFactoryUrl extends BaseTest {
 
     @Test
     public void testExecute() throws Exception {
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(ScriptType.TEST_FIX_FACTORY_URL, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_FIX_FACTORY_URL, context);
 
         assertTrue(iterator.hasNext());
         assertEquals(iterator.next().get(0), "http://www.com/factory?test=1");

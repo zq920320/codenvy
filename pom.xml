@@ -16,13 +16,14 @@
          is strictly forbidden unless prior written permission is obtained
          from Codenvy S.A..
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>maven-parent-pom</artifactId>
         <groupId>com.codenvy</groupId>
-        <version>3.0.1</version>
-        <relativePath />
+        <version>3.1.1-SNAPSHOT</version>
+        <relativePath/>
     </parent>
     <groupId>com.codenvy.analytics</groupId>
     <artifactId>analytics-parent</artifactId>
@@ -43,15 +44,15 @@
         <module>analytics-wso2bam-local-pkg</module>
     </modules>
     <properties>
-        <analytics.api.version>0.5.0-analytics-2.0.1</analytics.api.version>
-        <com.codenvy.commons.version>0.12.0-SNAPSHOT</com.codenvy.commons.version>
+        <analytics.api.version>0.5.0-analytics-2.1.0-SNAPSHOT</analytics.api.version>
+        <com.codenvy.commons.version>0.12.0</com.codenvy.commons.version>
         <antlr.version>3.4</antlr.version>
         <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.lang.version>2.6</commons.lang.version>
         <commons.net.version>3.2</commons.net.version>
         <embedded.mongo.version>1.28</embedded.mongo.version>
-        <everrest.version>1.0.10</everrest.version>
+        <everrest.version>1.1.7</everrest.version>
         <guava.version>13.0.1</guava.version>
         <guice.version>3.0</guice.version>
         <h2.version>1.2.140</h2.version>
@@ -65,13 +66,14 @@
         <junit.version>4.10</junit.version>
         <ldap.client.version>0.10.0</ldap.client.version>
         <log4j.version>1.2.17</log4j.version>
-        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
-        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/
+        </maven.releases.repo.url>
+        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/
+        </maven.snapshots.repo.url>
         <mockito.version>1.9.0</mockito.version>
         <mongo.driver.version>2.10.1</mongo.driver.version>
         <org.slf4j.version>1.6.1</org.slf4j.version>
         <pig.version>0.12.0</pig.version>
-        <platform.api.version>1.0.0-SNAPSHOT</platform.api.version>
         <quartz.version>2.1.7</quartz.version>
         <servlet-api.version>3.0.1</servlet-api.version>
         <testng.version>6.3.1</testng.version>

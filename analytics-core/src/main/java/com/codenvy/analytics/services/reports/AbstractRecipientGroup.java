@@ -17,16 +17,18 @@
  */
 package com.codenvy.analytics.services.reports;
 
+import com.codenvy.analytics.services.configuration.ParameterConfiguration;
+
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractRecipientGroup implements RecipientGroup {
 
-    protected final Map<String, String> parameters;
+    protected final List<ParameterConfiguration> parameters;
 
-    public AbstractRecipientGroup(Map<String, String> parameters) {
+    public AbstractRecipientGroup(List<ParameterConfiguration> parameters) {
         this.parameters = parameters;
     }
 
@@ -34,9 +36,9 @@ public abstract class AbstractRecipientGroup implements RecipientGroup {
     protected Set<String> getParameters(String key) {
         Set<String> items = new HashSet<>();
 
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            if (entry.getKey().equalsIgnoreCase(key)) {
-                items.add(entry.getValue());
+        for (ParameterConfiguration parameter : parameters) {
+            if (parameter.getKey().equalsIgnoreCase(key)) {
+                items.add(parameter.getValue());
             }
         }
 

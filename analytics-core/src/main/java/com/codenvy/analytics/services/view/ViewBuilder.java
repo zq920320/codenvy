@@ -22,12 +22,13 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.DataPersister;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.configuration.ConfigurationManager;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -40,8 +41,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Singleton;
-
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 @Singleton
 public class ViewBuilder extends Feature {
@@ -49,16 +48,20 @@ public class ViewBuilder extends Feature {
     private static final Logger LOG           = LoggerFactory.getLogger(ViewBuilder.class);
     private static final String CONFIGURATION = "views.xml";
 
-    private final DataPersister                              jdbcPersister;
-    private final ConfigurationManager<DisplayConfiguration> configurationManager;
+    private final DataPersister        jdbcPersister;
+    private final CSVReportPersister   csvReportPersister;
+    private final DisplayConfiguration displayConfiguration;
 
-    public ViewBuilder() {
-        this.configurationManager = new XmlConfigurationManager<>(DisplayConfiguration.class, CONFIGURATION);
-        this.jdbcPersister = JdbcDataPersisterFactory.getDataPersister();
+    @Inject
+    public ViewBuilder(JdbcDataPersisterFactory jdbcDataPersisterFactory,
+                       CSVReportPersister csvReportPersister,
+                       XmlConfigurationManager confManager) throws IOException {
+        this.displayConfiguration = confManager.loadConfiguration(DisplayConfiguration.class, CONFIGURATION);
+        this.jdbcPersister = jdbcDataPersisterFactory.getDataPersister();
+        this.csvReportPersister = csvReportPersister;
     }
 
     public ViewData getViewData(String name, Map<String, String> context) throws IOException, ParseException {
-        DisplayConfiguration displayConfiguration = configurationManager.loadConfiguration();
         ViewConfiguration view = displayConfiguration.getView(name);
 
         if (!view.isOnDemand() && Utils.isSimpleContext(context)) {
@@ -84,19 +87,18 @@ public class ViewBuilder extends Feature {
         long start = System.currentTimeMillis();
 
         try {
-            computeDisplayData(configurationManager.loadConfiguration(), context);
+            computeDisplayData(context);
         } finally {
             LOG.info("ViewBuilder is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
-    protected void computeDisplayData(DisplayConfiguration displayConf,
-                                      Map<String, String> context) throws Exception {
+    protected void computeDisplayData(Map<String, String> context) throws Exception {
         List<RecursiveAction> tasks = new ArrayList<>();
 
         ForkJoinPool forkJoinPool = new ForkJoinPool();
 
-        for (ViewConfiguration viewConf : displayConf.getViews()) {
+        for (ViewConfiguration viewConf : displayConfiguration.getViews()) {
             if (!viewConf.isOnDemand()) {
                 if (viewConf.getTimeUnit() == null) {
                     ComputeViewDataAction task = new ComputeViewDataAction(viewConf, context);
@@ -150,7 +152,7 @@ public class ViewBuilder extends Feature {
                                   ViewData viewData,
                                   Map<String, String> context) throws SQLException, IOException {
         jdbcPersister.storeData(viewData);
-        CSVReportPersister.storeData(viewId, viewData, context);
+        csvReportPersister.storeData(viewId, viewData, context);
     }
 
     private class ComputeViewDataAction extends RecursiveAction {

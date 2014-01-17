@@ -44,7 +44,7 @@ public class TestEventHolderConfiguration extends BaseTest {
                                                 "    </event>\n" +
                                                 "</events>";
 
-    private XmlConfigurationManager<EventHolderConfiguration> configurationManager;
+    private XmlConfigurationManager configurationManager;
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -52,13 +52,14 @@ public class TestEventHolderConfiguration extends BaseTest {
             out.write(CONFIGURATION);
         }
 
-        configurationManager = new XmlConfigurationManager<>(EventHolderConfiguration.class, FILE);
+        configurationManager = new XmlConfigurationManager();
     }
 
 
     @Test
     public void testParsingConfig() throws Exception {
-        EventHolderConfiguration configuration = configurationManager.loadConfiguration();
+        EventHolderConfiguration configuration =
+                configurationManager.loadConfiguration(EventHolderConfiguration.class, FILE);
 
         assertNotNull(configuration);
         assertEquals(1, configuration.getEvents().size());

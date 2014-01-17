@@ -35,6 +35,8 @@ import com.mongodb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
@@ -45,34 +47,31 @@ import java.util.Map;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
+@Singleton
 public class MongoDataStorage {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataStorage.class);
 
-    private static final String  URL      = Configurator.getString("analytics.storage.url");
-    private static final boolean EMBEDDED = Configurator.getBoolean("analytics.storage.embedded");
+    private static final String URL      = "analytics.storage.url";
+    private static final String EMBEDDED = "analytics.storage.embedded";
 
-    private static final MongoClientURI uri;
-    private static final MongoClient    client;
-    private static final DB             mongoDb;
+    private final MongoClientURI uri;
+    private final DB             mongoDb;
 
-    private static MongodProcess embeddedMongoProcess;
+    private final Configurator configurator;
 
-    static {
-        uri = new MongoClientURI(URL);
+    @Inject
+    public MongoDataStorage(Configurator configurator) throws IOException {
+        this.configurator = configurator;
+        this.uri = new MongoClientURI(configurator.getString(URL));
 
-        if (EMBEDDED) {
+        if (configurator.getBoolean(EMBEDDED)) {
             initEmbeddedStorage();
         }
 
-
-        try {
-            client = initializeClient();
-            mongoDb = client.getDB(uri.getDatabase());
-            mongoDb.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        MongoClient client = initializeClient();
+        this.mongoDb = client.getDB(uri.getDatabase());
+        this.mongoDb.setWriteConcern(WriteConcern.ACKNOWLEDGED);
     }
 
     /**
@@ -80,7 +79,7 @@ public class MongoDataStorage {
      *
      * @throws IOException
      */
-    private static MongoClient initializeClient() throws IOException {
+    private MongoClient initializeClient() throws IOException {
         final MongoClient mongoClient = new MongoClient(uri);
         try {
             DB db = mongoClient.getDB(uri.getDatabase());
@@ -107,48 +106,47 @@ public class MongoDataStorage {
     }
 
     /** @return database to which connection was opened */
-    public static DB getDb() {
+    public DB getDb() {
         return mongoDb;
     }
 
-    private static boolean isAuthRequired(MongoClientURI clientURI) {
+    private boolean isAuthRequired(MongoClientURI clientURI) {
         return clientURI.getUsername() != null && !clientURI.getUsername().isEmpty();
     }
 
-    public static DataLoader createdDataLoader() {
+    public DataLoader createdDataLoader() {
         try {
-            return new MongoDataLoader();
+            return new MongoDataLoader(getDb());
         } catch (MongoException | IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public static void putStorageParameters(Map<String, String> context) {
+    public void putStorageParameters(Map<String, String> context) {
         if (uri.getUsername() == null) {
             Parameters.STORAGE_URL.put(context, uri.toString());
             Parameters.STORAGE_USER.put(context, "''");
             Parameters.STORAGE_PASSWORD.put(context, "''");
         } else {
             String password = new String(uri.getPassword());
-            String serverUrlNoPassword = uri.toString().replace(uri.getUsername() + ":" +
-                                                                password + "@", "");
+            String serverUrlNoPassword = uri.toString().replace(uri.getUsername() + ":" + password + "@", "");
             Parameters.STORAGE_URL.put(context, serverUrlNoPassword);
             Parameters.STORAGE_USER.put(context, uri.getUsername());
             Parameters.STORAGE_PASSWORD.put(context, password);
         }
     }
 
-    private static void initEmbeddedStorage() {
+    private void initEmbeddedStorage() {
         if (isStarted()) {
             return;
         }
 
-        File dirTemp = new File(Configurator.getTmpDir(), "embedded-getDb-tmp");
+        File dirTemp = new File(configurator.getTmpDir(), "embedded-getDb-tmp");
         if (!dirTemp.exists() && !dirTemp.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + dirTemp.getAbsolutePath());
         }
 
-        File databaseDir = new File(Configurator.getTmpDir(), "embedded-getDb-database");
+        File databaseDir = new File(configurator.getTmpDir(), "embedded-getDb-database");
         if (!databaseDir.exists() && !databaseDir.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + databaseDir.getAbsolutePath());
         }
@@ -163,8 +161,10 @@ public class MongoDataStorage {
 
         MongodStarter starter = MongodStarter.getInstance(config);
         MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, net, storage, new Timeout()));
+        final MongodProcess mongodProcess;
+
         try {
-            embeddedMongoProcess = mongoExe.start();
+            mongodProcess = mongoExe.start();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -175,7 +175,7 @@ public class MongoDataStorage {
             @Override
             public void run() {
                 LOG.info("Embedded MongoDB is shutting down");
-                embeddedMongoProcess.stop();
+                mongodProcess.stop();
             }
         });
     }
@@ -184,10 +184,10 @@ public class MongoDataStorage {
      * Checks if embedded storage is started. If connection can be opened, then it means storage is started. All JVM
      * share the same storage.
      */
-    private static boolean isStarted() {
+    private boolean isStarted() {
         try {
             try (Socket sock = new Socket()) {
-                URI url = new URI(URL);
+                URI url = new URI(configurator.getString(URL));
 
                 int timeout = 500;
                 InetAddress addr = InetAddress.getByName(url.getHost());

@@ -26,7 +26,6 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.AbstractLoggedInType;
 import com.codenvy.analytics.metrics.users.UsersLoggedInTypes;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -75,7 +74,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
         Parameters.STORAGE_TABLE.put(params, "testnumberofusersbytypes_usersloggedintypes");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        PigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
+        pigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
     }
 
     @Test

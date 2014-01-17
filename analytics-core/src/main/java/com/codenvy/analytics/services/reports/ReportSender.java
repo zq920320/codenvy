@@ -18,14 +18,13 @@
 package com.codenvy.analytics.services.reports;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.Feature;
-import com.codenvy.analytics.services.configuration.ConfigurationManagerException;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
-import com.codenvy.analytics.util.MailService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,32 +49,33 @@ public class ReportSender extends Feature {
     private static final String MAIL_TEXT     = "reports.mail.text";
     private static final String MAIL_SUBJECT  = "reports.mail.subject";
 
-    private RecipientsHolder recipientsHolder;
-    private ViewBuilder      viewBuilder;
-
-//    public ReportSender() {
-//        this.recipientsHolder = new RecipientsHolder();
-//        this.viewBuilder = new ViewBuilder();
-//    }
+    private final RecipientsHolder     recipientsHolder;
+    private final ViewBuilder          viewBuilder;
+    private final Configurator         configurator;
+    private final CSVReportPersister   csvReportPersister;
+    private final ReportsConfiguration configuration;
 
     @Inject
-    public void setRecipientsHolder(RecipientsHolder recipientsHolder) {
+    public ReportSender(CSVReportPersister csvReportPersister,
+                        Configurator configurator,
+                        RecipientsHolder recipientsHolder,
+                        ViewBuilder viewBuilder,
+                        XmlConfigurationManager confManager) throws IOException {
+        this.csvReportPersister = csvReportPersister;
+        this.configurator = configurator;
         this.recipientsHolder = recipientsHolder;
-    }
-    
-    @Inject
-    public void setViewBuilder(ViewBuilder viewBuilder) {
         this.viewBuilder = viewBuilder;
+        this.configuration =
+                confManager.loadConfiguration(ReportsConfiguration.class, configurator.getString(CONFIGURATION));
     }
-    
-    
+
     @Override
     protected void putParametersInContext(Map<String, String> context) {
     }
 
     @Override
     public boolean isAvailable() {
-        return Configurator.getBoolean(AVAILABLE);
+        return configurator.getBoolean(AVAILABLE);
     }
 
     protected void doExecute(Map<String, String> context) throws IOException,
@@ -89,8 +89,6 @@ public class ReportSender extends Feature {
         long start = System.currentTimeMillis();
 
         try {
-            ReportsConfiguration configuration = readConfiguration();
-
             for (ReportConfiguration reportConfiguration : configuration.getReports()) {
                 for (FrequencyConfiguration frequencyConfiguration : reportConfiguration.getFrequencies()) {
                     for (AbstractFrequencyConfiguration frequency : frequencyConfiguration.frequencies()) {
@@ -121,12 +119,12 @@ public class ReportSender extends Feature {
                                                                          InstantiationException,
                                                                          IllegalAccessException {
 
-        String subject = Configurator.getString(MAIL_SUBJECT).replace("[period]", frequency.getTimeUnit().name());
+        String subject = configurator.getString(MAIL_SUBJECT).replace("[period]", frequency.getTimeUnit().name());
 
         for (String recipient : recipients.getRecipients()) {
             for (String email : recipientsHolder.getEmails(recipient, context)) {
                 MailService.Builder builder = new MailService.Builder();
-                builder.setText(Configurator.getString(MAIL_TEXT));
+                builder.setText(configurator.getString(MAIL_TEXT));
                 builder.setSubject(subject);
                 builder.setTo(email);
 
@@ -160,7 +158,7 @@ public class ReportSender extends Feature {
             ViewData viewData = viewBuilder.getViewData(view, context);
             String viewId = recipient + File.separator + view;
 
-            File report = CSVReportPersister.storeData(viewId, viewData, context);
+            File report = csvReportPersister.storeData(viewId, viewData, context);
             reports.add(report);
         }
 
@@ -180,12 +178,5 @@ public class ReportSender extends Feature {
         ContextModifier contextModifier = (ContextModifier)clazz.getConstructor().newInstance();
 
         return contextModifier.update(context);
-    }
-
-    private ReportsConfiguration readConfiguration() throws ConfigurationManagerException {
-        XmlConfigurationManager<ReportsConfiguration> configurationManager =
-                new XmlConfigurationManager<>(ReportsConfiguration.class, Configurator.getString(CONFIGURATION));
-
-        return configurationManager.loadConfiguration();
     }
 }

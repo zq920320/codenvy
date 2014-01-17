@@ -20,9 +20,12 @@
 package com.codenvy.analytics.metrics;
 
 
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.text.ParseException;
@@ -32,18 +35,25 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestInitialValueContainer {
+public class TestInitialValueContainer extends BaseTest {
+
+    private InitialValueContainer initialValueContainer;
+
+    @BeforeClass
+    public void prepare() {
+        initialValueContainer = Injector.getInstance(InitialValueContainer.class);
+    }
 
     @Test
     public void testInitialValue() throws Exception {
-        assertEquals(new LongValueData(10), InitialValueContainer.getInitialValue("total_workspaces"));
-        assertEquals(new LongValueData(20), InitialValueContainer.getInitialValue("total_users"));
-        assertEquals(new LongValueData(30), InitialValueContainer.getInitialValue("total_projects"));
+        assertEquals(new LongValueData(10), initialValueContainer.getInitialValue("total_workspaces"));
+        assertEquals(new LongValueData(20), initialValueContainer.getInitialValue("total_users"));
+        assertEquals(new LongValueData(30), initialValueContainer.getInitialValue("total_projects"));
     }
 
     @Test
     public void shouldThrowExceptionIfMetricUnknown() throws ParseException {
-        assertNull(InitialValueContainer.getInitialValue("bla-bla"));
+        assertNull(initialValueContainer.getInitialValue("bla-bla"));
     }
 
     @Test(expectedExceptions = InitialValueNotFoundException.class)
@@ -51,7 +61,7 @@ public class TestInitialValueContainer {
         Map<String, String> context = Utils.newContext();
         Parameters.TO_DATE.put(context, "20111231");
 
-        InitialValueContainer.validateExistenceInitialValueBefore(context);
+        initialValueContainer.validateExistenceInitialValueBefore(context);
     }
 
     @Test
@@ -60,7 +70,7 @@ public class TestInitialValueContainer {
         Parameters.TO_DATE.put(context, "201120101");
         Parameters.FROM_DATE.put(context, "20120101");
 
-        InitialValueContainer.validateExistenceInitialValueBefore(context);
+        initialValueContainer.validateExistenceInitialValueBefore(context);
     }
 
     @Test
@@ -69,6 +79,6 @@ public class TestInitialValueContainer {
         Parameters.TO_DATE.put(context, "201120102");
         Parameters.FROM_DATE.put(context, "20120102");
 
-        InitialValueContainer.validateExistenceInitialValueBefore(context);
+        initialValueContainer.validateExistenceInitialValueBefore(context);
     }
 }

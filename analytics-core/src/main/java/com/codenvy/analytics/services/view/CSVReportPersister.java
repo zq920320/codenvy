@@ -26,6 +26,8 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,23 +36,33 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@Singleton
 public class CSVReportPersister {
 
-    private static final Logger LOG                = LoggerFactory.getLogger(CSVReportPersister.class);
-    private static final String REPORTS_DIR        = Configurator.getString("analytics.reports.dir");
-    private static final String BACKUP_REPORTS_DIR = Configurator.getString("analytics.backup.reports.dir");
-
+    private static final Logger           LOG        = LoggerFactory.getLogger(CSVReportPersister.class);
     private static final SimpleDateFormat DIR_FORMAT =
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
-    public static File storeData(String viewId,
-                                 ViewData viewData,
-                                 Map<String, String> context) throws IOException {
+    private final String REPORTS_DIR        = "analytics.reports.dir";
+    private final String BACKUP_REPORTS_DIR = "analytics.backup.reports.dir";
+
+    private final String reportsDir;
+    private final String backupReportsDir;
+
+    @Inject
+    public CSVReportPersister(Configurator configurator) {
+        reportsDir = configurator.getString(REPORTS_DIR);
+        backupReportsDir = configurator.getString(BACKUP_REPORTS_DIR);
+    }
+
+    public File storeData(String viewId,
+                          ViewData viewData,
+                          Map<String, String> context) throws IOException {
         try {
-            File csvBackupFile = getFile(BACKUP_REPORTS_DIR, viewId, context);
+            File csvBackupFile = getFile(backupReportsDir, viewId, context);
             createParentDirIfNotExists(csvBackupFile);
 
-            File csvFile = getFile(REPORTS_DIR, viewId, context);
+            File csvFile = getFile(reportsDir, viewId, context);
             createParentDirIfNotExists(csvFile);
 
             doStore(csvBackupFile, viewData);
@@ -64,7 +76,7 @@ public class CSVReportPersister {
         }
     }
 
-    protected static File getFile(String reportsDir, String viewId, Map<String, String> context) throws ParseException {
+    protected File getFile(String reportsDir, String viewId, Map<String, String> context) throws ParseException {
         Calendar reportDate = Utils.getReportDate(context);
 
         StringBuilder filePath = new StringBuilder();
@@ -78,7 +90,7 @@ public class CSVReportPersister {
         return new File(filePath.toString());
     }
 
-    protected static void createParentDirIfNotExists(File csvFile) throws IOException {
+    protected void createParentDirIfNotExists(File csvFile) throws IOException {
         File parentDir = csvFile.getParentFile();
         if (!parentDir.exists()) {
             if (!parentDir.mkdirs()) {
@@ -90,9 +102,9 @@ public class CSVReportPersister {
     }
 
     /** Utility method. Restores report directory. */
-    public static void restoreBackup() throws IOException {
-        File reportDir = new File(REPORTS_DIR);
-        File backupReportDir = new File(BACKUP_REPORTS_DIR);
+    public void restoreBackup() throws IOException {
+        File reportDir = new File(reportsDir);
+        File backupReportDir = new File(backupReportsDir);
 
         FileUtils.deleteDirectory(reportDir);
         if (backupReportDir.exists()) {
@@ -101,7 +113,7 @@ public class CSVReportPersister {
         }
     }
 
-    protected static void doStore(File csvFile, ViewData viewData) throws IOException {
+    protected synchronized void doStore(File csvFile, ViewData viewData) throws IOException {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "UTF-8"))) {
             for (SectionData sectionData : viewData.values()) {
                 for (List<ValueData> rowData : sectionData) {
@@ -113,7 +125,7 @@ public class CSVReportPersister {
         LOG.info(csvFile.getPath() + " report is created");
     }
 
-    protected static String getDataAsString(List<ValueData> data) {
+    protected String getDataAsString(List<ValueData> data) {
         StringBuilder builder = new StringBuilder();
 
         for (ValueData valueData : data) {

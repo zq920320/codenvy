@@ -19,32 +19,24 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 
 /** @author Anatoliy Bazko */
+@Singleton
 public class EventsHolder {
 
-    private static final Logger LOG           = LoggerFactory.getLogger(EventsHolder.class);
     private static final String CONFIGURATION = "events.xml";
 
-    private static final EventHolderConfiguration configuration;
+    private final EventHolderConfiguration configuration;
 
-    static {
-        try {
-            XmlConfigurationManager<EventHolderConfiguration> configurationManager =
-                    new XmlConfigurationManager<>(EventHolderConfiguration.class, CONFIGURATION);
-
-            configuration = configurationManager.loadConfiguration();
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new IllegalStateException(e);
-        }
+    @Inject
+    public EventsHolder(XmlConfigurationManager confManager) throws IOException {
+        configuration = confManager.loadConfiguration(EventHolderConfiguration.class, CONFIGURATION);
     }
 
-    public static boolean isEventExists(String eventName) {
+    public boolean isEventExists(String eventName) {
         for (EventConfiguration eventConfiguration : configuration.getEvents()) {
             if (eventConfiguration.getName().equals(eventName)) {
                 return true;

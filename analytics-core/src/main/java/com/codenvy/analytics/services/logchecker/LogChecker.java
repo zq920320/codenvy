@@ -15,18 +15,22 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.services;
+package com.codenvy.analytics.services.logchecker;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
+import com.codenvy.analytics.services.Feature;
 
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -38,6 +42,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@Singleton
 public class LogChecker extends Feature {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogChecker.class);
@@ -47,9 +52,18 @@ public class LogChecker extends Feature {
     private static final String MAIL_SUBJECT = "log-checker.mail.subject";
     private static final String MAIL_TO      = "log-checker.mail.to";
 
+    private final Configurator configurator;
+    private final PigServer    pigServer;
+
+    @Inject
+    public LogChecker(Configurator configurator, PigServer pigServer) {
+        this.configurator = configurator;
+        this.pigServer = pigServer;
+    }
+
     @Override
     public boolean isAvailable() {
-        return Configurator.getBoolean(AVAILABLE);
+        return configurator.getBoolean(AVAILABLE);
     }
 
     @Override
@@ -60,7 +74,7 @@ public class LogChecker extends Feature {
 
     @Override
     protected void doExecute(Map<String, String> context) throws IOException {
-        LOG.info("LogChecker is started");
+        LOG.info("logchecker is started");
         long start = System.currentTimeMillis();
 
         try {
@@ -73,12 +87,12 @@ public class LogChecker extends Feature {
         } catch (ParseException e) {
             e.printStackTrace();
         } finally {
-            LOG.info("LogChecker is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            LOG.info("logchecker is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
         }
     }
 
     private File getReport(Map<String, String> context) throws IOException {
-        File reportFile = new File(Configurator.getTmpDir(), "report.txt");
+        File reportFile = new File(configurator.getTmpDir(), "report.txt");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(reportFile))) {
             writeReport(ScriptType.CHECK_LOGS_1, context, out);
             writeReport(ScriptType.CHECK_LOGS_2, context, out);
@@ -91,7 +105,7 @@ public class LogChecker extends Feature {
                              Map<String, String> context,
                              BufferedWriter out) throws IOException {
 
-        Iterator<Tuple> iterator = PigServer.executeAndReturn(scriptType, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(scriptType, context);
         while (iterator.hasNext()) {
             out.write(iterator.next().toString());
             out.newLine();
@@ -101,9 +115,9 @@ public class LogChecker extends Feature {
     private void sendReport(File reportFile, String date) throws IOException {
         MailService.Builder builder = new MailService.Builder();
         builder.attach(reportFile);
-        builder.setSubject(Configurator.getString(MAIL_SUBJECT).replace("[date]", date));
-        builder.setText(Configurator.getString(MAIL_TEXT));
-        builder.setTo(Configurator.getString(MAIL_TO));
+        builder.setSubject(configurator.getString(MAIL_SUBJECT).replace("[date]", date));
+        builder.setText(configurator.getString(MAIL_TEXT));
+        builder.setTo(configurator.getString(MAIL_TO));
         MailService mailService = builder.build();
 
         mailService.send();

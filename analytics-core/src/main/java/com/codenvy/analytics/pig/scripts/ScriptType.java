@@ -46,8 +46,22 @@ public enum ScriptType {
     },
     DEPLOYMENTS_BY_TYPES,
     CREATED_USERS_FROM_FACTORY,
-    PRODUCT_USAGE_SESSIONS,
-    PRODUCT_USAGE_SESSIONS_OLD,
+    PRODUCT_USAGE_SESSIONS {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.STORAGE_TABLE_USERS_STATISTICS);
+            return params;
+        }
+    },
+    PRODUCT_USAGE_SESSIONS_OLD {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.STORAGE_TABLE_USERS_STATISTICS);
+            return params;
+        }
+    },
     ACTIVE_ENTITIES {
         @Override
         public Set<Parameters> getParams() {

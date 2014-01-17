@@ -27,6 +27,8 @@ import com.codenvy.dto.server.JsonStringMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -43,15 +45,17 @@ import java.util.Map;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 @Path("view")
+@Singleton
 public class View {
 
     private static final Logger        LOG           = LoggerFactory.getLogger(View.class);
     private static final DecimalFormat decimalFormat = new DecimalFormat("00");
 
-    private final ViewBuilder viewBuilder;
+    private ViewBuilder viewBuilder;
 
-    public View() {
-        this.viewBuilder = new ViewBuilder();
+    @Inject
+    public View(ViewBuilder viewBuilder) {
+        this.viewBuilder = viewBuilder;
     }
 
     @GET

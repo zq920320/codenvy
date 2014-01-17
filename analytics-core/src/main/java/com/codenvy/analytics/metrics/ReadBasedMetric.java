@@ -19,6 +19,7 @@
 
 package com.codenvy.analytics.metrics;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
@@ -50,7 +51,9 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     public ReadBasedMetric(String metricName) {
         super(metricName);
-        this.dataLoader = MongoDataStorage.createdDataLoader();
+
+        MongoDataStorage mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
+        this.dataLoader = mongoDataStorage.createdDataLoader();
     }
 
     public ReadBasedMetric(MetricType metricType) {

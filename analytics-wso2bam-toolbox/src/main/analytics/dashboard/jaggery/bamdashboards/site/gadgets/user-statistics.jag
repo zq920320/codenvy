@@ -11,7 +11,7 @@ var queryParams = extractUrlParamsForRestService(request.getQueryString());
 // table names in order of receiving from server
 var databaseToUIMap = {
    databaseViews: ["user_data", "user-sessions", "user_workspace_data", "user_activity"],
-   tablePageCountResources: [undefined, "product_usage_sessions", "users_workspaces", "users_activity"],
+   tablePageCountResources: [undefined, "product_usage_sessions", "users_time_in_workspaces", "users_activity"],
    uiTables: ["User Statistics", "Sessions", "Workspaces", "User Logs"],
    sort: [undefined, "-date", undefined, "-date"]
 };
