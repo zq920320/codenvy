@@ -40,12 +40,6 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.analytics</groupId>
-            <artifactId>analytics-wso2bam-toolbox</artifactId>
-            <version>${project.version}</version>
-            <type>tbox</type>
-        </dependency>
-        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
@@ -181,9 +175,6 @@
                                         </copy>
                                         <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/">
                                             <fileset dir="${project.build.directory}/packager-conf/war" />
-                                        </copy>
-                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/bam-toolbox/">
-                                            <fileset dir="${project.build.directory}/packager-conf/tbox" />
                                         </copy>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x" />
                                         <chmod file="${project.build.directory}/wso2bam-analytics/pig/bin/*" perm="+x" />
