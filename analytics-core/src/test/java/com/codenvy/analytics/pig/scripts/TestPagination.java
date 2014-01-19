@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class TestPagination extends BaseTest {
     private Map<String, String> params;
 
     @BeforeClass
-    public void prepare() throws IOException {
+    public void prepare() throws Exception {
         params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();

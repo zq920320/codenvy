@@ -25,7 +25,6 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.mongodb.DBObject;
-import com.mongodb.MongoException;
 
 import org.apache.pig.ExecType;
 import org.apache.pig.data.Tuple;
@@ -67,7 +66,7 @@ public class PigServer {
     private final Calendar         oldScriptThresholdDate;
 
     @Inject
-    public PigServer(Configurator configurator, MongoDataStorage mongoDataStorage) throws ParseException {
+    public PigServer(Configurator configurator, MongoDataStorage mongoDataStorage) throws ParseException, IOException {
         this.mongoDataStorage = mongoDataStorage;
 
         this.oldScriptThresholdDate = Calendar.getInstance();
@@ -78,16 +77,17 @@ public class PigServer {
         this.scriptDir = configurator.getString(SCRIPTS_DIR);
         this.embedded = configurator.getBoolean(EMBEDDED);
 
-        initEmbeddedServer();
-        checkIfMongoIsStarted();
+        try {
+            initEmbeddedServer();
+            checkIfMongoIsStarted();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            throw new IOException(e);
+        }
     }
 
-    private void initEmbeddedServer() {
-        try {
-            server = initializeServer();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+    private void initEmbeddedServer() throws IOException {
+        server = initializeServer();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -99,11 +99,7 @@ public class PigServer {
     }
 
     private void checkIfMongoIsStarted() {
-        try {
-            mongoDataStorage.getDb();
-        } catch (MongoException e) {
-            throw new IllegalStateException(e);
-        }
+        mongoDataStorage.getDb();
     }
 
     /**
@@ -117,7 +113,7 @@ public class PigServer {
      * @throws IOException
      *         if something gone wrong or if a required parameter is absent
      */
-    public void execute(ScriptType scriptType, Map<String, String> context) throws IOException {
+    public void execute(ScriptType scriptType, Map<String, String> context) throws IOException, ParseException {
         context = validateAndAdjustContext(scriptType, context);
 
         LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
@@ -136,7 +132,8 @@ public class PigServer {
         }
     }
 
-    private void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context) throws IOException {
+    private void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context)
+            throws IOException, ParseException {
         String script = readScriptContent(scriptType, context);
 
         try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
@@ -159,7 +156,7 @@ public class PigServer {
     }
 
     private synchronized void executeOnDedicatedServer(ScriptType scriptType, Map<String, String> context)
-            throws IOException {
+            throws IOException, ParseException {
         String command = prepareRunCommand(scriptType, context);
         Process process = Runtime.getRuntime().exec(command);
 
@@ -192,7 +189,7 @@ public class PigServer {
         }
     }
 
-    private String prepareRunCommand(ScriptType scriptType, Map<String, String> context) {
+    private String prepareRunCommand(ScriptType scriptType, Map<String, String> context) throws ParseException {
         StringBuilder builder = new StringBuilder();
 
         builder.append(new File(binDir, "run_script.sh").getAbsolutePath());
@@ -223,7 +220,7 @@ public class PigServer {
      *         if something gone wrong or if a required parameter is absent
      */
     public Iterator<Tuple> executeAndReturn(ScriptType scriptType,
-                                            Map<String, String> context) throws IOException {
+                                            Map<String, String> context) throws IOException, ParseException {
         context = validateAndAdjustContext(scriptType, context);
 
         LOG.info("Script execution " + scriptType + " is started: " + getSecureContext(context).toString());
@@ -277,17 +274,13 @@ public class PigServer {
 
 
     /** @return the script file name */
-    private File getScriptFileName(ScriptType scriptType, Map<String, String> context) {
-        try {
-            if (Utils.getToDate(context).before(oldScriptThresholdDate)) {
-                File oldScriptFile = new File(scriptDir, scriptType.toString().toLowerCase() + "_old.pig");
-                if (oldScriptFile.exists()) {
-                    LOG.info("Old script will be used instead of " + scriptType);
-                    return oldScriptFile;
-                }
+    private File getScriptFileName(ScriptType scriptType, Map<String, String> context) throws ParseException {
+        if (Utils.getToDate(context).before(oldScriptThresholdDate)) {
+            File oldScriptFile = new File(scriptDir, scriptType.toString().toLowerCase() + "_old.pig");
+            if (oldScriptFile.exists()) {
+                LOG.info("Old script will be used instead of " + scriptType);
+                return oldScriptFile;
             }
-        } catch (ParseException e) {
-            throw new IllegalStateException(e);
         }
 
         return new File(scriptDir, scriptType.toString().toLowerCase() + ".pig");
@@ -311,7 +304,8 @@ public class PigServer {
     }
 
     /** Reads script from file. */
-    private String readScriptContent(ScriptType scriptType, Map<String, String> context) throws IOException {
+    private String readScriptContent(ScriptType scriptType, Map<String, String> context)
+            throws IOException, ParseException {
         File scriptFile = getScriptFileName(scriptType, context);
         if (!scriptFile.exists()) {
             throw new IOException("Resource " + scriptFile.getAbsolutePath() + " not found");

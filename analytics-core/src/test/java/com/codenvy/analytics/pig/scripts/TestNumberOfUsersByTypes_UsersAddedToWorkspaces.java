@@ -46,7 +46,7 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
 
 
     @BeforeClass
-    public void init() throws IOException {
+    public void init() throws Exception {
         Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();

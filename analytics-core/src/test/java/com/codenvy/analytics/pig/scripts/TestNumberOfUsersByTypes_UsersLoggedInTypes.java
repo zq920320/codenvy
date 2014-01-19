@@ -46,7 +46,7 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
     private TestUsersLoggedInTypes metric;
 
     @BeforeClass
-    public void init() throws IOException {
+    public void init() throws Exception {
         Map<String, String> params = Utils.newContext();
         metric = new TestUsersLoggedInTypes();
 

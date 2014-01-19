@@ -131,7 +131,7 @@ public class Scheduler implements ServletContextListener {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOG.error("Unable to force job run: " + e.getMessage(), e);
         }
     }

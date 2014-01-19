@@ -33,7 +33,7 @@ public class MongoDataLoader implements DataLoader {
 
     private final DB db;
 
-    MongoDataLoader(DB db) throws IOException {
+    MongoDataLoader(DB db) {
         this.db = db;
     }
 

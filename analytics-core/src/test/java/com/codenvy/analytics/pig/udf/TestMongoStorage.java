@@ -42,7 +42,7 @@ public class TestMongoStorage extends BaseTest {
     private Map<String, String> params = new HashMap<>();
 
     @BeforeClass
-    public void prepare() throws IOException {
+    public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
                         .withDate("2013-01-02")

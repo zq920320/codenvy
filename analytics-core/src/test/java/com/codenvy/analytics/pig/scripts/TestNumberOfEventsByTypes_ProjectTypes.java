@@ -45,7 +45,7 @@ import static org.testng.Assert.assertEquals;
 public class TestNumberOfEventsByTypes_ProjectTypes extends BaseTest {
 
     @BeforeClass
-    public void init() throws IOException {
+    public void init() throws Exception {
         Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();

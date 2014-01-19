@@ -30,7 +30,10 @@ import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Parameters;
-import com.mongodb.*;
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.WriteConcern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +69,12 @@ public class MongoDataStorage {
         this.uri = new MongoClientURI(configurator.getString(URL));
 
         if (configurator.getBoolean(EMBEDDED)) {
-            initEmbeddedStorage();
+            try {
+                initEmbeddedStorage();
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+                throw new IOException(e);
+            }
         }
 
         MongoClient client = initializeClient();
@@ -115,11 +123,7 @@ public class MongoDataStorage {
     }
 
     public DataLoader createdDataLoader() {
-        try {
-            return new MongoDataLoader(getDb());
-        } catch (MongoException | IOException e) {
-            throw new IllegalStateException(e);
-        }
+        return new MongoDataLoader(getDb());
     }
 
     public void putStorageParameters(Map<String, String> context) {

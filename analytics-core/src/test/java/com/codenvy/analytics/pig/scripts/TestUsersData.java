@@ -47,7 +47,7 @@ import static com.mongodb.util.MyAsserts.fail;
 public class TestUsersData extends BaseTest {
 
     @BeforeClass
-    public void prepare() throws IOException {
+    public void prepare() throws Exception {
         Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();

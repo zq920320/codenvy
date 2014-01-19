@@ -44,7 +44,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
     private Map<String, String>   params;
 
     @BeforeClass
-    public void prepare() throws IOException {
+    public void prepare() throws Exception {
         params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();

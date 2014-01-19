@@ -91,7 +91,7 @@ public class LogChecker extends Feature {
         }
     }
 
-    private File getReport(Map<String, String> context) throws IOException {
+    private File getReport(Map<String, String> context) throws IOException, ParseException {
         File reportFile = new File(configurator.getTmpDir(), "report.txt");
         try (BufferedWriter out = new BufferedWriter(new FileWriter(reportFile))) {
             writeReport(ScriptType.CHECK_LOGS_1, context, out);
@@ -103,7 +103,7 @@ public class LogChecker extends Feature {
 
     private void writeReport(ScriptType scriptType,
                              Map<String, String> context,
-                             BufferedWriter out) throws IOException {
+                             BufferedWriter out) throws IOException, ParseException {
 
         Iterator<Tuple> iterator = pigServer.executeAndReturn(scriptType, context);
         while (iterator.hasNext()) {

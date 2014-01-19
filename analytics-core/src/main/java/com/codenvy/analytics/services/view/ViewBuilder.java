@@ -173,7 +173,7 @@ public class ViewBuilder extends Feature {
                 ViewData viewData = doCompute(viewConfiguration, context);
 
                 retainViewData(viewId, viewData, context);
-            } catch (IOException | SQLException e) {
+            } catch (Throwable e) {
                 LOG.error(e.getMessage(), e);
                 throw new IllegalStateException(e);
             }
