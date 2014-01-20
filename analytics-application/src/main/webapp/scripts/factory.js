@@ -16,46 +16,14 @@
  * from Codenvy S.A..
  */
 var analytics = analytics || {};
-analytics.widgetFactory = new WidgetFactory();
+analytics.factory = new Factory();
 
-function WidgetFactory() {
-	var widgetProperties = {
-        factoryStatistics: {
-            presenterType: "factoryStatistics",
-            isNeedToSaveInHistory: true
-        },
-        
-        timeline: {
-            presenterType: "timeline",
-            isNeedToSaveInHistory: true
-        },
-        
-        topMetrics: {
-            presenterType: "topMetrics",
-            isNeedToSaveInHistory: true
-        },
-        
-        usersProfiles: {
-            presenterType: "usersProfiles",
-            isNeedToSaveInHistory: true
-        },
-        
-//        userOverview: {
-//            presenterType: "userOverview",
-//            isNeedToSaveInHistory: false
-//        },
-        
-        userStatistics: {
-            presenterType: "userStatistics",
-            isNeedToSaveInHistory: true
-        }
-	}
-    
+function Factory() {   
     var widgetComponents = {};
 		
-    var getModel = function(widgetName) {
+    function getModel(widgetName) {
         if (typeof widgetComponents[widgetName] == "undefined") {
-            widgetComponents[widgetName] = {};
+            widgetComponents[widgetName] = {}; 
         }
         
         if (typeof widgetComponents[widgetName].model == "undefined") {
@@ -63,9 +31,9 @@ function WidgetFactory() {
         }        
         
         return widgetComponents[widgetName].model;
-    };
+    }
 
-    var getView = function(widgetName, params) {
+    function getView(widgetName, params) {
         if (typeof widgetComponents[widgetName] == "undefined") {
             widgetComponents[widgetName] = {};
         }
@@ -79,42 +47,29 @@ function WidgetFactory() {
         widgetComponents[widgetName].view.setParams(params);
         
         return widgetComponents[widgetName].view;
-    };
+    }
 
-    var getPresenter = function(widgetName, view, model) {
+    function getPresenter(widgetName, view, model) {
         if (typeof widgetComponents[widgetName] == "undefined") {
             widgetComponents[widgetName] = {};
         }
         
         if (typeof widgetComponents[widgetName].presenter == "undefined") {
-            var presenterType = widgetProperties[widgetName].presenterType;
-            widgetComponents[widgetName].presenter = analytics.presenters[presenterType];
+            var presenterType = analytics.configuration.getProperty(widgetName, "presenterType");
+            widgetComponents[widgetName].presenter = new analytics.presenter[presenterType]();
         }
         
         widgetComponents[widgetName].presenter.setView(view);
         widgetComponents[widgetName].presenter.setModel(model);
-        return widgetComponents[widgetName].presenter;
-    };
-    
-    var isNeedToSaveInHistory = function(widgetName) {
-        return widgetProperties[widgetName].isNeedToSaveInHistory;
-    };
-    
-    var getWidgetNames = function() {
-        var widgetNames = new Array();
-        for (var widgetName in widgetProperties) {
-            widgetNames[widgetNames.length] = widgetName;
-        }
+        widgetComponents[widgetName].presenter.setWidgetName(widgetName);
         
-        return widgetNames;
-    };
+        return widgetComponents[widgetName].presenter;
+    }
     
     /** ****************** API ********** */
     return {
         getModel : getModel,
         getView: getView,
-        getPresenter: getPresenter,
-        isNeedToSaveInHistory: isNeedToSaveInHistory,
-        getWidgetNames: getWidgetNames
+        getPresenter: getPresenter
     }
 }

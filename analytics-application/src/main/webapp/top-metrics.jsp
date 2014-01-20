@@ -49,19 +49,19 @@
         </div>
         <div class="span10">
             <div class="well topFilteringPanel">
-                <div id="metric" class="btn-group metric-btns left" targetWidget="topMetrics">
-                    <button class="btn" default>Top Factory Sessions</button>
-                    <button class="btn">Top Factories</button>
-                    <button class="btn">Top Referrers</button>
+                <div id="metric" class="btn-group metric-btns left" targetWidgets="topMetrics">
+                    <button class="btn command-btn" default>Top Factory Sessions</button>
+                    <button class="btn command-btn">Top Factories</button>
+                    <button class="btn command-btn">Top Referrers</button>
                 </div>            
-                <div id="timely-dd" class="btn-group timely-dd-btns right" targetWidget="topMetrics">
-                    <button class="btn" default>1 Day</button>
-                    <button class="btn">7 Days</button>
-                    <button class="btn">30 Days</button>
-                    <button class="btn">60 Days</button>
-                    <button class="btn">90 Days</button>
-                    <button class="btn">1 Year</button>
-                    <button class="btn">LifeTime</button>
+                <div id="timely-dd" class="btn-group timely-dd-btns right" targetWidgets="topMetrics">
+                    <button class="btn command-btn" default>1 Day</button>
+                    <button class="btn command-btn">7 Days</button>
+                    <button class="btn command-btn">30 Days</button>
+                    <button class="btn command-btn">60 Days</button>
+                    <button class="btn command-btn">90 Days</button>
+                    <button class="btn command-btn">1 Year</button>
+                    <button class="btn command-btn">LifeTime</button>
                 </div>
             </div>
             <div class="hero-unit">
@@ -73,18 +73,24 @@
 
 <script type="text/javascript" src="scripts/third-party/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+
+<!-- Prototypes -->
+<script type="text/javascript" src="scripts/Presenter.js"></script>
+<script type="text/javascript" src="scripts/presenters/TopMetricsPresenter.js"></script>
+
+<!-- Singletons -->
 <script type="text/javascript" src="scripts/main.js"></script>
 
 <script type="text/javascript" src="scripts/util.js"></script>
 <script type="text/javascript" src="scripts/view.js"></script>
-<script type="text/javascript" src="scripts/presenter.js"></script>
 <script type="text/javascript" src="scripts/views/loader.js"></script>
 
 <script type="text/javascript" src="scripts/model.js"></script>
 
-<script type="text/javascript" src="scripts/widgetFactory.js"></script>
+<script type="text/javascript" src="scripts/factory.js"></script>
+<script type="text/javascript" src="scripts/configuration.js"></script>
 
-<script type="text/javascript" src="scripts/presenters/topMetricsPresenter.js"></script>
+
 
 </body>
 </html>

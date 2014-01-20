@@ -49,19 +49,19 @@
         </div>
         <div class="span10">
             <div class="well topFilteringPanel">
-                <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidget="factoryStatistics">
-                    <button class="btn" default>Day</button>
-                    <button class="btn">Week</button>
-                    <button class="btn">Month</button>
-                    <button class="btn">LifeTime</button>
+                <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="factoryStatistics">
+                    <button class="btn command-btn" default>Day</button>
+                    <button class="btn command-btn">Week</button>
+                    <button class="btn command-btn">Month</button>
+                    <button class="btn command-btn">LifeTime</button>
                 </div>
-                <div id="filter-by" class="right" targetWidget="factoryStatistics">
-	                 Filter by:
+                <div id="filter-by" class="right" targetWidgets="factoryStatistics">
+                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn">Email</button>
-                    <button class="btn">Organization</button>
-                    <button class="btn">Affiliate</button>
-                    <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>	                
+                    <button class="btn command-btn">Email</button>
+                    <button class="btn command-btn">Organization</button>
+                    <button class="btn command-btn">Affiliate</button>
+                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>                   
                 </div>
             </div>
             <div class="hero-unit">
@@ -73,18 +73,21 @@
 
 <script type="text/javascript" src="scripts/third-party/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+
+<!-- Prototypes -->
+<script type="text/javascript" src="scripts/Presenter.js"></script>
+<script type="text/javascript" src="scripts/presenters/ReportPresenter.js"></script>
+
+<!-- Singletons -->
 <script type="text/javascript" src="scripts/main.js"></script>
 
 <script type="text/javascript" src="scripts/util.js"></script>
 <script type="text/javascript" src="scripts/view.js"></script>
-<script type="text/javascript" src="scripts/presenter.js"></script>
 <script type="text/javascript" src="scripts/views/loader.js"></script>
 
 <script type="text/javascript" src="scripts/model.js"></script>
 
-<script type="text/javascript" src="scripts/widgetFactory.js"></script>
-
-<script type="text/javascript" src="scripts/presenters/factoryStatisticsPresenter.js"></script>
-
+<script type="text/javascript" src="scripts/factory.js"></script>
+<script type="text/javascript" src="scripts/configuration.js"></script>
 </body>
 </html>

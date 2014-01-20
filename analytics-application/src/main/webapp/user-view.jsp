@@ -50,37 +50,69 @@
         <div class="span10">
             <div class="hero-unit full-width">
                 <div class="well topFilteringPanel">
-                   <div id="date-range" class="btn-group" targetWidget="userStatistics">
+                   <div id="date-range" class="btn-group" targetWidgets="userData,userSessions,userWorkspaceData,userActivity">
                        <span>
                            From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box" />
                            To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box" />
                        </span>
-                       <button class="btn">Filter</button>
+                       <button class="btn command-btn">Filter</button>
                        <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>  
                    </div>
                 </div>
                 <div id="userOverview"></div>
-                <div id="userStatistics" class="single-column-gadget full-width"></div>
-            </div>
+                
+				<div class="single-column-gadget full-width">
+					<div class="view">
+						<div class="tables">
+							<div class="item">
+								<div class="header">User Statistics</div>
+								<div class="body" id="userData"></div>
+							</div>
+							
+                            <div class="item">
+                                <div class="header">Sessions</div>
+                                <div class="body" id="userSessions"></div>
+                            </div>
+                            
+                            <div class="item">
+                                <div class="header">Workspaces</div>
+                                <div class="body" id="userWorkspaceData"></div>
+                            </div>
+                            
+                            <div class="item">
+                                <div class="header">User Logs</div>
+                                <div class="body" id="userActivity"></div>
+                            </div>
+						</div>
+					</div>
+				</div>
+
+			</div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript" src="scripts/third-party/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+
+<!-- Prototypes -->
+<script type="text/javascript" src="scripts/Presenter.js"></script>
+<script type="text/javascript" src="scripts/presenters/VerticalTablePresenter.js"></script>
+<script type="text/javascript" src="scripts/presenters/TablePresenter.js"></script>
+
+<!-- Singletons -->
 <script type="text/javascript" src="scripts/main.js"></script>
 
 <script type="text/javascript" src="scripts/util.js"></script>
 <script type="text/javascript" src="scripts/view.js"></script>
-<script type="text/javascript" src="scripts/presenter.js"></script>
+
 <script type="text/javascript" src="scripts/views/loader.js"></script>
 
 <script type="text/javascript" src="scripts/model.js"></script>
 
-<script type="text/javascript" src="scripts/widgetFactory.js"></script>
+<script type="text/javascript" src="scripts/factory.js"></script>
+<script type="text/javascript" src="scripts/configuration.js"></script>
 
-<script type="text/javascript" src="scripts/presenters/userOverviewPresenter.js"></script>
-<script type="text/javascript" src="scripts/presenters/userStatisticsPresenter.js"></script>
 
 <!--  load calendar jquery plugin  -->
 <link rel="stylesheet" href="scripts/third-party/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">

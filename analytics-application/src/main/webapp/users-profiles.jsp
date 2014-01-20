@@ -49,14 +49,14 @@
         </div>
         <div class="span10">
             <div class="well topFilteringPanel">
-                <div id="filter-by" class="left" targetWidget="usersProfiles">
+                <div id="filter-by" class="left" targetWidgets="usersProfiles">
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn">Email</button>
-                    <button class="btn">First Name</button>
-                    <button class="btn">Last Name</button>                
-                    <button class="btn">Company</button>
-                    <button id="clearSelectionBtn" class="btn btn-primary btn-small clear-btn">Clear</button>
+                    <button class="btn command-btn">Email</button>
+                    <button class="btn command-btn">First Name</button>
+                    <button class="btn command-btn">Last Name</button>                
+                    <button class="btn command-btn">Company</button>
+                    <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
                 </div>
             </div>
             <div class="hero-unit">
@@ -68,18 +68,21 @@
 
 <script type="text/javascript" src="scripts/third-party/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+
+<!-- Prototypes -->
+<script type="text/javascript" src="scripts/Presenter.js"></script>
+<script type="text/javascript" src="scripts/presenters/UsersProfilesPresenter.js"></script>
+
+<!-- Singletons -->
 <script type="text/javascript" src="scripts/main.js"></script>
 
 <script type="text/javascript" src="scripts/util.js"></script>
 <script type="text/javascript" src="scripts/view.js"></script>
-<script type="text/javascript" src="scripts/presenter.js"></script>
 <script type="text/javascript" src="scripts/views/loader.js"></script>
 
 <script type="text/javascript" src="scripts/model.js"></script>
 
-<script type="text/javascript" src="scripts/widgetFactory.js"></script>
-
-<script type="text/javascript" src="scripts/presenters/usersProfilesPresenter.js"></script>
-
+<script type="text/javascript" src="scripts/factory.js"></script>
+<script type="text/javascript" src="scripts/configuration.js"></script>
 </body>
 </html>
