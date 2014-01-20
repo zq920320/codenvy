@@ -29,8 +29,10 @@ import java.util.Map;
 /** @author Anatoliy Bazko */
 public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
 
-    private final String VALUE    = "value";
-    private final String SESSIONS = "sessions";
+    public final String VALUE    = "value";
+    public final String SESSIONS = "sessions";
+    public final String TIME     = ProductUsageSessionsList.TIME;
+    public final String USER     = ProductUsageSessionsList.USER;
 
     final private long    minTime;
     final private long    maxTime;
@@ -77,27 +79,29 @@ public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
     @Override
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + ProductUsageSessionsList.USER);
-        group.put(ProductUsageSessionsList.TIME, new BasicDBObject("$sum", "$" + ProductUsageSessionsList.TIME));
+        group.put("_id", "$" + USER);
+        group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
         group.put(SESSIONS, new BasicDBObject("$sum", 1));
 
+        DBObject sessionsRange = new BasicDBObject();
+        sessionsRange.put(includeMinSessions ? "$gte" : "$gt", minSessions);
+        sessionsRange.put(includeMaxSessions ? "$lte" : "$lt", maxSessions);
+
+        DBObject timeRange = new BasicDBObject();
+        timeRange.put(includeMinTime ? "$gte" : "$gt", minTime);
+        timeRange.put(includeMaxTime ? "$lte" : "$lt", maxTime);
+
         DBObject match = new BasicDBObject();
-        DBObject timeFilter = new BasicDBObject();
-        DBObject sessionsFilter = new BasicDBObject();
-        match.put(DATE, timeFilter);
-//
-//        dateFilter.put("$gte", Parameters.FROM_DATE.exists(clauses)
-//                               ? Utils.getFromDate(clauses).getTimeInMillis()
-//                               : 0);
-//        dateFilter.put("$lt", Parameters.TO_DATE.exists(clauses)
-//                              ? Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS
-//                              : Long.MAX_VALUE);
+        match.put(operator, new DBObject[]{new BasicDBObject(SESSIONS, sessionsRange),
+                                           new BasicDBObject(TIME, timeRange)});
 
         DBObject count = new BasicDBObject();
+        count.put("_id", null);
+        count.put(VALUE, new BasicDBObject("$sum", 1));
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$match", match),
-                              new BasicDBObject("$count", count)};
+                              new BasicDBObject("$group", count)};
     }
 
     @Override

@@ -20,12 +20,14 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.AbstractProductTime;
+import com.codenvy.analytics.metrics.sessions.AbstractProductUsageCondition;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.top.AbstractTopUsers;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -35,7 +37,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class TestProductUsersTime extends BaseTest {
     private Map<String, String> params;
 
     @BeforeClass
-    public void init() throws IOException {
+    public void init() throws Exception {
         params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
@@ -112,7 +113,7 @@ public class TestProductUsersTime extends BaseTest {
     }
 
     @Test
-    public void testTopUsers() throws Exception {
+    public void testTopEntities() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
@@ -138,7 +139,66 @@ public class TestProductUsersTime extends BaseTest {
         assertEquals(item.getAll().get("sessions").getAsString(), "1");
         assertEquals(item.getAll().get("by_1_day").getAsString(), "60");
         assertEquals(item.getAll().get("by_lifetime").getAsString(), "60");
+    }
 
+    @Test
+    public void testConditions1() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
+
+        Metric metric = new TestedAbstractProductUsageCondition(0, 450, true, true, "$and", 0, 2, true, true);
+        LongValueData value = (LongValueData)metric.getValue(context);
+
+        assertEquals(2, value.getAsLong());
+    }
+
+    @Test
+    public void testConditions2() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
+
+        Metric metric = new TestedAbstractProductUsageCondition(0, 450, true, true, "$or", 0, 2, true, true);
+        LongValueData value = (LongValueData)metric.getValue(context);
+
+        assertEquals(3, value.getAsLong());
+    }
+
+    @Test
+    public void testConditions3() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
+
+        Metric metric = new TestedAbstractProductUsageCondition(0, 600, true, true, "$and", 0, 2, true, true);
+        LongValueData value = (LongValueData)metric.getValue(context);
+
+        assertEquals(3, value.getAsLong());
+    }
+
+    private class TestedAbstractProductUsageCondition extends AbstractProductUsageCondition {
+
+        public TestedAbstractProductUsageCondition(long minTime, long maxTime,
+                                                   boolean includeMinTime,
+                                                   boolean includeMaxTime, String operator, long minSessions,
+                                                   long maxSessions, boolean includeMinSessions,
+                                                   boolean includeMaxSessions) {
+            super(MetricType.PRODUCT_USAGE_CONDITION_ABOVE_300_MIN,
+                  minTime, maxTime, includeMinTime, includeMaxTime,
+                  operator, minSessions, maxSessions,
+                  includeMinSessions, includeMaxSessions);
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+
+        @Override
+        public String getStorageCollectionName() {
+            return "testproductuserstime";
+        }
     }
 
     private class TestedProductUsersTime extends AbstractProductTime {
