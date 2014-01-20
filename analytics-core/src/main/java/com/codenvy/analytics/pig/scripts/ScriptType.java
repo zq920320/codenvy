@@ -51,6 +51,7 @@ public enum ScriptType {
         public Set<Parameters> getParams() {
             Set<Parameters> params = super.getParams();
             params.add(Parameters.STORAGE_TABLE_USERS_STATISTICS);
+            params.add(Parameters.STORAGE_TABLE_USERS_PROFILES);
             return params;
         }
     },

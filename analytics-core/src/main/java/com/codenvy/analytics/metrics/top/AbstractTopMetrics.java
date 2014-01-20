@@ -33,6 +33,7 @@ import java.util.Map;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public abstract class AbstractTopMetrics extends ReadBasedMetric {
+
     public static final long MAX_DOCUMENT_COUNT = 100;
     public static final int  LIFE_TIME_PERIOD   = -1;
 

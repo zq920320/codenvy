@@ -20,15 +20,19 @@ package com.codenvy.analytics.metrics;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class CalculatedMetric extends AbstractMetric {
 
-    protected final Metric[]        basedMetric;
+    protected final Metric[] basedMetric;
 
     protected CalculatedMetric(MetricType metricType, MetricType[] basedMetricTypes) {
         super(metricType.name());
 
         this.basedMetric = new Metric[basedMetricTypes.length];
-
         for (int i = 0; i < basedMetricTypes.length; i++) {
             this.basedMetric[i] = MetricFactory.getMetric(basedMetricTypes[i]);
         }
+    }
+
+    protected CalculatedMetric(MetricType metricType, Metric[] basedMetric) {
+        super(metricType.name());
+        this.basedMetric = basedMetric;
     }
 }

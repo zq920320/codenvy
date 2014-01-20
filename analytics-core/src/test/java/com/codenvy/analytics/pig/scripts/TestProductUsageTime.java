@@ -88,6 +88,7 @@ public class TestProductUsageTime extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.STORAGE_TABLE.put(params, "testproductusagesessions");
         Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testproductusagesessions-stat");
+        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, "testproductusagesessions-profiles");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);

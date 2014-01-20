@@ -50,6 +50,10 @@ public class StringValueData extends AbstractValueData {
         return ValueDataTypes.STRING.toString();
     }
 
+    public static StringValueData valueOf(String value) {
+        return new StringValueData(value);
+    }
+
     /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {

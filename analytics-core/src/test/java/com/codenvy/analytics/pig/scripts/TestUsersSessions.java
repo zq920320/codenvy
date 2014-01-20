@@ -77,6 +77,8 @@ public class TestUsersSessions extends BaseTest {
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
                         .withDate("2013-11-01").withTime("20:05:00").build());
 
+        events.add(Event.Builder.createUserUpdateProfile("user@gmail.com", "", "", "company", "", "")
+                        .withDate("2013-11-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -84,8 +86,14 @@ public class TestUsersSessions extends BaseTest {
         Parameters.TO_DATE.put(params, "20131101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
+        Parameters.STORAGE_TABLE.put(params, "testuserssessions-profiles");
+        Parameters.LOG.put(params, log.getAbsolutePath());
+
+        pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
+
         Parameters.STORAGE_TABLE.put(params, "testuserssessions");
         Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testuserssessions-stat");
+        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, "testuserssessions-profiles");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
@@ -108,6 +116,8 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("end_time").getAsString(), "2013-11-01 20:05:00");
         assertEquals(items.getAll().get("session_id").getAsString(), "2");
         assertEquals(items.getAll().get("time").getAsString(), "300");
+        assertEquals(items.getAll().get("domain").getAsString(), "gmail.com");
+        assertEquals(items.getAll().get("user_company").getAsString(), "company");
 
         metric = new TestProductUsageSessions();
         assertEquals(metric.getValue(context).getAsString(), "1");

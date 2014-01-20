@@ -95,6 +95,7 @@ public class TestUsersData extends BaseTest {
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
         Parameters.STORAGE_TABLE.put(params, "testusersdata-sessions");
         Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testusersdata");
+        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, "testusersdata-profiles");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);

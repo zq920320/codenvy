@@ -85,6 +85,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type")
                         .withDate("2013-02-10").withTime("10:03:00").build());
 
+
         File log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130210");

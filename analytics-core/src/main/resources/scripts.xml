@@ -168,6 +168,7 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="product_usage_sessions_list"/>
         <parameter key="STORAGE_TABLE_USERS_STATISTICS" value="users_statistics_list"/>
+        <parameter key="STORAGE_TABLE_USERS_PROFILES" value="users_profiles_list"/>
     </script>
     <script name="time_spent_in_action">
         <description>Time of all builds</description>

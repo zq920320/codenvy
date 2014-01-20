@@ -35,6 +35,12 @@ com.codenvy.analytics.metrics.sessions.ProductUsageUsersAbove300Min
 com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList
 com.codenvy.analytics.metrics.sessions.ProductUsageSessions
+com.codenvy.analytics.metrics.sessions.ProductUsersTime
+com.codenvy.analytics.metrics.sessions.ProductDomainsTime
+com.codenvy.analytics.metrics.sessions.ProductCompaniesTime
+com.codenvy.analytics.metrics.sessions.ProductUsageConditionBelow120Min
+com.codenvy.analytics.metrics.sessions.ProductUsageConditionBetween120And300Min
+com.codenvy.analytics.metrics.sessions.ProductUsageConditionAbove300Min
 
 com.codenvy.analytics.metrics.users.UsersLoggedInTypes
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGitHub
@@ -146,6 +152,30 @@ com.codenvy.analytics.metrics.top.TopReferrersBy60Day
 com.codenvy.analytics.metrics.top.TopReferrersBy90Day
 com.codenvy.analytics.metrics.top.TopReferrersBy365Day
 com.codenvy.analytics.metrics.top.TopReferrersByLifetime
+
+com.codenvy.analytics.metrics.top.TopUsersBy1Day
+com.codenvy.analytics.metrics.top.TopUsersBy7Day
+com.codenvy.analytics.metrics.top.TopUsersBy30Day
+com.codenvy.analytics.metrics.top.TopUsersBy60Day
+com.codenvy.analytics.metrics.top.TopUsersBy90Day
+com.codenvy.analytics.metrics.top.TopUsersBy365Day
+com.codenvy.analytics.metrics.top.TopUsersByLifetime
+
+com.codenvy.analytics.metrics.top.TopCompaniesBy1Day
+com.codenvy.analytics.metrics.top.TopCompaniesBy7Day
+com.codenvy.analytics.metrics.top.TopCompaniesBy30Day
+com.codenvy.analytics.metrics.top.TopCompaniesBy60Day
+com.codenvy.analytics.metrics.top.TopCompaniesBy90Day
+com.codenvy.analytics.metrics.top.TopCompaniesBy365Day
+com.codenvy.analytics.metrics.top.TopCompaniesByLifetime
+
+com.codenvy.analytics.metrics.top.TopDomainsBy1Day
+com.codenvy.analytics.metrics.top.TopDomainsBy7Day
+com.codenvy.analytics.metrics.top.TopDomainsBy30Day
+com.codenvy.analytics.metrics.top.TopDomainsBy60Day
+com.codenvy.analytics.metrics.top.TopDomainsBy90Day
+com.codenvy.analytics.metrics.top.TopDomainsBy365Day
+com.codenvy.analytics.metrics.top.TopDomainsByLifetime
 
 com.codenvy.analytics.metrics.ide_usage.RunnerTotalTime
 

@@ -1496,4 +1496,277 @@
             </row>
         </section>
     </view>
+
+    <view name="top_users_by_1day">
+        <section name="top_users_by_1day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Emails,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_users_by_1day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_users_by_7day">
+        <section name="top_users_by_7day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Emails,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_users_by_7day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_users_by_30day">
+        <section name="top_users_by_30day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Emails,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_users_by_30day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_users_by_60day">
+        <section name="top_users_by_60day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Emails,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_users_by_60day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_users_by_90day">
+        <section name="top_users_by_90day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Emails,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_users_by_90day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_users_by_365day">
+        <section name="top_users_by_365day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Emails,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_users_by_365day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_users_by_lifetime">
+        <section name="top_users_by_lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_users_by_lifetime"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_domains_by_1day">
+        <section name="top_domains_by_1day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_domains_by_1day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_domains_by_7day">
+        <section name="top_domains_by_7day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_domains_by_7day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_domains_by_30day">
+        <section name="top_domains_by_30day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_domains_by_30day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_domains_by_60day">
+        <section name="top_domains_by_60day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_domains_by_60day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_domains_by_90day">
+        <section name="top_domains_by_90day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_domains_by_90day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_domains_by_365day">
+        <section name="top_domains_by_365day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_domains_by_365day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_domains_by_lifetime">
+        <section name="top_domains_by_lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Domain,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_domains_by_lifetime"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_companies_by_1day">
+        <section name="top_companies_by_1day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Company,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_companies_by_1day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_companies_by_7day">
+        <section name="top_companies_by_7day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Company,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_companies_by_7day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_companies_by_30day">
+        <section name="top_companies_by_30day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Company,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_companies_by_30day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_companies_by_60day">
+        <section name="top_companies_by_60day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Company,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_companies_by_60day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_companies_by_90day">
+        <section name="top_companies_by_90day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Company,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_companies_by_90day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_companies_by_365day">
+        <section name="top_companies_by_365day">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Company,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_companies_by_365day"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
+
+    <view name="top_companies_by_lifetime">
+        <section name="top_companies_by_lifetime">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Company,Sessions,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year,Lifetime"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="top_companies_by_lifetime"/>
+                <parameter key="fields"
+                           value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+            </row>
+        </section>
+    </view>
 </display>
