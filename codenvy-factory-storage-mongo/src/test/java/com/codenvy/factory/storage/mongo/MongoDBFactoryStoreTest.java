@@ -151,20 +151,20 @@ public class MongoDBFactoryStoreTest {
 
         BasicDBObject welcomeDBObject = new BasicDBObject();
 
-        WelcomeConfiguration authConfiguration = welcomePage.getAuthenticate();
+        WelcomeConfiguration authConfiguration = welcomePage.getAuthenticated();
         BasicDBObject authDBOWelcome = new BasicDBObject();
         authDBOWelcome.put("title", authConfiguration.getTitle());
         authDBOWelcome.put("iconurl", authConfiguration.getIconurl());
         authDBOWelcome.put("content", authConfiguration.getContent());
 
-        WelcomeConfiguration nonAuthConfiguration = welcomePage.getNonauthenticate();
+        WelcomeConfiguration nonAuthConfiguration = welcomePage.getNonauthenticated();
         BasicDBObject nonAuthDBOWelcome = new BasicDBObject();
         nonAuthDBOWelcome.put("title", nonAuthConfiguration.getTitle());
         nonAuthDBOWelcome.put("iconurl", nonAuthConfiguration.getIconurl());
         nonAuthDBOWelcome.put("content", nonAuthConfiguration.getContent());
 
-        welcomeDBObject.put("authenticate", authDBOWelcome);
-        welcomeDBObject.put("nonauthenticate", nonAuthDBOWelcome);
+        welcomeDBObject.put("authenticated", authDBOWelcome);
+        welcomeDBObject.put("nonauthenticated", nonAuthDBOWelcome);
 
         BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
         factoryURLbuilder.add("v", "1.1")

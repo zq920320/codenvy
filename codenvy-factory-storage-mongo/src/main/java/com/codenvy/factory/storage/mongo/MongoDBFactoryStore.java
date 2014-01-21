@@ -72,20 +72,20 @@ public class MongoDBFactoryStore implements FactoryStore {
 
         BasicDBObject welcomeDBObject = new BasicDBObject();
 
-        WelcomeConfiguration authConfiguration = factoryUrl.getWelcome().getAuthenticate();
+        WelcomeConfiguration authConfiguration = factoryUrl.getWelcome().getAuthenticated();
         BasicDBObject authDBOWelcome = new BasicDBObject();
         authDBOWelcome.put("title", authConfiguration.getTitle());
         authDBOWelcome.put("iconurl", authConfiguration.getIconurl());
         authDBOWelcome.put("content", authConfiguration.getContent());
 
-        WelcomeConfiguration nonAuthConfiguration = factoryUrl.getWelcome().getNonauthenticate();
+        WelcomeConfiguration nonAuthConfiguration = factoryUrl.getWelcome().getNonauthenticated();
         BasicDBObject nonAuthDBOWelcome = new BasicDBObject();
         nonAuthDBOWelcome.put("title", nonAuthConfiguration.getTitle());
         nonAuthDBOWelcome.put("iconurl", nonAuthConfiguration.getIconurl());
         nonAuthDBOWelcome.put("content", nonAuthConfiguration.getContent());
 
-        welcomeDBObject.put("authenticate", authDBOWelcome);
-        welcomeDBObject.put("nonauthenticate", nonAuthDBOWelcome);
+        welcomeDBObject.put("authenticated", authDBOWelcome);
+        welcomeDBObject.put("nonauthenticated", nonAuthDBOWelcome);
 
         List<DBObject> imageList = new ArrayList<>();
         for (FactoryImage one : images) {
@@ -168,8 +168,8 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setVariables(VariableHelper.fromBasicDBFormat(factoryAsDbObject));
 
         BasicDBObject welcomeDBObject = (BasicDBObject)factoryAsDbObject.get("welcome");
-        BasicDBObject authDBConfiguration = (BasicDBObject)welcomeDBObject.get("authenticate");
-        BasicDBObject nonAuthDBConfiguration = (BasicDBObject)welcomeDBObject.get("nonauthenticate");
+        BasicDBObject authDBConfiguration = (BasicDBObject)welcomeDBObject.get("authenticated");
+        BasicDBObject nonAuthDBConfiguration = (BasicDBObject)welcomeDBObject.get("nonauthenticated");
 
         WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration((String)authDBConfiguration.get("title"),
                                                                            (String)authDBConfiguration.get("iconurl"),
