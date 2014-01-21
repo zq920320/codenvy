@@ -18,18 +18,11 @@
 package com.codenvy.analytics.pig;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /** @author Anatoliy Bazko */
 public class Context extends HashMap<String, String> {
-    public Context(int initialCapacity) {
-        super(initialCapacity);
-    }
 
-    public Context() {
-    }
-
-    public Context(Map<? extends String, ? extends String> m) {
-        super(m);
+    public static Context create() {
+        return new Context();
     }
 }

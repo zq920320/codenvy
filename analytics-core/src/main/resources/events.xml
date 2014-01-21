@@ -222,7 +222,7 @@
         <description/>
         <parameters>
             <param>WS</param>
-            <param>USER</param>
+            <param>USER</param>user
             <param>SESSION-ID</param>
             <param>WINDOW</param>
         </parameters>
@@ -308,7 +308,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
-            <param>JREBEL</param>
+            <param>JREBEL</param>user
         </parameters>
     </event>
     <event name="jrebel-user-profile-info">

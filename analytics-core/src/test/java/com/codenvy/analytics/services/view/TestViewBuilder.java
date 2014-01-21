@@ -95,7 +95,12 @@ public class TestViewBuilder extends BaseTest {
     @Test
     public void testIfShippedConfigurationCorrect() throws Exception {
         ViewBuilder viewBuilder = Injector.getInstance(ViewBuilder.class);
-        viewBuilder.doExecute(Utils.initializeContext(Parameters.TimeUnit.DAY));
+
+        Map<String, String> context = Utils.newContext();
+        Parameters.TO_DATE.putDefaultValue(context);
+        Parameters.FROM_DATE.put(context, Parameters.TO_DATE.get(context));
+
+        viewBuilder.doExecute(context);
     }
 
     @Test

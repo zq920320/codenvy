@@ -145,7 +145,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_accepted_invites_percent"/>
-                <parameter key="format" value="%.0f%%"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="Accepted"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
@@ -157,17 +157,17 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_logged_in_with_google_percent"/>
-                <parameter key="format" value="%.0f%%"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="Google Auth"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_logged_in_with_github_percent"/>
-                <parameter key="format" value="%.0f%%"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="Github Auth"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_logged_in_with_form_percent"/>
-                <parameter key="format" value="%.0f%%"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="Form Auth"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
@@ -180,22 +180,27 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_time_total"/>
                 <parameter key="description" value="Total"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_time_below_1_min"/>
                 <parameter key="description" value="&#0060;= 1 Min"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_time_between_1_and_10_min"/>
                 <parameter key="description" value="&#0062; 1 And &#0060; 10 Mins"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_time_between_10_and_60_min"/>
                 <parameter key="description" value="&#0062;= 10 And &#0060;= 60 Mins"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_time_above_60_min"/>
                 <parameter key="description" value="&#0062; 60 Mins"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
@@ -284,14 +289,17 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="builds_time"/>
                 <parameter key="description" value="Builds"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="runs_time"/>
                 <parameter key="description" value="Runs"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="debugs_time"/>
                 <parameter key="description" value="Debugs"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
@@ -479,17 +487,17 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions_with_build_percent"/>
-                <parameter key="format" value="%.0f%%"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="% Built"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions_with_run_percent"/>
-                <parameter key="format" value="%.0f%%"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="% Run"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions_with_deploy_percent"/>
-                <parameter key="format" value="%.0f%%"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
                 <parameter key="description" value="% Deployed"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
@@ -516,12 +524,12 @@
 
         <section name="factory_product_usage">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Usage Time"/>
+                <parameter key="section-name" value="Usage Time (mins)"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_product_usage_time_total"/>
-                <parameter key="format" value="%,.0f"/>
                 <parameter key="description" value="Product Usage Mins"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
@@ -1117,7 +1125,7 @@
         <section name="user_data">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
+                           value="Number of Sessions,Total Time (mins),Total Build Time (mins),Total Run Time (mins),Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics_list"/>
@@ -1137,6 +1145,7 @@
                 <parameter key="name" value="product_usage_sessions_list"/>
                 <parameter key="fields" value="session_id,ws,start_time,end_time,time"/>
                 <parameter key="time-fields" value="time"/>
+                <parameter key="time-format" value="mm min. ss sec."/>
             </row>
         </section>
     </view>
@@ -1150,6 +1159,7 @@
                 <parameter key="name" value="users_time_in_workspaces_list"/>
                 <parameter key="fields" value="_id,sessions,time"/>
                 <parameter key="time-fields" value="time"/>
+                <parameter key="time-format" value="mm min. ss sec."/>
             </row>
         </section>
     </view>
@@ -1171,7 +1181,8 @@
     <view name="top_factory_sessions_by_1day">
         <section name="top_factory_sessions_by_1day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="titles"
+                           value="Time (mins),Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factory_sessions_by_1day"/>
@@ -1186,7 +1197,7 @@
     <view name="top_factory_sessions_by_7day">
         <section name="top_factory_sessions_by_7day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="titles" value="Time (mins),Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factory_sessions_by_7day"/>
@@ -1201,7 +1212,7 @@
     <view name="top_factory_sessions_by_30day">
         <section name="top_factory_sessions_by_30day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="titles" value="Time (mins),Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factory_sessions_by_30day"/>
@@ -1215,7 +1226,7 @@
     <view name="top_factory_sessions_by_60day">
         <section name="top_factory_sessions_by_60day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="titles" value="Time (mins),Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factory_sessions_by_60day"/>
@@ -1230,7 +1241,7 @@
     <view name="top_factory_sessions_by_90day">
         <section name="top_factory_sessions_by_90day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="titles" value="Time (mins),Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factory_sessions_by_90day"/>
@@ -1245,7 +1256,7 @@
     <view name="top_factory_sessions_by_365day">
         <section name="top_factory_sessions_by_365day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="titles" value="Time (mins),Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factory_sessions_by_365day"/>
@@ -1260,7 +1271,7 @@
     <view name="top_factory_sessions_by_lifetime">
         <section name="top_factory_sessions_by_lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Time,Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
+                <parameter key="titles" value="Time (mins),Factory,Referrer,Is Authenticated Session,Is Converted Session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factory_sessions_by_lifetime"/>
@@ -1276,7 +1287,7 @@
         <section name="top_factories_by_1day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Factory,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_1day"/>
@@ -1292,7 +1303,7 @@
         <section name="top_factories_by_7day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Factory,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_7day"/>
@@ -1308,7 +1319,7 @@
         <section name="top_factories_by_30day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Factory,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_30day"/>
@@ -1324,7 +1335,7 @@
         <section name="top_factories_by_60day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Factory,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_60day"/>
@@ -1340,7 +1351,7 @@
         <section name="top_factories_by_90day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Factory,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_90day"/>
@@ -1356,7 +1367,7 @@
         <section name="top_factories_by_365day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Factory,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_365day"/>
@@ -1372,7 +1383,7 @@
         <section name="top_factories_by_lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Factory,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Factory,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_factories_by_lifetime"/>
@@ -1388,7 +1399,7 @@
         <section name="top_referrers_by_1day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_1day"/>
@@ -1404,7 +1415,7 @@
         <section name="top_referrers_by_7day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_7day"/>
@@ -1420,7 +1431,7 @@
         <section name="top_referrers_by_30day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_30day"/>
@@ -1436,7 +1447,7 @@
         <section name="top_referrers_by_60day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_60day"/>
@@ -1452,7 +1463,7 @@
         <section name="top_referrers_by_90day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_90day"/>
@@ -1468,7 +1479,7 @@
         <section name="top_referrers_by_365day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_365day"/>
@@ -1484,7 +1495,7 @@
         <section name="top_referrers_by_lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,Workspace Creations,User Creations,Time (mins),% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_lifetime"/>
@@ -1505,6 +1516,8 @@
                 <parameter key="name" value="top_users_by_1day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1518,6 +1531,8 @@
                 <parameter key="name" value="top_users_by_7day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1531,6 +1546,8 @@
                 <parameter key="name" value="top_users_by_30day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1544,6 +1561,8 @@
                 <parameter key="name" value="top_users_by_60day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1557,6 +1576,8 @@
                 <parameter key="name" value="top_users_by_90day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1570,6 +1591,8 @@
                 <parameter key="name" value="top_users_by_365day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1583,6 +1606,8 @@
                 <parameter key="name" value="top_users_by_lifetime"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1596,6 +1621,8 @@
                 <parameter key="name" value="top_domains_by_1day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1609,6 +1636,8 @@
                 <parameter key="name" value="top_domains_by_7day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1622,6 +1651,8 @@
                 <parameter key="name" value="top_domains_by_30day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1635,6 +1666,8 @@
                 <parameter key="name" value="top_domains_by_60day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1648,6 +1681,8 @@
                 <parameter key="name" value="top_domains_by_90day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1661,6 +1696,8 @@
                 <parameter key="name" value="top_domains_by_365day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1674,6 +1711,8 @@
                 <parameter key="name" value="top_domains_by_lifetime"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1687,6 +1726,8 @@
                 <parameter key="name" value="top_companies_by_1day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1700,6 +1741,8 @@
                 <parameter key="name" value="top_companies_by_7day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1713,6 +1756,8 @@
                 <parameter key="name" value="top_companies_by_30day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1726,6 +1771,8 @@
                 <parameter key="name" value="top_companies_by_60day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1739,6 +1786,8 @@
                 <parameter key="name" value="top_companies_by_90day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1752,6 +1801,8 @@
                 <parameter key="name" value="top_companies_by_365day"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>
@@ -1765,6 +1816,8 @@
                 <parameter key="name" value="top_companies_by_lifetime"/>
                 <parameter key="fields"
                            value="entity,sessions,by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
+                <parameter key="time-fields"
+                           value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days,by_lifetime"/>
             </row>
         </section>
     </view>

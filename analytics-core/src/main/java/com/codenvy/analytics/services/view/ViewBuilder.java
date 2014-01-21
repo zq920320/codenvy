@@ -172,14 +172,15 @@ public class ViewBuilder extends Feature {
 
         @Override
         protected void compute() {
-            try {
-                String viewId = getId(viewConfiguration.getName(), context);
-                ViewData viewData = doCompute(viewConfiguration, context);
+            String viewId = getId(viewConfiguration.getName(), context);
 
+            try {
+                ViewData viewData = doCompute(viewConfiguration, context);
                 retainViewData(viewId, viewData, context);
             } catch (Throwable e) {
-                LOG.error(e.getMessage(), e);
-                throw new IllegalStateException(e);
+                String message = "Can't compute view" + viewId;
+                LOG.error(message, e);
+                throw new IllegalStateException(message, e);
             }
         }
 

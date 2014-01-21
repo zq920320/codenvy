@@ -25,7 +25,6 @@ import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.Parameters;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -39,32 +38,58 @@ import java.util.Map;
 public class MetricRow extends AbstractRow {
 
     private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
-    public static final  String DATE_FORMAT            = "yyyy-MM-dd HH:mm:ss";
+    private static final String DEFAULT_TIME_FORMAT    = "mm";
+    private static final String DEFAULT_DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";
 
-    private static final String NAME                           = "name";
-    private static final String FORMAT                         = "format";
-    private static final String DESCRIPTION                    = "description";
-    private static final String FIELDS                         = "fields";
-    private static final String HIDE_NEGATIVE_VALUES           = "hide-negative-values";
-    private static final String SET_FROM_DATE_TO_DEFAULT_VALUE = "set-from-date-to-default-value";
-    private static final String BOOLEAN_FIELDS                 = "boolean-fields";
-    private static final String DATE_FIELDS                    = "date-fields";
-    private static final String TIME_FIELDS                    = "time-fields";
+    /** The name of the metric. */
+    private static final String NAME        = "name";
+    private static final String DESCRIPTION = "description";
 
+    /** The names of fields to fetch from multi-valued metric. */
+    private static final String FIELDS = "fields";
+
+    /** The names of fields of multi-valued metric which should be formatted corresponding to their type. */
+    private static final String BOOLEAN_FIELDS = "boolean-fields";
+    private static final String DATE_FIELDS    = "date-fields";
+    private static final String TIME_FIELDS    = "time-fields";
+
+    /**
+     * Indicates if single-value should be treated as time and formatted in appropriate way.
+     * Possible values: 'true' or 'false'.
+     */
+    private static final String TIME_FIELD = "time-field";
+
+    /**
+     * Indicates if single-value shouldn't be printed if its value is negative.
+     * Possible values: 'true' or 'false'.
+     */
+    private static final String HIDE_NEGATIVE_VALUES = "hide-negative-values";
+
+    /** The format for time fields. Supports 'mm' as the number of minutes and 'ss' as the number of seconds. */
+    private static final String TIME_FORMAT = "time-format";
+
+    /**
+     * The format for numeric fields. All fields are supposed to be numeric if there is no any indicator to tell
+     * opposite. The value can be any supported java format.
+     */
+    private static final String NUMERIC_FORMAT = "numeric-format";
 
     private final Metric       metric;
-    private final String       format;
+    private final String       numericFormat;
     private final String[]     fields;
     private final boolean      hideNegativeValues;
     private final List<String> booleanFields;
     private final List<String> dateFields;
     private final List<String> timeFields;
+    private final boolean      isTimeField;
+    private final String       timeFormat;
 
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
 
         metric = MetricFactory.getMetric(parameters.get(NAME));
-        format = parameters.containsKey(FORMAT) ? parameters.get(FORMAT) : DEFAULT_NUMERIC_FORMAT;
+        numericFormat =
+                parameters.containsKey(NUMERIC_FORMAT) ? parameters.get(NUMERIC_FORMAT) : DEFAULT_NUMERIC_FORMAT;
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
 
         hideNegativeValues = parameters.containsKey(HIDE_NEGATIVE_VALUES) &&
@@ -76,6 +101,8 @@ public class MetricRow extends AbstractRow {
                                                          : new ArrayList<String>();
         timeFields = parameters.containsKey(TIME_FIELDS) ? Arrays.asList(parameters.get(TIME_FIELDS).split(","))
                                                          : new ArrayList<String>();
+        isTimeField = parameters.containsKey(TIME_FIELD) && Boolean.parseBoolean(parameters.get(TIME_FIELD));
+        timeFormat = parameters.containsKey(TIME_FORMAT) ? parameters.get(TIME_FORMAT) : DEFAULT_TIME_FORMAT;
     }
 
     @Override
@@ -90,15 +117,6 @@ public class MetricRow extends AbstractRow {
             throw new IOException(e);
         }
     }
-
-    private void formatTimeValue(ValueData valueData, List<ValueData> singleValue) {
-        long timeInSeconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
-        singleValue.add(new StringValueData(
-                (timeInSeconds / 60)
-                + " min."
-                + ((timeInSeconds % 60) == 0 ? "" : (timeInSeconds % 60) + " sec.")));
-    }
-
 
     private boolean isMultipleColumnsMetric() {
         return metric.getValueDataClass() == ListValueData.class;
@@ -139,8 +157,10 @@ public class MetricRow extends AbstractRow {
             ValueData formattedValue;
             if (value == 0 || (value < 0 && hideNegativeValues)) {
                 formattedValue = StringValueData.DEFAULT;
+            } else if (isTimeField) {
+                formattedValue = formatTimeValue(valueData);
             } else {
-                formattedValue = new StringValueData(String.format(format, value));
+                formattedValue = new StringValueData(String.format(numericFormat, value));
             }
 
             singleValue.add(formattedValue);
@@ -152,7 +172,7 @@ public class MetricRow extends AbstractRow {
             if (value == 0 || Double.isInfinite(value) || Double.isNaN(value) || (value < 0 && hideNegativeValues)) {
                 formattedValue = StringValueData.DEFAULT;
             } else {
-                formattedValue = new StringValueData(String.format(format, value));
+                formattedValue = new StringValueData(String.format(numericFormat, value));
             }
 
             singleValue.add(formattedValue);
@@ -186,11 +206,11 @@ public class MetricRow extends AbstractRow {
             for (String field : fields) {
                 ValueData item = items.containsKey(field) ? items.get(field) : StringValueData.DEFAULT;
                 if (booleanFields.contains(field)) {
-                    formatAndAddBooleanValue(item, singleValue);
+                    singleValue.add(formatBooleanValue(item));
                 } else if (dateFields.contains(field)) {
-                    formatAndAddDateValue(item, singleValue);
+                    singleValue.add(formatDateValue(item));
                 } else if (timeFields.contains(field)) {
-                    formatTimeValue(item, singleValue);
+                    singleValue.add(formatTimeValue(item));
                 } else {
                     formatAndAddSingleValue(item, singleValue);
                 }
@@ -207,29 +227,34 @@ public class MetricRow extends AbstractRow {
         }
     }
 
-    private void formatAndAddBooleanValue(ValueData valueData, List<ValueData> singleValue) {
+    private StringValueData formatBooleanValue(ValueData valueData) {
         String value = valueData.getAsString();
         String formattedValue = value.equals("1") ? "Yes" : "No";
 
-        singleValue.add(new StringValueData(formattedValue));
+        return new StringValueData(formattedValue);
     }
 
-    private void formatAndAddDateValue(ValueData valueData, List<ValueData> singleValue) {
+    private StringValueData formatDateValue(ValueData valueData) {
         Long value = new Long(valueData.getAsString());
-        String formattedValue = new SimpleDateFormat(DATE_FORMAT).format(value);
+        String formattedValue = new SimpleDateFormat(DEFAULT_DATE_FORMAT).format(value);
 
-        singleValue.add(new StringValueData(formattedValue));
+        return new StringValueData(formattedValue);
     }
 
+    private StringValueData formatTimeValue(ValueData valueData) {
+        long timeInSeconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
+        double min = timeInSeconds / 60;
+        long sec = timeInSeconds % 60;
 
-    protected ValueData getMetricValue(Map<String, String> context) throws IOException {
-        if (parameters.containsKey(SET_FROM_DATE_TO_DEFAULT_VALUE)
-            && Boolean.parseBoolean(parameters.get(SET_FROM_DATE_TO_DEFAULT_VALUE))) {
-
-            context = Utils.clone(context);
-            Parameters.FROM_DATE.putDefaultValue(context);
+        if (min == 0 && sec == 0) {
+            return StringValueData.DEFAULT;
         }
 
+        String value = timeFormat.replace("mm", String.format(numericFormat, min)).replace("ss", "" + sec);
+        return StringValueData.valueOf(value);
+    }
+
+    protected ValueData getMetricValue(Map<String, String> context) throws IOException {
         return metric.getValue(context);
     }
 }

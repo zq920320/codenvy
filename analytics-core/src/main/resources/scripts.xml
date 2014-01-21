@@ -17,6 +17,13 @@
          from Codenvy S.A..
 -->
 <scripts>
+    <script name="users_update_profiles">
+        <description>Users' profiles</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="users_profiles_list"/>
+    </script>
+
     <script name="events">
         <description>The number of created persistent workspaces</description>
         <parameter key="USER" value="ANY"/>
@@ -225,12 +232,6 @@
     </script>
 
     <!-- Scripts for user's view -->
-    <script name="users_update_profiles">
-        <description>Users' profiles</description>
-        <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="STORAGE_TABLE" value="users_profiles_list"/>
-    </script>
     <script name="users_statistics">
         <description>Users' statistics</description>
         <parameter key="USER" value="REGISTERED"/>
