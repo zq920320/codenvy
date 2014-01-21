@@ -179,6 +179,13 @@ public class Event {
                                 .withParam("TYPE", type);
         }
 
+        public static Builder createUserInviteEvent(String user, String ws, String email) {
+            return new Builder().withParam("EVENT", "user-invite")
+                                .withParam("WS", ws)
+                                .withParam("USER", user)
+                                .withParam("EMAIL", email);
+        }
+
 
         public static Builder createApplicationCreatedEvent(String user, String ws, String session, String project,
                                                             String type,

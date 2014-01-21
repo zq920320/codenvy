@@ -304,6 +304,9 @@ public class ActOn extends Feature {
         out.write(",");
 
         writeNotNullStr(out, Boolean.toString(isActive));
+        out.write(",");
+
+        writeInt(out, stat.get(UsersStatisticsList.INVITES));
         out.newLine();
     }
 
@@ -331,7 +334,7 @@ public class ActOn extends Feature {
     }
 
     private void writeHeader(BufferedWriter out) throws IOException {
-        out.write("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive");
+        out.write("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites");
         out.newLine();
     }
 }

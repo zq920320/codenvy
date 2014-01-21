@@ -35,7 +35,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +85,9 @@ public class TestUsersData extends BaseTest {
                 Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
                      .withTime("19:10:00").build());
 
+        events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws2", "email")
+                        .withDate("2013-11-01").build());
+
 
         File log = LogGenerator.generateLog(events);
 
@@ -122,7 +124,7 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            assertEquals(all.size(), 9);
+            assertEquals(all.size(), 10);
 
             String user = all.get("_id").getAsString();
             switch (user) {
@@ -135,6 +137,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get("factories").getAsString(), "1");
                     assertEquals(all.get("time").getAsString(), "300");
                     assertEquals(all.get("sessions").getAsString(), "1");
+                    assertEquals(all.get("invites").getAsString(), "1");
                     break;
 
                 case "user2@gmail.com":
@@ -146,6 +149,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get("factories").getAsString(), "0");
                     assertEquals(all.get("time").getAsString(), "0");
                     assertEquals(all.get("sessions").getAsString(), "0");
+                    assertEquals(all.get("invites").getAsString(), "0");
                     break;
 
                 case "user3@gmail.com":
@@ -157,6 +161,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get("debugs").getAsString(), "0");
                     assertEquals(all.get("runs").getAsString(), "0");
                     assertEquals(all.get("factories").getAsString(), "0");
+                    assertEquals(all.get("invites").getAsString(), "0");
                     break;
 
                 case "user4@gmail.com":

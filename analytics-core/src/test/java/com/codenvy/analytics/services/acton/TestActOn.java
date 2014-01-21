@@ -99,10 +99,10 @@ public class TestActOn extends BaseTest {
 
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive"));
-        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\""));
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites"));
+        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\""));
     }
 
     @Test
@@ -120,10 +120,10 @@ public class TestActOn extends BaseTest {
 
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive"));
-        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\""));
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites"));
+        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\""));
     }
 
     private Set<String> read(File jobFile) throws IOException {
@@ -189,6 +189,9 @@ public class TestActOn extends BaseTest {
                         .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "3").withDate("2013-11-02")
                         .withTime("20:10:00").build());
+
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "email").withDate(
+                "2013-11-01").build());
 
 
         return LogGenerator.generateLog(events);
