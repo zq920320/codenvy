@@ -41,7 +41,7 @@ class DateRow extends AbstractRow {
 
     private static final String DAY_FORMAT_DEFAULT       = "dd MMM";
     private static final String WEEK_FORMAT_DEFAULT      = "dd MMM";
-    private static final String MONTH_FORMAT_DEFAULT     = "MMM yy";
+    private static final String MONTH_FORMAT_DEFAULT     = "MMM yyyy";
     private static final String LIFE_TIME_FORMAT_DEFAULT = "dd MMM";
 
     private final Map<Parameters.TimeUnit, String> format = new HashMap<>(4);
