@@ -117,7 +117,7 @@ analytics.presenter.UsersProfilesPresenter.prototype.load = function() {
             
             // print table
             view.printTable(table, false);
-            view.loadTableHandlers(false);
+            view.loadTableHandlers();
             
             // print bottom page navigation
             if (pageCount > 1) {

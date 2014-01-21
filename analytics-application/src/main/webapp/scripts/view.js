@@ -137,11 +137,11 @@ function View() {
 	}	
 	
 	//load handlers of table events
-	function loadTableHandlers(ignoreLastRow) {
+	function loadTableHandlers() {
 	    print("<script src='scripts/views/database-table.js'></script>");
 	    print("<script>");
 	    print("  jQuery(function() { ");
-	    print("       analytics.views.databaseTable.setupRowHandlers(" + ignoreLastRow.toString() + ");");
+	    print("       analytics.views.databaseTable.setupRowHandlers();");
 	    print("       analytics.views.databaseTable.setupVerticalRowHandlers();");
 	    print("  });");
 	    print("</script>");

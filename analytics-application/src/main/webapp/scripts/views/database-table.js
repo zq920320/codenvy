@@ -30,18 +30,15 @@ function DatabaseTable() {
    var MOUSEOVER_ROW_STYLE = " mouseover-row";
    var CLICKED_ROW_STYLE = " clicked-row";
  
-   var setupRowHandlers = function(ignoreLastRow) {
+   var setupRowHandlers = function() {
       var tables = document.getElementsByClassName("database-table");
       if (tables != null) {      
          for(var i = 0; i < tables.length; i++) {
             var table = tables[i];
             var rows = table.rows;
             
-            // don't take into account header and footer rows
-            var rowCount = rows.length;
-            if (typeof ignoreLastRow == "boolean" && ignoreLastRow == true) {
-               rowCount--;
-            }            
+            // don't take into account header rows
+            var rowCount = rows.length;       
 
             for (var j = 1; j < rowCount; j++) {
                var row = rows[j];

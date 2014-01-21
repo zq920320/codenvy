@@ -23,17 +23,33 @@ function Configuration() {
         factoryStatistics: {
             presenterType: "ReportPresenter",
             modelViewName: "factory-timeline",
+            
+            defaultModelParams: {
+                "time_unit": "day"
+            },
+            
             isNeedToSaveInHistory: true
         },
         
         timeline: {
             presenterType: "ReportPresenter",
             modelViewName: "timeline",
+            
+            defaultModelParams: {
+                "time_unit": "day"
+            },
+            
             isNeedToSaveInHistory: true
         },
         
         topMetrics: {
             presenterType: "TopMetricsPresenter",
+            
+            defaultViewParams: {
+                "timeGroup": "1 DAY",
+                "metric": "TOP FACTORY SESSIONS"
+            },
+            
             isNeedToSaveInHistory: true
         },
         
@@ -87,19 +103,24 @@ function Configuration() {
             
             isSortable: true,
             defaultSortParams: "-date"
-         },
+        },
          
-         timeline_product_usage_condition: {
-             presenterType: "ReportPresenter",
-             modelViewName: "timeline_product_usage_condition",
-             isNeedToSaveInHistory: false
-         },
+        timeline_product_usage_condition : {
+            presenterType : "ReportPresenter",
+            modelViewName : "timeline_product_usage_condition",
+            isNeedToSaveInHistory : false
+        },
 
-         analysis: {
-             presenterType: "ReportPresenter",
-             modelViewName: "analysis",
-             isNeedToSaveInHistory: false
-         },
+        analysis : {
+            presenterType : "ReportPresenter",
+            modelViewName : "analysis",
+
+            defaultModelParams : {
+                "time_unit" : "month"
+            },
+
+            isNeedToSaveInHistory : false
+        },
          
     }
     
@@ -141,14 +162,49 @@ function Configuration() {
     }
 
     function getViewParamName(modelParamName) {
-        for (var i in mapViewParamNamesIntoModelParamNames) {
-            if (mapViewParamNamesIntoModelParamNames[i] == modelParamName) {
-                return i;
+        for (var viewParamName in mapViewParamNamesIntoModelParamNames) {
+            if (mapViewParamNamesIntoModelParamNames[viewParamName] == modelParamName) {
+                return viewParamName;
             }
         }
 
         return undefined;
     }
+    
+    /**
+     * Add model params which are undefined in modelParams and defined in widgetConfiguration[widgetName]["defaultModelParams"] property 
+     */
+    function setupDefaultModelParams(widgetName, modelParams) {
+        var defaultModelParams = widgetConfiguration[widgetName]["defaultModelParams"];
+        
+        if (typeof defaultModelParams != "undefined") {
+            for (var paramName in defaultModelParams) {
+                if (typeof modelParams[paramName] == "undefined") {
+                    modelParams[paramName] = defaultModelParams[paramName];
+                }
+            }
+        }
+        
+        return modelParams;
+    }
+
+    /**
+     * Add view params which are undefined in viewParams and defined in widgetConfiguration[widgetName]["defaultViewParams"] property 
+     */
+    function setupDefaultViewParams(widgetName, viewParams) {
+        var defaultViewParams = widgetConfiguration[widgetName]["defaultViewParams"];
+        
+        if (typeof defaultViewParams != "undefined") {
+            for (var paramName in defaultViewParams) {
+                if (typeof viewParams[paramName] == "undefined") {
+                    viewParams[paramName] = defaultViewParams[paramName];
+                }
+            }
+        }
+        
+        return viewParams;
+    }
+
     
     /** ****************** API ********** */
     return {
@@ -156,5 +212,7 @@ function Configuration() {
         getWidgetNames: getWidgetNames,
         getModelParamName: getModelParamName,
         getViewParamName: getViewParamName,
+        setupDefaultModelParams: setupDefaultModelParams,
+        setupDefaultViewParams: setupDefaultViewParams
     }
 }

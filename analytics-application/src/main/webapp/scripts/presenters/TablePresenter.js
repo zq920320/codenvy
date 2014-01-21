@@ -89,7 +89,7 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         
         model.pushDoneFunction(function(data) {
             view.printTable(data[0], false);            
-            view.loadTableHandlers(false);
+            view.loadTableHandlers();
         });
         
         model.getAllResults(modelViewName);
@@ -111,7 +111,7 @@ analytics.presenter.TablePresenter.prototype.printTableNavigation = function(cur
 
             view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.widgetName);
         }
-        view.loadTableHandlers(false);
+        view.loadTableHandlers();
     });
 
     model.getMetricValue(modelMetricName);

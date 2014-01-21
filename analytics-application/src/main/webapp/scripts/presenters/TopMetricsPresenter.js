@@ -29,12 +29,12 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
     var model = presenter.model;
-    
-    // define modelName
+
     var viewParams = view.getParams();
 
+    viewParams = analytics.configuration.setupDefaultViewParams(presenter.widgetName, viewParams);
+    
     var uiToDatabaseMap = {}
-
     uiToDatabaseMap.metricPrefix = {
         "TOP FACTORY SESSIONS" : "top_factory_sessions",
         "TOP FACTORIES" : "top_factories",
@@ -43,14 +43,6 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         "TOP DOMAINS" : "top_domains",
         "TOP COMPANIES" : "top_companies",
     };
-    var DEFAULT_METRIC_VALUE = "TOP FACTORY SESSIONS";
-    var metric = viewParams["metric"];
-    if (metric == null) {
-        metric = DEFAULT_METRIC_VALUE;
-    } else {
-        metric = metric.toUpperCase();
-    }
-
     uiToDatabaseMap.timeunitSuffix = {
         "1 DAY" : "1day",
         "7 DAYS" : "7day",
@@ -60,29 +52,20 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         "1 YEAR" : "365day",
         "LIFETIME" : "lifetime"
     };
-    var DEFAULT_TIME_UNIT_VALUE = "1 DAY";
-    var timeGroup = viewParams["timeGroup"];
-    if (timeGroup == null) {
-        timeGroup = DEFAULT_TIME_UNIT_VALUE;
-    } else {
-        timeGroup = timeGroup.toUpperCase();
-    }
 
-    var databaseTableMetricPrefix = uiToDatabaseMap.metricPrefix[metric]
-            || uiToDatabaseMap.metricPrefix[DEFAULT_METRIC_VALUE];
+    var databaseTableMetricPrefix = uiToDatabaseMap.metricPrefix[viewParams.metric.toUpperCase()];
     
-    var databaseTableTimeunitSuffix = uiToDatabaseMap.timeunitSuffix[timeGroup]
-            || uiToDatabaseMap.timeunitSuffix[DEFAULT_TIME_UNIT_VALUE];
+    var databaseTableTimeunitSuffix = uiToDatabaseMap.timeunitSuffix[viewParams.timeGroup.toUpperCase()];
     
-    var modelName = databaseTableMetricPrefix + "_by_" + databaseTableTimeunitSuffix;
+    var modelViewName = databaseTableMetricPrefix + "_by_" + databaseTableTimeunitSuffix;
 
     model.pushDoneFunction(function(data) {
         for (var table in data) {
             view.printTable(data[table], false);
         }
 
-        view.loadTableHandlers(false);
+        view.loadTableHandlers();
     });
 
-    model.getAllResults(modelName);
+    model.getAllResults(modelViewName);
 };

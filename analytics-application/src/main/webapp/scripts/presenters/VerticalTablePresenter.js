@@ -50,7 +50,7 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
         view.print("</div>");
         view.print("</div>");
         
-        view.loadTableHandlers(false);
+        view.loadTableHandlers();
         
         view.print("</div>");
         view.print("</div>");

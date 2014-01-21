@@ -25,8 +25,6 @@ analytics.presenter.ReportPresenter = function ReportPresenter() {};
 
 analytics.presenter.ReportPresenter.prototype = new Presenter();
 
-analytics.presenter.ReportPresenter.prototype.DEFAULT_TIME_UNIT_VALUE = "day";
-
 analytics.presenter.ReportPresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
@@ -35,11 +33,9 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
 	var viewParams = view.getParams();
 	
 	var modelParams = presenter.getModelParams(viewParams);
+
+	modelParams = analytics.configuration.setupDefaultModelParams(presenter.widgetName, modelParams);
 	
-    if (typeof modelParams["time_unit"] == "undefined") {
-        modelParams["time_unit"] = presenter.DEFAULT_TIME_UNIT_VALUE;
-    }
-    
     model.setParams(modelParams);
         
     model.pushDoneFunction(function(data) {
@@ -47,7 +43,7 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
             view.printTable(data[table], true);
         }
         
-        view.loadTableHandlers(true);           
+        view.loadTableHandlers();           
     });
 
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");
