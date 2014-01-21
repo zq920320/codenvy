@@ -1,22 +1,34 @@
----
-    layout : focused
-    title: Codenvy - Select Workspace
----
-<div class="container dark rounded shadow">
-    <div class="row">
-        <div class="span2"></div>
-        <div class="span8 select-domain loading">
-            <h2 class="shiny center">Select your destination workspace</h2>
-            <hr class="short-line">
+<!--
+    CODENVY CONFIDENTIAL
+    __________________
 
-            <p class="error hidden"></p>
-            <span class="selectws-section">Managed by you:</span>
-            <ul class="domain-list">
-            </ul>    
-            <span class="selectws-section">Shared with you:</span>
-            <ul class="shared-list">
-            </ul>
-        </div>
-        <div class="span2"></div>
-    </div>
-</div>
+    [2012] - [2013] Codenvy, S.A.
+    All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+-->
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Codenvy IDE</title>
+    <link rel="shortcut icon" href="/site/images/favicon.ico"/>
+    <meta initiator="/site/private/select-tenant.html" />
+</head>
+<body style="background-color: #373737;">
+    <script type="text/javascript">
+        var po = document.createElement("script");
+        po.type = "text/javascript";
+        po.async = true;
+        po.src = "/ide-resources/initializer/init.js?" + new Date().getTime();
+        document.getElementsByTagName('head')[0].appendChild(po);
+    </script>
+</body>
+</html>

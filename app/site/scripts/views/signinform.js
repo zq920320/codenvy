@@ -57,6 +57,7 @@
                     Account.login(
                             $(this.el).find("input[name='email']").val(),
                             $(this.el).find("input[name='password']").val(),
+                            Account.getQueryParameterByName('redirect_url'),
                             _.bind(function(d){
                                 this.trigger("success",d);
                             },this),

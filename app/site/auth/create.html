@@ -1,12 +1,34 @@
----
-    layout : simple
-    title: Codenvy - Loading...
----
-<div class="container dark creating-ws">
-    <div class="error-container"></div>
-</div>
-<div class="loader frame1 visible"></div>
-<div class="loader frame2"></div>
-<div class="loader frame3"></div>
-<div class="loader frame4"></div>
-<div class="loader-text">Creating your workspace...</div>
+<!--
+    CODENVY CONFIDENTIAL
+    __________________
+
+    [2012] - [2014] Codenvy, S.A.
+    All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+-->
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Codenvy IDE</title>
+    <link rel="shortcut icon" href="/site/images/favicon.ico"/>
+    <meta initiator="/site/auth/create.html" />
+</head>
+<body style="background-color: #373737;">
+    <script type="text/javascript">
+        var po = document.createElement("script");
+        po.type = "text/javascript";
+        po.async = true;
+        po.src = "/ide-resources/initializer/init.js?" + new Date().getTime();
+        document.getElementsByTagName('head')[0].appendChild(po);
+    </script>
+</body>
+</html>

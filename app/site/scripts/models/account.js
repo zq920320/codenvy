@@ -166,11 +166,11 @@
                 return (/^[^\+\/]+$/).test(email);
             },
 
-            login : function(email, password, success, error){
+            login : function(email, password, redirect_url, success, error){
 
                 if (isWebsocketEnabled()){
                     var loginUrl = "/api/auth/login";
-                    var successUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                    var selectWsUrl = "../site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
                     var data = {username: email, password: password};
                  $.ajax({
                     url : loginUrl,
@@ -178,7 +178,11 @@
                     contentType: "application/json",
                     data: JSON.stringify(data),
                     success : function(){
-                        success({url: successUrl});
+                        if (redirect_url) {
+                            success({url: redirect_url});
+                        } else {
+                            success({url: selectWsUrl});
+                        }
                     },
                     error : function(xhr/*, status , err*/){
                         error([
@@ -211,7 +215,7 @@
                 });
             },
 
-            createWorkspace : function(username,bearertoken,workspace,success,error){
+            createWorkspace : function(username,bearertoken,workspace,redirect_url,success,error){
                 var data = {username: username.toLowerCase(), token: bearertoken};
                 var destinationUrl = window.location.protocol + "//" + window.location.host + "/ide/" + workspace + "?" +
                     window.location.search.substring(1);
@@ -242,7 +246,11 @@
                                 }
                             });
                         } else {
-                            success({url: selectWsUrl});
+                            if (redirect_url) {
+                                success({url: redirect_url});
+                            } else {
+                                success({url: selectWsUrl});
+                            }
                         }
                     },
                     error : function(xhr/*, status , err*/){
