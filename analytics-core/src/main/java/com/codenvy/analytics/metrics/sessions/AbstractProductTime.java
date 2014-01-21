@@ -42,6 +42,9 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
 
     @Override
     protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+        DBObject match = new BasicDBObject();
+        match.put(getTrackedFields()[0], new BasicDBObject("$ne", ""));
+
         DBObject group = new BasicDBObject();
         group.put("_id", "$" + getTrackedFields()[0]);
         group.put(getTrackedFields()[1], new BasicDBObject("$sum", "$" + getTrackedFields()[1]));
@@ -52,7 +55,8 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
         project.put(getTrackedFields()[1], "$" + getTrackedFields()[1]);
         project.put(getTrackedFields()[2], "$" + getTrackedFields()[2]);
 
-        return new DBObject[]{new BasicDBObject("$group", group),
+        return new DBObject[]{new BasicDBObject("$match", match),
+                              new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
     }
 

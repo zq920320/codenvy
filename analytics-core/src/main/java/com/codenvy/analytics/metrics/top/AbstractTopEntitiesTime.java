@@ -34,11 +34,11 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     public static final String ENTITY      = "entity";
     public static final String SESSIONS    = "sessions";
     public static final String BY_1_DAY    = "by_1_day";
-    public static final String BY_7_DAY    = "by_7_day";
-    public static final String BY_30_DAY   = "by_30_day";
-    public static final String BY_60_DAY   = "by_60_day";
-    public static final String BY_90_DAY   = "by_90_day";
-    public static final String BY_365_DAY  = "by_365_day";
+    public static final String BY_7_DAY    = "by_7_days";
+    public static final String BY_30_DAY   = "by_30_days";
+    public static final String BY_60_DAY   = "by_60_days";
+    public static final String BY_90_DAY   = "by_90_days";
+    public static final String BY_365_DAY  = "by_365_days";
     public static final String BY_LIFETIME = "by_lifetime";
 
     public static final int MAX_DOCUMENT_COUNT = 100;
