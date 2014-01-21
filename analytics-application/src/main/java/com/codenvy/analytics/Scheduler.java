@@ -161,11 +161,12 @@ public class Scheduler implements ServletContextListener {
 
         Utils.putFromDate(context, fromDate);
         Utils.putToDate(context, fromDate);
-        Parameters.TIME_UNIT.put(context, Parameters.TimeUnit.DAY.name());
-
         do {
             job.forceExecute(context);
-            context = Utils.nextDateInterval(context);
+
+            fromDate.add(Calendar.DAY_OF_MONTH, 1);
+            Utils.putFromDate(context, fromDate);
+            Utils.putToDate(context, fromDate);
         } while (!Utils.getFromDate(context).after(toDate));
     }
 
@@ -187,6 +188,7 @@ public class Scheduler implements ServletContextListener {
         }
 
         scheduleFeature(jobDetails);
+
         ensureRunOrder(jobDetails);
     }
 

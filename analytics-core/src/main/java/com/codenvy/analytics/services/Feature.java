@@ -49,7 +49,7 @@ public abstract class Feature implements Job {
      */
     public void forceExecute(Map<String, String> context) throws JobExecutionException {
         try {
-            if (Utils.getTimeUnit(context) != Parameters.TimeUnit.DAY) {
+            if (!Parameters.FROM_DATE.get(context).equals(Parameters.TO_DATE.get(context))) {
                 throw new IllegalStateException("Force execution is allowed only per day");
             }
 
