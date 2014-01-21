@@ -87,7 +87,20 @@ function Configuration() {
             
             isSortable: true,
             defaultSortParams: "-date"
-         }
+         },
+         
+         timeline_product_usage_condition: {
+             presenterType: "ReportPresenter",
+             modelViewName: "timeline_product_usage_condition",
+             isNeedToSaveInHistory: false
+         },
+
+         analysis: {
+             presenterType: "ReportPresenter",
+             modelViewName: "analysis",
+             isNeedToSaveInHistory: false
+         },
+         
     }
     
     /** 1 x 1 relation(viewParams,modelParams) **/

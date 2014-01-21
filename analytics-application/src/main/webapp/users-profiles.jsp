@@ -44,6 +44,7 @@
                    <li><a href="factory-statistics.jsp">Factory statistics</a></li>
                    <li><a href="users-profiles.jsp">User's statistics</a></li>
                    <li><a href="top-metrics.jsp">Top Metrics</a></li>
+                   <li><a href="analysis.jsp">Analysis</a></li>
                </ul>
            </div>
         </div>

@@ -49,27 +49,20 @@
            </div>
         </div>
         <div class="span10">
-            <div class="well topFilteringPanel">
-                <div id="metric" class="btn-group metric-btns left" targetWidgets="topMetrics">
-                    <button class="btn command-btn" default>Top Factory Sessions</button>
-                    <button class="btn command-btn">Top Factories</button>
-                    <button class="btn command-btn">Top Referrers</button>
-                    <button class="btn command-btn">Top Users</button>
-                    <button class="btn command-btn">Top Domains</button>
-                    <button class="btn command-btn">Top Companies</button>
-                </div>            
-                <div id="timely-dd" class="btn-group timely-dd-btns right" targetWidgets="topMetrics">
-                    <button class="btn command-btn" default>1 Day</button>
-                    <button class="btn command-btn">7 Days</button>
-                    <button class="btn command-btn">30 Days</button>
-                    <button class="btn command-btn">60 Days</button>
-                    <button class="btn command-btn">90 Days</button>
-                    <button class="btn command-btn">1 Year</button>
-                    <button class="btn command-btn">LifeTime</button>
+            <div class="single-column-gadget full-width">
+                <div class="view">
+                    <div class="tables">
+                        <div class="item">
+                            <div class="header">Signup Analysis</div>
+                            <div class="body" id="timeline_product_usage_condition"></div>
+                        </div>
+                        
+                        <div class="item">
+                            <div class="header">Condition</div>
+                            <div class="body" id="analysis"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="hero-unit">
-                <div id="topMetrics" class="single-column-gadget"></div>
             </div>
         </div>
     </div>
@@ -80,7 +73,7 @@
 
 <!-- Prototypes -->
 <script type="text/javascript" src="scripts/Presenter.js"></script>
-<script type="text/javascript" src="scripts/presenters/TopMetricsPresenter.js"></script>
+<script type="text/javascript" src="scripts/presenters/ReportPresenter.js"></script>
 
 <!-- Singletons -->
 <script type="text/javascript" src="scripts/main.js"></script>
@@ -93,8 +86,5 @@
 
 <script type="text/javascript" src="scripts/factory.js"></script>
 <script type="text/javascript" src="scripts/configuration.js"></script>
-
-
-
 </body>
 </html>
