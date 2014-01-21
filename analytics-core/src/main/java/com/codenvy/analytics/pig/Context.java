@@ -67,6 +67,14 @@ public class Context {
         return builder.build();
     }
 
+    public Context cloneAndPut(MetricFilter param, String value) {
+        Builder builder = new Builder();
+        builder.putAll(context);
+        builder.put(param, value);
+
+        return builder.build();
+    }
+
     public Context clone() {
         Builder builder = new Builder();
         builder.putAll(context);
