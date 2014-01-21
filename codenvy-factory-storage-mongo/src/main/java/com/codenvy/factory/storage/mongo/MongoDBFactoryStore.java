@@ -70,15 +70,22 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setId(NameGenerator.generate("", 16));
         BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(factoryUrl.getProjectattributes());
 
-        BasicDBObject welcomeList = new BasicDBObject();
-        for (Map.Entry<String, WelcomeGreeting> welcomeEntry : factoryUrl.getWelcome().entrySet()) {
-            BasicDBObject welcomeDBObject = new BasicDBObject();
-            welcomeDBObject.put("title", welcomeEntry.getValue().getTitle());
-            welcomeDBObject.put("iconUrl", welcomeEntry.getValue().getIconUrl());
-            welcomeDBObject.put("content", welcomeEntry.getValue().getContent());
+        BasicDBObject welcomeDBObject = new BasicDBObject();
 
-            welcomeList.put(welcomeEntry.getKey(), welcomeDBObject);
-        }
+        WelcomeConfiguration authConfiguration = factoryUrl.getWelcome().getAuthenticate();
+        BasicDBObject authDBOWelcome = new BasicDBObject();
+        authDBOWelcome.put("title", authConfiguration.getTitle());
+        authDBOWelcome.put("iconurl", authConfiguration.getIconurl());
+        authDBOWelcome.put("content", authConfiguration.getContent());
+
+        WelcomeConfiguration nonAuthConfiguration = factoryUrl.getWelcome().getNonauthenticate();
+        BasicDBObject nonAuthDBOWelcome = new BasicDBObject();
+        nonAuthDBOWelcome.put("title", nonAuthConfiguration.getTitle());
+        nonAuthDBOWelcome.put("iconurl", nonAuthConfiguration.getIconurl());
+        nonAuthDBOWelcome.put("content", nonAuthConfiguration.getContent());
+
+        welcomeDBObject.put("authenticate", authDBOWelcome);
+        welcomeDBObject.put("nonauthenticate", nonAuthDBOWelcome);
 
         List<DBObject> imageList = new ArrayList<>();
         for (FactoryImage one : images) {
@@ -108,7 +115,7 @@ public class MongoDBFactoryStore implements FactoryStore {
                          .add("validuntil", factoryUrl.getValiduntil())
                          .add("created", factoryUrl.getCreated())
                          .add("variables", VariableHelper.toBasicDBFormat(factoryUrl.getVariables()))
-                         .add("welcome", welcomeList);
+                         .add("welcome", welcomeDBObject);
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", factoryUrl.getId());
@@ -160,17 +167,17 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setCreated((long)factoryAsDbObject.get("created"));
         factoryUrl.setVariables(VariableHelper.fromBasicDBFormat(factoryAsDbObject));
 
-        Map<String, WelcomeGreeting> welcome = new HashMap<>();
-        BasicDBObject welcomeList = (BasicDBObject)factoryAsDbObject.get("welcome");
-        for (Map.Entry<String, Object> o1 : welcomeList.entrySet()) {
-            BasicDBObject welcomeDBObject = (BasicDBObject)o1.getValue();
+        BasicDBObject welcomeDBObject = (BasicDBObject)factoryAsDbObject.get("welcome");
+        BasicDBObject authDBConfiguration = (BasicDBObject)welcomeDBObject.get("authenticate");
+        BasicDBObject nonAuthDBConfiguration = (BasicDBObject)welcomeDBObject.get("nonauthenticate");
 
-            welcome.put(o1.getKey(), new WelcomeGreeting((String)welcomeDBObject.get("title"),
-                                                         (String)welcomeDBObject.get("iconUrl"),
-                                                         (String)welcomeDBObject.get("content")));
-        }
-
-        factoryUrl.setWelcome(welcome);
+        WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration((String)authDBConfiguration.get("title"),
+                                                                           (String)authDBConfiguration.get("iconurl"),
+                                                                           (String)authDBConfiguration.get("content")),
+                                                  new WelcomeConfiguration((String)nonAuthDBConfiguration.get("title"),
+                                                                           (String)nonAuthDBConfiguration.get("iconurl"),
+                                                                           (String)nonAuthDBConfiguration.get("content")));
+        factoryUrl.setWelcome(welcomePage);
 
         return factoryUrl;
     }

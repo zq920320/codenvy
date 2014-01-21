@@ -74,9 +74,8 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
-        Map<String, WelcomeGreeting> welcome = new HashMap<>();
-        welcome.put("authorized", new WelcomeGreeting("title1", "url1", "content1"));
-        welcome.put("notauthorized", new WelcomeGreeting("title2", "url2", "content2"));
+        WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration("title1", "url1", "conten1"),
+                                                  new WelcomeConfiguration("title2", "url2", "content2"));
 
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
         factoryUrl.setAuthor("someAuthor");
@@ -94,7 +93,7 @@ public class MongoDBFactoryStoreTest {
         factoryUrl.setOpenfile("index.php");
         factoryUrl.setVcsbranch("master");
         factoryUrl.setVcsurl("http://testvscurl.com");
-        factoryUrl.setWelcome(welcome);
+        factoryUrl.setWelcome(welcomePage);
 
         String id = store.saveFactory(factoryUrl, images);
 
@@ -136,9 +135,8 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
-        Map<String, WelcomeGreeting> welcome = new HashMap<>();
-        welcome.put("authorized", new WelcomeGreeting("title1", "iconUrl1", "conten1"));
-        welcome.put("notauthorized", new WelcomeGreeting("title2", "iconUrl2", "conten2"));
+        WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration("title1", "url1", "conten1"),
+                                                  new WelcomeConfiguration("title2", "url2", "content2"));
 
         byte[] b = new byte[4096];
         new Random().nextBytes(b);
@@ -151,15 +149,22 @@ public class MongoDBFactoryStoreTest {
 
         List<DBObject> imageList = new ArrayList<>();
 
-        BasicDBObject welcomeList = new BasicDBObject();
-        for (Map.Entry<String, WelcomeGreeting> welcomeEntry : welcome.entrySet()) {
-            BasicDBObject welcomeDBObject = new BasicDBObject();
-            welcomeDBObject.put("title", welcomeEntry.getValue().getTitle());
-            welcomeDBObject.put("iconUrl", welcomeEntry.getValue().getIconUrl());
-            welcomeDBObject.put("content", welcomeEntry.getValue().getContent());
+        BasicDBObject welcomeDBObject = new BasicDBObject();
 
-            welcomeList.put(welcomeEntry.getKey(), welcomeDBObject);
-        }
+        WelcomeConfiguration authConfiguration = welcomePage.getAuthenticate();
+        BasicDBObject authDBOWelcome = new BasicDBObject();
+        authDBOWelcome.put("title", authConfiguration.getTitle());
+        authDBOWelcome.put("iconurl", authConfiguration.getIconurl());
+        authDBOWelcome.put("content", authConfiguration.getContent());
+
+        WelcomeConfiguration nonAuthConfiguration = welcomePage.getNonauthenticate();
+        BasicDBObject nonAuthDBOWelcome = new BasicDBObject();
+        nonAuthDBOWelcome.put("title", nonAuthConfiguration.getTitle());
+        nonAuthDBOWelcome.put("iconurl", nonAuthConfiguration.getIconurl());
+        nonAuthDBOWelcome.put("content", nonAuthConfiguration.getContent());
+
+        welcomeDBObject.put("authenticate", authDBOWelcome);
+        welcomeDBObject.put("nonauthenticate", nonAuthDBOWelcome);
 
         BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
         factoryURLbuilder.add("v", "1.1")
@@ -182,7 +187,7 @@ public class MongoDBFactoryStoreTest {
                          .add("created", 123645L)
                          .add("projectattributes", attributes.get())
                          .add("variables", VariableHelper.toBasicDBFormat(variables))
-                         .add("welcome", welcomeList);
+                         .add("welcome", welcomeDBObject);
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", id);
@@ -200,7 +205,7 @@ public class MongoDBFactoryStoreTest {
         AdvancedFactoryUrl source = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
         source.setId(id);
         source.setVariables(variables);
-        source.setWelcome(welcome);
+        source.setWelcome(welcomePage);
 
         assertEquals(result, source);
     }
