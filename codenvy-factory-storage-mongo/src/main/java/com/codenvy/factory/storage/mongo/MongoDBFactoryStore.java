@@ -70,6 +70,16 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setId(NameGenerator.generate("", 16));
         BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(factoryUrl.getProjectattributes());
 
+        BasicDBObject welcomeList = new BasicDBObject();
+        for (Map.Entry<String, WelcomeGreeting> welcomeEntry : factoryUrl.getWelcome().entrySet()) {
+            BasicDBObject welcomeDBObject = new BasicDBObject();
+            welcomeDBObject.put("title", welcomeEntry.getValue().getTitle());
+            welcomeDBObject.put("iconUrl", welcomeEntry.getValue().getIconUrl());
+            welcomeDBObject.put("content", welcomeEntry.getValue().getContent());
+
+            welcomeList.put(welcomeEntry.getKey(), welcomeDBObject);
+        }
+
         List<DBObject> imageList = new ArrayList<>();
         for (FactoryImage one : images) {
             imageList.add(new BasicDBObjectBuilder().add("name", one.getName())
@@ -97,7 +107,8 @@ public class MongoDBFactoryStore implements FactoryStore {
                          .add("validsince", factoryUrl.getValidsince())
                          .add("validuntil", factoryUrl.getValiduntil())
                          .add("created", factoryUrl.getCreated())
-                         .add("variables", VariableHelper.toBasicDBFormat(factoryUrl.getVariables()));
+                         .add("variables", VariableHelper.toBasicDBFormat(factoryUrl.getVariables()))
+                         .add("welcome", welcomeList);
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", factoryUrl.getId());
@@ -148,6 +159,18 @@ public class MongoDBFactoryStore implements FactoryStore {
         factoryUrl.setValiduntil((long)factoryAsDbObject.get("validuntil"));
         factoryUrl.setCreated((long)factoryAsDbObject.get("created"));
         factoryUrl.setVariables(VariableHelper.fromBasicDBFormat(factoryAsDbObject));
+
+        Map<String, WelcomeGreeting> welcome = new HashMap<>();
+        BasicDBObject welcomeList = (BasicDBObject)factoryAsDbObject.get("welcome");
+        for (Map.Entry<String, Object> o1 : welcomeList.entrySet()) {
+            BasicDBObject welcomeDBObject = (BasicDBObject)o1.getValue();
+
+            welcome.put(o1.getKey(), new WelcomeGreeting((String)welcomeDBObject.get("title"),
+                                                         (String)welcomeDBObject.get("iconUrl"),
+                                                         (String)welcomeDBObject.get("content")));
+        }
+
+        factoryUrl.setWelcome(welcome);
 
         return factoryUrl;
     }

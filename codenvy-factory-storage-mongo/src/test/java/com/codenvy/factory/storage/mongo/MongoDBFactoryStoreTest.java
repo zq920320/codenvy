@@ -74,6 +74,10 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
+        Map<String, WelcomeGreeting> welcome = new HashMap<>();
+        welcome.put("authorized", new WelcomeGreeting("title1", "url1", "content1"));
+        welcome.put("notauthorized", new WelcomeGreeting("title2", "url2", "content2"));
+
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
         factoryUrl.setAuthor("someAuthor");
         factoryUrl.setContactmail("test@test.com");
@@ -90,6 +94,7 @@ public class MongoDBFactoryStoreTest {
         factoryUrl.setOpenfile("index.php");
         factoryUrl.setVcsbranch("master");
         factoryUrl.setVcsurl("http://testvscurl.com");
+        factoryUrl.setWelcome(welcome);
 
         String id = store.saveFactory(factoryUrl, images);
 
@@ -131,6 +136,10 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
+        Map<String, WelcomeGreeting> welcome = new HashMap<>();
+        welcome.put("authorized", new WelcomeGreeting("title1", "iconUrl1", "conten1"));
+        welcome.put("notauthorized", new WelcomeGreeting("title2", "iconUrl2", "conten2"));
+
         byte[] b = new byte[4096];
         new Random().nextBytes(b);
 
@@ -141,6 +150,16 @@ public class MongoDBFactoryStoreTest {
                              Collections.singletonList(new Variable.Replacement("find", "replace", "text_multipass"))));
 
         List<DBObject> imageList = new ArrayList<>();
+
+        BasicDBObject welcomeList = new BasicDBObject();
+        for (Map.Entry<String, WelcomeGreeting> welcomeEntry : welcome.entrySet()) {
+            BasicDBObject welcomeDBObject = new BasicDBObject();
+            welcomeDBObject.put("title", welcomeEntry.getValue().getTitle());
+            welcomeDBObject.put("iconUrl", welcomeEntry.getValue().getIconUrl());
+            welcomeDBObject.put("content", welcomeEntry.getValue().getContent());
+
+            welcomeList.put(welcomeEntry.getKey(), welcomeDBObject);
+        }
 
         BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
         factoryURLbuilder.add("v", "1.1")
@@ -162,7 +181,8 @@ public class MongoDBFactoryStoreTest {
                          .add("validuntil", 123645L)
                          .add("created", 123645L)
                          .add("projectattributes", attributes.get())
-                         .add("variables", VariableHelper.toBasicDBFormat(variables));
+                         .add("variables", VariableHelper.toBasicDBFormat(variables))
+                         .add("welcome", welcomeList);
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", id);
@@ -180,6 +200,7 @@ public class MongoDBFactoryStoreTest {
         AdvancedFactoryUrl source = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
         source.setId(id);
         source.setVariables(variables);
+        source.setWelcome(welcome);
 
         assertEquals(result, source);
     }
