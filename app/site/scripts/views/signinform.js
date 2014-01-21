@@ -25,9 +25,8 @@
 
                 initialize : function(attributes){
                     AccountFormBase.prototype.initialize.apply(this,attributes);
-
+                    Account.supportTab();
                     //bind onclick to Google and GitHub buttons
-
                     $(".oauth-button.google").click(function(){
                         Account.loginWithGoogle("Login page", function(url){
                             window.location = url;

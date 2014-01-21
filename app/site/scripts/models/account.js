@@ -30,7 +30,16 @@
 
         */
         var user = user || {}; // User to store user's data from server
-
+        var showSupportLink = function(isPaid){
+            if (isPaid){
+                var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+                uv.src = ('https:' === document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/wfZmoiHoOptcKkBgu238zw.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+            }else {
+                var el = $("footer").find("ul");
+                el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support<b></b></a></li>');
+            }
+        };
         var AccountError = function(fieldName, errorDescription){
             return {
                 getFieldName : function(){
@@ -448,6 +457,45 @@
                         new  AccountError(null,msg)
                     ]);
                 });
+            },
+
+            // Returns true if User has WS with tariff plan
+            supportTab : function(){
+                var getUserUrl = "/api/user";
+                var getAccountUrl = "/api/account/";
+                var paid = false;
+                $.ajax({
+                    url : getUserUrl,
+                    type : "GET",
+                    async : false,
+                    success : function(user){
+                        if (typeof(user)==='object'){
+                            user.accounts.forEach(
+                                function(account){
+                                    $.ajax({
+                                        url : getAccountUrl + account.id,
+                                        type : "GET",
+                                        async : false,
+                                        success : function(account){
+                                            if (typeof(account.attributes)){
+                                                if (account.attributes.tariff_plan){
+                                                    paid = true;
+                                                }
+                                            }
+                                        },
+                                        error : function(){
+                                        }
+                                    });
+                                }
+                            );
+                        }
+
+                    },
+                    error : function(){
+                    }
+                });
+            
+            showSupportLink(paid);
             },
 
 

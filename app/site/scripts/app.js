@@ -75,6 +75,8 @@ define(["jquery","config",
                 $(document).ready(function(){
 
                     modernize();
+                    var uvOptions = {}; //UserVoice object
+                    if (uvOptions){}
                     var signupForm = $(".signup-form"),
                         signinForm = $(".login-form"),
                         forgotPasswordForm = $(".forgotpassword-form"),
