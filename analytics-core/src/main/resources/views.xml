@@ -1769,4 +1769,27 @@
             </row>
         </section>
     </view>
+
+    <view name="timeline_product_usage_condition">
+        <section name="timeline_product_usage_condition">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Condition,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="description" value="Visits &#0060;5 Or Lifetime &#0060;120"/>
+                <parameter key="name" value="timeline_product_usage_condition_below_120_min"/>
+                <parameter key="fields" value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="description" value="Visits &#0062;=5 And Lifetime &#0062;=120 And Lifetime &#0060;300"/>
+                <parameter key="name" value="timeline_product_usage_condition_between_120_and_300_min"/>
+                <parameter key="fields" value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="description" value="Visits &#0062;5 And Lifetime &#0062;=300"/>
+                <parameter key="name" value="timeline_product_usage_condition_above_300_min"/>
+                <parameter key="fields" value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days"/>
+            </row>
+        </section>
+    </view>
 </display>

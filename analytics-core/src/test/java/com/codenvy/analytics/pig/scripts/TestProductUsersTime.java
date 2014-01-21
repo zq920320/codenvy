@@ -28,6 +28,7 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.AbstractProductTime;
 import com.codenvy.analytics.metrics.sessions.AbstractProductUsageCondition;
+import com.codenvy.analytics.metrics.sessions.AbstractTimelineProductUsageCondition;
 import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.top.AbstractTopUsers;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -46,11 +47,9 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsersTime extends BaseTest {
 
-    private Map<String, String> params;
-
     @BeforeClass
     public void init() throws Exception {
-        params = Utils.newContext();
+        Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
@@ -151,6 +150,18 @@ public class TestProductUsersTime extends BaseTest {
         LongValueData value = (LongValueData)metric.getValue(context);
 
         assertEquals(2, value.getAsLong());
+
+        metric = new TestedAbstractTimelineProductUsageCondition(0, 450, true, true, "$and", 0, 2, true, true);
+        ListValueData listVD = (ListValueData)metric.getValue(context);
+
+        assertEquals(1, listVD.size());
+        MapValueData entities = (MapValueData)listVD.getAll().get(0);
+        assertEquals("2", entities.getAll().get("by_1_day").getAsString());
+        assertEquals("0", entities.getAll().get("by_7_day").getAsString());
+        assertEquals("0", entities.getAll().get("by_30_day").getAsString());
+        assertEquals("0", entities.getAll().get("by_60_day").getAsString());
+        assertEquals("0", entities.getAll().get("by_60_day").getAsString());
+        assertEquals("0", entities.getAll().get("by_365_day").getAsString());
     }
 
     @Test
@@ -175,6 +186,27 @@ public class TestProductUsersTime extends BaseTest {
         LongValueData value = (LongValueData)metric.getValue(context);
 
         assertEquals(3, value.getAsLong());
+    }
+
+    private class TestedAbstractTimelineProductUsageCondition extends AbstractTimelineProductUsageCondition {
+
+        protected TestedAbstractTimelineProductUsageCondition(long minTime, long maxTime,
+                                                              boolean includeMinTime,
+                                                              boolean includeMaxTime, String operator, long minSessions,
+                                                              long maxSessions, boolean includeMinSessions,
+                                                              boolean includeMaxSessions) {
+            super(MetricType.TIMELINE_PRODUCT_USAGE_CONDITION_ABOVE_300_MIN,
+                  new Metric[]{new TestedAbstractProductUsageCondition(minTime, maxTime,
+                                                                       includeMinTime,
+                                                                       includeMaxTime, operator, minSessions,
+                                                                       maxSessions, includeMinSessions,
+                                                                       includeMaxSessions)});
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
     }
 
     private class TestedAbstractProductUsageCondition extends AbstractProductUsageCondition {

@@ -182,6 +182,10 @@ public class MetricRow extends AbstractRow {
             Map<String, ValueData> items = ((MapValueData)valueData).getAll();
 
             List<ValueData> singleValue = new ArrayList<>();
+            if (parameters.containsKey(DESCRIPTION)) {
+                singleValue.add(new StringValueData(parameters.get(DESCRIPTION)));
+            }
+
             for (String field : fields) {
                 ValueData item = items.containsKey(field) ? items.get(field) : StringValueData.DEFAULT;
                 if (booleanFields.contains(field)) {

@@ -41,6 +41,9 @@ com.codenvy.analytics.metrics.sessions.ProductCompaniesTime
 com.codenvy.analytics.metrics.sessions.ProductUsageConditionBelow120Min
 com.codenvy.analytics.metrics.sessions.ProductUsageConditionBetween120And300Min
 com.codenvy.analytics.metrics.sessions.ProductUsageConditionAbove300Min
+com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBelow120Min
+com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionBetween120And300Min
+com.codenvy.analytics.metrics.sessions.TimelineProductUsageConditionAbove300Min
 
 com.codenvy.analytics.metrics.users.UsersLoggedInTypes
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGitHub
