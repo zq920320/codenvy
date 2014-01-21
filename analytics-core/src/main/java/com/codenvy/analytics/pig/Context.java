@@ -59,6 +59,14 @@ public class Context {
         return builder.build();
     }
 
+    public Context cloneAndRemove(MetricFilter param) {
+        Builder builder = new Builder();
+        builder.putAll(context);
+        builder.remove(param);
+
+        return builder.build();
+    }
+
     public Context cloneAndPut(Parameters param, String value) {
         Builder builder = new Builder();
         builder.putAll(context);
@@ -90,6 +98,11 @@ public class Context {
             return this;
         }
 
+        public Builder put(MetricFilter param, String value) {
+            context.put(param.name(), value);
+            return this;
+        }
+
         public Builder putDefaultValue(Parameters param) {
             context.put(param.name(), param.getDefaultValue());
             return this;
@@ -100,8 +113,8 @@ public class Context {
             return this;
         }
 
-        public Builder put(MetricFilter param, String value) {
-            context.put(param.name(), value);
+        public Builder remove(MetricFilter param) {
+            context.remove(param.name());
             return this;
         }
 
