@@ -17,20 +17,19 @@
  */
 
 
-package com.codenvy.analytics.metrics.projects;
+package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CreatedProjects extends AbstractLongValueResulted {
-
-    public CreatedProjects() {
-        super(MetricType.CREATED_PROJECTS);
+public class ShellLaunched extends AbstractLongValueResulted {
+    public ShellLaunched() {
+        super(MetricType.SHELL_LAUNCHED);
     }
 
     @Override
     public String getDescription() {
-        return "The number of created projects";
+        return "The number of launched shell";
     }
 }

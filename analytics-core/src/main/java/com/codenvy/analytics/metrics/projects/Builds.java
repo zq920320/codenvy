@@ -15,22 +15,20 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-
 package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class CreatedProjects extends AbstractLongValueResulted {
+public class Builds extends AbstractLongValueResulted {
 
-    public CreatedProjects() {
-        super(MetricType.CREATED_PROJECTS);
+    public Builds() {
+        super(MetricType.BUILDS);
     }
 
     @Override
     public String getDescription() {
-        return "The number of created projects";
+        return "The number of times when user build projects";
     }
 }

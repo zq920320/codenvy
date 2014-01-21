@@ -15,20 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage;
+
+
+package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class Runs extends AbstractLongValueResulted {
-
-    public Runs() {
-        super(MetricType.RUNS);
+public class DeploysToPaas extends AbstractLongValueResulted {
+    public DeploysToPaas() {
+        super(MetricType.DEPLOYS_TO_PAAS);
     }
 
     @Override
     public String getDescription() {
-        return "The number of times when user run projects";
+        return "The number of deploys to PaaS";
     }
 }

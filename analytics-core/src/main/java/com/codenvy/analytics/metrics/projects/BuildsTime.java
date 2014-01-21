@@ -15,20 +15,20 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.ide_usage;
+package com.codenvy.analytics.metrics.projects;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class Debugs extends AbstractLongValueResulted {
+public class BuildsTime extends AbstractTimeSpentInAction {
 
-    public Debugs() {
-        super(MetricType.DEBUGS);
+    public BuildsTime() {
+        super(MetricType.BUILDS_TIME);
     }
 
     @Override
     public String getDescription() {
-        return "The number of times when user debug projects";
+        return "The total time of all builds in minutes";
     }
 }

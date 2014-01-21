@@ -25,6 +25,7 @@ import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.Parameters;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -40,14 +41,15 @@ public class MetricRow extends AbstractRow {
     private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
     public static final  String DATE_FORMAT            = "yyyy-MM-dd HH:mm:ss";
 
-    private static final String NAME                 = "name";
-    private static final String FORMAT               = "format";
-    private static final String DESCRIPTION          = "description";
-    private static final String FIELDS               = "fields";
-    private static final String HIDE_NEGATIVE_VALUES = "hide-negative-values";
-    private static final String BOOLEAN_FIELDS       = "boolean-fields";
-    private static final String DATE_FIELDS          = "date-fields";
-    private static final String TIME_FIELDS          = "time-fields";
+    private static final String NAME                           = "name";
+    private static final String FORMAT                         = "format";
+    private static final String DESCRIPTION                    = "description";
+    private static final String FIELDS                         = "fields";
+    private static final String HIDE_NEGATIVE_VALUES           = "hide-negative-values";
+    private static final String SET_FROM_DATE_TO_DEFAULT_VALUE = "set-from-date-to-default-value";
+    private static final String BOOLEAN_FIELDS                 = "boolean-fields";
+    private static final String DATE_FIELDS                    = "date-fields";
+    private static final String TIME_FIELDS                    = "time-fields";
 
 
     private final Metric       metric;
@@ -89,12 +91,7 @@ public class MetricRow extends AbstractRow {
         }
     }
 
-    /**
-     * Return time in format 'XX min. XX sec.'
-     *
-     * @return StringValueData
-     */
-    private void formatAndAddTimeValue(ValueData valueData, List<ValueData> singleValue) {
+    private void formatTimeValue(ValueData valueData, List<ValueData> singleValue) {
         long timeInSeconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
         singleValue.add(new StringValueData(
                 (timeInSeconds / 60)
@@ -193,7 +190,7 @@ public class MetricRow extends AbstractRow {
                 } else if (dateFields.contains(field)) {
                     formatAndAddDateValue(item, singleValue);
                 } else if (timeFields.contains(field)) {
-                    formatAndAddTimeValue(item, singleValue);
+                    formatTimeValue(item, singleValue);
                 } else {
                     formatAndAddSingleValue(item, singleValue);
                 }
@@ -226,6 +223,13 @@ public class MetricRow extends AbstractRow {
 
 
     protected ValueData getMetricValue(Map<String, String> context) throws IOException {
+        if (parameters.containsKey(SET_FROM_DATE_TO_DEFAULT_VALUE)
+            && Boolean.parseBoolean(parameters.get(SET_FROM_DATE_TO_DEFAULT_VALUE))) {
+
+            context = Utils.clone(context);
+            Parameters.FROM_DATE.putDefaultValue(context);
+        }
+
         return metric.getValue(context);
     }
 }

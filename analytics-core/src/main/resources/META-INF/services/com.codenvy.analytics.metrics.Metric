@@ -18,6 +18,7 @@ com.codenvy.analytics.metrics.users.ActiveUsers
 com.codenvy.analytics.metrics.users.NonActiveUsers
 com.codenvy.analytics.metrics.users.NewActiveUsers
 com.codenvy.analytics.metrics.users.ReturningActiveUsers
+com.codenvy.analytics.metrics.users.ShellLaunched
 
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBelow1Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBetween1And10Min
@@ -92,13 +93,15 @@ com.codenvy.analytics.metrics.projects.ProjectTypeRuby
 com.codenvy.analytics.metrics.projects.ProjectTypeSpring
 com.codenvy.analytics.metrics.projects.ProjectTypeWar
 
-com.codenvy.analytics.metrics.ide_usage.RunsTime
-com.codenvy.analytics.metrics.ide_usage.DebugsTime
-com.codenvy.analytics.metrics.ide_usage.BuildsTime
+com.codenvy.analytics.metrics.projects.Deploys
+com.codenvy.analytics.metrics.projects.DeploysToPaas
+com.codenvy.analytics.metrics.projects.RunsTime
+com.codenvy.analytics.metrics.projects.DebugsTime
+com.codenvy.analytics.metrics.projects.BuildsTime
+com.codenvy.analytics.metrics.projects.Runs
+com.codenvy.analytics.metrics.projects.Builds
+com.codenvy.analytics.metrics.projects.Debugs
 
-com.codenvy.analytics.metrics.ide_usage.Runs
-com.codenvy.analytics.metrics.ide_usage.Builds
-com.codenvy.analytics.metrics.ide_usage.Debugs
 com.codenvy.analytics.metrics.ide_usage.CodeRefactorings
 com.codenvy.analytics.metrics.ide_usage.CodeCompletions
 com.codenvy.analytics.metrics.ide_usage.FileManipulations
@@ -131,6 +134,7 @@ com.codenvy.analytics.metrics.users.UsersActivity
 com.codenvy.analytics.metrics.users.UsersStatisticsList
 com.codenvy.analytics.metrics.users.UsersTimeInWorkspaces
 com.codenvy.analytics.metrics.users.UsersTimeInWorkspacesList
+com.codenvy.analytics.metrics.users.CompletedProfiles
 
 com.codenvy.analytics.metrics.top.TopFactorySessionsBy1Day
 com.codenvy.analytics.metrics.top.TopFactorySessionsBy7Day

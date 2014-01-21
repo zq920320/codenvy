@@ -250,4 +250,27 @@
         <parameter key="WS" value="ANY"/>
         <parameter key="STORAGE_TABLE" value="runner_total_time"/>
     </script>
+
+    <!-- Scripts for analysis's view -->
+    <script name="events">
+        <description>The number of launched shell</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="shell-launched"/>
+        <parameter key="STORAGE_TABLE" value="shell_launched"/>
+    </script>
+    <script name="events">
+        <description>The number of launched shell</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="project-deployed,application-created"/>
+        <parameter key="STORAGE_TABLE" value="deploys"/>
+    </script>
+    <script name="events">
+        <description>The number of launched shell</description>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="WS" value="PERSISTENT"/>
+        <parameter key="EVENT" value="application-created"/>
+        <parameter key="STORAGE_TABLE" value="deploys_to_pass"/>
+    </script>
 </scripts>
