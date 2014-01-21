@@ -307,6 +307,15 @@ public class ActOn extends Feature {
         out.write(",");
 
         writeInt(out, stat.get(UsersStatisticsList.INVITES));
+        out.write(",");
+
+        boolean profileCompleted = !profile.get(AbstractUsersProfile.USER_EMAIL).getAsString().isEmpty()
+                                   && !profile.get(AbstractUsersProfile.USER_FIRST_NAME).getAsString().isEmpty()
+                                   && !profile.get(AbstractUsersProfile.USER_LAST_NAME).getAsString().isEmpty()
+                                   && !profile.get(AbstractUsersProfile.USER_COMPANY).getAsString().isEmpty()
+                                   && !profile.get(AbstractUsersProfile.USER_JOB).getAsString().isEmpty()
+                                   && !profile.get(AbstractUsersProfile.USER_PHONE).getAsString().isEmpty();
+        writeNotNullStr(out, Boolean.toString(profileCompleted));
         out.newLine();
     }
 
@@ -334,7 +343,9 @@ public class ActOn extends Feature {
     }
 
     private void writeHeader(BufferedWriter out) throws IOException {
-        out.write("email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites");
+        out.write(
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites," +
+                "profileCompleted");
         out.newLine();
     }
 }

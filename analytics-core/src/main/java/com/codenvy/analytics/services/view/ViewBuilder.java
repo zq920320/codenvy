@@ -41,7 +41,10 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 
-/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+/**
+ * @author Alexander Reshetnyak
+ * @author Anatoliy Bazko
+ */
 @Singleton
 public class ViewBuilder extends Feature {
 

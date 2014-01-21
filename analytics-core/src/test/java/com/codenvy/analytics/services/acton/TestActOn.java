@@ -99,10 +99,13 @@ public class TestActOn extends BaseTest {
 
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites"));
-        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\""));
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites," +
+                "profileCompleted"));
+        assertTrue(
+                content.contains(
+                        "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\",\"true\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\",\"false\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\",\"false\""));
     }
 
     @Test
@@ -120,10 +123,12 @@ public class TestActOn extends BaseTest {
 
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites"));
-        assertTrue(content.contains("\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\""));
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites," +
+                "profileCompleted"));
+        assertTrue(content.contains(
+                "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\",\"true\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\",\"false\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"false\""));
     }
 
     private Set<String> read(File jobFile) throws IOException {
