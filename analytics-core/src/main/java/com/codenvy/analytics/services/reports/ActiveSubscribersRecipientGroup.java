@@ -116,7 +116,7 @@ public class ActiveSubscribersRecipientGroup extends AbstractRecipientGroup {
                     throw new IOException(e);
                 }
 
-                if (startTime <= currTime && currTime <= endTime) {
+                if (startTime <= currTime) {
                     return true;
                 }
             }

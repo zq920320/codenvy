@@ -65,7 +65,7 @@ public class TestActiveSubscribersRecipientGroup extends BaseTest {
     }
 
     @Test
-    public void testIsNotActiveSubscriberWhenPeriodIsWrong() throws Exception {
+    public void testActiveSubscriberIfSubscriptionPeriodBelow() throws Exception {
         doReturn(ActiveSubscribersRecipientGroup.TARIFF_MANAGED_FACTORY).when(account)
                 .getAttribute(ActiveSubscribersRecipientGroup.TARIFF_PLAN);
         doReturn("" + Utils.parseDate("20131009").getTimeInMillis()).when(account)
@@ -74,8 +74,22 @@ public class TestActiveSubscribersRecipientGroup extends BaseTest {
                 .getAttribute(ActiveSubscribersRecipientGroup.TARIFF_END_TIME);
         Parameters.TO_DATE.put(context, "20131010");
 
+        assertTrue(group.isActiveSubscriber(account, context));
+    }
+
+    @Test
+    public void testNotActiveSubscriberIfSubscriptionPeriodAbove() throws Exception {
+        doReturn(ActiveSubscribersRecipientGroup.TARIFF_MANAGED_FACTORY).when(account)
+                .getAttribute(ActiveSubscribersRecipientGroup.TARIFF_PLAN);
+        doReturn("" + Utils.parseDate("20131011").getTimeInMillis()).when(account)
+                .getAttribute(ActiveSubscribersRecipientGroup.TARIFF_START_TIME);
+        doReturn("" + Utils.parseDate("20131011").getTimeInMillis()).when(account)
+                .getAttribute(ActiveSubscribersRecipientGroup.TARIFF_END_TIME);
+        Parameters.TO_DATE.put(context, "20131010");
+
         assertFalse(group.isActiveSubscriber(account, context));
     }
+
 
     @Test
     public void testIsActiveSubscriber() throws Exception {
