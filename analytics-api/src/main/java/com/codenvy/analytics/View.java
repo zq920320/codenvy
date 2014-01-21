@@ -18,7 +18,6 @@
 package com.codenvy.analytics;
 
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
@@ -110,11 +109,7 @@ public class View {
     private Map<String, String> extractContext(UriInfo info) throws ParseException {
         MultivaluedMap<String, String> parameters = info.getQueryParameters();
 
-        Parameters.TimeUnit timeUnit = parameters.containsKey(Parameters.TIME_UNIT.name())
-                                       ? Parameters.TimeUnit.valueOf(parameters.getFirst(Parameters.TIME_UNIT.name()))
-                                       : Parameters.TimeUnit.LIFETIME;
-
-        Map<String, String> context = Utils.initializeContext(timeUnit);
+        Map<String, String> context = Utils.newContext();
         for (String key : parameters.keySet()) {
             context.put(key.toUpperCase(), parameters.getFirst(key));
         }

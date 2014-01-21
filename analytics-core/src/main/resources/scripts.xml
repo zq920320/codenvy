@@ -260,17 +260,17 @@
         <parameter key="STORAGE_TABLE" value="shell_launched"/>
     </script>
     <script name="events">
-        <description>The number of launched shell</description>
+        <description>The number of deploys</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="project-deployed,application-created"/>
         <parameter key="STORAGE_TABLE" value="deploys"/>
     </script>
     <script name="events">
-        <description>The number of launched shell</description>
+        <description>The number of deploys to PaaS</description>
         <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="PERSISTENT"/>
         <parameter key="EVENT" value="application-created"/>
-        <parameter key="STORAGE_TABLE" value="deploys_to_pass"/>
+        <parameter key="STORAGE_TABLE" value="deploys_to_paas"/>
     </script>
 </scripts>

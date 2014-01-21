@@ -54,12 +54,12 @@
                     <div class="tables">
                         <div class="item">
                             <div class="header">Signup Analysis</div>
-                            <div class="body" id="timeline_product_usage_condition"></div>
+                            <div class="body" id="analysis"></div>
                         </div>
                         
                         <div class="item">
                             <div class="header">Condition</div>
-                            <div class="body" id="analysis"></div>
+                            <div class="body" id="timeline_product_usage_condition"></div>
                         </div>
                     </div>
                 </div>

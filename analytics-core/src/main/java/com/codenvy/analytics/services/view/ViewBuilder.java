@@ -107,9 +107,10 @@ public class ViewBuilder extends Feature {
                     tasks.add(task);
                 } else {
                     for (String timeUnitParam : viewConf.getTimeUnit().split(",")) {
-                        context = Parameters.TIME_UNIT.cloneAndPut(context, timeUnitParam.toUpperCase());
+                        Map<String, String> newContext =
+                                Parameters.TIME_UNIT.cloneAndPut(context, timeUnitParam.toUpperCase());
 
-                        ComputeViewDataAction task = new ComputeViewDataAction(viewConf, context);
+                        ComputeViewDataAction task = new ComputeViewDataAction(viewConf, newContext);
                         forkJoinPool.submit(task);
 
                         tasks.add(task);
@@ -181,7 +182,6 @@ public class ViewBuilder extends Feature {
 
         private ViewData doCompute(ViewConfiguration viewConf, Map<String, String> context) throws IOException {
             try {
-                context = initializeFirstInterval(context);
                 ViewData viewData = new ViewData(viewConf.getSections().size());
 
                 for (SectionConfiguration sectionConf : viewConf.getSections()) {
@@ -201,19 +201,30 @@ public class ViewBuilder extends Feature {
 
                 return viewData;
             } catch (NoSuchMethodException | ClassCastException | ClassNotFoundException | InvocationTargetException |
-                    IllegalAccessException | InstantiationException | ParseException e) {
+                    IllegalAccessException | InstantiationException e) {
                 throw new IOException(e);
             }
         }
     }
 
     private Map<String, String> initializeFirstInterval(Map<String, String> context) throws ParseException {
-        String toDate = Parameters.TO_DATE.get(context);
+        if (!Parameters.TO_DATE.exists(context)) {
+            context = Utils.clone(context);
+            Parameters.TO_DATE.putDefaultValue(context);
+            Parameters.FROM_DATE.put(context, Parameters.TO_DATE.get(context));
+            Parameters.REPORT_DATE.put(context, Parameters.TO_DATE.get(context));
+            return context;
 
-        context = Parameters.REPORT_DATE.cloneAndPut(context, toDate);
-        Utils.initDateInterval(Utils.parseDate(toDate), context);
+        } else if (Parameters.TIME_UNIT.exists(context)) {
+            context = Utils.clone(context);
+            Parameters.REPORT_DATE.put(context, Parameters.TO_DATE.get(context));
+            Utils.initDateInterval(Utils.getToDate(context), context);
+            return context;
 
-        return context;
+
+        } else {
+            return Parameters.REPORT_DATE.cloneAndPut(context, Parameters.TO_DATE.get(context));
+        }
     }
 
     private int getRowCount(int rowCountFromConf, Map<String, String> context) {

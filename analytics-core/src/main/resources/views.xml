@@ -17,7 +17,6 @@
          from Codenvy S.A..
 -->
 <display>
-
     <view time-unit="day,week,month,lifetime" name="timeline" columns="15">
         <section name="workspaces">
             <row class="com.codenvy.analytics.services.view.DateRow">
@@ -1773,7 +1772,7 @@
     <view name="timeline_product_usage_condition">
         <section name="timeline_product_usage_condition">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Condition,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year"/>
+                <parameter key="titles" value=",1 Day,7 Days,30 Days,60 Days,90 Days,1 Year"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="description" value="Visits &#0060;5 Or Lifetime &#0060;120"/>
@@ -1796,7 +1795,7 @@
     <view time-unit="month" name="analysis" columns="15">
         <section name="analysis">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Signup Analysis"/>
+                <parameter key="section-name" value=""/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_users"/>
