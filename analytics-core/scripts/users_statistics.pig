@@ -55,6 +55,18 @@ k1 = filterByEvent(l, 'user-invite');
 k = FOREACH k1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('invites', 1);
 STORE k INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
-k1 = filterByEvent(l, 'user-sso-logged-in');
-k = FOREACH k1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('logins', 1);
-STORE k INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+p1 = filterByEvent(l, 'user-sso-logged-in');
+p = FOREACH p1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('logins', 1);
+STORE p INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+q1 = FOREACH l GENERATE *, '' AS id; -- it requires 'id' field in scheme
+
+q2 = combineClosestEvents(q1, 'run-started', 'run-finished');
+q3 = FOREACH q2 GENERATE dt, user, delta;
+q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('run-time', delta);
+STORE q INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+r2 = combineClosestEvents(q1, 'build-started', 'build-finished');
+r3 = FOREACH r2 GENERATE dt, user, delta;
+r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('build-time', delta);
+STORE r INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

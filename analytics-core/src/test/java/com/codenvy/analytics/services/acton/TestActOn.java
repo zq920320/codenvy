@@ -99,13 +99,14 @@ public class TestActOn extends BaseTest {
         
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites,factories,debugs,logins," +
-                "profileCompleted"));
-        assertTrue(
-                content.contains(
-                        "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\",\"1\",\"0\",\"0\",\"true\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\",\"0\",\"1\",\"1\",\"false\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\",\"0\",\"0\",\"0\",\"false\""));
+            "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites," +
+            "factories,debugs,logins,run-time,build-time,profileCompleted"));
+        assertTrue(content.contains(
+            "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\",\"1\",\"0\",\"0\",\"0\",\"120\",\"true\""));
+        assertTrue(content.contains(
+            "\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\",\"0\",\"1\",\"1\",\"120\",\"0\",\"false\""));
+        assertTrue(content.contains(
+            "\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\""));
     }
 
     @Test
@@ -120,15 +121,17 @@ public class TestActOn extends BaseTest {
         assertEquals(jobFile.getName(), ActOn.FILE_NAME);
 
         Set<String> content = read(jobFile);
-
+        
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites,factories,debugs,logins," +
-                "profileCompleted"));
+            "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites," +
+            "factories,debugs,logins,run-time,build-time,profileCompleted"));
         assertTrue(content.contains(
-                "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\",\"1\",\"0\",\"0\",\"true\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\",\"0\",\"1\",\"1\",\"false\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\",\"0\",\"0\",\"false\""));
+            "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\",\"1\",\"0\",\"0\",\"0\",\"120\",\"true\""));
+        assertTrue(content.contains(
+            "\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\",\"0\",\"1\",\"1\",\"120\",\"0\",\"false\""));
+        assertTrue(content.contains(
+            "\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\""));
     }
 
     private Set<String> read(File jobFile) throws IOException {
@@ -183,30 +186,51 @@ public class TestActOn extends BaseTest {
 
         // projects deployed
         events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
-                        .withTime("10:10:00").withDate("2013-11-02").build());
+                        .withTime("10:10:00")
+                        .withDate("2013-11-02").build());
         events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2")
-                        .withTime("10:00:00").withDate("2013-11-02").build());
+                        .withTime("10:00:00")
+                        .withDate("2013-11-02").build());
 
 
-        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1").withDate("2013-11-02")
+        events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1")
+                        .withDate("2013-11-02")
                         .withTime("19:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1").withDate("2013-11-02")
+        events.add(Event.Builder.createSessionFinishedEvent("user1", "ws1", "ide", "1")
+                        .withDate("2013-11-02")
                         .withTime("19:05:00").build());
 
-        events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "3").withDate("2013-11-02")
+        events.add(Event.Builder.createSessionStartedEvent("user2", "ws1", "ide", "3")
+                        .withDate("2013-11-02")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "3").withDate("2013-11-02")
+        events.add(Event.Builder.createSessionFinishedEvent("user2", "ws1", "ide", "3")
+                        .withDate("2013-11-02")
                         .withTime("20:10:00").build());
 
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "", "", "", "", "", "")
-                        .withDate("2013-11-01").withTime("20:03:00").build());
+                        .withDate("2013-11-01")
+                        .withTime("20:03:00").build());
        
         events.add(Event.Builder.createDebugStartedEvent("user2", "ws1", "", "")
-                        .withDate("2013-11-01").withTime("20:06:00").build());        
+                        .withDate("2013-11-01")
+                        .withTime("20:06:00").build());        
         
-        events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "email").withDate(
-                "2013-11-01").build());
+        events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "email")
+                        .withDate("2013-11-01").build());
 
+        events.add(Event.Builder.createRunStartedEvent("user2", "ws2", "project", "type")
+                         .withDate("2013-11-01")
+                         .withTime("20:59:00").build());        
+        events.add(Event.Builder.createRunFinishedEvent("user2", "ws2", "project", "type")
+                         .withDate("2013-11-01")
+                         .withTime("21:01:00").build());
+
+        events.add(Event.Builder.createBuildStartedEvent("user1", "ws1", "project", "type")
+                         .withDate("2013-11-01")
+                         .withTime("21:12:00").build());
+        events.add(Event.Builder.createBuildFinishedEvent("user1", "ws1", "project", "type")
+                         .withDate("2013-11-01")
+                         .withTime("21:14:00").build());
 
         return LogGenerator.generateLog(events);
     }

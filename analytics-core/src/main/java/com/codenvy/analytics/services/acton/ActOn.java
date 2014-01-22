@@ -89,6 +89,8 @@ public class ActOn extends Feature {
         put(UsersStatisticsList.FACTORIES, UsersStatisticsList.FACTORIES);
         put(UsersStatisticsList.DEBUGS, UsersStatisticsList.DEBUGS);
         put(UsersStatisticsList.LOGINS, UsersStatisticsList.LOGINS);
+        put(UsersStatisticsList.RUN_TIME, UsersStatisticsList.RUN_TIME);
+        put(UsersStatisticsList.BUILD_TIME, UsersStatisticsList.BUILD_TIME);
         put(PROFILE_COMPLETED, PROFILE_COMPLETED);
     }};
     
@@ -344,6 +346,12 @@ public class ActOn extends Feature {
         
         writeInt(out, stat.get(UsersStatisticsList.LOGINS));
         out.write(",");        
+
+        writeInt(out, stat.get(UsersStatisticsList.RUN_TIME));
+        out.write(",");
+
+        writeInt(out, stat.get(UsersStatisticsList.BUILD_TIME));
+        out.write(",");
         
         boolean profileCompleted = !profile.get(AbstractUsersProfile.USER_EMAIL).getAsString().isEmpty()
                                    && !profile.get(AbstractUsersProfile.USER_FIRST_NAME).getAsString().isEmpty()

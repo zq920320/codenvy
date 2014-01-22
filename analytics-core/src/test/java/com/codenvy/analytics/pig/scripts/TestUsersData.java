@@ -82,12 +82,19 @@ public class TestUsersData extends BaseTest {
                         .withDate("2013-11-01").withTime("20:06:00").build());
 
         events.add(
-                Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
-                     .withTime("19:08:00").build());
+              Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
+                           .withTime("19:08:00").build());
         events.add(
-                Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
-                     .withTime("19:10:00").build());
+              Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
+                           .withTime("19:10:00").build());
 
+        events.add(
+              Event.Builder.createBuildStartedEvent("user3@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
+                           .withTime("19:12:00").build());
+        events.add(
+              Event.Builder.createBuildFinishedEvent("user3@gmail.com", "ws2", "project", "type").withDate("2013-11-01")
+                           .withTime("19:14:00").build());
+        
         events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws2", "email")
                         .withDate("2013-11-01").build());
 
@@ -127,7 +134,7 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            assertEquals(all.size(), 11);
+            assertEquals(all.size(), 13);
 
             String user = all.get(UsersStatisticsList.USER).getAsString();
             switch (user) {
@@ -142,6 +149,8 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     break;
 
                 case "user2@gmail.com":
@@ -155,6 +164,8 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     break;
 
                 case "user3@gmail.com":
@@ -168,6 +179,8 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120");
                     break;
 
                 case "user4@gmail.com":
@@ -180,6 +193,8 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     break;
 
                 default:
