@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import java.io.*;
 import java.net.SocketTimeoutException;
 import java.text.ParseException;
@@ -64,7 +65,32 @@ public class ActOn extends Feature {
     private static final String FTP_TIMEOUT     = "acton.ftp.timeout";
     private static final String FTP_MAX_EFFORTS = "acton.ftp.maxEfforts";
     private static final String FTP_AUTH        = "acton.ftp.auth";
+    
+    private static final String INACTIVE = "inactive";
+    private static final String PROFILE_COMPLETED = "profileCompleted";
+    
 
+    /**
+     * Map  users_statistics collection columns into the csv file headers.
+     */
+    @SuppressWarnings("serial")
+    private static final LinkedHashMap<String, String> headerMap = new LinkedHashMap<String, String>(){{
+        put(AbstractUsersProfile.USER_EMAIL, "email");
+        put(AbstractUsersProfile.USER_FIRST_NAME, "firstName");
+        put(AbstractUsersProfile.USER_LAST_NAME, "lastName");
+        put(AbstractUsersProfile.USER_PHONE, "phone");
+        put(AbstractUsersProfile.USER_COMPANY, "company");
+        put(UsersStatisticsList.PROJECTS, "projects");
+        put(UsersStatisticsList.BUILDS, "builts");
+        put(UsersStatisticsList.DEPLOYS, "deployments");
+        put(UsersStatisticsList.TIME, "spentTime");
+        put(INACTIVE, INACTIVE);
+        put(UsersStatisticsList.INVITES, UsersStatisticsList.INVITES);
+        put(UsersStatisticsList.FACTORIES, UsersStatisticsList.FACTORIES);
+        put(UsersStatisticsList.DEBUGS, UsersStatisticsList.DEBUGS);
+        put(PROFILE_COMPLETED, PROFILE_COMPLETED);
+    }};
+    
     private final Configurator configurator;
 
     @Inject
@@ -294,7 +320,7 @@ public class ActOn extends Feature {
 
         writeInt(out, stat.get(UsersStatisticsList.DEPLOYS));
         out.write(",");
-
+        
         LongValueData time = (LongValueData)stat.get(UsersStatisticsList.TIME);
         if (time == null) {
             writeNotNullStr(out, "0");
@@ -309,6 +335,12 @@ public class ActOn extends Feature {
         writeInt(out, stat.get(UsersStatisticsList.INVITES));
         out.write(",");
 
+        writeInt(out, stat.get(UsersStatisticsList.FACTORIES));
+        out.write(",");        
+
+        writeInt(out, stat.get(UsersStatisticsList.DEBUGS));
+        out.write(",");
+        
         boolean profileCompleted = !profile.get(AbstractUsersProfile.USER_EMAIL).getAsString().isEmpty()
                                    && !profile.get(AbstractUsersProfile.USER_FIRST_NAME).getAsString().isEmpty()
                                    && !profile.get(AbstractUsersProfile.USER_LAST_NAME).getAsString().isEmpty()
@@ -343,9 +375,17 @@ public class ActOn extends Feature {
     }
 
     private void writeHeader(BufferedWriter out) throws IOException {
-        out.write(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites," +
-                "profileCompleted");
+        String header = ""; 
+        String delimeter = ",";
+        Iterator<String> iterator = headerMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            header += headerMap.get(iterator.next()) + delimeter;
+            
+        }
+        
+        header = header.substring(0, header.length() - 1);  // remove last delimeter occurence
+        
+        out.write(header);
         out.newLine();
     }
 }
