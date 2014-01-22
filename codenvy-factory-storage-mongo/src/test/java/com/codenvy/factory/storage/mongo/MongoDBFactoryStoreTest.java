@@ -74,6 +74,9 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
+        WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration("title1", "url1", "conten1"),
+                                                  new WelcomeConfiguration("title2", "url2", "content2"));
+
         AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
         factoryUrl.setAuthor("someAuthor");
         factoryUrl.setContactmail("test@test.com");
@@ -90,6 +93,7 @@ public class MongoDBFactoryStoreTest {
         factoryUrl.setOpenfile("index.php");
         factoryUrl.setVcsbranch("master");
         factoryUrl.setVcsurl("http://testvscurl.com");
+        factoryUrl.setWelcome(welcomePage);
 
         String id = store.saveFactory(factoryUrl, images);
 
@@ -131,6 +135,9 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
+        WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration("title1", "url1", "conten1"),
+                                                  new WelcomeConfiguration("title2", "url2", "content2"));
+
         byte[] b = new byte[4096];
         new Random().nextBytes(b);
 
@@ -141,6 +148,23 @@ public class MongoDBFactoryStoreTest {
                              Collections.singletonList(new Variable.Replacement("find", "replace", "text_multipass"))));
 
         List<DBObject> imageList = new ArrayList<>();
+
+        BasicDBObject welcomeDBObject = new BasicDBObject();
+
+        WelcomeConfiguration authConfiguration = welcomePage.getAuthenticated();
+        BasicDBObject authDBOWelcome = new BasicDBObject();
+        authDBOWelcome.put("title", authConfiguration.getTitle());
+        authDBOWelcome.put("iconurl", authConfiguration.getIconurl());
+        authDBOWelcome.put("contenturl", authConfiguration.getContenturl());
+
+        WelcomeConfiguration nonAuthConfiguration = welcomePage.getNonauthenticated();
+        BasicDBObject nonAuthDBOWelcome = new BasicDBObject();
+        nonAuthDBOWelcome.put("title", nonAuthConfiguration.getTitle());
+        nonAuthDBOWelcome.put("iconurl", nonAuthConfiguration.getIconurl());
+        nonAuthDBOWelcome.put("contenturl", nonAuthConfiguration.getContenturl());
+
+        welcomeDBObject.put("authenticated", authDBOWelcome);
+        welcomeDBObject.put("nonauthenticated", nonAuthDBOWelcome);
 
         BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
         factoryURLbuilder.add("v", "1.1")
@@ -162,7 +186,8 @@ public class MongoDBFactoryStoreTest {
                          .add("validuntil", 123645L)
                          .add("created", 123645L)
                          .add("projectattributes", attributes.get())
-                         .add("variables", VariableHelper.toBasicDBFormat(variables));
+                         .add("variables", VariableHelper.toBasicDBFormat(variables))
+                         .add("welcome", welcomeDBObject);
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", id);
@@ -180,6 +205,7 @@ public class MongoDBFactoryStoreTest {
         AdvancedFactoryUrl source = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
         source.setId(id);
         source.setVariables(variables);
+        source.setWelcome(welcomePage);
 
         assertEquals(result, source);
     }
