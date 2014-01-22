@@ -377,10 +377,10 @@ public class ActOn extends Feature {
     private void writeHeader(BufferedWriter out) throws IOException {
         String header = ""; 
         String delimeter = ",";
+        
         Iterator<String> iterator = headerMap.keySet().iterator();
         while (iterator.hasNext()) {
             header += headerMap.get(iterator.next()) + delimeter;
-            
         }
         
         header = header.substring(0, header.length() - 1);  // remove last delimeter occurence
