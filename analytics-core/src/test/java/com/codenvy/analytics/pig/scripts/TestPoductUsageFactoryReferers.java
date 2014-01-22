@@ -47,7 +47,7 @@ import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 public class TestPoductUsageFactoryReferers extends BaseTest {
 
     @BeforeClass
-    public void init() throws IOException {
+    public void init() throws IOException, Exception {
         Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
