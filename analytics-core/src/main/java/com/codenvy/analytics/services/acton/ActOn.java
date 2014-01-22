@@ -88,6 +88,7 @@ public class ActOn extends Feature {
         put(UsersStatisticsList.INVITES, UsersStatisticsList.INVITES);
         put(UsersStatisticsList.FACTORIES, UsersStatisticsList.FACTORIES);
         put(UsersStatisticsList.DEBUGS, UsersStatisticsList.DEBUGS);
+        put(UsersStatisticsList.LOGINS, UsersStatisticsList.LOGINS);
         put(PROFILE_COMPLETED, PROFILE_COMPLETED);
     }};
     
@@ -340,6 +341,9 @@ public class ActOn extends Feature {
 
         writeInt(out, stat.get(UsersStatisticsList.DEBUGS));
         out.write(",");
+        
+        writeInt(out, stat.get(UsersStatisticsList.LOGINS));
+        out.write(",");        
         
         boolean profileCompleted = !profile.get(AbstractUsersProfile.USER_EMAIL).getAsString().isEmpty()
                                    && !profile.get(AbstractUsersProfile.USER_FIRST_NAME).getAsString().isEmpty()

@@ -99,13 +99,13 @@ public class TestActOn extends BaseTest {
         
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites,factories,debugs," +
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites,factories,debugs,logins," +
                 "profileCompleted"));
         assertTrue(
                 content.contains(
-                        "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\",\"1\",\"0\",\"true\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\",\"0\",\"1\",\"false\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\",\"0\",\"0\",\"false\""));
+                        "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\",\"1\",\"0\",\"0\",\"true\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\",\"0\",\"1\",\"1\",\"false\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\",\"0\",\"0\",\"0\",\"false\""));
     }
 
     @Test
@@ -123,12 +123,12 @@ public class TestActOn extends BaseTest {
 
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
-                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites,factories,debugs," +
+                "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites,factories,debugs,logins," +
                 "profileCompleted"));
         assertTrue(content.contains(
-                "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\",\"1\",\"0\",\"true\""));
-        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\",\"0\",\"1\",\"false\""));
-        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\",\"0\",\"false\""));
+                "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\",\"1\",\"0\",\"0\",\"true\""));
+        assertTrue(content.contains("\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\",\"0\",\"1\",\"1\",\"false\""));
+        assertTrue(content.contains("\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\",\"0\",\"0\",\"false\""));
     }
 
     private Set<String> read(File jobFile) throws IOException {
@@ -147,6 +147,9 @@ public class TestActOn extends BaseTest {
     private File prepareLog() throws IOException {
         List<Event> events = new ArrayList<>();
 
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user2", "google")
+                        .withDate("2013-11-01").build());
+        
         events.add(Event.Builder.createUserUpdateProfile("user1", "f", "l", "company", "phone", "jobtitle")
                         .withDate("2013-11-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user2", "", "", "", "", "")

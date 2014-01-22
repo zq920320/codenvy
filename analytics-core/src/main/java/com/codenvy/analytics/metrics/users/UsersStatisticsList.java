@@ -37,6 +37,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     public static final String SESSIONS  = "sessions";
     public static final String TIME      = "time";
     public static final String INVITES   = "invites";
+    public static final String LOGINS    = "logins";
 
     public UsersStatisticsList() {
         super(MetricType.USERS_STATISTICS_LIST);
@@ -58,7 +59,8 @@ public class UsersStatisticsList extends AbstractListValueResulted {
                             FACTORIES,
                             TIME,
                             SESSIONS,
-                            INVITES};
+                            INVITES,
+                            LOGINS};
     }
 
     @Override
@@ -74,6 +76,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
         group.put(SESSIONS, new BasicDBObject("$sum", "$" + SESSIONS));
         group.put(INVITES, new BasicDBObject("$sum", "$" + INVITES));
+        group.put(LOGINS, new BasicDBObject("$sum", "$" + LOGINS));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }

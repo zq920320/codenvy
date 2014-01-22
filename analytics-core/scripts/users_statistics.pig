@@ -54,3 +54,7 @@ STORE m INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 k1 = filterByEvent(l, 'user-invite');
 k = FOREACH k1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('invites', 1);
 STORE k INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+k1 = filterByEvent(l, 'user-sso-logged-in');
+k = FOREACH k1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('logins', 1);
+STORE k INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

@@ -51,6 +51,9 @@ public class TestUsersData extends BaseTest {
 
         List<Event> events = new ArrayList<>();
 
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
+                        .withDate("2013-11-01").build());
+        
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
                         .withDate("2013-11-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company1", "11", "1")
@@ -124,55 +127,59 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            assertEquals(all.size(), 10);
+            assertEquals(all.size(), 11);
 
-            String user = all.get("_id").getAsString();
+            String user = all.get(UsersStatisticsList.USER).getAsString();
             switch (user) {
                 case "user1@gmail.com":
-                    assertEquals(all.get("projects").getAsString(), "1");
-                    assertEquals(all.get("deploys").getAsString(), "0");
-                    assertEquals(all.get("builds").getAsString(), "0");
-                    assertEquals(all.get("debugs").getAsString(), "0");
-                    assertEquals(all.get("runs").getAsString(), "0");
-                    assertEquals(all.get("factories").getAsString(), "1");
-                    assertEquals(all.get("time").getAsString(), "300");
-                    assertEquals(all.get("sessions").getAsString(), "1");
-                    assertEquals(all.get("invites").getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300");
+                    assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     break;
 
                 case "user2@gmail.com":
-                    assertEquals(all.get("projects").getAsString(), "0");
-                    assertEquals(all.get("runs").getAsString(), "1");
-                    assertEquals(all.get("deploys").getAsString(), "0");
-                    assertEquals(all.get("debugs").getAsString(), "0");
-                    assertEquals(all.get("builds").getAsString(), "0");
-                    assertEquals(all.get("factories").getAsString(), "0");
-                    assertEquals(all.get("time").getAsString(), "0");
-                    assertEquals(all.get("sessions").getAsString(), "0");
-                    assertEquals(all.get("invites").getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "1");
                     break;
 
                 case "user3@gmail.com":
-                    assertEquals(all.get("sessions").getAsString(), "1");
-                    assertEquals(all.get("projects").getAsString(), "0");
-                    assertEquals(all.get("time").getAsString(), "120");
-                    assertEquals(all.get("deploys").getAsString(), "0");
-                    assertEquals(all.get("builds").getAsString(), "0");
-                    assertEquals(all.get("debugs").getAsString(), "0");
-                    assertEquals(all.get("runs").getAsString(), "0");
-                    assertEquals(all.get("factories").getAsString(), "0");
-                    assertEquals(all.get("invites").getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120");
+                    assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     break;
 
                 case "user4@gmail.com":
-                    assertEquals(all.get("projects").getAsString(), "0");
-                    assertEquals(all.get("deploys").getAsString(), "1");
-                    assertEquals(all.get("builds").getAsString(), "1");
-                    assertEquals(all.get("debugs").getAsString(), "1");
-                    assertEquals(all.get("runs").getAsString(), "1");
-                    assertEquals(all.get("factories").getAsString(), "0");
-                    assertEquals(all.get("time").getAsString(), "0");
-                    assertEquals(all.get("sessions").getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     break;
 
                 default:
@@ -195,19 +202,19 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            String ws = all.get("_id").getAsString();
+            String ws = all.get(UsersStatisticsList.USER).getAsString();
 
             switch (ws) {
                 case "ws1":
                     assertEquals(all.size(), 3);
-                    assertEquals(all.get("sessions").getAsString(), "1");
-                    assertEquals(all.get("time").getAsString(), "300");
+                    assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300");
                     break;
 
                 case "ws2":
                     assertEquals(all.size(), 3);
-                    assertEquals(all.get("sessions").getAsString(), "1");
-                    assertEquals(all.get("time").getAsString(), "120");
+                    assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120");
                     break;
 
                 default:
@@ -231,9 +238,9 @@ public class TestUsersData extends BaseTest {
         List<ValueData> items = valueData.getAll();
         MapValueData entry = (MapValueData)items.get(0);
 
-        assertEquals(entry.getAll().get("sessions").getAsString(), "1");
-        assertEquals(entry.getAll().get("time").getAsString(), "300");
-        assertEquals(entry.getAll().get("_id").getAsString(), "ws1");
+        assertEquals(entry.getAll().get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+        assertEquals(entry.getAll().get(UsersStatisticsList.TIME).getAsString(), "300");
+        assertEquals(entry.getAll().get(UsersStatisticsList.USER).getAsString(), "ws1");
 
     }
 
