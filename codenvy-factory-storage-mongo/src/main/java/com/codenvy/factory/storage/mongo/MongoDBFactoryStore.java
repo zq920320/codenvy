@@ -76,13 +76,13 @@ public class MongoDBFactoryStore implements FactoryStore {
         BasicDBObject authDBOWelcome = new BasicDBObject();
         authDBOWelcome.put("title", authConfiguration.getTitle());
         authDBOWelcome.put("iconurl", authConfiguration.getIconurl());
-        authDBOWelcome.put("content", authConfiguration.getContent());
+        authDBOWelcome.put("contenturl", authConfiguration.getContenturl());
 
         WelcomeConfiguration nonAuthConfiguration = factoryUrl.getWelcome().getNonauthenticated();
         BasicDBObject nonAuthDBOWelcome = new BasicDBObject();
         nonAuthDBOWelcome.put("title", nonAuthConfiguration.getTitle());
         nonAuthDBOWelcome.put("iconurl", nonAuthConfiguration.getIconurl());
-        nonAuthDBOWelcome.put("content", nonAuthConfiguration.getContent());
+        nonAuthDBOWelcome.put("contenturl", nonAuthConfiguration.getContenturl());
 
         welcomeDBObject.put("authenticated", authDBOWelcome);
         welcomeDBObject.put("nonauthenticated", nonAuthDBOWelcome);
@@ -173,10 +173,10 @@ public class MongoDBFactoryStore implements FactoryStore {
 
         WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration((String)authDBConfiguration.get("title"),
                                                                            (String)authDBConfiguration.get("iconurl"),
-                                                                           (String)authDBConfiguration.get("content")),
+                                                                           (String)authDBConfiguration.get("contenturl")),
                                                   new WelcomeConfiguration((String)nonAuthDBConfiguration.get("title"),
                                                                            (String)nonAuthDBConfiguration.get("iconurl"),
-                                                                           (String)nonAuthDBConfiguration.get("content")));
+                                                                           (String)nonAuthDBConfiguration.get("contenturl")));
         factoryUrl.setWelcome(welcomePage);
 
         return factoryUrl;
