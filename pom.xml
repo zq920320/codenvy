@@ -63,7 +63,7 @@
         <jline.version>0.9.94</jline.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.10</junit.version>
-        <ldap.client.version>0.10.0</ldap.client.version>
+        <com.codenvy.organization.version>0.10.0</com.codenvy.organization.version>
         <log4j.version>1.2.17</log4j.version>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/
         </maven.releases.repo.url>

@@ -90,7 +90,7 @@
         <dependency>
             <groupId>com.codenvy.organization</groupId>
             <artifactId>codenvy-organization-api-java-client</artifactId>
-            <version>${ldap.client.version}</version>
+            <version>${com.codenvy.organization.version}</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
