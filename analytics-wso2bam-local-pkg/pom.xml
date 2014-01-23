@@ -165,10 +165,6 @@
                                         <copy tofile="${project.build.directory}/packager-conf/war/analytics-application/META-INF/context.xml"
                                               file="src/main/resources/analytics-application-dummy-auth.context.xml"
                                               overwrite="true"/>
-                                        <copy overwrite="true"
-                                              todir="${project.build.directory}/packager-conf/war/analytics-application">
-                                            <fileset dir="${basedir}/src/main/resources/login"/>
-                                        </copy>
                                         <war destfile="${project.build.directory}/packager-conf/war/analytics-application.war">
                                             <fileset
                                                     dir="${project.build.directory}/packager-conf/war/analytics-application"/>

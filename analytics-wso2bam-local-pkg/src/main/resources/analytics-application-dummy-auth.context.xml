@@ -16,13 +16,9 @@
   ~ from Codenvy S.A..
   -->
 <Context path="/analytics" docBase="analytics" reloadable="true" crossContext="false" sessionCookiePath="/">
-    <Valve className="org.apache.catalina.authenticator.FormAuthenticator" characterEncoding="UTF-8"/>
     <Logger className='org.apache.catalina.logger.SystemOutLogger'
             prefix='localhost_site_log.' suffix='.txt' timestamp='true'/>
-    <Manager className='org.apache.catalina.session.PersistentManager' saveOnRestart='false'/>
-    <Realm className='org.apache.catalina.realm.JAASRealm'
-           appName='codenvy'
-           userClassNames="com.codenvy.analytics.jaas.UserPrincipal"
-           roleClassNames="com.codenvy.analytics.jaas.RolePrincipal"
-           debug='0' cache='false'/>
+    <!--<Manager className='org.apache.catalina.session.PersistentManager' saveOnRestart='false'/>-->
+    <Realm className="org.apache.catalina.realm.MemoryRealm"
+           pathname="../../repository/conf/tomcat/tomcat-users.xml"/>
 </Context>
