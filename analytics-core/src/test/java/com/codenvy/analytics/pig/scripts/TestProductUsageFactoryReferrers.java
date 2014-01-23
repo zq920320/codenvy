@@ -17,7 +17,18 @@
  */
 package com.codenvy.analytics.pig.scripts;
 
-import static org.testng.Assert.assertEquals;
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.sessions.factory.ReferrersCountToSpecificFactory;
+import com.codenvy.analytics.pig.scripts.util.Event;
+import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,19 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactoryReferrers;
-import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.pig.scripts.util.Event;
-import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import static org.testng.Assert.assertEquals;
 
 /**
  * 
@@ -145,15 +144,15 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
         
         MapValueData vd = (MapValueData) lvd.getAll().get(0);
         assertEquals(vd.getAll().get("factory").getAsString(), "factoryUrl0");
-        assertEquals(vd.getAll().get("unique_referrer_count").getAsString(), "2");
+        assertEquals(vd.getAll().get("unique_referrers_count").getAsString(), "2");
         
         vd = (MapValueData) lvd.getAll().get(1);
         assertEquals(vd.getAll().get("factory").getAsString(), "factoryUrl1");
-        assertEquals(vd.getAll().get("unique_referrer_count").getAsString(), "1");
+        assertEquals(vd.getAll().get("unique_referrers_count").getAsString(), "1");
     }
     
     
-    private class TestProductUsageFactorySessionRefers extends ProductUsageFactoryReferrers {
+    private class TestProductUsageFactorySessionRefers extends ReferrersCountToSpecificFactory {
      
         @Override
         public String getStorageCollectionName() {
