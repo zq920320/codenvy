@@ -113,6 +113,7 @@ com.codenvy.analytics.metrics.sessions.factory.CreatedFactories
 com.codenvy.analytics.metrics.sessions.factory.TemporaryWorkspacesCreated
 com.codenvy.analytics.metrics.sessions.factory.FactorySessions
 com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList
+com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactoryReferrers
 com.codenvy.analytics.metrics.sessions.factory.AuthenticatedFactorySessions
 com.codenvy.analytics.metrics.sessions.factory.AnonymousFactorySessions
 com.codenvy.analytics.metrics.sessions.factory.ConvertedFactorySessions

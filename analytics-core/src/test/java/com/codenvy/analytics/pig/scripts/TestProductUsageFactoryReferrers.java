@@ -34,7 +34,7 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.sessions.factory.PoductUsageFactoryReferers;
+import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactoryReferrers;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -44,7 +44,7 @@ import com.codenvy.analytics.pig.scripts.util.LogGenerator;
  *
  * @author Alexander Reshetnyak
  */
-public class TestPoductUsageFactoryReferers extends BaseTest {
+public class TestProductUsageFactoryReferrers extends BaseTest {
 
     @BeforeClass
     public void init() throws IOException, Exception {
@@ -145,15 +145,15 @@ public class TestPoductUsageFactoryReferers extends BaseTest {
         
         MapValueData vd = (MapValueData) lvd.getAll().get(0);
         assertEquals(vd.getAll().get("factory").getAsString(), "factoryUrl0");
-        assertEquals(vd.getAll().get("unique_referer_count").getAsString(), "2");
+        assertEquals(vd.getAll().get("unique_referrer_count").getAsString(), "2");
         
         vd = (MapValueData) lvd.getAll().get(1);
         assertEquals(vd.getAll().get("factory").getAsString(), "factoryUrl1");
-        assertEquals(vd.getAll().get("unique_referer_count").getAsString(), "1");
+        assertEquals(vd.getAll().get("unique_referrer_count").getAsString(), "1");
     }
     
     
-    private class TestProductUsageFactorySessionRefers extends PoductUsageFactoryReferers {
+    private class TestProductUsageFactorySessionRefers extends ProductUsageFactoryReferrers {
      
         @Override
         public String getStorageCollectionName() {

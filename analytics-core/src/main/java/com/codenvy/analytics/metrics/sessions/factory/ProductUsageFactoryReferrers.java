@@ -33,18 +33,18 @@ import com.mongodb.DBObject;
  *
  * @author Alexander Reshetnyak
  */
-public class PoductUsageFactoryReferers extends ReadBasedMetric {
+public class ProductUsageFactoryReferrers extends ReadBasedMetric {
     
-    public static final String UNIQUE_REFERER_COUNT = "unique_referer_count";
+    public static final String UNIQUE_REFERRER_COUNT = "unique_referrer_count";
 
-    public PoductUsageFactoryReferers() {
-        super(MetricType.PRODUCT_USAGE_FACTORY_REFERERS);
+    public ProductUsageFactoryReferrers() {
+        super(MetricType.PRODUCT_USAGE_FACTORY_REFERRERS);
     }
     
     @Override
     public String[] getTrackedFields() {
         return new String[]{ProductUsageFactorySessionsList.FACTORY,
-                             UNIQUE_REFERER_COUNT,
+                             UNIQUE_REFERRER_COUNT,
         };
     }
     
@@ -54,20 +54,20 @@ public class PoductUsageFactoryReferers extends ReadBasedMetric {
 
             dbOperations.add(new BasicDBObject("$group",
                                                new BasicDBObject("_id", "$" + ProductUsageFactorySessionsList.FACTORY)
-                                                         .append("referers", new BasicDBObject("$addToSet", "$" + ProductUsageFactorySessionsList.REFERRER))
+                                                         .append("referrers", new BasicDBObject("$addToSet", "$" + ProductUsageFactorySessionsList.REFERRER))
                                                          ));
             
-            dbOperations.add(new BasicDBObject("$unwind", "$referers"));
+            dbOperations.add(new BasicDBObject("$unwind", "$referrers"));
             
             dbOperations.add(new BasicDBObject("$group",
                                                new BasicDBObject("_id", "$_id")
-                                                         .append(UNIQUE_REFERER_COUNT, new BasicDBObject("$sum", 1))
+                                                         .append(UNIQUE_REFERRER_COUNT, new BasicDBObject("$sum", 1))
                                                          ));
             
             dbOperations.add(new BasicDBObject("$project",
                                                new BasicDBObject("_id", 0)
                                                        .append(ProductUsageFactorySessionsList.FACTORY, "$_id")
-                                                       .append(UNIQUE_REFERER_COUNT, 1)
+                                                       .append(UNIQUE_REFERRER_COUNT, 1)
                                                        ));
           return dbOperations.toArray(new DBObject[dbOperations.size()]);
     }
@@ -84,6 +84,6 @@ public class PoductUsageFactoryReferers extends ReadBasedMetric {
 
     @Override
     public String getDescription() {
-        return "The unique referers count by factory";
+        return "The unique referrers count by factory";
     }
 }
