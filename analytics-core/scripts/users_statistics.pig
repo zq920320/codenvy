@@ -63,10 +63,14 @@ q1 = FOREACH l GENERATE *, '' AS id; -- it requires 'id' field in scheme
 
 q2 = combineClosestEvents(q1, 'run-started', 'run-finished');
 q3 = FOREACH q2 GENERATE dt, user, delta;
-q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('run-time', delta);
+q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('run_time', delta);
 STORE q INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 r2 = combineClosestEvents(q1, 'build-started', 'build-finished');
 r3 = FOREACH r2 GENERATE dt, user, delta;
-r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('build-time', delta);
+r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('build_time', delta);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
+s1 = filterByEvent(l, 'application-created');
+s = FOREACH s1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('paas_deploys', 1);
+STORE s INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

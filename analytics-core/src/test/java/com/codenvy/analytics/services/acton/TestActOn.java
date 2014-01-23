@@ -100,13 +100,13 @@ public class TestActOn extends BaseTest {
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
             "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites," +
-            "factories,debugs,logins,run-time,build-time,profileCompleted"));
+            "factories,debugs,logins,run-time,build-time,profileCompleted,paas-deploys,points"));
         assertTrue(content.contains(
-            "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\",\"1\",\"0\",\"0\",\"0\",\"120\",\"true\""));
+            "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"5\",\"true\",\"1\",\"1\",\"0\",\"0\",\"0\",\"120\",\"true\",\"0\",\"29\""));
         assertTrue(content.contains(
-            "\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\",\"0\",\"1\",\"1\",\"120\",\"0\",\"false\""));
+            "\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"10\",\"true\",\"0\",\"0\",\"1\",\"1\",\"120\",\"0\",\"false\",\"1\",\"20\""));
         assertTrue(content.contains(
-            "\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\""));
+            "\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"1\",\"0\",\"true\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\",\"1\",\"12\""));
     }
 
     @Test
@@ -125,13 +125,13 @@ public class TestActOn extends BaseTest {
         assertEquals(content.size(), 4);
         assertTrue(content.contains(
             "email,firstName,lastName,phone,company,projects,builts,deployments,spentTime,inactive,invites," +
-            "factories,debugs,logins,run-time,build-time,profileCompleted"));
+            "factories,debugs,logins,run-time,build-time,profileCompleted,paas-deploys,points"));
         assertTrue(content.contains(
-            "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\",\"1\",\"0\",\"0\",\"0\",\"120\",\"true\""));
+            "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"true\",\"1\",\"1\",\"0\",\"0\",\"0\",\"120\",\"true\",\"0\",\"29\""));
         assertTrue(content.contains(
-            "\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\",\"0\",\"1\",\"1\",\"120\",\"0\",\"false\""));
+            "\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\",\"0\",\"1\",\"1\",\"120\",\"0\",\"false\",\"0\",\"8\""));
         assertTrue(content.contains(
-            "\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\""));
+            "\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\""));
     }
 
     private Set<String> read(File jobFile) throws IOException {

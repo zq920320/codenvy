@@ -68,13 +68,13 @@ public class ActOn extends Feature {
     
     private static final String INACTIVE = "inactive";
     private static final String PROFILE_COMPLETED = "profileCompleted";
-    
+    private static final String POINTS = "points";
 
     /**
-     * Map  users_statistics collection columns into the csv file headers.
+     * Map users_statistics collection columns into the csv file headers.
      */
     @SuppressWarnings("serial")
-    private static final LinkedHashMap<String, String> headerMap = new LinkedHashMap<String, String>(){{
+    private static final LinkedHashMap<String, String> headers = new LinkedHashMap<String, String>(){{
         put(AbstractUsersProfile.USER_EMAIL, "email");
         put(AbstractUsersProfile.USER_FIRST_NAME, "firstName");
         put(AbstractUsersProfile.USER_LAST_NAME, "lastName");
@@ -89,9 +89,11 @@ public class ActOn extends Feature {
         put(UsersStatisticsList.FACTORIES, UsersStatisticsList.FACTORIES);
         put(UsersStatisticsList.DEBUGS, UsersStatisticsList.DEBUGS);
         put(UsersStatisticsList.LOGINS, UsersStatisticsList.LOGINS);
-        put(UsersStatisticsList.RUN_TIME, UsersStatisticsList.RUN_TIME);
-        put(UsersStatisticsList.BUILD_TIME, UsersStatisticsList.BUILD_TIME);
+        put(UsersStatisticsList.RUN_TIME, "run-time");
+        put(UsersStatisticsList.BUILD_TIME, "build-time");
         put(PROFILE_COMPLETED, PROFILE_COMPLETED);
+        put(UsersStatisticsList.PAAS_DEPLOYS, "paas-deploys");
+        put(POINTS, POINTS);
     }};
     
     private final Configurator configurator;
@@ -353,13 +355,15 @@ public class ActOn extends Feature {
         writeInt(out, stat.get(UsersStatisticsList.BUILD_TIME));
         out.write(",");
         
-        boolean profileCompleted = !profile.get(AbstractUsersProfile.USER_EMAIL).getAsString().isEmpty()
-                                   && !profile.get(AbstractUsersProfile.USER_FIRST_NAME).getAsString().isEmpty()
-                                   && !profile.get(AbstractUsersProfile.USER_LAST_NAME).getAsString().isEmpty()
-                                   && !profile.get(AbstractUsersProfile.USER_COMPANY).getAsString().isEmpty()
-                                   && !profile.get(AbstractUsersProfile.USER_JOB).getAsString().isEmpty()
-                                   && !profile.get(AbstractUsersProfile.USER_PHONE).getAsString().isEmpty();
+        boolean profileCompleted = isProfileCompleted(profile);
         writeNotNullStr(out, Boolean.toString(profileCompleted));
+        out.write(",");
+        
+        writeInt(out, stat.get(UsersStatisticsList.PAAS_DEPLOYS));
+        out.write(",");
+        
+        writeInt(out, getPoints(stat, profile));
+        
         out.newLine();
     }
 
@@ -390,14 +394,69 @@ public class ActOn extends Feature {
         String header = ""; 
         String delimeter = ",";
         
-        Iterator<String> iterator = headerMap.keySet().iterator();
+        Iterator<String> iterator = headers.keySet().iterator();
         while (iterator.hasNext()) {
-            header += headerMap.get(iterator.next()) + delimeter;
+            header += headers.get(iterator.next()) + delimeter;
         }
         
         header = header.substring(0, header.length() - 1);  // remove last delimeter occurence
         
         out.write(header);
         out.newLine();
+    }
+    
+    /**
+     * Get total Marketing Qualified Leads (MQL) Score from Product due to example {@link http://jsfiddle.net/ecavazos/64g9b/}.
+     * @param profile 
+     * @param stat 
+     */
+    private ValueData getPoints(Map<String, ValueData> statistics, Map<String, ValueData> profile) {
+        long total = 0;
+        
+        if (statistics.size() > 0) {
+            int logins = new Integer(statistics.get(UsersStatisticsList.LOGINS).toString());
+            int projects = new Integer(statistics.get(UsersStatisticsList.PROJECTS).toString());
+            int builds = new Integer(statistics.get(UsersStatisticsList.BUILDS).toString());
+            int debugs = new Integer(statistics.get(UsersStatisticsList.DEBUGS).toString());
+            int paasDeploys = new Integer(statistics.get(UsersStatisticsList.PAAS_DEPLOYS).toString());
+            int factories = new Integer(statistics.get(UsersStatisticsList.FACTORIES).toString());
+            int invitations = new Integer(statistics.get(UsersStatisticsList.INVITES).toString());
+            
+            boolean profileCompleted = isProfileCompleted(profile);
+            
+            // translate from seconds to hours
+            int time = Math.round(new Integer(statistics.get(UsersStatisticsList.TIME).toString()) / 360);
+       
+            // translate from seconds to hours
+            int runTime = Math.round(new Integer(statistics.get(UsersStatisticsList.RUN_TIME).toString()) / 360); 
+            
+            /** compute MQL Score from Product **/
+            total += logins * 2;
+            total += projects * 2;
+            total += builds * 2;
+            total += debugs * 2;
+            total += paasDeploys * 10;
+            total += factories * 10;
+            total += invitations * 10;
+            
+            // compute Metric Measurement Points
+            total +=       (logins > 5) ? 5 : 0;
+            total +=     (projects > 5) ? 5 : 0;
+            total +=  (paasDeploys > 5) ? 10 : 0;
+            total += (profileCompleted) ? 5 : 0;
+            total +=        (time > 40) ? 50 : 0;
+            total +=      (runTime > 3) ? 50 : 0;
+        }
+        
+        return ValueDataFactory.createValueData(total);
+    }
+
+    private boolean isProfileCompleted(Map<String, ValueData> profile) {
+        return !profile.get(AbstractUsersProfile.USER_EMAIL).getAsString().isEmpty()
+            && !profile.get(AbstractUsersProfile.USER_FIRST_NAME).getAsString().isEmpty()
+            && !profile.get(AbstractUsersProfile.USER_LAST_NAME).getAsString().isEmpty()
+            && !profile.get(AbstractUsersProfile.USER_COMPANY).getAsString().isEmpty()
+            && !profile.get(AbstractUsersProfile.USER_JOB).getAsString().isEmpty()
+            && !profile.get(AbstractUsersProfile.USER_PHONE).getAsString().isEmpty();
     }
 }
