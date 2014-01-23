@@ -80,6 +80,6 @@ public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
 
     @Override
     public String getDescription() {
-        return "The unique referrers count by factory";
+        return "The referrers count to a specifc factory";
     }
 }
