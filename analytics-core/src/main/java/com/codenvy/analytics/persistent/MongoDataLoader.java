@@ -42,25 +42,12 @@ public class MongoDataLoader implements DataLoader {
     public ValueData loadValue(ReadBasedMetric metric, Map<String, String> clauses) throws IOException {
         DBCollection dbCollection = db.getCollection(metric.getStorageCollectionName());
 
-        DBCursor curs = dbCollection.find();
-        System.out.println("\n");
-        while (curs.hasNext()) {
-            System.out.println(curs.next());
-        }
-        
-        
         try {
             DBObject filter = metric.getFilter(clauses);
             DBObject[] dbOperations = metric.getDBOperations(clauses);
 
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
             
-            Iterator<DBObject> it = aggregation.results().iterator();
-            System.out.println("\n");
-            while (it.hasNext()) {
-                System.out.println(it.next());
-            }
-
             return createdValueData(metric, aggregation.results().iterator());
         } catch (ParseException e) {
             throw new IOException(e);
