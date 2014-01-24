@@ -47,27 +47,50 @@
         <url-pattern>/reports</url-pattern>
     </servlet-mapping>
 
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Analytics-Application</web-resource-name>
-            <url-pattern>/*</url-pattern>
-            <http-method>POST</http-method>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>employees</role-name>
-        </auth-constraint>
-        <user-data-constraint>
-            <transport-guarantee>NONE</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
+    <context-param>
+        <param-name>verify-token-url</param-name>
+        <param-value>/api/internal/sso/server/principal</param-value>
+    </context-param>
 
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>Analytics Application</realm-name>
-    </login-config>
+    <listener>
+        <listener-class>com.codenvy.cloudide.auth.client.DestroySessionListener</listener-class>
+    </listener>
 
-    <security-role>
-        <role-name>employees</role-name>
-    </security-role>
+    <listener>
+        <listener-class>com.codenvy.cloudide.auth.client.SsoClientInitializer</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>com.codenvy.cloudide.auth.client.LoginFilter</filter-class>
+        <init-param>
+            <param-name>allow-anonymous-access</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+
+    <servlet>
+        <servlet-name>SSOLogoutServlet</servlet-name>
+        <servlet-class>com.codenvy.cloudide.auth.client.SSOLogoutServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>UpdateUserRolesServlet</servlet-name>
+        <servlet-class>com.codenvy.cloudide.auth.client.UpdateUserRolesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SSOLogoutServlet</servlet-name>
+        <url-pattern>/_sso/client/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UpdateUserRolesServlet</servlet-name>
+        <url-pattern>/_sso/client/updateroles</url-pattern>
+    </servlet-mapping>
+
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>
