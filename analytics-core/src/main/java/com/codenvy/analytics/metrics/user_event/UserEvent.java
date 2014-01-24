@@ -61,15 +61,6 @@ public class UserEvent extends ReadBasedMetric {
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
-        /*DBObject group = new BasicDBObject();
-
-        group.put("_id", null);
-        for (String type : types) {
-            group.put(type, new BasicDBObject("$sum", "$" + type));
-        }
-
-        return new DBObject[]{new BasicDBObject("$group", group)};*/
-        
         List<DBObject> dbOperations = new ArrayList<>();
 
         dbOperations.add(new BasicDBObject("$group",
@@ -83,26 +74,7 @@ public class UserEvent extends ReadBasedMetric {
                                                    .append(COUNT, 1)
                                                    ));
         
-        /*dbOperations.add(new BasicDBObject("$unwind", "$referrers"));
-        
-        dbOperations.add(new BasicDBObject("$group",
-                                           new BasicDBObject("_id", "$_id")
-                                                     .append(UNIQUE_REFERRER_COUNT, new BasicDBObject("$sum", 1))
-                                                     ));
-        
-        dbOperations.add(new BasicDBObject("$project",
-                                           new BasicDBObject("_id", 0)
-                                                   .append(ProductUsageFactorySessionsList.FACTORY, "$_id")
-                                                   .append(UNIQUE_REFERRER_COUNT, 1)
-                                                   ));*/
       return dbOperations.toArray(new DBObject[dbOperations.size()]);
-        
-        
-        /*DBObject group = new BasicDBObject();
-        group.put("_id", null);
-        group.put("value", new BasicDBObject("$sum", 1));
-        BasicDBObject opCount = new BasicDBObject("$group", group);
-        return new DBObject[]{opCount};*/
     }
     
     @Override

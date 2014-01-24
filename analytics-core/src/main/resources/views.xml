@@ -1897,4 +1897,19 @@
             </row>
         </section>
     </view>
+    
+    <view name="user_events">
+        <section name="user_events">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles"
+                           value="User event name,Count"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" 
+                           value="user_event"/>
+                <parameter key="fields" 
+                           value="user_event_name,count"/>
+            </row>
+        </section>
+    </view>
 </display>
