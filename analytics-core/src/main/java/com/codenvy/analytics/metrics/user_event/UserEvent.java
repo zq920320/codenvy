@@ -22,16 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /**
- * This is another simple class with no special purposes.
+ * 
  *
  * @author Alexander Reshetnyak
  */

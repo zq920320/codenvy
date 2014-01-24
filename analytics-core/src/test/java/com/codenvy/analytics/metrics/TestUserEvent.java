@@ -40,7 +40,7 @@ import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
 /**
- * This is another simple class with no special purposes.
+ * 
  *
  * @author Alexander Reshetnyak
  */
