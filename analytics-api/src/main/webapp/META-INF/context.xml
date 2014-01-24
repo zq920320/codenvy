@@ -16,7 +16,8 @@
          from Codenvy S.A..
 -->
 
-<Context path="/rest-service" docBase="rest-service" reloadable="true" crossContext="false">
+<Context path="/analytics" docBase="analytics" reloadable="true" crossContext="false" sessionCookiePath="/">
     <Logger className='org.apache.catalina.logger.SystemOutLogger' prefix='localhost_portal_log.' suffix='.txt' timestamp='true'/>
-    <Manager pathname=""/>
+    <Realm className="org.apache.catalina.realm.MemoryRealm" pathname="../../repository/conf/tomcat/tomcat-users.xml"/>
+    <!-- Manager pathname=""/-->
 </Context>

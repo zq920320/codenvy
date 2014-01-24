@@ -71,7 +71,7 @@ public class ViewBuilder extends Feature {
             return queryViewData(view, context);
         } else {
             ComputeViewDataAction computeViewDataAction = new ComputeViewDataAction(view, context);
-            return computeViewDataAction.doCompute(view, context);
+            return computeViewDataAction.doCompute();
         }
     }
 
@@ -168,6 +168,10 @@ public class ViewBuilder extends Feature {
                                       Map<String, String> context) throws ParseException {
             this.viewConfiguration = viewConfiguration;
             this.context = initializeFirstInterval(context);
+        }
+
+        public ViewData doCompute() throws IOException {
+            return doCompute(viewConfiguration, context);
         }
 
         @Override

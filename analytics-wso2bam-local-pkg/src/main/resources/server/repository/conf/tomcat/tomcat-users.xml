@@ -13,5 +13,7 @@
   <user username="both" password="tomcat" roles="tomcat,role1"/>
   <user username="tomcat" password="tomcat" roles="tomcat"/>
   <user username="admin" password="admin" roles="tomcat,manager,admin,developer"/>
+  <user username="admin@codenvy.com" password="admin" roles="tomcat,manager,admin,developer"/>
+  <user username="admin@gmail.com" password="admin" roles="developer"/>
   <user username="role1" password="tomcat" roles="role1"/>
 </tomcat-users>

@@ -18,6 +18,7 @@
 package com.codenvy.analytics;
 
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
@@ -35,12 +36,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+
+import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 @Path("view")
@@ -51,6 +57,8 @@ public class View {
     private static final DecimalFormat decimalFormat = new DecimalFormat("00");
 
     private ViewBuilder viewBuilder;
+    
+    Pattern adminRoleEmailPattern = Pattern.compile("@codenvy[.]com$"); 
 
     @Inject
     public View(ViewBuilder viewBuilder) {
@@ -60,9 +68,19 @@ public class View {
     @GET
     @Path("get/{name}")
     @Produces({"application/json"})
-    public Response build(@PathParam("name") String name, @Context UriInfo uriInfo) {
+    public Response build(@PathParam("name") String name, @Context UriInfo uriInfo, @Context SecurityContext securityContext) {
+        String email = null;
+        Principal userPrincipal = securityContext.getUserPrincipal();
+        if (userPrincipal != null) {
+            email = userPrincipal.getName();
+        }
+        
         try {
             Map<String, String> context = extractContext(uriInfo);
+            
+            if (email != null && ! isAdmin(email)) {
+                MetricFilter.USER.put(context, email);
+            }            
 
             ViewData result = viewBuilder.getViewData(name, context);
             String json = transform(result).toJson();
@@ -72,6 +90,11 @@ public class View {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
+    }
+
+    private boolean isAdmin(String email) {
+        Matcher matcher = adminRoleEmailPattern.matcher(email);
+        return matcher.find();
     }
 
     /**
