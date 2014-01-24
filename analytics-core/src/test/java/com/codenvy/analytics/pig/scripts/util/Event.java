@@ -340,6 +340,17 @@ public class Event {
                                 .withParam("ORG-ID", orgId)
                                 .withParam("AFFILIATE-ID", affiliateId);
         }
+        
+        public static Builder createUserEvent(String eventName, Entry<String, String> ... args) {
+            Builder builder = new Builder().withParam("EVENT", "user-event")
+                                .withParam("ITEM", eventName);
+            
+            for (Entry<String, String> arg : args) {
+                builder.withParam(arg.getKey(), arg.getValue());
+            }
+            
+            return builder;
+        }
     }
 
     /** Event context contains 3 parameters. */

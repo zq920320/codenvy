@@ -563,4 +563,17 @@
             </index>
         </indexes>
     </collection>
+    
+    <collection name="user_event">
+        <indexes>
+            <index name="user">
+                <field>date</field>
+                <field>user</field>
+            </index>
+            <index name="ws">
+                <field>date</field>
+                <field>ws</field>
+            </index>
+        </indexes>
+    </collection>
 </collections>
