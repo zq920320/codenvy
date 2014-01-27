@@ -417,6 +417,7 @@ public class ActOn extends Feature {
             int logins = new Integer(statistics.get(UsersStatisticsList.LOGINS).toString());
             int projects = new Integer(statistics.get(UsersStatisticsList.PROJECTS).toString());
             int builds = new Integer(statistics.get(UsersStatisticsList.BUILDS).toString());
+            int runs = new Integer(statistics.get(UsersStatisticsList.RUNS).toString());
             int debugs = new Integer(statistics.get(UsersStatisticsList.DEBUGS).toString());
             int paasDeploys = new Integer(statistics.get(UsersStatisticsList.PAAS_DEPLOYS).toString());
             int factories = new Integer(statistics.get(UsersStatisticsList.FACTORIES).toString());
@@ -426,25 +427,30 @@ public class ActOn extends Feature {
             
             // translate from seconds to hours
             int time = Math.round(new Integer(statistics.get(UsersStatisticsList.TIME).toString()) / 360);
-       
+
+            // translate from seconds to hours
+            int buildTime = Math.round(new Integer(statistics.get(UsersStatisticsList.BUILD_TIME).toString()) / 360);
+            
             // translate from seconds to hours
             int runTime = Math.round(new Integer(statistics.get(UsersStatisticsList.RUN_TIME).toString()) / 360); 
             
             /** compute MQL Score from Product **/
-            total += logins * 2;
-            total += projects * 2;
-            total += builds * 2;
-            total += debugs * 2;
-            total += paasDeploys * 10;
-            total += factories * 10;
-            total += invitations * 10;
+            total +=        logins *  2;
+            total +=      projects *  2;
+            total +=        builds *  2;
+            total +=          runs *  2;
+            total +=        debugs *  2;
+            total +=   paasDeploys * 10;
+            total +=     factories * 10;
+            total +=   invitations * 10;
             
             // compute Metric Measurement Points
-            total +=       (logins > 5) ? 5 : 0;
-            total +=     (projects > 5) ? 5 : 0;
+            total +=       (logins > 5) ?  5 : 0;
+            total +=     (projects > 5) ?  5 : 0;
             total +=  (paasDeploys > 5) ? 10 : 0;
-            total += (profileCompleted) ? 5 : 0;
+            total += (profileCompleted) ?  5 : 0;
             total +=        (time > 40) ? 50 : 0;
+            total +=    (buildTime > 3) ? 50 : 0;
             total +=      (runTime > 3) ? 50 : 0;
         }
         
