@@ -52,7 +52,7 @@
             <url-pattern>/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>developer</role-name>
+            <role-name>user</role-name>
         </auth-constraint>
     </security-constraint>
 
@@ -61,6 +61,6 @@
     </login-config>
 
     <security-role>
-        <role-name>developer</role-name>
+        <role-name>user</role-name>
     </security-role>
 </web-app>

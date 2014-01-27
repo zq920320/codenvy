@@ -27,18 +27,14 @@ import com.codenvy.dto.server.JsonStringMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-
+import javax.ws.rs.core.*;
 import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -48,17 +44,19 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+/**
+ * @author Alexander Reshetnyak
+ * @author Anatoliy Bazko
+ */
 @Path("view")
 @Singleton
 public class View {
 
-    private static final Logger        LOG           = LoggerFactory.getLogger(View.class);
-    private static final DecimalFormat decimalFormat = new DecimalFormat("00");
+    private static final Logger        LOG                      = LoggerFactory.getLogger(View.class);
+    private static final DecimalFormat DECIMAL_FORMAT           = new DecimalFormat("00");
+    private static final Pattern       ADMIN_ROLE_EMAIL_PATTERN = Pattern.compile("@codenvy[.]com$");
 
     private ViewBuilder viewBuilder;
-    
-    Pattern adminRoleEmailPattern = Pattern.compile("@codenvy[.]com$"); 
 
     @Inject
     public View(ViewBuilder viewBuilder) {
@@ -66,21 +64,23 @@ public class View {
     }
 
     @GET
-    @Path("get/{name}")
+    @Path("{name}")
     @Produces({"application/json"})
-    public Response build(@PathParam("name") String name, @Context UriInfo uriInfo, @Context SecurityContext securityContext) {
+    @RolesAllowed(value = {"user"})
+    public Response build(@PathParam("name") String name, @Context UriInfo uriInfo,
+                          @Context SecurityContext securityContext) {
         String email = null;
         Principal userPrincipal = securityContext.getUserPrincipal();
         if (userPrincipal != null) {
             email = userPrincipal.getName();
         }
-        
+
         try {
             Map<String, String> context = extractContext(uriInfo);
-            
-            if (email != null && ! isAdmin(email)) {
+
+            if (email != null && !isAdmin(email)) {
                 MetricFilter.USER.put(context, email);
-            }            
+            }
 
             ViewData result = viewBuilder.getViewData(name, context);
             String json = transform(result).toJson();
@@ -93,7 +93,7 @@ public class View {
     }
 
     private boolean isAdmin(String email) {
-        Matcher matcher = adminRoleEmailPattern.matcher(email);
+        Matcher matcher = ADMIN_ROLE_EMAIL_PATTERN.matcher(email);
         return matcher.find();
     }
 
@@ -117,13 +117,13 @@ public class View {
                 Map<String, String> newRowData = new LinkedHashMap<>(rowData.size());
 
                 for (int j = 0; j < rowData.size(); j++) {
-                    newRowData.put("c" + decimalFormat.format(j), rowData.get(j).getAsString());
+                    newRowData.put("c" + DECIMAL_FORMAT.format(j), rowData.get(j).getAsString());
                 }
 
-                newSectionData.put("r" + decimalFormat.format(i), newRowData);
+                newSectionData.put("r" + DECIMAL_FORMAT.format(i), newRowData);
             }
 
-            result.put("t" + decimalFormat.format(t++), newSectionData);
+            result.put("t" + DECIMAL_FORMAT.format(t++), newSectionData);
         }
 
         return new JsonStringMapImpl(result);

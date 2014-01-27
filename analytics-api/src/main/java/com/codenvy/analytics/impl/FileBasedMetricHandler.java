@@ -24,12 +24,13 @@ import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.util.MetricDTOFactory;
 import com.codenvy.api.analytics.MetricHandler;
-import com.codenvy.api.analytics.dto.*;
+import com.codenvy.api.analytics.dto.MetricInfoDTO;
+import com.codenvy.api.analytics.dto.MetricInfoListDTO;
+import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
 import com.codenvy.api.core.rest.ServiceContext;
 import com.codenvy.dto.server.DtoFactory;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,26 +84,6 @@ public class FileBasedMetricHandler implements MetricHandler {
         MetricInfoListDTO metricInfoListDTO = DtoFactory.getInstance().createDto(MetricInfoListDTO.class);
         metricInfoListDTO.setMetrics(metricInfoDTOs);
         return metricInfoListDTO;
-    }
-
-    @Override
-    public MetricRolesAllowedListDTO getRolesAllowed(String metricName, ServiceContext serviceContext) {
-        Metric metric = MetricFactory.getMetric(metricName);
-        RolesAllowed rolesAllowed = metric.getClass().getAnnotation(RolesAllowed.class);
-
-        List<MetricRolesAllowedDTO> roleDTOs = new ArrayList<>(rolesAllowed.value().length);
-
-        for (String role : rolesAllowed.value()) {
-            MetricRolesAllowedDTO roleDTO = DtoFactory.getInstance().createDto(MetricRolesAllowedDTO.class);
-            roleDTO.setRolesAllowed(role);
-
-            roleDTOs.add(roleDTO);
-        }
-
-        MetricRolesAllowedListDTO rolesListDTO = DtoFactory.getInstance().createDto(MetricRolesAllowedListDTO.class);
-        rolesListDTO.setRolesAllowed(roleDTOs);
-
-        return rolesListDTO;
     }
 
     protected ValueData getMetricValue(String metricName, Map<String, String> executionContext) throws IOException {

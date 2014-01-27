@@ -68,7 +68,7 @@ function Model() {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-		var url = "/api/view/get/" + modelName;
+		var url = "/api/view/" + modelName;
 
 		var callback = function(data) {
             data = convertJsonToTables(data);

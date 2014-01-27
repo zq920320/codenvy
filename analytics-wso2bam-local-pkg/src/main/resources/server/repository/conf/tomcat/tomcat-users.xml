@@ -9,11 +9,11 @@
   <role rolename="tomcat"/>
   <role rolename="role1"/>
   <role rolename="admin"/>
-  <role rolename="developer"/>
+  <role rolename="user"/>
   <user username="both" password="tomcat" roles="tomcat,role1"/>
   <user username="tomcat" password="tomcat" roles="tomcat"/>
-  <user username="admin" password="admin" roles="tomcat,manager,admin,developer"/>
-  <user username="admin@codenvy.com" password="admin" roles="tomcat,manager,admin,developer"/>
-  <user username="admin@gmail.com" password="admin" roles="developer"/>
+  <user username="admin" password="admin" roles="tomcat,manager,admin,user"/>
+  <user username="admin@codenvy.com" password="admin" roles="tomcat,manager,admin,user"/>
+  <user username="admin@gmail.com" password="admin" roles="user"/>
   <user username="role1" password="tomcat" roles="role1"/>
 </tomcat-users>
