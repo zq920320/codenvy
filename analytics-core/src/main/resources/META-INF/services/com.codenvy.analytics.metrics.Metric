@@ -8,6 +8,7 @@ com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.NewActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.ReturningActiveWorkspaces
 
+com.codenvy.analytics.metrics.users.UsersEvents
 com.codenvy.analytics.metrics.users.CreatedUsers
 com.codenvy.analytics.metrics.users.CreatedUsersFromFactory
 com.codenvy.analytics.metrics.users.CreatedUsersFromAuth

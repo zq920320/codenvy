@@ -182,7 +182,7 @@ public class ViewBuilder extends Feature {
                 ViewData viewData = doCompute(viewConfiguration, context);
                 retainViewData(viewId, viewData, context);
             } catch (Throwable e) {
-                String message = "Can't compute view" + viewId;
+                String message = "Can't compute view " + viewId;
                 LOG.error(message, e);
                 throw new IllegalStateException(message, e);
             }

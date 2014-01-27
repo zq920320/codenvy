@@ -44,15 +44,6 @@ public enum ScriptType {
             return params;
         }
     },
-    USER_EVENTS {
-        @Override
-        public Set<Parameters> getParams() {
-            Set<Parameters> params = super.getParams();
-            params.add(Parameters.EVENT);
-            params.add(Parameters.PARAM);
-            return params;
-        }
-    },
     DEPLOYMENTS_BY_TYPES,
     CREATED_USERS_FROM_FACTORY,
     PRODUCT_USAGE_SESSIONS {
@@ -96,6 +87,15 @@ public enum ScriptType {
     USERS_UPDATE_PROFILES,
     USERS_STATISTICS,
     USERS_ACTIVITY,
+    USERS_EVENTS {
+        @Override
+        public Set<Parameters> getParams() {
+            Set<Parameters> params = super.getParams();
+            params.add(Parameters.EVENT);
+            params.add(Parameters.PARAM);
+            return params;
+        }
+    },
     RUNNER_TOTAL_TIME,
 
     CHECK_LOGS_1 {

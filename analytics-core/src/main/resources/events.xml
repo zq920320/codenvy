@@ -24,9 +24,12 @@
             <param>USER</param>
         </parameters>
     </event>
-    <event name="user-event">
+    <event name="users-events">
         <description/>
-        <parameters/>
+        <parameters>
+            <param>USER</param>
+            <param>ACTION</param>
+        </parameters>
     </event>
     <event name="file-manipulation">
         <description/>

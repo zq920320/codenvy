@@ -42,24 +42,51 @@
         <filter-name>guiceFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Analytics-API</web-resource-name>
-            <url-pattern>/*</url-pattern>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>developer</role-name>
-        </auth-constraint>
-    </security-constraint>
 
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>Analytics API</realm-name>
-    </login-config>
+    <context-param>
+        <param-name>verify-token-url</param-name>
+        <param-value>/api/internal/sso/server/principal</param-value>
+    </context-param>
 
-    <security-role>
-        <role-name>developer</role-name>
-    </security-role>
+    <listener>
+        <listener-class>com.codenvy.cloudide.auth.client.DestroySessionListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>com.codenvy.cloudide.auth.client.SsoClientInitializer</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>com.codenvy.cloudide.auth.client.LoginFilter</filter-class>
+        <init-param>
+            <param-name>allow-anonymous-access</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+
+    <servlet>
+        <servlet-name>SSOLogoutServlet</servlet-name>
+        <servlet-class>com.codenvy.cloudide.auth.client.SSOLogoutServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>UpdateUserRolesServlet</servlet-name>
+        <servlet-class>com.codenvy.cloudide.auth.client.UpdateUserRolesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SSOLogoutServlet</servlet-name>
+        <url-pattern>/_sso/client/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UpdateUserRolesServlet</servlet-name>
+        <url-pattern>/_sso/client/updateroles</url-pattern>
+    </servlet-mapping>
+
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>

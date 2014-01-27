@@ -22,7 +22,6 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.AggregationOutput;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class MongoDataLoader implements DataLoader {
             DBObject[] dbOperations = metric.getDBOperations(clauses);
 
             AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
-            
+
             return createdValueData(metric, aggregation.results().iterator());
         } catch (ParseException e) {
             throw new IOException(e);

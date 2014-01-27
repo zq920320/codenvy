@@ -358,6 +358,6 @@ public enum MetricType {
     IDE_USAGE_SHELL,
     IDE_USAGE_PROFILE,
     IDE_USAGE_LOGOUT,
-    
-    USER_EVENT
+
+    USERS_EVENTS
 }

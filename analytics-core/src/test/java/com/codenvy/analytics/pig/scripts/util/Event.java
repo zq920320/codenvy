@@ -170,7 +170,7 @@ public class Event {
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type);
         }
-        
+
         public static Builder createDebugStartedEvent(String user, String ws, String project, String type) {
             return new Builder().withParam("EVENT", "debug-started")
                                 .withParam("WS", ws)
@@ -194,7 +194,7 @@ public class Event {
                                 .withParam("PROJECT", project)
                                 .withParam("TYPE", type);
         }
-        
+
         public static Builder createUserInviteEvent(String user, String ws, String email) {
             return new Builder().withParam("EVENT", "user-invite")
                                 .withParam("WS", ws)
@@ -340,15 +340,12 @@ public class Event {
                                 .withParam("ORG-ID", orgId)
                                 .withParam("AFFILIATE-ID", affiliateId);
         }
-        
-        public static Builder createUserEvent(String eventName, Entry<String, String> ... args) {
-            Builder builder = new Builder().withParam("EVENT", "user-event")
-                                .withParam("ITEM", eventName);
-            
-            for (Entry<String, String> arg : args) {
-                builder.withParam(arg.getKey(), arg.getValue());
-            }
-            
+
+        public static Builder createUserEvent(String user, String action) {
+            Builder builder = new Builder().withParam("EVENT", "users-events")
+                                           .withParam("ACTION", action)
+                                           .withParam("USER", user);
+
             return builder;
         }
     }
