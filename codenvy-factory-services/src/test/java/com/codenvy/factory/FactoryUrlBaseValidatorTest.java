@@ -136,17 +136,23 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test(dataProvider = "validProjectNamesProvider")
     public void shouldBeAbleToValidateValidProjectName(String projectName) throws Exception {
+        // given
         Map<String, String> projectAttributes = new HashMap<>();
         projectAttributes.put("pname", projectName);
         url.setProjectattributes(projectAttributes);
+
+        // when, then
         validator.validateUrl(url);
     }
 
     @Test(dataProvider = "invalidProjectNamesProvider", expectedExceptions = FactoryUrlException.class)
     public void shouldThrowFactoryUrlExceptionIfProjectNameInvalid(String projectName) throws Exception {
+        // given
         Map<String, String> projectAttributes = new HashMap<>();
         projectAttributes.put("pname", projectName);
         url.setProjectattributes(projectAttributes);
+
+        // when, then
         validator.validateUrl(url);
     }
 
@@ -226,5 +232,41 @@ public class FactoryUrlBaseValidatorTest {
                                         "newBranch", null, null)},
                 // invalid v
         };
+    }
+
+    @Test
+    public void shouldBeAbleToValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsValid()
+            throws FactoryUrlException, OrganizationServiceException {
+        // given
+        advUrl.setWelcome(new WelcomePage(new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico"),
+                                          new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico")));
+        advUrl.setOrgid(ID);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn("2022-11-30 11:21:15");
+
+        // when, then
+        validator.validateUrl(advUrl);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsNull() throws FactoryUrlException {
+        // given
+        advUrl.setWelcome(new WelcomePage(new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico"),
+                                          new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico")));
+        advUrl.setOrgid(null);
+
+        // when, then
+        validator.validateUrl(advUrl);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsEmpty() throws FactoryUrlException {
+        // given
+        advUrl.setWelcome(new WelcomePage(new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico"),
+                                          new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico")));
+        advUrl.setOrgid("");
+
+        // when, then
+        validator.validateUrl(advUrl);
     }
 }

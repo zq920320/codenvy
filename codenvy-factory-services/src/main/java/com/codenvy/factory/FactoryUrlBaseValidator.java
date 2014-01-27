@@ -83,6 +83,10 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         }
 
         validateCommonParams(factoryUrl);
+
+        if (factoryUrl.getWelcome() != null && (factoryUrl.getOrgid() == null || factoryUrl.getOrgid().isEmpty())) {
+            throw new FactoryUrlException("Using a custom Welcome Page requires a valid orgid parameter.");
+        }
     }
 
     protected void validateCommonParams(SimpleFactoryUrl factoryUrl) throws FactoryUrlException {
