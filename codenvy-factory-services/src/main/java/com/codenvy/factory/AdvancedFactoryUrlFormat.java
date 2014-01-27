@@ -17,7 +17,8 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
@@ -26,8 +27,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-
-import static com.codenvy.api.factory.AdvancedFactoryUrlValidator.validate;
 
 /**
  * Advanced version of <code>FactoryUrlFormat</code>.
@@ -59,8 +58,6 @@ public class AdvancedFactoryUrlFormat implements FactoryUrlFormat<AdvancedFactor
             if (factoryUrl == null) {
                 throw new FactoryUrlExistanceException("Can't find factory with id " + factoryId + ".");
             }
-
-            validate(factoryUrl);
 
             return factoryUrl;
         } catch (IOException e) {

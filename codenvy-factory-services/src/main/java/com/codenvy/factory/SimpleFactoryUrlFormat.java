@@ -17,10 +17,7 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.AdvancedFactoryUrlValidator;
-import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.SimpleFactoryUrl;
-import com.codenvy.api.factory.Variable;
+import com.codenvy.api.factory.*;
 import com.codenvy.commons.json.JsonHelper;
 import com.codenvy.commons.json.JsonParseException;
 import com.codenvy.commons.lang.UrlUtils;
@@ -78,18 +75,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat<SimpleFactoryUrl
                     if (value == null || value.isEmpty()) {
                         throw new FactoryUrlException(DEFAULT_MESSAGE);
                     }
-
-                    // check that vcs value is correct (only git is supported for now)
-                    if ("vcs".equals(paramToCheck) && !"git".equals(value)) {
-                        throw new FactoryUrlException(
-                                "Parameter vcs has illegal value. Only \"git\" is supported for now.");
-                    }
                 }
-            }
-
-            // check that vcs value is correct (only git is supported for now)
-            if (!"git".equals(params.get("vcs").iterator().next())) {
-                throw new FactoryUrlException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
             }
 
             SimpleFactoryUrl factoryUrl = new SimpleFactoryUrl();
@@ -121,10 +107,6 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat<SimpleFactoryUrl
             Map<String, String> projectAttributes = new HashMap<>();
             if ((values = params.get("pname")) != null && !values.isEmpty()) {
                 String pname = values.iterator().next();
-                if (!AdvancedFactoryUrlValidator.isProjectNameValid(pname)) {
-                    throw new FactoryUrlException(DEFAULT_MESSAGE);
-                }
-
                 projectAttributes.put("pname", pname);
             }
             if ((values = params.get("ptype")) != null && !values.isEmpty()) {

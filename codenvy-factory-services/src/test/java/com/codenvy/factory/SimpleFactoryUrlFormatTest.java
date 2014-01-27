@@ -17,13 +17,9 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.SimpleFactoryUrl;
-import com.codenvy.api.factory.Variable;
+import com.codenvy.api.factory.*;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -85,19 +81,11 @@ public class SimpleFactoryUrlFormatTest {
                                enc(VALID_REPOSITORY_URL)}, // vcs par is duplicated
                               {"http://codenvy.com/factory?v=1.0&vcs=&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
                                enc(VALID_REPOSITORY_URL)}, // vcs par has empty value
-                              {"http://codenvy.com/factory?v=1.0&vcs=mercurial&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" + enc(
-                                      VALID_REPOSITORY_URL)}, // vcs par has illegal value
                               {"http://codenvy.com/factory?v=1.0&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
                                enc(VALID_REPOSITORY_URL)}, // vcs par is missing
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt"}, // vcsurl par is missing
                               {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=eee&wname=ttt&vcsurl=" +
-                               enc(VALID_REPOSITORY_URL) + "&vcsurl=" + enc(VALID_REPOSITORY_URL)}, // vcsurl par is duplicated
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=.eee&wname=ttt&vcsurl=" +
-                               enc(VALID_REPOSITORY_URL)},
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=-eee&wname=ttt&vcsurl=" +
-                               enc(VALID_REPOSITORY_URL)},
-                              {"http://codenvy.com/factory?v=1.0&vcs=git&idcommit=1234567&pname=%eee&wname=ttt&vcsurl=" +
-                               enc(VALID_REPOSITORY_URL)}
+                               enc(VALID_REPOSITORY_URL) + "&vcsurl=" + enc(VALID_REPOSITORY_URL)} // vcsurl par is duplicated
         };
     }
 
