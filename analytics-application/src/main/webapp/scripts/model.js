@@ -46,7 +46,7 @@ function Model() {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-	    var url = '/api/analytics/metric/' + modelName;
+	    var url = '/analytics/api/analytics/metric/' + modelName;
 
 	    var callback = function(data) {
             data = parseInt(data.value);   
@@ -68,7 +68,7 @@ function Model() {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-		var url = "/api/view/" + modelName;
+		var url = "/analytics/api/view/" + modelName;
 
 		var callback = function(data) {
             data = convertJsonToTables(data);

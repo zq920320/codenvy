@@ -28,6 +28,6 @@ public class ApiServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        serve("/*").with(GuiceEverrestServlet.class);
+        serve("/api/*").with(GuiceEverrestServlet.class);
     }
 }

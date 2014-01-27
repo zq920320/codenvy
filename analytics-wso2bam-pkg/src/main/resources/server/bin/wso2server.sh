@@ -262,6 +262,10 @@ status=$START_EXIT_STATUS
 cp -r $HOME/analytics_conf/user-mgt.xml $CARBON_HOME/repository/conf
 cp -r $HOME/analytics_conf/log4j.properties $CARBON_HOME/repository/conf
 
+[ -z "${TENANT_MASTERHOST}" ]  && TENANT_MASTERHOST="localhost"
+[ -z "${TENANT_MASTERPORT}" ]  && TENANT_MASTERPORT="80"
+[ -z "${TENANT_MASTERHOST_PROTOCOL}" ]  && TENANT_MASTERHOST_PROTOCOL="http"
+
 while [ "$status" = "$START_EXIT_STATUS" ]
 do
     $JAVACMD \
@@ -273,6 +277,9 @@ do
     $JAVA_OPTS \
     -Xms256m -Xmx2G -XX:MaxPermSize=256m \
     -Dcodenvy.local.conf.dir=$HOME/analytics_conf \
+    -Dtenant.masterhost=${TENANT_MASTERHOST} \
+    -Dtenant.masterhost.protocol=${TENANT_MASTERHOST_PROTOCOL} \
+    -Dtenant.masterport=${TENANT_MASTERPORT} \
     -Dmail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory \
     -Dmail.smtp.socketFactory.port=465 \
     -Ddisable.cassandra.server.startup=true \

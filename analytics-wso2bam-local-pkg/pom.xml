@@ -30,12 +30,6 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.analytics</groupId>
-            <artifactId>analytics-api</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.analytics</groupId>
             <artifactId>analytics-application</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -159,37 +153,22 @@
                                         <!-- Patching war file to configure simple authentication -->
                                         <unzip dest="${project.build.directory}/packager-conf/war/analytics-application"
                                                src="${project.build.directory}/packager-conf/war/analytics-application.war"/>
-                                        <unzip dest="${project.build.directory}/packager-conf/war/analytics-api"
-                                               src="${project.build.directory}/packager-conf/war/analytics-api.war"/>
 
                                         <copy tofile="${project.build.directory}/packager-conf/war/analytics-application/WEB-INF/web.xml"
                                               file="src/main/resources/analytics-application-basic-auth.web.xml"
                                               overwrite="true"/>
-                                        <copy tofile="${project.build.directory}/packager-conf/war/analytics-api/WEB-INF/web.xml"
-                                              file="src/main/resources/analytics-api-basic-auth.web.xml"
-                                              overwrite="true"/>
 
                                         <copy tofile="${project.build.directory}/packager-conf/war/analytics-application/META-INF/context.xml"
                                               file="src/main/resources/analytics-application-basic-auth.context.xml"
-                                              overwrite="true"/>
-                                        <copy tofile="${project.build.directory}/packager-conf/war/analytics-api/META-INF/context.xml"
-                                              file="src/main/resources/analytics-api-basic-auth.context.xml"
                                               overwrite="true"/>
 
                                         <war destfile="${project.build.directory}/packager-conf/war/analytics-application.war">
                                             <fileset
                                                     dir="${project.build.directory}/packager-conf/war/analytics-application"/>
                                         </war>
-                                        <war destfile="${project.build.directory}/packager-conf/war/analytics-api.war">
-                                            <fileset
-                                                    dir="${project.build.directory}/packager-conf/war/analytics-api"/>
-                                        </war>
 
                                         <delete dir="${project.build.directory}/packager-conf/war/analytics-application"/>
-                                        <delete dir="${project.build.directory}/packager-conf/war/analytics-api"/>
 
-                                        <move file="${project.build.directory}/packager-conf/war/analytics-api.war"
-                                              tofile="${project.build.directory}/packager-conf/war/api.war"/>
                                         <move file="${project.build.directory}/packager-conf/war/analytics-application.war"
                                               tofile="${project.build.directory}/packager-conf/war/analytics.war"/>
 

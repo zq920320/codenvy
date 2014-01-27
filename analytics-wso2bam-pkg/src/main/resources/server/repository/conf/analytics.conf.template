@@ -2,7 +2,7 @@
 analytics.logs.dir=$HOME/logs-production
 analytics.home.dir=$HOME/wso2bam-analytics
 analytics.tmp.dir=${analytics.home.dir}/tmp
-analytics.reports.dir=${analytics.home.dir}repository/deployment/server/webapps/analytics/reports
+analytics.reports.dir=${analytics.home.dir}/repository/deployment/server/webapps/analytics/reports
 analytics.backup.reports.dir=$HOME/analytics_data/reports
 
 # Pig server configuration
