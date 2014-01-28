@@ -82,6 +82,7 @@ public class ActOn extends Feature {
         put(AbstractUsersProfile.USER_COMPANY, "company");
         put(UsersStatisticsList.PROJECTS, "projects");
         put(UsersStatisticsList.BUILDS, "builts");
+        put(UsersStatisticsList.RUNS, "runs");
         put(UsersStatisticsList.DEPLOYS, "deployments");
         put(UsersStatisticsList.TIME, "spentTime");
         put(INACTIVE, INACTIVE);
@@ -89,8 +90,8 @@ public class ActOn extends Feature {
         put(UsersStatisticsList.FACTORIES, UsersStatisticsList.FACTORIES);
         put(UsersStatisticsList.DEBUGS, UsersStatisticsList.DEBUGS);
         put(UsersStatisticsList.LOGINS, UsersStatisticsList.LOGINS);
-        put(UsersStatisticsList.RUN_TIME, "run-time");
         put(UsersStatisticsList.BUILD_TIME, "build-time");
+        put(UsersStatisticsList.RUN_TIME, "run-time");
         put(PROFILE_COMPLETED, PROFILE_COMPLETED);
         put(UsersStatisticsList.PAAS_DEPLOYS, "paas-deploys");
         put(POINTS, POINTS);
@@ -319,8 +320,11 @@ public class ActOn extends Feature {
 
         writeInt(out, stat.get(UsersStatisticsList.PROJECTS));
         out.write(",");
-
+        
         writeInt(out, stat.get(UsersStatisticsList.BUILDS));
+        out.write(",");
+
+        writeInt(out, stat.get(UsersStatisticsList.RUNS));
         out.write(",");
 
         writeInt(out, stat.get(UsersStatisticsList.DEPLOYS));
@@ -349,10 +353,10 @@ public class ActOn extends Feature {
         writeInt(out, stat.get(UsersStatisticsList.LOGINS));
         out.write(",");        
 
-        writeInt(out, stat.get(UsersStatisticsList.RUN_TIME));
-        out.write(",");
-
         writeInt(out, stat.get(UsersStatisticsList.BUILD_TIME));
+        out.write(",");
+        
+        writeInt(out, stat.get(UsersStatisticsList.RUN_TIME));
         out.write(",");
         
         boolean profileCompleted = isProfileCompleted(profile);
