@@ -40,8 +40,13 @@
     </filter>
 
     <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>guiceFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
+        <url-pattern>/rest/*</url-pattern>
     </filter-mapping>
 
     <listener>
@@ -108,9 +113,4 @@
         <servlet-name>UpdateUserRolesServlet</servlet-name>
         <url-pattern>/_sso/client/updateroles</url-pattern>
     </servlet-mapping>
-
-    <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 </web-app>

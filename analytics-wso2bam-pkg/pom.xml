@@ -29,12 +29,6 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.analytics</groupId>
-            <artifactId>analytics-api</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.analytics</groupId>
             <artifactId>analytics-application</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -148,7 +142,6 @@
                                         <jar destfile="${project.build.directory}/wso2bam-analytics/repository/components/plugins/org.wso2.carbon.logging_4.1.0.jar" update="true">
                                             <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
                                         </jar>
-                                        <move file="${project.build.directory}/packager-conf/war/analytics-api.war" tofile="${project.build.directory}/packager-conf/war/api.war" />
                                         <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/packager-conf/war/analytics.war" />
 
                                         <!-- Modifying Pig's properties-->

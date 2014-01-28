@@ -35,7 +35,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
-import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
@@ -67,19 +66,15 @@ public class View {
     @Path("{name}")
     @Produces({"application/json"})
     @RolesAllowed(value = {"user"})
-    public Response build(@PathParam("name") String name, @Context UriInfo uriInfo,
+    public Response build(@PathParam("name") String name,
+                          @Context UriInfo uriInfo,
                           @Context SecurityContext securityContext) {
-        String email = null;
-        Principal userPrincipal = securityContext.getUserPrincipal();
-        if (userPrincipal != null) {
-            email = userPrincipal.getName();
-        }
-
         try {
             Map<String, String> context = extractContext(uriInfo);
 
-            if (email != null && !isAdmin(email)) {
-                MetricFilter.USER.put(context, email);
+            String user = securityContext.getUserPrincipal().getName();
+            if (!isAdmin(user)) {
+                MetricFilter.USER.put(context, user);
             }
 
             ViewData result = viewBuilder.getViewData(name, context);
