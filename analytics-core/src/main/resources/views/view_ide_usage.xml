@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+         CODENVY CONFIDENTIAL
+         ________________
+
+         [2012] - [2014] Codenvy, S.A.
+         All Rights Reserved.
+         NOTICE: All information contained herein is, and remains
+         the property of Codenvy S.A. and its suppliers,
+         if any. The intellectual and technical concepts contained
+         herein are proprietary to Codenvy S.A.
+         and its suppliers and may be covered by U.S. and Foreign Patents,
+         patents in process, and are protected by trade secret or copyright law.
+         Dissemination of this information or reproduction of this material
+         is strictly forbidden unless prior written permission is obtained
+         from Codenvy S.A..
+-->
+<display>
+    <view time-unit="day,week,month,lifetime" name="ide_usage">
+        <section name="ide_usage_file_new">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'File->New->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_folder"/>
+                <parameter key="description" value="File->New->Folder"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_package"/>
+                <parameter key="description" value="File->New->Package"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_text_file"/>
+                <parameter key="description" value="File->New->TextFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_xml_file"/>
+                <parameter key="description" value="File->New->XMLFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_jsf_file"/>
+                <parameter key="description" value="File->New->JSFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_html_file"/>
+                <parameter key="description" value="File->New->HTMLFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_css_file"/>
+                <parameter key="description" value="File->New->CSSFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_java_class_file"/>
+                <parameter key="description" value="File->New->JavaClassFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_jsp_file"/>
+                <parameter key="description" value="File->New->JSPFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_ruby_file"/>
+                <parameter key="description" value="File->New->RubyFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_php_file"/>
+                <parameter key="description" value="File->New->PHPFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_python_file"/>
+                <parameter key="description" value="File->New->PythonFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_new_yaml_file"/>
+                <parameter key="description" value="File->New->YAMLFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_file">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'File->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_upload_file"/>
+                <parameter key="description" value="File->UploadFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_upload_zipped_folder"/>
+                <parameter key="description" value="File->UploadZippedFolder"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_open_local_file"/>
+                <parameter key="description" value="File->OpenLocalFile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_open_file_by_path"/>
+                <parameter key="description" value="File->OpenFileByPath"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_open_by_url"/>
+                <parameter key="description" value="File->OpenByURL"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_download"/>
+                <parameter key="description" value="File->Download"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_download_zipped_folder"/>
+                <parameter key="description" value="File->DowloadZippedFolder"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_save"/>
+                <parameter key="description" value="File->Save"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_save_as"/>
+                <parameter key="description" value="File->SaveAs"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_close"/>
+                <parameter key="description" value="File->Close"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_open"/>
+                <parameter key="description" value="File->Open"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_delete"/>
+                <parameter key="description" value="File->Delete"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_rename"/>
+                <parameter key="description" value="File->Rename"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_file_search"/>
+                <parameter key="description" value="File->Search"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_project">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'Project->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_create_new_project"/>
+                <parameter key="description" value="Project->CreateNewProject"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_create_new_module"/>
+                <parameter key="description" value="Project->CreateNewModule"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_import_from_github"/>
+                <parameter key="description" value="Project->ImportFromGitHub"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_open"/>
+                <parameter key="description" value="Project->Open"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_close"/>
+                <parameter key="description" value="Project->Close"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_properties_view"/>
+                <parameter key="description" value="Project->PropertiesView"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_open_resource"/>
+                <parameter key="description" value="Project->OpenResource"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_enable_collaboration_mode"/>
+                <parameter key="description" value="Project->EnableCollaborationMode"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_user_joined_workspace_in_collaboration_mode"/>
+                <parameter key="description" value="Project->UserJoinedWorkspaceinCollaborationMode"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_user_left_workspace"/>
+                <parameter key="description" value="Project->UserLeftWorkspace"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_update_dependencies"/>
+                <parameter key="description" value="Project->UpdateDependencies"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_show_syntax_error_highlighting"/>
+                <parameter key="description" value="Project->ShowSyntaxErrorHighlighting"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_disable_syntax_error_highlighting"/>
+                <parameter key="description" value="Project->DisableSyntaxErrorHighlighting"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_build"/>
+                <parameter key="description" value="Project->Build"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_project_build_publish"/>
+                <parameter key="description" value="Project->BuildPublish"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_edit">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'Edit->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_cut_item"/>
+                <parameter key="description" value="Edit->CutItem"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_copy_item"/>
+                <parameter key="description" value="Edit->CopyItem"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_paste_item"/>
+                <parameter key="description" value="Edit->PasteItem"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_undo_type"/>
+                <parameter key="description" value="Edit->UndoType"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_redo_type"/>
+                <parameter key="description" value="Edit->RedoType"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_format"/>
+                <parameter key="description" value="Edit->Format"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_add_block_comment"/>
+                <parameter key="description" value="Edit->AddBlockComment"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_remove_block_comment"/>
+                <parameter key="description" value="Edit->RemoveBlockComment"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_toggle_comment"/>
+                <parameter key="description" value="Edit->ToggleComment"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_find_and_replace"/>
+                <parameter key="description" value="Edit->FindAndReplace"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_hide_line_numbers"/>
+                <parameter key="description" value="Edit->HideLineNumbers"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_delete_current_line"/>
+                <parameter key="description" value="Edit->DeleteCurrentLine"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_go_to_line"/>
+                <parameter key="description" value="Edit->GoToLine"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_delete"/>
+                <parameter key="description" value="Edit->Delete"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_select_all"/>
+                <parameter key="description" value="Edit->SelectAll"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_move_line_up"/>
+                <parameter key="description" value="Edit->MoveLineUp"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_move_line_down"/>
+                <parameter key="description" value="Edit->MoveLineDown"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_source_generate_gettes_and_setters"/>
+                <parameter key="description" value="Edit->Source->GenerateGettesAndSetters"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_source_generate_constructor_using_fields"/>
+                <parameter key="description" value="Edit->Source->GenerateConstructorUsingFields"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_edit_refactor_rename"/>
+                <parameter key="description" value="Edit->Refactor->Rename"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_view">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'View->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_view_properties"/>
+                <parameter key="description" value="View->Properties"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_view_go_to_folder"/>
+                <parameter key="description" value="View->GoToFolder"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_view_progress"/>
+                <parameter key="description" value="View->Progress"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_view_output"/>
+                <parameter key="description" value="View->Output"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_view_log"/>
+                <parameter key="description" value="View->Log"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_view_show_hidden_files"/>
+                <parameter key="description" value="View->ShowHiddenFiles"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_view_collaboration"/>
+                <parameter key="description" value="View->Collaboration"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_run">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'Run->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_run_debug_application"/>
+                <parameter key="description" value="Run->DebugApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_run_run_application"/>
+                <parameter key="description" value="Run->RunApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_run_stop_application"/>
+                <parameter key="description" value="Run->StopApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_run_show_logs"/>
+                <parameter key="description" value="Run->ShowLogs"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_git">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'Git->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_add"/>
+                <parameter key="description" value="Git->Add"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_reset"/>
+                <parameter key="description" value="Git->Reset"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_remove"/>
+                <parameter key="description" value="Git->Remove"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_commit"/>
+                <parameter key="description" value="Git->Commit"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_branches"/>
+                <parameter key="description" value="Git->Branches"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_merge"/>
+                <parameter key="description" value="Git->Merge"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_reset_index"/>
+                <parameter key="description" value="Git->ResetIndex"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_clone_repository"/>
+                <parameter key="description" value="Git->CloneRepository"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_delete_repository"/>
+                <parameter key="description" value="Git->DeleteRepository"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_show_history"/>
+                <parameter key="description" value="Git->ShowHistory"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_status"/>
+                <parameter key="description" value="Git->Status"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_git_url_read_only"/>
+                <parameter key="description" value="Git->GitURLReadOnly"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_remote_push"/>
+                <parameter key="description" value="Git->Remote->Push"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_remote_fetch"/>
+                <parameter key="description" value="Git->Remote->Fetch"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_remote_pull"/>
+                <parameter key="description" value="Git->Remote->Pull"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_git_remote_remotes"/>
+                <parameter key="description" value="Git->Remote->Remotes"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_git">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'PaaS->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_many_mo_android_deploy"/>
+                <parameter key="description" value="PaaS->ManyMoAndroid->Deploy"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_app_fog_create_application"/>
+                <parameter key="description" value="PaaS->AppFog->CreateApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_app_fog_applications"/>
+                <parameter key="description" value="PaaS->AppFog->Applications"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_app_fog_switch_account"/>
+                <parameter key="description" value="PaaS->AppFog->SwitchAccount"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_cloud_bees_create_application"/>
+                <parameter key="description" value="PaaS->CloudBees->CreateApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_cloud_bees_applications"/>
+                <parameter key="description" value="PaaS->CloudBees->Applications"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_cloud_bees_switch_account"/>
+                <parameter key="description" value="PaaS->CloudBees->SwitchAccount"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_cloud_bees_create_account"/>
+                <parameter key="description" value="PaaS->CloudBees->CreateAccount"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_elastic_beanstalk_create_application"/>
+                <parameter key="description" value="PaaS->ElasticBeanstalk->CreateApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_elastic_beanstalk_manage_application"/>
+                <parameter key="description" value="PaaS->ElasticBeanstalk->ManageApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_elastic_beanstalk_switch_account"/>
+                <parameter key="description" value="PaaS->ElasticBeanstalk->SwitchAccount"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_elastic_beanstalk_ec2_management"/>
+                <parameter key="description" value="PaaS->ElasticBeanstalk->EC2Management"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_elastic_beanstalk_s3_management"/>
+                <parameter key="description" value="PaaS->ElasticBeanstalk->S3Management"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_google_app_engine_update_application"/>
+                <parameter key="description" value="PaaS->GoogleAppEngine->UpdateApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_google_app_engine_create_application"/>
+                <parameter key="description" value="PaaS->GoogleAppEngine->CreateApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_google_app_engine_login"/>
+                <parameter key="description" value="PaaS->GoogleAppEngine->Login"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_heroku_create_application"/>
+                <parameter key="description" value="PaaS->Heroku->CreateApplication"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_heroku_applications"/>
+                <parameter key="description" value="PaaS->Heroku->Applications"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_heroku_deploy_public_key"/>
+                <parameter key="description" value="PaaS->Heroku->DeployPublicKey"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_heroku_switch_account"/>
+                <parameter key="description" value="PaaS->Heroku->SwitchAccount"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_open_shift_change_namespace"/>
+                <parameter key="description" value="PaaS->OpenShift->ChangeNamespace"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_open_shift_applications"/>
+                <parameter key="description" value="PaaS->OpenShift->Applications"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_open_shift_update_shh_public_key"/>
+                <parameter key="description" value="PaaS->OpenShift->UpdateSHHPublicKey"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_paas_open_shift_switch_account"/>
+                <parameter key="description" value="PaaS->OpenShift->SwitchAccount"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_windows">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'Windows->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_window_show_view_project_explore"/>
+                <parameter key="description" value="Window->ShowView->ProjectExplore"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_window_show_view_package_explore"/>
+                <parameter key="description" value="Window->ShowView->PackageExplore"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_window_navigation_next_editor"/>
+                <parameter key="description" value="Window->Navigation->NextEditor"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_window_navigation_previous_editor"/>
+                <parameter key="description" value="Window->Navigation->PreviousEditor"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_window_welcome"/>
+                <parameter key="description" value="Window->Welcome"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_window_preferences"/>
+                <parameter key="description" value="Window->Preferences"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="ide_usage_main">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage main '*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_shell"/>
+                <parameter key="description" value="Shell"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_profile"/>
+                <parameter key="description" value="Profile"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_logout"/>
+                <parameter key="description" value="Logout"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+    </view>
+</display>

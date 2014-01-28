@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+         CODENVY CONFIDENTIAL
+         ________________
+
+         [2012] - [2014] Codenvy, S.A.
+         All Rights Reserved.
+         NOTICE: All information contained herein is, and remains
+         the property of Codenvy S.A. and its suppliers,
+         if any. The intellectual and technical concepts contained
+         herein are proprietary to Codenvy S.A.
+         and its suppliers and may be covered by U.S. and Foreign Patents,
+         patents in process, and are protected by trade secret or copyright law.
+         Dissemination of this information or reproduction of this material
+         is strictly forbidden unless prior written permission is obtained
+         from Codenvy S.A..
+-->
+<display>
+    <view time-unit="month" name="analysis" columns="15">
+        <section name="analysis">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value=""/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="total_users"/>
+                <parameter key="description" value="Active Users"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="active_users"/>
+                <parameter key="description" value="Active Users"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_projects"/>
+                <parameter key="description" value="Created Projects"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="builds"/>
+                <parameter key="description" value="&amp; Built"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="deploys"/>
+                <parameter key="description" value="&amp; Deployed"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="deploys_to_paas"/>
+                <parameter key="description" value="&amp; Deployed to PAAS"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="user_invite"/>
+                <parameter key="description" value="Sent Invites"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="shell_launched"/>
+                <parameter key="description" value="Shell launched"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="completed_profiles"/>
+                <parameter key="description" value="Have Complete Profile"/>
+                <parameter key="set-from-date-to-default-value" value="true"/>
+            </row>
+        </section>
+    </view>
+</display>

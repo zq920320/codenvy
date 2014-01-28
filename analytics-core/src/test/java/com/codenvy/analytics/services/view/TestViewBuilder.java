@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertTrue;
@@ -89,7 +91,19 @@ public class TestViewBuilder extends BaseTest {
 
         viewBuilder = spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
                                           Injector.getInstance(CSVReportPersister.class),
-                                          configurationManager));
+                                          configurationManager, new TestConfigurator()));
+    }
+    
+    class TestConfigurator extends Configurator {
+        public TestConfigurator() throws IOException {
+            super();
+        }
+        
+        protected Properties loadProperties() throws IOException {
+            Properties properties = new Properties();
+            properties.put(ViewBuilder.VIEW_CONFIGS_PROPERTY, FILE);
+            return properties;
+        }
     }
 
     @Test
