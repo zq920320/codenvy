@@ -52,14 +52,16 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         try {
             Map<String, List<String>> params = UrlUtils.getQueryParameters(url);
 
-            FactoryUrlFormat factoryUrlFormat;
             if (params.get("id") != null) {
-                factoryUrlFormat = new AdvancedFactoryUrlFormat(new HttpFactoryClient(url.getProtocol(), url.getHost(), url.getPort()));
-            } else {
-                factoryUrlFormat = new SimpleFactoryUrlFormat();
-            }
+                AdvancedFactoryUrlFormat factoryUrlFormat =
+                        new AdvancedFactoryUrlFormat(new HttpFactoryClient(url.getProtocol(), url.getHost(), url.getPort()));
 
-            this.validateUrl(factoryUrlFormat.parse(url));
+                this.validateUrl(factoryUrlFormat.parse(url));
+            } else {
+                SimpleFactoryUrlFormat factoryUrlFormat = new SimpleFactoryUrlFormat();
+
+                this.validateUrl(factoryUrlFormat.parse(url));
+            }
         } catch (UnsupportedEncodingException e) {
             throw new FactoryUrlException(e.getLocalizedMessage(), e);
         }
