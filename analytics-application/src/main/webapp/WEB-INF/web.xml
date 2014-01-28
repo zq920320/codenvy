@@ -92,6 +92,10 @@
             <param-name>allow-anonymous-access</param-name>
             <param-value>false</param-value>
         </init-param>
+        <init-param>
+            <param-name>exclude-regexp</param-name>
+            <param-value>/analytics/rest/.*</param-value>
+        </init-param>
     </filter>
 
     <servlet>

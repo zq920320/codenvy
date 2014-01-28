@@ -28,10 +28,10 @@ import com.codenvy.api.analytics.dto.MetricInfoDTO;
 import com.codenvy.api.analytics.dto.MetricInfoListDTO;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
-import com.codenvy.api.core.rest.ServiceContext;
 import com.codenvy.dto.server.DtoFactory;
 
 import javax.inject.Singleton;
+import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class FileBasedMetricHandler implements MetricHandler {
     @Override
     public MetricValueDTO getValue(String metricName,
                                    Map<String, String> executionContext,
-                                   ServiceContext serviceContext) throws MetricNotFoundException {
+                                   UriInfo uriInfo) throws MetricNotFoundException {
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
         try {
             ValueData vd = getMetricValue(metricName, executionContext);
@@ -64,21 +64,21 @@ public class FileBasedMetricHandler implements MetricHandler {
     }
 
     @Override
-    public MetricInfoDTO getInfo(String metricName, ServiceContext serviceContext) throws MetricNotFoundException {
+    public MetricInfoDTO getInfo(String metricName, UriInfo uriInfo) throws MetricNotFoundException {
         try {
             Metric metric = MetricFactory.getMetric(metricName);
-            return MetricDTOFactory.createMetricDTO(metric, metricName, serviceContext);
+            return MetricDTOFactory.createMetricDTO(metric, metricName, uriInfo);
         } catch (IllegalArgumentException e) {
             throw new MetricNotFoundException();
         }
     }
 
     @Override
-    public MetricInfoListDTO getAllInfo(ServiceContext serviceContext) {
+    public MetricInfoListDTO getAllInfo(UriInfo uriInfo) {
         List<MetricInfoDTO> metricInfoDTOs = new ArrayList<>();
 
         for (Metric metric : MetricFactory.getAllMetrics()) {
-            metricInfoDTOs.add(MetricDTOFactory.createMetricDTO(metric, metric.getName(), serviceContext));
+            metricInfoDTOs.add(MetricDTOFactory.createMetricDTO(metric, metric.getName(), uriInfo));
         }
 
         MetricInfoListDTO metricInfoListDTO = DtoFactory.getInstance().createDto(MetricInfoListDTO.class);

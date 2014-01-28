@@ -22,12 +22,12 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.api.analytics.AnalyticsService;
 import com.codenvy.api.analytics.dto.Constants;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
-import com.codenvy.api.core.rest.ServiceContext;
 import com.codenvy.api.core.rest.shared.dto.Link;
 import com.codenvy.dto.server.DtoFactory;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,34 +35,39 @@ import java.util.List;
 /**
  * Utility class to create {@link com.codenvy.api.analytics.dto.MetricInfoDTO} instances and to update its values
  *
- * @author <a href="mailto:dkuleshov@codenvy.com">Dmitry Kuleshov</a>
+ * @author Dmitry Kuleshov
+ * @author Anatoliy Bazko
  */
 public class MetricDTOFactory {
 
     private MetricDTOFactory() {
     }
 
-    public static MetricInfoDTO createMetricDTO(Metric metric, String metricName, ServiceContext restfulRequestContext) {
+    public static MetricInfoDTO createMetricDTO(Metric metric, String metricName, UriInfo uriInfo) {
         MetricInfoDTO metricInfoDTO = DtoFactory.getInstance().createDto(MetricInfoDTO.class);
         metricInfoDTO.setName(metricName);
         metricInfoDTO.setDescription(metric.getDescription());
-        try
-        {
+        try {
             metricInfoDTO.setType(ValueDataFactory.createDefaultValue(metric.getValueDataClass()).getType());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        metricInfoDTO.setLinks(getLinks(metricName, restfulRequestContext));
+        metricInfoDTO.setLinks(getLinks(metricName, uriInfo));
         return metricInfoDTO;
     }
 
-    public static List<Link> getLinks(String metricName, ServiceContext restfulRequestContext) {
-        final UriBuilder servicePathBuilder = restfulRequestContext.getServiceUriBuilder();
+    public static List<Link> getLinks(String metricName, UriInfo uriInfo) {
+        final UriBuilder servicePathBuilder = uriInfo.getBaseUriBuilder();
         List<Link> links = new ArrayList<>();
 
         final Link statusLink = DtoFactory.getInstance().createDto(Link.class);
         statusLink.setRel(Constants.LINK_REL_GET_METRIC_VALUE);
-        statusLink.setHref(servicePathBuilder.clone().path(getMethod("getValue")).build(metricName, "name").toString());
+        statusLink.setHref(servicePathBuilder
+                                   .clone()
+                                   .path("analytics")
+                                   .path(getMethod("getValue"))
+                                   .build(metricName, "name")
+                                   .toString());
         statusLink.setMethod("GET");
         statusLink.setProduces(MediaType.APPLICATION_JSON);
         links.add(statusLink);
