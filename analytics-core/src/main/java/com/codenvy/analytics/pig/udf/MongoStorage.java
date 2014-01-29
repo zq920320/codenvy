@@ -27,13 +27,16 @@ import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.pig.StoreFunc;
 import org.apache.pig.data.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
 
-    public static final String SERVER_URL_PARAM = "server.url";
+    private static final Logger LOG              = LoggerFactory.getLogger(MongoStorage.class);
+    private static final String SERVER_URL_PARAM = "server.url";
 
     private final String user;
     private final String password;
@@ -110,7 +113,9 @@ public class MongoStorage extends StoreFunc {
             if (!uri.getCollection().startsWith("test") &&
                 !collectionsManagement.isCollectionExists(uri.getCollection())) {
 
-                throw new IOException("Collection " + uri.getCollection() + " doesn't exist in configuration");
+                String msg = "Collection " + uri.getCollection() + " doesn't exist in configuration";
+                LOG.error(msg);
+                throw new IOException(msg);
             }
 
             this.dbCollection = db.getCollection(uri.getCollection());

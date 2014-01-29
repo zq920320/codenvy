@@ -22,11 +22,16 @@ import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import org.apache.pig.FilterFunc;
 import org.apache.pig.data.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class EventExists extends FilterFunc {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EventExists.class);
+
 
     private final EventsHolder eventsHolder;
 
@@ -41,7 +46,9 @@ public class EventExists extends FilterFunc {
         if (!eventNames.equals("*")) {
             for (String event : eventNames.split(",")) {
                 if (!eventsHolder.isEventExists(event)) {
-                    throw new IOException("Unknown event " + event);
+                    String msg = "Unknown event " + event;
+                    LOG.error(msg);
+                    throw new IOException(msg);
                 }
             }
         }

@@ -19,7 +19,6 @@ package com.codenvy.analytics.pig.udf;
 
 import org.apache.pig.EvalFunc;
 import org.apache.pig.PigWarning;
-import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
@@ -37,12 +36,12 @@ public class URLDecode extends EvalFunc<String> {
             return null;
         }
 
+        String str = (String)input.get(0);
         try {
-            String str = (String)input.get(0);
             return (str == null) ? null : URLDecoder.decode(str, "UTF-8");
-        } catch (ExecException e) {
-            warn("Error reading input: " + e.getMessage(), PigWarning.UDF_WARNING_1);
-            return null;
+        } catch (Exception e) {
+            warn("Error URL decoding: " + str, PigWarning.UDF_WARNING_1);
+            return str;
         }
     }
 

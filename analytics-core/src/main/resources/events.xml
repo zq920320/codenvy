@@ -183,6 +183,16 @@
             <param>PAAS</param>
         </parameters>
     </event>
+    <event name="artifact-deployed">
+        <description/>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>PROJECT</param>
+            <param>TYPE</param>
+            <param>PAAS</param>
+        </parameters>
+    </event>
     <event name="user-created">
         <description/>
         <parameters>
