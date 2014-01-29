@@ -34,9 +34,9 @@ import java.util.Map;
 
 /**
  * Container for initial values of some metrics. It is used in case when statistics had been started collecting not
- * from very beginning. The configuration has to be placed in analytics.conf and defines the date and initial values of
- * metrics. The example belows explains that statistic had been started collecting from 2012-01-01 but the day before
- * (on 2011-12-31) 10 workspaces, 20 users and 30 projects already had been created.
+ * from very beginning. The configuration has to be placed in analytics.properties and defines the date and initial
+ * values of metrics. The example belows explains that statistic had been started collecting from 2012-01-01 but the
+ * day before (on 2011-12-31) 10 workspaces, 20 users and 30 projects already had been created.
  * <p/>
  * initial.value.date=2011-12-31
  * initial.value.metrics=total_workspaces,total_users,total_projects
