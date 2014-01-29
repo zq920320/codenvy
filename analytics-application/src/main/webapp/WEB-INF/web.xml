@@ -94,7 +94,7 @@
         </init-param>
         <init-param>
             <param-name>exclude-regexp</param-name>
-            <param-value>/analytics/rest/.*</param-value>
+            <param-value>/analytics/rest/analytics-private/.*</param-value>
         </init-param>
     </filter>
 

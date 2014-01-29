@@ -26,6 +26,7 @@ public class ApiModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(AnalyticsService.class);
         bind(View.class);
     }
 }
