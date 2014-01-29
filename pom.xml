@@ -16,24 +16,18 @@
          is strictly forbidden unless prior written permission is obtained
          from Codenvy S.A..
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>maven-parent-pom</artifactId>
         <groupId>com.codenvy</groupId>
         <version>3.1.1-SNAPSHOT</version>
-        <relativePath/>
+        <relativePath />
     </parent>
     <groupId>com.codenvy.analytics</groupId>
     <artifactId>analytics-parent</artifactId>
     <version>2.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <scm>
-        <connection>scm:git:git@github.com:codenvy/analytics.git</connection>
-        <developerConnection>scm:git:git@github.com:codenvy/analytics.git</developerConnection>
-        <tag>2.0.0</tag>
-    </scm>
     <name>Codenvy :: Analytics :: Parent</name>
     <modules>
         <module>analytics-core</module>
@@ -41,12 +35,18 @@
         <module>analytics-wso2bam-pkg</module>
         <module>analytics-wso2bam-local-pkg</module>
     </modules>
+    <scm>
+        <connection>scm:git:git@github.com:codenvy/analytics.git</connection>
+        <developerConnection>scm:git:git@github.com:codenvy/analytics.git</developerConnection>
+        <tag>2.0.0</tag>
+    </scm>
     <properties>
         <analytics.api.version>0.7.0-SNAPSHOT</analytics.api.version>
-        <com.codenvy.commons.version>0.12.0</com.codenvy.commons.version>
         <antlr.version>3.4</antlr.version>
         <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
         <cloud-ide.version>2.10.1</cloud-ide.version>
+        <com.codenvy.commons.version>0.12.0</com.codenvy.commons.version>
+        <com.codenvy.organization.version>0.10.0</com.codenvy.organization.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.lang.version>2.6</commons.lang.version>
         <commons.net.version>3.2</commons.net.version>
@@ -63,12 +63,9 @@
         <jline.version>0.9.94</jline.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.10</junit.version>
-        <com.codenvy.organization.version>0.10.0</com.codenvy.organization.version>
         <log4j.version>1.2.17</log4j.version>
-        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/
-        </maven.releases.repo.url>
-        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/
-        </maven.snapshots.repo.url>
+        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
+        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
         <mockito.version>1.9.0</mockito.version>
         <mongo.driver.version>2.10.1</mongo.driver.version>
         <org.slf4j.version>1.6.1</org.slf4j.version>

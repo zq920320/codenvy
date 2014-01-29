@@ -16,8 +16,7 @@
          is strictly forbidden unless prior written permission is obtained
          from Codenvy S.A..
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>analytics-parent</artifactId>
@@ -126,97 +125,63 @@
                                 <configuration>
                                     <target>
                                         <!-- unpacking resources -->
-                                        <unzip dest="${project.build.directory}/"
-                                               src="${project.build.directory}/packager-conf/zip/bam.zip"/>
+                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/bam.zip" />
                                         <move todir="${project.build.directory}/wso2bam-analytics">
-                                            <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}"/>
+                                            <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}" />
                                         </move>
-
-                                        <unzip dest="${project.build.directory}/"
-                                               src="${project.build.directory}/packager-conf/zip/pig.zip"/>
+                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/pig.zip" />
                                         <move todir="${project.build.directory}/wso2bam-analytics/pig">
-                                            <fileset dir="${project.build.directory}/pig-${pig.version}"/>
+                                            <fileset dir="${project.build.directory}/pig-${pig.version}" />
                                         </move>
-
                                         <!--Repacking-->
-                                        <jar destfile="${project.build.directory}/wso2bam-analytics/lib/org.wso2.carbon.logging-4.1.0.jar"
-                                             update="true">
-                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar"
-                                                             includes="log4j-${log4j.version}.jar"/>
+                                        <jar destfile="${project.build.directory}/wso2bam-analytics/lib/org.wso2.carbon.logging-4.1.0.jar" update="true">
+                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
                                         </jar>
-                                        <jar destfile="${project.build.directory}/wso2bam-analytics/repository/components/plugins/org.wso2.carbon.logging_4.1.0.jar"
-                                             update="true">
-                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar"
-                                                             includes="log4j-${log4j.version}.jar"/>
+                                        <jar destfile="${project.build.directory}/wso2bam-analytics/repository/components/plugins/org.wso2.carbon.logging_4.1.0.jar" update="true">
+                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
                                         </jar>
-
                                         <!-- Patching war file to configure simple authentication -->
-                                        <unzip dest="${project.build.directory}/packager-conf/war/analytics-application"
-                                               src="${project.build.directory}/packager-conf/war/analytics-application.war"/>
-
-                                        <copy tofile="${project.build.directory}/packager-conf/war/analytics-application/WEB-INF/web.xml"
-                                              file="src/main/resources/analytics-application-basic-auth.web.xml"
-                                              overwrite="true"/>
-
-                                        <copy tofile="${project.build.directory}/packager-conf/war/analytics-application/META-INF/context.xml"
-                                              file="src/main/resources/analytics-application-basic-auth.context.xml"
-                                              overwrite="true"/>
-
+                                        <unzip dest="${project.build.directory}/packager-conf/war/analytics-application" src="${project.build.directory}/packager-conf/war/analytics-application.war" />
+                                        <copy file="src/main/resources/analytics-application-basic-auth.web.xml" overwrite="true" tofile="${project.build.directory}/packager-conf/war/analytics-application/WEB-INF/web.xml" />
+                                        <copy file="src/main/resources/analytics-application-basic-auth.context.xml" overwrite="true" tofile="${project.build.directory}/packager-conf/war/analytics-application/META-INF/context.xml" />
                                         <war destfile="${project.build.directory}/packager-conf/war/analytics-application.war">
-                                            <fileset
-                                                    dir="${project.build.directory}/packager-conf/war/analytics-application"/>
+                                            <fileset dir="${project.build.directory}/packager-conf/war/analytics-application" />
                                         </war>
-
-                                        <delete dir="${project.build.directory}/packager-conf/war/analytics-application"/>
-
-                                        <move file="${project.build.directory}/packager-conf/war/analytics-application.war"
-                                              tofile="${project.build.directory}/packager-conf/war/analytics.war"/>
-
+                                        <delete dir="${project.build.directory}/packager-conf/war/analytics-application" />
+                                        <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/packager-conf/war/analytics.war" />
                                         <!-- Modifying Pig's properties-->
-                                        <propertyfile
-                                                file="${project.build.directory}/wso2bam-analytics/pig/conf/pig.properties">
-                                            <entry key="pig.import.search.path" value="pig/scripts"/>
-                                            <entry key="pig.logfile" value="repository/logs/pig.log"/>
-                                            <entry key="udf.import.list" value="com.codenvy.analytics.pig.udf"/>
-                                            <entry key="exectype" value="local"/>
+                                        <propertyfile file="${project.build.directory}/wso2bam-analytics/pig/conf/pig.properties">
+                                            <entry key="pig.import.search.path" value="pig/scripts" />
+                                            <entry key="pig.logfile" value="repository/logs/pig.log" />
+                                            <entry key="udf.import.list" value="com.codenvy.analytics.pig.udf" />
+                                            <entry key="exectype" value="local" />
                                         </propertyfile>
-
                                         <!-- Coping resources -->
                                         <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/">
-                                            <fileset dir="${basedir}/src/main/resources/server"/>
+                                            <fileset dir="${basedir}/src/main/resources/server" />
                                         </copy>
-                                        <copy overwrite="true"
-                                              todir="${project.build.directory}/wso2bam-analytics/pig/scripts">
-                                            <fileset dir="${basedir}/../analytics-core/scripts/"/>
+                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/pig/scripts">
+                                            <fileset dir="${basedir}/../analytics-core/scripts/" />
                                         </copy>
-                                        <copy overwrite="true"
-                                              todir="${project.build.directory}/wso2bam-analytics/pig/bin">
-                                            <fileset dir="${basedir}/../analytics-core/bin/"/>
+                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/pig/bin">
+                                            <fileset dir="${basedir}/../analytics-core/bin/" />
                                         </copy>
-                                        <copy overwrite="true"
-                                              todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/">
-                                            <fileset dir="${project.build.directory}/packager-conf/war"/>
+                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/">
+                                            <fileset dir="${project.build.directory}/packager-conf/war" />
                                         </copy>
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x"/>
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/pig/bin/*" perm="+x"/>
-
+                                        <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x" />
+                                        <chmod file="${project.build.directory}/wso2bam-analytics/pig/bin/*" perm="+x" />
                                         <!-- prepare logs -->
                                         <tstamp>
-                                            <format property="previous.date.dir" pattern="yyyy/MM/dd" offset="-1"
-                                                    unit="day"/>
+                                            <format offset="-1" pattern="yyyy/MM/dd" property="previous.date.dir" unit="day" />
                                         </tstamp>
                                         <tstamp>
-                                            <format property="previous.date.stamp" pattern="yyyy-MM-dd" offset="-1"
-                                                    unit="day"/>
+                                            <format offset="-1" pattern="yyyy-MM-dd" property="previous.date.stamp" unit="day" />
                                         </tstamp>
-
-                                        <mkdir dir="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}"/>
-                                        <unzip dest="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}"
-                                               src="${project.build.directory}/wso2bam-analytics/logs-production/messages"/>
-                                        <delete file="${project.build.directory}/wso2bam-analytics/logs-production/messages"/>
-                                        <replace
-                                                file="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}/messages"
-                                                token="2013-12-12" value="${previous.date.stamp}"/>
+                                        <mkdir dir="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}" />
+                                        <unzip dest="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}" src="${project.build.directory}/wso2bam-analytics/logs-production/messages" />
+                                        <delete file="${project.build.directory}/wso2bam-analytics/logs-production/messages" />
+                                        <replace file="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}/messages" token="2013-12-12" value="${previous.date.stamp}" />
                                     </target>
                                 </configuration>
                             </execution>

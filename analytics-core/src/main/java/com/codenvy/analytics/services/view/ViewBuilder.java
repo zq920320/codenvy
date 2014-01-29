@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -50,8 +49,8 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class ViewBuilder extends Feature {
 
-    private static final Logger LOG           = LoggerFactory.getLogger(ViewBuilder.class);
-    public static final String VIEW_CONFIGS_PROPERTY = "view.configs";
+    private static final Logger LOG                   = LoggerFactory.getLogger(ViewBuilder.class);
+    public static final  String VIEW_CONFIGS_PROPERTY = "view.configs";
 
     private final DataPersister        jdbcPersister;
     private final CSVReportPersister   csvReportPersister;
@@ -63,17 +62,18 @@ public class ViewBuilder extends Feature {
                        XmlConfigurationManager confManager,
                        Configurator configurator) throws IOException {
         this.displayConfiguration = new DisplayConfiguration();
+
         List<ViewConfiguration> views = new ArrayList<ViewConfiguration>();
         for (String view : configurator.getArray(VIEW_CONFIGS_PROPERTY)) {
-             DisplayConfiguration dc = confManager.loadConfiguration(DisplayConfiguration.class, view);
-             views.addAll(dc.getViews());
+            DisplayConfiguration dc = confManager.loadConfiguration(DisplayConfiguration.class, view);
+            views.addAll(dc.getViews());
         }
         this.displayConfiguration.setViews(views);
-        
+
         this.jdbcPersister = jdbcDataPersisterFactory.getDataPersister();
         this.csvReportPersister = csvReportPersister;
     }
-    
+
     public ViewData getViewData(String name, Map<String, String> context) throws IOException, ParseException {
         ViewConfiguration view = displayConfiguration.getView(name);
 

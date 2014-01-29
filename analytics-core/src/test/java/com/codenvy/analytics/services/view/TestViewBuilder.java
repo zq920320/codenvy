@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertTrue;
@@ -89,21 +88,13 @@ public class TestViewBuilder extends BaseTest {
             }
         });
 
+        Configurator configurator = spy(Injector.getInstance(Configurator.class));
+        doReturn(new String[]{FILE}).when(configurator).getArray(anyString());
+
         viewBuilder = spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
                                           Injector.getInstance(CSVReportPersister.class),
-                                          configurationManager, new TestConfigurator()));
-    }
-    
-    class TestConfigurator extends Configurator {
-        public TestConfigurator() throws IOException {
-            super();
-        }
-        
-        protected Properties loadProperties() throws IOException {
-            Properties properties = new Properties();
-            properties.put(ViewBuilder.VIEW_CONFIGS_PROPERTY, FILE);
-            return properties;
-        }
+                                          configurationManager,
+                                          configurator));
     }
 
     @Test

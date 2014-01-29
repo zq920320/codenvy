@@ -141,7 +141,7 @@ public class Configurator {
         return result;
     }
 
-    protected Properties loadProperties() throws IOException {
+    private Properties loadProperties() throws IOException {
         try {
             return loadFromResource();
         } catch (IOException e) {
