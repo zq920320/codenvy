@@ -41,15 +41,19 @@ public abstract class CumulativeMetric extends AbstractMetric {
     private final InitialValueContainer initialValueContainer;
 
 
-    public CumulativeMetric(MetricType metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
+    protected CumulativeMetric(MetricType metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
+        this(metricType.toString(), addedMetric, removedMetric);
+    }
+
+    public CumulativeMetric(String metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
         super(metricType);
 
         this.addedMetric = addedMetric;
         this.removedMetric = removedMetric;
 
         initialValueContainer = Injector.getInstance(InitialValueContainer.class);
-    }
-
+    }    
+    
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {

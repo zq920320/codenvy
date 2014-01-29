@@ -47,7 +47,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final String DATE                = "date";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
-    protected final DataLoader dataLoader;
+    public final DataLoader dataLoader;
 
     public ReadBasedMetric(String metricName) {
         super(metricName);
@@ -77,11 +77,11 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return getName().toLowerCase();
     }
 
-    protected String getStorageCollectionName(MetricType metricType) {
+    public String getStorageCollectionName(MetricType metricType) {
         return MetricFactory.getMetric(metricType).getName().toLowerCase();
     }
 
-    protected String getStorageCollectionName(String metricName) {
+    public String getStorageCollectionName(String metricName) {
         return metricName.toLowerCase();
     }
 
@@ -211,7 +211,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return dbOp;
     }
 
-    protected DBObject[] unionDBOperations(DBObject[] dbOp1, DBObject[] dbOp2) {
+    public DBObject[] unionDBOperations(DBObject[] dbOp1, DBObject[] dbOp2) {
         DBObject[] result = new DBObject[dbOp1.length + dbOp2.length];
 
         System.arraycopy(dbOp1, 0, result, 0, dbOp1.length);
@@ -221,7 +221,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /** @return DB operations specific for given metric */
-    protected abstract DBObject[] getSpecificDBOperations(Map<String, String> clauses);
+    public abstract DBObject[] getSpecificDBOperations(Map<String, String> clauses);
 
 }
 

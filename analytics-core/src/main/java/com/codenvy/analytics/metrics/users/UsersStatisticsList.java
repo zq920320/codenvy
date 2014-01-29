@@ -70,7 +70,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     }
 
     @Override
-    protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
         group.put("_id", "$user");
         group.put(PROJECTS, new BasicDBObject("$sum", "$" + PROJECTS));

@@ -77,7 +77,7 @@ public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
     }
 
     @Override
-    protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
         group.put("_id", "$" + USER);
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));

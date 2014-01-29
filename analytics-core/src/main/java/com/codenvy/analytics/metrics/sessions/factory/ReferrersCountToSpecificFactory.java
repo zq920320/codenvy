@@ -45,7 +45,7 @@ public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
     }
 
     @Override
-    protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
 
         DBObject group = new BasicDBObject();

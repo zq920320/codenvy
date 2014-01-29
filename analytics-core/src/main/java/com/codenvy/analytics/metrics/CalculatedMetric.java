@@ -23,7 +23,7 @@ public abstract class CalculatedMetric extends AbstractMetric {
     protected final Metric[] basedMetric;
 
     protected CalculatedMetric(MetricType metricType, MetricType[] basedMetricTypes) {
-        super(metricType.name());
+        super(metricType);
 
         this.basedMetric = new Metric[basedMetricTypes.length];
         for (int i = 0; i < basedMetricTypes.length; i++) {
@@ -31,8 +31,22 @@ public abstract class CalculatedMetric extends AbstractMetric {
         }
     }
 
+    public CalculatedMetric(String metricType, String[] basedMetricTypes) {
+        super(metricType);
+
+        this.basedMetric = new Metric[basedMetricTypes.length];
+        for (int i = 0; i < basedMetricTypes.length; i++) {
+            this.basedMetric[i] = MetricFactory.getMetric(basedMetricTypes[i]);
+        }
+    }
+    
     protected CalculatedMetric(MetricType metricType, Metric[] basedMetric) {
-        super(metricType.name());
+        this(metricType.name(), basedMetric);
+    }
+    
+    public CalculatedMetric(String metricType, Metric[] basedMetric) {
+        super(metricType);
         this.basedMetric = basedMetric;
     }
+
 }

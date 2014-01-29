@@ -46,7 +46,7 @@ public class CompletedProfiles extends ReadBasedMetric {
     }
 
     @Override
-    protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject match = new BasicDBObject();
         match.put(UsersProfilesList.USER_EMAIL, new BasicDBObject("$ne", ""));
         match.put(UsersProfilesList.USER_COMPANY, new BasicDBObject("$ne", ""));

@@ -41,7 +41,7 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
     }
 
     @Override
-    protected DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject match = new BasicDBObject();
         match.put(getTrackedFields()[0], new BasicDBObject("$ne", ""));
 
