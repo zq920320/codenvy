@@ -50,6 +50,6 @@ public class UsersLoggedInTotal extends CalculatedMetric {
 
     @Override
     public String getDescription() {
-        return null;
+        return "The total number of login";
     }
 }

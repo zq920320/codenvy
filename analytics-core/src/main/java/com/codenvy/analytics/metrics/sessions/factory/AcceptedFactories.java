@@ -29,6 +29,6 @@ public class AcceptedFactories extends AbstractCount {
 
     @Override
     public String getDescription() {
-        return null;
+        return "The number of factory usage";
     }
 }
