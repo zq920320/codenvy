@@ -38,10 +38,9 @@ public class Configurator {
 
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
 
-    private static final String  CONFIGURATION      = "analytics.properties";
-    private static final String  ANALYTICS_CONF_DIR = System.getProperty("codenvy.local.conf.dir");
-    private static final Pattern TEMPLATE_PROP_VAR  = Pattern.compile("\\$\\{([^\\}]*)\\}");
-    private static final Pattern TEMPLATE_ENV_VAR   = Pattern.compile("\\$([^\\/]*)[\\/]?");
+    private static final String  CONFIGURATION     = "analytics.properties";
+    private static final Pattern TEMPLATE_PROP_VAR = Pattern.compile("\\$\\{([^\\}]*)\\}");
+    private static final Pattern TEMPLATE_ENV_VAR  = Pattern.compile("\\$([^\\/]*)[\\/]?");
 
     private final Properties properties;
 
@@ -145,7 +144,11 @@ public class Configurator {
         try {
             return loadFromResource();
         } catch (IOException e) {
-            return loadFromFile();
+            try {
+                return loadFromFile(System.getenv("CODENVY_LOCAL_CONF_DIR"));
+            } catch (IOException e1) {
+                return loadFromFile(System.getProperty("codenvy.local.conf.dir"));
+            }
         }
     }
 
@@ -164,9 +167,9 @@ public class Configurator {
         return properties;
     }
 
-    private Properties loadFromFile() throws IOException {
+    private Properties loadFromFile(String baseDir) throws IOException {
         Properties properties = new Properties();
-        File file = new File(ANALYTICS_CONF_DIR, CONFIGURATION);
+        File file = new File(baseDir, CONFIGURATION);
 
         try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
             properties.load(in);
