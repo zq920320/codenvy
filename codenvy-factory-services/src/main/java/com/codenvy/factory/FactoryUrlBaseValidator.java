@@ -106,14 +106,14 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                 Account account = accountManager.getAccountById(factoryUrl.getOrgid());
 
                 String endTime;
-                if ((endTime = account.getAttribute("tariff_end_time")) != null) {
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date endTimeDate = df.parse(endTime);
+                if ("Managed Factory".equals(account.getAttribute("tariff_plan")) &&
+                    (endTime = account.getAttribute("tariff_end_time")) != null) {
+                    Date endTimeDate = new Date(Long.valueOf(endTime));
                     if (endTimeDate.after(new Date())) {
                         return;
                     }
                 }
-            } catch (OrganizationServiceException | ParseException ignore) {
+            } catch (OrganizationServiceException | NumberFormatException ignore) {
             }
             throw new FactoryUrlException("Parameter orgid is invalid.");
         }

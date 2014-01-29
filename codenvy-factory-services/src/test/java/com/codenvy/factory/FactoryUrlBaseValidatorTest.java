@@ -29,8 +29,9 @@ import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.*;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -54,11 +55,16 @@ public class FactoryUrlBaseValidatorTest {
 
     private AdvancedFactoryUrl advUrl;
 
+    private SimpleDateFormat datetimeFormatter;
+
     @BeforeMethod
     public void setUp() {
         url = new SimpleFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, null, null, null, false, null, null, null, null, null);
 
         advUrl = new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "123456798", null, null, false, null, null, null, null, null);
+
+        datetimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        datetimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -77,58 +83,56 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid(ID);
         when(accountManager.getAccountById(ID)).thenReturn(account);
         when(account.getAttribute("tariff_end_time")).thenReturn(null);
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
         validator.validateUrl(url);
-    }
-
-    @Test(dataProvider = "illegalFormatPropertyValue", expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfTariffEndTimePropertyHasIllegalFormat(String propertyValue)
-            throws OrganizationServiceException, FactoryUrlException {
-        // given
-        url.setOrgid(ID);
-        when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn(propertyValue);
-
-        // when, then
-        validator.validateUrl(url);
-    }
-
-    @DataProvider(name = "illegalFormatPropertyValue")
-    public Object[][] illegalFormatProvider() {
-        return new Object[][]{
-                {"smth"},
-                {"11.15.2051"},
-                {"11.15.2051 15:45"},
-                {"11.15.2051 15:45:45"},
-                {"15.11.2051"},
-                {"15.11.2051 15:45"},
-                {"15.11.2051 15:45:45"},
-                {"11-15-2051"},
-                {"15-11-2051"},
-                {"11-15-2051 15:54"},
-                {"15-11-2051 15:54"},
-                {"15-11-2051 15:45:45"}
-        };
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdExpires() throws OrganizationServiceException, FactoryUrlException {
+    public void shouldNotValidateIfAccountHasIllegalTariffPlan() throws OrganizationServiceException, FactoryUrlException, ParseException {
         // given
         url.setOrgid(ID);
         when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn("2012-11-30 11:21:15");
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2050-11-21 11:11:11").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Personal Premium");
+
+        // when, then
+        validator.validateUrl(url);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfTariffEndTimePropertyHasIllegalFormat()
+            throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn("smth");
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+
+        // when, then
+        validator.validateUrl(url);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfOrgIdExpires() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2012-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
         validator.validateUrl(url);
     }
 
     @Test
-    public void shouldBeAbleToValidateIfOrgIdIsValid() throws OrganizationServiceException, FactoryUrlException {
+    public void shouldBeAbleToValidateIfOrgIdIsValid() throws OrganizationServiceException, FactoryUrlException, ParseException {
         // given
         url.setOrgid(ID);
         when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn("2022-11-30 11:21:15");
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
         validator.validateUrl(url);
@@ -236,13 +240,14 @@ public class FactoryUrlBaseValidatorTest {
 
     @Test
     public void shouldBeAbleToValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsValid()
-            throws FactoryUrlException, OrganizationServiceException {
+            throws FactoryUrlException, OrganizationServiceException, ParseException {
         // given
         advUrl.setWelcome(new WelcomePage(new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico"),
                                           new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico")));
         advUrl.setOrgid(ID);
         when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn("2022-11-30 11:21:15");
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
         validator.validateUrl(advUrl);
