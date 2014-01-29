@@ -262,7 +262,7 @@ status=$START_EXIT_STATUS
 cp -r $HOME/analytics_conf/user-mgt.xml $CARBON_HOME/repository/conf
 cp -r $HOME/analytics_conf/log4j.properties $CARBON_HOME/repository/conf
 
-[ -z "${TENANT_MASTERHOST}" ]  && TENANT_MASTERHOST="localhost"
+[ -z "${TENANT_MASTERHOST}" ]  && TENANT_MASTERHOST="codenvy.com"
 [ -z "${TENANT_MASTERPORT}" ]  && TENANT_MASTERPORT="80"
 [ -z "${TENANT_MASTERHOST_PROTOCOL}" ]  && TENANT_MASTERHOST_PROTOCOL="http"
 

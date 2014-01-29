@@ -15,13 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics;
+package com.codenvy.analytics.api;
 
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
+import com.codenvy.api.analytics.Utils;
 import com.codenvy.dto.server.JsonStringMapImpl;
 
 import org.slf4j.Logger;
@@ -34,14 +35,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Alexander Reshetnyak
@@ -51,29 +52,24 @@ import java.util.regex.Pattern;
 @Singleton
 public class View {
 
-    private static final Logger        LOG                      = LoggerFactory.getLogger(View.class);
-    private static final DecimalFormat DECIMAL_FORMAT           = new DecimalFormat("00");
-    private static final Pattern       ADMIN_ROLE_EMAIL_PATTERN = Pattern.compile("@codenvy[.]com$");
-
-    private ViewBuilder viewBuilder;
+    private static final Logger        LOG            = LoggerFactory.getLogger(View.class);
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("00");
 
     @Inject
-    public View(ViewBuilder viewBuilder) {
-        this.viewBuilder = viewBuilder;
-    }
+    private ViewBuilder viewBuilder;
 
     @GET
     @Path("{name}")
     @Produces({"application/json"})
     @RolesAllowed(value = {"user"})
-    public Response build(@PathParam("name") String name,
-                          @Context UriInfo uriInfo,
-                          @Context SecurityContext securityContext) {
+    public Response getViewData(@PathParam("name") String name,
+                                @Context UriInfo uriInfo,
+                                @Context SecurityContext securityContext) {
         try {
-            Map<String, String> context = extractContext(uriInfo);
+            Map<String, String> context = Utils.extractContext(uriInfo);
 
             String user = securityContext.getUserPrincipal().getName();
-            if (!isAdmin(user)) {
+            if (!Utils.isAdmin(user)) {
                 MetricFilter.USER.put(context, user);
             }
 
@@ -85,11 +81,6 @@ public class View {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-    }
-
-    private boolean isAdmin(String email) {
-        Matcher matcher = ADMIN_ROLE_EMAIL_PATTERN.matcher(email);
-        return matcher.find();
     }
 
     /**
@@ -122,16 +113,5 @@ public class View {
         }
 
         return new JsonStringMapImpl(result);
-    }
-
-    private Map<String, String> extractContext(UriInfo info) throws ParseException {
-        MultivaluedMap<String, String> parameters = info.getQueryParameters();
-
-        Map<String, String> context = Utils.newContext();
-        for (String key : parameters.keySet()) {
-            context.put(key.toUpperCase(), parameters.getFirst(key));
-        }
-
-        return context;
     }
 }

@@ -49,8 +49,8 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class ViewBuilder extends Feature {
 
-    private static final Logger LOG                   = LoggerFactory.getLogger(ViewBuilder.class);
-    public static final  String VIEW_CONFIGS_PROPERTY = "view.configs";
+    private static final Logger LOG                 = LoggerFactory.getLogger(ViewBuilder.class);
+    public static final  String VIEWS_CONFIGURATION = "views.configuration";
 
     private final DataPersister        jdbcPersister;
     private final CSVReportPersister   csvReportPersister;
@@ -64,7 +64,7 @@ public class ViewBuilder extends Feature {
         this.displayConfiguration = new DisplayConfiguration();
 
         List<ViewConfiguration> views = new ArrayList<ViewConfiguration>();
-        for (String view : configurator.getArray(VIEW_CONFIGS_PROPERTY)) {
+        for (String view : configurator.getArray(VIEWS_CONFIGURATION)) {
             DisplayConfiguration dc = confManager.loadConfiguration(DisplayConfiguration.class, view);
             views.addAll(dc.getViews());
         }

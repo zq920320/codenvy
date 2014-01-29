@@ -16,15 +16,15 @@
  * from Codenvy S.A..
  */
 
-package com.codenvy.analytics;
+package com.codenvy.analytics.api;
 
 
 import com.codenvy.api.analytics.MetricHandler;
+import com.codenvy.api.analytics.Utils;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
 import com.codenvy.api.analytics.dto.MetricInfoListDTO;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
-import com.codenvy.api.core.rest.Service;
 import com.codenvy.api.core.rest.annotations.GenerateLink;
 
 import org.slf4j.Logger;
@@ -33,8 +33,10 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.util.HashMap;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.Map;
 
 
@@ -46,9 +48,9 @@ import java.util.Map;
  */
 @Path("analytics-private")
 @Singleton
-public class AnalyticsService extends Service {
+public class AnalyticsPrivate {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsPrivate.class);
 
     @Inject
     private MetricHandler metricHandler;
@@ -62,7 +64,7 @@ public class AnalyticsService extends Service {
                              @QueryParam("per_page") String perPage,
                              @Context UriInfo uriInfo) {
         try {
-            Map<String, String> metricContext = extractContext(uriInfo, page, perPage);
+            Map<String, String> metricContext = Utils.extractContext(uriInfo, page, perPage);
 
             MetricValueDTO value = metricHandler.getValue(metricName, metricContext, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
@@ -102,22 +104,5 @@ public class AnalyticsService extends Service {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-    }
-
-    /** Extract the execution context from passed query parameters. */
-    private Map<String, String> extractContext(UriInfo info, String page, String perPage) {
-        MultivaluedMap<String, String> parameters = info.getQueryParameters();
-        Map<String, String> context = new HashMap<>(parameters.size());
-
-        for (String key : parameters.keySet()) {
-            context.put(key.toUpperCase(), parameters.getFirst(key));
-        }
-
-        if (page != null) {
-            context.put("PAGE", page);
-            context.put("PER_PAGE", perPage);
-        }
-
-        return context;
     }
 }

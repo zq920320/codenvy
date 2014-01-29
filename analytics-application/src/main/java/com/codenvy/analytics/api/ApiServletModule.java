@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics;
+package com.codenvy.analytics.api;
 
 import com.codenvy.inject.DynaModule;
 import com.google.inject.servlet.ServletModule;
