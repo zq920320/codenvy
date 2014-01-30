@@ -264,7 +264,7 @@ cp -r $HOME/analytics_conf/log4j.properties $CARBON_HOME/repository/conf
 
 [ -z "${TENANT_MASTERHOST}" ]  && TENANT_MASTERHOST="codenvy.com"
 [ -z "${TENANT_MASTERPORT}" ]  && TENANT_MASTERPORT="80"
-[ -z "${TENANT_MASTERHOST_PROTOCOL}" ]  && TENANT_MASTERHOST_PROTOCOL="http"
+[ -z "${TENANT_MASTERHOST_PROTOCOL}" ]  && TENANT_MASTERHOST_PROTOCOL="https"
 
 while [ "$status" = "$START_EXIT_STATUS" ]
 do

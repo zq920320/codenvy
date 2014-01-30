@@ -258,6 +258,10 @@ cd "$CARBON_HOME"
 START_EXIT_STATUS=121
 status=$START_EXIT_STATUS
 
+[ -z "${TENANT_MASTERHOST}" ]  && TENANT_MASTERHOST="localhost"
+[ -z "${TENANT_MASTERPORT}" ]  && TENANT_MASTERPORT="80"
+[ -z "${TENANT_MASTERHOST_PROTOCOL}" ]  && TENANT_MASTERHOST_PROTOCOL="http"
+
 while [ "$status" = "$START_EXIT_STATUS" ]
 do
     $JAVACMD \
@@ -270,6 +274,9 @@ do
     -Xms256m -Xmx2G -XX:MaxPermSize=256m \
     -Dcodenvy.local.conf.dir=$CARBON_HOME/repository/conf \
     -Ddisable.cassandra.server.startup=true \
+    -Dtenant.masterhost=${TENANT_MASTERHOST} \
+    -Dtenant.masterhost.protocol=${TENANT_MASTERHOST_PROTOCOL} \
+    -Dtenant.masterport=${TENANT_MASTERPORT} \
     -Dcom.sun.management.jmxremote \
     -classpath "$CARBON_CLASSPATH" \
     -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
