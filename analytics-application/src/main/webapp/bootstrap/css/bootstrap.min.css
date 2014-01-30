@@ -2104,9 +2104,9 @@ table .span24 {
     border: 1px solid rgba(0, 0, 0, 0.2);
     *border-right-width: 2px;
     *border-bottom-width: 2px;
-    -webkit-border-radius: 5px;
+/*    -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
-    border-radius: 5px;
+    border-radius: 5px; */
     -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -3165,7 +3165,7 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
 }
 
 .navbar-inner {
-    min-height: 40px;
+    min-height: 20px;
     padding-right: 20px;
     padding-left: 20px;
     background-color: #2c2c2c;
@@ -3204,12 +3204,12 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
 .navbar .brand {
     display: block;
     float: left;
-    padding: 8px 20px 12px;
+    margin-top: 6px;
+    padding: 0 20px;
     margin-left: -20px;
     font-size: 20px;
     font-weight: 200;
-    line-height: 1;
-    color: #999
+    color: white;
 }
 
 .navbar .navbar-text {

@@ -123,8 +123,6 @@
 
 
 <!--  load calendar jquery plugin  -->
-<link rel="stylesheet" href="scripts/third-party/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">
-<script type="text/javascript" src="scripts/third-party/jquery-ui-1.8.20/ui/minified/jquery-ui.min.js"></script>
 <script type="text/javascript">
     $(function () {
         $("#datepicker-from-date").datepicker({dateFormat: "yy-mm-dd"});
