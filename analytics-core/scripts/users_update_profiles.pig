@@ -18,12 +18,13 @@
 
 DEFINE MongoStorage com.codenvy.analytics.pig.udf.MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
+DEFINE FixJobTitle com.codenvy.analytics.pig.udf.FixJobTitle;
 
 IMPORT 'macros.pig';
 
 ---------------------------------------------------------------------------
 -- Finds last updates user profile
--- @return {user : chararray, firstName : chararray, lastName : chararray, company : chararry}
+-- @return {user : chararray, firstName : chararray, lastName : chararray, company : chararray}
 ---------------------------------------------------------------------------
 DEFINE lastUserProfileUpdate(X) RETURNS Y {
   y1 = GROUP $X BY user;
@@ -41,12 +42,13 @@ a3 = extractParam(a2, 'LASTNAME', 'lastName');
 a4 = extractParam(a3, 'COMPANY', 'company');
 a5 = extractParam(a4, 'PHONE', 'phone');
 a6 = extractParam(a5, 'JOBTITLE', 'job');
-a7 = FOREACH a6 GENERATE user, firstName, lastName, company, phone, job, dt;
+a7 = FOREACH a6 GENERATE user, firstName, lastName, company, phone, FixJobTitle(job) AS job, dt;
 a8 = FOREACH a7 GENERATE user, (firstName == 'null' OR firstName IS NULL ? '' : firstName) AS firstName,
 			    (lastName == 'null' OR lastName IS NULL ? '' : lastName) AS lastName,
 			    (company == 'null' OR company IS NULL ? '' : company) AS company,
 			    (phone == 'null' OR phone IS NULL ? '' : phone) AS phone,
 			    (job == 'null' OR job IS NULL ? '' : job) AS job, dt;
+
 a = lastUserProfileUpdate(a8);
 
 result = FOREACH a GENERATE user, TOTUPLE('user_first_name', firstName),

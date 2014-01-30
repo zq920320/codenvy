@@ -34,7 +34,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -102,21 +101,21 @@ public class TestUserUpdateProfile extends BaseTest {
                 assertEquals(all.get("user_last_name").getAsString(), "l3");
                 assertEquals(all.get("user_company").getAsString(), "company1");
                 assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "2");
+                assertEquals(all.get("user_job").getAsString(), "Other");
 
             } else if (userEmail.getAsString().equals("user2@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f2");
                 assertEquals(all.get("user_last_name").getAsString(), "l2");
                 assertEquals(all.get("user_company").getAsString(), "company2");
                 assertEquals(all.get("user_phone").getAsString(), "11");
-                assertEquals(all.get("user_job").getAsString(), "1");
+                assertEquals(all.get("user_job").getAsString(), "Other");
 
             } else if (userEmail.getAsString().equals("user3@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
                 assertEquals(all.get("user_last_name").getAsString(), "l4");
                 assertEquals(all.get("user_company").getAsString(), "company3");
                 assertEquals(all.get("user_phone").getAsString(), "22");
-                assertEquals(all.get("user_job").getAsString(), "2");
+                assertEquals(all.get("user_job").getAsString(), "Other");
 
             } else if (userEmail.getAsString().equals("user4@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
@@ -149,7 +148,7 @@ public class TestUserUpdateProfile extends BaseTest {
         assertEquals(all.get("user_last_name").getAsString(), "l3");
         assertEquals(all.get("user_company").getAsString(), "company1");
         assertEquals(all.get("user_phone").getAsString(), "22");
-        assertEquals(all.get("user_job").getAsString(), "2");
+        assertEquals(all.get("user_job").getAsString(), "Other");
     }
 
     @Test
