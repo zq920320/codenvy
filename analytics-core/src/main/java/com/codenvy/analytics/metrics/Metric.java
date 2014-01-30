@@ -27,16 +27,26 @@ import java.util.Map;
 public interface Metric {
 
     /**
-     * Returns the value of metric for given context.
+     * Returns the value of metric.
      *
      * @param context
-     *         the execution context
+     *         the execution context, for the most cases it isn't needed to modify it. It is used as a parameter to get
+     *         value of other metrics
      * @throws IOException
      *         if any errors are occurred
      */
     ValueData getValue(Map<String, String> context) throws IOException;
 
-    /** @return which data type is returned by metric */
+    /**
+     * @return which type of {@link ValueData} the {@link #getValue(java.util.Map)} method returns.
+     *         The possible variants are:
+     *         {@link com.codenvy.analytics.datamodel.StringValueData}
+     *         {@link com.codenvy.analytics.datamodel.LongValueData}
+     *         {@link com.codenvy.analytics.datamodel.DoubleValueData}
+     *         {@link com.codenvy.analytics.datamodel.SetValueData}
+     *         {@link com.codenvy.analytics.datamodel.ListValueData}
+     *         {@link com.codenvy.analytics.datamodel.MapValueData}
+     */
     Class<? extends ValueData> getValueDataClass();
 
     /** @return the name of the metric */

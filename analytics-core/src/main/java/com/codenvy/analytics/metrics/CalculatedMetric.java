@@ -31,19 +31,29 @@ public abstract class CalculatedMetric extends AbstractMetric {
         }
     }
 
-    public CalculatedMetric(String metricType, String[] basedMetricTypes) {
-        super(metricType);
+    /**
+     * {@link CalculatedMetric} constructor.
+     *
+     * @param metricName
+     *         the metric name, must be unique
+     * @param basedMetricsNames
+     *         the metrics names which is used to calculate the value of the metric. All metrics will be available
+     *         inside {@link #getValue(java.util.Map)} method throw array {@link #basedMetric} in the same order as were
+     *         passed into constructor
+     */
+    public CalculatedMetric(String metricName, String[] basedMetricsNames) {
+        super(metricName);
 
-        this.basedMetric = new Metric[basedMetricTypes.length];
-        for (int i = 0; i < basedMetricTypes.length; i++) {
-            this.basedMetric[i] = MetricFactory.getMetric(basedMetricTypes[i]);
+        this.basedMetric = new Metric[basedMetricsNames.length];
+        for (int i = 0; i < basedMetricsNames.length; i++) {
+            this.basedMetric[i] = MetricFactory.getMetric(basedMetricsNames[i]);
         }
     }
-    
+
     protected CalculatedMetric(MetricType metricType, Metric[] basedMetric) {
         this(metricType.name(), basedMetric);
     }
-    
+
     public CalculatedMetric(String metricType, Metric[] basedMetric) {
         super(metricType);
         this.basedMetric = basedMetric;
