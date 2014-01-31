@@ -32,11 +32,11 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_where_users_have_several_factory_sessions"/>
-                <parameter key="description" value="Workspaces count where users have several factory sessions"/>
+                <parameter key="description" value="# more than one session"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_with_zero_factory_sessions_length"/>
-                <parameter key="description" value="Workspaces count with zero factory sessions length"/>
+                <parameter key="description" value="# without sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_users_from_factory"/>

@@ -31,7 +31,7 @@ import com.mongodb.DBObject;
 /** @author Alexander Reshetnyak */
 public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
 
-    public static final String UNIQUE_WORKSPACES_COUNT = "count";
+    public static final String COUNT = "count";
 
     public WorkspacesWithZeroFactorySessionsLength() {
         super(MetricType.WORKSPACES_WITH_ZERO_FACTORY_SESSIONS_LENGTH);
@@ -39,7 +39,7 @@ public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{UNIQUE_WORKSPACES_COUNT};
+        return new String[]{COUNT};
     }
 
     @Override
@@ -56,7 +56,7 @@ public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
         
         group = new BasicDBObject();
         group.put("_id", null);
-        group.put(UNIQUE_WORKSPACES_COUNT, new BasicDBObject("$sum", 1));
+        group.put(COUNT, new BasicDBObject("$sum", 1));
         dbOperations.add(new BasicDBObject("$group", group));
         
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
@@ -65,6 +65,11 @@ public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
     @Override
     public Class< ? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+    
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
 
     @Override

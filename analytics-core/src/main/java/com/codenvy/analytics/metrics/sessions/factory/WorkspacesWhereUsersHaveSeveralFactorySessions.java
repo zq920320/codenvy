@@ -32,7 +32,7 @@ import com.mongodb.DBObject;
 /** @author Alexander Reshetnyak */
 public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMetric {
 
-    public static final String UNIQUE_WORKSPACES_COUNT = "count";
+    public static final String COUNT = "count";
 
     public WorkspacesWhereUsersHaveSeveralFactorySessions() {
         super(MetricType.WORKSPACES_WHERE_USERS_HAVE_SEVERAL_FACTORY_SESSIONS);
@@ -40,7 +40,7 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMet
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{UNIQUE_WORKSPACES_COUNT};
+        return new String[]{COUNT};
     }
 
     @Override
@@ -65,7 +65,7 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMet
         
         group = new BasicDBObject();
         group.put("_id", null);
-        group.put(UNIQUE_WORKSPACES_COUNT, new BasicDBObject("$sum", 1));
+        group.put(COUNT, new BasicDBObject("$sum", 1));
         dbOperations.add(new BasicDBObject("$group", group));
 
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
@@ -74,6 +74,11 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMet
     @Override
     public Class< ? extends ValueData> getValueDataClass() {
         return LongValueData.class;
+    }
+    
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
 
     @Override
