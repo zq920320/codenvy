@@ -131,5 +131,27 @@
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
+        
+        <section name="workspaces_where_users_have_several_factory_sessions">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="The workspaces count where users have several factory sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="workspaces_where_users_have_several_factory_sessions"/>
+                <parameter key="description" value="Workspaces count"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+        
+        <section name="workspaces_with_zero_factory_sessions_length">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="The workspaces count with zero factory sessions length"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="workspaces_with_zero_factory_sessions_length"/>
+                <parameter key="description" value="Workspaces count"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
     </view>
 </display>

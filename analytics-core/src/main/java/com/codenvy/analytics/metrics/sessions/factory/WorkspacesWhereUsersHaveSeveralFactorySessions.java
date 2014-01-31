@@ -1,0 +1,75 @@
+/*
+ *
+ * CODENVY CONFIDENTIAL
+ * ________________
+ *
+ * [2012] - [2014] Codenvy, S.A.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
+package com.codenvy.analytics.metrics.sessions.factory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.codenvy.analytics.metrics.MetricType;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
+/** @author Alexander Reshetnyak */
+public class WorkspacesWhereUsersHaveSeveralFactorySessions extends AbstractFactorySessionsWithEvent {
+
+    public static final String UNIQUE_WORKSPACES_COUNT = "unique_workspaces_count";
+
+    public WorkspacesWhereUsersHaveSeveralFactorySessions() {
+        super(MetricType.WORKSPACES_WHERE_USERS_HAVE_SEVERAL_FACTORY_SESSIONS);
+    }
+
+    @Override
+    public String[] getTrackedFields() {
+        return new String[]{UNIQUE_WORKSPACES_COUNT};
+    }
+
+    @Override
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+        List<DBObject> dbOperations = new ArrayList<>();
+
+        DBObject group = new BasicDBObject();
+        Map<Object, Object> m = new HashMap<Object, Object>();
+        m.put("user", "$" + ProductUsageFactorySessionsList.USER);
+        m.put("ws", "$" + ProductUsageFactorySessionsList.WS);
+        group.put("_id", m);
+        group.put("sum", new BasicDBObject("$sum", 1));
+        dbOperations.add(new BasicDBObject("$group", group));
+
+        DBObject match = new BasicDBObject();
+        match.put("sum", new BasicDBObject( "$gte", 2));
+        dbOperations.add(new BasicDBObject("$match", match));
+        
+        group = new BasicDBObject();
+        group.put("_id", "$_id." + ProductUsageFactorySessionsList.WS);
+        dbOperations.add(new BasicDBObject("$group", group));
+        
+        group = new BasicDBObject();
+        group.put("_id", null);
+        group.put(UNIQUE_WORKSPACES_COUNT, new BasicDBObject("$sum", 1));
+        dbOperations.add(new BasicDBObject("$group", group));
+
+        return dbOperations.toArray(new DBObject[dbOperations.size()]);
+    }
+
+    @Override
+    public String getDescription() {
+        return "The workspaces count where users have several factory sessions";
+    }
+}
