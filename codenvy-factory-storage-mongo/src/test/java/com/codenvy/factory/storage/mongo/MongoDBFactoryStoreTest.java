@@ -255,6 +255,72 @@ public class MongoDBFactoryStoreTest {
     }
 
     @Test
+    public void testGetFactoryWithoutWelcome() throws Exception {
+
+        String id = "testid1234";
+
+        Map<String, String> attrs = new HashMap<>();
+        attrs.put("testattr1", "testValue1");
+        attrs.put("testattr2", "testValue2");
+        attrs.put("testattr3", "testValue3");
+
+
+        byte[] b = new byte[4096];
+        new Random().nextBytes(b);
+
+        BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(attrs);
+
+        List<Variable> variables = Collections.singletonList(
+                new Variable(Collections.singletonList("glob"),
+                             Collections.singletonList(new Variable.Replacement("find", "replace", "text_multipass"))));
+
+        List<DBObject> imageList = new ArrayList<>();
+
+
+        BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
+        factoryURLbuilder.add("v", "1.1")
+                         .add("vcs", "git")
+                         .add("vcsurl", "http://vcsurl")
+                         .add("commitid", "commit123456")
+                         .add("action", "openfile")
+                         .add("openfile", "true")
+                         .add("vcsinfo", true)
+                         .add("style", "testStyle")
+                         .add("description", "testDescription")
+                         .add("contactmail", "test@test.com")
+                         .add("author", "someAuthor")
+                         .add("orgid", "org123456")
+                         .add("affiliateid", "testaffiliate123")
+                         .add("vcsbranch", "master")
+                         .add("userid", "123456798")
+                         .add("validsince", 123645L)
+                         .add("validuntil", 123645L)
+                         .add("created", 123645L)
+                         .add("projectattributes", attributes.get())
+                         .add("variables", VariableHelper.toBasicDBFormat(variables))
+                         .add("welcome", null);
+
+        BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
+        factoryDatabuilder.add("_id", id);
+        factoryDatabuilder.add("factoryurl", factoryURLbuilder.get());
+        factoryDatabuilder.add("images", imageList);
+
+        collection.save(factoryDatabuilder.get());
+
+        AdvancedFactoryUrl result = store.getFactory(id);
+        assertNotNull(result);
+
+        JsonParser jsonParser = new JsonParser();
+        jsonParser.parse(new ByteArrayInputStream(factoryURLbuilder.get().toString().getBytes("UTF-8")));
+        JsonValue jsonValue = jsonParser.getJsonObject();
+        AdvancedFactoryUrl source = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
+        source.setId(id);
+        source.setVariables(variables);
+
+        assertEquals(result, source);
+    }
+
+    @Test
     public void testGetFactoryImages() throws Exception {
 
         String id = "testid1234314";
