@@ -262,6 +262,13 @@ status=$START_EXIT_STATUS
 [ -z "${TENANT_MASTERPORT}" ]  && TENANT_MASTERPORT="80"
 [ -z "${TENANT_MASTERHOST_PROTOCOL}" ]  && TENANT_MASTERHOST_PROTOCOL="http"
 
+# Set path to organization service server
+[ -z "${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL}" ] && ORGANIZATION_SERVICE_APPLICATION_SERVER_URL="http://${TENANT_MASTERHOST}:${TENANT_MASTERPORT}/organization/"
+
+# What kind of organization server is used
+[ -z "${ORGANIZATION_SERVICE_IMPL}" ] && ORGANIZATION_SERVICE_IMPL="ldap"
+
+
 while [ "$status" = "$START_EXIT_STATUS" ]
 do
     $JAVACMD \
