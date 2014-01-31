@@ -22,14 +22,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author Alexander Reshetnyak */
-public class WorkspacesWhereUsersHaveSeveralFactorySessions extends AbstractFactorySessionsWithEvent {
+public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMetric {
 
-    public static final String UNIQUE_WORKSPACES_COUNT = "unique_workspaces_count";
+    public static final String UNIQUE_WORKSPACES_COUNT = "count";
 
     public WorkspacesWhereUsersHaveSeveralFactorySessions() {
         super(MetricType.WORKSPACES_WHERE_USERS_HAVE_SEVERAL_FACTORY_SESSIONS);
@@ -45,7 +48,7 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends AbstractFact
         List<DBObject> dbOperations = new ArrayList<>();
 
         DBObject group = new BasicDBObject();
-        Map<Object, Object> m = new HashMap<Object, Object>();
+        Map<String, String> m = new HashMap<String, String>();
         m.put("user", "$" + ProductUsageFactorySessionsList.USER);
         m.put("ws", "$" + ProductUsageFactorySessionsList.WS);
         group.put("_id", m);
@@ -66,6 +69,11 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends AbstractFact
         dbOperations.add(new BasicDBObject("$group", group));
 
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
+    }
+    
+    @Override
+    public Class< ? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     @Override

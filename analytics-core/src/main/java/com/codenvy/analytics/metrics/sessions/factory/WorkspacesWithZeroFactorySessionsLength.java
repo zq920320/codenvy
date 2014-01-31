@@ -21,14 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author Alexander Reshetnyak */
-public class WorkspacesWithZeroFactorySessionsLength extends AbstractFactorySessionsWithEvent {
+public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
 
-    public static final String UNIQUE_WORKSPACES_COUNT = "unique_workspaces_count";
+    public static final String UNIQUE_WORKSPACES_COUNT = "count";
 
     public WorkspacesWithZeroFactorySessionsLength() {
         super(MetricType.WORKSPACES_WITH_ZERO_FACTORY_SESSIONS_LENGTH);
@@ -57,6 +60,11 @@ public class WorkspacesWithZeroFactorySessionsLength extends AbstractFactorySess
         dbOperations.add(new BasicDBObject("$group", group));
         
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
+    }
+    
+    @Override
+    public Class< ? extends ValueData> getValueDataClass() {
+        return LongValueData.class;
     }
 
     @Override

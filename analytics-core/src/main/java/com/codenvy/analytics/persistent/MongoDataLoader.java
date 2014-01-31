@@ -22,7 +22,6 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.AggregationOutput;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 import java.io.IOException;

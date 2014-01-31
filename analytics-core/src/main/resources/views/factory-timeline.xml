@@ -31,6 +31,14 @@
                 <parameter key="description" value="Temporary Workspaces Created"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="workspaces_where_users_have_several_factory_sessions"/>
+                <parameter key="description" value="Workspaces count where users have several factory sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="workspaces_with_zero_factory_sessions_length"/>
+                <parameter key="description" value="Workspaces count with zero factory sessions length"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_users_from_factory"/>
                 <parameter key="description" value="Accounts Created From Factories"/>
             </row>
@@ -128,28 +136,6 @@
                 <parameter key="name" value="factory_product_usage_time_total"/>
                 <parameter key="description" value="Product Usage Mins"/>
                 <parameter key="time-field" value="true"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
-        </section>
-        
-        <section name="workspaces_where_users_have_several_factory_sessions">
-            <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="The workspaces count where users have several factory sessions"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="workspaces_where_users_have_several_factory_sessions"/>
-                <parameter key="description" value="Workspaces count"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
-        </section>
-        
-        <section name="workspaces_with_zero_factory_sessions_length">
-            <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="The workspaces count with zero factory sessions length"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="workspaces_with_zero_factory_sessions_length"/>
-                <parameter key="description" value="Workspaces count"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
