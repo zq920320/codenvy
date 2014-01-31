@@ -2136,6 +2136,7 @@ table .span24 {
     clear: both;
     font-weight: normal;
     line-height: 18px;
+    font-size: 15px;
     color: #333;
     white-space: nowrap
 }
@@ -3204,11 +3205,11 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
 .navbar .brand {
     display: block;
     float: left;
-    margin-top: 6px;
+    margin-top: 7px;
     padding: 0 20px;
     margin-left: -20px;
-    font-size: 20px;
-    font-weight: 200;
+    font-size: 22px;
+    font-weight: bold;
     color: white;
 }
 
@@ -3352,7 +3353,7 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
     left: 0;
     display: block;
     float: left;
-    margin: 0 10px 0 0
+    margin: 0;
 }
 
 .navbar .nav.pull-right {
@@ -4058,6 +4059,18 @@ a.thumbnail:hover {
 .thumbnail .caption {
     padding: 9px
 }
+
+.navbar .label {
+    color: #FFFFFF;
+    display: inline;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 16px;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    vertical-align: baseline;
+    white-space: nowrap;
+} 
+
 
 .label, .badge {
     font-size: 10.998px;

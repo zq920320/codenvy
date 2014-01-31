@@ -1,61 +1,106 @@
+<%@page import="java.security.Principal,com.codenvy.analytics.datamodel.*,java.util.*,com.codenvy.analytics.metrics.MetricFactory" %>  
+<%  
+   /** get first name and last name from special metric **/
+
+   String METRIC_NAME = "users_profiles_list";
+   String USER_FIRST_NAME_KEY = "user_first_name";
+   String USER_LAST_NAME_KEY = "user_last_name";
+
+   String email = null;
+   Principal userPrincipal = request.getUserPrincipal();
+   if (userPrincipal != null) {
+       email = userPrincipal.getName();
+   }
+   
+   HashMap<String, String> metricContext = new HashMap<String, String>();
+   
+   if (email != null) {
+       metricContext.put("USER", email);
+   }    
+   
+   ListValueData value = (ListValueData) MetricFactory.getMetric(METRIC_NAME).getValue(metricContext);
+   
+   String firstName = "";
+   String lastName = "";
+   
+   if (value.size() > 0) {
+	   Map<String,ValueData> userProfile = ((MapValueData) value.getAll().get(0)).getAll();
+	   
+	   firstName = userProfile.get(USER_FIRST_NAME_KEY).toString();
+	   lastName = userProfile.get(USER_LAST_NAME_KEY).toString();
+   }
+
+   // display user email if there are empty both his/her first name and last name
+   if (firstName.isEmpty() && lastName.isEmpty()) {
+       firstName = email;
+   }
+   
+   request.setAttribute(USER_FIRST_NAME_KEY, firstName);   
+   request.setAttribute(USER_LAST_NAME_KEY, lastName);
+%>
+
 <style>
-
-.ui-button, .ui-button a {
-    color: white !important;
-    font-weight: bold !important;
-    font-size: 16px !important;
-}
-
-.ui-state-default {
-    background: none;
-    border: 0 none !important;
-}
-
-.selected, .ui-state-hover {
-    background-color: #0076B1;
-    color: white !important;
-}
-
-.ui-corner-all {
-    border-radius: 0 !important;
-}
+	.ui-button, .ui-button a {
+	    color: white !important;
+	    font-weight: bold !important;
+	    font-size: 16px !important;
+	}
+	
+	.ui-state-default {
+	    background: none;
+	    border: 0 none !important;
+	}
+	
+	.selected {
+	    background-color: #0076B1;
+	    color: white !important;
+	}
+	
+	.ui-state-hover {
+	    background-color: #08c;
+	}
+	
+	.ui-corner-all {
+	    border-radius: 0 !important;
+	}
 </style>
+
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
-		<div class="container-fluid">
-			<a class="brand" href="#">
+		<div class="container-fluid" id="topmenu">
+			<a class="brand" href="/analytics/">
 			     Codenvy Analytics
 			</a>
 
             <div>
-				<button class="nav"><a href="users-profiles.jsp">Users</a></button>
-				<button class="nav"><a href="#">Workspaces</a></button>
-				<button class="nav"><a href="#">Sessions</a></button> 
-				<button class="nav"><a href="#">Projects</a></button> 
-				<button class="nav"><a href="#">Factories</a></button>
+				<a class="nav" href="users-profiles.jsp" id="topmenu-users">Users</a>
+				<a class="nav" href="#">Workspaces</a>
+				<a class="nav" href="#">Sessions</a> 
+				<a class="nav" href="#">Projects</a> 
+				<a class="nav" href="#">Factories</a>
 	
 				<div class="nav">
 					<div>
-						<button id="reportMenuButton" class="selected">Reports</button>
+						<button id="topmenu-reports">Reports</button>
 					</div>
 					<ul class="dropdown-menu">
-					    <li><a href="timeline.jsp">Timeline</a></li>
-					    <li><a href="factory-statistics.jsp">Factory statistics</a></li>
-					    <li><a href="top-metrics.jsp">Top Metrics</a></li>
-					    <li><a href="analysis.jsp" class="selected">Analysis</a></li>
+					    <li><a href="timeline.jsp" id="topmenu-reports-timeline">Timeline</a></li>
+					    <li><a href="factory-statistics.jsp" id="topmenu-reports-factories">Factories</a></li>
+					    <li><a href="top-metrics.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
+					    <li><a href="analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
 				    </ul>	    
 				</div>
 		    </div>
 
 			<div class="right">
 				<div class="nav">
-					<div class="brand">First_Name Last_Name</div>
-					<button id="userMenuButton">Select an action</button>
+					<div class="label"><%= request.getAttribute(USER_FIRST_NAME_KEY)%> <%= request.getAttribute(USER_LAST_NAME_KEY)%></div>
+					<button id="topmenu-user">Select an action</button>
 				</div>
                 <ul class="dropdown-menu">
-					<li><a href="#">Logout</a></li>
-					<li><a href="#">Main page</a></li>
-					<li><a href="#">Workspace</a></li>
+					<li><a href="/api/auth/logout">Logout</a></li>
+					<li><a href="/">Main page</a></li>
+					<li><a href="/site/private/select-tenant/">Workspace</a></li>
 				</ul>
             </div>
 		</div>
@@ -63,43 +108,23 @@
 </div>
 
 <!-- add handlers of top-menu buttons -->
+<script type="text/javascript" src="scripts/views/top-menu.js"></script>
 <script>
 	$(function() {
-	    turnOnNavButtons();
-	    dropdownButtonAction("reportMenuButton", false);    // reports menu button
-	    dropdownButtonAction("userMenuButton", true);    // user menu button
-	});
-	
-	function turnOnNavButtons() {
-	    var buttons = jQuery( "button.nav" );
-	    for (var i = 0; i < buttons.length; i++)
-	        jQuery(buttons[i]).button();
-	}
-	
-	function dropdownButtonAction(selectButtonId, displayTriangleIcon) {
-	    var buttonText = {};
-	    if (displayTriangleIcon) {
-	        buttonText = {
-	            text: false,
-	            icons: {
-	                primary: "ui-icon-triangle-1-s"
-	            }
-	        };
-	    }
+	    analytics.views.topMenu.turnOnNavButtons();
+	    analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
+	    analytics.views.topMenu.turnOnDropdownButton("topmenu-user", true);    // turn-on user menu button
 	    
-	    jQuery( "#" + selectButtonId )
-	    .button(buttonText)
-	    .click(function() {
-	      var menu = $( this ).parent().next().show().position({
-	        my: "left top",
-	        at: "left bottom",
-	        of: this
-	      });
-	      $( document ).one( "click", function() {
-	        menu.hide();
-	      });
-	      return false;
-	    });
-	
-	}
+	    // select menu items connected to page where top menu is displaying
+	<%  if (request.getParameterValues("selectedMenuItemId") != null) { 
+	        String[] menuItemIds = request.getParameterValues("selectedMenuItemId");
+	        for (int i = 0; i < menuItemIds.length; i++) { 
+	%>
+	    analytics.views.topMenu.selectMenuItem("<%= menuItemIds[i]%>");  
+	<%      }
+	    }
+	%>
+
+        analytics.views.topMenu.addHandlersToHidePopupMenu();
+	});
 </script>

@@ -7,13 +7,13 @@
 <body>
 
 <jsp:include page="inclusions/top-menu.jsp">
-    <jsp:param name="selectedMenuItem" value="Reports"/>
-    <jsp:param name="selectedSubMenuItem" value="Analysis"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-reports-analysis"/>
 </jsp:include>
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span10">
+        <div>
             <div class="single-column-gadget full-width">
                 <div class="view">
                     <div class="tables">
