@@ -111,6 +111,50 @@ public class MongoDBFactoryStoreTest {
     }
 
     @Test
+    public void testSaveFactoryWithoutWelcome() throws Exception {
+
+        Set<FactoryImage> images = new HashSet<>();
+        Map<String, String> attrs = new HashMap<>();
+        attrs.put("testattr1", "testValue1");
+        attrs.put("testattr2", "testValue2");
+        attrs.put("testattr3", "testValue3");
+
+        WelcomePage welcomePage = null;
+
+        AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
+        factoryUrl.setAuthor("someAuthor");
+        factoryUrl.setContactmail("test@test.com");
+        factoryUrl.setDescription("testDescription");
+        factoryUrl.setProjectattributes(attrs);
+        factoryUrl.setStyle("testStyle");
+        factoryUrl.setAction("openfile");
+        factoryUrl.setOrgid("org123456");
+        factoryUrl.setAffiliateid("testaffiliate123");
+        factoryUrl.setCommitid("commit12345");
+        factoryUrl.setVcsinfo(true);
+        factoryUrl.setV("1.1");
+        factoryUrl.setVcs("http://testvscurl.com");
+        factoryUrl.setOpenfile("index.php");
+        factoryUrl.setVcsbranch("master");
+        factoryUrl.setVcsurl("http://testvscurl.com");
+        factoryUrl.setWelcome(welcomePage);
+
+        String id = store.saveFactory(factoryUrl, images);
+
+        DBObject query = new BasicDBObject();
+        query.put("_id", id);
+        DBObject res = (DBObject)collection.findOne(query).get("factoryurl");
+        JsonParser jsonParser = new JsonParser();
+        jsonParser.parse(new ByteArrayInputStream(res.toString().getBytes("UTF-8")));
+        JsonValue jsonValue = jsonParser.getJsonObject();
+        AdvancedFactoryUrl result = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
+        result.setId(id);
+        factoryUrl.setId(id);
+        assertEquals(result, factoryUrl);
+
+    }
+
+    @Test
     public void testRemoveFactory() throws Exception {
 
         String id = "123412341";
