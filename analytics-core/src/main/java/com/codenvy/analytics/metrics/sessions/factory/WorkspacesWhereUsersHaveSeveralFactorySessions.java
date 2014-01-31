@@ -48,7 +48,7 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMet
         List<DBObject> dbOperations = new ArrayList<>();
 
         DBObject group = new BasicDBObject();
-        Map<String, String> m = new HashMap<String, String>();
+        Map<String, String> m = new HashMap<>();
         m.put("user", "$" + ProductUsageFactorySessionsList.USER);
         m.put("ws", "$" + ProductUsageFactorySessionsList.WS);
         group.put("_id", m);
