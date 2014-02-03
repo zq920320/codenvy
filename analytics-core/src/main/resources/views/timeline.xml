@@ -275,10 +275,6 @@
                 <parameter key="name" value="debugs"/>
                 <parameter key="description" value="# Debugs"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="file_manipulations"/>
-                <parameter key="description" value="# File Ops"/>
-            </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
 

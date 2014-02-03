@@ -24,6 +24,9 @@ import com.codenvy.analytics.metrics.MetricType;
 public class UsersActivityList extends AbstractListValueResulted {
 
     public static final String MESSAGE = "message";
+    public static final String EVENT = "event";
+    public static final String USER = "user";
+    public static final String WS = "ws";
 
     public UsersActivityList() {
         super(MetricType.USERS_ACTIVITY_LIST);
@@ -31,7 +34,7 @@ public class UsersActivityList extends AbstractListValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{DATE, MESSAGE};
+        return new String[]{DATE, MESSAGE, EVENT, WS, USER};
     }
 
     @Override

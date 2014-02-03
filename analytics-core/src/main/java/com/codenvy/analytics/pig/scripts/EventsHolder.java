@@ -45,4 +45,18 @@ public class EventsHolder {
 
         return false;
     }
+    
+    /**
+     * @return the description of the event
+     * @throws IllegalArgumentException if event doesn't exist into configuration
+     */
+    public String getDescription(String eventName) throws IllegalArgumentException {
+        for (EventConfiguration eventConfiguration : configuration.getEvents()) {
+            if (eventConfiguration.getName().equals(eventName)) {
+                return eventConfiguration.getDescription();
+            }
+        }
+        
+        throw new IllegalArgumentException("There is no event with name " + eventName);
+    }
 }

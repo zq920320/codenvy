@@ -20,6 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersActivity;
@@ -32,7 +33,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +52,6 @@ public class TestUsersActivity extends BaseTest {
 
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
                         .withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:05:00").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -75,11 +73,16 @@ public class TestUsersActivity extends BaseTest {
 
         Metric metric = new TestUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
-
-        assertEquals(value.size(), 2);
+        
+        assertEquals(value.size(), 1);        
+        
+        MapValueData item = (MapValueData) value.getAll().get(0);
+        assertEquals(item.getAll().get("event").getAsString(), "session-started");
+        assertEquals(item.getAll().get("ws").getAsString(), "ws1");
+        assertEquals(item.getAll().get("user").getAsString(), "user1@gmail.com");
 
         metric = new TestNumberOfUsersOfActivity();
-        Assert.assertEquals(metric.getValue(context).getAsString(), "2");
+        Assert.assertEquals(metric.getValue(context).getAsString(), "1");
     }
 
     private class TestNumberOfUsersOfActivity extends UsersActivity {
