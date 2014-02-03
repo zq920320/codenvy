@@ -376,7 +376,7 @@ a:hover {
 }
 
 .container-fluid {
-    padding-right: 20px;
+    /* padding-right: 20px;*/
     padding-left: 20px;
     *zoom: 1;
 }
@@ -2090,12 +2090,12 @@ table .span24 {
 
 .dropdown-menu {
     position: absolute;
-    top: 100%;
+/*    top: 100%; */
     left: 0;
-    z-index: 1000;
+/*    z-index: 1000; */
     display: none;
     float: left;
-    min-width: 160px;
+/*    min-width: 160px;*/
     padding: 4px 0;
     margin: 1px 0 0;
     list-style: none;
@@ -4060,19 +4060,26 @@ a.thumbnail:hover {
     padding: 9px
 }
 
-.navbar .label {
+.navbar .label-container {
+    float: left;
+	background-color: #999
+} 
+
+.label {
     color: #FFFFFF;
-    display: inline;
     font-size: 16px;
     font-weight: bold;
     line-height: 16px;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    vertical-align: baseline;
     white-space: nowrap;
+    line-height: 2.2;
+    padding: 0 12px;
+    /*-webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px */    
 } 
 
-
-.label, .badge {
+.badge {
     font-size: 10.998px;
     font-weight: bold;
     line-height: 14px;
@@ -4081,16 +4088,6 @@ a.thumbnail:hover {
     white-space: nowrap;
     vertical-align: baseline;
     background-color: #999
-}
-
-.label {
-    padding: 1px 4px 2px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px
-}
-
-.badge {
     padding: 1px 9px 2px;
     -webkit-border-radius: 9px;
     -moz-border-radius: 9px;

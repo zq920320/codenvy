@@ -1,49 +1,27 @@
-<%@page import="java.security.Principal,com.codenvy.analytics.datamodel.*,java.util.*,com.codenvy.analytics.metrics.MetricFactory" %>  
-<%  
-   /** get first name and last name from special metric **/
+<%-- 
+ CODENVY CONFIDENTIAL
+ ________________
 
-   String METRIC_NAME = "users_profiles_list";
-   String USER_FIRST_NAME_KEY = "user_first_name";
-   String USER_LAST_NAME_KEY = "user_last_name";
-
-   String email = null;
-   Principal userPrincipal = request.getUserPrincipal();
-   if (userPrincipal != null) {
-       email = userPrincipal.getName();
-   }
-   
-   HashMap<String, String> metricContext = new HashMap<String, String>();
-   
-   if (email != null) {
-       metricContext.put("USER", email);
-   }    
-   
-   ListValueData value = (ListValueData) MetricFactory.getMetric(METRIC_NAME).getValue(metricContext);
-   
-   String firstName = "";
-   String lastName = "";
-   
-   if (value.size() > 0) {
-	   Map<String,ValueData> userProfile = ((MapValueData) value.getAll().get(0)).getAll();
-	   
-	   firstName = userProfile.get(USER_FIRST_NAME_KEY).toString();
-	   lastName = userProfile.get(USER_LAST_NAME_KEY).toString();
-   }
-
-   // display user email if there are empty both his/her first name and last name
-   if (firstName.isEmpty() && lastName.isEmpty()) {
-       firstName = email;
-   }
-   
-   request.setAttribute(USER_FIRST_NAME_KEY, firstName);   
-   request.setAttribute(USER_LAST_NAME_KEY, lastName);
-%>
+ [2012] - [2014] Codenvy, S.A.
+ All Rights Reserved.
+ NOTICE: All information contained herein is, and remains
+ the property of Codenvy S.A. and its suppliers,
+ if any. The intellectual and technical concepts contained
+ herein are proprietary to Codenvy S.A.
+ and its suppliers and may be covered by U.S. and Foreign Patents,
+ patents in process, and are protected by trade secret or copyright law.
+ Dissemination of this information or reproduction of this material
+ is strictly forbidden unless prior written permission is obtained
+ from Codenvy S.A.. 
+--%>
+<%@page import="com.codenvy.analytics.util.FrontEndUtil" %>  
 
 <style>
 	.ui-button, .ui-button a {
 	    color: white !important;
 	    font-weight: bold !important;
 	    font-size: 16px !important;
+	    margin-right: 0px;
 	}
 	
 	.ui-state-default {
@@ -63,19 +41,28 @@
 	.ui-corner-all {
 	    border-radius: 0 !important;
 	}
+	
+	.analytics-label {
+        color: #0076B1;
+    }
+    
+    /* use white "ui-icon-triangle-1-s" icon in user menu button */
+    .ui-state-hover .ui-icon, .ui-state-focus .ui-icon,
+    .ui-state-default .ui-icon {
+        background-image: url(images/ui-icons_ffffff_256x240.png); 
+    }
 </style>
 
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
 		<div class="container-fluid" id="topmenu">
 			<a class="brand" href="/analytics/">
-			     Codenvy Analytics
+			     Codenvy <span class="analytics-label">Analytics</span>
 			</a>
 
             <div>
 				<a class="nav" href="users-profiles.jsp" id="topmenu-users">Users</a>
-				<a class="nav" href="#">Workspaces</a>
-				<a class="nav" href="#">Sessions</a> 
+				<a class="nav" href="#">Workspaces</a> 
 				<a class="nav" href="#">Projects</a> 
 				<a class="nav" href="#">Factories</a>
 	
@@ -94,8 +81,10 @@
 
 			<div class="right">
 				<div class="nav">
-					<div class="label"><%= request.getAttribute(USER_FIRST_NAME_KEY)%> <%= request.getAttribute(USER_LAST_NAME_KEY)%></div>
-					<button id="topmenu-user">Select an action</button>
+					<div class="label-container">
+					    <div class="label"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></div>
+					</div>
+					<button id="topmenu-user">&nbsp;</button>
 				</div>
                 <ul class="dropdown-menu">
 					<li><a href="/api/auth/logout">Logout</a></li>
