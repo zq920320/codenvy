@@ -41,7 +41,7 @@
         <tag>2.0.0</tag>
     </scm>
     <properties>
-        <analytics.api.version>0.7.0-SNAPSHOT</analytics.api.version>
+        <analytics.api.version>0.7.0</analytics.api.version>
         <antlr.version>3.4</antlr.version>
         <ch.qos.logback.version>1.0.9</ch.qos.logback.version>
         <cloud-ide.version>2.10.1</cloud-ide.version>
