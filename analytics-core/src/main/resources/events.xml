@@ -18,28 +18,21 @@
 -->
 <events>
     <event name="ide-usage">
-        <description/>
+        <description>IDE usage</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
         </parameters>
     </event>
     <event name="users-events">
-        <description/>
+        <description>Custom event</description>
         <parameters>
             <param>USER</param>
             <param>ACTION</param>
         </parameters>
     </event>
-    <event name="file-manipulation">
-        <description/>
-        <parameters>
-            <param>WS</param>
-            <param>USER</param>
-        </parameters>
-    </event>
     <event name="user-code-refactor">
-        <description/>
+        <description>Code refactoring</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -49,7 +42,7 @@
         </parameters>
     </event>
     <event name="user-code-complete">
-        <description/>
+        <description>Autocompleting</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -58,7 +51,7 @@
         </parameters>
     </event>
     <event name="build-started">
-        <description/>
+        <description>Build started</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -67,7 +60,7 @@
         </parameters>
     </event>
     <event name="build-finished">
-        <description/>
+        <description>Build finished</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -76,7 +69,7 @@
         </parameters>
     </event>
     <event name="run-started">
-        <description/>
+        <description>Run started</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -85,7 +78,7 @@
         </parameters>
     </event>
     <event name="run-finished">
-        <description/>
+        <description>Run finished</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -94,7 +87,7 @@
         </parameters>
     </event>
     <event name="debug-started">
-        <description/>
+        <description>Debug started</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -103,7 +96,7 @@
         </parameters>
     </event>
     <event name="debug-finished">
-        <description/>
+        <description>Debug finished</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -112,32 +105,32 @@
         </parameters>
     </event>
     <event name="tenant-created">
-        <description/>
+        <description>Workspace created</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
         </parameters>
     </event>
     <event name="tenant-started">
-        <description/>
+        <description>Workspace started</description>
         <parameters>
             <param>WS</param>
         </parameters>
     </event>
     <event name="tenant-stopped">
-        <description/>
+        <description>Workspace stopped</description>
         <parameters>
             <param>WS</param>
         </parameters>
     </event>
     <event name="tenant-destroyed">
-        <description/>
+        <description>Workspace destroyed</description>
         <parameters>
             <param>WS</param>
         </parameters>
     </event>
     <event name="project-created">
-        <description/>
+        <description>Project created</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -146,7 +139,7 @@
         </parameters>
     </event>
     <event name="project-destroyed">
-        <description/>
+        <description>Project destroyed</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -155,7 +148,7 @@
         </parameters>
     </event>
     <event name="project-deployed">
-        <description/>
+        <description>Project deployed</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -165,7 +158,7 @@
         </parameters>
     </event>
     <event name="project-built">
-        <description/>
+        <description>Project built</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -174,7 +167,7 @@
         </parameters>
     </event>
     <event name="application-created">
-        <description/>
+        <description>Application deployed</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -184,7 +177,7 @@
         </parameters>
     </event>
     <event name="artifact-deployed">
-        <description/>
+        <description>Artifact deployed</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -194,21 +187,21 @@
         </parameters>
     </event>
     <event name="user-created">
-        <description/>
+        <description>User created</description>
         <parameters>
             <param>ALIASES</param>
             <param>USER-ID</param>
         </parameters>
     </event>
     <event name="user-removed">
-        <description/>
+        <description>User removed</description>
         <parameters>
             <param>ALIASES</param>
             <param>USER-ID</param>
         </parameters>
     </event>
     <event name="user-invite">
-        <description/>
+        <description>User sent invite</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -216,27 +209,27 @@
         </parameters>
     </event>
     <event name="user-changed-name">
-        <description/>
+        <description>User changed account</description>
         <parameters>
             <param>OLD-USER</param>
             <param>NEW-USER</param>
         </parameters>
     </event>
     <event name="user-sso-logged-in">
-        <description/>
+        <description>User logged in</description>
         <parameters>
             <param>USING</param>
             <param>USER</param>
         </parameters>
     </event>
     <event name="user-sso-logged-out">
-        <description/>
+        <description>User logged out</description>
         <parameters>
             <param>USER</param>
         </parameters>
     </event>
     <event name="session-started">
-        <description/>
+        <description>Session started</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>user
@@ -245,7 +238,7 @@
         </parameters>
     </event>
     <event name="session-finished">
-        <description/>
+        <description>Session finished</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -254,14 +247,14 @@
         </parameters>
     </event>
     <event name="shell-launched">
-        <description/>
+        <description>Shell launched</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
         </parameters>
     </event>
     <event name="user-added-to-ws">
-        <description/>
+        <description>User joined to workspace</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -269,7 +262,7 @@
         </parameters>
     </event>
     <event name="factory-created">
-        <description/>
+        <description>Factory created</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -283,7 +276,7 @@
         </parameters>
     </event>
     <event name="factory-project-imported">
-        <description/>
+        <description>Factory project imported</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -292,7 +285,7 @@
         </parameters>
     </event>
     <event name="session-factory-started">
-        <description/>
+        <description>Factory session started</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -300,7 +293,7 @@
         </parameters>
     </event>
     <event name="session-factory-stopped">
-        <description/>
+        <description>Factory session finished</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -308,7 +301,7 @@
         </parameters>
     </event>
     <event name="factory-url-accepted">
-        <description/>
+        <description>Factory accepted</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -319,7 +312,7 @@
         </parameters>
     </event>
     <event name="jrebel-usage">
-        <description/>
+        <description>JRebel usage</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -329,7 +322,7 @@
         </parameters>
     </event>
     <event name="jrebel-user-profile-info">
-        <description/>
+        <description>JRebel profile gathering</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -340,7 +333,7 @@
         </parameters>
     </event>
     <event name="build-interrupted">
-        <description/>
+        <description>Build interrupted</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
@@ -349,7 +342,7 @@
         </parameters>
     </event>
     <event name="user-update-profile">
-        <description/>
+        <description>User update profile</description>
         <parameters>
             <param>USER</param>
             <param>FIRSTNAME</param>
@@ -360,7 +353,7 @@
         </parameters>
     </event>
     <event name="runner-total-time">
-        <description/>
+        <description>Time spent in runner</description>
         <parameters>
             <param>USER</param>
             <param>WS</param>

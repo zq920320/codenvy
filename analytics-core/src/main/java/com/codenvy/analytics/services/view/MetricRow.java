@@ -20,11 +20,13 @@
 package com.codenvy.analytics.services.view;
 
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -52,6 +54,7 @@ public class MetricRow extends AbstractRow {
     private static final String BOOLEAN_FIELDS = "boolean-fields";
     private static final String DATE_FIELDS    = "date-fields";
     private static final String TIME_FIELDS    = "time-fields";
+    private static final String EVENT_FIELDS   = "event-fields";
 
     /**
      * Indicates if single-value should be treated as time and formatted in appropriate way.
@@ -81,11 +84,16 @@ public class MetricRow extends AbstractRow {
     private final List<String> booleanFields;
     private final List<String> dateFields;
     private final List<String> timeFields;
+    private final List<String> eventFields;
     private final boolean      isTimeField;
     private final String       timeFormat;
 
+    private final EventsHolder eventsHolder;
+
     public MetricRow(Map<String, String> parameters) {
         super(parameters);
+
+        this.eventsHolder = Injector.getInstance(EventsHolder.class);
 
         metric = MetricFactory.getMetric(parameters.get(NAME));
         numericFormat =
@@ -101,6 +109,8 @@ public class MetricRow extends AbstractRow {
                                                          : new ArrayList<String>();
         timeFields = parameters.containsKey(TIME_FIELDS) ? Arrays.asList(parameters.get(TIME_FIELDS).split(","))
                                                          : new ArrayList<String>();
+        eventFields = parameters.containsKey(EVENT_FIELDS) ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
+                                                           : new ArrayList<String>();                                                         
         isTimeField = parameters.containsKey(TIME_FIELD) && Boolean.parseBoolean(parameters.get(TIME_FIELD));
         timeFormat = parameters.containsKey(TIME_FORMAT) ? parameters.get(TIME_FORMAT) : DEFAULT_TIME_FORMAT;
     }
@@ -211,6 +221,8 @@ public class MetricRow extends AbstractRow {
                     singleValue.add(formatDateValue(item));
                 } else if (timeFields.contains(field)) {
                     singleValue.add(formatTimeValue(item));
+                } else if (eventFields.contains(field)) {
+                    singleValue.add(formatEventValue(item));
                 } else {
                     formatAndAddSingleValue(item, singleValue);
                 }
@@ -240,6 +252,18 @@ public class MetricRow extends AbstractRow {
 
         return new StringValueData(formattedValue);
     }
+    
+    /**
+     * @return the description of the event
+     */
+    private StringValueData formatEventValue(ValueData valueData) {
+        try {
+            String description = eventsHolder.getDescription(valueData.getAsString());
+            return new StringValueData(description);        
+        } catch (IllegalArgumentException e) {
+            return StringValueData.DEFAULT;
+        }
+    }    
 
     private StringValueData formatTimeValue(ValueData valueData) {
         long timeInSeconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());

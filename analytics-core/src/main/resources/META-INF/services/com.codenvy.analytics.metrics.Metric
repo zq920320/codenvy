@@ -105,7 +105,6 @@ com.codenvy.analytics.metrics.projects.Debugs
 
 com.codenvy.analytics.metrics.ide_usage.CodeRefactorings
 com.codenvy.analytics.metrics.ide_usage.CodeCompletions
-com.codenvy.analytics.metrics.ide_usage.FileManipulations
 
 com.codenvy.analytics.metrics.sessions.factory.AcceptedFactoriesList
 com.codenvy.analytics.metrics.sessions.factory.AcceptedFactories
