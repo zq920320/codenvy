@@ -89,7 +89,7 @@
                 <ul class="dropdown-menu">
 					<li><a href="/api/auth/logout">Logout</a></li>
 					<li><a href="/">Main page</a></li>
-					<li><a href="/site/private/select-tenant/">Workspace</a></li>
+					<li><a href="/site/private/select-tenant">Workspace</a></li>
 				</ul>
             </div>
 		</div>

@@ -32,9 +32,8 @@ public class FrontEndUtil {
 
     /**
      * Read name of logged user from userPrincipal and read his/him first and last names by using metric "users_profiles_list" filtered by logged user name. 
-     * @param userPrincipal
      * @return "{user_first_name} {user_last_name}" String,
-     * <br>- or "{logged user name}" if metric "users_profiles_list" returning empty user_first_name and user_last_name attributes,
+     * <br>- or "{logged user name}" if metric "users_profiles_list" is returning empty user_first_name and user_last_name attributes,
      * <br>- or "{logged user name}" if there was impossible to read data from metric (exception happened in time of reading data by metric). 
      */
     public static String getFirstAndLastName(Principal userPrincipal) {
