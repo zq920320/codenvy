@@ -35,12 +35,12 @@
         <section name="user_activity">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Date,Event"/>
-
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_activity_list"/>
-                <parameter key="fields" value="date,message"/>
+                <parameter key="fields" value="date,event"/>
                 <parameter key="date-fields" value="date"/>
+                <parameter key="event-fields" value="event"/>
             </row>
         </section>
     </view>

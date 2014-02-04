@@ -26,6 +26,8 @@ import java.util.Map;
 public enum MetricFilter {
     _ID,
     DATE,
+    START_TIME,
+    END_TIME,
 
     WS,
     USER,

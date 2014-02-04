@@ -295,12 +295,12 @@
     <collection name="product_usage_sessions_list">
         <indexes>
             <index name="user">
-                <field>date</field>
                 <field>user</field>
+                <field>start_time</field>
             </index>
             <index name="ws">
-                <field>date</field>
                 <field>ws</field>
+                <field>start_time</field>
             </index>
         </indexes>
     </collection>
