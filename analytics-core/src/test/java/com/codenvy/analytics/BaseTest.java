@@ -39,7 +39,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Random;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
@@ -72,9 +71,8 @@ public class BaseTest {
         RuntimeConfig config = new RuntimeConfig();
         config.setTempDirFactory(new FixedPath(dirTemp.getAbsolutePath()));
 
-        int port = new Random().nextInt(100) + 10000;
         MongodStarter starter = MongodStarter.getInstance(config);
-        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, port, false));
+        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, 12000, false));
 
         try {
             embeddedMongoProcess = mongoExe.start();
