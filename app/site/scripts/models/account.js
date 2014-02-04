@@ -198,7 +198,7 @@
 
             createTenant : function(email,domain,success,error){
                 var data = {email: email.toLowerCase(), workspacename: domain.toLowerCase()};
-                var emailValidateUrl = "/api/internal/email/validate?" + window.location.search.substring(1);
+                var emailValidateUrl = "/api/internal/token/validate?" + window.location.search.substring(1);
                 $.ajax({
                     url : emailValidateUrl,
                     type : "POST",
