@@ -21,7 +21,7 @@ import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class AcceptedFactoriesList extends AbstractListValueResulted {
+public class FactoriesAcceptedList extends AbstractListValueResulted {
 
     public static final String TMP_WS       = "ws";
     public static final String USER         = "user";
@@ -30,8 +30,8 @@ public class AcceptedFactoriesList extends AbstractListValueResulted {
     public static final String AFFILIATE_ID = "affiliate_id";
     public static final String REFERRER     = "referrer";
 
-    public AcceptedFactoriesList() {
-        super(MetricType.ACCEPTED_FACTORIES_LIST);
+    public FactoriesAcceptedList() {
+        super(MetricType.FACTORIES_ACCEPTED_LIST);
     }
 
     @Override

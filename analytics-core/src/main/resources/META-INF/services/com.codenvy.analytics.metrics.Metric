@@ -106,8 +106,11 @@ com.codenvy.analytics.metrics.projects.Debugs
 com.codenvy.analytics.metrics.ide_usage.CodeRefactorings
 com.codenvy.analytics.metrics.ide_usage.CodeCompletions
 
-com.codenvy.analytics.metrics.sessions.factory.AcceptedFactoriesList
-com.codenvy.analytics.metrics.sessions.factory.AcceptedFactories
+com.codenvy.analytics.metrics.sessions.factory.FactoriesAcceptedList
+com.codenvy.analytics.metrics.sessions.factory.FactoriesAccepted
+com.codenvy.analytics.metrics.sessions.factory.FactoriesBuilt
+com.codenvy.analytics.metrics.sessions.factory.FactoriesRun
+com.codenvy.analytics.metrics.sessions.factory.FactoriesImported
 com.codenvy.analytics.metrics.sessions.factory.FactoryUrlAccepted
 com.codenvy.analytics.metrics.sessions.factory.CreatedFactories
 com.codenvy.analytics.metrics.sessions.factory.TemporaryWorkspacesCreated

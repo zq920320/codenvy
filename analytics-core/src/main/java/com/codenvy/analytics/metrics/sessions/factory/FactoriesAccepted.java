@@ -17,32 +17,18 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
-import java.io.IOException;
-import java.util.Map;
-
 /** @author Anatoliy Bazko */
-public class FactoryUrlAccepted extends CalculatedMetric {
+public class FactoriesAccepted extends AbstractCount {
 
-    public FactoryUrlAccepted() {
-        super(MetricType.FACTORY_URL_ACCEPTED, new MetricType[]{MetricType.FACTORIES_ACCEPTED});
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        return basedMetric[0].getValue(context);
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return basedMetric[0].getValueDataClass();
+    public FactoriesAccepted() {
+        super(MetricType.FACTORIES_ACCEPTED, MetricType.FACTORIES_ACCEPTED_LIST);
     }
 
     @Override
     public String getDescription() {
-        return basedMetric[0].getDescription();
+        return "The number of factory usage";
     }
 }

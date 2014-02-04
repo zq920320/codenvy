@@ -22,6 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.sessions.factory.AbstractFactoryAction;
 import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.codenvy.analytics.metrics.top.AbstractTopFactories;
 import com.codenvy.analytics.metrics.top.AbstractTopMetrics;
@@ -35,7 +36,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -158,10 +158,10 @@ public class TestTopMetrics extends BaseTest {
 
         List<ValueData> all = value.getAll();
         checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1", "1", "1500", "0.0", "0.0", "0.0",
-                                  "50.0", "50.0", "100.0", "0.0",  "" + timeFormat.parse("20130210 10:20:00").getTime(),
+                                  "50.0", "50.0", "100.0", "0.0", "" + timeFormat.parse("20130210 10:20:00").getTime(),
                                   "" + timeFormat.parse("20130210 11:00:00").getTime());
         checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300", "100.0", "100.0", "100.0",
-                                  "0.0", "100.0", "0.0", "100.0",  "" + timeFormat.parse("20130210 10:00:00").getTime(),
+                                  "0.0", "100.0", "0.0", "100.0", "" + timeFormat.parse("20130210 10:00:00").getTime(),
                                   "" + timeFormat.parse("20130210 10:00:00").getTime());
     }
 
@@ -231,6 +231,31 @@ public class TestTopMetrics extends BaseTest {
                                   "" + timeFormat.parse("20130210 10:00:00").getTime());
     }
 
+    @Test
+    public void testFactoriesRun() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130210");
+        Parameters.TO_DATE.put(context, "20130210");
+
+        Metric metric = new TestFactoriesRun();
+        assertEquals(metric.getValue(context).getAsString(), "1");
+    }
+
+    @Test
+    public void testFactoriesRunWithFilter() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130210");
+        Parameters.TO_DATE.put(context, "20130210");
+        MetricFilter.FACTORY.put(context, "factoryUrl0");
+
+        Metric metric = new TestFactoriesRun();
+        assertEquals(metric.getValue(context).getAsString(), "1");
+
+        MetricFilter.FACTORY.put(context, "factoryUrl1");
+        metric = new TestFactoriesRun();
+        assertEquals(metric.getValue(context).getAsString(), "0");
+    }
+
     private void checkTopReferrersDataItem(MapValueData item,
                                            String referrer,
                                            String wsCreated,
@@ -297,6 +322,23 @@ public class TestTopMetrics extends BaseTest {
         @Override
         public String getStorageCollectionName() {
             return "testtopmetrics";
+        }
+    }
+
+    private class TestFactoriesRun extends AbstractFactoryAction {
+
+        public TestFactoriesRun() {
+            super(MetricType.FACTORIES_RUN, ProductUsageFactorySessionsList.RUN);
+        }
+
+        @Override
+        public String getStorageCollectionName() {
+            return "testtopmetrics";
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
         }
     }
 

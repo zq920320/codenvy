@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2014] Codenvy, S.A.
+ * [2012] - [2013] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,18 +17,17 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
-/** @author Anatoliy Bazko */
-public class AcceptedFactories extends AbstractCount {
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+public class FactoriesBuilt extends AbstractFactoryAction {
 
-    public AcceptedFactories() {
-        super(MetricType.ACCEPTED_FACTORIES, MetricType.ACCEPTED_FACTORIES_LIST);
+    public FactoriesBuilt() {
+        super(MetricType.FACTORIES_BUILT, ProductUsageFactorySessionsList.BUILD);
     }
 
     @Override
     public String getDescription() {
-        return "The number of factory usage";
+        return "The number of factory builds";
     }
 }
