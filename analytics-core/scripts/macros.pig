@@ -413,23 +413,11 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     x1 = removeEmptyField($X, 'ws');
     x = removeEmptyField(x1, 'user');
 
---    a1 = filterByEvent(x, '$startEvent');
---    a2 = extractParam(a1, 'ID', event_id);
---    a3 = removeNotEmptyField(a2, 'event_id');
---    a = FOREACH a3 GENERATE ws, user, event, dt, id;
---
---    b1 = filterByEvent(x, '$finishEvent');
---    b2 = extractParam(b1, 'ID', event_id);
---    b3 = removeNotEmptyField(b2, 'event_id');
---    b = FOREACH b3 GENERATE ws, user, event, dt, id;
-
     a1 = filterByEvent(x, '$startEvent');
     a = FOREACH a1 GENERATE ws, user, event, dt, id;
     
     b1 = filterByEvent(x, '$startEvent,$finishEvent');
     b = FOREACH b1 GENERATE ws, user, event, dt, id;
-    
-   
 
     -- joins $startEvent with all other events to figure out which event is mostly close to '$startEvent'
     c1 = JOIN a BY (ws, user), b BY (ws, user);
