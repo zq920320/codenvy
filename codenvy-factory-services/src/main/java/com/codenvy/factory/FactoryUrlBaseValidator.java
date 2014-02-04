@@ -17,7 +17,10 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.FactoryUrlValidator;
+import com.codenvy.api.factory.SimpleFactoryUrl;
 import com.codenvy.commons.lang.UrlUtils;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.exception.OrganizationServiceException;
@@ -26,9 +29,10 @@ import com.codenvy.organization.model.Account;
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.net.URLDecoder;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -98,6 +102,14 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         }
         if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
             throw new FactoryUrlException("Parameter vcsurl is null or empty.");
+        } else {
+            try {
+                URLDecoder.decode(factoryUrl.getVcsurl(), "UTF-8");
+            } catch (IllegalArgumentException e) {
+                throw new FactoryUrlException("Vcsurl is invalid. " + e.getMessage());
+            } catch (UnsupportedEncodingException e) {
+                throw new FactoryUrlException("During decoding vcsurl. " + e.getMessage());
+            }
         }
 
         // validate orgid
