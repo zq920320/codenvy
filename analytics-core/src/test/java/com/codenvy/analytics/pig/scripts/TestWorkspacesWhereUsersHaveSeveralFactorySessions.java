@@ -17,17 +17,6 @@
  */
 package com.codenvy.analytics.pig.scripts;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
@@ -36,6 +25,17 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.sessions.factory.WorkspacesWhereUsersHaveSeveralFactorySessions;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
 
 /** @author Alexander Reshetnyak */
 public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest {
@@ -119,7 +119,7 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
                         .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
-        events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type")
+        events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type", "id")
                         .withDate("2013-02-10").withTime("10:03:00").build());
 
         events.add(Event.Builder.createProjectDeployedEvent("user1", "tmp-1", "session", "project", "type",
