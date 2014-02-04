@@ -108,13 +108,6 @@
         <parameter key="EVENT" value="user-code-refactor"/>
         <parameter key="STORAGE_TABLE" value="code_refactorings"/>
     </script>
-    <script name="events">
-        <description>The number of file manipulations</description>
-        <parameter key="USER" value="REGISTERED"/>
-        <parameter key="WS" value="PERSISTENT"/>
-        <parameter key="EVENT" value="file-manipulation"/>
-        <parameter key="STORAGE_TABLE" value="file_manipulations"/>
-    </script>
     <script name="active_entities">
         <description>Active workspaces</description>
         <parameter key="USER" value="ANY"/>
