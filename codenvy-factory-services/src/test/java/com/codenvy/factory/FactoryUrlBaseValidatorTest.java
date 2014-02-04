@@ -78,6 +78,33 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfVcsurlContainIncorrectEncodedSymbol() throws FactoryUrlException {
+        // given
+        url.setVcsurl("http://codenvy.com/git/04%2");
+
+        // when, then
+        validator.validateUrl(url);
+    }
+
+    @Test
+    public void shouldValidateIfVcsurlIsCorrectSsh() throws FactoryUrlException {
+        // given
+        url.setVcsurl("ssh://codenvy@review.gerrithub.io:29418/codenvy/exampleProject");
+
+        // when, then
+        validator.validateUrl(url);
+    }
+
+    @Test
+    public void shouldValidateIfVcsurlIsCorrectHttps() throws FactoryUrlException {
+        // given
+        url.setVcsurl("https://github.com/codenvy/example.git");
+
+        // when, then
+        validator.validateUrl(url);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateIfAccountHasNoCertainProperty() throws OrganizationServiceException, FactoryUrlException {
         // given
         url.setOrgid(ID);
