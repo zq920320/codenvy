@@ -88,6 +88,8 @@ public class ReportSender extends Feature {
         LOG.info("ReportSender is started");
         long start = System.currentTimeMillis();
 
+        Parameters.REPORT_DATE.cloneAndPut(context, Parameters.TO_DATE.get(context));
+
         try {
             for (ReportConfiguration reportConfiguration : configuration.getReports()) {
                 for (FrequencyConfiguration frequencyConfiguration : reportConfiguration.getFrequencies()) {
