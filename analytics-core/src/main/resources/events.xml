@@ -57,6 +57,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
+            <param>ID</param>
         </parameters>
     </event>
     <event name="build-finished">
@@ -66,6 +67,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
+            <param>ID</param>
         </parameters>
     </event>
     <event name="run-started">
@@ -75,6 +77,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
+            <param>ID</param>
         </parameters>
     </event>
     <event name="run-finished">
@@ -84,6 +87,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
+            <param>ID</param>
         </parameters>
     </event>
     <event name="debug-started">
@@ -93,6 +97,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
+            <param>ID</param>
         </parameters>
     </event>
     <event name="debug-finished">
@@ -102,6 +107,7 @@
             <param>USER</param>
             <param>PROJECT</param>
             <param>TYPE</param>
+            <param>ID</param>
         </parameters>
     </event>
     <event name="tenant-created">
