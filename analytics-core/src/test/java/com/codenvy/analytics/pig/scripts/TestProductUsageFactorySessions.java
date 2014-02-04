@@ -82,7 +82,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
                         .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
-        events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type")
+        events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type", "id1")
                         .withDate("2013-02-10").withTime("10:03:00").build());
 
 
