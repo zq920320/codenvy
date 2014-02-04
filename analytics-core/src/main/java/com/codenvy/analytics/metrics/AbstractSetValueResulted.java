@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import java.util.Map;
@@ -49,6 +50,13 @@ public abstract class AbstractSetValueResulted extends ReadBasedMetric {
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
-        return new DBObject[0];
+        String field = getTrackedFields()[0];
+
+        DBObject group = new BasicDBObject();
+        group.put("_id", null);
+        group.put(field, new BasicDBObject("$addToSet", "$" + field));
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$unwind", "$" + field)};
     }
 }
