@@ -24,7 +24,14 @@ IMPORT 'macros.pig';
 l1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 l = FOREACH l1 GENERATE *, '' AS id; -- it requires 'id' field in scheme
 
-f = combineClosestEvents(l, '$EVENT-started', '$EVENT-finished');
+a1 = filterByEvent(l, '$EVENT-started,$EVENT-finished');
+a2 = extractParam(a1, 'ID', event_id);
+a3 = removeNotEmptyField(a2, 'event_id');
+a = combineClosestEvents(a3, '$EVENT-started', '$EVENT-finished');
+
+b = combineClosestEventsByID(l, '$EVENT-started', '$EVENT-finished');
+
+f = UNION a, b;
 
 r1 = FOREACH f GENERATE dt, ws, user, delta;
 result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('time', delta);

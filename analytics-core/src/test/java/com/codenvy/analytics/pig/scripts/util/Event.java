@@ -155,44 +155,49 @@ public class Event {
                                 .withParam("WINDOW", window);
         }
 
-        public static Builder createRunStartedEvent(String user, String ws, String project, String type) {
+        public static Builder createRunStartedEvent(String user, String ws, String project, String type, String id) {
             return new Builder().withParam("EVENT", "run-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
-                                .withParam("TYPE", type);
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
         }
 
-        public static Builder createBuildStartedEvent(String user, String ws, String project, String type) {
+        public static Builder createBuildStartedEvent(String user, String ws, String project, String type, String id) {
             return new Builder().withParam("EVENT", "build-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
-                                .withParam("TYPE", type);
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
         }
 
-        public static Builder createDebugStartedEvent(String user, String ws, String project, String type) {
+        public static Builder createDebugStartedEvent(String user, String ws, String project, String type, String id) {
             return new Builder().withParam("EVENT", "debug-started")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
-                                .withParam("TYPE", type);
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
         }
 
-        public static Builder createRunFinishedEvent(String user, String ws, String project, String type) {
+        public static Builder createRunFinishedEvent(String user, String ws, String project, String type, String id) {
             return new Builder().withParam("EVENT", "run-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
-                                .withParam("TYPE", type);
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
         }
 
-        public static Builder createBuildFinishedEvent(String user, String ws, String project, String type) {
+        public static Builder createBuildFinishedEvent(String user, String ws, String project, String type, String id) {
             return new Builder().withParam("EVENT", "build-finished")
                                 .withParam("WS", ws)
                                 .withParam("USER", user)
                                 .withParam("PROJECT", project)
-                                .withParam("TYPE", type);
+                                .withParam("TYPE", type)
+                                .withParam("ID", id);
         }
 
         public static Builder createUserInviteEvent(String user, String ws, String email) {

@@ -68,6 +68,13 @@ DEFINE removeEmptyField(X, fieldParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
+-- Removes tuples with not empty fields
+---------------------------------------------------------------------------
+DEFINE removeNotEmptyField(X, fieldParam) RETURNS Y {
+  $Y = FILTER $X BY $fieldParam == '' AND $fieldParam == 'default' AND $fieldParam == 'null' AND $fieldParam IS NULL;
+};
+
+---------------------------------------------------------------------------
 -- Filters events by date of occurrence.
 -- @param fromDateParam - date in format 'YYYYMMDD'
 -- @param toDateParam  - date in format 'YYYYMMDD'
@@ -406,14 +413,65 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     x1 = removeEmptyField($X, 'ws');
     x = removeEmptyField(x1, 'user');
 
+--    a1 = filterByEvent(x, '$startEvent');
+--    a2 = extractParam(a1, 'ID', event_id);
+--    a3 = removeNotEmptyField(a2, 'event_id');
+--    a = FOREACH a3 GENERATE ws, user, event, dt, id;
+--
+--    b1 = filterByEvent(x, '$finishEvent');
+--    b2 = extractParam(b1, 'ID', event_id);
+--    b3 = removeNotEmptyField(b2, 'event_id');
+--    b = FOREACH b3 GENERATE ws, user, event, dt, id;
+
     a1 = filterByEvent(x, '$startEvent');
     a = FOREACH a1 GENERATE ws, user, event, dt, id;
-
+    
     b1 = filterByEvent(x, '$startEvent,$finishEvent');
     b = FOREACH b1 GENERATE ws, user, event, dt, id;
+    
+   
 
     -- joins $startEvent with all other events to figure out which event is mostly close to '$startEvent'
     c1 = JOIN a BY (ws, user), b BY (ws, user);
+    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::event AS event, a::dt AS dt, b::event AS secondEvent, b::dt AS secondDt, a::id AS id;
+
+    -- @param delta: milliseconds between $startEvent and second event
+    c3 = FOREACH c2 GENERATE *, MilliSecondsBetween(secondDt, dt) AS delta;
+
+    -- removes cases when second event is preceded by $startEvent (before $startEvent in time line)
+    c = FILTER c3 BY delta > 0;
+
+    g1 = GROUP c BY (ws, user, event, dt, id);
+    g2 = FOREACH g1 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, group.id AS id, FLATTEN(c), MIN(c.delta) AS minDelta;
+
+    -- the desired closest event have to be $finishEvent anyway
+    g = FILTER g2 BY delta == minDelta AND c::secondEvent == '$finishEvent';
+
+    -- converts time into seconds
+    $Y = FOREACH g GENERATE ws AS ws, user AS user, dt AS dt, delta / 1000 AS delta, id AS id;
+};
+
+---------------------------------------------------------------------------------------------
+-- Calculates time between pairs of $startEvent and $finishEvent by ID
+-- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
+---------------------------------------------------------------------------------------------
+DEFINE combineClosestEventsByID(X, startEvent, finishEvent) RETURNS Y {
+    x1 = removeEmptyField(l, 'ws');
+    x = removeEmptyField(x1, 'user');
+
+    a1 = filterByEvent(x, '$startEvent');
+    a2 = extractParam(a1, 'ID', event_id);
+    a3 = removeEmptyField(a2, 'event_id');
+    
+    a = FOREACH a2 GENERATE ws, user, event, dt, id, event_id;
+
+    b1 = filterByEvent(l, '$finishEvent');
+    b2 = extractParam(b1, 'ID', event_id);
+    b3 = removeEmptyField(b2, 'event_id');
+    b = FOREACH b3 GENERATE ws, user, event, dt, id, event_id;
+    
+    -- joins $startEvent with all other events to figure out which event is mostly close to '$startEvent'
+    c1 = JOIN a BY (event_id), b BY (event_id);
     c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::event AS event, a::dt AS dt, b::event AS secondEvent, b::dt AS secondDt, a::id AS id;
 
     -- @param delta: milliseconds between $startEvent and second event

@@ -211,24 +211,24 @@ public class TestActOn extends BaseTest {
                         .withDate("2013-11-01")
                         .withTime("20:03:00").build());
        
-        events.add(Event.Builder.createDebugStartedEvent("user2", "ws1", "", "")
+        events.add(Event.Builder.createDebugStartedEvent("user2", "ws1", "", "", "id1")
                         .withDate("2013-11-01")
                         .withTime("20:06:00").build());        
         
         events.add(Event.Builder.createUserInviteEvent("user1", "ws2", "email")
                         .withDate("2013-11-01").build());
 
-        events.add(Event.Builder.createRunStartedEvent("user2", "ws2", "project", "type")
+        events.add(Event.Builder.createRunStartedEvent("user2", "ws2", "project", "type", "id1")
                          .withDate("2013-11-01")
                          .withTime("20:59:00").build());        
-        events.add(Event.Builder.createRunFinishedEvent("user2", "ws2", "project", "type")
+        events.add(Event.Builder.createRunFinishedEvent("user2", "ws2", "project", "type", "id1")
                          .withDate("2013-11-01")
                          .withTime("21:01:00").build());
 
-        events.add(Event.Builder.createBuildStartedEvent("user1", "ws1", "project", "type")
+        events.add(Event.Builder.createBuildStartedEvent("user1", "ws1", "project", "type", "id2")
                          .withDate("2013-11-01")
                          .withTime("21:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent("user1", "ws1", "project", "type")
+        events.add(Event.Builder.createBuildFinishedEvent("user1", "ws1", "project", "type", "id2")
                          .withDate("2013-11-01")
                          .withTime("21:14:00").build());
 

@@ -70,17 +70,17 @@ public class TestUsersData extends BaseTest {
         events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
                         .withTime("19:02:00").build());
 
-        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type")
+        events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate("2013-11-01")
                                 .withTime("19:08:00").build());
-        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type")
+        events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate("2013-11-01")
                                 .withTime("19:10:00").build());
 
-        events.add(Event.Builder.createBuildStartedEvent("user3@gmail.com", "ws2", "project", "type")
+        events.add(Event.Builder.createBuildStartedEvent("user3@gmail.com", "ws2", "project", "type", "id2")
                                 .withDate("2013-11-01")
                                 .withTime("19:12:00").build());
-        events.add(Event.Builder.createBuildFinishedEvent("user3@gmail.com", "ws2", "project", "type")
+        events.add(Event.Builder.createBuildFinishedEvent("user3@gmail.com", "ws2", "project", "type", "id2")
                                 .withDate("2013-11-01")
                                 .withTime("19:14:00").build());
          
@@ -93,9 +93,9 @@ public class TestUsersData extends BaseTest {
                         .withDate("2013-11-01").withTime("20:02:00").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
                         .withDate("2013-11-01").withTime("20:03:00").build());
-        events.add(Event.Builder.createRunStartedEvent("user4@gmail.com", "ws1", "", "")
+        events.add(Event.Builder.createRunStartedEvent("user4@gmail.com", "ws1", "", "", "id3")
                         .withDate("2013-11-01").withTime("20:04:00").build());
-        events.add(Event.Builder.createDebugStartedEvent("user4@gmail.com", "ws1", "", "")
+        events.add(Event.Builder.createDebugStartedEvent("user4@gmail.com", "ws1", "", "", "id4")
                         .withDate("2013-11-01").withTime("20:06:00").build());
 
         // projects deployed
