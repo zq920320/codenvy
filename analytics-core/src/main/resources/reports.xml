@@ -22,7 +22,7 @@
             <recipient>analytics-admin</recipient>
         </recipients>
         <frequency>
-            <daily>
+            <weekly>
                 <views>
                     <view>timeline</view>
                     <view>factory-timeline</view>
@@ -30,7 +30,7 @@
                 <context-modifier>
                     <class>com.codenvy.analytics.services.reports.DummyContextModifier</class>
                 </context-modifier>
-            </daily>
+            </weekly>
         </frequency>
     </report>
 
