@@ -45,7 +45,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     /** The field name in collection containing the date of events. */
     public static final String DATE                = "date";
+    public static final String EXCLUDE_SIGN        = "~";
+    public static final String SEPARATOR           = ",";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
+
 
     public final DataLoader dataLoader;
 
@@ -105,16 +108,41 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
 
             } else if (filter == MetricFilter.DOMAIN) {
-                String[] domains = filter.get(clauses).split(",");
+                String[] domains = filter.get(clauses).split(SEPARATOR);
                 match.put(MetricFilter.USER.name().toLowerCase(), getUsersInDomains(domains));
 
             } else {
-                values = filter.get(clauses).split(",");
-                match.put(filter.name().toLowerCase(), new BasicDBObject("$in", values));
+                values = filter.get(clauses).split(SEPARATOR);
+                match.put(filter.name().toLowerCase(), processExclusiveValues(values));
             }
         }
 
         return new BasicDBObject("$match", match);
+    }
+
+    private BasicDBObject processExclusiveValues(String[] values) throws IOException, ParseException {
+        StringBuilder exclusiveValues = new StringBuilder();
+        StringBuilder inclusiveValues = new StringBuilder();
+
+        for (String value : values) {
+            if (value.startsWith(EXCLUDE_SIGN)) {
+                if (exclusiveValues.length() != 0) {
+                    exclusiveValues.append(SEPARATOR);
+                }
+                exclusiveValues.append(value.substring(1));
+
+            } else {
+                if (inclusiveValues.length() != 0) {
+                    inclusiveValues.append(SEPARATOR);
+                }
+                inclusiveValues.append(value);
+            }
+        }
+        if (inclusiveValues.length() != 0) {
+            return new BasicDBObject("$in", inclusiveValues.toString().split(SEPARATOR));
+        } else {
+            return new BasicDBObject("$nin", exclusiveValues.toString().split(SEPARATOR));
+        }
     }
 
     /**

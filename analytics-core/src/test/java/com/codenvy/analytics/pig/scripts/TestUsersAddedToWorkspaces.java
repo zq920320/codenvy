@@ -41,8 +41,9 @@ import java.util.Map;
 import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
+public class TestUsersAddedToWorkspaces extends BaseTest {
 
+    private static final String COLLECTION = TestUsersAddedToWorkspaces.class.getSimpleName().toLowerCase();
 
     @BeforeClass
     public void init() throws Exception {
@@ -50,17 +51,16 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserAddedToWsEvent("user1@gmail.com", "ws1", "", "", "", "website")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:00")
-                        .build());
+                        .withDate("2013-01-02").withTime("10:00:00").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user2@gmail.com", "ws", "", "", "", "website")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:01")
-                        .build());
+                        .withDate("2013-01-02").withTime("10:00:01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("user3@gmail.com", "ws", "", "", "", "invite")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:02")
-                        .build());
+                        .withDate("2013-01-02").withTime("10:00:02").build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user4@gmail.com", "ws2", "", "", "", "invite")
+                        .withDate("2013-01-02").withTime("10:00:03").build());
+        events.add(Event.Builder.createUserAddedToWsEvent("user5@gmail.com", "ws2", "", "", "", "invite")
+                        .withDate("2013-01-02").withTime("10:00:04").build());
+
         File log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130102");
@@ -69,7 +69,7 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
         Parameters.EVENT.put(params, "user-added-to-ws");
-        Parameters.STORAGE_TABLE.put(params, "testnumberofusersbytypes_usersaddedtoworkspaces");
+        Parameters.STORAGE_TABLE.put(params, COLLECTION);
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, params);
@@ -81,14 +81,17 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130102");
         Parameters.TO_DATE.put(context, "20130102");
 
-        Metric metric = new TestUsersAddedToWorkspaces();
+        Metric metric = new TestedUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 2);
-        assertEquals(values.get("website"), new LongValueData(2));
-        assertEquals(values.get("invite"), new LongValueData(1));
+        assertEquals(values.get("website"), LongValueData.valueOf(2));
+        assertEquals(values.get("invite"), LongValueData.valueOf(3));
 
-        metric = new TestAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context).getAsString(), "2");
+        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(2));
+
+        metric = new TestedInviteAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(3));
     }
 
     @Test
@@ -98,13 +101,13 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
-        Metric metric = new TestUsersAddedToWorkspaces();
+        Metric metric = new TestedUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 1);
-        assertEquals(values.get("website"), new LongValueData(1));
+        assertEquals(values.get("website"), LongValueData.valueOf(1));
 
-        metric = new TestAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context).getAsString(), "1");
+        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
     }
 
     @Test
@@ -113,12 +116,12 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
-        Metric metric = new TestUsersAddedToWorkspaces();
+        Metric metric = new TestedUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 0);
 
-        metric = new TestAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context).getAsString(), "0");
+        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(0));
     }
 
     @Test
@@ -129,25 +132,58 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com,user1@yahoo.com");
         MetricFilter.WS.put(context, "ws1,ws2");
 
-        Metric metric = new TestUsersAddedToWorkspaces();
+        Metric metric = new TestedUsersAddedToWorkspaces();
         Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
         assertEquals(values.size(), 1);
-        assertEquals(values.get("website"), new LongValueData(1));
+        assertEquals(values.get("website"), LongValueData.valueOf(1));
 
-        metric = new TestAbstractUsersAddedToWorkspaces();
-        assertEquals(metric.getValue(context).getAsString(), "1");
+        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
     }
 
+    @Test
+    public void testComplexFilterWhenAllParamHasTilda() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130102");
+        Parameters.TO_DATE.put(context, "20130102");
+        MetricFilter.USER.put(context, "~user1@gmail.com,~user2@gmail.com");
 
-    private class TestAbstractUsersAddedToWorkspaces extends AbstractUsersAddedToWorkspaces {
+        Metric metric = new TestedUsersAddedToWorkspaces();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        assertEquals(values.size(), 1);
+        assertEquals(values.get("invite"), LongValueData.valueOf(3));
 
-        private TestAbstractUsersAddedToWorkspaces() {
-            super("testnumberofusersbytypes_usersaddedtoworkspaces", new String[]{"website"});
+        metric = new TestedInviteAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(3));
+    }
+
+    @Test
+    public void testComplexFilterWhenSomeParamHasTilda() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20130102");
+        Parameters.TO_DATE.put(context, "20130102");
+        MetricFilter.USER.put(context, "user1@gmail.com,~user3@gmail.com");
+
+        Metric metric = new TestedUsersAddedToWorkspaces();
+        Map<String, ValueData> values = ((MapValueData)metric.getValue(context)).getAll();
+        assertEquals(values.size(), 1);
+        assertEquals(values.get("website"), LongValueData.valueOf(1));
+
+        metric = new TestedWebsiteAbstractUsersAddedToWorkspaces();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
+    }
+
+    //------------------------- Tested classed
+
+    private class TestedInviteAbstractUsersAddedToWorkspaces extends AbstractUsersAddedToWorkspaces {
+
+        private TestedInviteAbstractUsersAddedToWorkspaces() {
+            super(COLLECTION, new String[]{"invite"});
         }
 
         @Override
         public String getStorageCollectionName() {
-            return "testnumberofusersbytypes_usersaddedtoworkspaces";
+            return COLLECTION;
         }
 
         @Override
@@ -156,10 +192,27 @@ public class TestNumberOfUsersByTypes_UsersAddedToWorkspaces extends BaseTest {
         }
     }
 
-    private class TestUsersAddedToWorkspaces extends UsersAddedToWorkspaces {
+    private class TestedWebsiteAbstractUsersAddedToWorkspaces extends AbstractUsersAddedToWorkspaces {
+
+        private TestedWebsiteAbstractUsersAddedToWorkspaces() {
+            super(COLLECTION, new String[]{"website"});
+        }
+
         @Override
         public String getStorageCollectionName() {
-            return "testnumberofusersbytypes_usersaddedtoworkspaces";
+            return COLLECTION;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+    }
+
+    private class TestedUsersAddedToWorkspaces extends UsersAddedToWorkspaces {
+        @Override
+        public String getStorageCollectionName() {
+            return COLLECTION;
         }
     }
 }
