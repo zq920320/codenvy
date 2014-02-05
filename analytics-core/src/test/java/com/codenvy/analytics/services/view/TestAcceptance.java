@@ -274,12 +274,20 @@ public class TestAcceptance extends BaseTest {
         aggregateResult(row, new StringValueData("13"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
-        aggregateResult(row, new StringValueData("Temporary Workspaces Created"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("280"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("Accounts Created From Factories"), sectionData.get(2).get(0));
+        aggregateResult(row, new StringValueData("21"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
-        aggregateResult(row, new StringValueData("Accounts Created From Factories"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("21"), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("Temporary Workspaces Created"), sectionData.get(3).get(0));
+        aggregateResult(row, new StringValueData("280"), sectionData.get(3).get(1));
+
+        row = sectionData.get(4).get(0).getAsString();
+        aggregateResult(row, new StringValueData("# with more than one session"), sectionData.get(4).get(0));
+        aggregateResult(row, new StringValueData("16"), sectionData.get(4).get(1));
+
+        row = sectionData.get(5).get(0).getAsString();
+        aggregateResult(row, new StringValueData("# with empty sessions"), sectionData.get(5).get(0));
+        aggregateResult(row, new StringValueData("80"), sectionData.get(5).get(1));
     }
 
     private void assertProjectsPaasDay(SectionData sectionData) {
@@ -573,11 +581,11 @@ public class TestAcceptance extends BaseTest {
     private void assertTimeSpentDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Builds"), sectionData.get(1).get(0));
-        aggregateResult(row, new StringValueData("60"), sectionData.get(1).get(1));
+        aggregateResult(row, new StringValueData("61"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("Runs"), sectionData.get(2).get(0));
-        aggregateResult(row, new StringValueData("415"), sectionData.get(2).get(1));
+        aggregateResult(row, new StringValueData("474"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Debugs"), sectionData.get(3).get(0));

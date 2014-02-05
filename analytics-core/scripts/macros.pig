@@ -68,10 +68,10 @@ DEFINE removeEmptyField(X, fieldParam) RETURNS Y {
 };
 
 ---------------------------------------------------------------------------
--- Removes tuples with not empty fields
+-- Removes tuples without empty fields
 ---------------------------------------------------------------------------
 DEFINE removeNotEmptyField(X, fieldParam) RETURNS Y {
-  $Y = FILTER $X BY $fieldParam == '' AND $fieldParam == 'default' AND $fieldParam == 'null' AND $fieldParam IS NULL;
+  $Y = FILTER $X BY $fieldParam == '' OR $fieldParam == 'default' OR $fieldParam == 'null' OR $fieldParam IS NULL;
 };
 
 ---------------------------------------------------------------------------
@@ -460,22 +460,14 @@ DEFINE combineClosestEventsByID(X, startEvent, finishEvent) RETURNS Y {
     
     -- joins $startEvent with all other events to figure out which event is mostly close to '$startEvent'
     c1 = JOIN a BY (event_id), b BY (event_id);
-    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::event AS event, a::dt AS dt, b::event AS secondEvent, b::dt AS secondDt, a::id AS id;
+    c2 = FOREACH c1 GENERATE a::ws AS ws, a::user AS user, a::dt AS dt, b::dt AS secondDt, a::id AS id;
 
     -- @param delta: milliseconds between $startEvent and second event
     c3 = FOREACH c2 GENERATE *, MilliSecondsBetween(secondDt, dt) AS delta;
 
     -- removes cases when second event is preceded by $startEvent (before $startEvent in time line)
-    c = FILTER c3 BY delta > 0;
-
-    g1 = GROUP c BY (ws, user, event, dt, id);
-    g2 = FOREACH g1 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, group.id AS id, FLATTEN(c), MIN(c.delta) AS minDelta;
-
-    -- the desired closest event have to be $finishEvent anyway
-    g = FILTER g2 BY delta == minDelta AND c::secondEvent == '$finishEvent';
-
-    -- converts time into seconds
-    $Y = FOREACH g GENERATE ws AS ws, user AS user, dt AS dt, delta / 1000 AS delta, id AS id;
+    c4 = FILTER c3 BY delta > 0;
+    $Y = FOREACH c4 GENERATE ws, user, dt, delta / 1000 AS delta, id;
 };
 
 ---------------------------------------------------------------------------------------------
