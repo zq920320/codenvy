@@ -139,10 +139,8 @@ function Configuration() {
         "Organization": "org_id",
         "Affiliate": "affiliate_id",
 
-        "Email": "_id",
         "First Name": "user_first_name",
         "Last Name": "user_last_name",
-        "Company": "user_company",
         "Job": "user_job",
 
         "sort": "sort",
