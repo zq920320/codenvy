@@ -157,11 +157,11 @@ public class TestProductUsersTime extends BaseTest {
         assertEquals(1, listVD.size());
         MapValueData entities = (MapValueData)listVD.getAll().get(0);
         assertEquals("2", entities.getAll().get("by_1_day").getAsString());
-        assertEquals("0", entities.getAll().get("by_7_day").getAsString());
-        assertEquals("0", entities.getAll().get("by_30_day").getAsString());
-        assertEquals("0", entities.getAll().get("by_60_day").getAsString());
-        assertEquals("0", entities.getAll().get("by_60_day").getAsString());
-        assertEquals("0", entities.getAll().get("by_365_day").getAsString());
+        assertEquals("0", entities.getAll().get("by_7_days").getAsString());
+        assertEquals("0", entities.getAll().get("by_30_days").getAsString());
+        assertEquals("0", entities.getAll().get("by_60_days").getAsString());
+        assertEquals("0", entities.getAll().get("by_60_days").getAsString());
+        assertEquals("0", entities.getAll().get("by_365_days").getAsString());
     }
 
     @Test

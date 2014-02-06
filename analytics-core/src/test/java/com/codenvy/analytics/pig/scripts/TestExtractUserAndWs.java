@@ -47,10 +47,16 @@ public class TestExtractUserAndWs extends BaseTest {
                                       .withParam("WS", "tmp-2").withDate("2013-01-01").build());
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "user4")
                                       .withParam("WS", "tmp-1").withDate("2013-01-01").build());
+
+        // param contains value ' WS' and workspace name contains ' '
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("USER", "AnonymousUser_1")
-                                      .withParam("WS", "ws2").withDate("2013-01-01").build());
+                                      .withParam("WS", "ws 2").withParam("COMPANY", "Mints. WS")
+                                      .withParam("PHONE", "123456").withDate("2013-01-01").build());
+
+        // param contains value 'WS'
         events.add(new Event.Builder().withParam("EVENT", "fake").withParam("ALIASES", "AnonymousUser_2")
-                                      .withParam("WS", "tmp-3").withDate("2013-01-01").build());
+                                      .withParam("WS", "tmp-3").withParam("COMPANY", "Mints.WS")
+                                      .withParam("PHONE", "123456").withDate("2013-01-01").build());
         events.add(new Event.Builder().withParam("EVENT", "fake").withDate("2013-01-01").build());
         events.add(Event.Builder.createUserAddedToWsEvent("default", "default", "default", "ws10", "user10", "website")
                         .withDate("2013-01-01").build());
@@ -147,7 +153,7 @@ public class TestExtractUserAndWs extends BaseTest {
         Set<String> expected = new HashSet<>();
         expected.add("(ws1)");
         expected.add("(ws10)");
-        expected.add("(ws2)");
+        expected.add("(ws 2)");
         expected.add("(tmp-1)");
         expected.add("(tmp-2)");
         expected.add("(tmp-3)");
@@ -192,7 +198,7 @@ public class TestExtractUserAndWs extends BaseTest {
         Set<String> expected = new HashSet<>();
         expected.add("(ws1)");
         expected.add("(ws10)");
-        expected.add("(ws2)");
+        expected.add("(ws 2)");
         expected.add("(default)");
 
         assertEquals(actual, expected);
