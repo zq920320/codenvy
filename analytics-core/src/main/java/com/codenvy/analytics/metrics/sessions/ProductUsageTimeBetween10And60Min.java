@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.MetricType;
 public class ProductUsageTimeBetween10And60Min extends AbstractProductUsageTime {
 
     public ProductUsageTimeBetween10And60Min() {
-        super(MetricType.PRODUCT_USAGE_TIME_BETWEEN_10_AND_60_MIN, 10 * 60, 60 * 60, true, true);
+        super(MetricType.PRODUCT_USAGE_TIME_BETWEEN_10_AND_60_MIN, 10 * 60 * 1000, 60 * 60 * 1000, true, true);
     }
 
     @Override

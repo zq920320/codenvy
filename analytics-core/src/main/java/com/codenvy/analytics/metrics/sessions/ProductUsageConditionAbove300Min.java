@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.MetricType;
 public class ProductUsageConditionAbove300Min extends AbstractProductUsageCondition {
     public ProductUsageConditionAbove300Min() {
         super(MetricType.PRODUCT_USAGE_CONDITION_ABOVE_300_MIN,
-              300 * 60,
+              300 * 60 * 1000,
               Integer.MAX_VALUE,
               true,
               true,

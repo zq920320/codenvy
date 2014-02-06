@@ -138,9 +138,9 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(value.size(), 3);
 
         List<ValueData> all = value.getAll();
-        checkTopSessionDataItem((MapValueData)all.get(0), "900", "factoryUrl1", "referrer2", "0", "0");
-        checkTopSessionDataItem((MapValueData)all.get(1), "600", "factoryUrl1", "referrer2", "0", "1");
-        checkTopSessionDataItem((MapValueData)all.get(2), "300", "factoryUrl0", "referrer1", "1", "1");
+        checkTopSessionDataItem((MapValueData)all.get(0), "900000", "factoryUrl1", "referrer2", "0", "0");
+        checkTopSessionDataItem((MapValueData)all.get(1), "600000", "factoryUrl1", "referrer2", "0", "1");
+        checkTopSessionDataItem((MapValueData)all.get(2), "300000", "factoryUrl0", "referrer1", "1", "1");
     }
 
     @Test
@@ -157,11 +157,12 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(value.size(), 2);
 
         List<ValueData> all = value.getAll();
-        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1", "1", "1500", "0.0", "0.0", "0.0",
-                                  "50.0", "50.0", "100.0", "0.0", "" + timeFormat.parse("20130210 10:20:00").getTime(),
+
+        checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1", "1", "1500000", "0.0", "0.0", "0.0",
+                                  "50.0", "50.0", "100.0", "0.0",  "" + timeFormat.parse("20130210 10:20:00").getTime(),
                                   "" + timeFormat.parse("20130210 11:00:00").getTime());
-        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300", "100.0", "100.0", "100.0",
-                                  "0.0", "100.0", "0.0", "100.0", "" + timeFormat.parse("20130210 10:00:00").getTime(),
+        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300000", "100.0", "100.0", "100.0",
+                                  "0.0", "100.0", "0.0", "100.0",  "" + timeFormat.parse("20130210 10:00:00").getTime(),
                                   "" + timeFormat.parse("20130210 10:00:00").getTime());
     }
 
@@ -223,10 +224,10 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(value.size(), 2);
 
         List<ValueData> all = value.getAll();
-        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1", "1", "1500", "0.0", "0.0", "0.0", "50.0",
+        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1", "1", "1500000", "0.0", "0.0", "0.0", "50.0",
                                   "50.0", "100.0", "0.0", "" + timeFormat.parse("20130210 10:20:00").getTime(),
                                   "" + timeFormat.parse("20130210 11:00:00").getTime());
-        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "1", "0", "300", "100.0", "100.0", "100.0",
+        checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "1", "0", "300000", "100.0", "100.0", "100.0",
                                   "0.0", "100.0", "0.0", "100.0", "" + timeFormat.parse("20130210 10:00:00").getTime(),
                                   "" + timeFormat.parse("20130210 10:00:00").getTime());
     }

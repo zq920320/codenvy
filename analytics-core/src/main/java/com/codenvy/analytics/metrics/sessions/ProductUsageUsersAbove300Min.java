@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.MetricType;
 public class ProductUsageUsersAbove300Min extends AbstractProductUsageUsers {
 
     public ProductUsageUsersAbove300Min() {
-        super(MetricType.PRODUCT_USAGE_USERS_ABOVE_300_MIN, 300 * 60, Integer.MAX_VALUE, false, true);
+        super(MetricType.PRODUCT_USAGE_USERS_ABOVE_300_MIN, 300 * 60 * 1000, Integer.MAX_VALUE, false, true);
     }
 
     @Override

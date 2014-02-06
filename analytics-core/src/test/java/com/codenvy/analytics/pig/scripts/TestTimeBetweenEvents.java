@@ -98,9 +98,9 @@ public class TestTimeBetweenEvents extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(60)");
-        expected.add("(120)");
-        expected.add("(360)");
+        expected.add("(60000)");
+        expected.add("(120000)");
+        expected.add("(360000)");
 
         assertEquals(expected, actual);
     }

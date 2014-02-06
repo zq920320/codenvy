@@ -30,6 +30,8 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     var view = presenter.view;
     var model = presenter.model;
     
+    var widgetLabel = analytics.configuration.getProperty(presenter.widgetName, "widgetLabel") || "Overview";
+    
     view.print("<div class='view'>");
 
     var modelParams = analytics.util.clone(view.getParams());
@@ -39,7 +41,7 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
         view.print("<div class='view'>");
         
         view.print("<div class='overview'>");
-        view.print("<div class='header'>User Overview</div>");
+        view.print("<div class='header'>" + widgetLabel + "</div>");
         
         view.print("<div class='body'>");
         

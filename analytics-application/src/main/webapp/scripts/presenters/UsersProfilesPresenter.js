@@ -32,7 +32,6 @@ analytics.presenter.UsersProfilesPresenter.prototype.ASCENDING_ORDER_PREFIX = "+
 analytics.presenter.UsersProfilesPresenter.prototype.DESCENDING_ORDER_PREFIX = "-";
 analytics.presenter.UsersProfilesPresenter.prototype.DEFAULT_ORDER_PREFIX = analytics.presenter.UsersProfilesPresenter.prototype.ASCENDING_ORDER_PREFIX;
 
-analytics.presenter.UsersProfilesPresenter.prototype.USER_ID_LINK_PREFIX = "user-view.jsp?user";
 analytics.presenter.UsersProfilesPresenter.prototype.USERS_OVERVIEW_PAGE_LINK = "users-profiles.jsp";
 
 analytics.presenter.UsersProfilesPresenter.prototype.load = function() {
@@ -82,12 +81,10 @@ analytics.presenter.UsersProfilesPresenter.prototype.load = function() {
             var table = data[0];  // there is only one table in data
             
             // make user id in first column as linked 
-            for (var i = 0; i < table.rows.length; i++) {
-               var userId = table.rows[i][0];
-               var href = presenter.USER_ID_LINK_PREFIX + "=" + userId;
-               table.rows[i][0] = "<a href='" + href + "'>" + userId + "</a>";
-            }
-            
+            var firstColumnLinkPrefix = analytics.configuration.getProperty(presenter.widgetName, "firstColumnLinkPrefix");
+            if (typeof firstColumnLinkPrefix != "undefined") {
+                table = view.makeFirstTableColumnAsLinked(table, firstColumnLinkPrefix);
+            }            
             
             // make table header as linked for sorting         
             for (var i = 0; i < table.columns.length; i++) {

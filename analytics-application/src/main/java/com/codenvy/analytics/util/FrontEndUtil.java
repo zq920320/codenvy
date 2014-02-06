@@ -21,6 +21,9 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.users.UsersProfilesList;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -41,10 +44,6 @@ public class FrontEndUtil {
      *         time of reading data by metric).
      */
     public static String getFirstAndLastName(Principal userPrincipal) {
-        String METRIC_NAME = "users_profiles_list";
-        String USER_FIRST_NAME_KEY = "user_first_name";
-        String USER_LAST_NAME_KEY = "user_last_name";
-
         String firstAndLastName;
         String email = null;
         if (userPrincipal != null) {
@@ -54,12 +53,12 @@ public class FrontEndUtil {
         HashMap<String, String> metricContext = new HashMap<>();
 
         if (email != null) {
-            metricContext.put("USER", email);
+            metricContext.put(Parameters.USER.toString(), email);
         }
 
         ListValueData value;
         try {
-            value = (ListValueData)MetricFactory.getMetric(METRIC_NAME).getValue(metricContext);
+            value = (ListValueData)MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST).getValue(metricContext);
         } catch (IOException e) {
             // return user email if there was impossible to read data from metric
             return email;
@@ -71,8 +70,8 @@ public class FrontEndUtil {
         if (value.size() > 0) {
             Map<String, ValueData> userProfile = ((MapValueData)value.getAll().get(0)).getAll();
 
-            firstName = userProfile.get(USER_FIRST_NAME_KEY).toString();
-            lastName = userProfile.get(USER_LAST_NAME_KEY).toString();
+            firstName = userProfile.get(UsersProfilesList.USER_FIRST_NAME).toString();
+            lastName = userProfile.get(UsersProfilesList.USER_LAST_NAME).toString();
         }
 
         // return user email if there are empty both his/her first name and last name

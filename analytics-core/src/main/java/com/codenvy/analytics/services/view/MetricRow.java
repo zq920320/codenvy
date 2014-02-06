@@ -266,9 +266,10 @@ public class MetricRow extends AbstractRow {
     }    
 
     private StringValueData formatTimeValue(ValueData valueData) {
-        long timeInSeconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
+        long timeInMillisecs = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
+        long timeInSeconds = Math.round(timeInMillisecs / 1000.0);
         double min = timeInSeconds / 60;
-        long sec = timeInSeconds % 60;
+        long sec = timeInSeconds % 60;        
 
         if (min == 0 && sec == 0) {
             return StringValueData.DEFAULT;

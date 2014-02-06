@@ -19,6 +19,11 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
+import com.mongodb.DBObject;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersActivity extends AbstractCount {
@@ -30,5 +35,15 @@ public class UsersActivity extends AbstractCount {
     @Override
     public String getDescription() {
         return "The total number of users events";
+    }
+    
+    @Override
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+        DBObject initialFilter = super.getFilter(clauses);
+        DBObject match = (DBObject)initialFilter.get("$match");
+
+        UsersActivityList.replaceFilterSessionIdWithUserAndDate(clauses, match);
+        
+        return initialFilter;
     }
 }

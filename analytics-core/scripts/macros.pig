@@ -385,7 +385,7 @@ DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
     u2 = combineClosestEvents(u1, '$startEvent', '$finishEvent');
 
     -- considering sessions less than 1 min as 1 min columns
-    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, (delta < 60 ? 60 : delta) AS delta, id AS id;
+    $Y = FOREACH u2 GENERATE ws AS ws, user AS user, dt AS dt, (delta < 60 * 1000 ? 60 * 1000 : delta) AS delta, id AS id;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -419,7 +419,7 @@ DEFINE combineClosestEvents(X, startEvent, finishEvent) RETURNS Y {
     g = FILTER g2 BY delta == minDelta AND c::secondEvent == '$finishEvent';
 
     -- converts time into seconds
-    $Y = FOREACH g GENERATE ws AS ws, user AS user, dt AS dt, delta / 1000 AS delta, id AS id;
+    $Y = FOREACH g GENERATE ws AS ws, user AS user, dt AS dt, delta AS delta, id AS id;
 };
 
 ---------------------------------------------------------------------------------------------
@@ -450,7 +450,7 @@ DEFINE combineClosestEventsByID(X, startEvent, finishEvent) RETURNS Y {
 
     -- removes cases when second event is preceded by $startEvent (before $startEvent in time line)
     c4 = FILTER c3 BY delta > 0;
-    $Y = FOREACH c4 GENERATE ws, user, dt, delta / 1000 AS delta, id;
+    $Y = FOREACH c4 GENERATE ws, user, dt, delta AS delta, id;
 };
 
 ---------------------------------------------------------------------------------------------

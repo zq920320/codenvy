@@ -23,7 +23,7 @@ analytics.presenter.TablePresenter = function TablePresenter() {};
 
 analytics.presenter.TablePresenter.prototype = new Presenter();
 
-analytics.presenter.TablePresenter.prototype.ONE_PAGE_ROWS_COUNT = 10;
+analytics.presenter.TablePresenter.prototype.DEFAULT_ONE_PAGE_ROWS_COUNT = 10;
 
 analytics.presenter.TablePresenter.prototype.load = function() { 
     var presenter = this; 
@@ -33,6 +33,8 @@ analytics.presenter.TablePresenter.prototype.load = function() {
     
     var modelViewName = analytics.configuration.getProperty(widgetName, "modelViewName");
     var viewParams = view.getParams();
+    
+    var onePageRowsCount = analytics.configuration.getProperty(widgetName, "onePageRowsCount") || presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
         
     // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
     if (typeof viewParams["from_date"] != "undefined") {
@@ -62,17 +64,26 @@ analytics.presenter.TablePresenter.prototype.load = function() {
             currentPageNumber = new Number(currentPageNumber);
         }
         modelParams.page = currentPageNumber;
-        modelParams.per_page = presenter.ONE_PAGE_ROWS_COUNT;
+        modelParams.per_page = onePageRowsCount;
         
         model.setParams(modelParams);
         model.pushDoneFunction(function(data){
             model.popDoneFunction(data);
 
-            view.printTable(data[0], false);
+            var table = data[0];  // there is only one table in data
+            
+            // make user id in first column as linked 
+            var firstColumnLinkPrefix = analytics.configuration.getProperty(presenter.widgetName, "firstColumnLinkPrefix");
+            if (typeof firstColumnLinkPrefix != "undefined") {
+                table = view.makeFirstTableColumnAsLinked(table, firstColumnLinkPrefix);
+            }            
+            
+            view.printTable(table, false);
             
             delete modelParams.page;
             presenter.printTableNavigation(
-                currentPageNumber, 
+                currentPageNumber,
+                onePageRowsCount,
                 modelParams
             );
             
@@ -96,7 +107,7 @@ analytics.presenter.TablePresenter.prototype.load = function() {
     }
 };
 
-analytics.presenter.TablePresenter.prototype.printTableNavigation = function(currentPageNumber, modelParams) { 
+analytics.presenter.TablePresenter.prototype.printTableNavigation = function(currentPageNumber, onePageRowsCount, modelParams) { 
     var presenter = this; 
     var view = presenter.view;
     var model = presenter.model;
@@ -105,7 +116,7 @@ analytics.presenter.TablePresenter.prototype.printTableNavigation = function(cur
     
     model.setParams(modelParams);
     model.pushDoneFunction(function(data) {
-        var pageCount = data / presenter.ONE_PAGE_ROWS_COUNT;
+        var pageCount = data / onePageRowsCount;
         if (pageCount > 1) {
             var queryString = "?" + analytics.util.constructUrlParams(modelParams);
 

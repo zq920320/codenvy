@@ -296,11 +296,12 @@
         <indexes>
             <index name="user">
                 <field>user</field>
-                <field>start_time</field>
             </index>
             <index name="ws">
                 <field>ws</field>
-                <field>start_time</field>
+            </index>
+            <index name="session_id">
+                <field>session_id</field>
             </index>
         </indexes>
     </collection>

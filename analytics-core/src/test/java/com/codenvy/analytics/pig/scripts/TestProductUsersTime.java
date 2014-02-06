@@ -97,17 +97,17 @@ public class TestProductUsersTime extends BaseTest {
         List<ValueData> all = value.getAll();
         MapValueData valueData = (MapValueData)all.get(0);
         assertEquals(valueData.getAll().get("user").getAsString(), "user1@gmail.com");
-        assertEquals(valueData.getAll().get("time").getAsString(), "480");
+        assertEquals(valueData.getAll().get("time").getAsString(), "480000");
         assertEquals(valueData.getAll().get("sessions").getAsString(), "2");
 
         valueData = (MapValueData)all.get(1);
         assertEquals(valueData.getAll().get("user").getAsString(), "user3@gmail.com");
-        assertEquals(valueData.getAll().get("time").getAsString(), "420");
+        assertEquals(valueData.getAll().get("time").getAsString(), "420000");
         assertEquals(valueData.getAll().get("sessions").getAsString(), "1");
 
         valueData = (MapValueData)all.get(2);
         assertEquals(valueData.getAll().get("user").getAsString(), "user2@gmail.com");
-        assertEquals(valueData.getAll().get("time").getAsString(), "60");
+        assertEquals(valueData.getAll().get("time").getAsString(), "60000");
         assertEquals(valueData.getAll().get("sessions").getAsString(), "1");
     }
 
@@ -124,20 +124,20 @@ public class TestProductUsersTime extends BaseTest {
         MapValueData item = (MapValueData)value.getAll().get(0);
         assertEquals(item.getAll().get("entity").getAsString(), "user1@gmail.com");
         assertEquals(item.getAll().get("sessions").getAsString(), "2");
-        assertEquals(item.getAll().get("by_1_day").getAsString(), "480");
-        assertEquals(item.getAll().get("by_lifetime").getAsString(), "480");
+        assertEquals(item.getAll().get("by_1_day").getAsString(), "480000");
+        assertEquals(item.getAll().get("by_lifetime").getAsString(), "480000");
 
         item = (MapValueData)value.getAll().get(1);
         assertEquals(item.getAll().get("entity").getAsString(), "user3@gmail.com");
         assertEquals(item.getAll().get("sessions").getAsString(), "1");
-        assertEquals(item.getAll().get("by_1_day").getAsString(), "420");
-        assertEquals(item.getAll().get("by_lifetime").getAsString(), "420");
+        assertEquals(item.getAll().get("by_1_day").getAsString(), "420000");
+        assertEquals(item.getAll().get("by_lifetime").getAsString(), "420000");
 
         item = (MapValueData)value.getAll().get(2);
         assertEquals(item.getAll().get("entity").getAsString(), "user2@gmail.com");
         assertEquals(item.getAll().get("sessions").getAsString(), "1");
-        assertEquals(item.getAll().get("by_1_day").getAsString(), "60");
-        assertEquals(item.getAll().get("by_lifetime").getAsString(), "60");
+        assertEquals(item.getAll().get("by_1_day").getAsString(), "60000");
+        assertEquals(item.getAll().get("by_lifetime").getAsString(), "60000");
     }
 
     @Test
@@ -146,12 +146,12 @@ public class TestProductUsersTime extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestedAbstractProductUsageCondition(0, 450, true, true, "$and", 0, 2, true, true);
+        Metric metric = new TestedAbstractProductUsageCondition(0, 450000, true, true, "$and", 0, 2, true, true);
         LongValueData value = (LongValueData)metric.getValue(context);
 
         assertEquals(2, value.getAsLong());
 
-        metric = new TestedAbstractTimelineProductUsageCondition(0, 450, true, true, "$and", 0, 2, true, true);
+        metric = new TestedAbstractTimelineProductUsageCondition(0, 450000, true, true, "$and", 0, 2, true, true);
         ListValueData listVD = (ListValueData)metric.getValue(context);
 
         assertEquals(1, listVD.size());
@@ -170,7 +170,7 @@ public class TestProductUsersTime extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestedAbstractProductUsageCondition(0, 450, true, true, "$or", 0, 2, true, true);
+        Metric metric = new TestedAbstractProductUsageCondition(0, 450000, true, true, "$or", 0, 2, true, true);
         LongValueData value = (LongValueData)metric.getValue(context);
 
         assertEquals(3, value.getAsLong());
@@ -182,7 +182,7 @@ public class TestProductUsersTime extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestedAbstractProductUsageCondition(0, 600, true, true, "$and", 0, 2, true, true);
+        Metric metric = new TestedAbstractProductUsageCondition(0, 600000, true, true, "$and", 0, 2, true, true);
         LongValueData value = (LongValueData)metric.getValue(context);
 
         assertEquals(3, value.getAsLong());

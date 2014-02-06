@@ -31,7 +31,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +112,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.TO_DATE.put(context, "20130210");
 
         Metric metric = new TestFactorySessionsProductUsageTotal();
-        assertEquals(metric.getValue(context), new LongValueData(1800L));
+        assertEquals(metric.getValue(context), new LongValueData(1800000L));
 
         metric = new TestFactorySessions();
         assertEquals(metric.getValue(context), new LongValueData(3));
@@ -133,7 +132,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         MetricFilter.REFERRER.put(context, "referrer1");
 
         Metric metric = new TestFactorySessionsProductUsageTotal();
-        assertEquals(metric.getValue(context), new LongValueData(300L));
+        assertEquals(metric.getValue(context), new LongValueData(300000L));
     }
 
     @Test
@@ -142,7 +141,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130210");
         Parameters.TO_DATE.put(context, "20130210");
 
-        Metric metric = new TestAbstractFactorySessions("testproductusagefactorysessions", 0, 600, true, true);
+        Metric metric = new TestAbstractFactorySessions("testproductusagefactorysessions", 0, 600000, true, true);
         assertEquals(metric.getValue(context), new LongValueData(2));
     }
 

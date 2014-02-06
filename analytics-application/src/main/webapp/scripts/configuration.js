@@ -28,7 +28,7 @@ function Configuration() {
                 "time_unit": "day"
             },
 
-            isNeedToSaveInHistory: true
+            isNeedToSaveInHistory: true,
         },
 
         timeline: {
@@ -39,7 +39,7 @@ function Configuration() {
                 "time_unit": "day"
             },
 
-            isNeedToSaveInHistory: true
+            isNeedToSaveInHistory: true,
         },
 
         topMetrics: {
@@ -50,7 +50,7 @@ function Configuration() {
                 "metric": "TOP FACTORY SESSIONS"
             },
 
-            isNeedToSaveInHistory: true
+            isNeedToSaveInHistory: true,
         },
 
         usersProfiles: {
@@ -58,18 +58,20 @@ function Configuration() {
             modelViewName: "users-profiles",
             modelMetricName: "users_profiles",
             isNeedToSaveInHistory: true,
+            firstColumnLinkPrefix: "user-view.jsp?user",
         },
 
         userOverview: {
+            widgetLabel: "User Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "user_profile",
-            isNeedToSaveInHistory: false
+            isNeedToSaveInHistory: false,
         },
 
         userData: {
             presenterType: "TablePresenter",
             modelViewName: "user_data",
-            isNeedToSaveInHistory: true
+            isNeedToSaveInHistory: true,
         },
 
         userSessions: {
@@ -81,7 +83,9 @@ function Configuration() {
             modelMetricName: "product_usage_sessions",
 
             isSortable: true,
-            defaultSortParams: "-date"
+            defaultSortParams: "-date",
+            
+            firstColumnLinkPrefix: "session-view.jsp?session_id",
         },
 
         userWorkspaceData: {
@@ -90,7 +94,7 @@ function Configuration() {
             isNeedToSaveInHistory: true,
 
             isPaginable: true,
-            modelMetricName: "users_time_in_workspaces"
+            modelMetricName: "users_time_in_workspaces",
         },
 
         userActivity: {
@@ -102,7 +106,7 @@ function Configuration() {
             modelMetricName: "users_activity",
 
             isSortable: true,
-            defaultSortParams: "-date"
+            defaultSortParams: "-date",
         },
 
         userEvents: {
@@ -114,7 +118,7 @@ function Configuration() {
         timeline_product_usage_condition: {
             presenterType: "ReportPresenter",
             modelViewName: "timeline_product_usage_condition",
-            isNeedToSaveInHistory: false
+            isNeedToSaveInHistory: false,
         },
 
         analysis: {
@@ -125,9 +129,29 @@ function Configuration() {
                 "time_unit": "month"
             },
 
-            isNeedToSaveInHistory: false
+            isNeedToSaveInHistory: false,
         },
 
+        sessionOverview: {
+            widgetLabel: "Session Overview",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "session_overview",
+            isNeedToSaveInHistory: false,
+        },
+
+        userSessionActivity: {
+            presenterType: "TablePresenter",
+            modelViewName: "session_events",
+            isNeedToSaveInHistory: true,
+            
+            isPaginable: true,
+            modelMetricName: "users_activity",
+            onePageRowsCount: 30,
+
+            isSortable: true,
+            defaultSortParams: "-date",
+        },        
+        
     }
 
     /** 1 x 1 relation(viewParams,modelParams) **/
@@ -145,7 +169,7 @@ function Configuration() {
 
         "sort": "sort",
         "page": "page",
-
+        "session_id": "session_id",
     }
 
     function getProperty(widgetName, property) {

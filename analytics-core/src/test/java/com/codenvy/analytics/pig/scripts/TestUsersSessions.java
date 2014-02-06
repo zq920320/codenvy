@@ -33,7 +33,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +114,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("start_time").getAsString(), "2013-11-01 20:00:00");
         assertEquals(items.getAll().get("end_time").getAsString(), "2013-11-01 20:05:00");
         assertEquals(items.getAll().get("session_id").getAsString(), "2");
-        assertEquals(items.getAll().get("time").getAsString(), "300");
+        assertEquals(items.getAll().get("time").getAsString(), "300000");
         assertEquals(items.getAll().get("domain").getAsString(), "gmail.com");
         assertEquals(items.getAll().get("user_company").getAsString(), "company");
 

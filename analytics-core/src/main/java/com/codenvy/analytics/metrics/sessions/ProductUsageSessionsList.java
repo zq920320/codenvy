@@ -45,7 +45,8 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
                             TIME,
                             START_TIME,
                             END_TIME,
-                            SESSION_ID};
+                            SESSION_ID,
+                            DATE};
     }
 
     @Override

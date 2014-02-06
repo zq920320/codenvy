@@ -94,7 +94,7 @@ public class TestTimeSpentInAction extends BaseTest {
         Parameters.TO_DATE.put(context, "20130101");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(540));
+        Assert.assertEquals(metric.getValue(context), new LongValueData(540000));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class TestTimeSpentInAction extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(420));
+        Assert.assertEquals(metric.getValue(context), new LongValueData(420000));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class TestTimeSpentInAction extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(540));
+        Assert.assertEquals(metric.getValue(context), new LongValueData(540000));
     }
 
     @Test
@@ -139,7 +139,8 @@ public class TestTimeSpentInAction extends BaseTest {
         MetricFilter.WS.put(context, "ws2");
 
         Metric metric = new TestedAbstractTimeSpentInAction();
-        Assert.assertEquals(metric.getValue(context), new LongValueData(120));
+        Assert.assertEquals(metric.getValue(context), new LongValueData(120000));
+
     }
 
     //-------------------- Tested classes --------------------

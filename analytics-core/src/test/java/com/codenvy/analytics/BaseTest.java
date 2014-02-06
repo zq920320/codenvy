@@ -45,11 +45,10 @@ public class BaseTest {
     public static final    String BASE_DIR = "target";
     protected static final Logger LOG      = LoggerFactory.getLogger(BaseTest.class);
 
-    protected final TupleFactory     tupleFactory = TupleFactory.getInstance();
-    protected final DateFormat       dateFormat   = new SimpleDateFormat("yyyyMMdd");
-    protected final DateFormat       timeFormat   = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
-    protected final SimpleDateFormat dirFormat    =
-            new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
+    protected final TupleFactory tupleFactory   = TupleFactory.getInstance();
+    protected final DateFormat   dateFormat     = new SimpleDateFormat("yyyyMMdd");
+    protected final DateFormat   timeFormat     = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+    protected final DateFormat   fullTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
     private MongodProcess embeddedMongoProcess;
 

@@ -17,8 +17,8 @@
          from Codenvy S.A..
 -->
 <display>
-    <view name="user-sessions" on-demand="true">
-        <section name="user_sessions">
+    <view name="session_overview" on-demand="true">
+        <section name="session_overview">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Id,User,Workspace,Start Time,End Time,Duration"/>
             </row>
@@ -31,8 +31,8 @@
         </section>
     </view>
 
-    <view name="user_activity" on-demand="true">
-        <section name="user_activity">
+    <view name="session_events" on-demand="true">
+        <section name="session_events">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Date,Event"/>
             </row>

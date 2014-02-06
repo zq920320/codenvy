@@ -24,8 +24,8 @@ public class ProductUsageConditionBetween120And300Min extends AbstractProductUsa
 
     public ProductUsageConditionBetween120And300Min() {
         super(MetricType.PRODUCT_USAGE_CONDITION_BETWEEN_120_AND_300_MIN,
-              120 * 60,
-              300 * 60,
+              120 * 60 * 1000,
+              300 * 60 * 1000,
               true,
               false,
               "$and",

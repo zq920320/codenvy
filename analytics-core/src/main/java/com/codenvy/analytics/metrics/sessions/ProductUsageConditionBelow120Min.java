@@ -25,7 +25,7 @@ public class ProductUsageConditionBelow120Min extends AbstractProductUsageCondit
     public ProductUsageConditionBelow120Min() {
         super(MetricType.PRODUCT_USAGE_CONDITION_BELOW_120_MIN,
               0,
-              120 * 60,
+              120 * 60 * 1000,
               true,
               false,
               "$or",

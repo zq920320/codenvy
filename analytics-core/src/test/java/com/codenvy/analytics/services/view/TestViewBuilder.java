@@ -37,6 +37,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -49,27 +50,34 @@ import static org.testng.AssertJUnit.assertEquals;
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
 public class TestViewBuilder extends BaseTest {
 
-    private static final String FILE          = BASE_DIR + "/resource";
-    private static final String CONFIGURATION = "<display>\n" +
-                                                "     <view time-unit=\"day,week,month," +
-                                                "lifetime\" name=\"view\" columns=\"3\">\n" +
-                                                "         <section name=\"workspaces\">\n" +
-                                                "             <row class=\"com.codenvy.analytics.services.view" +
-                                                ".DateRow\">\n" +
-                                                "                 <parameter key=\"section-name\" value=\"desc\"/>\n" +
-                                                "             </row>\n" +
-                                                "             <row class=\"com.codenvy.analytics.services.view" +
-                                                ".TestViewBuilder$TestMetricRow\">\n" +
-                                                "                 <parameter key=\"name\" " +
-                                                "value=\"CREATED_WORKSPACES\"/>\n" +
-                                                "                 <parameter key=\"description\" value=\"Created " +
-                                                "Workspaces\"/>\n" +
-                                                "             </row>\n" +
-                                                "             <row class=\"com.codenvy.analytics.services.view" +
-                                                ".EmptyRow\"/>\n" +
-                                                "         </section>\n" +
-                                                "     </view>" +
-                                                "</display>";
+    private static final String           FILE          = BASE_DIR + "/resource";
+    private static final String           CONFIGURATION = "<display>\n" +
+                                                          "     <view time-unit=\"day,week,month," +
+                                                          "lifetime\" name=\"view\" columns=\"3\">\n" +
+                                                          "         <section name=\"workspaces\">\n" +
+                                                          "             <row class=\"com.codenvy.analytics.services" +
+                                                          ".view" +
+                                                          ".DateRow\">\n" +
+                                                          "                 <parameter key=\"section-name\" " +
+                                                          "value=\"desc\"/>\n" +
+                                                          "             </row>\n" +
+                                                          "             <row class=\"com.codenvy.analytics.services" +
+                                                          ".view" +
+                                                          ".TestViewBuilder$TestMetricRow\">\n" +
+                                                          "                 <parameter key=\"name\" " +
+                                                          "value=\"CREATED_WORKSPACES\"/>\n" +
+                                                          "                 <parameter key=\"description\" " +
+                                                          "value=\"Created " +
+                                                          "Workspaces\"/>\n" +
+                                                          "             </row>\n" +
+                                                          "             <row class=\"com.codenvy.analytics.services" +
+                                                          ".view" +
+                                                          ".EmptyRow\"/>\n" +
+                                                          "         </section>\n" +
+                                                          "     </view>" +
+                                                          "</display>";
+    private static final SimpleDateFormat dirFormat     =
+            new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     private ViewBuilder viewBuilder;
 

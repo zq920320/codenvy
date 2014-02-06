@@ -330,7 +330,7 @@ public class ActOn extends Feature {
         if (time == null) {
             writeNotNullStr(out, "0");
         } else {
-            writeNotNullStr(out, "" + (time.getAsLong() / 60));
+            writeNotNullStr(out, "" + (time.getAsLong() / (60 * 1000)));  // convert from millisec into minutes
         }
         out.write(",");
 
@@ -349,12 +349,22 @@ public class ActOn extends Feature {
         writeInt(out, stat.get(UsersStatisticsList.LOGINS));
         out.write(",");
 
-        writeInt(out, stat.get(UsersStatisticsList.BUILD_TIME));
+        LongValueData buildTime = (LongValueData)stat.get(UsersStatisticsList.BUILD_TIME);
+        if (buildTime == null) {
+            writeNotNullStr(out, "0");
+        } else {
+            writeNotNullStr(out, "" + (buildTime.getAsLong() / 1000));  // convert from millisec into secs
+        }
         out.write(",");
 
-        writeInt(out, stat.get(UsersStatisticsList.RUN_TIME));
-        out.write(",");
-
+        LongValueData runTime = (LongValueData)stat.get(UsersStatisticsList.RUN_TIME);
+        if (runTime == null) {
+            writeNotNullStr(out, "0");
+        } else {
+            writeNotNullStr(out, "" + (runTime.getAsLong() / 1000));  // convert from millisec into secs
+        }
+        out.write(",");        
+        
         boolean profileCompleted = isProfileCompleted(profile);
         writeNotNullStr(out, Boolean.toString(profileCompleted));
         out.write(",");
@@ -426,36 +436,35 @@ public class ActOn extends Feature {
             int invitations = new Integer(statistics.get(UsersStatisticsList.INVITES).toString());
 
             boolean profileCompleted = isProfileCompleted(profile);
-
-            int time = getTimeInHours(statistics, UsersStatisticsList.TIME);
-            int buildTime = getTimeInHours(statistics, UsersStatisticsList.BUILD_TIME);
-            int runTime = getTimeInHours(statistics, UsersStatisticsList.RUN_TIME);
+            int time = getTimeInHours(statistics, UsersStatisticsList.TIME); 
+            int buildTime = getTimeInHours(statistics, UsersStatisticsList.BUILD_TIME);           
+            int runTime = getTimeInHours(statistics, UsersStatisticsList.RUN_TIME); 
 
             /** compute MQL Score from Product **/
-            total += logins * 2;
-            total += projects * 2;
-            total += builds * 2;
-            total += runs * 2;
-            total += debugs * 2;
-            total += paasDeploys * 10;
-            total += factories * 10;
-            total += invitations * 10;
+            total +=        logins *  2;
+            total +=      projects *  2;
+            total +=        builds *  2;
+            total +=          runs *  2;
+            total +=        debugs *  2;
+            total +=   paasDeploys * 10;
+            total +=     factories * 10;
+            total +=   invitations * 10;
 
             // compute Metric Measurement Points
-            total += (logins > 5) ? 5 : 0;
-            total += (projects > 5) ? 5 : 0;
-            total += (paasDeploys > 5) ? 10 : 0;
-            total += (profileCompleted) ? 5 : 0;
-            total += (time > 40) ? 50 : 0;
-            total += (buildTime > 3) ? 50 : 0;
-            total += (runTime > 3) ? 50 : 0;
+            total +=       (logins > 5) ?  5 : 0;
+            total +=     (projects > 5) ?  5 : 0;
+            total +=  (paasDeploys > 5) ? 10 : 0;
+            total += (profileCompleted) ?  5 : 0;
+            total +=        (time > 40) ? 50 : 0;
+            total +=    (buildTime > 3) ? 50 : 0;
+            total +=      (runTime > 3) ? 50 : 0;
         }
 
         return ValueDataFactory.createValueData(total);
     }
 
     private int getTimeInHours(Map<String, ValueData> statistics, String fieldName) {
-        return Math.round(new Integer(statistics.get(fieldName).toString()) / 360);
+        return Math.round(new Integer(statistics.get(fieldName).toString()) / (360 * 1000));
     }
 
     private boolean isProfileCompleted(Map<String, ValueData> profile) {

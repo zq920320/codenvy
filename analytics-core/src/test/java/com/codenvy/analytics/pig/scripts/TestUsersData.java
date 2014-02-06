@@ -52,7 +52,8 @@ public class TestUsersData extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
-                        .withDate("2013-11-01").build());
+                        .withDate("2013-11-01")
+                        .build());
         
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
                         .withDate("2013-11-01").build());
@@ -62,9 +63,9 @@ public class TestUsersData extends BaseTest {
                         .withDate("2013-11-01").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:00:00").build());
+                        .withTime("20:00:00,155").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:05:00").build());
+                        .withTime("20:05:00,655").build());
         events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
                         .withTime("19:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
@@ -72,17 +73,17 @@ public class TestUsersData extends BaseTest {
 
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate("2013-11-01")
-                                .withTime("19:08:00").build());
+                                .withTime("19:08:00,155").build());
         events.add(Event.Builder.createRunFinishedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate("2013-11-01")
-                                .withTime("19:10:00").build());
+                                .withTime("19:10:00,655").build());
 
         events.add(Event.Builder.createBuildStartedEvent("user3@gmail.com", "ws2", "project", "type", "id2")
                                 .withDate("2013-11-01")
-                                .withTime("19:12:00").build());
+                                .withTime("19:12:00,155").build());
         events.add(Event.Builder.createBuildFinishedEvent("user3@gmail.com", "ws2", "project", "type", "id2")
                                 .withDate("2013-11-01")
-                                .withTime("19:14:00").build());
+                                .withTime("19:14:00,655").build());
          
         events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws2", "email")
                          .withDate("2013-11-01").build());
@@ -154,7 +155,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUNS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.FACTORIES).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300500");
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
@@ -174,7 +175,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120");
+                    assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120500");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "1");
                     break;
@@ -182,7 +183,7 @@ public class TestUsersData extends BaseTest {
                 case "user3@gmail.com":
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120000");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
@@ -191,7 +192,7 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.INVITES).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.LOGINS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
-                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120");
+                    assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120500");
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "1");
                     break;
 
@@ -236,13 +237,13 @@ public class TestUsersData extends BaseTest {
                 case "ws1":
                     assertEquals(all.size(), 3);
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "300500");
                     break;
 
                 case "ws2":
                     assertEquals(all.size(), 3);
                     assertEquals(all.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
-                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120");
+                    assertEquals(all.get(UsersStatisticsList.TIME).getAsString(), "120000");
                     break;
 
                 default:
@@ -267,7 +268,7 @@ public class TestUsersData extends BaseTest {
         MapValueData entry = (MapValueData)items.get(0);
 
         assertEquals(entry.getAll().get(UsersStatisticsList.SESSIONS).getAsString(), "1");
-        assertEquals(entry.getAll().get(UsersStatisticsList.TIME).getAsString(), "300");
+        assertEquals(entry.getAll().get(UsersStatisticsList.TIME).getAsString(), "300500");
         assertEquals(entry.getAll().get(UsersStatisticsList.USER).getAsString(), "ws1");
 
     }

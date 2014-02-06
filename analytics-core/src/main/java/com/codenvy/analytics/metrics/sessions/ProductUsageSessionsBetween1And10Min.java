@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.MetricType;
 public class ProductUsageSessionsBetween1And10Min extends AbstractProductUsageSessions {
 
     public ProductUsageSessionsBetween1And10Min() {
-        super(MetricType.PRODUCT_USAGE_SESSIONS_BETWEEN_1_AND_10_MIN, 1 * 60, 10 * 60, false, false);
+        super(MetricType.PRODUCT_USAGE_SESSIONS_BETWEEN_1_AND_10_MIN, 1 * 60 * 1000, 10 * 60 * 1000, false, false);
     }
 
     @Override

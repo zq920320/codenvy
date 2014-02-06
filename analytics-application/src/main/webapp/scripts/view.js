@@ -136,6 +136,19 @@ function View() {
 	    print('</table>');
 	}	
 	
+	/**
+	 * Make first column of table as linked with link = "firstColumnLinkPrefix + {firstColumnValue}"
+	 */
+    function makeFirstTableColumnAsLinked(table, firstColumnLinkPrefix) {
+        for (var i = 0; i < table.rows.length; i++) {
+            var firstColumnValue = table.rows[i][0];
+            var href = firstColumnLinkPrefix + "=" + firstColumnValue;
+            table.rows[i][0] = "<a href='" + href + "'>" + firstColumnValue + "</a>";
+        }
+    
+        return table;
+    }
+	
 	//load handlers of table events
 	function loadTableHandlers() {
 	    print("<script src='scripts/views/database-table.js'></script>");
@@ -146,7 +159,6 @@ function View() {
 	    print("  });");
 	    print("</script>");
 	}
-	
 	
 	/**
 	 * currentPageNumber is 1-based
@@ -274,6 +286,7 @@ function View() {
     	printTable: printTable,
     	loadTableHandlers: loadTableHandlers,
     	printTableVerticalRow: printTableVerticalRow,
+    	makeFirstTableColumnAsLinked: makeFirstTableColumnAsLinked,
     	
     	// page navigation
     	printBottomPageNavigator: printBottomPageNavigator,

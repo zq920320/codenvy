@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.MetricType;
 public class FactorySessionsBelow10Min extends AbstractFactorySessions {
 
     public FactorySessionsBelow10Min() {
-        super(MetricType.FACTORY_SESSIONS_BELOW_10_MIN, 0, 10 * 60, true, false);
+        super(MetricType.FACTORY_SESSIONS_BELOW_10_MIN, 0, 10 * 60 * 1000, true, false);
     }
 
     @Override

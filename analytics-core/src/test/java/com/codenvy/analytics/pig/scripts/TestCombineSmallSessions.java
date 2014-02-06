@@ -1,4 +1,5 @@
 /*
+/*
  *
  * CODENVY CONFIDENTIAL
  * ________________
@@ -100,12 +101,12 @@ public class TestCombineSmallSessions extends BaseTest {
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(user1,360)");
-        expected.add("(user2,120)");
-        expected.add("(user3,300)");
-        expected.add("(user4,60)");
+        expected.add("(user1,360000)");
+        expected.add("(user2,120000)");
+        expected.add("(user3,300000)");
+        expected.add("(user4,60000)");
 
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
     }
 }
 
