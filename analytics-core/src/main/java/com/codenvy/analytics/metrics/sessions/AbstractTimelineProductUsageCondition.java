@@ -34,12 +34,12 @@ import java.util.*;
 /** @author Anatoliy Bazko */
 public abstract class AbstractTimelineProductUsageCondition extends CalculatedMetric {
 
-    public static final String BY_1_DAY   = "by_1_day";
-    public static final String BY_7_DAY   = "by_7_day";
-    public static final String BY_30_DAY  = "by_30_day";
-    public static final String BY_60_DAY  = "by_60_day";
-    public static final String BY_90_DAY  = "by_90_day";
-    public static final String BY_365_DAY = "by_365_day";
+    public static final String BY_1_DAY    = "by_1_day";
+    public static final String BY_7_DAYS   = "by_7_days";
+    public static final String BY_30_DAYS  = "by_30_days";
+    public static final String BY_60_DAYS  = "by_60_days";
+    public static final String BY_90_DAYS  = "by_90_days";
+    public static final String BY_365_DAYS = "by_365_days";
 
     protected AbstractTimelineProductUsageCondition(MetricType metricType,
                                                     MetricType[] basedMetricTypes) {
@@ -63,11 +63,11 @@ public abstract class AbstractTimelineProductUsageCondition extends CalculatedMe
 
             Map<String, ValueData> row = new HashMap<>(6);
             row.put(BY_1_DAY, by1Day);
-            row.put(BY_7_DAY, by7Day);
-            row.put(BY_30_DAY, by30Day);
-            row.put(BY_60_DAY, by60Day);
-            row.put(BY_90_DAY, by90Day);
-            row.put(BY_365_DAY, by365Day);
+            row.put(BY_7_DAYS, by7Day);
+            row.put(BY_30_DAYS, by30Day);
+            row.put(BY_60_DAYS, by60Day);
+            row.put(BY_90_DAYS, by90Day);
+            row.put(BY_365_DAYS, by365Day);
 
             List<ValueData> result = new ArrayList<>();
             result.add(new MapValueData(row));
