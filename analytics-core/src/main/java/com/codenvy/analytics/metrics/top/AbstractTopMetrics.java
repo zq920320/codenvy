@@ -51,11 +51,11 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        setDateParameters(context, this.dayCount);
+        context = initializeContext(context);
         return super.getValue(context);
     }
 
-    private void setDateParameters(Map<String, String> context, int countOfDays) throws IOException {
+    private Map<String, String> initializeContext(Map<String, String> context) throws IOException {
         context = Utils.clone(context);
         Parameters.TO_DATE.putDefaultValue(context);
 
@@ -64,13 +64,15 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
         } else {
             try {
                 Calendar date = Utils.getToDate(context);
-                date.add(Calendar.DAY_OF_MONTH, 1 - countOfDays);
+                date.add(Calendar.DAY_OF_MONTH, 1 - dayCount);
 
                 Utils.putFromDate(context, date);
             } catch (ParseException e) {
                 throw new IOException(e);
             }
         }
+
+        return context;
     }
 
     /** @return mongodb operation (100% * (subjectField / predicateField)) */
