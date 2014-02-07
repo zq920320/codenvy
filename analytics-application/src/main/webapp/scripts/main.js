@@ -135,8 +135,7 @@ function Main() {
 
         // process ide version selector
         var ideVersionButton = $("#ide-version a.btn-primary");
-        if (ideVersionButton.doesExist() 
-                && typeof ideVersionButton.attr("value") != "undefined") {            
+        if (ideVersionButton.doesExist()) {            
            params.ide = ideVersionButton.attr("value"); 
            updateGlobalParamInStorage("ide", params.ide);
         }
@@ -386,7 +385,11 @@ function Main() {
         }
         
         if (analytics.configuration.isParamGlobal(parameter)) {
-            localStorage.setItem(parameter, value);    // save param value in the HTML5 Web Storage
+            if (typeof value != "undefined") {
+                localStorage.setItem(parameter, value);    // save param value in the HTML5 Web Storage                
+            } else {
+                localStorage.removeItem(parameter);    // remove param from HTML5 Web Storage
+            }
         }
     }
     
