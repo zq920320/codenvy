@@ -31,7 +31,7 @@ DEFINE EventExists com.codenvy.analytics.pig.udf.EventExists;
 ---------------------------------------------------------------------------
 DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l1 = LOAD '$resourceParam' using PigStorage() as (message : chararray);
-  l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\sEVENT#([^\\s#][^#]*|)#\\s.*')
+  l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\sEVENT#([^\\s#][^#]*|)#.*')
                           AS pattern, message;
   l3 = FILTER l2 BY pattern.$2 != '';
   l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$2 AS event, message;
@@ -119,7 +119,7 @@ DEFINE removeEvent(X, eventNamesParam) RETURNS Y {
 -- @return  {..., ws : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractWs(X, wsType) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws2, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sWS#([^\\s#][^#]*|)#\\s.*')) AS ws1;
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[.*\\]\\[(.*)\\]\\[.*\\] - .*')) AS ws2, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sWS#([^\\s#][^#]*|)#.*')) AS ws1;
   x2 = FOREACH x1 GENERATE *, (ws1 IS NOT NULL AND ws1 != '' ? ws1 : (ws2 IS NOT NULL AND ws2 != '' ? ws2 : 'default')) AS ws;
   $Y = FILTER x2 BY '$wsType' == 'ANY' OR  ws == 'default' OR
             ('$wsType' == 'TEMPORARY' AND INDEXOF(UPPER(ws), 'TMP-', 0) == 0) OR 
@@ -131,7 +131,7 @@ DEFINE extractWs(X, wsType) RETURNS Y {
 -- @return  {..., user : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractUser(X, userType) RETURNS Y {
-  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sUSER#([^\\s#][^#]*|)#\\s.*')) AS user1,
+  x1 = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\sUSER#([^\\s#][^#]*|)#.*')) AS user1,
                   FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\[(.*)\\]\\[.*\\]\\[.*\\] - .*')) AS user2,
                   FLATTEN(REGEX_EXTRACT_ALL(message, '.*ALIASES\\#[\\[]?([^\\#^\\[^\\]]*)[\\]]?\\#.*')) AS user3;
   x2 = FOREACH x1 GENERATE *, (user1 IS NOT NULL AND user1 != '' ? user1 : (user2 IS NOT NULL AND user2 != '' ? user2 : (user3 IS NOT NULL AND user3 != '' ? user3 : 'default'))) AS newUser;
@@ -148,7 +148,7 @@ DEFINE extractUser(X, userType) RETURNS Y {
 -- @return  {..., $paramFieldNameParam : bytearray}
 ---------------------------------------------------------------------------
 DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
-  $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#\\s.*')) AS $paramFieldNameParam;
+  $Y = FOREACH $X GENERATE *, FLATTEN(REGEX_EXTRACT_ALL(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#.*')) AS $paramFieldNameParam;
 };
 
 
@@ -175,10 +175,10 @@ DEFINE extractUrlParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
   $Y = FOREACH $X GENERATE *, ('$paramNameParam' == 'FACTORY-URL' ? REPLACE(CutQueryParam(
                                                                             URLDecode(
                                                                                 URLDecode(
-                                                                                    REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))), 'ptype'), '\\/factory\\/\\?', '\\/factory\\?')
+                                                                                    REGEX_EXTRACT(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#.*', 1))), 'ptype'), '\\/factory\\/\\?', '\\/factory\\?')
                                                                   :  URLDecode(
                                                                         URLDecode(
-                                                                            REGEX_EXTRACT(message, '.*$paramNameParam\\#([^\\#]*)\\#.*', 1))))
+                                                                            REGEX_EXTRACT(message, '.*\\s$paramNameParam#([^\\s#][^#]*|)#.*', 1))))
                                 AS $paramFieldNameParam;
 };
 
