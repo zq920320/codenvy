@@ -35,7 +35,8 @@ public class ProductUsageTimeBelow1Min extends CalculatedMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        return basedMetric[0].getValue(context);
+        LongValueData value = (LongValueData)basedMetric[0].getValue(context);
+        return LongValueData.valueOf(value.getAsLong() * 60 * 1000);
     }
 
     @Override

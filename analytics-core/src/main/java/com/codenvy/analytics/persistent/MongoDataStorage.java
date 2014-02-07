@@ -101,15 +101,6 @@ public class MongoDataStorage {
         }
 
         LOG.info("Mongo client connected to server");
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                mongoClient.close();
-                LOG.info("Mongo client disconnected from server");
-            }
-        });
-
         return mongoClient;
     }
 

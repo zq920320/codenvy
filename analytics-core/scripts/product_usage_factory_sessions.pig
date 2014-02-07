@@ -69,7 +69,7 @@ s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
 s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory, s4::referrer AS referrer, s4::user AS user,
                         s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::auth AS auth, s4::tmpWs AS ws,
                         (d::tmpWs IS NULL ? 0
-                                          : (SecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval * 60  > 0 ? 1 : 0 )) AS conv;
+                                          : (MilliSecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval*60*1000  > 0 ? 1 : 0 )) AS conv;
 
 -- sessions with events
 k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');

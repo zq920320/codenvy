@@ -253,7 +253,7 @@ DEFINE productUsageTimeList(X, inactiveIntervalParam) RETURNS Y {
   l5 = FOREACH l4 GENERATE l1::ws AS ws, l1::user AS user, l1::dt AS dt, MilliSecondsBetween(l2::dt, l1::dt) AS delta;
   l6 = FILTER l5 BY delta > 0;
   l7 = GROUP l6 BY (ws, user, dt);
-  l = FOREACH l7 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MIN(l6.delta)/1000 AS delta;
+  l = FOREACH l7 GENERATE group.ws AS ws, group.user AS user, group.dt AS dt, MIN(l6.delta) AS delta;
 
   $Y = UNION kS, l;
 };
@@ -464,7 +464,7 @@ DEFINE addEventIndicator(W, X,  eventParam, fieldParam, inactiveIntervalParam) R
   -- finds out if event was inside session
   x1 = JOIN $W BY (ws, user) LEFT, z BY (ws, user);
   x2 = FOREACH x1 GENERATE *, (z::ws IS NULL ? 0
-                                             : (MilliSecondsBetween(z::dt, $W::dt) > 0 AND SecondsBetween(z::dt, $W::dt) <= $W::delta + (int) $inactiveIntervalParam * 60 ? 1 : 0 )) AS $fieldParam;
+                                             : (MilliSecondsBetween(z::dt, $W::dt) > 0 AND MilliSecondsBetween(z::dt, $W::dt) <= $W::delta + (int) $inactiveIntervalParam*60*1000 ? 1 : 0 )) AS $fieldParam;
   -- if several events were occurred then keep only one
   x3 = GROUP x2 BY $W::dt;
   $Y = FOREACH x3 {

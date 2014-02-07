@@ -29,7 +29,7 @@ a = FOREACH a1 GENERATE ws, user, dt;
 b = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
 
 c1 = JOIN b BY (ws, user), a BY (ws, user);
-c2 = FILTER c1 BY MilliSecondsBetween(a::dt, b::dt) > 0 AND SecondsBetween(a::dt, b::dt) <= delta;
+c2 = FILTER c1 BY MilliSecondsBetween(a::dt, b::dt) > 0 AND MilliSecondsBetween(a::dt, b::dt) <= delta;
 c3 = FOREACH c2 GENERATE b::dt AS dt, a::ws AS ws, a::user AS user;
 c = DISTINCT c3;
 
