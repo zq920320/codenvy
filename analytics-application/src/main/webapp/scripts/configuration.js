@@ -101,7 +101,7 @@ function Configuration() {
             presenterType: "TablePresenter",
             modelViewName: "user_activity",
             isNeedToSaveInHistory: true,
-
+            
             isPaginable: true,
             modelMetricName: "users_activity",
 
@@ -143,6 +143,10 @@ function Configuration() {
             presenterType: "TablePresenter",
             modelViewName: "session_events",
             isNeedToSaveInHistory: true,
+
+            defaultModelParams: {
+                "session_id": "unexisted_session_id"
+            },
             
             isPaginable: true,
             modelMetricName: "users_activity",
