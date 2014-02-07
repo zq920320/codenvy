@@ -30,6 +30,7 @@ public enum MetricFilter {
     END_TIME,
 
     WS,
+    IDE(true),
     USER,
     DOMAIN,
     USER_COMPANY,
@@ -45,6 +46,16 @@ public enum MetricFilter {
     CONVERTED_FACTORY_SESSION,
     AUTHENTICATED_FACTORY_SESSION;
 
+    private boolean isNumeric;
+    
+    MetricFilter(boolean isNumeric) {
+        this.isNumeric = isNumeric;
+    }
+
+    MetricFilter() {
+        this.isNumeric = false;
+    }
+    
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {
         context.put(name(), value);
@@ -65,6 +76,10 @@ public enum MetricFilter {
         context = Utils.clone(context);
         context.put(name(), value);
         return context;
+    }
+    
+    public boolean isNumeric() {
+        return isNumeric;
     }
 }
 
