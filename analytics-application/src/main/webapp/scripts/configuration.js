@@ -147,10 +147,7 @@ function Configuration() {
             isPaginable: true,
             modelMetricName: "users_activity",
             onePageRowsCount: 30,
-
-            isSortable: true,
-            defaultSortParams: "-date",
-        },        
+        },
         
     }
 
