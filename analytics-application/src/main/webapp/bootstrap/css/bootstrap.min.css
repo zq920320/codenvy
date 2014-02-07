@@ -2428,6 +2428,10 @@ button.close {
     background-color: #004099  \9
 }
 
+.dropdown-menu .btn-primary {
+	color: white;
+}
+
 .btn-warning {
     background-color: #faa732;
     *background-color: #f89406;

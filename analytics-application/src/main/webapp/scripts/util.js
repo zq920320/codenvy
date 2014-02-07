@@ -80,6 +80,9 @@ function Util() {
 	    return jQuery.extend({}, object);
 	}
 	
+	/**
+	 * @see http://html5.litten.com/html5-web-storage-using-localstorage-and-sessionstorage-objects/
+	 */
 	function isBrowserSupportWebStorage() {
 	    return typeof(Storage) != "undefined";
 	}

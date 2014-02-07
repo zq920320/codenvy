@@ -80,8 +80,8 @@ function Main() {
         });
         
         // Ide version selectors group
-        $("#ide-version button.command-btn").click(function () {
-            $("#ide-version button").removeClass('btn-primary');
+        $("#ide-version a.command-btn").click(function () {
+            $("#ide-version a").removeClass('btn-primary');
             $(this).addClass('btn-primary');
             
             reloadWidgets($("#ide-version").attr("targetWidgets"));
@@ -134,10 +134,10 @@ function Main() {
         }    
 
         // process ide version selector
-        var ideVersionButton = $("#ide-version button.btn-primary");
+        var ideVersionButton = $("#ide-version a.btn-primary");
         if (ideVersionButton.doesExist() 
-                && typeof ideVersionButton.val() != "undefined") {            
-           params.ide = ideVersionButton.val(); 
+                && typeof ideVersionButton.attr("value") != "undefined") {            
+           params.ide = ideVersionButton.attr("value"); 
            updateGlobalParamInStorage("ide", params.ide);
         }
         
@@ -305,7 +305,7 @@ function Main() {
           // find out "filter by" param like "Email: test@test.com" which is linked with button with text "Email"
           for (var i = 0; i < filterButtons.length; i++) {
              var button = jQuery(filterButtons[i]);
-             var filterParamValue = params[button.val()];
+             var filterParamValue = params[button.attr("value")];
              if (typeof filterParamValue != "undefined") {
                 button.addClass('btn-primary');
                 filterInput.val(filterParamValue);   // set keyword input = value from param
@@ -352,7 +352,7 @@ function Main() {
        }
        
        // update ide version selection buttons
-       var ideVersionButtons = jQuery("#ide-version button"); 
+       var ideVersionButtons = jQuery("#ide-version a"); 
        if (ideVersionButtons.doesExist()) {
            setPrimaryButtonOnValue(ideVersionButtons, params["ide"]);
        }
@@ -371,7 +371,7 @@ function Main() {
             var globalParamName = globalParamList[i];
             var storedParam = localStorage.getItem(globalParamName);  // get param value from HTML5 Web Storage
             if (typeof params[globalParamName] == "undefined" 
-                    && typeof storedParam != "undefined") {
+                    && storedParam != null) {
                 params[globalParamName] = storedParam;
             }
         }
@@ -396,7 +396,7 @@ function Main() {
             // set as primary the button with value = parameter 
             for (var i = 0; i < buttonGroup.size(); i++) {
                var button = jQuery(buttonGroup[i]);
-               if (button.val() == parameter) {
+               if (button.attr("value") == parameter) {
                   button.addClass("btn-primary");
                   break;
                }
