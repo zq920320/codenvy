@@ -22,8 +22,9 @@ DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-f = FOREACH l GENERATE dt, user, ws, event, message;
+f = FOREACH l GENERATE dt, user, ws, event, message, ide;
 
-result = FOREACH f GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('event', event), TOTUPLE('message', message);
+result = FOREACH f GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws),
+    TOTUPLE('event', event), TOTUPLE('message', message), TOTUPLE('ide', ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

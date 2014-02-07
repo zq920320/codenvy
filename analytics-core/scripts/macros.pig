@@ -34,15 +34,15 @@ DEFINE loadResources(resourceParam, from, to, userType, wsType) RETURNS Y {
   l2 = FOREACH l1 GENERATE REGEX_EXTRACT_ALL($0, '([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}) ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}).*\\sEVENT#([^\\s#][^#]*|)#.*')
                           AS pattern, message;
   l3 = FILTER l2 BY pattern.$2 != '';
-  l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$2 AS event, message;
+  l4 = FOREACH l3 GENERATE pattern.$0 AS ip, ToDate(pattern.$1, 'yyyy-MM-dd HH:mm:ss,SSS') AS dt, pattern.$2 AS event,
+                (INDEXOF(message, '[ide3]', 0) >= 0 ? 3 : 2) AS ide,  message;
   l5 = DISTINCT l4;
 
   l6 = filterByDate(l5, '$from', '$to');
   l7 = extractUser(l6, '$userType');
   l8 = extractWs(l7, '$wsType');
-  $Y = FOREACH l8 GENERATE ip, dt, event, message, user, ws;
+  $Y = FOREACH l8 GENERATE ip, dt, event, message, user, ws, ide;
 };
-
 ---------------------------------------------------------------------------
 -- Removes tuples with empty fields
 ---------------------------------------------------------------------------

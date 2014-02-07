@@ -128,6 +128,7 @@ public enum ScriptType {
         }
     },
     TEST_EXTRACT_WS,
+    TEST_IDE3_EVENTS,
     TEST_EXTRACT_USER,
     TEST_EXTRACT_QUERY_PARAM,
     TEST_COMBINE_SMALL_SESSIONS,

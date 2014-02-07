@@ -113,14 +113,16 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
             } else {
                 values = filter.get(clauses).split(SEPARATOR);
-                match.put(filter.name().toLowerCase(), processExclusiveValues(values));
+                match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
             }
         }
 
         return new BasicDBObject("$match", match);
     }
 
-    private BasicDBObject processExclusiveValues(String[] values) throws IOException, ParseException {
+    private BasicDBObject processExclusiveValues(String[] values, boolean isNumericType)
+            throws IOException, ParseException {
+
         StringBuilder exclusiveValues = new StringBuilder();
         StringBuilder inclusiveValues = new StringBuilder();
 
@@ -138,11 +140,23 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 inclusiveValues.append(value);
             }
         }
+
         if (inclusiveValues.length() != 0) {
-            return new BasicDBObject("$in", inclusiveValues.toString().split(SEPARATOR));
+            values = inclusiveValues.toString().split(SEPARATOR);
+            return new BasicDBObject("$in", isNumericType ? convertToNumericFormat(values) : values);
         } else {
-            return new BasicDBObject("$nin", exclusiveValues.toString().split(SEPARATOR));
+            values = exclusiveValues.toString().split(SEPARATOR);
+            return new BasicDBObject("$nin", isNumericType ? convertToNumericFormat(values) : values);
         }
+    }
+
+    private long[] convertToNumericFormat(String[] values) {
+        long[] result = new long[values.length];
+        for (int i = 0; i < values.length; i++) {
+            result[i] = Long.parseLong(values[i]);
+        }
+
+        return result;
     }
 
     /**

@@ -25,24 +25,22 @@ import java.util.UUID;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class Event {
+    private final String              date;
+    private final String              time;
+    private final EventContext        context;
+    private final boolean             isIDE3Event;
     private final Map<String, String> params;
-
-    private final EventContext context;
-
-    private final String date;
-
-    private final String time;
 
     /**
      * Event constructor. {@link EventContext} parameters could be null. It means they'll be omitted in the resulted
-     * message. The same true
-     * and for date parameter;
+     * message. The same true and for date parameter;
      */
-    private Event(String date, String time, EventContext context, Map<String, String> params) {
+    private Event(String date, String time, EventContext context, Map<String, String> params, boolean isIDE3Event) {
         this.date = date;
         this.time = time;
         this.context = context;
         this.params = params;
+        this.isIDE3Event = isIDE3Event;
     }
 
     /** Represents event as a message of the log. */
@@ -57,6 +55,10 @@ public class Event {
 
         builder.append(time == null ? "10:10:10,000" : time + ",000");
         builder.append("[main] [INFO] [HelloWorld 1010] ");
+
+        if (isIDE3Event) {
+            builder.append("[ide3]");
+        }
 
         if (context.user != null) {
             builder.append("[");
@@ -90,13 +92,10 @@ public class Event {
 
     /** Helps to generate events. Uses Builder pattern. */
     public static class Builder {
-        private Map<String, String> params = new LinkedHashMap<>();
-
-        private EventContext context = new EventContext();
-
-        private String date;
-
         private String time;
+        private String date;
+        private EventContext        context = new EventContext();
+        private Map<String, String> params  = new LinkedHashMap<>();
 
         public Builder withContext(String user, String ws, String session) {
             context = new EventContext(user, ws, session);
@@ -119,7 +118,11 @@ public class Event {
         }
 
         public Event build() {
-            return new Event(date, time, context, params);
+            return new Event(date, time, context, params, false);
+        }
+
+        public Event buildIDE3Event() {
+            return new Event(date, time, context, params, true);
         }
 
         public static Builder createTenantCreatedEvent(String ws, String user) {
@@ -358,9 +361,7 @@ public class Event {
     /** Event context contains 3 parameters. */
     static private class EventContext {
         private final String user;
-
         private final String ws;
-
         private final String session;
 
         EventContext() {

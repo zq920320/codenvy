@@ -25,9 +25,9 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public enum MetricFilter {
     _ID,
-    DATE,
-    START_TIME,
-    END_TIME,
+    DATE(true),
+    START_TIME(true),
+    END_TIME(true),
 
     WS,
     IDE(true),
@@ -47,7 +47,7 @@ public enum MetricFilter {
     AUTHENTICATED_FACTORY_SESSION;
 
     private boolean isNumeric;
-    
+
     MetricFilter(boolean isNumeric) {
         this.isNumeric = isNumeric;
     }
@@ -55,7 +55,8 @@ public enum MetricFilter {
     MetricFilter() {
         this.isNumeric = false;
     }
-    
+
+
     /** Puts value into execution context */
     public void put(Map<String, String> context, String value) {
         context.put(name(), value);
@@ -78,7 +79,7 @@ public enum MetricFilter {
         return context;
     }
     
-    public boolean isNumeric() {
+    public boolean isNumericType() {
         return isNumeric;
     }
 }
