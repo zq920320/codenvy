@@ -47,12 +47,7 @@ analytics.presenter.UsersProfilesPresenter.prototype.load = function() {
     delete modelParams.sort;
     delete modelParams.per_page;
 
-    var sortingParameterValue = modelParams.sort || null;
-    
-    // fix "user" param name on "_id"
-    if (typeof viewParams["Email"] != "undefined") {
-        modelParams["_id"] = viewParams["Email"];
-    }
+    var sortingParameterValue = modelParams.sort || null;    
 
     model.setParams(modelParams);
     
@@ -89,17 +84,16 @@ analytics.presenter.UsersProfilesPresenter.prototype.load = function() {
             // make table header as linked for sorting         
             for (var i = 0; i < table.columns.length; i++) {
                var columnName = table.columns[i];
-               var sortingColumnParameter = analytics.configuration.getModelParamName(columnName);
                
-               var isAscending = presenter.isSortingOrderAscending(sortingColumnParameter, sortingParameterValue);
+               var isAscending = presenter.isSortingOrderAscending(columnName, sortingParameterValue);
                
                if (isAscending == null) {
                   var headerClassOption = "";
-                  var newSortingParameterValue = presenter.DEFAULT_ORDER_PREFIX + sortingColumnParameter;
+                  var newSortingParameterValue = presenter.DEFAULT_ORDER_PREFIX + columnName;
                   
                } else if (isAscending) {
                   var headerClassOption = "class='ascending'";
-                  var newSortingParameterValue = presenter.DESCENDING_ORDER_PREFIX + sortingColumnParameter;  // for example "-user_email"
+                  var newSortingParameterValue = presenter.DESCENDING_ORDER_PREFIX + columnName;  // for example "-user_email"
             
                } else {
                   var headerClassOption = "class='descending'";

@@ -22,8 +22,8 @@ function Util() {
 		
 	/**
 	 * Construct url parameters String based on parameters from params object
-	 * @param params object like {timeGroup: Month, Email="test@gmail.com"}
-	 * @returns url like "timeGroup=Month&Email=test%40gmail.com"
+	 * @param params object like {time_unit: Month, Email="test@gmail.com"}
+	 * @returns url like "time_unit=Month&Email=test%40gmail.com"
 	 */
 	function constructUrlParams(params) {
 	   var params = params || {};
@@ -45,12 +45,12 @@ function Util() {
 	
 	/**
 	 * Extract url parameters from url
-	 * @param url like "http://127.0.0.1/timeline.jsp?timeGroup=Month&Email=test%40gmail.com
-	 * @returns params object like {timeGroup: Month, Email: "test@gmail.com"}
+	 * @param url like "http://127.0.0.1/timeline.jsp?time_unit=Month&Email=test%40gmail.com
+	 * @returns params object like {time_unit: Month, Email: "test@gmail.com"}
 	 */
 	function extractUrlParams(url) {
 	   if (url.indexOf('?') < 0) {
-	      return null;
+	      return {};
 	   }
 	   
 	   var absUrl = url.split('?');
@@ -80,12 +80,16 @@ function Util() {
 	    return jQuery.extend({}, object);
 	}
 	
+	function isBrowserSupportWebStorage() {
+	    return typeof(Storage) != "undefined";
+	}
 	
     /** ****************** library API ********** */
     return {
     	constructUrlParams: constructUrlParams,
     	extractUrlParams: extractUrlParams,
-    	clone: clone
+    	clone: clone,
+    	isBrowserSupportWebStorage: isBrowserSupportWebStorage,
     }
 
 }

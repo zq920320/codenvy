@@ -34,8 +34,7 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
     
     view.print("<div class='view'>");
 
-    var modelParams = analytics.util.clone(view.getParams());
-    model.setParams(modelParams);
+    model.setParams(presenter.getModelParams(view.getParams()));
     
     model.pushDoneFunction(function(data) {
         view.print("<div class='view'>");

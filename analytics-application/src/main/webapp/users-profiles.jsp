@@ -33,10 +33,10 @@
                 <div id="filter-by" class="left" targetWidgets="usersProfiles">
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn command-btn">Email</button>
-                    <button class="btn command-btn">First Name</button>
-                    <button class="btn command-btn">Last Name</button>                
-                    <button class="btn command-btn">Company</button>
+                    <button class="btn command-btn" value="_id">Email</button>
+                    <button class="btn command-btn" value="user_first_name">First Name</button>
+                    <button class="btn command-btn" value="user_last_name">Last Name</button>                
+                    <button class="btn command-btn" value="user_company">Company</button>
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
                 </div>
             </div>

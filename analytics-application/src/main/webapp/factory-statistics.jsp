@@ -32,17 +32,17 @@
         <div>
             <div class="well topFilteringPanel">
                 <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="factoryStatistics">
-                    <button class="btn command-btn" default>Day</button>
-                    <button class="btn command-btn">Week</button>
-                    <button class="btn command-btn">Month</button>
-                    <button class="btn command-btn">LifeTime</button>
+                    <button class="btn command-btn" default value="Day">Day</button>
+                    <button class="btn command-btn" value="Week">Week</button>
+                    <button class="btn command-btn" value="Month">Month</button>
+                    <button class="btn command-btn" value="LifeTime">LifeTime</button>
                 </div>
                 <div id="filter-by" class="right" targetWidgets="factoryStatistics">
                      Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn command-btn">Email</button>
-                    <button class="btn command-btn">Organization</button>
-                    <button class="btn command-btn">Affiliate</button>
+                    <button class="btn command-btn" value="user">Email</button>
+                    <button class="btn command-btn" value="org_id">Organization</button>
+                    <button class="btn command-btn" value="affiliate_id">Affiliate</button>
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>                   
                 </div>
             </div>

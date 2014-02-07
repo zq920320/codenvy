@@ -76,6 +76,17 @@ function TopMenu() {
         });
     }
     
+    function turnOnButtonSet(buttonSetId) {
+        var buttons = jQuery( "#" + buttonSetId + " button" );
+        for (var i = 0; i < buttons.length; i++) {
+            jQuery(buttons[i])
+            .button()
+            .click(function() {
+                console.log(this.name) + ":" + console.log(this.value);
+            });
+        }        
+    }
+    
     function displayPopupMenu(button) {
         hidePopupMenu();
         
@@ -101,7 +112,7 @@ function TopMenu() {
             var menuItem = jQuery("#" + menuItemId);            
             if (menuItem.doesExist()) {
                 menuItem.addClass("selected");
-            }           
+            }
         }
     }
     
@@ -117,6 +128,7 @@ function TopMenu() {
         turnOnNavButtons: turnOnNavButtons,
         turnOnDropdownButton: turnOnDropdownButton,
         selectMenuItem: selectMenuItem,
-        addHandlersToHidePopupMenu: addHandlersToHidePopupMenu
+        addHandlersToHidePopupMenu: addHandlersToHidePopupMenu,
+        turnOnButtonSet: turnOnButtonSet,
     }
 }

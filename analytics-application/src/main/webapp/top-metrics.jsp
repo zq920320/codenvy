@@ -32,21 +32,21 @@
         <div>
             <div class="well topFilteringPanel">
                 <div id="metric" class="btn-group metric-btns left" targetWidgets="topMetrics">
-                    <button class="btn command-btn" default>Top Factory Sessions</button>
-                    <button class="btn command-btn">Top Factories</button>
-                    <button class="btn command-btn">Top Referrers</button>
-                    <button class="btn command-btn">Top Users</button>
-                    <button class="btn command-btn">Top Domains</button>
-                    <button class="btn command-btn">Top Companies</button>
+                    <button class="btn command-btn" default value="top_factory_sessions">Top Factory Sessions</button>
+                    <button class="btn command-btn" value="top_factories">Top Factories</button>
+                    <button class="btn command-btn" value="top_referrers">Top Referrers</button>
+                    <button class="btn command-btn" value="top_users">Top Users</button>
+                    <button class="btn command-btn" value="top_domains">Top Domains</button>
+                    <button class="btn command-btn" value="top_companies">Top Companies</button>
                 </div>            
                 <div id="timely-dd" class="btn-group timely-dd-btns right" targetWidgets="topMetrics">
-                    <button class="btn command-btn" default>1 Day</button>
-                    <button class="btn command-btn">7 Days</button>
-                    <button class="btn command-btn">30 Days</button>
-                    <button class="btn command-btn">60 Days</button>
-                    <button class="btn command-btn">90 Days</button>
-                    <button class="btn command-btn">1 Year</button>
-                    <button class="btn command-btn">LifeTime</button>
+                    <button class="btn command-btn" default value="1day">1 Day</button>
+                    <button class="btn command-btn" value="7day">7 Days</button>
+                    <button class="btn command-btn" value="30day">30 Days</button>
+                    <button class="btn command-btn" value="60day">60 Days</button>
+                    <button class="btn command-btn" value="90day">90 Days</button>
+                    <button class="btn command-btn" value="365day">1 Year</button>
+                    <button class="btn command-btn" value="lifetime">LifeTime</button>
                 </div>
             </div>
             <div class="hero-unit">

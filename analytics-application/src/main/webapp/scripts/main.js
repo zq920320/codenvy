@@ -78,6 +78,14 @@ function Main() {
             
             reloadWidgets($("#metric").attr("targetWidgets"));
         });
+        
+        // Ide version selectors group
+        $("#ide-version button.command-btn").click(function () {
+            $("#ide-version button").removeClass('btn-primary');
+            $(this).addClass('btn-primary');
+            
+            reloadWidgets($("#ide-version").attr("targetWidgets"));
+        });
     };
     
     /**
@@ -89,7 +97,7 @@ function Main() {
         // process time selector
         var selectedTimeButton = $("#timely-dd button.btn-primary");
         if (selectedTimeButton.doesExist()) {
-           params.timeGroup = selectedTimeButton.text();       
+           params.time_unit = selectedTimeButton.val();       
         }
         
         // process filter
@@ -97,7 +105,7 @@ function Main() {
         var selectedFilterButton = $("#filter-by button.btn-primary")
         if (selectedFilterButton.doesExist() 
               && filterInput.val().length > 0) {
-           params[selectedFilterButton.text()] = filterInput.val(); 
+           params[selectedFilterButton.val()] = filterInput.val(); 
         }
     
         // process date-range
@@ -122,8 +130,16 @@ function Main() {
         // process metric selector
         var selectedMetricButton = $("#metric button.btn-primary");
         if (selectedMetricButton.doesExist()) {
-           params.metric = selectedMetricButton.text();       
+           params.metric = selectedMetricButton.val();       
         }    
+
+        // process ide version selector
+        var ideVersionButton = $("#ide-version button.btn-primary");
+        if (ideVersionButton.doesExist() 
+                && typeof ideVersionButton.val() != "undefined") {            
+           params.ide = ideVersionButton.val(); 
+           updateGlobalParamInStorage("ide", params.ide);
+        }
         
         return params;
     };
@@ -149,8 +165,14 @@ function Main() {
     function reloadWidgets(widgetNames) { 
         if (typeof widgetNames != "undefined") {
            var widgetName = widgetNames.split(',');
-           for (var i in widgetName) {
-               reloadWidget(widgetName[i]);
+           
+           if (widgetName == "_all") {
+               loadAllWidgets(getParamsFromButtons());
+               
+           } else {
+               for (var i in widgetName) {
+                   reloadWidget(widgetName[i]);
+               }
            }
         }
     }
@@ -179,10 +201,12 @@ function Main() {
        
     }
     
-    function loadAllWidgets() {
-       var params = analytics.util.extractUrlParams(window.location.href);
-
-       updateCommandButtonsState(params);
+    function loadAllWidgets(params) {
+       if (typeof params == "undefined") {
+           params = analytics.util.extractUrlParams(window.location.href);
+           updateGlobalParamsWithValuesFromStorage(params);
+           updateCommandButtonsState(params);
+       }
        
        var widgetNames = analytics.configuration.getWidgetNames();
        for(var i in widgetNames) {
@@ -268,7 +292,7 @@ function Main() {
        // update time selection buttons
        var timeUnitButtons = jQuery("#timely-dd button"); 
        if (timeUnitButtons.doesExist()) {
-          setPrimaryButton(timeUnitButtons, params["timeGroup"]);
+          setPrimaryButtonOnValue(timeUnitButtons, params["time_unit"]);
        }
        
        // update filter-by group
@@ -281,7 +305,7 @@ function Main() {
           // find out "filter by" param like "Email: test@test.com" which is linked with button with text "Email"
           for (var i = 0; i < filterButtons.length; i++) {
              var button = jQuery(filterButtons[i]);
-             var filterParamValue = params[button.text()];
+             var filterParamValue = params[button.val()];
              if (typeof filterParamValue != "undefined") {
                 button.addClass('btn-primary');
                 filterInput.val(filterParamValue);   // set keyword input = value from param
@@ -324,34 +348,70 @@ function Main() {
        // update metric selection buttons
        var metricButtons = jQuery("#metric button"); 
        if (metricButtons.doesExist()) {
-           setPrimaryButton(metricButtons, params["metric"]);
+           setPrimaryButtonOnValue(metricButtons, params["metric"]);
        }
-    }
-    
-    
-    function setPrimaryButton(buttonGroup, parameter) {
-       buttonGroup.removeClass('btn-primary');
-       if (typeof parameter != "undefined") {
-           // set as primary the button with label = parameter 
-           for (var i = 0; i < buttonGroup.size(); i++) {
-              var button = jQuery(buttonGroup[i]);
-              if (button.text() == parameter) {
-                 button.addClass("btn-primary");
-                 break;
-              }
-           }
-       } else {
-          // restore default primary button
-          for (var i = 0; i < buttonGroup.size(); i++) {
-              var button = jQuery(buttonGroup[i]);
-              if (typeof button.attr("default") != "undefined") {
-                 button.addClass("btn-primary");
-                 break;
-              }
-          }
+       
+       // update ide version selection buttons
+       var ideVersionButtons = jQuery("#ide-version button"); 
+       if (ideVersionButtons.doesExist()) {
+           setPrimaryButtonOnValue(ideVersionButtons, params["ide"]);
        }
     }
 
+    /**
+     * Update undefined global params with values from HTML5 Web Storage
+     */
+    function updateGlobalParamsWithValuesFromStorage(params) {
+        if (!analytics.util.isBrowserSupportWebStorage()) {
+            return;
+        }
+        
+        var globalParamList = analytics.configuration.getGlobalParamList();
+        for (var i in globalParamList) {
+            var globalParamName = globalParamList[i];
+            var storedParam = localStorage.getItem(globalParamName);  // get param value from HTML5 Web Storage
+            if (typeof params[globalParamName] == "undefined" 
+                    && typeof storedParam != "undefined") {
+                params[globalParamName] = storedParam;
+            }
+        }
+    }
+    
+    /**
+     * Save global param value in the HTML5 Web Storage
+     */
+    function updateGlobalParamInStorage(parameter, value) {
+        if (!analytics.util.isBrowserSupportWebStorage()) {
+            return;
+        }
+        
+        if (analytics.configuration.isParamGlobal(parameter)) {
+            localStorage.setItem(parameter, value);    // save param value in the HTML5 Web Storage
+        }
+    }
+    
+    function setPrimaryButtonOnValue(buttonGroup, parameter) {
+        buttonGroup.removeClass('btn-primary');
+        if (typeof parameter != "undefined") {
+            // set as primary the button with value = parameter 
+            for (var i = 0; i < buttonGroup.size(); i++) {
+               var button = jQuery(buttonGroup[i]);
+               if (button.val() == parameter) {
+                  button.addClass("btn-primary");
+                  break;
+               }
+            }
+        } else {
+           // restore default primary button
+           for (var i = 0; i < buttonGroup.size(); i++) {
+               var button = jQuery(buttonGroup[i]);
+               if (typeof button.attr("default") != "undefined") {
+                  button.addClass("btn-primary");
+                  break;
+               }
+           }
+        }
+     }
     
     /** ****************** library API ********** */
     return {

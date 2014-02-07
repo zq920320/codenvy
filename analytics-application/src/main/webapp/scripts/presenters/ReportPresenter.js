@@ -30,13 +30,7 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
     var view = presenter.view;
     var model = presenter.model;
 	
-	var viewParams = view.getParams();
-	
-	var modelParams = presenter.getModelParams(viewParams);
-
-	modelParams = analytics.configuration.setupDefaultModelParams(presenter.widgetName, modelParams);
-	
-    model.setParams(modelParams);
+    model.setParams(presenter.getModelParams(view.getParams()));
         
     model.pushDoneFunction(function(data) {
         for (var table in data) {

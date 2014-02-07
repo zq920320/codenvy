@@ -104,17 +104,18 @@ Presenter.prototype.mapQueryParametersFromDatabaseToUI = function(params) {
 };
 
 /**
- * Return modelParams based on viewParams with param name mapping defined in analytics.configuration object
+ * Return modelParams based on params from view which are registered in analytics.configuration object and updated with default values
  */
 Presenter.prototype.getModelParams = function(viewParams) {
     var modelParams = {};
 
     for (var i in viewParams) {
-        var modelParamName = analytics.configuration.getModelParamName(i); 
-        if (typeof modelParamName != "undefined") {
-            modelParams[modelParamName] = viewParams[i];
+        if (analytics.configuration.isParamRegistered(i)) {
+            modelParams[i] = viewParams[i];
         }
     }
 
+    analytics.configuration.setupDefaultModelParams(this.widgetName, modelParams)
+    
     return modelParams;
 }

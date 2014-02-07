@@ -45,9 +45,9 @@ function Configuration() {
         topMetrics: {
             presenterType: "TopMetricsPresenter",
 
-            defaultViewParams: {
-                "timeGroup": "1 DAY",
-                "metric": "TOP FACTORY SESSIONS"
+            defaultModelParams: {
+                "time_unit": "1day",
+                "metric": "top_factory_sessions"
             },
 
             isNeedToSaveInHistory: true,
@@ -147,28 +147,36 @@ function Configuration() {
             isPaginable: true,
             modelMetricName: "users_activity",
             onePageRowsCount: 30,
-        },
+
+            isSortable: true,
+            defaultSortParams: "-date",
+        },        
         
     }
 
-    /** 1 x 1 relation(viewParams,modelParams) **/
-    var mapViewParamNamesIntoModelParamNames = {
-        "timeGroup": "time_unit",
-        "Email": "user",
-        "Domain": "domain",
-        "Company": "user_company",
-        "Organization": "org_id",
-        "Affiliate": "affiliate_id",
+    var registeredModelParams = [
+        "time_unit",
+        "user",
+        "_id",
+        "domain",
+        "user_company",
+        "org_id",
+        "affiliate_id",
+        "user_first_name",
+        "user_last_name",
+        "sort",
+        "page",
+        "session_id",
+        "ide",
+        "metric",
+        "from_date",
+        "to_date",
+    ];
 
-        "First Name": "user_first_name",
-        "Last Name": "user_last_name",
-        "Job": "user_job",
-
-        "sort": "sort",
-        "page": "page",
-        "session_id": "session_id",
-    }
-
+    var globalParams = [
+        "ide",
+    ];
+    
     function getProperty(widgetName, property) {
         return widgetConfiguration[widgetName][property];
     }
@@ -180,20 +188,6 @@ function Configuration() {
         }
 
         return widgetNames;
-    }
-
-    function getModelParamName(viewParamName) {
-        return mapViewParamNamesIntoModelParamNames[viewParamName];
-    }
-
-    function getViewParamName(modelParamName) {
-        for (var viewParamName in mapViewParamNamesIntoModelParamNames) {
-            if (mapViewParamNamesIntoModelParamNames[viewParamName] == modelParamName) {
-                return viewParamName;
-            }
-        }
-
-        return undefined;
     }
 
     /**
@@ -214,30 +208,45 @@ function Configuration() {
     }
 
     /**
-     * Add view params which are undefined in viewParams and defined in widgetConfiguration[widgetName]["defaultViewParams"] property
+     * Verify if modelParam is presence in registeredModelParams array
      */
-    function setupDefaultViewParams(widgetName, viewParams) {
-        var defaultViewParams = widgetConfiguration[widgetName]["defaultViewParams"];
-
-        if (typeof defaultViewParams != "undefined") {
-            for (var paramName in defaultViewParams) {
-                if (typeof viewParams[paramName] == "undefined") {
-                    viewParams[paramName] = defaultViewParams[paramName];
-                }
+    function isParamRegistered(modelParam) {
+        for (var i in registeredModelParams) {
+            if (modelParam == registeredModelParams[i]) {
+                return true;
             }
         }
-
-        return viewParams;
+        
+        return false;
     }
 
-
+    /**
+     * Verify if param is global
+     */
+    function isParamGlobal(param) {
+        for (var i in globalParams) {
+            if (param == globalParams[i]) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Return array with global param names
+     */
+    function getGlobalParamList() {
+        return globalParams;
+    }
+    
     /** ****************** API ********** */
     return {
         getProperty: getProperty,
         getWidgetNames: getWidgetNames,
-        getModelParamName: getModelParamName,
-        getViewParamName: getViewParamName,
         setupDefaultModelParams: setupDefaultModelParams,
-        setupDefaultViewParams: setupDefaultViewParams
+        isParamRegistered: isParamRegistered,
+        isParamGlobal: isParamGlobal,
+        getGlobalParamList: getGlobalParamList,
     }
 }

@@ -44,7 +44,7 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         viewParams["to_date"] = viewParams["to_date"].replace(/-/g, "");
     }
     
-    var modelParams = analytics.util.clone(viewParams);
+    var modelParams = presenter.getModelParams(viewParams);
     
     // process sorting
     if (typeof analytics.configuration.getProperty(widgetName, "isSortable") != "undefined"

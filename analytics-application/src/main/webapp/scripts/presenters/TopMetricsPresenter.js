@@ -30,35 +30,18 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
     var view = presenter.view;
     var model = presenter.model;
 
-    var viewParams = view.getParams();
+    var modelParams = presenter.getModelParams(view.getParams())
 
-    viewParams = analytics.configuration.setupDefaultViewParams(presenter.widgetName, viewParams);
-    
-    var uiToDatabaseMap = {}
-    uiToDatabaseMap.metricPrefix = {
-        "TOP FACTORY SESSIONS" : "top_factory_sessions",
-        "TOP FACTORIES" : "top_factories",
-        "TOP REFERRERS" : "top_referrers",
-        "TOP USERS" : "top_users",
-        "TOP DOMAINS" : "top_domains",
-        "TOP COMPANIES" : "top_companies",
-    };
-    uiToDatabaseMap.timeunitSuffix = {
-        "1 DAY" : "1day",
-        "7 DAYS" : "7day",
-        "30 DAYS" : "30day",
-        "60 DAYS" : "60day",
-        "90 DAYS" : "90day",
-        "1 YEAR" : "365day",
-        "LIFETIME" : "lifetime"
-    };
-
-    var databaseTableMetricPrefix = uiToDatabaseMap.metricPrefix[viewParams.metric.toUpperCase()];
-    
-    var databaseTableTimeunitSuffix = uiToDatabaseMap.timeunitSuffix[viewParams.timeGroup.toUpperCase()];
-    
+    var databaseTableMetricPrefix = modelParams.metric.toLowerCase();
+    var databaseTableTimeunitSuffix = modelParams.time_unit.toLowerCase();
     var modelViewName = databaseTableMetricPrefix + "_by_" + databaseTableTimeunitSuffix;
 
+    // remove unnecessary params 
+    delete modelParams.metric;
+    delete modelParams.time_unit;
+    
+    model.setParams(modelParams);
+    
     model.pushDoneFunction(function(data) {
         for (var table in data) {
             view.printTable(data[table], false);

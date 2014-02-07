@@ -3218,6 +3218,10 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
     line-height: 40px
 }
 
+.navbar .button-set {
+    padding-left: 100px;
+} 
+
 .navbar .navbar-link {
     color: #999
 }
