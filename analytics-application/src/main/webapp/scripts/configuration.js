@@ -137,6 +137,10 @@ function Configuration() {
             presenterType: "VerticalTablePresenter",
             modelViewName: "session_overview",
             isNeedToSaveInHistory: false,
+            
+            defaultModelParams: {
+                "session_id": "unexisted_session_id"
+            },
         },
 
         userSessionActivity: {

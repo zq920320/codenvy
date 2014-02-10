@@ -119,13 +119,6 @@ function Main() {
               && toDateInput.val() != "") {
            params["to_date"] = toDateInput.val();       
         }
-    
-        // process userid url query parameter
-        var urlParams = analytics.util.extractUrlParams(window.location.href);
-        if (urlParams != null 
-              && typeof urlParams["user"] != "undefined") {
-           params["user"] = urlParams["user"];       
-        }
         
         // process metric selector
         var selectedMetricButton = $("#metric button.btn-primary");
@@ -166,21 +159,24 @@ function Main() {
     function reloadWidgets(widgetNames) { 
         if (typeof widgetNames != "undefined") {
            var widgetName = widgetNames.split(',');
+
+           var urlParams = analytics.util.extractUrlParams(window.location.href);
+           var buttonParams = getParamsFromButtons();
            
-           if (widgetName == "_all") {
-               loadAllWidgets(getParamsFromButtons());
-               
+           // union url params with button params and choose button params values above url params values 
+           var params = analytics.util.unionWithRewrite(urlParams, buttonParams);
+           
+           if (widgetName == "_all") {               
+               loadAllWidgets(params);
            } else {
                for (var i in widgetName) {
-                   reloadWidget(widgetName[i]);
+                   reloadWidget(widgetName[i], params);
                }
            }
         }
     }
     
     function reloadWidget(widgetName, params) {
-        var params = params || getParamsFromButtons();
-        
         loadWidget(widgetName, params, function(data) {
           // rewrite page location to make it possible to navigate new url through the browser's history
           if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory")) {
@@ -203,6 +199,7 @@ function Main() {
     }
     
     function loadAllWidgets(params) {
+       // load all widgets at first time of loading the page
        if (typeof params == "undefined") {
            params = analytics.util.extractUrlParams(window.location.href);
            updateGlobalParamsWithValuesFromStorage(params);

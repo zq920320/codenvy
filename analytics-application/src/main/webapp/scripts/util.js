@@ -73,6 +73,36 @@ function Util() {
 	}
 	
 	/**
+	 * Set operation 'diff': return (map1 - map2)
+	 */
+	function diff(map1, map2) {
+	    var diffMap = clone(map1);
+	    var map2Keys = Object.keys(map2);
+        for (var i in map2Keys) {
+            var map2Key = map2Keys[i];
+            if (typeof diffMap[map2Key] != "undefined") {
+                delete diffMap[map2Key];
+            }
+        }
+	    
+	    return diffMap;
+	}
+
+    /**
+     * Set operation 'union': return (map1 + map2) where map1 params are re-written with params from map2
+     */
+	function unionWithRewrite(map1, map2) {
+	    var unionMap = clone(map1);
+	    var map2Keys = Object.keys(map2);
+        for (var i in map2Keys) {
+            var map2Key = map2Keys[i];
+            unionMap[map2Key] = map2[map2Key];
+        }
+        
+        return unionMap;
+	}
+	
+	/**
 	 * Shallow copy object
 	 * @see http://api.jquery.com/jQuery.extend/
 	 */
@@ -93,6 +123,8 @@ function Util() {
     	extractUrlParams: extractUrlParams,
     	clone: clone,
     	isBrowserSupportWebStorage: isBrowserSupportWebStorage,
+    	diff: diff,
+    	unionWithRewrite: unionWithRewrite,
     }
 
 }
