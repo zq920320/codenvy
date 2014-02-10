@@ -25,8 +25,8 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 f = filterByEvent(l, '$EVENT');
 
 r1 = extractParam(f, 'TIME', 'time');
-r = FOREACH r1 GENERATE dt, ws, user, ((long)time) AS time;
+r = FOREACH r1 GENERATE dt, ws, user, ((long)time) AS time, ide;
 
 result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-        TOTUPLE('time', time);
+        TOTUPLE('time', time), TOTUPLE('ide', ide);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

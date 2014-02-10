@@ -25,7 +25,7 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 r = createdTemporaryWorkspaces(l);
 
 result = FOREACH r GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-                    TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
+                    TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId), TOTUPLE('ide', ide),
                     TOTUPLE('referrer', referrer), TOTUPLE('factory', factory), TOTUPLE('value', 1);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

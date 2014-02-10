@@ -55,11 +55,11 @@ d = DISTINCT d3;
 
 -- factory sessions themselves
 s1 = combineSmallSessions(l, 'session-factory-started', 'session-factory-stopped');
-s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user AS tmpUser, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) AS auth;
+s2 = FOREACH s1 GENERATE dt, ws AS tmpWs, user AS tmpUser, delta, (INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) == 0 ? 0 : 1) AS auth, ide;
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
-s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::tmpUser AS user, s2::delta AS delta, s2::auth AS auth,
+s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::tmpUser AS user, s2::delta AS delta, s2::auth AS auth, s2::ide AS ide,
         (u::tmpWs IS NULL ? '' : u::factory) AS factory, (u::tmpWs IS NULL ? '' : u::referrer) AS referrer,
         (u::tmpWs IS NULL ? '' : u::orgId) AS orgId,  (u::tmpWs IS NULL ? '' : u::affiliateId) AS affiliateId;
 
@@ -67,7 +67,7 @@ s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::tmpUser AS user, 
 -- (if importing operation was inside a session)
 s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
 s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory, s4::referrer AS referrer, s4::user AS user,
-                        s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::auth AS auth, s4::tmpWs AS ws,
+                        s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::auth AS auth, s4::tmpWs AS ws, s4::ide AS ide,
                         (d::tmpWs IS NULL ? 0
                                           : (MilliSecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval*60*1000  > 0 ? 1 : 0 )) AS conv;
 
@@ -75,22 +75,23 @@ s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory
 k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');
 k = FOREACH k1 GENERATE t::s::dt AS dt, t::s::delta AS delta, t::s::factory AS factory, t::s::referrer AS referrer,
                         t::s::orgId AS orgId, t::s::affiliateId AS affiliateId, t::s::auth AS auth, t::s::ws AS ws,
-                        t::s::user AS user, t::s::conv AS conv, t::run AS run;
+                        t::s::user AS user, t::s::conv AS conv, t::s::ide AS ide, t::run AS run;
 
 m1 = addEventIndicator(k, l,  'project-deployed,application-created', 'deploy', '$inactiveInterval');
 m = FOREACH m1 GENERATE t::k::dt AS dt, t::k::delta AS delta, t::k::factory AS factory, t::k::referrer AS referrer,
                         t::k::orgId AS orgId, t::k::affiliateId AS affiliateId, t::k::auth AS auth, t::k::ws AS ws,
-                        t::k::user AS user, t::k::conv AS conv, t::k::run AS run, t::deploy AS deploy;
+                        t::k::user AS user, t::k::conv AS conv, t::k::run AS run, t::k::ide AS ide, t::deploy AS deploy;
 
 n1 = addEventIndicator(m, l,  'project-built,project-deployed,application-created,build-started', 'build', '$inactiveInterval');
 n = FOREACH n1 GENERATE t::m::dt AS dt, t::m::delta AS delta, t::m::factory AS factory, t::m::referrer AS referrer,
-                        t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::auth AS auth, t::m::ws AS ws,
+                        t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::auth AS auth, t::m::ws AS ws, t::m::ide AS ide,
                         t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build;
 
 -- add created temporary session indicator
 w = createdTemporaryWorkspaces(l);
 z1 = JOIN n BY (ws, user) FULL, w BY (ws, user);
 z2 = FOREACH z1 GENERATE (n::ws IS NULL ? w::dt : n::dt) AS dt,
+    (n::ws IS NULL ? w::ide : n::ide) AS ide,
     (n::ws IS NULL ? 0 : n::delta) AS delta,
     (n::ws IS NULL ? w::factory : n::factory) AS factory,
     (n::ws IS NULL ? w::referrer : n::referrer) AS referrer,
@@ -109,19 +110,20 @@ z2 = FOREACH z1 GENERATE (n::ws IS NULL ? w::dt : n::dt) AS dt,
 z3 = GROUP z2 BY (ws, user);
 z4 = FOREACH z3 GENERATE group.ws AS ws, group.user AS user, MIN(z2.dt) AS minDT, FLATTEN(z2);
 z5 = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory AS factory,
-    z2::referrer AS referrer, z2::orgId AS orgId, z2::affiliateId AS affiliateId,
+    z2::referrer AS referrer, z2::orgId AS orgId, z2::affiliateId AS affiliateId, z2::ide AS ide,
     z2::auth AS auth, z2::conv AS conv, z2::run AS run, z2::deploy AS deploy, z2::build AS build,
     (z2::dt == minDT ? z2::ws_created : 0) AS ws_created;
-z = FOREACH z5 GENERATE ws, LOWER(user) AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, build, ws_created;
+z = FOREACH z5 GENERATE ws, LOWER(user) AS user, dt, delta, factory, referrer, orgId, affiliateId, auth, conv, run, deploy, build, ws_created, ide;
 
 -- add user created from factory indicator
 ls1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
 ls2 = usersCreatedFromFactory(ls1);
-ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, LOWER(tmpUser) AS tmpUser;
+ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, LOWER(tmpUser) AS tmpUser, ide;
 
 p1 = JOIN z BY (ws, user) FULL, ls BY (ws, tmpUser);
 p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
     (z::ws IS NULL ? 0 : z::delta) AS delta,
+    (z::ws IS NULL ? ls::ide : z::ide) AS ide,
     (z::ws IS NULL ? ls::factory : z::factory) AS factory,
     (z::ws IS NULL ? ls::referrer : z::referrer) AS referrer,
     (z::ws IS NULL ? ls::orgId : z::orgId) AS orgId,
@@ -141,11 +143,11 @@ p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
 p3 = GROUP p2 BY (ws, user);
 p4 = FOREACH p3 GENERATE group.ws AS ws, group.user AS user, MIN(p2.dt) AS minDT, FLATTEN(p2);
 p = FOREACH p4 GENERATE ws, user, p2::dt AS dt, p2::delta AS delta, p2::factory AS factory,
-    p2::referrer AS referrer, p2::orgId AS orgId, p2::affiliateId AS affiliateId,
+    p2::referrer AS referrer, p2::orgId AS orgId, p2::affiliateId AS affiliateId, p2::ide AS ide,
     p2::auth AS auth, p2::conv AS conv, p2::run AS run, p2::deploy AS deploy, p2::build AS build,
     p2::ws_created AS ws_created, (p2::dt == minDT ? p2::user_created : 0) AS user_created;
 
-result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+result = FOREACH p GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('ide', ide),
                         TOTUPLE('run', run), TOTUPLE('deploy', deploy), TOTUPLE('build', build), TOTUPLE('ws_created', ws_created), TOTUPLE('user_created', user_created),
                         TOTUPLE('factory', factory), TOTUPLE('referrer', referrer), TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId),
                         TOTUPLE('authenticated_factory_session', auth), TOTUPLE('converted_factory_session', conv), TOTUPLE('time', delta);

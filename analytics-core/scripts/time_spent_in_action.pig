@@ -32,7 +32,8 @@ a3 = removeNotEmptyField(a2, 'event_id');
 a = combineClosestEvents(a3, '$EVENT-started', '$EVENT-finished');
 
 r1 = UNION a, b;
-r2 = FOREACH r1 GENERATE dt, ws, user, delta;
-result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user), TOTUPLE('time', delta);
+r2 = FOREACH r1 GENERATE dt, ws, user, delta, dt;
+result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+        TOTUPLE('time', delta), TOTUPLE('ide', ide);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

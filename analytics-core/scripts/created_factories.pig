@@ -31,13 +31,10 @@ a5 = extractUrlParam(a4, 'ORG-ID', 'orgId');
 a6 = extractUrlParam(a5, 'AFFILIATE-ID', 'affiliateId');
 
 a = FOREACH a6 GENERATE dt, ws, user, factory, repository, (orgId == '}' ? '' : orgId) AS orgId,
-                (affiliateId == '}' ? '' : affiliateId) AS affiliateId, projectType;
+                (affiliateId == '}' ? '' : affiliateId) AS affiliateId, projectType, ide;
 
-r1 = FOREACH a GENERATE dt, ws, user, factory, repository,
-                orgId, affiliateId, projectType;
-
-result = FOREACH r1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-                    TOTUPLE('orgId', orgId), TOTUPLE('affiliateId', affiliateId),
+result = FOREACH a GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
+                    TOTUPLE('orgId', orgId), TOTUPLE('affiliateId', affiliateId), TOTUPLE('ide', ide),
                     TOTUPLE('repository', repository), TOTUPLE('project_type', projectType), TOTUPLE('factory', factory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
