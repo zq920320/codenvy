@@ -65,13 +65,13 @@ public class ActOn extends Feature {
     private static final String FTP_MAX_EFFORTS = "acton.ftp.maxEfforts";
     private static final String FTP_AUTH        = "acton.ftp.auth";
 
-    private static final String INACTIVE          = "inactive";
-    private static final String PROFILE_COMPLETED = "profileCompleted";
-    private static final String POINTS            = "points";
+    public static final String INACTIVE          = "inactive";
+    public static final String PROFILE_COMPLETED = "profileCompleted";
+    public static final String POINTS            = "points";
 
     /** Map users_statistics collection columns into the csv file headers. */
     @SuppressWarnings("serial")
-    private static final LinkedHashMap<String, String> headers = new LinkedHashMap<String, String>() {{
+    public static final LinkedHashMap<String, String> headers = new LinkedHashMap<String, String>() {{
         put(AbstractUsersProfile.USER_EMAIL, "email");
         put(AbstractUsersProfile.USER_FIRST_NAME, "firstName");
         put(AbstractUsersProfile.USER_LAST_NAME, "lastName");

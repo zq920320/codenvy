@@ -19,30 +19,37 @@
 
 package com.codenvy.analytics.services.acton;
 
-import com.codenvy.analytics.BaseTest;
-import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.pig.scripts.ScriptType;
-import com.codenvy.analytics.pig.scripts.util.Event;
-import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Injector;
+import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
+import com.codenvy.analytics.pig.scripts.ScriptType;
+import com.codenvy.analytics.pig.scripts.util.Event;
+import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestActOn extends BaseTest {
 
+    private static final Map<String,String> HEADERS = ActOn.headers;
+    
     @BeforeClass
     public void prepare() throws Exception {
         Map<String, String> context = Utils.newContext();
@@ -95,18 +102,88 @@ public class TestActOn extends BaseTest {
         File jobFile = job.prepareFile(context);
         assertEquals(jobFile.getName(), ActOn.FILE_NAME);
 
-        Set<String> content = read(jobFile);
+        Map<String, Map<String, String>> content = read(jobFile);
         
         assertEquals(content.size(), 4);
-        assertTrue(content.contains(
-            "email,firstName,lastName,phone,company,projects,builts,runs,deployments,spentTime,inactive,invites," +
-            "factories,debugs,logins,build-time,run-time,profileCompleted,paas-deploys,points"));
-        assertTrue(content.contains(
-            "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"5\",\"true\",\"1\",\"1\",\"0\",\"0\",\"120\",\"0\",\"true\",\"0\",\"29\""));
-        assertTrue(content.contains(
-            "\"user2\",\"\",\"\",\"\",\"\",\"1\",\"2\",\"1\",\"1\",\"10\",\"true\",\"0\",\"0\",\"1\",\"1\",\"0\",\"120\",\"false\",\"1\",\"22\""));
-        assertTrue(content.contains(
-            "\"user3\",\"\",\"\",\"\",\"\",\"0\",\"1\",\"0\",\"1\",\"0\",\"true\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\",\"1\",\"12\""));
+        
+        // verify head of FTP data
+        Map<String, String> headData = content.get("_HEAD");
+        assertEquals(HEADERS.size(), headData.size());
+        for (String column: HEADERS.values()) {
+            assertEquals(column, headData.get(column));
+        }
+
+        // verify "user1" data
+        Map<String, String> user1Data = content.get("user1");
+        assertEquals(HEADERS.size(), user1Data.size());
+        assertEquals("user1", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
+        assertEquals("f", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
+        assertEquals("l", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
+        assertEquals("phone", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
+        assertEquals("company", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
+        assertEquals("5", user1Data.get(HEADERS.get(UsersStatisticsList.TIME)));
+        assertEquals("true", user1Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
+        assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("120", user1Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
+        assertEquals("true", user1Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
+        assertEquals("29", user1Data.get(HEADERS.get(ActOn.POINTS)));
+                    
+        // verify "user2" data
+        Map<String, String> user2Data = content.get("user2");
+        assertEquals(HEADERS.size(), user2Data.size());
+        assertEquals("user2", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
+        assertEquals("7", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
+        assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
+        assertEquals("10", user2Data.get(HEADERS.get(UsersStatisticsList.TIME)));
+        assertEquals("true", user2Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
+        assertEquals("120", user2Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
+        assertEquals("false", user2Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
+        assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
+        assertEquals("92", user2Data.get(HEADERS.get(ActOn.POINTS)));
+
+        // verify "user3" data
+        Map<String, String> user3Data = content.get("user3");
+        assertEquals(HEADERS.size(), user3Data.size());
+        assertEquals("user3", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
+        assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
+        assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
+        assertEquals("true", user3Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
+        assertEquals("false", user3Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
+        assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
+        assertEquals("12", user3Data.get(HEADERS.get(ActOn.POINTS)));
     }
 
     @Test
@@ -120,31 +197,119 @@ public class TestActOn extends BaseTest {
         File jobFile = job.prepareFile(context);
         assertEquals(jobFile.getName(), ActOn.FILE_NAME);
 
-        Set<String> content = read(jobFile);
+        Map<String, Map<String, String>> content = read(jobFile);
         
         assertEquals(content.size(), 4);
-        assertTrue(content.contains(
-            "email,firstName,lastName,phone,company,projects,builts,runs,deployments,spentTime,inactive,invites," +
-            "factories,debugs,logins,build-time,run-time,profileCompleted,paas-deploys,points"));
-        assertTrue(content.contains(
-            "\"user1\",\"f\",\"l\",\"phone\",\"company\",\"2\",\"0\",\"0\",\"0\",\"0\",\"true\",\"1\",\"1\",\"0\",\"0\",\"120\",\"0\",\"true\",\"0\",\"29\""));
-        assertTrue(content.contains(
-            "\"user2\",\"\",\"\",\"\",\"\",\"1\",\"1\",\"1\",\"0\",\"0\",\"true\",\"0\",\"0\",\"1\",\"1\",\"0\",\"120\",\"false\",\"0\",\"10\""));
-        assertTrue(content.contains(
-            "\"user3\",\"\",\"\",\"\",\"\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"false\",\"0\",\"0\""));
+
+        // verify head of FTP data
+        Map<String, String> headData = content.get("_HEAD");
+        assertEquals(HEADERS.size(), headData.size());
+        for (String column: HEADERS.values()) {
+            assertEquals(column, headData.get(column));
+        }
+
+        // verify "user1" data
+        Map<String, String> user1Data = content.get("user1");
+        assertEquals(HEADERS.size(), user1Data.size());
+        assertEquals("user1", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
+        assertEquals("f", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
+        assertEquals("l", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
+        assertEquals("phone", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
+        assertEquals("company", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.TIME)));
+        assertEquals("true", user1Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
+        assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("120", user1Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
+        assertEquals("true", user1Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
+        assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
+        assertEquals("29", user1Data.get(HEADERS.get(ActOn.POINTS)));
+        
+        // verify "user2" data
+        Map<String, String> user2Data = content.get("user2");
+        assertEquals(HEADERS.size(), user2Data.size());
+        assertEquals("user2", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.TIME)));
+        assertEquals("true", user2Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
+        assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
+        assertEquals("120", user2Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
+        assertEquals("false", user2Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
+        assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
+        assertEquals("10", user2Data.get(HEADERS.get(ActOn.POINTS)));
+        
+        // verify "user3" data
+        Map<String, String> user3Data = content.get("user3");   
+        assertEquals(HEADERS.size(), user3Data.size());        
+        assertEquals("user3", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
+        assertEquals("false", user3Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILD_TIME)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
+        assertEquals("false", user3Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
+        assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
+        assertEquals("0", user3Data.get(HEADERS.get(ActOn.POINTS)));
     }
 
-    private Set<String> read(File jobFile) throws IOException {
-        Set<String> result = new HashSet<>();
-
+    private Map<String, Map<String,String>> read(File jobFile) throws IOException {
+        Map<String, Map<String, String>> results = new HashMap<>();
+        
+        List<String> columns = new ArrayList<>();
+        for (String header: HEADERS.values()) {
+            columns.add(header);
+        }
+        
         try (BufferedReader reader = new BufferedReader(new FileReader(jobFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                result.add(line);
+                line = line.replace("\"", "");  // remove all '"'
+                String[] userDataArray= line.split(",");
+                // put line values into map
+                Map<String, String> userDataMap = new HashMap<>();
+                for (int i = 0; i < userDataArray.length; i++) {
+                    userDataMap.put(columns.get(i), userDataArray[i]);
+                }
+                
+                if (userDataArray[0].equals("email")) {
+                    results.put("_HEAD", userDataMap);    
+                } else {
+                    results.put(userDataArray[0], userDataMap);
+                }
+                
             }
         }
 
-        return result;
+        return results;
     }
 
     private File prepareLog() throws IOException {
@@ -186,13 +351,34 @@ public class TestActOn extends BaseTest {
 
         // projects deployed
         events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
-                        .withTime("10:10:00")
+                        .withTime("10:10:00,000")
                         .withDate("2013-11-02").build());
+        
         events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2")
                         .withTime("10:00:00")
                         .withDate("2013-11-02").build());
 
+        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project2", "type1", "paas1")
+                        .withTime("10:11:00,100")
+                        .withDate("2013-11-02").build());
 
+        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project3", "type1", "paas1")
+                        .withTime("10:12:00,200")
+                        .withDate("2013-11-02").build());
+
+        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project4", "type1", "paas1")
+                        .withTime("10:13:00,300")
+                        .withDate("2013-11-02").build());
+
+        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project5", "type1", "paas1")
+                        .withTime("10:14:00,400")
+                        .withDate("2013-11-02").build());
+
+        events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
+                        .withTime("10:15:00,500")
+                        .withDate("2013-11-02").build());
+
+        
         events.add(Event.Builder.createSessionStartedEvent("user1", "ws1", "ide", "1")
                         .withDate("2013-11-02")
                         .withTime("19:00:00").build());
