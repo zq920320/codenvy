@@ -42,9 +42,7 @@ public enum MetricFilter {
     REFERRER,
     REPOSITORY,
     SESSION_ID,
-    AFFILIATE_ID,
-    CONVERTED_FACTORY_SESSION,
-    AUTHENTICATED_FACTORY_SESSION;
+    AFFILIATE_ID;
 
     private boolean isNumeric;
 
