@@ -245,10 +245,10 @@ function Main() {
         view.setParams(params);
 
         // display loader after the 2 seconds of timeout
-        var needLoader = true;
+        analytics.views.loader.needLoader = true;
         var timeoutInMillisec = 2000;          
         setTimeout(function() {
-           if (needLoader) {
+           if (analytics.views.loader.needLoader) {
                analytics.views.loader.show();               
            }
         }, timeoutInMillisec);
@@ -256,7 +256,7 @@ function Main() {
         var model = analytics.factory.getModel(widgetName);
         model.clearDoneFunction();
         model.pushDoneFunction(function() {
-            needLoader = false;
+            analytics.views.loader.needLoader = false;
             view.show();
             analytics.views.loader.hide();
             callback();            
@@ -265,12 +265,12 @@ function Main() {
         model.clearFailFunction();
         model.pushFailFunction(function(status, textStatus, errorThrown) {
             if (textStatus == "abort") {
-                needLoader = false;
+                analytics.views.loader.needLoader = false;
                 analytics.views.loader.hide();
                 
                 view.showAbortMessage();
             } else {
-                needLoader = false;
+                analytics.views.loader.needLoader = false;
                 analytics.views.loader.hide();
                 
                 view.showErrorMessage(status, textStatus, errorThrown);
