@@ -56,7 +56,7 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
                 Pattern company = Pattern.compile(filter.get(clauses).replace(",", "|"), Pattern.CASE_INSENSITIVE);
                 match.put(USER_COMPANY, company);
 
-            } else {
+            } else if (filter != MetricFilter.IDE) {
                 match.put(filter.toString().toLowerCase(), new BasicDBObject("$in", values));
             }
         }
