@@ -15,6 +15,7 @@
  from Codenvy S.A.. 
 --%>
 <%@page import="com.codenvy.analytics.util.FrontEndUtil" %>  
+<%@page import="com.codenvy.api.analytics.Utils" %>
 
 <style>
 	.ui-button, .ui-button a {
@@ -94,17 +95,19 @@
 		    </div>
 
 			<div class="right">			
+
+            <% if (Utils.isAdmin(request.getUserPrincipal().getName())) { %>
                 <div class="nav">                
                     <div>
                         <button id="topmenu-preferences">Preferences</button>
                     </div>
                     <ul class="dropdown-menu" id="ide-version" targetWidgets="_all">
 	                    <li><a class="command-btn" default>IDE<i>2</i> & IDE<i>3</i></a></li>
-	                    <li><a class="command-btn" value="~3">IDE<i>2</i> only</a></li>                    
-	                    <li><a class="command-btn" value="~2">IDE<i>3</i> only</a></li>
+	                    <li><a class="command-btn" value="2">IDE<i>2</i> only</a></li>                    
+	                    <li><a class="command-btn" value="3">IDE<i>3</i> only</a></li>
                     </ul> 
                 </div>
-
+            <% } %>
 
 				<div class="nav">
 					<div class="label-container">
@@ -130,8 +133,9 @@
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-user", true);    // turn-on user menu button
 	    
+    <% if (Utils.isAdmin(request.getUserPrincipal().getName())) { %>
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-preferences", false);    // turn-on preferences menu button
-	    
+	<% } %>
 	    
 	    // select menu items connected to page where top menu is displaying
 	<%  if (request.getParameterValues("selectedMenuItemId") != null) { 

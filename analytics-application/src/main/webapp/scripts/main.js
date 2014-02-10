@@ -135,9 +135,11 @@ function Main() {
 
         // process ide version selector
         var ideVersionButton = $("#ide-version a.btn-primary");
-        if (ideVersionButton.doesExist()) {            
-           params.ide = ideVersionButton.attr("value"); 
-           updateGlobalParamInStorage("ide", params.ide);
+        if (ideVersionButton.doesExist()) {
+           if (typeof ideVersionButton.attr("value") != "undefined") {
+               params.ide = ideVersionButton.attr("value");
+           } 
+           updateGlobalParamInStorage("ide", params["ide"]);  // params["ide"] is undefined if ideVersionButton.attr("value") is undefined 
         }
         
         return params;
