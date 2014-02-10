@@ -63,7 +63,7 @@ public class ViewBuilder extends Feature {
                        Configurator configurator) throws IOException {
         this.displayConfiguration = new DisplayConfiguration();
 
-        List<ViewConfiguration> views = new ArrayList<ViewConfiguration>();
+        List<ViewConfiguration> views = new ArrayList<>();
         for (String view : configurator.getArray(VIEWS_CONFIGURATION)) {
             DisplayConfiguration dc = confManager.loadConfiguration(DisplayConfiguration.class, view);
             views.addAll(dc.getViews());
@@ -171,25 +171,21 @@ public class ViewBuilder extends Feature {
 
     private class ComputeViewDataAction extends RecursiveAction {
 
-        private final ViewConfiguration   viewConfiguration;
+        private final ViewConfiguration   viewConf;
         private final Map<String, String> context;
 
         private ComputeViewDataAction(ViewConfiguration viewConfiguration,
                                       Map<String, String> context) throws ParseException {
-            this.viewConfiguration = viewConfiguration;
+            this.viewConf = viewConfiguration;
             this.context = initializeFirstInterval(context);
-        }
-
-        public ViewData doCompute() throws IOException {
-            return doCompute(viewConfiguration, context);
         }
 
         @Override
         protected void compute() {
-            String viewId = getId(viewConfiguration.getName(), context);
+            String viewId = getId(viewConf.getName(), context);
 
             try {
-                ViewData viewData = doCompute(viewConfiguration, context);
+                ViewData viewData = doCompute();
                 retainViewData(viewId, viewData, context);
             } catch (Throwable e) {
                 String message = "Can't compute view " + viewId;
@@ -198,7 +194,7 @@ public class ViewBuilder extends Feature {
             }
         }
 
-        private ViewData doCompute(ViewConfiguration viewConf, Map<String, String> context) throws IOException {
+        private ViewData doCompute() throws IOException {
             try {
                 ViewData viewData = new ViewData(viewConf.getSections().size());
 
@@ -229,20 +225,17 @@ public class ViewBuilder extends Feature {
         if (!Parameters.TO_DATE.exists(context)) {
             context = Utils.clone(context);
             Parameters.TO_DATE.putDefaultValue(context);
-            Parameters.FROM_DATE.put(context, Parameters.TO_DATE.get(context));
+            Parameters.FROM_DATE.putDefaultValue(context);
             Parameters.REPORT_DATE.put(context, Parameters.TO_DATE.get(context));
-            return context;
-
-        } else if (Parameters.TIME_UNIT.exists(context)) {
-            context = Utils.clone(context);
-            Parameters.REPORT_DATE.put(context, Parameters.TO_DATE.get(context));
-            Utils.initDateInterval(Utils.getToDate(context), context);
-            return context;
-
-
         } else {
-            return Parameters.REPORT_DATE.cloneAndPut(context, Parameters.TO_DATE.get(context));
+            context = Parameters.REPORT_DATE.cloneAndPut(context, Parameters.TO_DATE.get(context));
         }
+
+        if (Parameters.TIME_UNIT.exists(context)) {
+            Utils.initDateInterval(Utils.getToDate(context), context);
+        }
+
+        return context;
     }
 
     private int getRowCount(int rowCountFromConf, Map<String, String> context) {
