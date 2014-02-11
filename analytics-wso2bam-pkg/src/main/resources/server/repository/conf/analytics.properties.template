@@ -74,3 +74,6 @@ acton.ftp.password=
 acton.ftp.timeout=5000
 acton.ftp.auth=TLS
 acton.ftp.maxEfforts=5
+
+# security
+api.endpoint=https://codenyv.com/api

@@ -27,16 +27,6 @@
     <name>Codenvy :: Analytics :: Core</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-sso-client</artifactId>
-            <version>${cloud-ide.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-sso-client-codenvy</artifactId>
-            <version>${cloud-ide.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.commons</groupId>
             <artifactId>codenvy-commons-inject</artifactId>
             <version>${com.codenvy.commons.version}</version>
@@ -45,11 +35,6 @@
             <groupId>com.codenvy.organization</groupId>
             <artifactId>codenvy-organization-api-java-client</artifactId>
             <version>${com.codenvy.organization.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-dto</artifactId>
-            <version>${analytics.api.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -151,6 +136,11 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongo.driver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>2.10.1</version>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>

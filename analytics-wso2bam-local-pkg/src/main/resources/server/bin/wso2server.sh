@@ -250,24 +250,25 @@ fi
 
 # ----- Execute The Requested Command -----------------------------------------
 
-echo JAVA_HOME environment variable is set to $JAVA_HOME
-echo CARBON_HOME environment variable is set to $CARBON_HOME
-
 cd "$CARBON_HOME"
 
 START_EXIT_STATUS=121
 status=$START_EXIT_STATUS
 
-[ -z "${TENANT_MASTERHOST}" ]  && TENANT_MASTERHOST="localhost"
-[ -z "${TENANT_MASTERPORT}" ]  && TENANT_MASTERPORT="80"
-[ -z "${TENANT_MASTERHOST_PROTOCOL}" ]  && TENANT_MASTERHOST_PROTOCOL="http"
-
 # Set path to organization service server
-[ -z "${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL}" ] && ORGANIZATION_SERVICE_APPLICATION_SERVER_URL="http://${TENANT_MASTERHOST}:${TENANT_MASTERPORT}/organization/"
+[ -z "${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL}" ] && ORGANIZATION_SERVICE_APPLICATION_SERVER_URL="http://localhost:8080/organization/"
 
-# What kind of organization server is used
-[ -z "${ORGANIZATION_SERVICE_IMPL}" ] && ORGANIZATION_SERVICE_IMPL="ldap"
+# Set path to configuration directory
+[ -z "${CODENVY_LOCAL_CONF_DIR}" ] && CODENVY_LOCAL_CONF_DIR="$CARBON_HOME/repository/conf"
 
+cp -r ${CODENVY_LOCAL_CONF_DIR}/user-mgt.xml.template $CARBON_HOME/repository/conf/user-mgt.xml
+cp -r ${CODENVY_LOCAL_CONF_DIR}/log4j.properties.template $CARBON_HOME/repository/conf/log4j.properties
+
+export CODENVY_LOCAL_CONF_DIR
+
+echo JAVA_HOME environment variable is set to $JAVA_HOME
+echo CARBON_HOME environment variable is set to $CARBON_HOME
+echo CODENVY_LOCAL_CONF_DIR environment variable is set to $CODENVY_LOCAL_CONF_DIR
 
 while [ "$status" = "$START_EXIT_STATUS" ]
 do
@@ -279,11 +280,11 @@ do
     -javaagent:"$CARBON_HOME/repository/components/plugins/jamm_0.2.5.wso2v2.jar" \
     $JAVA_OPTS \
     -Xms256m -Xmx2G -XX:MaxPermSize=256m \
-    -Dcodenvy.local.conf.dir=$CARBON_HOME/repository/conf \
+    -Dcodenvy.local.conf.dir="${CODENVY_LOCAL_CONF_DIR}" \
+    -Dorganization.application.server.url="${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL}" \
+    -Dmail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory \
+    -Dmail.smtp.socketFactory.port=465 \
     -Ddisable.cassandra.server.startup=true \
-    -Dtenant.masterhost=${TENANT_MASTERHOST} \
-    -Dtenant.masterhost.protocol=${TENANT_MASTERHOST_PROTOCOL} \
-    -Dtenant.masterport=${TENANT_MASTERPORT} \
     -Dcom.sun.management.jmxremote \
     -classpath "$CARBON_CLASSPATH" \
     -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
@@ -293,7 +294,6 @@ do
     -Dcarbon.registry.root=/ \
     -Djava.command="$JAVACMD" \
     -Dcarbon.home="$CARBON_HOME" \
-    -Djava.util.logging.config.file="$CARBON_HOME/repository/conf/log4j.properties" \
     -Dcarbon.config.dir.path="$CARBON_HOME/repository/conf" \
     -Dcomponents.repo="$CARBON_HOME/repository/components/plugins" \
     -Dconf.location="$CARBON_HOME/repository/conf"\
