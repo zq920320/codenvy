@@ -27,22 +27,34 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractActiveEntities extends ReadBasedMetric {
 
-    public static final String VALUE = "value";
+    public static final String DEFAULT_VALUE_FIELD = "value";
 
+    private String valueField;
+    
     private final String basedMetricName;
 
-    protected AbstractActiveEntities(String metricName, String basedMetricName) {
+    public AbstractActiveEntities(String metricName, String basedMetricName, String valueField) {
         super(metricName);
         this.basedMetricName = basedMetricName;
+        this.valueField = valueField;
+    }
+
+    public AbstractActiveEntities(String metricName, String basedMetricName) {
+        this(metricName, basedMetricName, DEFAULT_VALUE_FIELD);
+    }
+    
+    protected AbstractActiveEntities(MetricType metricType, MetricType basedMetric, String valueField) {
+        this(metricType.name(), basedMetric.name(), valueField);
     }
 
     public AbstractActiveEntities(MetricType metricType, MetricType basedMetric) {
-        this(metricType.name(), basedMetric.name());
+        this(metricType.name(), basedMetric.name(), DEFAULT_VALUE_FIELD);
     }
+
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{VALUE};
+        return new String[]{valueField};
     }
 
     @Override
@@ -53,12 +65,12 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + VALUE);
+        group.put("_id", "$" + valueField);
         BasicDBObject opGroupBy = new BasicDBObject("$group", group);
 
         group = new BasicDBObject();
         group.put("_id", null);
-        group.put(VALUE, new BasicDBObject("$sum", 1));
+        group.put(valueField, new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 
         return new DBObject[]{opGroupBy, opCount};

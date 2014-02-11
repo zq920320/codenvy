@@ -20,6 +20,12 @@ com.codenvy.analytics.metrics.users.NonActiveUsers
 com.codenvy.analytics.metrics.users.NewActiveUsers
 com.codenvy.analytics.metrics.users.ReturningActiveUsers
 com.codenvy.analytics.metrics.users.ShellLaunched
+com.codenvy.analytics.metrics.users.UsersWhoCreatedProject
+com.codenvy.analytics.metrics.users.UsersWhoBuilt
+com.codenvy.analytics.metrics.users.UsersWhoDeployed
+com.codenvy.analytics.metrics.users.UsersWhoDeployedToPaas
+com.codenvy.analytics.metrics.users.UsersWhoInvited
+com.codenvy.analytics.metrics.users.UsersWhoLaunchedShell
 
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBelow1Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBetween1And10Min

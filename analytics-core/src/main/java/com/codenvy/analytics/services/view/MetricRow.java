@@ -26,6 +26,7 @@ import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.InitialValueNotFoundException;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import java.io.IOException;
@@ -42,6 +43,7 @@ public class MetricRow extends AbstractRow {
     private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
     private static final String DEFAULT_TIME_FORMAT    = "mm";
     private static final String DEFAULT_DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";
+    private static final String SET_FROM_DATE_TO_DEFAULT_VALUE = "set-from-date-to-default-value";
 
     /** The name of the metric. */
     private static final String NAME        = "name";
@@ -280,6 +282,13 @@ public class MetricRow extends AbstractRow {
     }
 
     protected ValueData getMetricValue(Map<String, String> context) throws IOException {
+        if (parameters.containsKey(SET_FROM_DATE_TO_DEFAULT_VALUE)
+            && Boolean.parseBoolean(parameters.get(SET_FROM_DATE_TO_DEFAULT_VALUE))) {
+
+            context = Utils.clone(context);
+            Parameters.FROM_DATE.putDefaultValue(context);
+        }        
+        
         return metric.getValue(context);
     }
 }
