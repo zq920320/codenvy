@@ -356,6 +356,11 @@ public class Event {
 
             return builder;
         }
+        
+        public static Builder createShellLaunchedEvent(String user, String ws, String session) {
+            return new Builder().withContext(user, ws, session).withParam("EVENT", "shell-launched");
+        }
+        
     }
 
     /** Event context contains 3 parameters. */

@@ -28,17 +28,21 @@ import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
 import com.mongodb.MongoException;
 
 import org.apache.pig.data.TupleFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
@@ -55,11 +59,13 @@ public class BaseTest {
     protected final Configurator     configurator;
     protected final PigServer        pigServer;
     protected final MongoDataStorage mongoDataStorage;
+    protected final DB               mongoDb;
 
     public BaseTest() {
         this.configurator = Injector.getInstance(Configurator.class);
         this.pigServer = Injector.getInstance(PigServer.class);
         this.mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
+        this.mongoDb = mongoDataStorage.getDb();
     }
 
     @BeforeTest
@@ -85,5 +91,16 @@ public class BaseTest {
                 embeddedMongoProcess.stop();
             }
         });
+    }
+    
+    @AfterClass
+    public void clearDatabase() {        
+        for (String collectionName: mongoDb.getCollectionNames()) {
+            if (collectionName.startsWith("system.")) {           // don't drop system collections
+                continue;
+            }
+            
+            mongoDb.getCollection(collectionName).drop();
+        }
     }
 }

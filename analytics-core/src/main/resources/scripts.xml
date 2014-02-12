@@ -68,7 +68,7 @@
     </script>
     <script name="events">
         <description>The number of invites</description>
-        <parameter key="USER" value="ANY"/>
+        <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="user-invite"/>
         <parameter key="STORAGE_TABLE" value="user_invite"/>
@@ -142,7 +142,7 @@
     </script>
     <script name="users_events">
         <description>User's events</description>
-        <parameter key="USER" value="ANY"/>
+        <parameter key="USER" value="REGISTERED"/>
         <parameter key="WS" value="ANY"/>
         <parameter key="EVENT" value="users-events"/>
         <parameter key="PARAM" value="ACTION"/>
