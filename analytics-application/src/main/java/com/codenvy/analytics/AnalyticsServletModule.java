@@ -21,6 +21,7 @@ import com.codenvy.auth.sso.client.EmptyContextResolver;
 import com.codenvy.auth.sso.client.LoginFilter;
 import com.codenvy.auth.sso.client.SSOLogoutServlet;
 import com.codenvy.auth.sso.client.WebAppClientUrlExtractor;
+import com.codenvy.auth.sso.client.filter.RegexpRequestFilter;
 import com.codenvy.auth.sso.client.token.ChainedTokenExtractor;
 import com.codenvy.inject.DynaModule;
 import com.google.inject.name.Names;
@@ -29,21 +30,29 @@ import com.google.inject.servlet.ServletModule;
 /** @author Anatoliy Bazko */
 @DynaModule
 public class AnalyticsServletModule extends ServletModule {
+
+    private static final String AUTH_SKIP_SSO = "analytics.auth.skip_sso";
+
     @Override
     protected void configureServlets() {
-        bindConstant().annotatedWith(Names.named("auth.sso.client_allow_anonymous")).to(false);
-        bindConstant().annotatedWith(Names.named("auth.sso.login_page_url")).to("/site/login");
+        Configurator configurator = Injector.getInstance(Configurator.class);
 
-        bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp"))
-                .to("/analytics/rest/analytics-private/.*");
-        bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url"))
-                .to("/site/error/error-cookies-disabled");
+        if (!configurator.getBoolean(AUTH_SKIP_SSO)) {
+            bindConstant().annotatedWith(Names.named("auth.sso.client_allow_anonymous")).to(false);
+            bindConstant().annotatedWith(Names.named("auth.sso.login_page_url")).to("/site/login");
 
-        bind(WebAppClientUrlExtractor.class);
-        bind(EmptyContextResolver.class);
-        bind(ChainedTokenExtractor.class);
+            bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp"))
+                    .to("/analytics/rest/analytics-private/.*");
+            bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url"))
+                    .to("/site/error/error-cookies-disabled");
 
-        filter("/analytics/*").through(LoginFilter.class);
-        serve("/_sso/client/logout").with(SSOLogoutServlet.class);
+            bind(WebAppClientUrlExtractor.class);
+            bind(EmptyContextResolver.class);
+            bind(ChainedTokenExtractor.class);
+            bind(RegexpRequestFilter.class);
+
+            filter("/*").through(LoginFilter.class);
+            serve("/_sso/client/logout").with(SSOLogoutServlet.class);
+        }
     }
 }

@@ -30,6 +30,7 @@
         <param-value>0</param-value>
     </context-param>
     
+
     <listener>
         <listener-class>com.codenvy.analytics.Scheduler</listener-class>
     </listener>
@@ -54,7 +55,7 @@
 
     <filter-mapping>
         <filter-name>guiceFilter</filter-name>
-        <url-pattern>/rest/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     
     <filter-mapping>

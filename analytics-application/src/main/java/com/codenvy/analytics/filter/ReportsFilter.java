@@ -21,6 +21,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.regex.Pattern;
 
 /** @author Alexander Reshetnyak */
@@ -38,9 +39,9 @@ public class ReportsFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         HttpServletResponse httpResponse = (HttpServletResponse)response;
 
-        String user = httpRequest.getUserPrincipal().getName();
+        Principal userPrincipal = httpRequest.getUserPrincipal();
 
-        if (isAccessPermitted(user)) {
+        if (userPrincipal != null && isAccessPermitted(userPrincipal.getName())) {
             chain.doFilter(request, response);
         } else {
             httpResponse.sendRedirect(httpRequest.getContextPath());

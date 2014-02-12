@@ -269,6 +269,7 @@ export CODENVY_LOCAL_CONF_DIR
 echo JAVA_HOME environment variable is set to $JAVA_HOME
 echo CARBON_HOME environment variable is set to $CARBON_HOME
 echo CODENVY_LOCAL_CONF_DIR environment variable is set to $CODENVY_LOCAL_CONF_DIR
+echo ORGANIZATION_SERVICE_APPLICATION_SERVER_URL environment variable is set to $ORGANIZATION_SERVICE_APPLICATION_SERVER_URL
 
 while [ "$status" = "$START_EXIT_STATUS" ]
 do
