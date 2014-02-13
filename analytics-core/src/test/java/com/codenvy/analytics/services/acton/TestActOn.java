@@ -158,7 +158,7 @@ public class TestActOn extends BaseTest {
         assertEquals("120", user2Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
         assertEquals("false", user2Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
         assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("92", user2Data.get(HEADERS.get(ActOn.POINTS)));
+        assertEquals("104", user2Data.get(HEADERS.get(ActOn.POINTS)));
 
         // verify "user3" data
         Map<String, String> user3Data = content.get("user3");
@@ -182,7 +182,7 @@ public class TestActOn extends BaseTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUN_TIME)));
         assertEquals("false", user3Data.get(HEADERS.get(ActOn.PROFILE_COMPLETED)));
         assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.PAAS_DEPLOYS)));
-        assertEquals("12", user3Data.get(HEADERS.get(ActOn.POINTS)));
+        assertEquals("14", user3Data.get(HEADERS.get(ActOn.POINTS)));
     }
 
     @Test

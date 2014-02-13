@@ -431,6 +431,7 @@ public class ActOn extends Feature {
             int builds = new Integer(statistics.get(UsersStatisticsList.BUILDS).toString());
             int runs = new Integer(statistics.get(UsersStatisticsList.RUNS).toString());
             int debugs = new Integer(statistics.get(UsersStatisticsList.DEBUGS).toString());
+            int deploys = new Integer(statistics.get(UsersStatisticsList.DEPLOYS).toString());
             int paasDeploys = new Integer(statistics.get(UsersStatisticsList.PAAS_DEPLOYS).toString());
             int factories = new Integer(statistics.get(UsersStatisticsList.FACTORIES).toString());
             int invitations = new Integer(statistics.get(UsersStatisticsList.INVITES).toString());
@@ -446,6 +447,7 @@ public class ActOn extends Feature {
             total +=        builds *  2;
             total +=          runs *  2;
             total +=        debugs *  2;
+            total +=       deploys *  2;
             total +=   paasDeploys * 10;
             total +=     factories * 10;
             total +=   invitations * 10;
