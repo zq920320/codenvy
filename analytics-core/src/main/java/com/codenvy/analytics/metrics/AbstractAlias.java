@@ -15,27 +15,32 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
 package com.codenvy.analytics.metrics;
 
-import javax.annotation.security.RolesAllowed;
+import com.codenvy.analytics.datamodel.ValueData;
+
+import java.io.IOException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"system/admin", "system/manager"})
-public abstract class AbstractMetric implements Metric {
+public abstract class AbstractAlias extends CalculatedMetric {
 
-    protected final String metricName;
-
-    public AbstractMetric(String metricName) {
-        this.metricName = metricName.toLowerCase();
-    }
-
-    public AbstractMetric(MetricType metricType) {
-        this(metricType.toString());
+    public AbstractAlias(MetricType metricType, MetricType basedMetric) {
+        super(metricType, new MetricType[]{basedMetric});
     }
 
     @Override
-    public String getName() {
-        return metricName;
+    public String getDescription() {
+        return basedMetric[0].getDescription();
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        return basedMetric[0].getValue(context);
+    }
+
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return basedMetric[0].getValueDataClass();
     }
 }

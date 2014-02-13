@@ -15,27 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.sessions;
 
-package com.codenvy.analytics.metrics;
+import com.codenvy.analytics.metrics.AbstractAlias;
+import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"system/admin", "system/manager"})
-public abstract class AbstractMetric implements Metric {
-
-    protected final String metricName;
-
-    public AbstractMetric(String metricName) {
-        this.metricName = metricName.toLowerCase();
-    }
-
-    public AbstractMetric(MetricType metricType) {
-        this(metricType.toString());
-    }
-
-    @Override
-    public String getName() {
-        return metricName;
+@RolesAllowed(value = {"user", "system/admin", "system/manager"})
+public class Sessions extends AbstractAlias {
+    public Sessions() {
+        super(MetricType.SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS);
     }
 }

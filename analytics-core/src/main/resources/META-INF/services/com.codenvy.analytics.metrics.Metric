@@ -1,4 +1,5 @@
 com.codenvy.analytics.metrics.workspaces.CreatedWorkspaces
+com.codenvy.analytics.metrics.workspaces.Workspaces
 com.codenvy.analytics.metrics.workspaces.DestroyedWorkspaces
 com.codenvy.analytics.metrics.workspaces.TotalWorkspaces
 com.codenvy.analytics.metrics.workspaces.ActiveWorkspacesSet
@@ -43,6 +44,8 @@ com.codenvy.analytics.metrics.sessions.ProductUsageUsersAbove300Min
 com.codenvy.analytics.metrics.sessions.ProductUsageUsersBelow10Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList
 com.codenvy.analytics.metrics.sessions.ProductUsageSessions
+com.codenvy.analytics.metrics.sessions.Sessions
+com.codenvy.analytics.metrics.sessions.Usage
 com.codenvy.analytics.metrics.sessions.ProductUsersTime
 com.codenvy.analytics.metrics.sessions.ProductDomainsTime
 com.codenvy.analytics.metrics.sessions.ProductCompaniesTime
@@ -65,10 +68,12 @@ com.codenvy.analytics.metrics.users.UsersLoggedInWithFormPercent
 com.codenvy.analytics.metrics.users.UsersAddedToWorkspaces
 com.codenvy.analytics.metrics.users.UsersAddedToWorkspacesUsingInvitation
 com.codenvy.analytics.metrics.users.UserInvite
+com.codenvy.analytics.metrics.users.Users
 com.codenvy.analytics.metrics.users.UsersAcceptedInvites
 com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent
 
 com.codenvy.analytics.metrics.projects.CreatedProjects
+com.codenvy.analytics.metrics.projects.Projects
 com.codenvy.analytics.metrics.projects.DestroyedProjects
 com.codenvy.analytics.metrics.projects.TotalProjects
 
@@ -119,6 +124,7 @@ com.codenvy.analytics.metrics.sessions.factory.FactoriesRun
 com.codenvy.analytics.metrics.sessions.factory.FactoriesImported
 com.codenvy.analytics.metrics.sessions.factory.FactoryUrlAccepted
 com.codenvy.analytics.metrics.sessions.factory.CreatedFactories
+com.codenvy.analytics.metrics.sessions.factory.Factories
 com.codenvy.analytics.metrics.sessions.factory.TemporaryWorkspacesCreated
 com.codenvy.analytics.metrics.sessions.factory.FactorySessions
 com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList

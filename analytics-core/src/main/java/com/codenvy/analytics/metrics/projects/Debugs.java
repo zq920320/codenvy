@@ -20,7 +20,10 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Debugs extends AbstractLongValueResulted {
 
     public Debugs() {
