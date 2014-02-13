@@ -64,14 +64,48 @@ public class TestAnalysisView extends BaseTest {
     private static final String DATE1 = "2013-11-01";
     private static final String DATE2 = "2013-12-02";
     
-    private static final List<String> monthLabels = Arrays.asList(new String[]{"", "Jan 2014", "Dec 2013",
+    private static final List<String> columnLabels = Arrays.asList(new String[]{"", "Jan 2014", "Dec 2013",
            "Nov 2013", "Oct 2013", "Sep 2013", "Aug 2013", "Jul 2013", "Jun 2013", "May 2013", "Apr 2013",
            "Mar 2013", "Feb 2013", "Jan 2013", "Dec 2012"});
     
-    private static final List<String> metricLabels = Arrays.asList(new String[]{"", "Total Users",
-            "Total Number of Users We Track", "Created Projects", "& Built", "& Run", "& Deployed to PAAS",
-            "Sent Invites", "Shell Launched", "Have Complete Profile"});
+    private static final List<RowLabel> rowsLabels = Arrays.asList(new RowLabel[]{
+        RowLabel.EMPTY, 
+        RowLabel.TOTAL_USERS,
+        RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK, 
+        RowLabel.CREATED_PROJECTS, 
+        RowLabel.AND_BUILT, 
+        RowLabel.AND_RUN, 
+        RowLabel.AND_DEPLOYED_TO_PAAS,
+        RowLabel.SENT_INVITES, 
+        RowLabel.SHELL_LAUNCHED, 
+        RowLabel.HAVE_COMPLETE_PROFILE
+    });
     
+    private enum RowLabel {
+        TOTAL_USERS("Total Users"),
+        TOTAL_NUMBER_OF_USERS_WE_TRACK("Total Number of Users We Track"),
+        CREATED_PROJECTS("Created Projects"),
+        AND_BUILT("& Built"),
+        AND_RUN("& Run"),
+        AND_DEPLOYED_TO_PAAS("& Deployed to PAAS"),
+        SENT_INVITES("Sent Invites"),
+        SHELL_LAUNCHED("Shell Launched"), 
+        HAVE_COMPLETE_PROFILE("Have Complete Profile"),
+        EMPTY(""),
+        UNKNOWN;
+        
+        private String label;
+        
+        RowLabel(String label) {
+            this.label = label;
+        }
+
+        RowLabel() {}
+        
+        String getLabel() {
+            return this.label;
+        }
+    }
     
     @BeforeMethod
     public void prepare() throws Exception {
@@ -108,7 +142,7 @@ public class TestAnalysisView extends BaseTest {
     }
     
     @Test
-    public void testSpecificDayPeriod() throws Exception {
+    public void testFourColumns() throws Exception {
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
@@ -123,76 +157,78 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(actualData.size(), 1);
         
         SectionData analysisReport = actualData.get("analysis_month");
+        
+        // test row labels
         assertEquals(analysisReport.size(), 10);
-
-        // test metrics
         for (int i = 0; i < analysisReport.size(); i++) {
-            String metricLabel = analysisReport.get(i).get(0).getAsString();
-            assertEquals(metricLabel, metricLabels.get(i));
+            String actualRowLabel = analysisReport.get(i).get(0).getAsString();
+            String expectedRowLabel = rowsLabels.get(i).getLabel();
+            assertEquals(actualRowLabel, expectedRowLabel);
         } 
         
-        // test headers
-        List<ValueData> headers = analysisReport.get(0);
-        assertEquals(headers.size(), 15);
-        for (int i = 0; i < headers.size(); i++) {
-            String header = headers.get(i).getAsString();
-            assertEquals(header, monthLabels.get(i));
+        // test column labels
+        List<ValueData> actualColumnLabels = analysisReport.get(0);
+        assertEquals(actualColumnLabels.size(), 15);
+        for (int i = 0; i < columnLabels.size(); i++) {
+            String actualColumnLabel = actualColumnLabels.get(i).getAsString();
+            String expectedColumnLabel = columnLabels.get(i);
+            assertEquals(actualColumnLabel, expectedColumnLabel);
         }        
 
-        // test data on Oct 2013
-        Map<String, String> oct2013Data = getColumn(4, analysisReport, metricLabels, true);
-        assertEquals(oct2013Data.get("Total Users"), "20");
-        assertEquals(oct2013Data.get("Total Number of Users We Track"), "");
-        assertEquals(oct2013Data.get("Created Projects"), "");
-        assertEquals(oct2013Data.get("& Built"), "");
-        assertEquals(oct2013Data.get("& Run"), "");
-        assertEquals(oct2013Data.get("& Deployed to PAAS"), "");
-        assertEquals(oct2013Data.get("Sent Invites"), "");
-        assertEquals(oct2013Data.get("Shell Launched"), "");
-        assertEquals(oct2013Data.get("Have Complete Profile"), "");
+        // test data of column 4 with label "Oct 2013"
+        Map<RowLabel, String> column4Data = getColumn(4, analysisReport, rowsLabels, true);
+        assertEquals(column4Data.get(RowLabel.TOTAL_USERS), "20");
+        assertEquals(column4Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "");
+        assertEquals(column4Data.get(RowLabel.CREATED_PROJECTS), "");
+        assertEquals(column4Data.get(RowLabel.AND_BUILT), "");
+        assertEquals(column4Data.get(RowLabel.AND_RUN), "");
+        assertEquals(column4Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "");
+        assertEquals(column4Data.get(RowLabel.SENT_INVITES), "");
+        assertEquals(column4Data.get(RowLabel.SHELL_LAUNCHED), "");
+        assertEquals(column4Data.get(RowLabel.HAVE_COMPLETE_PROFILE), "");
         
-        // test data on Nov 2013
-        Map<String, String> nov2013Data = getColumn(3, analysisReport, metricLabels, true);
-        assertEquals(nov2013Data.get("Total Users"), "22");
-        assertEquals(nov2013Data.get("Total Number of Users We Track"), "2");
-        assertEquals(nov2013Data.get("Created Projects"), "2");
-        assertEquals(nov2013Data.get("& Built"), "2");
-        assertEquals(nov2013Data.get("& Run"), "2");
-        assertEquals(nov2013Data.get("& Deployed to PAAS"), "1");
-        assertEquals(nov2013Data.get("Sent Invites"), "1");
-        assertEquals(nov2013Data.get("Shell Launched"), "1");
-//         assertEquals(nov2013Data.get("Have Complete Profile"), "1");  // TODO there is a bug in analytics which returns ""
+        // test data of column 3 with label "Nov 2013"
+        Map<RowLabel, String> column3Data = getColumn(3, analysisReport, rowsLabels, true);
+        assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "22");
+        assertEquals(column3Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
+        assertEquals(column3Data.get(RowLabel.CREATED_PROJECTS), "2");
+        assertEquals(column3Data.get(RowLabel.AND_BUILT), "2");
+        assertEquals(column3Data.get(RowLabel.AND_RUN), "2");
+        assertEquals(column3Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
+        assertEquals(column3Data.get(RowLabel.SENT_INVITES), "1");
+        assertEquals(column3Data.get(RowLabel.SHELL_LAUNCHED), "1");
+//         assertEquals(column3Data.get(RowLabel.HAVE_COMPLETE_PROFILE), "1");  // TODO there is a bug in analytics which returns ""
         
-        // test data on Dec 2013
-        Map<String, String> dec2013Data = getColumn(2, analysisReport, metricLabels, true);
-        assertEquals(dec2013Data.get("Total Users"), "23");
-        assertEquals(dec2013Data.get("Total Number of Users We Track"), "3");
-        assertEquals(dec2013Data.get("Created Projects"), "3");
-        assertEquals(dec2013Data.get("& Built"), "3");
-        assertEquals(dec2013Data.get("& Run"), "3");
-        assertEquals(dec2013Data.get("& Deployed to PAAS"), "3");
-        assertEquals(dec2013Data.get("Sent Invites"), "2");
-        assertEquals(dec2013Data.get("Shell Launched"), "2");
-//         assertEquals(dec2013Data.get("Have Complete Profile"), "2");  // TODO there is a bug in analytics which returns ""
+        // test data of column 2 with label "Dec 2013"
+        Map<RowLabel, String> column2Data = getColumn(2, analysisReport, rowsLabels, true);
+        assertEquals(column2Data.get(RowLabel.TOTAL_USERS), "23");
+        assertEquals(column2Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
+        assertEquals(column2Data.get(RowLabel.CREATED_PROJECTS), "3");
+        assertEquals(column2Data.get(RowLabel.AND_BUILT), "3");
+        assertEquals(column2Data.get(RowLabel.AND_RUN), "3");
+        assertEquals(column2Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
+        assertEquals(column2Data.get(RowLabel.SENT_INVITES), "2");
+        assertEquals(column2Data.get(RowLabel.SHELL_LAUNCHED), "2");
+//         assertEquals(column2Data.get(RowLabel.HAVE_COMPLETE_PROFILE), "2");  // TODO there is a bug in analytics which returns ""
         
-        // test data on Jan 2014
-        Map<String, String> jan2014Data = getColumn(1, analysisReport, metricLabels, true);
-        assertEquals(jan2014Data.get("Total Users"), "23");
-        assertEquals(jan2014Data.get("Total Number of Users We Track"), "3");
-        assertEquals(jan2014Data.get("Created Projects"), "3");
-        assertEquals(jan2014Data.get("& Built"), "3");
-        assertEquals(jan2014Data.get("& Run"), "3");
-        assertEquals(jan2014Data.get("& Deployed to PAAS"), "3");
-        assertEquals(jan2014Data.get("Sent Invites"), "2");
-        assertEquals(jan2014Data.get("Shell Launched"), "2");
-//         assertEquals(jan2014Data.get("Have Complete Profile"), "2");  // TODO there is a bug in analytics which returns ""
+        // test data of column 1 with label "Jan 2014"
+        Map<RowLabel, String> column1Data = getColumn(1, analysisReport, rowsLabels, true);
+        assertEquals(column1Data.get(RowLabel.TOTAL_USERS), "23");
+        assertEquals(column1Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
+        assertEquals(column1Data.get(RowLabel.CREATED_PROJECTS), "3");
+        assertEquals(column1Data.get(RowLabel.AND_BUILT), "3");
+        assertEquals(column1Data.get(RowLabel.AND_RUN), "3");
+        assertEquals(column1Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
+        assertEquals(column1Data.get(RowLabel.SENT_INVITES), "2");
+        assertEquals(column1Data.get(RowLabel.SHELL_LAUNCHED), "2");
+//         assertEquals(column1Data.get(RowLabel.HAVE_COMPLETE_PROFILE), "2");  // TODO there is a bug in analytics which returns ""
     }
 
     /**
      * Returns column from section table of view
      */
-    private Map<String, String> getColumn(int columnIndex, SectionData report, List<String> rowLabels, boolean passFirstRow) {
-        LinkedHashMap<String, String> columnData = new LinkedHashMap<>();
+    private Map<RowLabel, String> getColumn(int columnIndex, SectionData report, List<RowLabel> rowLabels, boolean passFirstRow) {
+        LinkedHashMap<RowLabel, String> columnData = new LinkedHashMap<>();
         assertEquals(report.size(), rowLabels.size());
  
         int i = (passFirstRow) ? 1 : 0;   // don't taking into account first row which consists of column labels
@@ -206,7 +242,7 @@ public class TestAnalysisView extends BaseTest {
     private File prepareLog() throws IOException {
         List<Event> events = new ArrayList<>();
 
-        /** events at the 2013-11-01 */
+        /** events at the DATE1 */
         // create users
         events.add(Event.Builder.createUserCreatedEvent("user1-id", "user1")
                         .withDate(DATE1).build());
@@ -284,7 +320,7 @@ public class TestAnalysisView extends BaseTest {
                          .withTime("21:14:00").build());
 
         
-        /** events at the 2013-12-02 */
+        /** events at the DATE2 */
         // create user
         events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3")
                    .withDate(DATE2).build());   
