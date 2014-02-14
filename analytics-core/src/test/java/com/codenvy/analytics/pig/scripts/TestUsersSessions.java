@@ -20,6 +20,7 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
@@ -50,34 +51,34 @@ public class TestUsersSessions extends BaseTest {
 
         // sessions #1 - 240s
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                        .withDate("2013-11-01").withTime("19:00:00").build());
+                                .withDate("2013-11-01").withTime("19:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws1", "ide", "1")
-                        .withDate("2013-11-01").withTime("19:04:00").build());
+                                .withDate("2013-11-01").withTime("19:04:00").build());
 
         // sessions #2 - 300s
         events.add(Event.Builder.createSessionStartedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                        .withTime("20:00:00").build());
+                                .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                        .withTime("20:05:00").build());
+                                .withTime("20:05:00").build());
 
         // sessions #3 - 120s
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                        .withDate("2013-11-01").withTime("18:00:00").build());
+                                .withDate("2013-11-01").withTime("18:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                        .withDate("2013-11-01").withTime("18:02:00").build());
+                                .withDate("2013-11-01").withTime("18:02:00").build());
 
         // by mistake
         events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
-                        .withTime("20:25:00").build());
+                                .withTime("20:25:00").build());
 
         // session will be ignored,
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
-                        .withDate("2013-11-01").withTime("20:00:00").build());
+                                .withDate("2013-11-01").withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
-                        .withDate("2013-11-01").withTime("20:05:00").build());
+                                .withDate("2013-11-01").withTime("20:05:00").build());
 
         events.add(Event.Builder.createUserUpdateProfile("user@gmail.com", "", "", "company", "", "")
-                        .withDate("2013-11-01").build());
+                                .withDate("2013-11-01").build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -111,8 +112,10 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(1, valueData.size());
 
         MapValueData items = (MapValueData)valueData.getAll().get(0);
-        assertEquals(items.getAll().get("start_time").getAsString(), "2013-11-01 20:00:00");
-        assertEquals(items.getAll().get("end_time").getAsString(), "2013-11-01 20:05:00");
+        assertEquals(items.getAll().get("start_time"),
+                     LongValueData.valueOf(fullTimeFormat.parse("2013-11-01 20:00:00,000").getTime()));
+        assertEquals(items.getAll().get("end_time"),
+                     LongValueData.valueOf(fullTimeFormat.parse("2013-11-01 20:05:00,000").getTime()));
         assertEquals(items.getAll().get("session_id").getAsString(), "2");
         assertEquals(items.getAll().get("time").getAsString(), "300000");
         assertEquals(items.getAll().get("domain").getAsString(), "gmail.com");

@@ -138,11 +138,6 @@
             <version>${mongo.driver.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>2.10.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>${quartz.version}</version>
@@ -251,9 +246,10 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <includes>
-                                <include>com/codenvy/analytics/services/view/TestAcceptance.java</include>
-                            </includes>
+                            <excludes>
+                                <exclude>com/codenvy/analytics/**/TestLogCollector.java</exclude>
+                                <exclude>com/codenvy/analytics/**/LoadTestMongoIndexes.java</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
