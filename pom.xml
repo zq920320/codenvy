@@ -63,7 +63,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
-                    <execution>
+                    <!--<execution>
                         <id>gh</id>
                         <phase>package</phase>
                         <goals>
@@ -89,6 +89,7 @@
                             </descriptors>
                         </configuration>
                     </execution>
+                -->
                     <execution>
                         <id>prod</id>
                         <phase>package</phase>

@@ -293,7 +293,7 @@ module.exports = function( grunt ) {
   grunt.registerTask('build',
         [
             // hiding copy output
-            'verbosity:hidden',
+//            'verbosity:hidden',
             //check code quality before building
             'jshint:test', 'jshint:app',
 
@@ -307,31 +307,31 @@ module.exports = function( grunt ) {
             // ------------------ Github pages STAGING
 
             // copy staging _config.yml to the temporary folder
-            'shell:jekyll_gh_config',
+            //'shell:jekyll_gh_config',
 
             // run jekyll build for github staging
-            'shell:jekyll',
+            //'shell:jekyll',
 
             // run yeoman build on top of staging Jekyll build
-            'shell:yeoman',
+            //'shell:yeoman',
 
             // copy staging build output
-            'copy:gh_stage',
+            //'copy:gh_stage',
 
 
             // ------------------ STAGING
 
             // copy staging _config.yml to the temporary folder
-            'shell:jekyll_stage_config',
+            //'shell:jekyll_stage_config',
 
             // run jekyll build for staging
-            'shell:jekyll',
+            //'shell:jekyll',
 
             // run yeoman build on top of staging Jekyll build
-            'shell:yeoman',
+            //'shell:yeoman',
 
             // copy staging build output
-            'copy:stage',
+            //'copy:stage',
 
 
             // ------------------ PRODUCTION
