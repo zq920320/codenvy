@@ -17,21 +17,21 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- *  @author Anatoliy Bazko
+ * @author Anatoliy Bazko
  */
 public class ProductUsageSessionsList extends AbstractListValueResulted {
 
@@ -59,29 +59,29 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
                             SESSION_ID,
                             DATE};
     }
-    
-    @Override    
+
+    @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         List<ValueData> value = new ArrayList<>();
-        
-        ListValueData valueData = (ListValueData) super.getValue(context);
-        
+
+        ListValueData valueData = (ListValueData)super.getValue(context);
+
         for (ValueData items : valueData.getAll()) {
-            MapValueData prevItems = (MapValueData) items;
-            Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());            
-            
-            LongValueData date = (LongValueData) newItems.get(DATE);
-            LongValueData delta = (LongValueData) newItems.get(TIME);            
-            
+            MapValueData prevItems = (MapValueData)items;
+            Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());
+
+            LongValueData date = (LongValueData)newItems.get(DATE);
+            LongValueData delta = (LongValueData)newItems.get(TIME);
+
             newItems.put(START_TIME, date);
             newItems.put(END_TIME, LongValueData.valueOf(date.getAsLong() + delta.getAsLong()));
-            
+
             value.add(new MapValueData(newItems));
         }
-        
+
         return new ListValueData(value);
     }
-       
+
     @Override
     public String getStorageCollectionName() {
         return super.getStorageCollectionName();
