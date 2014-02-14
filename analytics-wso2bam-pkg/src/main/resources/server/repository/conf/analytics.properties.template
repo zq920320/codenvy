@@ -6,8 +6,6 @@ analytics.reports.dir=${analytics.home.dir}/repository/deployment/server/webapps
 analytics.backup.reports.dir=$HOME/analytics_data/reports
 
 # Pig server configuration
-pig.embedded=true
-pig.bin.dir=${analytics.home.dir}/pig/bin
 pig.scripts.dir=${analytics.home.dir}/pig/scripts
 
 # MongoDB storage configuration

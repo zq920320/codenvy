@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.*;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,46 +49,46 @@ import java.util.regex.Pattern;
 @Singleton
 public class PigServer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PigServer.class);
+    private static final String     LOGS_DIR    = "analytics.logs.dir";
+    private static final String     SCRIPTS_DIR = "pig.scripts.dir";
+    private static final Logger     LOG         = LoggerFactory.getLogger(PigServer.class);
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT);
 
-    private static final String LOGS_DIR_   = "analytics.logs.dir";
-    private static final String SCRIPTS_DIR = "pig.scripts.dir";
-    private static final String BIN_DIR     = "pig.bin.dir";
-    private static final String EMBEDDED    = "pig.embedded";
+    private final String scriptDir;
+    private final String logsDir;
 
-    private final String  binDir;
-    private final String  scriptDir;
-    private final String  logsDir;
-    private final boolean embedded;
-
-    private org.apache.pig.PigServer server;
-
-    private final MongoDataStorage mongoDataStorage;
-    private final Calendar         oldScriptThresholdDate;
+    private final org.apache.pig.PigServer server;
+    private final MongoDataStorage         mongoDataStorage;
+    private final List<String>             outdatedScriptDirectories;
 
     @Inject
     public PigServer(Configurator configurator, MongoDataStorage mongoDataStorage) throws ParseException, IOException {
         this.mongoDataStorage = mongoDataStorage;
-
-        this.oldScriptThresholdDate = Calendar.getInstance();
-        this.oldScriptThresholdDate.setTime(new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT).parse("20130822"));
-
-        this.binDir = configurator.getString(BIN_DIR);
-        this.logsDir = configurator.getString(LOGS_DIR_);
+        this.logsDir = configurator.getString(LOGS_DIR);
         this.scriptDir = configurator.getString(SCRIPTS_DIR);
-        this.embedded = configurator.getBoolean(EMBEDDED);
+        this.server = initEmbeddedServer();
+        this.outdatedScriptDirectories = getOutdatedScriptDirectories();
 
-        try {
-            initEmbeddedServer();
-            checkIfMongoIsStarted();
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            throw new IOException(e);
-        }
+        checkIfMongoIsStarted();
     }
 
-    private void initEmbeddedServer() throws IOException {
-        server = initializeServer();
+    private List<String> getOutdatedScriptDirectories() {
+        List<String> result = new ArrayList<>();
+
+        File[] files = new File(scriptDir).listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                result.add(file.getName());
+            }
+        }
+
+        Collections.sort(result);
+
+        return result;
+    }
+
+    private org.apache.pig.PigServer initEmbeddedServer() throws IOException {
+        final org.apache.pig.PigServer server = initializeServer();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -96,6 +97,8 @@ public class PigServer {
                 server.shutdown();
             }
         });
+
+        return server;
     }
 
     private void checkIfMongoIsStarted() {
@@ -122,24 +125,15 @@ public class PigServer {
                 return;
             }
 
-            if (embedded) {
-                executeOnEmbeddedServer(scriptType, context);
-            } else {
-                executeOnDedicatedServer(scriptType, context);
+            String script = readScriptContent(scriptType, context);
+
+            try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
+                server.setBatchOn();
+                server.registerScript(scriptContent, context);
+                server.executeBatch();
+            } finally {
+                LOG.info("Execution " + scriptType + " is finished");
             }
-        } finally {
-            LOG.info("Execution " + scriptType + " is finished");
-        }
-    }
-
-    private void executeOnEmbeddedServer(ScriptType scriptType, Map<String, String> context)
-            throws IOException, ParseException {
-        String script = readScriptContent(scriptType, context);
-
-        try (InputStream scriptContent = new ByteArrayInputStream(script.getBytes())) {
-            server.setBatchOn();
-            server.registerScript(scriptContent, context);
-            server.executeBatch();
         } finally {
             LOG.info("Execution " + scriptType + " is finished");
         }
@@ -153,59 +147,6 @@ public class PigServer {
         server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
         return server;
-    }
-
-    private synchronized void executeOnDedicatedServer(ScriptType scriptType, Map<String, String> context)
-            throws IOException, ParseException {
-        String command = prepareRunCommand(scriptType, context);
-        Process process = Runtime.getRuntime().exec(command);
-
-        try {
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                logProcessOutput(process);
-                throw new IOException("The process has finished with wrong code " + exitCode);
-            }
-        } catch (InterruptedException e) {
-            throw new IOException(e);
-        }
-    }
-
-    private static void logProcessOutput(Process process) throws IOException {
-        try (BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            for (; ; ) {
-                String inLine = in.readLine();
-                String errLine = err.readLine();
-
-                if (inLine != null) {
-                    LOG.info(inLine);
-                } else if (errLine != null) {
-                    LOG.info(errLine);
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-
-    private String prepareRunCommand(ScriptType scriptType, Map<String, String> context) throws ParseException {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(new File(binDir, "run_script.sh").getAbsolutePath());
-
-        for (Map.Entry<String, String> entry : context.entrySet()) {
-            builder.append(' ');
-            builder.append("-param ");
-            builder.append(entry.getKey());
-            builder.append("=");
-            builder.append(entry.getValue());
-        }
-
-        builder.append(' ');
-        builder.append(getScriptFileName(scriptType, context).getAbsolutePath());
-
-        return builder.toString();
     }
 
     /**
@@ -272,14 +213,22 @@ public class PigServer {
         return context;
     }
 
-
-    /** @return the script file name */
+    /**
+     * @return the script file name, check if outdated script should be used based on date from context.
+     */
     private File getScriptFileName(ScriptType scriptType, Map<String, String> context) throws ParseException {
-        if (Utils.getToDate(context).before(oldScriptThresholdDate)) {
-            File oldScriptFile = new File(scriptDir, scriptType.toString().toLowerCase() + "_old.pig");
-            if (oldScriptFile.exists()) {
-                LOG.info("Old script will be used instead of " + scriptType);
-                return oldScriptFile;
+        for (String dir : outdatedScriptDirectories) {
+            Date date = DATE_FORMAT.parse(dir);
+
+            if (Utils.getToDate(context).getTimeInMillis() < date.getTime()) {
+                File script = new File(scriptDir, dir + File.separator + scriptType.toString().toLowerCase() + ".pig");
+
+                if (script.exists()) {
+                    LOG.info("Script " + scriptType + " will be used from " + dir + " directory");
+                    return script;
+                }
+
+                break;
             }
         }
 
