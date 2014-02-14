@@ -47,7 +47,7 @@
         <section name="user_data">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Number of Sessions,Total Time (mins),Total Build Time (mins),Total Run Time (mins),Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
+                           value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics_list"/>
@@ -67,7 +67,6 @@
                 <parameter key="name" value="product_usage_sessions_list"/>
                 <parameter key="fields" value="session_id,ws,start_time,end_time,time"/>
                 <parameter key="time-fields" value="time"/>
-                <parameter key="time-format" value="mm min. ss sec."/>
             </row>
         </section>
     </view>
@@ -81,7 +80,6 @@
                 <parameter key="name" value="users_time_in_workspaces_list"/>
                 <parameter key="fields" value="_id,sessions,time"/>
                 <parameter key="time-fields" value="time"/>
-                <parameter key="time-format" value="mm min. ss sec."/>
             </row>
         </section>
     </view>
