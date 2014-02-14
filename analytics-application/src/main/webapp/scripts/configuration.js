@@ -67,6 +67,9 @@ function Configuration() {
         engagementLevels: {
             presenterType: "TablePresenter",
             modelViewName: "engagement_levels",
+            
+            forbiddenModelParams: ["time_unit"],
+            
             isNeedToSaveInHistory: true,
         },
         
@@ -314,6 +317,24 @@ function Configuration() {
         return globalParams;
     }
     
+    /**
+     * Return modelParams which had been cleared from forbidden params defined in the configuration of widget with widgetName
+     */
+    function removeForbiddenModelParams(widgetName, modelParams) {
+        var forbiddenModelParams = widgetConfiguration[widgetName]["forbiddenModelParams"];  
+
+        if (typeof forbiddenModelParams != "undefined") {
+            for (var i in forbiddenModelParams) {
+                var forbiddenModelParam = forbiddenModelParams[i];
+                if (typeof modelParams[forbiddenModelParam] != "undefined") {
+                    delete modelParams[forbiddenModelParam];
+                }
+            }
+        }
+
+        return modelParams;
+    }
+    
     /** ****************** API ********** */
     return {
         getProperty: getProperty,
@@ -322,5 +343,6 @@ function Configuration() {
         isParamRegistered: isParamRegistered,
         isParamGlobal: isParamGlobal,
         getGlobalParamList: getGlobalParamList,
+        removeForbiddenModelParams: removeForbiddenModelParams,
     }
 }

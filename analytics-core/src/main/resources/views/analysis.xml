@@ -62,11 +62,6 @@
                 <parameter key="description" value="Shell Launched"/>
                 <parameter key="set-from-date-to-default-value" value="true"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="completed_profiles"/>
-                <parameter key="description" value="Have Complete Profile"/>
-                <parameter key="set-from-date-to-default-value" value="true"/>
-            </row>
         </section>
     </view>
 </display>

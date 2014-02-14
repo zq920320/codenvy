@@ -20,11 +20,13 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.users.CompletedProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -43,36 +45,36 @@ import static com.mongodb.util.MyAsserts.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUserUpdateProfile extends BaseTest {
 
-    private Map<String, String> params;
+    private static final String COLLECTION = TestUserUpdateProfile.class.getSimpleName().toLowerCase();
 
     @BeforeClass
     public void prepare() throws Exception {
-        params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company2", "11", "1")
-                        .withDate("2013-01-01").build());
+                                .withDate("2013-01-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
-                        .withDate("2013-01-01").build());
+                                .withDate("2013-01-01").build());
         File log = LogGenerator.generateLog(events);
 
+        Map<String, String> params = Utils.newContext();
         Parameters.FROM_DATE.put(params, "20130101");
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testuserupdateprofile");
+        Parameters.STORAGE_TABLE.put(params, COLLECTION);
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
 
 
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company1", "22", "2")
-                        .withDate("2013-01-02").build());
+                                .withDate("2013-01-02").build());
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company3", "22", "2")
-                        .withDate("2013-01-02").build());
+                                .withDate("2013-01-02").build());
         events.add(Event.Builder.createUserUpdateProfile("user4@gmail.com", "f4", "l4", "company4", "22", "")
-                        .withDate("2013-01-02").build());
+                                .withDate("2013-01-02").build());
         log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130102");
@@ -86,7 +88,7 @@ public class TestUserUpdateProfile extends BaseTest {
     public void testAllProfiles() throws Exception {
         Map<String, String> context = Utils.newContext();
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 4);
@@ -126,7 +128,7 @@ public class TestUserUpdateProfile extends BaseTest {
             }
         }
 
-        metric = new TestUsersProfiles();
+        metric = new TestedUsersProfiles();
         assertEquals(metric.getValue(context).getAsString(), "4");
     }
 
@@ -135,7 +137,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER.put(context, "user1@gmail.com");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
@@ -156,7 +158,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "company1");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
@@ -167,7 +169,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "company");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 4);
@@ -178,7 +180,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "comp.ny");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 4);
@@ -189,7 +191,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, ".*cOmp.n");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 4);
@@ -200,7 +202,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "comp..ny");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 0);
@@ -211,7 +213,7 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "COMPANY2");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 1);
@@ -223,26 +225,40 @@ public class TestUserUpdateProfile extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "company1,company2");
 
-        Metric metric = new TestUsersProfilesList();
+        Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
         assertEquals(value.size(), 2);
     }
 
+    @Test
+    public void testCompletedProfiles() throws Exception {
+        Metric metric = new TestedCompletedProfiles();
 
-    public class TestUsersProfiles extends UsersProfiles {
+        ValueData value = metric.getValue(Utils.newContext());
+        assertEquals(value, LongValueData.valueOf(3));
+    }
+
+    // ----------------------> Tested metrics
+
+    private class TestedCompletedProfiles extends CompletedProfiles {
         @Override
         public String getStorageCollectionName() {
-            return "testuserupdateprofile";
+            return COLLECTION;
         }
     }
 
-
-    public class TestUsersProfilesList extends UsersProfilesList {
-
+    private class TestedUsersProfiles extends UsersProfiles {
         @Override
         public String getStorageCollectionName() {
-            return "testuserupdateprofile";
+            return COLLECTION;
+        }
+    }
+
+    private class TestedUsersProfilesList extends UsersProfilesList {
+        @Override
+        public String getStorageCollectionName() {
+            return COLLECTION;
         }
     }
 }

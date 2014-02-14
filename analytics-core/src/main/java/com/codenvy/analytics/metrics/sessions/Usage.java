@@ -15,27 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.analytics.metrics.sessions;
 
-package com.codenvy.analytics.metrics;
+import com.codenvy.analytics.metrics.AbstractSum;
+import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"system/admin", "system/manager"})
-public abstract class AbstractMetric implements Metric {
+@RolesAllowed(value = {"user", "system/admin", "system/manager"})
+public class Usage extends AbstractSum {
 
-    protected final String metricName;
-
-    public AbstractMetric(String metricName) {
-        this.metricName = metricName.toLowerCase();
-    }
-
-    public AbstractMetric(MetricType metricType) {
-        this(metricType.toString());
+    public Usage() {
+        super(MetricType.USAGE,
+              MetricType.PRODUCT_USAGE_SESSIONS_LIST,
+              ProductUsageSessionsList.TIME);
     }
 
     @Override
-    public String getName() {
-        return metricName;
+    public String getDescription() {
+        return "The product usage time";
     }
 }

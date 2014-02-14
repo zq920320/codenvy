@@ -72,7 +72,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     /**
      * @return the fields are interested in by given metric. In other words, they are valuable for given metric. It
-     *         might returns empty array to read all available fields
+     * might returns empty array to read all available fields
      */
     public abstract String[] getTrackedFields();
 

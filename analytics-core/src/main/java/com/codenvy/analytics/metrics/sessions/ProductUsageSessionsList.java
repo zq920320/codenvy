@@ -17,10 +17,22 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Anatoliy Bazko
+ */
 public class ProductUsageSessionsList extends AbstractListValueResulted {
 
     public static final String WS           = "ws";
@@ -43,10 +55,31 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
                             USER_COMPANY,
                             DOMAIN,
                             TIME,
-                            START_TIME,
                             END_TIME,
                             SESSION_ID,
                             DATE};
+    }
+
+    @Override
+    public ValueData getValue(Map<String, String> context) throws IOException {
+        List<ValueData> value = new ArrayList<>();
+
+        ListValueData valueData = (ListValueData)super.getValue(context);
+
+        for (ValueData items : valueData.getAll()) {
+            MapValueData prevItems = (MapValueData)items;
+            Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());
+
+            LongValueData date = (LongValueData)newItems.get(DATE);
+            LongValueData delta = (LongValueData)newItems.get(TIME);
+
+            newItems.put(START_TIME, date);
+            newItems.put(END_TIME, LongValueData.valueOf(date.getAsLong() + delta.getAsLong()));
+
+            value.add(new MapValueData(newItems));
+        }
+
+        return new ListValueData(value);
     }
 
     @Override

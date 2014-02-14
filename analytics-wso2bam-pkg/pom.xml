@@ -39,12 +39,6 @@
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.pig</groupId>
-            <artifactId>pig</artifactId>
-            <version>${pig.version}</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
             <groupId>org.wso2</groupId>
             <artifactId>bam</artifactId>
             <version>${wso2.bam.version}</version>
@@ -130,11 +124,6 @@
                                             <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}" />
                                         </move>
 
-                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/pig.zip" />
-                                        <move todir="${project.build.directory}/wso2bam-analytics/pig">
-                                            <fileset dir="${project.build.directory}/pig-${pig.version}" />
-                                        </move>
-
                                         <!--Repacking-->
                                         <jar destfile="${project.build.directory}/wso2bam-analytics/lib/org.wso2.carbon.logging-4.1.0.jar" update="true">
                                             <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
@@ -143,14 +132,6 @@
                                             <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
                                         </jar>
                                         <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/packager-conf/war/analytics.war" />
-
-                                        <!-- Modifying Pig's properties-->
-                                        <propertyfile file="${project.build.directory}/wso2bam-analytics/pig/conf/pig.properties">
-                                            <entry key="pig.import.search.path" value="pig/scripts" />
-                                            <entry key="pig.logfile" value="repository/logs/pig.log" />
-                                            <entry key="udf.import.list" value="com.codenvy.analytics.pig.udf" />
-                                            <entry key="exectype" value="local" />
-                                        </propertyfile>
 
                                         <!-- Removal useless resources -->
                                         <delete file="${project.build.directory}/wso2bam-analytics/repository/conf/user-mgt.xml" />
@@ -163,14 +144,10 @@
                                         <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/pig/scripts">
                                             <fileset dir="${basedir}/../analytics-core/scripts/" />
                                         </copy>
-                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/pig/bin">
-                                            <fileset dir="${basedir}/../analytics-core/bin/" />
-                                        </copy>
                                         <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/">
                                             <fileset dir="${project.build.directory}/packager-conf/war" />
                                         </copy>
                                         <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x" />
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/pig/bin/*" perm="+x" />
                                     </target>
                                 </configuration>
                             </execution>

@@ -17,32 +17,13 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.AbstractAlias;
 import com.codenvy.analytics.metrics.MetricType;
 
-import java.io.IOException;
-import java.util.Map;
-
 /** @author Anatoliy Bazko */
-public class FactoryUrlAccepted extends CalculatedMetric {
+public class FactoryUrlAccepted extends AbstractAlias {
 
     public FactoryUrlAccepted() {
-        super(MetricType.FACTORY_URL_ACCEPTED, new MetricType[]{MetricType.FACTORIES_ACCEPTED});
-    }
-
-    @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        return basedMetric[0].getValue(context);
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return basedMetric[0].getValueDataClass();
-    }
-
-    @Override
-    public String getDescription() {
-        return basedMetric[0].getDescription();
+        super(MetricType.FACTORY_URL_ACCEPTED, MetricType.FACTORIES_ACCEPTED);
     }
 }

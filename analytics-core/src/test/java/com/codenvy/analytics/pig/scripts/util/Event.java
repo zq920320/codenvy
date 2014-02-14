@@ -103,7 +103,11 @@ public class Event {
         }
 
         public Builder withDate(String date) {
-            this.date = date;
+            if (date.length() == 8) {
+                this.date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
+            } else {
+                this.date = date;
+            }
             return this;
         }
 
@@ -356,11 +360,11 @@ public class Event {
 
             return builder;
         }
-        
+
         public static Builder createShellLaunchedEvent(String user, String ws, String session) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "shell-launched");
         }
-        
+
     }
 
     /** Event context contains 3 parameters. */

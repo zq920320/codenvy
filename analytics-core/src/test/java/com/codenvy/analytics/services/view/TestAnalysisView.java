@@ -17,31 +17,6 @@
  */
 package com.codenvy.analytics.services.view;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
@@ -54,33 +29,49 @@ import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
+import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.*;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
+
 /** @author Dmytro Nochevnov */
 public class TestAnalysisView extends BaseTest {
 
     private static final String ANALYSIS_VIEW_CONFIGURATION = BASE_DIR + "/classes/views/analysis.xml";
-     
-    private ViewBuilder viewBuilder;    
+
+    private ViewBuilder viewBuilder;
 
     private static final String DATE1 = "2013-11-01";
     private static final String DATE2 = "2013-12-02";
-    
-    private static final List<String> columnLabels = Arrays.asList(new String[]{"", "Jan 2014", "Dec 2013",
-           "Nov 2013", "Oct 2013", "Sep 2013", "Aug 2013", "Jul 2013", "Jun 2013", "May 2013", "Apr 2013",
-           "Mar 2013", "Feb 2013", "Jan 2013", "Dec 2012"});
-    
-    private static final List<RowLabel> rowsLabels = Arrays.asList(new RowLabel[]{
-        RowLabel.EMPTY, 
-        RowLabel.TOTAL_USERS,
-        RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK, 
-        RowLabel.CREATED_PROJECTS, 
-        RowLabel.AND_BUILT, 
-        RowLabel.AND_RUN, 
-        RowLabel.AND_DEPLOYED_TO_PAAS,
-        RowLabel.SENT_INVITES, 
-        RowLabel.SHELL_LAUNCHED, 
-        RowLabel.HAVE_COMPLETE_PROFILE
-    });
-    
+
+    private static final List<String> columnLabels = Arrays.asList("", "Jan 2014", "Dec 2013",
+                                                                   "Nov 2013", "Oct 2013", "Sep 2013",
+                                                                   "Aug 2013", "Jul 2013", "Jun 2013",
+                                                                   "May 2013", "Apr 2013",
+                                                                   "Mar 2013", "Feb 2013", "Jan 2013",
+                                                                   "Dec 2012");
+
+    private static final List<RowLabel> rowsLabels = Arrays.asList(RowLabel.EMPTY,
+                                                                   RowLabel.TOTAL_USERS,
+                                                                   RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK,
+                                                                   RowLabel.CREATED_PROJECTS,
+                                                                   RowLabel.AND_BUILT,
+                                                                   RowLabel.AND_RUN,
+                                                                   RowLabel.AND_DEPLOYED_TO_PAAS,
+                                                                   RowLabel.SENT_INVITES,
+                                                                   RowLabel.SHELL_LAUNCHED);
+
     private enum RowLabel {
         TOTAL_USERS("Total Users"),
         TOTAL_NUMBER_OF_USERS_WE_TRACK("Total Number of Users We Track"),
@@ -89,31 +80,31 @@ public class TestAnalysisView extends BaseTest {
         AND_RUN("& Run"),
         AND_DEPLOYED_TO_PAAS("& Deployed to PAAS"),
         SENT_INVITES("Sent Invites"),
-        SHELL_LAUNCHED("Shell Launched"), 
-        HAVE_COMPLETE_PROFILE("Have Complete Profile"),
+        SHELL_LAUNCHED("Shell Launched"),
         EMPTY(""),
         UNKNOWN;
-        
+
         private String label;
-        
+
         RowLabel(String label) {
             this.label = label;
         }
 
-        RowLabel() {}
-        
+        RowLabel() {
+        }
+
         String getLabel() {
             return this.label;
         }
     }
-    
+
     @BeforeMethod
     public void prepare() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.toString());
 
         Parameters.LOG.put(context, prepareLog().getAbsolutePath());
-       
+
         Parameters.FROM_DATE.put(context, DATE1.replace("-", ""));
         Parameters.TO_DATE.put(context, DATE1.replace("-", ""));
         extractDataFromLog(context);
@@ -121,7 +112,7 @@ public class TestAnalysisView extends BaseTest {
         Parameters.FROM_DATE.put(context, DATE2.replace("-", ""));
         Parameters.TO_DATE.put(context, DATE2.replace("-", ""));
         extractDataFromLog(context);
-        
+
         XmlConfigurationManager configurationManager = mock(XmlConfigurationManager.class);
 
         when(configurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
@@ -130,8 +121,8 @@ public class TestAnalysisView extends BaseTest {
                 XmlConfigurationManager manager = new XmlConfigurationManager();
                 return manager.loadConfiguration(DisplayConfiguration.class, ANALYSIS_VIEW_CONFIGURATION);
             }
-        });        
-        
+        });
+
         Configurator configurator = spy(Injector.getInstance(Configurator.class));
         doReturn(new String[]{ANALYSIS_VIEW_CONFIGURATION}).when(configurator).getArray(anyString());
 
@@ -140,7 +131,7 @@ public class TestAnalysisView extends BaseTest {
                                           configurationManager,
                                           configurator));
     }
-    
+
     @Test
     public void testFourColumns() throws Exception {
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
@@ -155,17 +146,17 @@ public class TestAnalysisView extends BaseTest {
 
         ViewData actualData = viewData.getAllValues().get(0);
         assertEquals(actualData.size(), 1);
-        
+
         SectionData analysisReport = actualData.get("analysis_month");
-        
+
         // test row labels
-        assertEquals(analysisReport.size(), 10);
+        assertEquals(analysisReport.size(), 9);
         for (int i = 0; i < analysisReport.size(); i++) {
             String actualRowLabel = analysisReport.get(i).get(0).getAsString();
             String expectedRowLabel = rowsLabels.get(i).getLabel();
             assertEquals(actualRowLabel, expectedRowLabel);
-        } 
-        
+        }
+
         // test column labels
         List<ValueData> actualColumnLabels = analysisReport.get(0);
         assertEquals(actualColumnLabels.size(), 15);
@@ -173,7 +164,7 @@ public class TestAnalysisView extends BaseTest {
             String actualColumnLabel = actualColumnLabels.get(i).getAsString();
             String expectedColumnLabel = columnLabels.get(i);
             assertEquals(actualColumnLabel, expectedColumnLabel);
-        }        
+        }
 
         // test data of column 4 with label "Oct 2013"
         Map<RowLabel, String> column4Data = getColumn(4, analysisReport, rowsLabels, true);
@@ -185,8 +176,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column4Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "");
         assertEquals(column4Data.get(RowLabel.SENT_INVITES), "");
         assertEquals(column4Data.get(RowLabel.SHELL_LAUNCHED), "");
-        assertEquals(column4Data.get(RowLabel.HAVE_COMPLETE_PROFILE), "");
-        
+
         // test data of column 3 with label "Nov 2013"
         Map<RowLabel, String> column3Data = getColumn(3, analysisReport, rowsLabels, true);
         assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "22");
@@ -197,8 +187,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column3Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
         assertEquals(column3Data.get(RowLabel.SENT_INVITES), "1");
         assertEquals(column3Data.get(RowLabel.SHELL_LAUNCHED), "1");
-//         assertEquals(column3Data.get(RowLabel.HAVE_COMPLETE_PROFILE), "1");  // TODO there is a bug in analytics which returns ""
-        
+
         // test data of column 2 with label "Dec 2013"
         Map<RowLabel, String> column2Data = getColumn(2, analysisReport, rowsLabels, true);
         assertEquals(column2Data.get(RowLabel.TOTAL_USERS), "23");
@@ -209,8 +198,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column2Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(column2Data.get(RowLabel.SENT_INVITES), "2");
         assertEquals(column2Data.get(RowLabel.SHELL_LAUNCHED), "2");
-//         assertEquals(column2Data.get(RowLabel.HAVE_COMPLETE_PROFILE), "2");  // TODO there is a bug in analytics which returns ""
-        
+
         // test data of column 1 with label "Jan 2014"
         Map<RowLabel, String> column1Data = getColumn(1, analysisReport, rowsLabels, true);
         assertEquals(column1Data.get(RowLabel.TOTAL_USERS), "23");
@@ -221,21 +209,21 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column1Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
         assertEquals(column1Data.get(RowLabel.SENT_INVITES), "2");
         assertEquals(column1Data.get(RowLabel.SHELL_LAUNCHED), "2");
-//         assertEquals(column1Data.get(RowLabel.HAVE_COMPLETE_PROFILE), "2");  // TODO there is a bug in analytics which returns ""
     }
 
     /**
      * Returns column from section table of view
      */
-    private Map<RowLabel, String> getColumn(int columnIndex, SectionData report, List<RowLabel> rowLabels, boolean passFirstRow) {
+    private Map<RowLabel, String> getColumn(int columnIndex, SectionData report, List<RowLabel> rowLabels,
+                                            boolean passFirstRow) {
         LinkedHashMap<RowLabel, String> columnData = new LinkedHashMap<>();
         assertEquals(report.size(), rowLabels.size());
- 
+
         int i = (passFirstRow) ? 1 : 0;   // don't taking into account first row which consists of column labels
         for (; i < rowLabels.size(); i++) {
             columnData.put(rowLabels.get(i), report.get(i).get(columnIndex).getAsString());
         }
-        
+
         return columnData;
     }
 
@@ -245,138 +233,138 @@ public class TestAnalysisView extends BaseTest {
         /** events at the DATE1 */
         // create users
         events.add(Event.Builder.createUserCreatedEvent("user1-id", "user1")
-                        .withDate(DATE1).build());
+                                .withDate(DATE1).build());
         events.add(Event.Builder.createUserCreatedEvent("user2-id", "user2")
-                   .withDate(DATE1).build());
+                                .withDate(DATE1).build());
 
         // update users' profiles
         events.add(Event.Builder.createUserUpdateProfile("user1", "f1", "l1", "company1", "phone1", "jobtitle1")
-                        .withDate(DATE1).build());
+                                .withDate(DATE1).build());
         events.add(Event.Builder.createUserUpdateProfile("user2", "", "", "", "", "")
-                        .withDate(DATE1).build());
+                                .withDate(DATE1).build());
 
         // active users [user1, user2]
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1").withTime("09:00:00").withDate(DATE1)
-                        .build());
+                                .build());
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2").withTime("09:00:00").withDate(DATE1)
-                        .build());
+                                .build());
 
         // add shell launched events
         events.add(Event.Builder.createShellLaunchedEvent("user2", "ws2", "2").withTime("09:00:00").withDate(DATE1)
-                   .build());
+                                .build());
         events.add(Event.Builder.createShellLaunchedEvent("user2", "ws2", "2").withTime("10:00:00").withDate(DATE1)
-                   .build());
-        
+                                .build());
+
         // projects created
         events.add(
                 Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project1", "type1").withDate(DATE1)
-                     .withTime("10:00:00").build());
+                             .withTime("10:00:00").build());
         events.add(
                 Event.Builder.createProjectCreatedEvent("user1", "ws1", "", "project2", "type1").withDate(DATE1)
-                     .withTime("10:05:00").build());
+                             .withTime("10:05:00").build());
         events.add(
                 Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project1", "type1").withDate(DATE1)
-                     .withTime("10:03:00").build());
+                             .withTime("10:03:00").build());
 
         // projects deployed to LOCAL
         events.add(Event.Builder.createProjectDeployedEvent("user2", "ws2", "", "project1", "type1", "LOCAL")
-                        .withTime("10:10:00,000")
-                        .withDate(DATE1).build());
+                                .withTime("10:10:00,000")
+                                .withDate(DATE1).build());
 
         // projects deployed to PaaS
         events.add(Event.Builder.createApplicationCreatedEvent("user1", "ws1", "", "project1", "type1", "paas1")
-                        .withTime("10:10:00,000")
-                        .withDate(DATE1).build());        
-        
+                                .withTime("10:10:00,000")
+                                .withDate(DATE1).build());
+
         // projects built
         events.add(Event.Builder.createProjectBuiltEvent("user2", "ws1", "", "project1", "type1").withTime("10:06:00")
-                        .withDate(DATE1).build());
+                                .withDate(DATE1).build());
 
 
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1", "", "", "", "", "", "")
-                        .withDate(DATE1)
-                        .withTime("20:03:00").build());
-       
+                                .withDate(DATE1)
+                                .withTime("20:03:00").build());
+
         events.add(Event.Builder.createDebugStartedEvent("user2", "ws1", "", "", "id1")
-                        .withDate(DATE1)
-                        .withTime("20:06:00").build());        
+                                .withDate(DATE1)
+                                .withTime("20:06:00").build());
 
         // invite users
         events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "email1")
-                        .withDate(DATE1).build());
+                                .withDate(DATE1).build());
 
         events.add(Event.Builder.createRunStartedEvent("user2", "ws2", "project", "type", "id1")
-                         .withDate(DATE1)
-                         .withTime("20:59:00").build());        
+                                .withDate(DATE1)
+                                .withTime("20:59:00").build());
         events.add(Event.Builder.createRunFinishedEvent("user2", "ws2", "project", "type", "id1")
-                         .withDate(DATE1)
-                         .withTime("21:01:00").build());
+                                .withDate(DATE1)
+                                .withTime("21:01:00").build());
 
         events.add(Event.Builder.createBuildStartedEvent("user1", "ws1", "project", "type", "id2")
-                         .withDate(DATE1)
-                         .withTime("21:12:00").build());
+                                .withDate(DATE1)
+                                .withTime("21:12:00").build());
         events.add(Event.Builder.createBuildFinishedEvent("user1", "ws1", "project", "type", "id2")
-                         .withDate(DATE1)
-                         .withTime("21:14:00").build());
+                                .withDate(DATE1)
+                                .withTime("21:14:00").build());
 
-        
+
         /** events at the DATE2 */
         // create user
         events.add(Event.Builder.createUserCreatedEvent("user3-id", "user3")
-                   .withDate(DATE2).build());   
+                                .withDate(DATE2).build());
 
         events.add(Event.Builder.createTenantCreatedEvent("ws3", "user3").withTime("09:00:00").withDate(DATE2)
-                   .build());
+                                .build());
 
         // update user's profile
         events.add(Event.Builder.createUserUpdateProfile("user3", "f3", "l3", "company3", "phone3", "jobtitle3")
-                   .withDate(DATE2).build());
-        
+                                .withDate(DATE2).build());
+
         // add shell launched events
         events.add(Event.Builder.createShellLaunchedEvent("user3", "ws3", "3").withTime("09:00:00").withDate(DATE2)
-                   .build());
+                                .build());
         events.add(Event.Builder.createShellLaunchedEvent("user2", "ws2", "2").withTime("10:00:00").withDate(DATE2)
-                   .build());        
-        
+                                .build());
+
         // projects created
         events.add(
-                   Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project22", "type1").withDate(DATE2)
-                        .withTime("10:03:00").build());
+                Event.Builder.createProjectCreatedEvent("user2", "ws2", "", "project22", "type1").withDate(DATE2)
+                             .withTime("10:03:00").build());
         events.add(
-                   Event.Builder.createProjectCreatedEvent("user3", "ws3", "", "project33", "type1").withDate(DATE2)
-                        .withTime("10:03:00").build());
+                Event.Builder.createProjectCreatedEvent("user3", "ws3", "", "project33", "type1").withDate(DATE2)
+                             .withTime("10:03:00").build());
 
         // projects deployed to LOCAL
         events.add(Event.Builder.createProjectDeployedEvent("user2", "ws2", "", "project1", "type1", "LOCAL")
-                        .withTime("10:10:00,000")
-                        .withDate(DATE2).build());
+                                .withTime("10:10:00,000")
+                                .withDate(DATE2).build());
         events.add(Event.Builder.createProjectDeployedEvent("user3", "ws3", "", "project33", "type1", "LOCAL")
-                        .withTime("10:10:00,000")
-                        .withDate(DATE2).build());
-        
-        
+                                .withTime("10:10:00,000")
+                                .withDate(DATE2).build());
+
+
         // projects deployed to PaaS
         events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project1", "type1", "paas1")
-                        .withTime("10:10:00,000")
-                        .withDate(DATE2).build());
-        
+                                .withTime("10:10:00,000")
+                                .withDate(DATE2).build());
+
         events.add(Event.Builder.createApplicationCreatedEvent("user3", "ws2", "", "project1", "type1", "paas2")
-                        .withTime("10:00:00")
-                        .withDate(DATE2).build());
+                                .withTime("10:00:00")
+                                .withDate(DATE2).build());
 
         events.add(Event.Builder.createApplicationCreatedEvent("user2", "ws2", "", "project2", "type1", "paas1")
-                        .withTime("10:11:00,100")
-                        .withDate(DATE2).build());
+                                .withTime("10:11:00,100")
+                                .withDate(DATE2).build());
 
 
         // invite users
         events.add(Event.Builder.createUserInviteEvent("user1", "ws1", "email2")
-                   .withDate(DATE2).build());
+                                .withDate(DATE2).build());
         events.add(Event.Builder.createUserInviteEvent("user3", "ws3", "email3")
-                   .withDate(DATE2).build());
-        
+                                .withDate(DATE2).build());
+
         return LogGenerator.generateLog(events);
-    }    
+    }
 
     private void extractDataFromLog(Map<String, String> context) throws IOException, ParseException {
         /** create collections "created_users", "removed_users" to calculate "total_users" metric */
@@ -400,41 +388,41 @@ public class TestAnalysisView extends BaseTest {
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
         Parameters.EVENT.put(context, "project-created");
         Parameters.STORAGE_TABLE.put(context, "created_projects");
-        pigServer.execute(ScriptType.EVENTS, context);        
+        pigServer.execute(ScriptType.EVENTS, context);
 
         /** create collections "builds" to calculate "users_who_built" metric */
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
         Parameters.EVENT.put(context, "project-built,project-deployed,application-created");
         Parameters.STORAGE_TABLE.put(context, "builds");
-        pigServer.execute(ScriptType.EVENTS, context);  
-        
-        /** create collections "deploys" to calculate "users_who_deployed" metric */        
+        pigServer.execute(ScriptType.EVENTS, context);
+
+        /** create collections "deploys" to calculate "users_who_deployed" metric */
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
         Parameters.EVENT.put(context, "project-deployed,application-created");
         Parameters.STORAGE_TABLE.put(context, "deploys");
-        pigServer.execute(ScriptType.EVENTS, context);          
-        
-        /** create collections "deploys_to_paas" to calculate "users_who_deployed_to_paas" metric */        
+        pigServer.execute(ScriptType.EVENTS, context);
+
+        /** create collections "deploys_to_paas" to calculate "users_who_deployed_to_paas" metric */
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
         Parameters.EVENT.put(context, "application-created");
         Parameters.STORAGE_TABLE.put(context, "deploys_to_paas");
-        pigServer.execute(ScriptType.EVENTS, context);     
+        pigServer.execute(ScriptType.EVENTS, context);
 
         /** create collections "user_invite" to calculate "users_who_invited" metric */
         // Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.toString());  // TODO
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
         Parameters.EVENT.put(context, "user-invite");
         Parameters.STORAGE_TABLE.put(context, "user_invite");
-        pigServer.execute(ScriptType.EVENTS, context);         
+        pigServer.execute(ScriptType.EVENTS, context);
 
-        /** create collections "shell_launched" to calculate "users_who_launched_shell" metric */        
+        /** create collections "shell_launched" to calculate "users_who_launched_shell" metric */
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
         Parameters.EVENT.put(context, "shell-launched");
         Parameters.STORAGE_TABLE.put(context, "shell_launched");
-        pigServer.execute(ScriptType.EVENTS, context);           
-        
+        pigServer.execute(ScriptType.EVENTS, context);
+
         /** create collections "users_profiles_list" to calculate "completed_profiles" metric */
-        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.toString());        
+        Parameters.WS.put(context, Parameters.WS_TYPES.ANY.toString());
         Parameters.STORAGE_TABLE.put(context, "users_profiles_list");
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, context);
     }
