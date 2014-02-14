@@ -20,14 +20,13 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import java.util.Map;
 
 /** @author Anatoliy Bazko */
-public class CompletedProfiles extends ReadBasedMetric {
+public class CompletedProfiles extends AbstractUsersProfile {
 
     private final String VALUE = "value";
 
