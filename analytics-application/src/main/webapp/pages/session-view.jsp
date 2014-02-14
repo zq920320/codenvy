@@ -18,11 +18,11 @@
 <html lang="en">
 <head>
     <title>User Session View</title>
-    <%@ include file="inclusions/header.jsp"%>
+    <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
-<jsp:include page="inclusions/top-menu.jsp">
+<jsp:include page="/inclusions/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-users"/>
 </jsp:include>
 
@@ -48,9 +48,9 @@
     </div>
 </div>
 
-<jsp:include page="inclusions/footer.jsp">
-    <jsp:param name="javaScriptToLoad" value="scripts/presenters/VerticalTablePresenter.js"/>
-    <jsp:param name="javaScriptToLoad" value="scripts/presenters/TablePresenter.js"/>
+<jsp:include page="/inclusions/footer.jsp">
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/VerticalTablePresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/TablePresenter.js"/>
 </jsp:include>
 
 </body>

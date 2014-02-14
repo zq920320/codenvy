@@ -32,7 +32,7 @@ function View() {
     var ABORT_LOADING_MESSAGE = "<i>Loading has been aborted.</i>";
 	
     function printTable(table, isDisplaySpecificFirstCell) {
-        print('<link href="css/database-table.css" rel="stylesheet" type="text/css" />');	    
+        print('<link href="/analytics/css/database-table.css" rel="stylesheet" type="text/css" />');	    
 	    print('<table cellspacing="0" class="database-table" align="center">');
 	    print('<thead aria-hidden="false">');
 	    print('<tr>');
@@ -151,7 +151,7 @@ function View() {
 	
 	//load handlers of table events
 	function loadTableHandlers() {
-	    print("<script src='scripts/views/database-table.js'></script>");
+	    print("<script src='/analytics/scripts/views/database-table.js'></script>");
 	    print("<script>");
 	    print("  jQuery(function() { ");
 	    print("       analytics.views.databaseTable.setupRowHandlers();");
@@ -169,7 +169,7 @@ function View() {
 	        return;
 	    }
 	
-	    print('<link href="css/page-navigator.css" rel="stylesheet" type="text/css" />');
+	    print('<link href="/analytics/css/page-navigator.css" rel="stylesheet" type="text/css" />');
 	    print("<div class='bottom-page-navigator'>");
 	
 	    for (var i = 1; i < pageCount + 1; i++) {
@@ -212,7 +212,7 @@ function View() {
 			
 		}
 
-	    print("<script src='scripts/views/page-navigation.js'></script>");
+	    print("<script src='/analytics/scripts/views/page-navigation.js'></script>");
 	    print("<script>");
         print("  jQuery(function() { ");
         print("       analytics.views.pageNavigation.setupHandlers(" + pageNavigatorLinkClickHandler + ");");

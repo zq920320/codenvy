@@ -18,11 +18,11 @@
 <html lang="en">
 <head>
     <title>Top Metrics</title>
-    <%@ include file="inclusions/header.jsp"%>
+    <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
-<jsp:include page="inclusions/top-menu.jsp">
+<jsp:include page="/inclusions/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
     <jsp:param name="selectedMenuItemId" value="topmenu-reports-top_metrics"/>
 </jsp:include>
@@ -31,7 +31,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="metric" class="btn-group metric-btns left" targetWidgets="topMetrics">
+                <div id="metric" class="btn-group metric-btns left" targetWidgets="_all">
                     <button class="btn command-btn" default value="top_factory_sessions">Top Factory Sessions</button>
                     <button class="btn command-btn" value="top_factories">Top Factories</button>
                     <button class="btn command-btn" value="top_referrers">Top Referrers</button>
@@ -39,7 +39,7 @@
                     <button class="btn command-btn" value="top_domains">Top Domains</button>
                     <button class="btn command-btn" value="top_companies">Top Companies</button>
                 </div>            
-                <div id="timely-dd" class="btn-group timely-dd-btns right" targetWidgets="topMetrics">
+                <div id="timely-dd" class="btn-group timely-dd-btns right" targetWidgets="_all">
                     <button class="btn command-btn" default value="1day">1 Day</button>
                     <button class="btn command-btn" value="7day">7 Days</button>
                     <button class="btn command-btn" value="30day">30 Days</button>
@@ -56,8 +56,8 @@
     </div>
 </div>
 
-<jsp:include page="inclusions/footer.jsp">
-    <jsp:param name="javaScriptToLoad" value="scripts/presenters/TopMetricsPresenter.js"/>
+<jsp:include page="/inclusions/footer.jsp">
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/TopMetricsPresenter.js"/>
 </jsp:include>
 
 </body>

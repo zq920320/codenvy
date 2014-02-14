@@ -18,11 +18,11 @@
 <html lang="en">
 <head>
     <title>Users Profiles</title>
-    <%@ include file="inclusions/header.jsp"%>
+    <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
-<jsp:include page="inclusions/top-menu.jsp">
+<jsp:include page="/inclusions/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-users"/>
 </jsp:include>
 
@@ -30,7 +30,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="filter-by" class="left" targetWidgets="usersProfiles">
+                <div id="filter-by" class="left" targetWidgets="_all">
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
                     <button class="btn command-btn" value="_id">Email</button>
@@ -47,8 +47,8 @@
     </div>
 </div>
 
-<jsp:include page="inclusions/footer.jsp">
-    <jsp:param name="javaScriptToLoad" value="scripts/presenters/UsersProfilesPresenter.js"/>
+<jsp:include page="/inclusions/footer.jsp">
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/UsersProfilesPresenter.js"/>
 </jsp:include>
 
 </body>

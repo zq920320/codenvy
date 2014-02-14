@@ -1,3 +1,5 @@
+com.codenvy.analytics.metrics.Zero
+
 com.codenvy.analytics.metrics.workspaces.CreatedWorkspaces
 com.codenvy.analytics.metrics.workspaces.DestroyedWorkspaces
 com.codenvy.analytics.metrics.workspaces.TotalWorkspaces
@@ -119,6 +121,7 @@ com.codenvy.analytics.metrics.sessions.factory.FactoriesRun
 com.codenvy.analytics.metrics.sessions.factory.FactoriesImported
 com.codenvy.analytics.metrics.sessions.factory.FactoryUrlAccepted
 com.codenvy.analytics.metrics.sessions.factory.CreatedFactories
+com.codenvy.analytics.metrics.sessions.factory.TotalFactories
 com.codenvy.analytics.metrics.sessions.factory.TemporaryWorkspacesCreated
 com.codenvy.analytics.metrics.sessions.factory.FactorySessions
 com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList
@@ -321,4 +324,3 @@ com.codenvy.analytics.metrics.ide_usage.window.IdeUsageWindowPreferences
 com.codenvy.analytics.metrics.ide_usage.window.IdeUsageWindowShowViewPackageExplore
 com.codenvy.analytics.metrics.ide_usage.window.IdeUsageWindowShowViewProjectExplore
 com.codenvy.analytics.metrics.ide_usage.window.IdeUsageWindowWelcome
-

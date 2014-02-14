@@ -19,6 +19,8 @@ if (typeof analytics === "undefined") {
     analytics = {};
 }
 
+analytics.presenter = analytics.presenter || {};
+
 analytics.presenter.TablePresenter = function TablePresenter() {};
 
 analytics.presenter.TablePresenter.prototype = new Presenter();

@@ -42,7 +42,6 @@ public class TestCumulativeMetric extends BaseTest {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20120105");
         Parameters.TO_DATE.put(context, "20120105");
-        Parameters.TIME_UNIT.put(context, "20120105");
 
         ReadBasedMetric mockedAddedMetric = mock(ReadBasedMetric.class);
         ReadBasedMetric mockedRemovedMetric = mock(ReadBasedMetric.class);
@@ -63,7 +62,6 @@ public class TestCumulativeMetric extends BaseTest {
         MetricFilter.USER.put(context, "user");
         Parameters.FROM_DATE.put(context, "20120105");
         Parameters.TO_DATE.put(context, "20120105");
-        Parameters.TIME_UNIT.put(context, "20120105");
 
         ReadBasedMetric mockedAddedMetric = mock(ReadBasedMetric.class);
         ReadBasedMetric mockedRemovedMetric = mock(ReadBasedMetric.class);

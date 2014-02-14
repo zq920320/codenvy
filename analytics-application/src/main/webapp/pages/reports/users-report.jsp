@@ -17,27 +17,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Timeline</title>
-    <%@ include file="inclusions/header.jsp"%>
+    <title>Users Report</title>
+    <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
-<jsp:include page="inclusions/top-menu.jsp">
+<jsp:include page="/inclusions/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
-    <jsp:param name="selectedMenuItemId" value="topmenu-reports-timeline"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-reports-users_report"/>
 </jsp:include>
 
 <div class="container-fluid">
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="timeline">
-                    <button class="btn command-btn" default value="Day">Day</button>
-                    <button class="btn command-btn" value="Week">Week</button>
+                <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="usersReport">
+                    <button class="btn command-btn" value="Day">Day</button>
+                    <button class="btn command-btn" default value="Week">Week</button>
                     <button class="btn command-btn" value="Month">Month</button>
                     <button class="btn command-btn" value="LifeTime">LifeTime</button>
                 </div>
-                <div id="filter-by" class="right" targetWidgets="timeline">
+                <div id="filter-by" class="right" targetWidgets="_all">
                      Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
                     <button class="btn command-btn" value="user">Email</button>
@@ -46,15 +46,29 @@
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>                   
                 </div>
             </div>
-            <div class="hero-unit">
-                <div id="timeline" class="single-column-gadget"></div>
+            <div class="single-column-gadget full-width">
+                <div class="view">
+                    <div class="tables">
+                        <div class="item">
+                            <div class="header">Users Report</div>
+                            <div class="body" id="usersReport"></div>
+                        </div>
+                        <div class="item">
+                            <div class="header">Engagement Levels</div>
+                            <div class="body" id="engagementLevels"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="hero-unit">
+                <div id="usersReport" class="single-column-gadget"></div>
+            </div>        
         </div>
     </div>
 </div>
 
-<jsp:include page="inclusions/footer.jsp">
-    <jsp:param name="javaScriptToLoad" value="scripts/presenters/ReportPresenter.js"/>
+<jsp:include page="/inclusions/footer.jsp">
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/TablePresenter.js"/>
 </jsp:include>
 
 </body>

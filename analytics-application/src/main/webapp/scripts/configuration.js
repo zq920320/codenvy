@@ -31,17 +31,89 @@ function Configuration() {
             isNeedToSaveInHistory: true,
         },
 
-        timeline: {
-            presenterType: "ReportPresenter",
-            modelViewName: "timeline",
+        summaryReport: {
+            presenterType: "TablePresenter",
+            modelViewName: "summary_report",
 
             defaultModelParams: {
-                "time_unit": "day"
+                "time_unit": "month"
             },
 
             isNeedToSaveInHistory: true,
         },
 
+        workspaceReport: {
+            presenterType: "ReportPresenter",
+            modelViewName: "workspace_report",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            isNeedToSaveInHistory: true,
+        },
+
+        usersReport: {
+            presenterType: "TablePresenter",
+            modelViewName: "users_report",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            isNeedToSaveInHistory: true,
+        },
+
+        engagementLevels: {
+            presenterType: "TablePresenter",
+            modelViewName: "engagement_levels",
+            isNeedToSaveInHistory: true,
+        },
+        
+        collaborationReport: {
+            presenterType: "TablePresenter",
+            modelViewName: "collaboration_report",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            isNeedToSaveInHistory: true,
+        },        
+        
+        usageReport: {
+            presenterType: "ReportPresenter",
+            modelViewName: "usage_report",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            isNeedToSaveInHistory: true,
+        },
+        
+        sessionsReport: {
+            presenterType: "ReportPresenter",
+            modelViewName: "sessions_report",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            isNeedToSaveInHistory: true,
+        },
+
+        projectsReport: {
+            presenterType: "ReportPresenter",
+            modelViewName: "projects_report",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            isNeedToSaveInHistory: true,
+        },        
+        
         topMetrics: {
             presenterType: "TopMetricsPresenter",
 
@@ -113,12 +185,6 @@ function Configuration() {
             presenterType: "TablePresenter",
             modelViewName: "users_events",
             isNeedToSaveInHistory: true
-        },
-
-        timeline_product_usage_condition: {
-            presenterType: "ReportPresenter",
-            modelViewName: "timeline_product_usage_condition",
-            isNeedToSaveInHistory: false,
         },
 
         analysis: {

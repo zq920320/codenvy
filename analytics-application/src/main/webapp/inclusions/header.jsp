@@ -1,8 +1,8 @@
-    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-responsive.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/styles.css"/>
-    <link href="css/single-column.css" rel="stylesheet" type="text/css" />
-    <link href="css/view.css" rel="stylesheet" type="text/css" />    
+    <link rel="stylesheet" type="text/css" href="/analytics/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/analytics/bootstrap/css/bootstrap-responsive.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/analytics/css/styles.css"/>
+    <link rel="stylesheet" type="text/css" href="/analytics/css/single-column.css"/>
+    <link rel="stylesheet" type="text/css" href="/analytics/css/view.css"/>    
     
     <style type="text/css">
         body {
@@ -15,8 +15,8 @@
         }
     </style>
     
-    <script type="text/javascript" src="scripts/third-party/jquery-1.7.2.min.js"></script>
-	<script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/analytics/scripts/third-party/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="/analytics/bootstrap/js/bootstrap.js"></script>
 
-    <link rel="stylesheet" href="scripts/third-party/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">
-	<script type="text/javascript" src="scripts/third-party/jquery-ui-1.8.20/ui/minified/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="/analytics/scripts/third-party/jquery-ui-1.8.20/themes/base/minified/jquery-ui.min.css">
+	<script type="text/javascript" src="/analytics/scripts/third-party/jquery-ui-1.8.20/ui/minified/jquery-ui.min.js"></script>

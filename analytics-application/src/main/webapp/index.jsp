@@ -15,4 +15,4 @@
  from Codenvy S.A.. 
 --%>
 
-<jsp:forward page="timeline.jsp"/>
+<jsp:forward page="pages/reports/summary-report.jsp"/>

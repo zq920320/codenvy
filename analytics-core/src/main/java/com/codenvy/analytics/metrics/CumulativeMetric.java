@@ -41,11 +41,11 @@ public abstract class CumulativeMetric extends AbstractMetric {
     private final InitialValueContainer initialValueContainer;
 
 
-    protected CumulativeMetric(MetricType metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
+    protected CumulativeMetric(MetricType metricType, Metric addedMetric, Metric removedMetric) {
         this(metricType.toString(), addedMetric, removedMetric);
     }
 
-    public CumulativeMetric(String metricType, ReadBasedMetric addedMetric, ReadBasedMetric removedMetric) {
+    public CumulativeMetric(String metricType, Metric addedMetric, Metric removedMetric) {
         super(metricType);
 
         this.addedMetric = addedMetric;

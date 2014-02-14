@@ -76,7 +76,7 @@
 			</a>
 
             <div class="left">
-				<a class="nav" href="users-profiles.jsp" id="topmenu-users">Users</a>
+				<a class="nav" href="/analytics/pages/users-profiles.jsp" id="topmenu-users">Users</a>
 				<a class="nav" href="#">Workspaces</a> 
 				<a class="nav" href="#">Projects</a> 
 				<a class="nav" href="#">Factories</a>
@@ -86,10 +86,16 @@
 						<button id="topmenu-reports">Reports</button>
 					</div>
 					<ul class="dropdown-menu">
-					    <li><a href="timeline.jsp" id="topmenu-reports-timeline">Timeline</a></li>
-					    <li><a href="factory-statistics.jsp" id="topmenu-reports-factories">Factories</a></li>
-					    <li><a href="top-metrics.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
-					    <li><a href="analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
+					    <li><a href="/analytics/pages/reports/summary-report.jsp" id="topmenu-reports-summary_report">Summary</a></li>
+                        <li><a href="/analytics/pages/reports/workspace-report.jsp" id="topmenu-reports-workspace_report">Workspace</a></li>
+                        <li><a href="/analytics/pages/reports/users-report.jsp" id="topmenu-reports-users_report">Users</a></li>
+                        <li><a href="/analytics/pages/reports/collaboration-report.jsp" id="topmenu-reports-collaboration_report">Collaboration</a></li>
+                        <li><a href="/analytics/pages/reports/usage-report.jsp" id="topmenu-reports-usage_report">Usage</a></li>
+                        <li><a href="/analytics/pages/reports/sessions-report.jsp" id="topmenu-reports-sessions_report">Sessions</a></li>
+                        <li><a href="/analytics/pages/reports/projects-report.jsp" id="topmenu-reports-projects_report">Projects</a></li>
+					    <li><a href="/analytics/pages/reports/factory-statistics.jsp" id="topmenu-reports-factories">Factories</a></li>
+					    <li><a href="/analytics/pages/reports/top-metrics.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
+					    <li><a href="/analytics/pages/reports/analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
 				    </ul>	    
 				</div>
 		    </div>
@@ -126,7 +132,7 @@
 </div>
 
 <!-- add handlers of top-menu buttons -->
-<script type="text/javascript" src="scripts/views/top-menu.js"></script>
+<script type="text/javascript" src="/analytics/scripts/views/top-menu.js"></script>
 <script>
 	$(function() {
 	    analytics.views.topMenu.turnOnNavButtons();
