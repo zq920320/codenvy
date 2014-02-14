@@ -37,12 +37,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 public class MetricRow extends AbstractRow {
-
-    private static final String DEFAULT_NUMERIC_FORMAT = "%,.0f";
-    private static final String DEFAULT_TIME_FORMAT    = "mm";
-    private static final String DEFAULT_DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";
+    private static final String DEFAULT_NUMERIC_FORMAT         = "%,.0f";
+    private static final String DEFAULT_DATE_FORMAT            = "yyyy-MM-dd HH:mm:ss";
     private static final String SET_FROM_DATE_TO_DEFAULT_VALUE = "set-from-date-to-default-value";
 
     /** The name of the metric. */
@@ -70,9 +70,6 @@ public class MetricRow extends AbstractRow {
      */
     private static final String HIDE_NEGATIVE_VALUES = "hide-negative-values";
 
-    /** The format for time fields. Supports 'mm' as the number of minutes and 'ss' as the number of seconds. */
-    private static final String TIME_FORMAT = "time-format";
-
     /**
      * The format for numeric fields. All fields are supposed to be numeric if there is no any indicator to tell
      * opposite. The value can be any supported java format.
@@ -88,16 +85,27 @@ public class MetricRow extends AbstractRow {
     private final List<String> timeFields;
     private final List<String> eventFields;
     private final boolean      isTimeField;
-    private final String       timeFormat;
 
     private final EventsHolder eventsHolder;
 
     public MetricRow(Map<String, String> parameters) {
+        this(MetricFactory.getMetric(parameters.get(NAME)), parameters);
+    }
+
+    /**
+     * For testing purpose.
+     *
+     * @param metric
+     *         the underlying Metric
+     * @param parameters
+     *         the list of additional parameters
+     */
+    protected MetricRow(Metric metric, Map<String, String> parameters) {
         super(parameters);
 
+        this.metric = metric;
         this.eventsHolder = Injector.getInstance(EventsHolder.class);
 
-        metric = MetricFactory.getMetric(parameters.get(NAME));
         numericFormat =
                 parameters.containsKey(NUMERIC_FORMAT) ? parameters.get(NUMERIC_FORMAT) : DEFAULT_NUMERIC_FORMAT;
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
@@ -112,9 +120,9 @@ public class MetricRow extends AbstractRow {
         timeFields = parameters.containsKey(TIME_FIELDS) ? Arrays.asList(parameters.get(TIME_FIELDS).split(","))
                                                          : new ArrayList<String>();
         eventFields = parameters.containsKey(EVENT_FIELDS) ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
-                                                           : new ArrayList<String>();                                                         
+                                                           : new ArrayList<String>();
+
         isTimeField = parameters.containsKey(TIME_FIELD) && Boolean.parseBoolean(parameters.get(TIME_FIELD));
-        timeFormat = parameters.containsKey(TIME_FORMAT) ? parameters.get(TIME_FORMAT) : DEFAULT_TIME_FORMAT;
     }
 
     @Override
@@ -254,31 +262,39 @@ public class MetricRow extends AbstractRow {
 
         return new StringValueData(formattedValue);
     }
-    
+
     /**
      * @return the description of the event
      */
     private StringValueData formatEventValue(ValueData valueData) {
         try {
             String description = eventsHolder.getDescription(valueData.getAsString());
-            return new StringValueData(description);        
+            return new StringValueData(description);
         } catch (IllegalArgumentException e) {
             return StringValueData.DEFAULT;
         }
-    }    
+    }
 
     private StringValueData formatTimeValue(ValueData valueData) {
-        long timeInMillisecs = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
-        long timeInSeconds = Math.round(timeInMillisecs / 1000.0);
-        double min = timeInSeconds / 60;
-        long sec = timeInSeconds % 60;        
+        long milliseconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
 
-        if (min == 0 && sec == 0) {
+        int minutes = (int)((milliseconds / (1000 * 60)) % 60);
+        int hours = (int)(milliseconds / (1000 * 60 * 60));
+
+        if (hours == 0 && minutes == 0) {
             return StringValueData.DEFAULT;
-        }
+        } else {
+            StringBuilder builder = new StringBuilder();
+            if (hours > 0) {
+                builder.append(hours);
+                builder.append("h ");
+            }
 
-        String value = timeFormat.replace("mm", String.format(numericFormat, min)).replace("ss", "" + sec);
-        return StringValueData.valueOf(value);
+            builder.append(minutes);
+            builder.append("m");
+
+            return StringValueData.valueOf(builder.toString());
+        }
     }
 
     protected ValueData getMetricValue(Map<String, String> context) throws IOException {
@@ -287,8 +303,8 @@ public class MetricRow extends AbstractRow {
 
             context = Utils.clone(context);
             Parameters.FROM_DATE.putDefaultValue(context);
-        }        
-        
+        }
+
         return metric.getValue(context);
     }
 }

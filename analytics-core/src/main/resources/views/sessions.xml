@@ -26,7 +26,6 @@
                 <parameter key="name" value="product_usage_sessions_list"/>
                 <parameter key="fields" value="session_id,user,ws,start_time,end_time,time"/>
                 <parameter key="time-fields" value="time"/>
-                <parameter key="time-format" value="mm min. ss sec."/>
             </row>
         </section>
     </view>
