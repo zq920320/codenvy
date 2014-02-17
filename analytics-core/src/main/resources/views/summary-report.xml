@@ -45,6 +45,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_time_total"/>
                 <parameter key="description" value="Usage Minutes"/>
+                <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_projects"/>
