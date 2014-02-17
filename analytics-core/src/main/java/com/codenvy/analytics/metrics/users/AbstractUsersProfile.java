@@ -53,7 +53,17 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
                 match.put(USER_EMAIL, new BasicDBObject("$in", values));
 
             } else if (filter == MetricFilter.USER_COMPANY) {
-                Pattern company = Pattern.compile(filter.get(clauses).replace(",", "|"), Pattern.CASE_INSENSITIVE);
+                StringBuilder builder = new StringBuilder();
+
+                for (String value : filter.get(clauses).split(",")) {
+                    if (builder.length() > 0) {
+                        builder.append("|");
+                    }
+
+                    builder.append(Pattern.quote(value));
+                }
+
+                Pattern company = Pattern.compile(builder.toString(), Pattern.CASE_INSENSITIVE);
                 match.put(USER_COMPANY, company);
 
             } else if (filter != MetricFilter.IDE) {

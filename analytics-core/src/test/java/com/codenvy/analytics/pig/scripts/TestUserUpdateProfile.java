@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.mongodb.util.MyAsserts.assertEquals;
+import static org.testng.AssertJUnit.fail;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUserUpdateProfile extends BaseTest {
@@ -68,12 +69,11 @@ public class TestUserUpdateProfile extends BaseTest {
 
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
 
-
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f3", "l3", "company1", "22", "2")
                                 .withDate("2013-01-02").build());
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f4", "l4", "company3", "22", "2")
                                 .withDate("2013-01-02").build());
-        events.add(Event.Builder.createUserUpdateProfile("user4@gmail.com", "f4", "l4", "company4", "22", "")
+        events.add(Event.Builder.createUserUpdateProfile("user4@gmail.com", "f4", "l4", "company4 :)", "22", "")
                                 .withDate("2013-01-02").build());
         log = LogGenerator.generateLog(events);
 
@@ -122,10 +122,14 @@ public class TestUserUpdateProfile extends BaseTest {
             } else if (userEmail.getAsString().equals("user4@gmail.com")) {
                 assertEquals(all.get("user_first_name").getAsString(), "f4");
                 assertEquals(all.get("user_last_name").getAsString(), "l4");
-                assertEquals(all.get("user_company").getAsString(), "company4");
+                assertEquals(all.get("user_company").getAsString(), "company4 :)");
                 assertEquals(all.get("user_phone").getAsString(), "22");
                 assertEquals(all.get("user_job").getAsString(), "");
+
+            } else {
+                fail("Unknown user" + userEmail);
             }
+
         }
 
         metric = new TestedUsersProfiles();
@@ -165,7 +169,7 @@ public class TestUserUpdateProfile extends BaseTest {
     }
 
     @Test
-    public void testSearchUsersByCompanyWildCardsUseCase1() throws Exception {
+    public void testSearchUsersByCompanyUseCase1() throws Exception {
         Map<String, String> context = Utils.newContext();
         MetricFilter.USER_COMPANY.put(context, "company");
 
@@ -176,9 +180,31 @@ public class TestUserUpdateProfile extends BaseTest {
     }
 
     @Test
-    public void testSearchUsersByCompanyWildCardsUseCase2() throws Exception {
+    public void testSearchUsersByCompanyUseCase2() throws Exception {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "comp.ny");
+        MetricFilter.USER_COMPANY.put(context, "company1,company2");
+
+        Metric metric = new TestedUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 2);
+    }
+
+    @Test
+    public void testSearchUsersByCompanyUseCase3() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, "company1,company4");
+
+        Metric metric = new TestedUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 2);
+    }
+
+    @Test
+    public void testSearchUsersByCompanyUseCase4() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_COMPANY.put(context, "ompan");
 
         Metric metric = new TestedUsersProfilesList();
 
@@ -187,25 +213,14 @@ public class TestUserUpdateProfile extends BaseTest {
     }
 
     @Test
-    public void testSearchUsersByCompanyWildCardsUseCase3() throws Exception {
+    public void testSearchUsersByCompanyUseCase5() throws Exception {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, ".*cOmp.n");
+        MetricFilter.USER_COMPANY.put(context, "company4");
 
         Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
-        assertEquals(value.size(), 4);
-    }
-
-    @Test
-    public void testSearchUsersByCompanyWildCardsUseCase4() throws Exception {
-        Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "comp..ny");
-
-        Metric metric = new TestedUsersProfilesList();
-
-        ListValueData value = (ListValueData)metric.getValue(context);
-        assertEquals(value.size(), 0);
+        assertEquals(value.size(), 1);
     }
 
     @Test
@@ -221,14 +236,14 @@ public class TestUserUpdateProfile extends BaseTest {
 
 
     @Test
-    public void testSearchUsersByCompanyWildCardsUseCase5() throws Exception {
+    public void testSearchUsersByCompanyWithSpecialCharacters() throws Exception {
         Map<String, String> context = Utils.newContext();
-        MetricFilter.USER_COMPANY.put(context, "company1,company2");
+        MetricFilter.USER_COMPANY.put(context, "company4 :)");
 
         Metric metric = new TestedUsersProfilesList();
 
         ListValueData value = (ListValueData)metric.getValue(context);
-        assertEquals(value.size(), 2);
+        assertEquals(value.size(), 1);
     }
 
     @Test
