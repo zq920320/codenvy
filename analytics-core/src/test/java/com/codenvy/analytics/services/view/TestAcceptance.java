@@ -149,6 +149,9 @@ public class TestAcceptance extends BaseTest {
                 case "users_usage_day":
                     assertUsersUsageDay(sectionData);
                     break;
+                case "active_users_usage_day":
+                    assertActiveUsersUsageDay(sectionData);
+                    break;                 
                 case "authentications_day":
                     assertAuthenticationsDay(sectionData);
                     break;
@@ -538,16 +541,26 @@ public class TestAcceptance extends BaseTest {
         aggregateResult(row, new StringValueData("96"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
+        aggregateResult(row, new StringValueData("Active Users"), sectionData.get(2).get(0));
+        aggregateResult(row, new StringValueData("202"), sectionData.get(2).get(1));
+
+        row = sectionData.get(3).get(0).getAsString();
+        aggregateResult(row, new StringValueData("Non-Active Users"), sectionData.get(3).get(0));
+        aggregateResult(row, new StringValueData(""), sectionData.get(3).get(1));    
+    }
+    
+    private void assertActiveUsersUsageDay(SectionData sectionData) {    
+        String row = sectionData.get(1).get(0).getAsString();
+        aggregateResult(row, new StringValueData("Total Active Users"), sectionData.get(1).get(0));
+        aggregateResult(row, new StringValueData("202"), sectionData.get(1).get(1));
+
+        row = sectionData.get(2).get(0).getAsString();
         aggregateResult(row, new StringValueData("New Active Users"), sectionData.get(2).get(0));
         aggregateResult(row, new StringValueData("76"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Returning Active Users"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("126"), sectionData.get(3).get(1));
-
-        row = sectionData.get(4).get(0).getAsString();
-        aggregateResult(row, new StringValueData("Non-Active Users"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("126"), sectionData.get(3).get(1));            
     }
 
     private void assertProjectsDay(SectionData sectionData) {
