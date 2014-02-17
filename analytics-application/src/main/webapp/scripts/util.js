@@ -117,6 +117,25 @@ function Util() {
 	    return typeof(Storage) != "undefined";
 	}
 	
+	/**
+	 * Logout user from codenvy.
+	 * @see Codenvy Authentication API here https://wiki.codenvycorp.com/display/PSR/Authentication+API 
+	 */
+    function processUserLogOut() {
+        $.ajax({
+            url: "/api/auth/logout",
+            type: "POST"
+        })
+        .done(function (data) {
+            window.location = "/site/login";
+        })
+        .fail(function (data, textStatus, errorThrown) {
+            window.location = "/site/login";
+        });
+        
+        return false;
+    }
+	
     /** ****************** library API ********** */
     return {
     	constructUrlParams: constructUrlParams,
@@ -125,6 +144,7 @@ function Util() {
     	isBrowserSupportWebStorage: isBrowserSupportWebStorage,
     	diff: diff,
     	unionWithRewrite: unionWithRewrite,
+    	processUserLogOut: processUserLogOut,
     }
 
 }

@@ -122,7 +122,7 @@
 					<button id="topmenu-user">&nbsp;</button>
 				</div>
                 <ul class="dropdown-menu">
-					<li><a href="/api/auth/logout">Logout</a></li>
+					<li><a href="#" onClick = "analytics.util.processUserLogOut()">Logout</a></li>
 					<li><a href="/">Main page</a></li>
 					<li><a href="/site/private/select-tenant">Workspace</a></li>
 				</ul>

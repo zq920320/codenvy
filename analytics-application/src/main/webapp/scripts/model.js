@@ -102,12 +102,12 @@ function Model() {
                 dataType: responseType,
                 async: isAsync
             })
-                .done(function (data) {
-                    doneCollback(data);
-                })
-                .fail(function (data, textStatus, errorThrown) {
-                    failFunction(data.status, textStatus, errorThrown);
-                });
+            .done(function (data) {
+                doneCollback(data);
+            })
+            .fail(function (data, textStatus, errorThrown) {
+                failFunction(data.status, textStatus, errorThrown);
+            });
         } else {
             var response = currentAjaxRequest = $.ajax({
                 url: url,
