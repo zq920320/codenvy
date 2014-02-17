@@ -45,7 +45,7 @@ public class TestReportsConfiguration extends BaseTest {
                                                 "            <daily/>\n" +
                                                 "            <weekly>\n" +
                                                 "                <views>\n" +
-                                                "                    <view>timeline</view>\n" +
+                                                "                    <view>summary_report</view>\n" +
                                                 "                    <view>factory-timeline</view>\n" +
                                                 "                </views>\n" +
                                                 "                <context-modifier>\n" +
@@ -98,7 +98,7 @@ public class TestReportsConfiguration extends BaseTest {
 
         ViewsConfiguration viewsConfiguration = weeklyFrequencyConfiguration.getViews();
         assertEquals(2, viewsConfiguration.getViews().size());
-        assertEquals("timeline", viewsConfiguration.getViews().get(0));
+        assertEquals("summary_report", viewsConfiguration.getViews().get(0));
         assertEquals("factory-timeline", viewsConfiguration.getViews().get(1));
 
         assertNotNull(weeklyFrequencyConfiguration.getContextModifier());

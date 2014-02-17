@@ -22,15 +22,21 @@
             <recipient>analytics-admin</recipient>
         </recipients>
         <frequency>
-            <weekly>
+            <daily>
                 <views>
-                    <view>timeline</view>
+                    <view>summary_report</view>
+                    <view>workspace_report.xml</view>
+                    <view>users_report</view>
+                    <view>collaboration_report</view>
+                    <view>usage_report</view>
+                    <view>sessions_report</view>
+                    <view>projects_report</view>
                     <view>factory-timeline</view>
                 </views>
                 <context-modifier>
                     <class>com.codenvy.analytics.services.reports.DummyContextModifier</class>
                 </context-modifier>
-            </weekly>
+            </daily>
         </frequency>
     </report>
 
