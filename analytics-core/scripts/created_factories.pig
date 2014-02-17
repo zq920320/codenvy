@@ -27,11 +27,8 @@ a1 = filterByEvent(l, 'factory-created');
 a2 = extractUrlParam(a1, 'FACTORY-URL', 'factory');
 a3 = extractParam(a2, 'TYPE', 'projectType');
 a4 = extractUrlParam(a3, 'REPO-URL', 'repository');
-a5 = extractUrlParam(a4, 'ORG-ID', 'orgId');
-a6 = extractUrlParam(a5, 'AFFILIATE-ID', 'affiliateId');
-
-a = FOREACH a6 GENERATE dt, ws, user, factory, repository, (orgId == '}' ? '' : orgId) AS orgId,
-                (affiliateId == '}' ? '' : affiliateId) AS affiliateId, projectType, ide;
+a5 = extractOrgAndAffiliateId(a4);
+a = FOREACH a5 GENERATE dt, ws, user, factory, repository, projectType, ide, orgId, affiliateId;
 
 result = FOREACH a GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
                     TOTUPLE('orgId', orgId), TOTUPLE('affiliateId', affiliateId), TOTUPLE('ide', ide),

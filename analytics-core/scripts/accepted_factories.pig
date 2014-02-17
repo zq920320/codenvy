@@ -26,9 +26,9 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 a1 = filterByEvent(l, 'factory-url-accepted');
 a2 = extractUrlParam(a1, 'REFERRER', 'referrer');
 a3 = extractUrlParam(a2, 'FACTORY-URL', 'factoryUrl');
-a4 = extractUrlParam(a3, 'ORG-ID', 'orgId');
-a5 = extractUrlParam(a4, 'AFFILIATE-ID', 'affiliateId');
-a = FOREACH a5 GENERATE dt, ws, user, referrer, factoryUrl, orgId, affiliateId, ide;
+a4 = extractOrgAndAffiliateId(a3);
+a = FOREACH a4 GENERATE dt, ws, user, referrer, factoryUrl, ide, orgId, affiliateId;
+
 
 result = FOREACH a GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
                     TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId), TOTUPLE('referrer', referrer),

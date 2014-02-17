@@ -30,10 +30,10 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.*;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class TestExtractQueryParam extends BaseTest {
+public class TestExtractOrgAndAffiliateId extends BaseTest {
 
     private HashMap<String, String> context = new HashMap<>();
 
@@ -41,26 +41,23 @@ public class TestExtractQueryParam extends BaseTest {
     public void prepare() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(new Event.Builder().withParam("EVENT", "event1")
-                                      .withParam("FACTORY-URL", "http://www.com?test=1&affiliateid=100")
-                                      .withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "event2")
-                                      .withParam("FACTORY-URL", "http://www.com?test=1&affiliateid=200&orgid=500")
-                                      .withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "event3")
-                                      .withParam("AFFILIATE-ID", "300")
-                                      .withParam("FACTORY-URL", "http://www.com?test=1&affiliateid=100")
-                                      .withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "event4")
-                                      .withParam("FACTORY-URL", "http://www.com?affiliateid=400")
-                                      .withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "event5")
-                                      .withParam("AFFILIATE-ID", "")
-                                      .withParam("FACTORY-URL", "http://www.com?affiliateid=400")
-                                      .withDate("2013-01-01").build());
-        events.add(new Event.Builder().withParam("EVENT", "event6")
-                                      .withParam("FACTORY-URL", "http://www.com")
-                                      .withDate("2013-01-01").build());
+        events.add(new Event.Builder().withParam("EVENT", "event1").withParam("ORG-ID", "")
+                                      .withParam("AFFILIATE-ID", "").withDate("2013-01-01").build());
+
+        events.add(new Event.Builder().withParam("EVENT", "event2").withParam("ORG-ID", "o")
+                                      .withParam("AFFILIATE-ID", "a").withDate("2013-01-01").build());
+
+        events.add(new Event.Builder().withParam("EVENT", "event3").withParam("ORG-ID", "}")
+                                      .withParam("AFFILIATE-ID", "a}").withDate("2013-01-01").build());
+
+        events.add(new Event.Builder().withParam("EVENT", "event4").withParam("ORG-ID", "o")
+                                      .withParam("FACTORY-URL", "http://www.com?affiliateid=a")
+                                      .withParam("AFFILIATE-ID", "").withDate("2013-01-01").build());
+
+        events.add(new Event.Builder().withParam("EVENT", "event5").withParam("ORG-ID", "o")
+                                      .withParam("FACTORY-URL", "http://www.com?affiliateid=A&orgid=O")
+                                      .withParam("AFFILIATE-ID", "a").withDate("2013-01-01").build());
+
 
         File log = LogGenerator.generateLog(events);
 
@@ -77,18 +74,17 @@ public class TestExtractQueryParam extends BaseTest {
     public void testExtractQueryParam() throws Exception {
         Set<String> actual = new HashSet<>();
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_QUERY_PARAM, context);
+        Iterator<Tuple> iterator = pigServer.executeAndReturn(ScriptType.TEST_EXTRACT_ORG_AND_AFFILIATE_ID, context);
         while (iterator.hasNext()) {
             actual.add(iterator.next().toString());
         }
 
         Set<String> expected = new HashSet<>();
-        expected.add("(event1,100)");
-        expected.add("(event2,200)");
-        expected.add("(event3,300)");
-        expected.add("(event4,400)");
-        expected.add("(event5,)");
-        expected.add("(event6,)");
+        expected.add("(event1,,)");
+        expected.add("(event2,o,a)");
+        expected.add("(event3,,a)");
+        expected.add("(event4,o,a)");
+        expected.add("(event5,o,a)");
 
         assertEquals(actual, expected);
     }

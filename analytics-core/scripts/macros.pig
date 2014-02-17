@@ -152,16 +152,19 @@ DEFINE extractParam(X, paramNameParam, paramFieldNameParam) RETURNS Y {
 
 
 ---------------------------------------------------------------------------
--- Extract parameter value out of message and adds as field to tuple.
--- @param paramNameParam - the parameter name
--- @param paramFieldNameParam - the name of filed in the tuple
--- @return  {..., $paramFieldNameParam : bytearray}
---a3 = extractQueryParam(a2, 'factoryUrl', 'affiliateid', 'AFFILIATE-ID', 'affiliateId');
+-- Extract orgId and affiliateId either from parameter or from factory url.
+-- Removes ending '}' character (known bug)
+-- @return  {..., orgId : bytearray, affiliateId : bytearray}
 ---------------------------------------------------------------------------
-DEFINE extracQueryParam(X, url, paramName, messageParam, expectedFieldName) RETURNS Y {
-  x1 = extractParam($X, '$messageParam', 'param1');
-  x2 = FOREACH x1 GENERATE *, GetQueryValue($url, '$paramName') AS param2;
-  $Y = FOREACH x2 GENERATE *, (param1 IS NOT NULL ? param1 : param2) AS $expectedFieldName;
+DEFINE extractOrgAndAffiliateId(X) RETURNS Y {
+  e1 = extractParam($X, 'ORG-ID', 'orgIdTest1');
+  e2 = extractParam(e1, 'AFFILIATE-ID', 'affiliateIdTest1');
+  e3 = extractUrlParam(e2, 'FACTORY-URL', 'factoryTest');
+  e4 = FOREACH e3 GENERATE *, GetQueryValue(factoryTest, 'orgid') AS orgIdTest2, GetQueryValue(factoryTest, 'affiliateid') AS affiliateIdTest2;
+  e5 = FOREACH e4 GENERATE *, (orgIdTest1 IS NULL OR orgIdTest1 == '' ? orgIdTest2 : orgIdTest1) AS orgIdTest3,
+                        (affiliateIdTest1 IS NULL OR affiliateIdTest1 == '' ? affiliateIdTest2 : affiliateIdTest1) AS affiliateIdTest3;
+  $Y = FOREACH e5 GENERATE *, (ENDSWITH(orgIdTest3, '}') ? SUBSTRING(orgIdTest3, 0, LAST_INDEX_OF(orgIdTest3, '}')) : orgIdTest3) AS orgId,
+        (ENDSWITH(affiliateIdTest3, '}') ? SUBSTRING(affiliateIdTest3, 0, LAST_INDEX_OF(affiliateIdTest3, '}')) : affiliateIdTest3) AS affiliateId;
 };
 
 ---------------------------------------------------------------------------
@@ -275,9 +278,8 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
     x1 = filterByEvent($X, 'factory-url-accepted');
     x2 = extractUrlParam(x1, 'REFERRER', 'referrer');
     x3 = extractUrlParam(x2, 'FACTORY-URL', 'factory');
-    x4 = extractUrlParam(x3, 'ORG-ID', 'orgId');
-    x5 = extractUrlParam(x4, 'AFFILIATE-ID', 'affiliateId');
-    x = FOREACH x5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+    x4 = extractOrgAndAffiliateId(x3);
+    x = FOREACH x4 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
 
     -- created temporary workspaces
     w1 = filterByEvent($X, 'tenant-created');
@@ -296,9 +298,8 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     u1 = filterByEvent($X, 'factory-url-accepted');
     u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
     u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
-    u4 = extractUrlParam(u3, 'ORG-ID', 'orgId');
-    u5 = extractUrlParam(u4, 'AFFILIATE-ID', 'affiliateId');
-    u = FOREACH u5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+    u4 = extractOrgAndAffiliateId(u3);
+    u = FOREACH u4 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
 
     -- finds in which temporary workspaces anonymous users have worked
     x1 = filterByEvent($X, 'user-added-to-ws');

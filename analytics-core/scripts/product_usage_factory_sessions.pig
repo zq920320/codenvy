@@ -28,9 +28,8 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 u1 = filterByEvent(l, 'factory-url-accepted');
 u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
 u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
-u4 = extractUrlParam(u3, 'ORG-ID', 'orgId');
-u5 = extractUrlParam(u4, 'AFFILIATE-ID', 'affiliateId');
-u = FOREACH u5 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+u4 = extractOrgAndAffiliateId(u3);
+u = FOREACH u4 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
 
 ---- finds out all imported projects
 i1 = filterByEvent(l, 'factory-project-imported');
