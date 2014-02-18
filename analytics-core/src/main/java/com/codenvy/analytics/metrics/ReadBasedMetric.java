@@ -49,6 +49,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final String SEPARATOR           = ",";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
+    public static final Pattern NON_ANONYMOUS_USER = Pattern.compile("^(?!ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
+
 
     public final DataLoader dataLoader;
 

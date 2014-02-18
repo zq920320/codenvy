@@ -24,6 +24,8 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 /** @author Anatoliy Bazko */
@@ -58,6 +60,18 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
         return new DBObject[]{new BasicDBObject("$match", match),
                               new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
+    }
+
+    @Override
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+        DBObject filter = super.getFilter(clauses);
+
+        DBObject match = (DBObject)filter.get("$match");
+        if (match.get(ProductUsageSessionsList.USER) == null) {
+            match.put(ProductUsageSessionsList.USER, NON_ANONYMOUS_USER);
+        }
+
+        return filter;
     }
 
     @Override

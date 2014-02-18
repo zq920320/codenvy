@@ -27,13 +27,11 @@ import com.mongodb.DBObject;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
 
     public static final String  VALUE              = "value";
-    public static final Pattern NON_ANONYMOUS_USER = Pattern.compile("^(?!ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
 
     private final long    min;
     private final long    max;
