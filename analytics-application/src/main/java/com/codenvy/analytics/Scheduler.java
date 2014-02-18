@@ -139,6 +139,11 @@ public class Scheduler implements ServletContextListener {
     private void executeForSpecificPeriod(Feature job, String runCondition) throws Exception {
         if (runCondition.contains(",")) {
             String[] dates = runCondition.split(",");
+            for (String date : dates) {
+                doExecute(job, date, date);
+            }
+        } else if (runCondition.contains("-")) {
+            String[] dates = runCondition.split("-");
             doExecute(job, dates[0], dates[1]);
         } else {
             doExecute(job, runCondition, runCondition);

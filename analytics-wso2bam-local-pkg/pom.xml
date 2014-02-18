@@ -139,6 +139,7 @@
                                         </war>
                                         <delete dir="${project.build.directory}/packager-conf/war/analytics-application" />
                                         <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/packager-conf/war/analytics.war" />
+
                                         <!-- Coping resources -->
                                         <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/">
                                             <fileset dir="${basedir}/src/main/resources/server" />
@@ -149,17 +150,40 @@
                                         <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/">
                                             <fileset dir="${project.build.directory}/packager-conf/war" />
                                         </copy>
-                                        <!-- prepare logs -->
+
+                                        <!-- prepare last day log (based on 2013.12.15) -->
                                         <tstamp>
-                                            <format offset="-1" pattern="yyyy/MM/dd" property="previous.date.dir" unit="day" />
+                                            <format offset="-1" pattern="yyyy/MM/dd" property="offset.1day.date.dir" unit="day" />
                                         </tstamp>
                                         <tstamp>
-                                            <format offset="-1" pattern="yyyy-MM-dd" property="previous.date.stamp" unit="day" />
+                                            <format offset="-1" pattern="yyyy-MM-dd" property="offset.1day.date.stamp" unit="day" />
                                         </tstamp>
-                                        <mkdir dir="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}" />
-                                        <unzip dest="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}" src="${project.build.directory}/wso2bam-analytics/logs-production/messages" />
-                                        <delete file="${project.build.directory}/wso2bam-analytics/logs-production/messages" />
-                                        <replace file="${project.build.directory}/wso2bam-analytics/logs-production/${previous.date.dir}/messages" token="2013-12-12" value="${previous.date.stamp}" />
+                                        <tstamp>
+                                            <format offset="-1" pattern="yyyyMMdd" property="offset.1day.date.param" unit="day" />
+                                        </tstamp>
+                                        <mkdir dir="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1day.date.dir}" />
+                                        <unzip dest="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1day.date.dir}" src="${project.build.directory}/wso2bam-analytics/logs-production/2013.12.15/messages" />
+                                        <delete dir="${project.build.directory}/wso2bam-analytics/logs-production/2013.12.15" />
+                                        <replace file="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1day.date.dir}/messages" token="2013-12-15" value="${offset.1day.date.stamp}" />
+
+                                        <!-- prepare last month log (based on 2013.12.14) -->
+                                        <tstamp>
+                                            <format offset="-1" pattern="yyyy/MM/dd" property="offset.1month.date.dir" unit="month" />
+                                        </tstamp>
+                                        <tstamp>
+                                            <format offset="-1" pattern="yyyy-MM-dd" property="offset.1month.date.stamp" unit="month" />
+                                        </tstamp>
+                                        <tstamp>
+                                            <format offset="-1" pattern="yyyyMMdd" property="offset.1month.date.param" unit="month" />
+                                        </tstamp>
+                                        <mkdir dir="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1month.date.dir}" />
+                                        <unzip dest="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1month.date.dir}" src="${project.build.directory}/wso2bam-analytics/logs-production/2013.12.14/messages" />
+                                        <delete dir="${project.build.directory}/wso2bam-analytics/logs-production/2013.12.14" />
+                                        <replace file="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1month.date.dir}/messages" token="2013-12-14" value="${offset.1month.date.stamp}" />
+
+                                        <!-- prepare analytics.properties -->
+                                        <replace file="${project.build.directory}/wso2bam-analytics/repository/conf/analytics.properties" token="20131214,20131215" value="${offset.1month.date.param},${offset.1day.date.param}" />
+
                                         <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x" />
                                     </target>
                                 </configuration>
