@@ -21,6 +21,7 @@ package com.codenvy.analytics.impl;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.util.MetricDTOFactory;
 import com.codenvy.api.analytics.MetricHandler;
@@ -48,11 +49,16 @@ public class FileBasedMetricHandler implements MetricHandler {
 
     @Override
     public MetricValueDTO getValue(String metricName,
-                                   Map<String, String> executionContext,
+                                   Map<String, String> context,
                                    UriInfo uriInfo) throws MetricNotFoundException {
+
+        if (!com.codenvy.api.analytics.Utils.isAdmin(Parameters.USER_PRINCIPAL.get(context))) {
+            MetricFilter.USER.put(context, Parameters.USER_PRINCIPAL.get(context));
+        }
+
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
         try {
-            ValueData vd = getMetricValue(metricName, executionContext);
+            ValueData vd = getMetricValue(metricName, context);
             metricValueDTO.setType(vd.getType());
             metricValueDTO.setValue(vd.getAsString());
         } catch (IOException e) {

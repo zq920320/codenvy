@@ -61,12 +61,11 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
+    protected ValueData postEvaluation(ValueData valueData) throws IOException {
         List<ValueData> value = new ArrayList<>();
+        ListValueData listValueData = (ListValueData)valueData;
 
-        ListValueData valueData = (ListValueData)super.getValue(context);
-
-        for (ValueData items : valueData.getAll()) {
+        for (ValueData items : listValueData.getAll()) {
             MapValueData prevItems = (MapValueData)items;
             Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());
 

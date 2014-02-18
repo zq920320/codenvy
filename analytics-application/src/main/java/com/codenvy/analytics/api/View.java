@@ -19,6 +19,7 @@ package com.codenvy.analytics.api;
 
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
@@ -66,11 +67,9 @@ public class View {
                                 @Context UriInfo uriInfo,
                                 @Context SecurityContext securityContext) {
         try {
-            Map<String, String> context = Utils.extractContext(uriInfo);
-
-            String user = securityContext.getUserPrincipal().getName();
-            if (!Utils.isAdmin(user)) {
-                MetricFilter.USER.put(context, user);
+            Map<String, String> context = Utils.extractContext(uriInfo, securityContext.getUserPrincipal());
+            if (!Utils.isAdmin(Parameters.USER_PRINCIPAL.get(context))) {
+                MetricFilter.USER.put(context, Parameters.USER_PRINCIPAL.get(context));
             }
 
             ViewData result = viewBuilder.getViewData(name, context);
@@ -89,7 +88,7 @@ public class View {
      * @param data
      *         the view data
      * @return the resulted format will be: {"t00" : {"r00" : {"c00" : ...} ...} ...}, where txx - the sequences
-     *         numbers of tables, rxx - the sequences numbers of rows and cxx - the sequences numbers of columns.
+     * numbers of tables, rxx - the sequences numbers of rows and cxx - the sequences numbers of columns.
      */
     private JsonStringMapImpl transform(ViewData data) {
         Map<String, Object> result = new LinkedHashMap<>(data.size());

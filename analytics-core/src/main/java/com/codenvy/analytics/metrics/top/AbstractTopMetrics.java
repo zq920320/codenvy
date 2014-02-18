@@ -50,12 +50,7 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {
-        context = initializeContext(context);
-        return super.getValue(context);
-    }
-
-    private Map<String, String> initializeContext(Map<String, String> context) throws IOException {
+    protected Map<String, String> modifyContext(Map<String, String> context) throws IOException {
         context = Utils.clone(context);
         Parameters.TO_DATE.putDefaultValue(context);
 

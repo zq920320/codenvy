@@ -15,20 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions.factory;
+package com.codenvy.analytics.metrics;
 
-import com.codenvy.analytics.metrics.AbstractCount;
-import com.codenvy.analytics.metrics.MetricType;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-/** @author Anatoliy Bazko */
-public class FactoriesAccepted extends AbstractCount {
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    public FactoriesAccepted() {
-        super(MetricType.FACTORIES_ACCEPTED, MetricType.FACTORIES_ACCEPTED_LIST);
-    }
-
-    @Override
-    public String getDescription() {
-        return "The number of factory usage";
-    }
+/**
+ * Specifies the {@link com.codenvy.analytics.metrics.MetricFilter} required to access a metric.
+ *
+ * @author Anatoliy Bazko
+ */
+@Documented
+@Retention(RUNTIME)
+@Target({TYPE})
+public @interface FilterRequired {
+    MetricFilter value();
 }

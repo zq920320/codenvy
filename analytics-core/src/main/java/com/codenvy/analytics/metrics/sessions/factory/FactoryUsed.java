@@ -17,13 +17,24 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import com.codenvy.analytics.metrics.AbstractAlias;
+import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.FilterRequired;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
-/** @author Anatoliy Bazko */
-public class FactoryUrlAccepted extends AbstractAlias {
+import javax.annotation.security.RolesAllowed;
 
-    public FactoryUrlAccepted() {
-        super(MetricType.FACTORY_URL_ACCEPTED, MetricType.FACTORIES_ACCEPTED);
+/** @author Anatoliy Bazko */
+@RolesAllowed(value = {})
+@FilterRequired(value = MetricFilter.FACTORY)
+public class FactoryUsed extends AbstractCount {
+
+    public FactoryUsed() {
+        super(MetricType.FACTORY_USED, MetricType.FACTORIES_ACCEPTED_LIST);
+    }
+
+    @Override
+    public String getDescription() {
+        return "The number of factory usage";
     }
 }

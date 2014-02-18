@@ -65,7 +65,40 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
-        return dataLoader.loadValue(this, context);
+        context = modifyContext(context);
+        validateRestrictions(context);
+
+        ValueData valueData = dataLoader.loadValue(this, context);
+
+        return postEvaluation(valueData);
+    }
+
+    /**
+     * Validates restriction before data loading.
+     *
+     * @param context
+     *         the execution context
+     * @throws IllegalArgumentException
+     *         if one of the restrictions failed
+     */
+    private void validateRestrictions(Map<String, String> context) throws IllegalArgumentException {
+        if (getClass().isAnnotationPresent(FilterRequired.class)) {
+            MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
+            if (!requiredFilter.exists(context)) {
+                throw new IllegalArgumentException("Filter " + requiredFilter + " is required");
+            }
+        }
+    }
+
+    protected ValueData postEvaluation(ValueData valueData) throws IOException {
+        return valueData;
+    }
+
+    /**
+     * Allows modify context before evaluation if necessary.
+     */
+    protected Map<String, String> modifyContext(Map<String, String> context) throws IOException {
+        return context;
     }
 
     // --------------------------------------------- storage related methods -------------
