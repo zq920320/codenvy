@@ -32,7 +32,7 @@ function Configuration() {
         },
 
         summaryReport: {
-            presenterType: "TablePresenter",
+            presenterType: "ReportPresenter",
             modelViewName: "summary_report",
 
             defaultModelParams: {
@@ -53,9 +53,9 @@ function Configuration() {
             isNeedToSaveInHistory: true,
         },
 
-        usersReport: {
-            presenterType: "TablePresenter",
-            modelViewName: "users_report",
+        userReport: {
+            presenterType: "ReportPresenter",
+            modelViewName: "user_report",
 
             defaultModelParams: {
                 "time_unit": "month"
@@ -65,7 +65,7 @@ function Configuration() {
         },
 
         engagementLevels: {
-            presenterType: "TablePresenter",
+            presenterType: "ReportPresenter",
             modelViewName: "engagement_levels",
             
             forbiddenModelParams: ["time_unit"],
@@ -74,7 +74,7 @@ function Configuration() {
         },
         
         collaborationReport: {
-            presenterType: "TablePresenter",
+            presenterType: "ReportPresenter",
             modelViewName: "collaboration_report",
 
             defaultModelParams: {
@@ -95,9 +95,9 @@ function Configuration() {
             isNeedToSaveInHistory: true,
         },
         
-        sessionsReport: {
+        sessionReport: {
             presenterType: "ReportPresenter",
-            modelViewName: "sessions_report",
+            modelViewName: "session_report",
 
             defaultModelParams: {
                 "time_unit": "month"
@@ -106,9 +106,9 @@ function Configuration() {
             isNeedToSaveInHistory: true,
         },
 
-        projectsReport: {
+        projectReport: {
             presenterType: "ReportPresenter",
-            modelViewName: "projects_report",
+            modelViewName: "project_report",
 
             defaultModelParams: {
                 "time_unit": "month"

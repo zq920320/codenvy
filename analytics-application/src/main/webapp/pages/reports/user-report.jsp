@@ -17,21 +17,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Users Report</title>
+    <title>User Report</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
 <jsp:include page="/inclusions/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
-    <jsp:param name="selectedMenuItemId" value="topmenu-reports-users_report"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-reports-user_report"/>
 </jsp:include>
 
 <div class="container-fluid">
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="usersReport">
+                <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="userReport">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" default value="Week">Week</button>
                     <button class="btn command-btn" value="Month">Month</button>
@@ -46,29 +46,18 @@
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>                   
                 </div>
             </div>
-            <div class="single-column-gadget full-width">
-                <div class="view">
-                    <div class="tables">
-                        <div class="item">
-                            <div class="header">Users Report</div>
-                            <div class="body" id="usersReport"></div>
-                        </div>
-                        <div class="item">
-                            <div class="header">Engagement Levels</div>
-                            <div class="body" id="engagementLevels"></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="hero-unit">
+                <div id="userReport" class="single-column-gadget"></div>
             </div>
             <div class="hero-unit">
-                <div id="usersReport" class="single-column-gadget"></div>
-            </div>        
+                <div id="engagementLevels" class="single-column-gadget"></div>
+            </div> 
         </div>
     </div>
 </div>
 
 <jsp:include page="/inclusions/footer.jsp">
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/TablePresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/ReportPresenter.js"/>
 </jsp:include>
 
 </body>

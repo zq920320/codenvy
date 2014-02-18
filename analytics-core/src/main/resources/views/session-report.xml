@@ -17,7 +17,7 @@
          from Codenvy S.A..
 -->
 <display>
-    <view time-unit="day,week,month,lifetime" name="sessions_report" columns="15">
+    <view time-unit="day,week,month,lifetime" name="session_report" columns="15">
         <section name="user_sessions">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="# User Sessions"/>

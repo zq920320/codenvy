@@ -20,7 +20,7 @@
     <view time-unit="day,week,month,lifetime" name="collaboration_report" columns="15">
         <section name="invitations">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value=""/>
+                <parameter key="section-name" value="Collaboration Report"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="user_invite"/>
@@ -42,7 +42,8 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_sessions"/>
                 <parameter key="description" value="Factory Sessions"/>
-            </row>            
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

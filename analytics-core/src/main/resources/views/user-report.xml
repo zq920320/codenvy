@@ -17,7 +17,7 @@
          from Codenvy S.A..
 -->
 <display>
-    <view time-unit="day,week,month,lifetime" name="users_report" columns="15">
+    <view time-unit="day,week,month,lifetime" name="user_report" columns="15">
         <section name="users_usage">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Users Splits"/>
@@ -110,7 +110,7 @@
     <view name="engagement_levels">
         <section name="engagement_levels">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value=",1 Day,7 Days,30 Days,60 Days,90 Days,1 Year"/>
+                <parameter key="titles" value="Engagement Levels,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="description" value="Visits &#0060;5 Or Lifetime &#0060;120"/>
@@ -127,6 +127,7 @@
                 <parameter key="name" value="timeline_product_usage_condition_above_300_min"/>
                 <parameter key="fields" value="by_1_day,by_7_days,by_30_days,by_60_days,by_90_days,by_365_days"/>
             </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
     </view>
 </display>

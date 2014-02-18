@@ -17,14 +17,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Projects Report</title>
+    <title>Session Report</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
 <jsp:include page="/inclusions/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
-    <jsp:param name="selectedMenuItemId" value="topmenu-reports-projects_report"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-reports-session_report"/>
 </jsp:include>
 
 <div class="container-fluid">
@@ -47,8 +47,8 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="projectsReport" class="single-column-gadget"></div>
-            </div>            
+                <div id="sessionReport" class="single-column-gadget"></div>
+            </div>           
         </div>
     </div>
 </div>

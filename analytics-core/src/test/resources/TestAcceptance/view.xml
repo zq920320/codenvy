@@ -83,14 +83,34 @@
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
-
+        
         <section name="users_usage">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Users Usage"/>
+                <parameter key="section-name" value="Users Splits"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_users"/>
                 <parameter key="description" value="Total"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="active_users"/>
+                <parameter key="description" value="Active Users"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="non_active_users"/>
+                <parameter key="description" value="Non-Active Users"/>
+                <parameter key="hide-negative-values" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="active_users_usage">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Active User Splits"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="active_users"/>
+                <parameter key="description" value="Total Active Users"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="new_active_users"/>
@@ -99,11 +119,6 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="returning_active_users"/>
                 <parameter key="description" value="Returning Active Users"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="non_active_users"/>
-                <parameter key="description" value="Non-Active Users"/>
-                <parameter key="hide-negative-values" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
@@ -413,5 +428,138 @@
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
+        
+        <section name="factories">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Factories"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_factories"/>
+                <parameter key="description" value="Factories Created"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="created_users_from_factory"/>
+                <parameter key="description" value="Accounts Created From Factories"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="temporary_workspaces_created"/>
+                <parameter key="description" value="Temporary Workspaces Created"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="workspaces_where_users_have_several_factory_sessions"/>
+                <parameter key="description" value="# with more than one session"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="workspaces_with_zero_factory_sessions_length"/>
+                <parameter key="description" value="# with empty sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="authenticated_factory_sessions">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Authenticated Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Factory Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="anonymous_factory_sessions"/>
+                <parameter key="description" value="Anonymous Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="authenticated_factory_sessions"/>
+                <parameter key="description" value="Authenticated Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="converted_factory_sessions">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Converted Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Factory Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="abandoned_factory_sessions"/>
+                <parameter key="description" value="Abandoned Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="converted_factory_sessions"/>
+                <parameter key="description" value="Converted Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="factory_sessions_ide_usage_events">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Factory Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions_with_build_percent"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
+                <parameter key="description" value="% Built"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions_with_run_percent"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
+                <parameter key="description" value="% Run"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions_with_deploy_percent"/>
+                <parameter key="numeric-format" value="%.0f%%"/>
+                <parameter key="description" value="% Deployed"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="factory_users_sessions">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Users Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions"/>
+                <parameter key="description" value="Factory Sessions"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions_below_10_min"/>
+                <parameter key="description" value="&#0060; 10 Mins"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_sessions_above_10_min"/>
+                <parameter key="description" value="&#0062; 10 Mins"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+
+        <section name="factory_product_usage">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="Usage Time (mins)"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="factory_product_usage_time_total"/>
+                <parameter key="description" value="Product Usage Mins"/>
+                <parameter key="time-field" value="true"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+       
+       <section name="user_profile">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Email,First Name,Last Name,Company,Job"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_profiles_list"/>
+                <parameter key="fields"
+                           value="_id,user_first_name,user_last_name,user_company,user_job"/>
+            </row>
+        </section> 
     </view>
 </display>

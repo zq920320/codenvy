@@ -46,22 +46,15 @@
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>                   
                 </div>
             </div>
-            <div class="single-column-gadget full-width">
-                <div class="view">
-                    <div class="tables">
-                        <div class="item">
-                            <div class="header">Collaboration Report</div>
-                            <div class="body" id="collaborationReport"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>            
+            <div class="hero-unit">
+                <div id="collaborationReport" class="single-column-gadget"></div>
+            </div>          
         </div>
     </div>
 </div>
 
 <jsp:include page="/inclusions/footer.jsp">
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/TablePresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/ReportPresenter.js"/>
 </jsp:include>
 
 </body>

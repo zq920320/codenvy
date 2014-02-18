@@ -26,11 +26,11 @@
                 <views>
                     <view>summary_report</view>
                     <view>workspace_report.xml</view>
-                    <view>users_report</view>
+                    <view>user_report</view>
                     <view>collaboration_report</view>
                     <view>usage_report</view>
-                    <view>sessions_report</view>
-                    <view>projects_report</view>
+                    <view>session_report</view>
+                    <view>project_report</view>
                     <view>factory-timeline</view>
                 </views>
                 <context-modifier>

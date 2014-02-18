@@ -20,7 +20,7 @@
     <view time-unit="day,week,month,lifetime" name="summary_report" columns="15">
         <section name="summary_report">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value=""/>
+                <parameter key="section-name" value="Summary Report"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_workspaces"/>
@@ -66,7 +66,8 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="user_invite"/>
                 <parameter key="description" value="Invitations Sent"/>
-            </row>            
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>            
          </section>
     </view>
 </display>
