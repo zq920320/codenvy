@@ -556,6 +556,56 @@
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>
         </section>
+        
+        <section name="ide_usage_share">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'Share->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_share_factory_url"/>
+                <parameter key="description" value="Share->FactoryURL"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_share_manage_access"/>
+                <parameter key="description" value="Share->ManageAccess"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_share_invite_developers"/>
+                <parameter key="description" value="Share->InviteDevelopers"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_share_invite_github_collaboratos"/>
+                <parameter key="description" value="Share->InviteGitHubCollaboratos "/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
+        
+        <section name="ide_usage_help">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="IDE User Usage 'Help->*' Events"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_help_about"/>
+                <parameter key="description" value="Help->About"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_help_show_keyboard_shortcuts"/>
+                <parameter key="description" value="Help->ShowKeyboardShortcuts"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_help_documentation"/>
+                <parameter key="description" value="Help->Documentation"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_help_contact_support"/>
+                <parameter key="description" value="Help->ContactSupport"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="ide_usage_help_submit_feedback"/>
+                <parameter key="description" value="Help->SubmitFeedback"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.EmptyRow"/>
+        </section>
 
         <section name="ide_usage_main">
             <row class="com.codenvy.analytics.services.view.DateRow">

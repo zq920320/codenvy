@@ -329,3 +329,13 @@ com.codenvy.analytics.metrics.ide_usage.window.IdeUsageWindowPreferences
 com.codenvy.analytics.metrics.ide_usage.window.IdeUsageWindowShowViewPackageExplore
 com.codenvy.analytics.metrics.ide_usage.window.IdeUsageWindowShowViewProjectExplore
 com.codenvy.analytics.metrics.ide_usage.window.IdeUsageWindowWelcome
+com.codenvy.analytics.metrics.ide_usage.share.IdeUsageShareFactoryUrl
+com.codenvy.analytics.metrics.ide_usage.share.IdeUsageShareInviteDevelopers
+com.codenvy.analytics.metrics.ide_usage.share.IdeUsageShareInviteGithubCollaboratos
+com.codenvy.analytics.metrics.ide_usage.share.IdeUsageShareManageAccess
+com.codenvy.analytics.metrics.ide_usage.help.IdeUsageHelpAbout
+com.codenvy.analytics.metrics.ide_usage.help.IdeUsageHelpContactSupport
+com.codenvy.analytics.metrics.ide_usage.help.IdeUsageHelpDocumentation
+com.codenvy.analytics.metrics.ide_usage.help.IdeUsageHelpShowKeyboardShortcuts
+com.codenvy.analytics.metrics.ide_usage.help.IdeUsageHelpSubmitFeedback
+
