@@ -19,6 +19,7 @@ package com.codenvy.factory;
 
 import com.codenvy.api.factory.*;
 import com.codenvy.organization.client.AccountManager;
+import com.codenvy.organization.client.UserManager;
 import com.codenvy.organization.exception.AccountExistenceException;
 import com.codenvy.organization.exception.OrganizationServiceException;
 import com.codenvy.organization.model.Account;
@@ -48,6 +49,9 @@ public class FactoryUrlBaseValidatorTest {
     @Mock
     private Account account;
 
+    @Mock
+    private UserManager userManager;
+
     @InjectMocks
     private FactoryUrlBaseValidator validator;
 
@@ -59,9 +63,11 @@ public class FactoryUrlBaseValidatorTest {
 
     @BeforeMethod
     public void setUp() {
-        url = new SimpleFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, null, null, null, false, null, null, null, null, null);
+        url = new SimpleFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, null, null, null, false, null, null, null, null,
+                                   null);
 
-        advUrl = new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "123456798", null, null, false, null, null, null, null, null);
+        advUrl = new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "123456798", null, null, false, null, null,
+                                        null, null, null);
 
         datetimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         datetimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));

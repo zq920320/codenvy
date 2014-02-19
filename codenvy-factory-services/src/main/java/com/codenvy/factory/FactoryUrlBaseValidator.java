@@ -23,8 +23,10 @@ import com.codenvy.api.factory.FactoryUrlValidator;
 import com.codenvy.api.factory.SimpleFactoryUrl;
 import com.codenvy.commons.lang.UrlUtils;
 import com.codenvy.organization.client.AccountManager;
+import com.codenvy.organization.client.UserManager;
 import com.codenvy.organization.exception.OrganizationServiceException;
 import com.codenvy.organization.model.Account;
+import com.codenvy.organization.model.User;
 
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
@@ -46,9 +48,12 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
     private AccountManager accountManager;
 
+    private UserManager userManager;
+
     @Inject
-    public FactoryUrlBaseValidator(AccountManager accountManager) {
+    public FactoryUrlBaseValidator(AccountManager accountManager, UserManager userManager) {
         this.accountManager = accountManager;
+        this.userManager = userManager;
     }
 
     @Override
@@ -90,6 +95,23 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
         validateCommonParams(factoryUrl);
 
+        if (factoryUrl.getUserid() != null) {
+            try {
+                User user = userManager.getUserById(factoryUrl.getUserid());
+                if (user.isTemporary()) {
+                    throw new FactoryUrlException("Current user is not allowed for using this method.");
+                }
+                if (factoryUrl.getWelcome() != null) {
+                    String orgid = factoryUrl.getOrgid();
+                    Account account = accountManager.getAccountById(orgid);
+                    if (!account.getOwner().getId().equals(user.getId())) {
+                        throw new FactoryUrlException("You are not authorized to use this orgid.");
+                    }
+                }
+            } catch (OrganizationServiceException e) {
+                throw new FactoryUrlException("Unable to validate user " + factoryUrl.getUserid());
+            }
+        }
         if (factoryUrl.getWelcome() != null && (factoryUrl.getOrgid() == null || factoryUrl.getOrgid().isEmpty())) {
             throw new FactoryUrlException("Using a custom Welcome Page requires a valid orgid parameter.");
         }
