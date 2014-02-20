@@ -20,7 +20,10 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Dmytro Nochevnov */
+@RolesAllowed({"system/admin", "system/manager"})
 public class UsersWhoBuilt extends AbstractActiveEntities {
     private static final String USER = "user";    
     

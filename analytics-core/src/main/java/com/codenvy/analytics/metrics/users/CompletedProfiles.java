@@ -23,9 +23,11 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.Map;
 
 /** @author Anatoliy Bazko */
+@RolesAllowed({"system/admin", "system/manager"})
 public class CompletedProfiles extends AbstractUsersProfile {
 
     private final String VALUE = "value";

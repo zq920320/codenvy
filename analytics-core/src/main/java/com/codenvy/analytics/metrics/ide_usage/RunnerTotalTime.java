@@ -20,7 +20,10 @@ package com.codenvy.analytics.metrics.ide_usage;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Anatoliy Bazko */
+@RolesAllowed({"system/admin", "system/manager"})
 public class RunnerTotalTime extends AbstractLongValueResulted {
 
     private static final String TIME = "time";

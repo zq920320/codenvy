@@ -19,7 +19,10 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageUsersBetween10And60Min extends AbstractProductUsageUsers {
 
     public ProductUsageUsersBetween10And60Min() {

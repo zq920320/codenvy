@@ -20,7 +20,10 @@ package com.codenvy.analytics.metrics.sessions.factory;
 import com.codenvy.analytics.metrics.AbstractSetValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Anatoliy Bazko */
+@RolesAllowed({"system/admin", "system/manager"})
 public class ActiveOrgIdSet extends AbstractSetValueResulted {
 
     protected ActiveOrgIdSet() {

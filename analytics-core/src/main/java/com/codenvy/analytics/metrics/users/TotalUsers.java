@@ -23,15 +23,17 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.CumulativeMetric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+
+import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class TotalUsers extends CumulativeMetric {
 
     public TotalUsers() {
         super(MetricType.TOTAL_USERS,
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.CREATED_USERS),
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.REMOVED_USERS));
+              MetricFactory.getMetric(MetricType.CREATED_USERS),
+              MetricFactory.getMetric(MetricType.REMOVED_USERS));
     }
 
     @Override

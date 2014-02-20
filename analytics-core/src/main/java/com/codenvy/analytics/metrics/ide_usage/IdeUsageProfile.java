@@ -19,7 +19,10 @@ package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Alexander Reshetnyak */
+@RolesAllowed({"system/admin", "system/manager"})
 public class IdeUsageProfile extends AbstractIdeUsage {
 
     public IdeUsageProfile() {

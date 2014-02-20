@@ -21,7 +21,10 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Alexander Reshetnyak */
+@RolesAllowed({"system/admin", "system/manager"})
 public class IdeUsageHelpDocumentation extends AbstractIdeUsage {
 
     public IdeUsageHelpDocumentation() {

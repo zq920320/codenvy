@@ -21,11 +21,13 @@ import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.DBObject;
 
+import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class UsersActivity extends AbstractCount {
 
     public UsersActivity() {

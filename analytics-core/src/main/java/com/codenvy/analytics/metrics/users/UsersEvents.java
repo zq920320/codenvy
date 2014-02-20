@@ -24,12 +24,14 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.Map;
 
 /**
  * @author Alexander Reshetnyak
  * @author Anatoliy Bazko
  */
+@RolesAllowed({"system/admin", "system/manager"})
 public class UsersEvents extends ReadBasedMetric {
 
     public static final String ACTION = "action";

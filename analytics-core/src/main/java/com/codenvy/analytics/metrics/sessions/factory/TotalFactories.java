@@ -23,7 +23,10 @@ import com.codenvy.analytics.metrics.CumulativeMetric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Dmytro Nochevnov */
+@RolesAllowed({"system/admin", "system/manager"})
 public class TotalFactories extends CumulativeMetric {
 
     public TotalFactories() {
