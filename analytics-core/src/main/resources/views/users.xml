@@ -67,6 +67,7 @@
                 <parameter key="name" value="product_usage_sessions_list"/>
                 <parameter key="fields" value="session_id,ws,start_time,end_time,time"/>
                 <parameter key="time-fields" value="time"/>
+                <parameter key="date-fields" value="start_time,end_time"/>
             </row>
         </section>
     </view>
