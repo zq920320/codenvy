@@ -47,7 +47,6 @@ import java.util.Map;
  */
 @Singleton
 public class FileBasedMetricHandler implements MetricHandler {
-
     @Override
     public MetricValueDTO getValue(String metricName,
                                    Map<String, String> context,

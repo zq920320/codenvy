@@ -26,6 +26,7 @@ import com.codenvy.api.analytics.dto.MetricInfoListDTO;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
 import com.codenvy.api.core.rest.annotations.GenerateLink;
+import com.google.inject.name.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,13 @@ public class AnalyticsPrivate {
     @Inject
     private MetricHandler metricHandler;
 
+    @Inject
+    @Named("analytics.analytics-private.permit_access_from_host")
+    protected String permittedHost;
+
+    public AnalyticsPrivate() {
+    }
+
     @GenerateLink(rel = "metric value")
     @GET
     @Path("metric/{name}")
@@ -64,8 +72,9 @@ public class AnalyticsPrivate {
                              @QueryParam("per_page") String perPage,
                              @Context UriInfo uriInfo) {
         try {
-            Map<String, String> metricContext = Utils.extractContext(uriInfo, page, perPage);
+            validateAccess(uriInfo);
 
+            Map<String, String> metricContext = Utils.extractContext(uriInfo, page, perPage);
             MetricValueDTO value = metricHandler.getValue(metricName, metricContext, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
         } catch (MetricNotFoundException e) {
@@ -83,6 +92,8 @@ public class AnalyticsPrivate {
     @Path("metricinfo/{name}")
     public Response getInfo(@PathParam("name") String metricName, @Context UriInfo uriInfo) {
         try {
+            validateAccess(uriInfo);
+
             MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
             return Response.status(Response.Status.OK).entity(metricInfoDTO).build();
         } catch (MetricNotFoundException e) {
@@ -98,11 +109,19 @@ public class AnalyticsPrivate {
     @Path("metricinfo")
     public Response getAllInfo(@Context UriInfo uriInfo) {
         try {
+            validateAccess(uriInfo);
+
             MetricInfoListDTO metricInfoListDTO = metricHandler.getAllInfo(uriInfo);
             return Response.status(Response.Status.OK).entity(metricInfoListDTO).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
+    private void validateAccess(UriInfo uriInfo) {
+        if (!uriInfo.getBaseUri().getHost().equals(permittedHost)) {
+            throw new IllegalStateException("Access is not permitted");
         }
     }
 }
