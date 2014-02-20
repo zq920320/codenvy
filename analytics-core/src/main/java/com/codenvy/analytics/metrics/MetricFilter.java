@@ -32,6 +32,7 @@ public enum MetricFilter {
     WS,
     IDE(true),
     USER,
+    EVENT,
     DOMAIN,
     USER_COMPANY,
     USER_LAST_NAME,

@@ -72,7 +72,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
         ValueData valueData = dataLoader.loadValue(this, context);
 
-        return postEvaluation(valueData);
+        return postEvaluation(valueData, context);
     }
 
     /**
@@ -93,6 +93,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     protected ValueData postEvaluation(ValueData valueData) throws IOException {
+        return valueData;
+    }
+    
+    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
         return valueData;
     }
 

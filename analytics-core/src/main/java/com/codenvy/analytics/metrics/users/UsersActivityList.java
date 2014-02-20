@@ -17,8 +17,18 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
@@ -27,11 +37,6 @@ import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class UsersActivityList extends AbstractListValueResulted {
 
@@ -39,6 +44,7 @@ public class UsersActivityList extends AbstractListValueResulted {
     public static final String EVENT   = "event";
     public static final String USER    = "user";
     public static final String WS      = "ws";
+    public static final String TIME_FROM_BEGINNING = "time_from_beginning";
 
     private static final String TIME = ProductUsageSessionsList.TIME;
 
@@ -54,6 +60,45 @@ public class UsersActivityList extends AbstractListValueResulted {
     @Override
     public String getDescription() {
         return "Users' actions";
+    }
+    
+    @Override
+    /**
+     * Calculate <time from beginning of session_with_SESSION_ID>=(activityDate-startSessionTime), or 0, if there is SESSION_ID value in the clauses.
+     * Then add it value into separate column TIME_FROM_BEGINNING
+     */
+    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+        long startSessionTime = 0;
+        
+        // get start session time
+        if (MetricFilter.SESSION_ID.exists(clauses)) {
+            MapValueData sessionData = getSessionData(MetricFilter.SESSION_ID.get(clauses));
+            startSessionTime = Long.parseLong(sessionData.getAll().get(DATE).getAsString());
+        }
+        
+        
+        // calculate time from beginning of session and add it into separate column
+        List<ValueData> updatedValueData = new ArrayList<>(((ListValueData) valueData).size());
+        Iterator<ValueData> iterator = ((ListValueData) valueData).getAll().iterator();
+        
+        while (iterator.hasNext()) {
+            MapValueData next = (MapValueData)iterator.next();            
+            Map<String, ValueData> updatedNext = new HashMap<>(next.size());
+            updatedNext.putAll(next.getAll());
+            
+            if (startSessionTime != 0) {
+                long activityDate = ((LongValueData) updatedNext.get(DATE)).getAsLong();
+                long delta = activityDate - startSessionTime;            
+
+                updatedNext.put(TIME_FROM_BEGINNING, new LongValueData(delta));                
+            } else {
+                updatedNext.put(TIME_FROM_BEGINNING, new LongValueData(0));   // store 0 if SESSION_ID is undefined in clauses                
+            }
+            
+            updatedValueData.add(new MapValueData(updatedNext));
+        }
+        
+        return new ListValueData(updatedValueData);
     }
 
     @Override
@@ -88,15 +133,10 @@ public class UsersActivityList extends AbstractListValueResulted {
 
                 match.put(DATE, getSessionStartAndFinishDateRange(sessionData));
                 match.put(WS, getSessionWorkspace(sessionData));
-                match.put(EVENT, getAllEventsExceptSessions());
             }
 
             match.removeField(ProductUsageSessionsList.SESSION_ID);
         }
-    }
-
-    private static BasicDBObject getAllEventsExceptSessions() {
-        return new BasicDBObject("$nin", new String[]{"session-started", "session-finished"});
     }
 
     private static String getSessionWorkspace(MapValueData sessionData) {

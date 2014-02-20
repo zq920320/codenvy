@@ -26,12 +26,14 @@ import com.codenvy.analytics.metrics.users.UsersActivityList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
+import org.mortbay.log.Log;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,7 @@ public class TestUsersActivity extends BaseTest {
     private static final String FIRST_TARGET_SESSION_ID = "8AA06F22-3755-4BDD-9242-8A6371BAB53A";
     private static final String TARGET_USER             = "user1@gmail.com";
     private static final String TARGET_WORKSPACE        = "ws1";
+    private static final String SESSION_EVENTS_FILTER_VALUE = "~session-started,~session-finished,~session-factory-started,~session-factory-stopped";
 
     @BeforeClass
     public void prepare() throws Exception {
@@ -145,6 +148,9 @@ public class TestUsersActivity extends BaseTest {
         Metric metric = new TestUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
 
+        LOG.info("[testOneSessionActivity]:");
+        LOG.info(Arrays.toString(value.getAll().toArray()));
+        
         assertEquals(value.size(), 14);
 
         assertItem(value,
@@ -155,7 +161,8 @@ public class TestUsersActivity extends BaseTest {
                    "127.0.0.1 2013-11-01 19:00:00,155,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-started# "
                    + "SESSION-ID#" + FIRST_TARGET_SESSION_ID + "# WS#" + TARGET_WORKSPACE + "# USER#" + TARGET_USER +
                    "# WINDOW#ide# ",
-                   fullTimeFormat.parse("2013-11-01 19:00:00,155").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:00:00,155").getTime(),
+                   0);
 
         assertItem(value,
                    1,
@@ -163,7 +170,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    "user2@gmail.com",
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:06:00,100").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:06:00,100").getTime(),
+                   0);
 
         assertItem(value,
                    2,
@@ -171,7 +179,8 @@ public class TestUsersActivity extends BaseTest {
                    "ws2",
                    "user2@gmail.com",
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:08:00,000").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:08:00,000").getTime(),
+                   0);
 
         assertItem(value,
                    3,
@@ -179,7 +188,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:08:00,600").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:08:00,600").getTime(),
+                   0);
 
         assertItem(value,
                    4,
@@ -187,7 +197,8 @@ public class TestUsersActivity extends BaseTest {
                    "ws2",
                    "user2@gmail.com",
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:10:00,000").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:10:00,000").getTime(),
+                   0);
 
         assertItem(value,
                    5,
@@ -195,7 +206,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:10:00,900").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:10:00,900").getTime(),
+                   0);
 
         assertItem(value,
                    6,
@@ -203,7 +215,8 @@ public class TestUsersActivity extends BaseTest {
                    "ws2",
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:12:00,000").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:12:00,000").getTime(),
+                   0);
 
         assertItem(value,
                    7,
@@ -211,7 +224,8 @@ public class TestUsersActivity extends BaseTest {
                    "ws2",
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:14:00,000").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:14:00,000").getTime(),
+                   0);
 
         assertItem(value,
                    8,
@@ -219,7 +233,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    "user2@gmail.com",
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:20:00,220").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:20:00,220").getTime(),
+                   0);
 
         assertItem(value,
                    9,
@@ -229,7 +244,8 @@ public class TestUsersActivity extends BaseTest {
                    "127.0.0.1 2013-11-01 19:55:00,555,000[main] [INFO] [HelloWorld 1010]  - EVENT#session-finished# "
                    + "SESSION-ID#" + FIRST_TARGET_SESSION_ID + "# WS#" + TARGET_WORKSPACE + "# USER#" + TARGET_USER +
                    "# WINDOW#ide# ",
-                   fullTimeFormat.parse("2013-11-01 19:55:00,555").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:55:00,555").getTime(),
+                   0);
 
         assertItem(value,
                    10,
@@ -237,7 +253,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 20:00:00,100").getTime());
+                   fullTimeFormat.parse("2013-11-01 20:00:00,100").getTime(),
+                   0);
 
         assertItem(value,
                    11,
@@ -245,7 +262,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 20:02:00,600").getTime());
+                   fullTimeFormat.parse("2013-11-01 20:02:00,600").getTime(),
+                   0);
 
         assertItem(value,
                    12,
@@ -253,7 +271,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 20:04:00,220").getTime());
+                   fullTimeFormat.parse("2013-11-01 20:04:00,220").getTime(),
+                   0);
 
         assertItem(value,
                    13,
@@ -261,20 +280,24 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 20:04:00,320").getTime());
+                   fullTimeFormat.parse("2013-11-01 20:04:00,320").getTime(),
+                   0);
 
         metric = new TestNumberOfUsersOfActivity();
         Assert.assertEquals(metric.getValue(context).getAsString(), "14");
     }
 
     @Test
-    public void testOneSessionActivity() throws Exception {
+    public void testOneSessionActivityWithHidedSessionEvents() throws Exception {
         Map<String, String> context = Utils.newContext();
         MetricFilter.SESSION_ID.put(context, FIRST_TARGET_SESSION_ID);
+        MetricFilter.EVENT.put(context, SESSION_EVENTS_FILTER_VALUE);
 
         Metric metric = new TestUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
-
+        LOG.info("[testOneSessionActivityWithHidedSessionEvents]:");
+        LOG.info(Arrays.toString(value.getAll().toArray()));
+        
         assertEquals(value.size(), 3);
 
         assertItem(value,
@@ -283,7 +306,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:08:00,600").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:08:00,600").getTime(),
+                   480445);
 
         assertItem(value,
                    1,
@@ -291,7 +315,8 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 19:10:00,900").getTime());
+                   fullTimeFormat.parse("2013-11-01 19:10:00,900").getTime(),
+                   600745);
 
         assertItem(value,
                    2,
@@ -299,33 +324,105 @@ public class TestUsersActivity extends BaseTest {
                    TARGET_WORKSPACE,
                    TARGET_USER,
                    null,
-                   fullTimeFormat.parse("2013-11-01 20:02:00,600").getTime());
+                   fullTimeFormat.parse("2013-11-01 20:02:00,600").getTime(),
+                   3720445);
 
         metric = new TestNumberOfUsersOfActivity();
         Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(3));
     }
 
 
+    @Test
+    public void testOneSessionActivity() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.SESSION_ID.put(context, FIRST_TARGET_SESSION_ID);
+
+        Metric metric = new TestUsersActivityList();
+        ListValueData value = (ListValueData)metric.getValue(context);
+        LOG.info("[testOneSessionActivity]:");
+        LOG.info(Arrays.toString(value.getAll().toArray()));
+        
+        assertEquals(value.size(), 6);
+
+        assertItem(value,
+                   0,
+                   "session-started",
+                   TARGET_WORKSPACE,
+                   TARGET_USER,
+                   null,
+                   fullTimeFormat.parse("2013-11-01 19:00:00,155").getTime(),
+                   0);        
+        
+        assertItem(value,
+                   1,
+                   "run-started",
+                   TARGET_WORKSPACE,
+                   TARGET_USER,
+                   null,
+                   fullTimeFormat.parse("2013-11-01 19:08:00,600").getTime(),
+                   480445);
+
+        assertItem(value,
+                   2,
+                   "run-finished",
+                   TARGET_WORKSPACE,
+                   TARGET_USER,
+                   null,
+                   fullTimeFormat.parse("2013-11-01 19:10:00,900").getTime(),
+                   600745);
+
+        assertItem(value,
+                   3,
+                   "session-finished",
+                   TARGET_WORKSPACE,
+                   TARGET_USER,
+                   null,
+                   fullTimeFormat.parse("2013-11-01 19:55:00,555").getTime(),
+                   3300400);        
+
+        assertItem(value,
+                   4,
+                   "session-started",
+                   TARGET_WORKSPACE,
+                   TARGET_USER,
+                   null,
+                   fullTimeFormat.parse("2013-11-01 20:00:00,100").getTime(),
+                   3599945);
+        
+        assertItem(value,
+                   5,
+                   "debug-started",
+                   TARGET_WORKSPACE,
+                   TARGET_USER,
+                   null,
+                   fullTimeFormat.parse("2013-11-01 20:02:00,600").getTime(),
+                   3720445);
+
+        metric = new TestNumberOfUsersOfActivity();
+        Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(6));
+    }
+    
+    
     private void assertItem(ListValueData items,
                             int itemIndex,
                             String event,
                             String ws,
                             String user,
                             String message,
-                            long date) {
+                            long date,
+                            long timeFromBeginning) {
 
         Map<String, ValueData> itemContent = ((MapValueData)items.getAll().get(itemIndex)).getAll();
-        assertEquals(itemContent.get("event"), StringValueData.valueOf(event));
-        assertEquals(itemContent.get("ws"), StringValueData.valueOf(ws));
-        assertEquals(itemContent.get("user"), StringValueData.valueOf(user));
+        assertEquals(itemContent.get(UsersActivityList.EVENT), StringValueData.valueOf(event));
+        assertEquals(itemContent.get(UsersActivityList.WS), StringValueData.valueOf(ws));
+        assertEquals(itemContent.get(UsersActivityList.USER), StringValueData.valueOf(user));
 
         if (message != null) {
             assertEquals(itemContent.get("message"), StringValueData.valueOf(message));
         }
 
-        Date date1 = new Date(((LongValueData)itemContent.get("date")).getAsLong());
-        System.out.println(fullTimeFormat.format(date1));
-        assertEquals(itemContent.get("date"), LongValueData.valueOf(date));
+        assertEquals(itemContent.get(UsersActivityList.DATE), LongValueData.valueOf(date));
+        assertEquals(itemContent.get(UsersActivityList.TIME_FROM_BEGINNING), LongValueData.valueOf(timeFromBeginning));
     }
 
     // ------------------------> Tested classes
