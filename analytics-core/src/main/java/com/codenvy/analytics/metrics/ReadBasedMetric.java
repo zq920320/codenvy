@@ -86,7 +86,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
             if (!requiredFilter.exists(context)) {
-                throw new MetricRestrictionException("Filter " + requiredFilter + " is required");
+                throw new MetricRestrictionException(
+                        "Parameter " + requiredFilter + " required to be passed to get the value of the metric");
             }
         }
     }
