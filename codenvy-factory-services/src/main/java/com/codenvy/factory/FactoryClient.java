@@ -17,8 +17,8 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
 
 /** Allows to get factory from factories storage. */
 public interface FactoryClient {

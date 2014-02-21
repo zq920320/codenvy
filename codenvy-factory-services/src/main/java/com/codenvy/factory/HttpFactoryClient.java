@@ -17,8 +17,8 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
 import com.codenvy.commons.json.JsonHelper;
 import com.codenvy.commons.json.JsonParseException;
 import com.codenvy.commons.lang.IoUtil;
@@ -26,7 +26,6 @@ import com.codenvy.commons.lang.IoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;

@@ -17,10 +17,10 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.FactoryUrlValidator;
-import com.codenvy.api.factory.SimpleFactoryUrl;
+import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
+import com.codenvy.api.factory.dto.SimpleFactoryUrl;
 import com.codenvy.commons.lang.UrlUtils;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.client.UserManager;

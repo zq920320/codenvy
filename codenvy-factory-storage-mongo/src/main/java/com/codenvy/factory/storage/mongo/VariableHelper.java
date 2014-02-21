@@ -1,6 +1,9 @@
 package com.codenvy.factory.storage.mongo;
 
-import com.codenvy.api.factory.Variable;
+import com.codenvy.api.factory.ReplacementImpl;
+import com.codenvy.api.factory.VariableImpl;
+import com.codenvy.api.factory.dto.Replacement;
+import com.codenvy.api.factory.dto.Variable;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
@@ -15,7 +18,7 @@ public class VariableHelper {
     public static List<Variable> fromBasicDBFormat(BasicDBObject object) {
         List<Variable> variables = new ArrayList<>();
         List<String> files = new ArrayList<>();
-        List<Variable.Replacement> replacements = new ArrayList<>();
+        List<Replacement> replacements = new ArrayList<>();
         BasicDBList basicDBVariables = (BasicDBList)object.get("variables");
         if (basicDBVariables != null) {
             for (Object o : basicDBVariables) {
@@ -31,7 +34,7 @@ public class VariableHelper {
                     }
 
                     replacements.clear();
-                    Variable.Replacement replacement = new Variable.Replacement();
+                    Replacement replacement = new ReplacementImpl();
                     for (Object o1 : basicDBEntries) {
                         BasicDBObject entries = (BasicDBObject)o1;
                         for (Map.Entry<String, Object> entry : entries.entrySet()) {
@@ -51,7 +54,7 @@ public class VariableHelper {
                         replacements.add(replacement);
                     }
 
-                    variables.add(new Variable(files, replacements));
+                    variables.add(new VariableImpl(files, replacements));
                 }
             }
         }
@@ -62,27 +65,30 @@ public class VariableHelper {
     /** Transform List of Variables into Mongo DB Basic Object to allow save list in database. */
     public static BasicDBList toBasicDBFormat(List<Variable> variables) {
         BasicDBList basicDBVariables = new BasicDBList();
-        for (Variable variable : variables) {
-            BasicDBList files = new BasicDBList();
-            BasicDBList basicDBReplacements = new BasicDBList();
 
-            for (String file : variable.getFiles()) {
-                files.add(file);
+        if (variables != null) {
+            for (Variable variable : variables) {
+                BasicDBList files = new BasicDBList();
+                BasicDBList basicDBReplacements = new BasicDBList();
+
+                for (String file : variable.getFiles()) {
+                    files.add(file);
+                }
+
+                for (Replacement replacement : variable.getEntries()) {
+                    BasicDBObject BasicDBReplacement = new BasicDBObject();
+                    BasicDBReplacement.put("find", replacement.getFind());
+                    BasicDBReplacement.put("replace", replacement.getReplace());
+                    BasicDBReplacement.put("replacemode", replacement.getReplacemode());
+                    basicDBReplacements.add(BasicDBReplacement);
+                }
+
+                BasicDBObject temporary = new BasicDBObject();
+                temporary.put("files", files);
+                temporary.put("entries", basicDBReplacements);
+
+                basicDBVariables.add(temporary);
             }
-
-            for (Variable.Replacement replacement : variable.getEntries()) {
-                BasicDBObject BasicDBReplacement = new BasicDBObject();
-                BasicDBReplacement.put("find", replacement.getFind());
-                BasicDBReplacement.put("replace", replacement.getReplace());
-                BasicDBReplacement.put("replacemode", replacement.getReplacemode());
-                basicDBReplacements.add(BasicDBReplacement);
-            }
-
-            BasicDBObject temporary = new BasicDBObject();
-            temporary.put("files", files);
-            temporary.put("entries", basicDBReplacements);
-
-            basicDBVariables.add(temporary);
         }
 
         return basicDBVariables;

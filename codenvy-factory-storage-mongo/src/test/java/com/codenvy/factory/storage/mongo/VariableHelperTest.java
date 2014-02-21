@@ -1,6 +1,9 @@
 package com.codenvy.factory.storage.mongo;
 
-import com.codenvy.api.factory.Variable;
+import com.codenvy.api.factory.ReplacementImpl;
+import com.codenvy.api.factory.VariableImpl;
+import com.codenvy.api.factory.dto.Replacement;
+import com.codenvy.api.factory.dto.Variable;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
@@ -17,8 +20,8 @@ public class VariableHelperTest {
     @Test
     public void testFromBasicDBFormat() throws Exception {
         List<Variable> variables = new ArrayList<>();
-        Variable.Replacement replacement = new Variable.Replacement("findText", "replaceText", "text_multipass");
-        variables.add(new Variable(Collections.singletonList("glob_pattern"), Collections.singletonList(replacement)));
+        Replacement replacement = new ReplacementImpl("findText", "replaceText", "text_multipass");
+        variables.add(new VariableImpl(Collections.singletonList("glob_pattern"), Collections.singletonList(replacement)));
 
         BasicDBList basicDBVariables = VariableHelper.toBasicDBFormat(variables);
         BasicDBObject factoryURLbuilder = new BasicDBObject();
@@ -32,17 +35,12 @@ public class VariableHelperTest {
     @Test
     public void testToBasicDBFormat() throws Exception {
         List<Variable> variables = new ArrayList<>();
-        Variable.Replacement replacement = new Variable.Replacement("findText", "replaceText", "text_multipass");
-        variables.add(new Variable(Collections.singletonList("glob_pattern"), Collections.singletonList(replacement)));
-
-
+        Replacement replacement = new ReplacementImpl("findText", "replaceText", "text_multipass");
+        variables.add(new VariableImpl(Collections.singletonList("glob_pattern"), Collections.singletonList(replacement)));
 
         BasicDBList basicDBVariables = VariableHelper.toBasicDBFormat(variables);
         BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
         factoryURLbuilder.add("variables", basicDBVariables);
-
-
-
 
         JsonParser jsonParser = new JsonParser();
         jsonParser.parse(new ByteArrayInputStream(factoryURLbuilder.get().toString().getBytes("UTF-8")));
@@ -52,7 +50,7 @@ public class VariableHelperTest {
 
         List<Variable> result = new ArrayList<>();
         List<String> resultFiles = new ArrayList<>();
-        List<Variable.Replacement> resultReplacements = new ArrayList<>();
+        List<Replacement> resultReplacements = new ArrayList<>();
 
         Iterator<JsonValue> iterator = variablesArr.getElements();
         while (iterator.hasNext()) {
@@ -74,16 +72,14 @@ public class VariableHelperTest {
             while (entriesIterator.hasNext()) {
                 JsonValue entryValue = entriesIterator.next();
                 if (entryValue.isObject()) {
-                    resultReplacements.add(new Variable.Replacement(entryValue.getElement("find").getStringValue(),
+                    resultReplacements.add(new ReplacementImpl(entryValue.getElement("find").getStringValue(),
                                                                     entryValue.getElement("replace").getStringValue(),
                                                                     entryValue.getElement("replacemode").getStringValue()));
                 }
             }
 
-            result.add(new Variable(resultFiles, resultReplacements));
+            result.add(new VariableImpl(resultFiles, resultReplacements));
         }
-
-
 
         Assert.assertEquals(variables, result);
     }

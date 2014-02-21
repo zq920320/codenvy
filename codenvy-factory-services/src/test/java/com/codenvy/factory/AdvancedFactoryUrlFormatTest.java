@@ -17,8 +17,9 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.AdvancedFactoryUrl;
+import com.codenvy.api.factory.AdvancedFactoryUrlImpl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -45,7 +46,7 @@ public class AdvancedFactoryUrlFormatTest {
     public void shouldBeAbleToParseValidUrl() throws Exception {
         //given
         AdvancedFactoryUrl expectedFactoryUrl =
-                new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null,
+                new AdvancedFactoryUrlImpl("1.1", "git", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null,
                                        null, "newBranch",
                                        null, null);
         expectedFactoryUrl.setId("123456789");

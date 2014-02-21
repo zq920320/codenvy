@@ -18,6 +18,8 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
+import com.codenvy.api.factory.dto.SimpleFactoryUrl;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.client.UserManager;
 import com.codenvy.organization.exception.AccountExistenceException;
@@ -63,10 +65,10 @@ public class FactoryUrlBaseValidatorTest {
 
     @BeforeMethod
     public void setUp() {
-        url = new SimpleFactoryUrl("1.0", "git", VALID_REPOSITORY_URL, null, null, null, false, null, null, null, null,
+        url = new SimpleFactoryUrlImpl("1.0", "git", VALID_REPOSITORY_URL, null, null, null, false, null, null, null, null,
                                    null);
 
-        advUrl = new AdvancedFactoryUrl("1.1", "git", VALID_REPOSITORY_URL, "123456798", null, null, false, null, null,
+        advUrl = new AdvancedFactoryUrlImpl("1.1", "git", VALID_REPOSITORY_URL, "123456798", null, null, false, null, null,
                                         null, null, null);
 
         datetimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -234,14 +236,14 @@ public class FactoryUrlBaseValidatorTest {
     @DataProvider(name = "badSimpleFactoryUrlProvider")
     public Object[][] invalidParameterssimpleFactoryUrlProvider() throws UnsupportedEncodingException {
         return new Object[][]{
-                {new SimpleFactoryUrl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
-                                      "newBranch", null, null)},// invalid vcs
-                {new SimpleFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null, null)},
+                {new SimpleFactoryUrlImpl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
+                                          "newBranch", null, null)},// invalid vcs
+                {new SimpleFactoryUrlImpl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null, null)},
                 // invalid vcsurl
-                {new SimpleFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null, null)},
+                {new SimpleFactoryUrlImpl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null, null)},
                 // invalid vcsurl
-                {new SimpleFactoryUrl("1.0", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
-                                      "newBranch", null, null)},
+                {new SimpleFactoryUrlImpl("1.0", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
+                                          "newBranch", null, null)},
                 // invalid v
         };
     }
@@ -259,14 +261,14 @@ public class FactoryUrlBaseValidatorTest {
     @DataProvider(name = "badAdvancedFactoryUrlProvider")
     public Object[][] invalidParametersAdvancedFactoryUrlProvider() throws UnsupportedEncodingException {
         return new Object[][]{
-                {new AdvancedFactoryUrl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
-                                        "newBranch", null, null)},// invalid vcs
-                {new AdvancedFactoryUrl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null, null)},
+                {new AdvancedFactoryUrlImpl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
+                                            "newBranch", null, null)},// invalid vcs
+                {new AdvancedFactoryUrlImpl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null, null)},
                 // invalid vcsurl
-                {new AdvancedFactoryUrl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null, null)},
+                {new AdvancedFactoryUrlImpl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null, null)},
                 // invalid vcsurl
-                {new AdvancedFactoryUrl("1.0", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
-                                        "newBranch", null, null)},
+                {new AdvancedFactoryUrlImpl("1.0", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
+                                            "newBranch", null, null)},
                 // invalid v
         };
     }
@@ -275,8 +277,8 @@ public class FactoryUrlBaseValidatorTest {
     public void shouldBeAbleToValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsValid()
             throws FactoryUrlException, OrganizationServiceException, ParseException {
         // given
-        advUrl.setWelcome(new WelcomePage(new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico"),
-                                          new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico")));
+        advUrl.setWelcome(new WelcomePageImpl(new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico"),
+                                              new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico")));
         advUrl.setOrgid(ID);
         when(accountManager.getAccountById(ID)).thenReturn(account);
         when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
@@ -289,8 +291,8 @@ public class FactoryUrlBaseValidatorTest {
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsNull() throws FactoryUrlException {
         // given
-        advUrl.setWelcome(new WelcomePage(new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico"),
-                                          new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico")));
+        advUrl.setWelcome(new WelcomePageImpl(new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico"),
+                                              new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico")));
         advUrl.setOrgid(null);
 
         // when, then
@@ -300,8 +302,8 @@ public class FactoryUrlBaseValidatorTest {
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsEmpty() throws FactoryUrlException {
         // given
-        advUrl.setWelcome(new WelcomePage(new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico"),
-                                          new WelcomeConfiguration("title", null, "http://codenvy.com/favicon.ico")));
+        advUrl.setWelcome(new WelcomePageImpl(new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico"),
+                                              new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico")));
         advUrl.setOrgid("");
 
         // when, then
