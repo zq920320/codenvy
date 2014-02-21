@@ -379,10 +379,9 @@ public class TestAnalysisView extends BaseTest {
 
         /** create collections "active_users_set" to calculate "active_users" metric */
         Parameters.WS.put(context, Parameters.WS_TYPES.ANY.toString());
-        Parameters.EVENT.put(context, "*");
-        Parameters.PARAM.put(context, "user");
-        Parameters.STORAGE_TABLE.put(context, "active_users_set");
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, context);
+        Parameters.USER.put(context, Parameters.USER_TYPES.ANY.toString());
+        Parameters.STORAGE_TABLE.put(context, "users_activity_list");
+        pigServer.execute(ScriptType.USERS_ACTIVITY, context);
 
         /** create collections "created_project" to calculate "users_who_created_project" metric */
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());

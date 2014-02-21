@@ -27,20 +27,20 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractSetValueResulted extends ReadBasedMetric {
 
+    private final String valueField;
 
-    public static final String VALUE = "value";
-
-    protected AbstractSetValueResulted(String metricName) {
+    protected AbstractSetValueResulted(String metricName, String valueField) {
         super(metricName);
+        this.valueField = valueField;
     }
 
-    public AbstractSetValueResulted(MetricType metricType) {
-        super(metricType);
+    public AbstractSetValueResulted(MetricType metricType, String valueField) {
+        this(metricType.toString(), valueField);
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{VALUE};
+        return new String[]{valueField};
     }
 
     @Override
@@ -50,13 +50,11 @@ public abstract class AbstractSetValueResulted extends ReadBasedMetric {
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
-        String field = getTrackedFields()[0];
-
         DBObject group = new BasicDBObject();
         group.put("_id", null);
-        group.put(field, new BasicDBObject("$addToSet", "$" + field));
+        group.put(valueField, new BasicDBObject("$addToSet", "$" + valueField));
 
         return new DBObject[]{new BasicDBObject("$group", group),
-                              new BasicDBObject("$unwind", "$" + field)};
+                              new BasicDBObject("$unwind", "$" + valueField)};
     }
 }

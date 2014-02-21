@@ -5,7 +5,6 @@ com.codenvy.analytics.metrics.workspaces.Workspaces
 com.codenvy.analytics.metrics.workspaces.DestroyedWorkspaces
 com.codenvy.analytics.metrics.workspaces.TotalWorkspaces
 com.codenvy.analytics.metrics.workspaces.ActiveWorkspacesSet
-com.codenvy.analytics.metrics.workspaces.ActiveWsSet
 com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.NewActiveWorkspaces

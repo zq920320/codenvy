@@ -19,15 +19,34 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 public class ActiveUsers extends AbstractActiveEntities {
 
     public ActiveUsers() {
-        super(MetricType.ACTIVE_USERS, MetricType.ACTIVE_USERS_SET);
+        super(MetricType.ACTIVE_USERS,
+              MetricType.USERS_ACTIVITY_LIST,
+              UsersActivityList.USER);
+    }
+
+    @Override
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+        DBObject filter = super.getFilter(clauses);
+
+        DBObject match = (DBObject)filter.get("$match");
+        if (match.get(UsersActivityList.USER) == null) {
+            match.put(UsersActivityList.USER, REGISTERED_USER);
+        }
+
+        return filter;
     }
 
     @Override

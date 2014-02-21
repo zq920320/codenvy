@@ -99,7 +99,7 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
 
         DBObject match = (DBObject)filter.get("$match");
         if (match.get(ProductUsageSessionsList.USER) == null) {
-            match.put(ProductUsageSessionsList.USER, NON_ANONYMOUS_USER);
+            match.put(ProductUsageSessionsList.USER, REGISTERED_USER);
         }
 
         return filter;

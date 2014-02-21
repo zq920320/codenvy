@@ -17,36 +17,6 @@
  */
 package com.codenvy.analytics.services.view;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
@@ -64,24 +34,43 @@ import com.codenvy.analytics.services.pig.PigRunnerConfiguration;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.OutputSupplier;
 
+import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestAcceptance extends BaseTest {
 
     private StringBuilder builder = new StringBuilder();
-    
     private ViewBuilder viewBuilder;
-    
-    private PigRunner pigRunner;
-    
-    private static final String BASE_TEST_RESOURCE_DIR = BASE_DIR + "/test-classes/" + TestAcceptance.class.getSimpleName();
+    private PigRunner   pigRunner;
+
+    private static final String BASE_TEST_RESOURCE_DIR =
+            BASE_DIR + "/test-classes/" + TestAcceptance.class.getSimpleName();
 
     private static final String TEST_VIEW_CONFIGURATION_FILE = BASE_TEST_RESOURCE_DIR + "/view.xml";
-    private static final String TEST_STATISTICS_ARCHIVE = TestAcceptance.class.getSimpleName() + "/messages_2013-11-24";
-    
+    private static final String TEST_STATISTICS_ARCHIVE      =
+            TestAcceptance.class.getSimpleName() + "/messages_2013-11-24";
+
     @BeforeClass
     public void prepare() throws Exception {
         pigRunner = getPigRunner();
-        viewBuilder = getViewBuilder(TEST_VIEW_CONFIGURATION_FILE);        
+        viewBuilder = getViewBuilder(TEST_VIEW_CONFIGURATION_FILE);
         runScript();
     }
 
@@ -98,7 +87,7 @@ public class TestAcceptance extends BaseTest {
 
     private File getResourceAsBytes(String originalDate, String newDate) throws Exception {
         String archive = getClass().getClassLoader().getResource(TEST_STATISTICS_ARCHIVE).getFile();
-        
+
 
         try (ZipInputStream in = new ZipInputStream(new BufferedInputStream(new FileInputStream(archive)))) {
             ZipEntry zipEntry = in.getNextEntry();
@@ -181,7 +170,7 @@ public class TestAcceptance extends BaseTest {
                     break;
                 case "active_users_usage_day":
                     assertActiveUsersUsageDay(sectionData);
-                    break;                 
+                    break;
                 case "authentications_day":
                     assertAuthenticationsDay(sectionData);
                     break;
@@ -575,10 +564,10 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Users"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(3).get(1));    
+        aggregateResult(row, new StringValueData(""), sectionData.get(3).get(1));
     }
-    
-    private void assertActiveUsersUsageDay(SectionData sectionData) {    
+
+    private void assertActiveUsersUsageDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
         aggregateResult(row, new StringValueData("Total Active Users"), sectionData.get(1).get(0));
         aggregateResult(row, new StringValueData("96"), sectionData.get(1).get(1));
@@ -589,7 +578,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Returning Active Users"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData("65"), sectionData.get(3).get(1));            
+        aggregateResult(row, new StringValueData("65"), sectionData.get(3).get(1));
     }
 
     private void assertProjectsDay(SectionData sectionData) {
@@ -661,38 +650,40 @@ public class TestAcceptance extends BaseTest {
     private ViewBuilder getViewBuilder(final String viewConfigurationPath) throws IOException {
         XmlConfigurationManager viewConfigurationManager = mock(XmlConfigurationManager.class);
 
-        when(viewConfigurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                XmlConfigurationManager manager = new XmlConfigurationManager();
-                return manager.loadConfiguration(DisplayConfiguration.class, viewConfigurationPath);
-            }
-        });
+        when(viewConfigurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(
+                new Answer<Object>() {
+                    @Override
+                    public Object answer(InvocationOnMock invocation) throws Throwable {
+                        XmlConfigurationManager manager = new XmlConfigurationManager();
+                        return manager.loadConfiguration(DisplayConfiguration.class, viewConfigurationPath);
+                    }
+                });
 
         Configurator viewConfigurator = spy(Injector.getInstance(Configurator.class));
         doReturn(new String[]{viewConfigurationPath}).when(viewConfigurator).getArray(anyString());
 
         return spy(new ViewBuilder(Injector.getInstance(JdbcDataPersisterFactory.class),
-                                          Injector.getInstance(CSVReportPersister.class),
-                                          viewConfigurationManager,
-                                          viewConfigurator));
+                                   Injector.getInstance(CSVReportPersister.class),
+                                   viewConfigurationManager,
+                                   viewConfigurator));
     }
-    
+
     /** Creates pig runner with test configuration */
     private PigRunner getPigRunner(final String scriptConfigurationPath) throws IOException {
         XmlConfigurationManager pigRunnerConfigurationManager = mock(XmlConfigurationManager.class);
 
-        when(pigRunnerConfigurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                XmlConfigurationManager manager = new XmlConfigurationManager();
-                return manager.loadConfiguration(PigRunnerConfiguration.class, scriptConfigurationPath);
-            }
-        });
-        
+        when(pigRunnerConfigurationManager.loadConfiguration(any(Class.class), anyString())).thenAnswer(
+                new Answer<Object>() {
+                    @Override
+                    public Object answer(InvocationOnMock invocation) throws Throwable {
+                        XmlConfigurationManager manager = new XmlConfigurationManager();
+                        return manager.loadConfiguration(PigRunnerConfiguration.class, scriptConfigurationPath);
+                    }
+                });
+
         return spy(new PigRunner(Injector.getInstance(CollectionsManagement.class),
-                                      pigRunnerConfigurationManager,
-                                      Injector.getInstance(PigServer.class)));
+                                 pigRunnerConfigurationManager,
+                                 Injector.getInstance(PigServer.class)));
     }
 
     /** Get pig runner with default configuration */

@@ -27,19 +27,13 @@ import javax.annotation.security.RolesAllowed;
 public class ActiveOrgIdSet extends AbstractSetValueResulted {
 
     protected ActiveOrgIdSet() {
-        super(MetricType.ACTIVE_ORG_ID_SET);
+        super(MetricType.ACTIVE_ORG_ID_SET, ProductUsageFactorySessionsList.ORG_ID);
     }
 
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.ORG_ID};
-    }
-
 
     @Override
     public String getDescription() {
