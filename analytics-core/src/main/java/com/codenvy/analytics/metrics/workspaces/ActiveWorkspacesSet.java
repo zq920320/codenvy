@@ -19,18 +19,40 @@ package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractSetValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.users.UsersActivityList;
+import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 public class ActiveWorkspacesSet extends AbstractSetValueResulted {
 
     public ActiveWorkspacesSet() {
-        super(MetricType.ACTIVE_WORKSPACES_SET);
+        super(MetricType.ACTIVE_WORKSPACES_SET, UsersActivityList.WS);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.USERS_ACTIVITY_LIST);
+    }
+
+    @Override
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+        DBObject filter = super.getFilter(clauses);
+
+        DBObject match = (DBObject)filter.get("$match");
+        if (match.get(UsersActivityList.WS) == null) {
+            match.put(UsersActivityList.WS, PERSISTENT_WS);
+        }
+
+        return filter;
+    }
+
     @Override
     public String getDescription() {
         return "Active workspaces list";

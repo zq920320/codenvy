@@ -27,10 +27,7 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractActiveEntities extends ReadBasedMetric {
 
-    public static final String DEFAULT_VALUE_FIELD = "value";
-
-    private String valueField;
-    
+    private final String valueField;
     private final String basedMetricName;
 
     public AbstractActiveEntities(String metricName, String basedMetricName, String valueField) {
@@ -39,18 +36,9 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
         this.valueField = valueField;
     }
 
-    public AbstractActiveEntities(String metricName, String basedMetricName) {
-        this(metricName, basedMetricName, DEFAULT_VALUE_FIELD);
-    }
-    
     protected AbstractActiveEntities(MetricType metricType, MetricType basedMetric, String valueField) {
         this(metricType.name(), basedMetric.name(), valueField);
     }
-
-    public AbstractActiveEntities(MetricType metricType, MetricType basedMetric) {
-        this(metricType.name(), basedMetric.name(), DEFAULT_VALUE_FIELD);
-    }
-
 
     @Override
     public String[] getTrackedFields() {

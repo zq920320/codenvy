@@ -50,7 +50,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final String SEPARATOR           = ",";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
-    public static final Pattern NON_ANONYMOUS_USER = Pattern.compile("^(?!ANONYMOUSUSER_).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern REGISTERED_USER = Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PERSISTENT_WS   = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
 
 
     public final DataLoader dataLoader;
@@ -86,7 +87,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
             if (!requiredFilter.exists(context)) {
-                throw new MetricRestrictionException("Filter " + requiredFilter + " is required");
+                throw new MetricRestrictionException(
+                        "Parameter " + requiredFilter + " required to be passed to get the value of the metric");
             }
         }
     }

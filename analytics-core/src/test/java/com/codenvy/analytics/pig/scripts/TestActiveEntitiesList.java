@@ -31,7 +31,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,56 +41,56 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestActiveEntitiesList extends BaseTest {
 
+    private static final String COLLECTION = TestActiveEntitiesList.class.getSimpleName().toLowerCase();
+
     @BeforeClass
     public void init() throws Exception {
         Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
-                        .withDate("2013-01-01")
-                        .withTime("10:00:00")
-                        .build());
+                                .withDate("2013-01-01")
+                                .withTime("10:00:00")
+                                .build());
         events.add(Event.Builder.createTenantCreatedEvent("ws1", "user1@gmail.com")
-                        .withDate("2013-01-01")
-                        .withTime("10:00:01")
-                        .build());
+                                .withDate("2013-01-01")
+                                .withTime("10:00:01")
+                                .build());
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
-                        .withDate("2013-01-01")
-                        .withTime("10:00:02")
-                        .build());
+                                .withDate("2013-01-01")
+                                .withTime("10:00:02")
+                                .build());
         File log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130101");
         Parameters.TO_DATE.put(params, "20130101");
         Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.PERSISTENT.name());
-        Parameters.EVENT.put(params, "tenant-created");
-        Parameters.PARAM.put(params, "ws");
-        Parameters.STORAGE_TABLE.put(params, "testsetofactiveentities");
+        Parameters.STORAGE_TABLE.put(params, COLLECTION);
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
+        pigServer.execute(ScriptType.USERS_ACTIVITY, params);
 
         events = new ArrayList<>();
         events.add(Event.Builder.createTenantCreatedEvent("ws2", "user2@gmail.com")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:00")
-                        .build());
+                                .withDate("2013-01-02")
+                                .withTime("10:00:00")
+                                .build());
         events.add(Event.Builder.createTenantCreatedEvent("ws3", "user1@gmail.com")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:01")
-                        .build());
+                                .withDate("2013-01-02")
+                                .withTime("10:00:01")
+                                .build());
         events.add(Event.Builder.createTenantCreatedEvent("ws4", "user4@gmail.com")
-                        .withDate("2013-01-02")
-                        .withTime("10:00:02")
-                        .build());
+                                .withDate("2013-01-02")
+                                .withTime("10:00:02")
+                                .build());
         log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20130102");
         Parameters.TO_DATE.put(params, "20130102");
         Parameters.LOG.put(params, log.getAbsolutePath());
 
-        pigServer.execute(ScriptType.ACTIVE_ENTITIES, params);
+        pigServer.execute(ScriptType.USERS_ACTIVITY, params);
     }
 
     @Test
@@ -120,7 +119,7 @@ public class TestActiveEntitiesList extends BaseTest {
                                                                                          new StringValueData("ws4"))));
 
         metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(4));
+        assertEquals(metric.getValue(context), new LongValueData(3));
     }
 
     @Test
@@ -135,7 +134,7 @@ public class TestActiveEntitiesList extends BaseTest {
                                                                                          new StringValueData("ws3"))));
 
         metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(2));
+        assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
     @Test
@@ -151,7 +150,7 @@ public class TestActiveEntitiesList extends BaseTest {
                                                                                          new StringValueData("ws3"))));
 
         metric = new TestActiveUsersMetric();
-        assertEquals(metric.getValue(context), new LongValueData(3));
+        assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
     @Test
@@ -169,15 +168,17 @@ public class TestActiveEntitiesList extends BaseTest {
         assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
-    public class TestSetValueResulted extends AbstractSetValueResulted {
+    // =======================> Tested Metrics
+
+    private class TestSetValueResulted extends AbstractSetValueResulted {
 
         public TestSetValueResulted() {
-            super("testsetofactiveentities");
+            super(COLLECTION, "ws");
         }
 
         @Override
         public String getStorageCollectionName() {
-            return "testsetofactiveentities";
+            return COLLECTION;
         }
 
         @Override
@@ -186,11 +187,17 @@ public class TestActiveEntitiesList extends BaseTest {
         }
     }
 
-    public class TestActiveUsersMetric extends AbstractActiveEntities {
+    private class TestActiveUsersMetric extends AbstractActiveEntities {
 
         public TestActiveUsersMetric() {
-            super("testsetofactiveentities", "testsetofactiveentities");
+            super(COLLECTION, COLLECTION, "user");
         }
+
+        @Override
+        public String getStorageCollectionName() {
+            return COLLECTION;
+        }
+
 
         @Override
         public String getDescription() {

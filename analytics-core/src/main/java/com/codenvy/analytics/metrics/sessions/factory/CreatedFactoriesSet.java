@@ -34,16 +34,11 @@ public class CreatedFactoriesSet extends AbstractSetValueResulted {
     public static final String REPOSITORY   = "repository";
 
     public CreatedFactoriesSet() {
-        super(MetricType.CREATED_FACTORIES_SET);
+        super(MetricType.CREATED_FACTORIES_SET, FACTORY);
     }
 
     @Override
     public String getDescription() {
         return "The list of created factories.";
-    }
-
-    @Override
-    public String[] getTrackedFields() {
-        return new String[]{FACTORY};
     }
 }
