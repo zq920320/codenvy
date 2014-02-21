@@ -35,7 +35,7 @@ function Loader() {
 	      + '   <tr>'
 	      + '     <td align="center">'
 	      + '        <div id="loader-img">'
-	      + '           <img src="images/loader.gif" />'
+	      + '           <img src="/analytics/images/loader.gif" />'
 	      + '         </div>'
 	      + '     </td>'
 	      + '   </tr>'

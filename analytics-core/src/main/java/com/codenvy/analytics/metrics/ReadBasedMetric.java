@@ -27,6 +27,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
+import com.codenvy.api.analytics.exception.MetricRestrictionException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -80,20 +81,14 @@ public abstract class ReadBasedMetric extends AbstractMetric {
      *
      * @param context
      *         the execution context
-     * @throws IllegalArgumentException
-     *         if one of the restrictions failed
      */
-    private void validateRestrictions(Map<String, String> context) throws IllegalArgumentException {
+    private void validateRestrictions(Map<String, String> context) {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
             if (!requiredFilter.exists(context)) {
-                throw new IllegalArgumentException("Filter " + requiredFilter + " is required");
+                throw new MetricRestrictionException("Filter " + requiredFilter + " is required");
             }
         }
-    }
-
-    protected ValueData postEvaluation(ValueData valueData) throws IOException {
-        return valueData;
     }
     
     protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {

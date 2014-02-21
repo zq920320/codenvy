@@ -24,11 +24,13 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /** @author Alexander Reshetnyak */
+@RolesAllowed({"system/admin", "system/manager"})
 public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
 
     public static final String UNIQUE_REFERRERS_COUNT = "unique_referrers_count";

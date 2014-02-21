@@ -20,7 +20,10 @@ package com.codenvy.analytics.metrics.sessions.factory;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
     public AuthenticatedFactorySessions() {

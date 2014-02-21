@@ -25,8 +25,8 @@ import com.codenvy.analytics.metrics.MetricType;
 import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed(value = {})
-@FilterRequired(value = MetricFilter.FACTORY)
+@RolesAllowed({})
+@FilterRequired(MetricFilter.FACTORY)
 public class FactoryUsed extends AbstractCount {
 
     public FactoryUsed() {

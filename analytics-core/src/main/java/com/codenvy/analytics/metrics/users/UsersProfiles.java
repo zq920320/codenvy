@@ -23,9 +23,11 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class UsersProfiles extends AbstractUsersProfile {
 
     public static final String VALUE = "value";

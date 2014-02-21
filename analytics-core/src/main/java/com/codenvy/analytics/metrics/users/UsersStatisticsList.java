@@ -22,9 +22,11 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class UsersStatisticsList extends AbstractListValueResulted {
 
     public static final String USER      = "_id";

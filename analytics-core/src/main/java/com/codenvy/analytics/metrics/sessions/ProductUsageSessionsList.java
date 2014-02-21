@@ -24,6 +24,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import java.util.Map;
 /**
  * @author Anatoliy Bazko
  */
+@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageSessionsList extends AbstractListValueResulted {
 
     public static final String WS           = "ws";
@@ -61,7 +63,7 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
     }
 
     @Override
-    protected ValueData postEvaluation(ValueData valueData) throws IOException {
+    protected ValueData postEvaluation(ValueData valueData, Map<String,String> clauses) throws IOException {
         List<ValueData> value = new ArrayList<>();
         ListValueData listValueData = (ListValueData)valueData;
 

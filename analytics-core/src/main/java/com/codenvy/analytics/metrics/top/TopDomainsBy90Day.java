@@ -19,7 +19,10 @@ package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Anatoliy Bazko */
+@RolesAllowed({"system/admin", "system/manager"})
 public class TopDomainsBy90Day extends AbstractDomainsTime {
 
     public TopDomainsBy90Day() {

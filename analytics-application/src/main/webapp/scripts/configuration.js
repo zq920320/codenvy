@@ -160,7 +160,7 @@ function Configuration() {
             isSortable: true,
             defaultSortParams: "-date",
             
-            firstColumnLinkPrefix: "session-view.jsp?session_id",
+            firstColumnLinkPrefix: "session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
         },
 
         userWorkspaceData: {
@@ -218,7 +218,7 @@ function Configuration() {
             isNeedToSaveInHistory: true,
 
             defaultModelParams: {
-                "session_id": "unexisted_session_id"
+                "session_id": "unexisted_session_id",
             },
             
             isPaginable: true,
@@ -248,6 +248,7 @@ function Configuration() {
         "metric",
         "from_date",
         "to_date",
+        "event",
     ];
 
     var globalParams = [

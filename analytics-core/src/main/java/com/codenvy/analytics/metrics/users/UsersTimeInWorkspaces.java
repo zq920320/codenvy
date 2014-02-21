@@ -20,7 +20,10 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Dmytro Nochevnov */
+@RolesAllowed({"system/admin", "system/manager"})
 public class UsersTimeInWorkspaces extends AbstractCount {
 
     public UsersTimeInWorkspaces() {

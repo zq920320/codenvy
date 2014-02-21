@@ -102,7 +102,7 @@
 
 			<div class="right">			
 
-            <% if (Utils.isAdmin(request.getUserPrincipal().getName())) { %>
+            <% if (Utils.isSystemUser(request.getUserPrincipal().getName())) { %>
                 <div class="nav">                
                     <div>
                         <button id="topmenu-preferences">Preferences</button>
@@ -139,7 +139,7 @@
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-user", true);    // turn-on user menu button
 	    
-    <% if (Utils.isAdmin(request.getUserPrincipal().getName())) { %>
+    <% if (Utils.isSystemUser(request.getUserPrincipal().getName())) { %>
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-preferences", false);    // turn-on preferences menu button
 	<% } %>
 	    

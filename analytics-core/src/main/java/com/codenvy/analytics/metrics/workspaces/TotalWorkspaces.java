@@ -23,15 +23,17 @@ package com.codenvy.analytics.metrics.workspaces;
 import com.codenvy.analytics.metrics.CumulativeMetric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+
+import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class TotalWorkspaces extends CumulativeMetric {
 
     public TotalWorkspaces() {
         super(MetricType.TOTAL_WORKSPACES,
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.CREATED_WORKSPACES),
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.DESTROYED_WORKSPACES));
+              MetricFactory.getMetric(MetricType.CREATED_WORKSPACES),
+              MetricFactory.getMetric(MetricType.DESTROYED_WORKSPACES));
     }
 
     @Override

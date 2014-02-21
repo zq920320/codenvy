@@ -17,10 +17,6 @@
  */
 package com.codenvy.analytics.metrics.sessions.factory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricType;
@@ -28,7 +24,13 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import javax.annotation.security.RolesAllowed;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /** @author Alexander Reshetnyak */
+@RolesAllowed({"system/admin", "system/manager"})
 public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
 
     public static final String COUNT = "count";
@@ -47,26 +49,26 @@ public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
         List<DBObject> dbOperations = new ArrayList<>();
 
         DBObject match = new BasicDBObject();
-        match.put(ProductUsageFactorySessionsList.TIME, new BasicDBObject( "$lte", 0));
+        match.put(ProductUsageFactorySessionsList.TIME, new BasicDBObject("$lte", 0));
         dbOperations.add(new BasicDBObject("$match", match));
-        
+
         DBObject group = new BasicDBObject();
         group.put("_id", "$" + ProductUsageFactorySessionsList.WS);
         dbOperations.add(new BasicDBObject("$group", group));
-        
+
         group = new BasicDBObject();
         group.put("_id", null);
         group.put(COUNT, new BasicDBObject("$sum", 1));
         dbOperations.add(new BasicDBObject("$group", group));
-        
+
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
     }
-    
+
     @Override
-    public Class< ? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
-    
+
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);

@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.MetricType;
 import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
+@RolesAllowed({"system/admin", "system/manager"})
 public class CreatedFactories extends AbstractCount {
 
     public CreatedFactories() {

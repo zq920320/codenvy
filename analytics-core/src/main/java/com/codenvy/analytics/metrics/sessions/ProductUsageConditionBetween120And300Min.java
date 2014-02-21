@@ -19,7 +19,10 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Anatoliy Bazko */
+@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageConditionBetween120And300Min extends AbstractProductUsageCondition {
 
     public ProductUsageConditionBetween120And300Min() {

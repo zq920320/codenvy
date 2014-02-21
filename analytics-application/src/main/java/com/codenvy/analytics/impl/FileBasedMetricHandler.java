@@ -29,6 +29,7 @@ import com.codenvy.api.analytics.dto.MetricInfoDTO;
 import com.codenvy.api.analytics.dto.MetricInfoListDTO;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
+import com.codenvy.api.analytics.exception.MetricRestrictionException;
 import com.codenvy.dto.server.DtoFactory;
 
 import javax.inject.Singleton;
@@ -50,10 +51,13 @@ public class FileBasedMetricHandler implements MetricHandler {
     @Override
     public MetricValueDTO getValue(String metricName,
                                    Map<String, String> context,
-                                   UriInfo uriInfo) throws MetricNotFoundException {
+                                   UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
 
-        if (!com.codenvy.api.analytics.Utils.isAdmin(Parameters.USER_PRINCIPAL.get(context))) {
-            MetricFilter.USER.put(context, Parameters.USER_PRINCIPAL.get(context));
+        String userPrincipal = Parameters.USER_PRINCIPAL.get(context);
+        if (userPrincipal != null) {
+            if (!com.codenvy.api.analytics.Utils.isSystemUser(userPrincipal)) {
+                MetricFilter.USER.put(context, userPrincipal);
+            }
         }
 
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
@@ -64,7 +68,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         } catch (IOException e) {
             throw new IllegalStateException("Inappropriate metric state or metric context to evaluate metric ");
         } catch (IllegalArgumentException e) {
-            throw new MetricNotFoundException();
+            throw new MetricNotFoundException("Metric not found");
         }
         return metricValueDTO;
     }
@@ -75,7 +79,7 @@ public class FileBasedMetricHandler implements MetricHandler {
             Metric metric = MetricFactory.getMetric(metricName);
             return MetricDTOFactory.createMetricDTO(metric, metricName, uriInfo);
         } catch (IllegalArgumentException e) {
-            throw new MetricNotFoundException();
+            throw new MetricNotFoundException("Metric not found");
         }
     }
 

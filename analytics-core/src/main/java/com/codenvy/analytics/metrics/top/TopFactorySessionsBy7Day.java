@@ -19,7 +19,10 @@ package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class TopFactorySessionsBy7Day extends AbstractTopSessions {
 
     public TopFactorySessionsBy7Day() {

@@ -18,10 +18,7 @@
 
 package com.codenvy.analytics.metrics;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"system/admin", "system/manager"})
 public abstract class AbstractMetric implements Metric {
 
     protected final String metricName;

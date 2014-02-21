@@ -86,6 +86,11 @@ function Main() {
             
             reloadWidgets($("#ide-version").attr("targetWidgets"));
         });
+        
+        // Hide session events selector
+        $("#hide-session-events").click(function () {
+            reloadWidgets($("#hide-session-events").attr("targetWidgets"));
+        });
     };
     
     /**
@@ -133,6 +138,16 @@ function Main() {
                params.ide = ideVersionButton.attr("value");
            } 
            updateGlobalParamInStorage("ide", params["ide"]);  // params["ide"] is undefined if ideVersionButton.attr("value") is undefined 
+        }
+        
+        // process hide session events selector
+        var hideSesionEventsCheckbox = $("#hide-session-events");
+        if (hideSesionEventsCheckbox.doesExist()) {
+            if (hideSesionEventsCheckbox.prop("checked")) {
+                params.event = hideSesionEventsCheckbox.attr("checked-value");                
+            } else {
+                params.event = hideSesionEventsCheckbox.attr("unchecked-value");
+            }
         }
         
         return params;
@@ -353,6 +368,17 @@ function Main() {
        var ideVersionButtons = jQuery("#ide-version a"); 
        if (ideVersionButtons.doesExist()) {
            setPrimaryButtonOnValue(ideVersionButtons, params["ide"]);
+       }
+       
+       // update hide session events selector
+       var hideSesionEventsCheckbox = jQuery("#hide-session-events"); 
+       if (hideSesionEventsCheckbox.doesExist()) {
+           if (typeof params["event"] != undefined 
+                   && params["event"] == hideSesionEventsCheckbox.attr("checked-value")) {
+               hideSesionEventsCheckbox.prop("checked", true);
+           } else {
+               hideSesionEventsCheckbox.prop("checked", false);
+           }
        }
     }
 

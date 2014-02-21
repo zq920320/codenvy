@@ -21,7 +21,10 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 import com.codenvy.analytics.metrics.ide_usage.IdeUsageTypes;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author Alexander Reshetnyak */
+@RolesAllowed({"system/admin", "system/manager"})
 public class IdeUsageFileDownloadZippedFolder extends AbstractIdeUsage {
 
     public IdeUsageFileDownloadZippedFolder() {
@@ -31,6 +34,6 @@ public class IdeUsageFileDownloadZippedFolder extends AbstractIdeUsage {
 
     @Override
     public String getDescription() {
-        return "The number of 'File->DowloadZippedFolder' operations";
+        return "The number of 'File->DownloadZippedFolder' operations";
     }
 }

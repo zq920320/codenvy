@@ -23,15 +23,17 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.metrics.CumulativeMetric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
+
+import javax.annotation.security.RolesAllowed;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class TotalProjects extends CumulativeMetric {
 
     public TotalProjects() {
         super(MetricType.TOTAL_PROJECTS,
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.CREATED_PROJECTS),
-              (ReadBasedMetric)MetricFactory.getMetric(MetricType.DESTROYED_PROJECTS));
+              MetricFactory.getMetric(MetricType.CREATED_PROJECTS),
+              MetricFactory.getMetric(MetricType.DESTROYED_PROJECTS));
     }
 
     @Override

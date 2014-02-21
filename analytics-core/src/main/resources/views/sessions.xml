@@ -41,7 +41,7 @@
                 <parameter key="fields" value="date,event,time_from_beginning"/>
                 <parameter key="date-fields" value="date"/>
                 <parameter key="event-fields" value="event"/>
-                 <parameter key="time-fields" value="time_from_beginning"/>
+                <parameter key="time-fields" value="time_from_beginning"/>
             </row>
         </section>
     </view>

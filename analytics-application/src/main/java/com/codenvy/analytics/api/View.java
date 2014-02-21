@@ -62,13 +62,14 @@ public class View {
     @GET
     @Path("{name}")
     @Produces({"application/json"})
-    @RolesAllowed(value = {"user"})
+    @RolesAllowed({"user"})
     public Response getViewData(@PathParam("name") String name,
                                 @Context UriInfo uriInfo,
                                 @Context SecurityContext securityContext) {
         try {
             Map<String, String> context = Utils.extractContext(uriInfo, securityContext.getUserPrincipal());
-            if (!Utils.isAdmin(Parameters.USER_PRINCIPAL.get(context))) {
+
+            if (!Utils.isSystemUser(Parameters.USER_PRINCIPAL.get(context))) {
                 MetricFilter.USER.put(context, Parameters.USER_PRINCIPAL.get(context));
             }
 

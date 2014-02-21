@@ -17,13 +17,15 @@
  */
 package com.codenvy.analytics.metrics;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
+import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
+import java.util.Map;
+
 /** @author Dmytro Nochevnov */
+@RolesAllowed({"system/admin", "system/manager"})
 public class Zero extends AbstractMetric {
     public Zero() {
         super(MetricType.ZERO);
@@ -35,7 +37,7 @@ public class Zero extends AbstractMetric {
     }
 
     @Override
-    public ValueData getValue(Map<String, String> context) throws IOException {       
+    public ValueData getValue(Map<String, String> context) throws IOException {
         return new LongValueData(0);
     }
 

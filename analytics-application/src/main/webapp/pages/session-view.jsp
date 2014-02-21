@@ -31,6 +31,16 @@
         <div>
             <div class="hero-unit full-width">
                 <div id="sessionOverview"></div>
+                
+	            <div class="well topFilteringPanel">
+	                <div id="filter-by" class="left">
+	                    <input type="checkbox" checked id="hide-session-events" name="event" 
+                               checked-value="~session-started,~session-finished,~session-factory-started,~session-factory-stopped" 
+                               unchecked-value="session-started,session-finished,session-factory-started,session-factory-stopped"
+                               targetWidgets="userSessionActivity" />
+	                    hide session events
+	                </div>
+	            </div>
 
                 <div class="single-column-gadget full-width">
                     <div class="view">

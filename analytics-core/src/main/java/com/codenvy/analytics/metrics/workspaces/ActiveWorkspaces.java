@@ -20,7 +20,10 @@ package com.codenvy.analytics.metrics.workspaces;
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class ActiveWorkspaces extends AbstractActiveEntities {
 
     public ActiveWorkspaces() {

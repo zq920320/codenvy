@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
+
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
@@ -38,6 +40,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class UsersActivityList extends AbstractListValueResulted {
 
     public static final String MESSAGE = "message";

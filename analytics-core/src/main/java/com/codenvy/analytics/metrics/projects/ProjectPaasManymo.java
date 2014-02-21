@@ -19,7 +19,10 @@ package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+@RolesAllowed({"system/admin", "system/manager"})
 public class ProjectPaasManymo extends AbstractProjectPaas {
 
     public ProjectPaasManymo() {

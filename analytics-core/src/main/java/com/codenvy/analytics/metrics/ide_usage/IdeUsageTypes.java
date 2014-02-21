@@ -20,11 +20,14 @@ package com.codenvy.analytics.metrics.ide_usage;
 import com.codenvy.analytics.metrics.AbstractMapValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
+import javax.annotation.security.RolesAllowed;
+
 /**
  * The IDE usage types definition.
  *
  * @author Alexander Reshetnyak
  */
+@RolesAllowed({"system/admin", "system/manager"})
 public class IdeUsageTypes extends AbstractMapValueResulted {
 
     public static final String FILE_NEW_FOLDER  = "file-new-folder";
