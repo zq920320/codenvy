@@ -15,58 +15,6 @@
  from Codenvy S.A.. 
 --%>
 <%@page import="com.codenvy.analytics.util.FrontEndUtil" %>  
-<%@page import="com.codenvy.api.analytics.Utils" %>
-
-<style>
-	.ui-button, .ui-button a {
-	    color: white !important;
-	    font-weight: bold !important;
-	    font-size: 16px !important;
-	    margin-right: 0px;
-	}
-	
-	.ui-state-default {
-	    background: none;
-	    border: 0 none !important;
-	}
-	
-	.selected {
-	    background-color: #0076B1;
-        color: white !important;
-	}
-	
-	.ui-state-hover {
-	    background-color: #08c;
-	}
-	
-	.ui-corner-all {
-	    border-radius: 0 !important;
-	}
-	
-	.analytics-label {
-        color: #0076B1;
-    }
-
-    /* button set */    
-    .button-set .ui-state-hover {
-        background-color: red;
-    }
-    
-    .button-set .selected {
-        background-color: purple;
-    }
-
-    .button-set .ui-button {
-        font-size: 14px !important;
-    }
-    
-    
-    /* use white "ui-icon-triangle-1-s" icon in user menu button */
-    .ui-state-hover .ui-icon, .ui-state-focus .ui-icon,
-    .ui-state-default .ui-icon {
-        background-image: url(images/ui-icons_ffffff_256x240.png); 
-    }
-</style>
 
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
@@ -101,8 +49,6 @@
 		    </div>
 
 			<div class="right">			
-
-            <% if (Utils.isSystemUser(request.getUserPrincipal().getName())) { %>
                 <div class="nav">                
                     <div>
                         <button id="topmenu-preferences">Preferences</button>
@@ -113,7 +59,6 @@
 	                    <li><a class="command-btn" value="3">IDE<i>3</i> only</a></li>
                     </ul> 
                 </div>
-            <% } %>
 
 				<div class="nav">
 					<div class="label-container">
@@ -139,9 +84,7 @@
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-user", true);    // turn-on user menu button
 	    
-    <% if (Utils.isSystemUser(request.getUserPrincipal().getName())) { %>
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-preferences", false);    // turn-on preferences menu button
-	<% } %>
 	    
 	    // select menu items connected to page where top menu is displaying
 	<%  if (request.getParameterValues("selectedMenuItemId") != null) { 

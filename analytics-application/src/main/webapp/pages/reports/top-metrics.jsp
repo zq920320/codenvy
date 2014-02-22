@@ -22,7 +22,7 @@
 </head>
 <body>
 
-<jsp:include page="/inclusions/top-menu.jsp">
+<jsp:include page="/inclusions/top-menu/top-menu.jsp">
     <jsp:param name="selectedMenuItemId" value="topmenu-reports"/>
     <jsp:param name="selectedMenuItemId" value="topmenu-reports-top_metrics"/>
 </jsp:include>
