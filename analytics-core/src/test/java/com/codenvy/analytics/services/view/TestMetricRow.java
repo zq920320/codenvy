@@ -96,7 +96,7 @@ public class TestMetricRow extends BaseTest {
         TestedMetric metric = new TestedMetric(30 * 1000);
         Row row = new MetricRow(metric, parameters);
 
-        assertData(row, "");
+        assertData(row, "< 1m");
     }
 
     private void assertData(Row row, String value) throws Exception {
