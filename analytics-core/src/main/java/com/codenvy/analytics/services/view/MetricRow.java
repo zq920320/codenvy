@@ -280,9 +280,14 @@ public class MetricRow extends AbstractRow {
 
         int minutes = (int)((milliseconds / (1000 * 60)) % 60);
         int hours = (int)(milliseconds / (1000 * 60 * 60));
+        int secs = (int)((milliseconds / 1000) % 60);
 
         if (hours == 0 && minutes == 0) {
-            return StringValueData.DEFAULT;
+            if (secs > 0) {
+                return StringValueData.valueOf("< 1m");  // return "<1m" if hours == 0 && minutes == 0 && secs > 0
+            } else {
+                return StringValueData.DEFAULT;
+            }
         } else {
             StringBuilder builder = new StringBuilder();
             if (hours > 0) {
