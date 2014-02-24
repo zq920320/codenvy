@@ -20,6 +20,9 @@ package com.codenvy.factory;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
 import com.codenvy.api.factory.dto.SimpleFactoryUrl;
+import com.codenvy.api.factory.dto.WelcomeConfiguration;
+import com.codenvy.api.factory.dto.WelcomePage;
+import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.client.UserManager;
 import com.codenvy.organization.exception.AccountExistenceException;
@@ -65,11 +68,20 @@ public class FactoryUrlBaseValidatorTest {
 
     @BeforeMethod
     public void setUp() {
-        url = new SimpleFactoryUrlImpl("1.0", "git", VALID_REPOSITORY_URL, null, null, null, false, null, null, null, null,
-                                   null);
+        SimpleFactoryUrl simpleFactoryUrl = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
+        simpleFactoryUrl.setV("1.0");
+        simpleFactoryUrl.setVcs("git");
+        simpleFactoryUrl.setVcsurl(VALID_REPOSITORY_URL);
+        simpleFactoryUrl.setVcsinfo(false);
+        url = simpleFactoryUrl;
 
-        advUrl = new AdvancedFactoryUrlImpl("1.1", "git", VALID_REPOSITORY_URL, "123456798", null, null, false, null, null,
-                                        null, null, null);
+        AdvancedFactoryUrl advancedFactoryUrl = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+        advancedFactoryUrl.setV("1.1");
+        advancedFactoryUrl.setVcs("git");
+        advancedFactoryUrl.setVcsurl(VALID_REPOSITORY_URL);
+        advancedFactoryUrl.setCommitid("123456798");
+        advancedFactoryUrl.setVcsinfo(false);
+        advUrl = advancedFactoryUrl;
 
         datetimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         datetimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -235,16 +247,42 @@ public class FactoryUrlBaseValidatorTest {
 
     @DataProvider(name = "badSimpleFactoryUrlProvider")
     public Object[][] invalidParameterssimpleFactoryUrlProvider() throws UnsupportedEncodingException {
+        SimpleFactoryUrl f1 = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
+        f1.setV("1.1");
+        f1.setVcs("notagit");
+        f1.setVcsurl(VALID_REPOSITORY_URL);
+        f1.setCommitid("commit123456789");
+        f1.setVcsinfo(false);
+        f1.setVcsbranch("newBranch");
+
+        SimpleFactoryUrl f2 = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
+        f2.setV("1.1");
+        f2.setVcs("git");
+        f2.setCommitid("commit123456789");
+        f2.setVcsinfo(false);
+        f2.setVcsbranch("newBranch");
+
+        SimpleFactoryUrl f3 = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
+        f3.setV("1.1");
+        f3.setVcs("git");
+        f3.setVcsurl("");
+        f3.setCommitid("commit123456789");
+        f3.setVcsinfo(false);
+        f3.setVcsbranch("newBranch");
+
+        SimpleFactoryUrl f4 = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
+        f4.setV("1.0");
+        f4.setVcs("notagit");
+        f4.setVcsurl(VALID_REPOSITORY_URL);
+        f4.setCommitid("commit123456789");
+        f4.setVcsinfo(false);
+        f4.setVcsbranch("newBranch");
+
         return new Object[][]{
-                {new SimpleFactoryUrlImpl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
-                                          "newBranch", null, null)},// invalid vcs
-                {new SimpleFactoryUrlImpl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null, null)},
-                // invalid vcsurl
-                {new SimpleFactoryUrlImpl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null, null)},
-                // invalid vcsurl
-                {new SimpleFactoryUrlImpl("1.0", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
-                                          "newBranch", null, null)},
-                // invalid v
+                {f1},// invalid vcs
+                {f2},// invalid vcsurl
+                {f3},// invalid vcsurl
+                {f4},// invalid v
         };
     }
 
@@ -260,16 +298,43 @@ public class FactoryUrlBaseValidatorTest {
 
     @DataProvider(name = "badAdvancedFactoryUrlProvider")
     public Object[][] invalidParametersAdvancedFactoryUrlProvider() throws UnsupportedEncodingException {
+        AdvancedFactoryUrl adv1 = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+        adv1.setV("1.1");
+        adv1.setVcs("notagit");
+        adv1.setVcsurl(VALID_REPOSITORY_URL);
+        adv1.setCommitid("commit123456789");
+        adv1.setVcsinfo(false);
+        adv1.setVcsbranch("newBranch");
+
+        AdvancedFactoryUrl adv2 = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+        adv2.setV("1.1");
+        adv2.setVcs("git");
+        adv2.setVcsurl(null);
+        adv2.setCommitid("commit123456789");
+        adv2.setVcsinfo(false);
+        adv2.setVcsbranch("newBranch");
+
+        AdvancedFactoryUrl adv3 = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+        adv3.setV("1.1");
+        adv3.setVcs("git");
+        adv3.setVcsurl("");
+        adv3.setCommitid("commit123456789");
+        adv3.setVcsinfo(false);
+        adv3.setVcsbranch("newBranch");
+
+        AdvancedFactoryUrl adv4 = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+        adv4.setV("1.0");
+        adv4.setVcs("notagit");
+        adv4.setVcsurl(VALID_REPOSITORY_URL);
+        adv4.setCommitid("commit123456789");
+        adv4.setVcsinfo(false);
+        adv4.setVcsbranch("newBranch");
+
         return new Object[][]{
-                {new AdvancedFactoryUrlImpl("1.1", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
-                                            "newBranch", null, null)},// invalid vcs
-                {new AdvancedFactoryUrlImpl("1.1", "git", null, "commit123456789", null, null, false, null, null, "newBranch", null, null)},
-                // invalid vcsurl
-                {new AdvancedFactoryUrlImpl("1.1", "git", "", "commit123456789", null, null, false, null, null, "newBranch", null, null)},
-                // invalid vcsurl
-                {new AdvancedFactoryUrlImpl("1.0", "notagit", VALID_REPOSITORY_URL, "commit123456789", null, null, false, null, null,
-                                            "newBranch", null, null)},
-                // invalid v
+                {adv1},// invalid vcs
+                {adv2},// invalid vcsurl
+                {adv3},// invalid vcsurl
+                {adv4},// invalid v
         };
     }
 
@@ -277,8 +342,19 @@ public class FactoryUrlBaseValidatorTest {
     public void shouldBeAbleToValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsValid()
             throws FactoryUrlException, OrganizationServiceException, ParseException {
         // given
-        advUrl.setWelcome(new WelcomePageImpl(new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico"),
-                                              new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico")));
+        WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
+        WelcomeConfiguration conf1 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+        WelcomeConfiguration conf2 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+
+        conf1.setTitle("title");
+        conf1.setIconurl("http://codenvy.com/favicon.ico");
+        conf2.setTitle("title");
+        conf2.setIconurl("http://codenvy.com/favicon.ico");
+
+        welcome.setAuthenticated(conf1);
+        welcome.setNonauthenticated(conf2);
+
+        advUrl.setWelcome(welcome);
         advUrl.setOrgid(ID);
         when(accountManager.getAccountById(ID)).thenReturn(account);
         when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
@@ -291,8 +367,19 @@ public class FactoryUrlBaseValidatorTest {
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsNull() throws FactoryUrlException {
         // given
-        advUrl.setWelcome(new WelcomePageImpl(new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico"),
-                                              new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico")));
+        WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
+        WelcomeConfiguration conf1 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+        WelcomeConfiguration conf2 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+
+        conf1.setTitle("title");
+        conf1.setIconurl("http://codenvy.com/favicon.ico");
+        conf2.setTitle("title");
+        conf2.setIconurl("http://codenvy.com/favicon.ico");
+
+        welcome.setAuthenticated(conf1);
+        welcome.setNonauthenticated(conf2);
+
+        advUrl.setWelcome(welcome);
         advUrl.setOrgid(null);
 
         // when, then
@@ -302,8 +389,19 @@ public class FactoryUrlBaseValidatorTest {
     @Test(expectedExceptions = FactoryUrlException.class)
     public void shouldNotValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsEmpty() throws FactoryUrlException {
         // given
-        advUrl.setWelcome(new WelcomePageImpl(new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico"),
-                                              new WelcomeConfigurationImpl("title", null, "http://codenvy.com/favicon.ico")));
+        WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
+        WelcomeConfiguration conf1 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+        WelcomeConfiguration conf2 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+
+        conf1.setTitle("title");
+        conf1.setIconurl("http://codenvy.com/favicon.ico");
+        conf2.setTitle("title");
+        conf2.setIconurl("http://codenvy.com/favicon.ico");
+
+        welcome.setAuthenticated(conf1);
+        welcome.setNonauthenticated(conf2);
+
+        advUrl.setWelcome(welcome);
         advUrl.setOrgid("");
 
         // when, then

@@ -23,6 +23,7 @@ import com.codenvy.api.factory.dto.Variable;
 import com.codenvy.commons.json.JsonHelper;
 import com.codenvy.commons.json.JsonParseException;
 import com.codenvy.commons.lang.UrlUtils;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,7 @@ public class SimpleFactoryUrlFormat implements FactoryUrlFormat<SimpleFactoryUrl
                 }
             }
 
-            SimpleFactoryUrl factoryUrl = new SimpleFactoryUrlImpl();
+            SimpleFactoryUrl factoryUrl = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
             factoryUrl.setV(params.get("v").iterator().next());
             factoryUrl.setVcs(params.get("vcs").iterator().next());
             factoryUrl.setVcsurl(params.get("vcsurl").iterator().next());

@@ -17,12 +17,12 @@
  */
 package com.codenvy.factory.storage;
 
-import com.codenvy.api.factory.AdvancedFactoryUrlImpl;
 import com.codenvy.api.factory.FactoryImage;
 import com.codenvy.api.factory.FactoryStore;
 import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
 import com.codenvy.commons.lang.NameGenerator;
+import com.codenvy.dto.server.DtoFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -37,7 +37,7 @@ public class InMemoryFactoryStore implements FactoryStore {
     public String saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
         lock.writeLock().lock();
         try {
-            AdvancedFactoryUrl newFactoryUrl = new AdvancedFactoryUrlImpl(factoryUrl, null);
+            AdvancedFactoryUrl newFactoryUrl = DtoFactory.getInstance().clone(factoryUrl);
             newFactoryUrl.setId(NameGenerator.generate("", 16));
             Set<FactoryImage> newImages = new HashSet<>();
             for (FactoryImage image : images) {

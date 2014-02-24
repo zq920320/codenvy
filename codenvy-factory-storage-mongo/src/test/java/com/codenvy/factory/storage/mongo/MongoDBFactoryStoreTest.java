@@ -23,6 +23,7 @@ import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.*;
 import com.codenvy.commons.lang.NameGenerator;
+import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.*;
 
 import org.everrest.core.impl.provider.json.*;
@@ -75,10 +76,21 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
-        WelcomePage welcomePage = new WelcomePageImpl(new WelcomeConfigurationImpl("title1", "url1", "conten1"),
-                                                  new WelcomeConfigurationImpl("title2", "url2", "content2"));
+        WelcomePage welcomePage = DtoFactory.getInstance().createDto(WelcomePage.class);
+        WelcomeConfiguration authConf = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+        WelcomeConfiguration notAuthConf = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
 
-        AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrlImpl();
+        authConf.setTitle("title1");
+        authConf.setIconurl("url1");
+        authConf.setContenturl("content1");
+        notAuthConf.setTitle("title2");
+        notAuthConf.setIconurl("url2");
+        notAuthConf.setContenturl("content2");
+
+        welcomePage.setAuthenticated(authConf);
+        welcomePage.setNonauthenticated(notAuthConf);
+
+        AdvancedFactoryUrl factoryUrl = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
         factoryUrl.setAuthor("someAuthor");
         factoryUrl.setContactmail("test@test.com");
         factoryUrl.setDescription("testDescription");
@@ -122,7 +134,7 @@ public class MongoDBFactoryStoreTest {
 
         WelcomePage welcomePage = null;
 
-        AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrlImpl();
+        AdvancedFactoryUrl factoryUrl = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
         factoryUrl.setAuthor("someAuthor");
         factoryUrl.setContactmail("test@test.com");
         factoryUrl.setDescription("testDescription");
@@ -180,17 +192,33 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
-        WelcomePage welcomePage = new WelcomePageImpl(new WelcomeConfigurationImpl("title1", "url1", "conten1"),
-                                                  new WelcomeConfigurationImpl("title2", "url2", "content2"));
+        WelcomePage welcomePage = DtoFactory.getInstance().createDto(WelcomePage.class);
+        WelcomeConfiguration authConf = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+        WelcomeConfiguration notAuthConf = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+
+        authConf.setTitle("title1");
+        authConf.setIconurl("url1");
+        authConf.setContenturl("content1");
+        notAuthConf.setTitle("title2");
+        notAuthConf.setIconurl("url2");
+        notAuthConf.setContenturl("content2");
+
+        welcomePage.setAuthenticated(authConf);
+        welcomePage.setNonauthenticated(notAuthConf);
 
         byte[] b = new byte[4096];
         new Random().nextBytes(b);
 
         BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(attrs);
 
-        List<Variable> variables = Collections.<Variable>singletonList(
-                new VariableImpl(Collections.singletonList("glob"),
-                                 Collections.<Replacement>singletonList(new ReplacementImpl("find", "replace", "text_multipass"))));
+        Variable variable = DtoFactory.getInstance().createDto(Variable.class);
+        Replacement replacement = DtoFactory.getInstance().createDto(Replacement.class);
+        replacement.setFind("find");
+        replacement.setReplacemode("replace");
+        replacement.setReplacemode("text_multipass");
+        variable.setFiles(Collections.singletonList("glob"));
+        variable.setEntries(Collections.<Replacement>singletonList(replacement));
+        List<Variable> variables = Collections.<Variable>singletonList(variable);
 
         List<DBObject> imageList = new ArrayList<>();
 
@@ -271,9 +299,14 @@ public class MongoDBFactoryStoreTest {
 
         BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(attrs);
 
-        List<Variable> variables = Collections.<Variable>singletonList(
-                new VariableImpl(Collections.singletonList("glob"),
-                             Collections.<Replacement>singletonList(new ReplacementImpl("find", "replace", "text_multipass"))));
+        Variable variable = DtoFactory.getInstance().createDto(Variable.class);
+        Replacement replacement = DtoFactory.getInstance().createDto(Replacement.class);
+        replacement.setFind("find");
+        replacement.setReplacemode("replace");
+        replacement.setReplacemode("text_multipass");
+        variable.setFiles(Collections.singletonList("glob"));
+        variable.setEntries(Collections.<Replacement>singletonList(replacement));
+        List<Variable> variables = Collections.<Variable>singletonList(variable);
 
         List<DBObject> imageList = new ArrayList<>();
 

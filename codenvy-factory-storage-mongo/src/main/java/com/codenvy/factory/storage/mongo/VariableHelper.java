@@ -1,9 +1,8 @@
 package com.codenvy.factory.storage.mongo;
 
-import com.codenvy.api.factory.ReplacementImpl;
-import com.codenvy.api.factory.VariableImpl;
 import com.codenvy.api.factory.dto.Replacement;
 import com.codenvy.api.factory.dto.Variable;
+import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
@@ -34,7 +33,7 @@ public class VariableHelper {
                     }
 
                     replacements.clear();
-                    Replacement replacement = new ReplacementImpl();
+                    Replacement replacement = DtoFactory.getInstance().createDto(Replacement.class);
                     for (Object o1 : basicDBEntries) {
                         BasicDBObject entries = (BasicDBObject)o1;
                         for (Map.Entry<String, Object> entry : entries.entrySet()) {
@@ -54,7 +53,10 @@ public class VariableHelper {
                         replacements.add(replacement);
                     }
 
-                    variables.add(new VariableImpl(files, replacements));
+                    Variable variable = DtoFactory.getInstance().createDto(Variable.class);
+                    variable.setFiles(files);
+                    variable.setEntries(replacements);
+                    variables.add(variable);
                 }
             }
         }
