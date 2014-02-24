@@ -32,7 +32,7 @@ public class ListValueData extends AbstractValueData {
 
     private List<ValueData> value;
 
-    public static ListValueData DEFAULT = new ListValueData(Collections.<ValueData>emptyList());
+    public static final ListValueData DEFAULT = new ListValueData(Collections.<ValueData>emptyList());
 
     public ListValueData() {
     }

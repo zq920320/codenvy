@@ -68,6 +68,12 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
 
         dbOperations.add(
                 new BasicDBObject(
+                        "$match",
+                        new BasicDBObject(ProductUsageFactorySessionsList.FACTORY,
+                                          new BasicDBObject("$ne", null))));
+
+        dbOperations.add(
+                new BasicDBObject(
                         "$group",
                         new BasicDBObject("_id", "$" + ProductUsageFactorySessionsList.FACTORY)
                                 .append(ProductUsageFactorySessionsList.WS_CREATED,

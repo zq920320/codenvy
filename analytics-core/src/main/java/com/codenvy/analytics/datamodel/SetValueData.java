@@ -33,7 +33,7 @@ public class SetValueData extends AbstractValueData {
 
     private Set<ValueData> value;
 
-    public static SetValueData DEFAULT = new SetValueData(Collections.<ValueData>emptySet());
+    public static final SetValueData DEFAULT = new SetValueData(Collections.<ValueData>emptySet());
 
     public SetValueData() {
     }

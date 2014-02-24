@@ -45,69 +45,71 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
 public class TestTopMetrics extends BaseTest {
 
+    private static final String COLLECTION          = TestTopMetrics.class.getSimpleName().toLowerCase();
+    private static final String COLLECTION_ACCEPTED = TestTopMetrics.class.getSimpleName().toLowerCase() + "accepted";
+
     @BeforeClass
     public void init() throws Exception {
         Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
-                        .withDate("2013-02-10").withTime("10:00:00").build());
+                                .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id1", "tmp-1", "user1")
-                        .withDate("2013-02-10").withTime("10:05:00").build());
+                                .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id2", "tmp-2", "user1", "true", "brType")
-                        .withDate("2013-02-10").withTime("10:20:00").build());
+                                .withDate("2013-02-10").withTime("10:20:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id2", "tmp-2", "user1")
-                        .withDate("2013-02-10").withTime("10:30:00").build());
+                                .withDate("2013-02-10").withTime("10:30:00").build());
 
         events.add(Event.Builder.createSessionFactoryStartedEvent("id3", "tmp-3", "anonymoususer_1", "false", "brType")
-                        .withDate("2013-02-10").withTime("11:00:00").build());
+                                .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(Event.Builder.createSessionFactoryStoppedEvent("id3", "tmp-3", "anonymoususer_1")
-                        .withDate("2013-02-10").withTime("11:15:00").build());
+                                .withDate("2013-02-10").withTime("11:15:00").build());
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("tmp-1", "user1", "project", "type")
-                        .withDate("2013-02-10").withTime("10:05:00").build());
+                                .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "referrer1", "org1", "affiliate1")
-                     .withDate("2013-02-10").withTime("11:00:00").build());
+                             .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "referrer2", "org2", "affiliate1")
-                     .withDate("2013-02-10").withTime("11:00:01").build());
+                             .withDate("2013-02-10").withTime("11:00:01").build());
         events.add(
                 Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer2", "org3", "affiliate2")
-                     .withDate("2013-02-10").withTime("11:00:02").build());
+                             .withDate("2013-02-10").withTime("11:00:02").build());
 
         events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")
-                        .withDate("2013-02-10").withTime("12:00:00").build());
+                                .withDate("2013-02-10").withTime("12:00:00").build());
         events.add(Event.Builder.createTenantCreatedEvent("tmp-2", "user1")
-                        .withDate("2013-02-10").withTime("12:01:00").build());
+                                .withDate("2013-02-10").withTime("12:01:00").build());
 
         // run event for session #1
         events.add(Event.Builder.createRunStartedEvent("user1", "tmp-1", "project", "type", "id1")
-                        .withDate("2013-02-10").withTime("10:03:00").build());
+                                .withDate("2013-02-10").withTime("10:03:00").build());
 
         events.add(Event.Builder.createProjectDeployedEvent("user1", "tmp-1", "session", "project", "type",
                                                             "local")
-                        .withDate("2013-02-10")
-                        .withTime("10:04:00")
-                        .build());
+                                .withDate("2013-02-10")
+                                .withTime("10:04:00")
+                                .build());
 
         events.add(Event.Builder.createProjectBuiltEvent("user1", "tmp-1", "session", "project", "type")
-                        .withDate("2013-02-10")
-                        .withTime("10:04:00")
-                        .build());
+                                .withDate("2013-02-10")
+                                .withTime("10:04:00")
+                                .build());
 
 
         // create user
         events.add(Event.Builder.createUserAddedToWsEvent("", "", "", "tmp-3", "anonymoususer_1", "website")
-                        .withDate("2013-02-10").build());
+                                .withDate("2013-02-10").build());
 
         events.add(Event.Builder.createUserChangedNameEvent("anonymoususer_1", "user4@gmail.com").withDate("2013-02-10")
-                        .build());
+                                .build());
 
         events.add(Event.Builder.createUserCreatedEvent("user-id2", "user4@gmail.com").withDate("2013-02-10").build());
-
 
         File log = LogGenerator.generateLog(events);
 
@@ -115,12 +117,12 @@ public class TestTopMetrics extends BaseTest {
         Parameters.TO_DATE.put(params, "20130210");
         Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testtopmetrics_acceptedfactories");
+        Parameters.STORAGE_TABLE.put(params, COLLECTION_ACCEPTED);
         Parameters.LOG.put(params, log.getAbsolutePath());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, params);
 
         Parameters.WS.put(params, Parameters.WS_TYPES.TEMPORARY.name());
-        Parameters.STORAGE_TABLE.put(params, "testtopmetrics");
+        Parameters.STORAGE_TABLE.put(params, COLLECTION);
         pigServer.execute(ScriptType.PRODUCT_USAGE_FACTORY_SESSIONS, params);
     }
 
@@ -159,10 +161,11 @@ public class TestTopMetrics extends BaseTest {
         List<ValueData> all = value.getAll();
 
         checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1", "1", "1500000", "0.0", "0.0", "0.0",
-                                  "50.0", "50.0", "100.0", "0.0",  "" + timeFormat.parse("20130210 10:20:00").getTime(),
+                                  "50.0", "50.0", "100.0", "0.0", "" + timeFormat.parse("20130210 10:20:00").getTime(),
                                   "" + timeFormat.parse("20130210 11:00:00").getTime());
-        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300000", "100.0", "100.0", "100.0",
-                                  "0.0", "100.0", "0.0", "100.0",  "" + timeFormat.parse("20130210 10:00:00").getTime(),
+        checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300000", "100.0", "100.0",
+                                  "100.0",
+                                  "0.0", "100.0", "0.0", "100.0", "" + timeFormat.parse("20130210 10:00:00").getTime(),
                                   "" + timeFormat.parse("20130210 10:00:00").getTime());
     }
 
@@ -224,7 +227,8 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(value.size(), 2);
 
         List<ValueData> all = value.getAll();
-        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1", "1", "1500000", "0.0", "0.0", "0.0", "50.0",
+        checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1", "1", "1500000", "0.0", "0.0", "0.0",
+                                  "50.0",
                                   "50.0", "100.0", "0.0", "" + timeFormat.parse("20130210 10:20:00").getTime(),
                                   "" + timeFormat.parse("20130210 11:00:00").getTime());
         checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "1", "0", "300000", "100.0", "100.0", "100.0",
@@ -290,6 +294,8 @@ public class TestTopMetrics extends BaseTest {
         assertEquals(item.getAll().get(AbstractTopReferrers.LAST_SESSION_DATE).getAsString(), lastSessionDate);
     }
 
+    // ------------------------> Tested Metrics
+
     private class TestAbstractTopSessions extends AbstractTopSessions {
 
         public TestAbstractTopSessions(MetricType metricType, int dayCount) {
@@ -304,7 +310,7 @@ public class TestTopMetrics extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return "testtopmetrics";
+            return COLLECTION;
         }
     }
 
@@ -322,7 +328,7 @@ public class TestTopMetrics extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return "testtopmetrics";
+            return COLLECTION;
         }
     }
 
@@ -334,7 +340,7 @@ public class TestTopMetrics extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return "testtopmetrics";
+            return COLLECTION;
         }
 
         @Override
@@ -357,7 +363,7 @@ public class TestTopMetrics extends BaseTest {
 
         @Override
         public String getStorageCollectionName() {
-            return "testtopmetrics";
+            return COLLECTION;
         }
     }
 }
