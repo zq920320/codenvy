@@ -34,6 +34,14 @@ analytics.presenter.UsersProfilesPresenter.prototype.DEFAULT_ORDER_PREFIX = anal
 
 analytics.presenter.UsersProfilesPresenter.prototype.USERS_OVERVIEW_PAGE_LINK = "users-profiles.jsp";
 
+analytics.presenter.UsersProfilesPresenter.prototype.mapColumnNameToSortValue = {
+        "Email": "user",
+        "First Name": "user_first_name",
+        "Last Name": "user_last_name",
+        "Company": "user_company",            
+        "Job": "user_job",
+};
+
 analytics.presenter.UsersProfilesPresenter.prototype.load = function() {
     var presenter = this; 
     var view = presenter.view;
@@ -84,16 +92,17 @@ analytics.presenter.UsersProfilesPresenter.prototype.load = function() {
             // make table header as linked for sorting         
             for (var i = 0; i < table.columns.length; i++) {
                var columnName = table.columns[i];
+               var sortParamColumnName = presenter.mapColumnNameToSortValue[columnName];
                
-               var isAscending = presenter.isSortingOrderAscending(columnName, sortingParameterValue);
+               var isAscending = presenter.isSortingOrderAscending(sortParamColumnName, sortingParameterValue);
                
                if (isAscending == null) {
                   var headerClassOption = "";
-                  var newSortingParameterValue = presenter.DEFAULT_ORDER_PREFIX + columnName;
+                  var newSortingParameterValue = presenter.DEFAULT_ORDER_PREFIX + sortParamColumnName;
                   
                } else if (isAscending) {
                   var headerClassOption = "class='ascending'";
-                  var newSortingParameterValue = presenter.DESCENDING_ORDER_PREFIX + columnName;  // for example "-user_email"
+                  var newSortingParameterValue = presenter.DESCENDING_ORDER_PREFIX + sortParamColumnName;  // for example "-user_email"
             
                } else {
                   var headerClassOption = "class='descending'";

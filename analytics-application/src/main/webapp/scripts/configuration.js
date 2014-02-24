@@ -215,7 +215,7 @@ function Configuration() {
         userSessionActivity: {
             presenterType: "TablePresenter",
             modelViewName: "session_events",
-            isNeedToSaveInHistory: true,
+            isNeedToSaveInHistory: false,
 
             defaultModelParams: {
                 "session_id": "unexisted_session_id",
@@ -251,6 +251,31 @@ function Configuration() {
         "event",
     ];
 
+    /** see method analytics.main.getParamsFromButtons()    */
+    var registeredViewParams = [
+        "user",              // factory-statistics, *-reports
+        "domain",            // *-reports
+        "user_company",      // users-profiles, *-reports
+        "org_id",            // factory-statistics
+        "affiliate_id",      // factory-statistics
+        "user_first_name",   // users-profiles
+        "user_last_name",    // users-profiles
+        "ide",               // top-menu
+        "metric",            // top-metrics
+        "from_date",         // user-view
+        "to_date",           // user-view
+        "event",             // session-view
+    ];
+    
+    /** url params which are passed from other pages */
+    var crossPageParams = [
+        "user",        // users-profiles > user-view
+        "sort",        // users-profiles > users-profiles
+        "page",        // user-view > user-view; users-profiles > users-profiles
+        "session_id",  // user-view > session-view
+//        "event",       // user-view > session-view
+    ];
+    
     var globalParams = [
         "ide",
     ];
@@ -319,6 +344,19 @@ function Configuration() {
     }
     
     /**
+     * Return registered params with all values = null
+     */
+    function getViewParamsWithNullValues() {
+        var params = {};
+        for (var i in registeredViewParams) {
+            var paramName = registeredViewParams[i];
+            params[paramName] = null;
+        }
+        
+        return params;
+    }
+    
+    /**
      * Return modelParams which had been cleared from forbidden params defined in the configuration of widget with widgetName
      */
     function removeForbiddenModelParams(widgetName, modelParams) {
@@ -336,6 +374,10 @@ function Configuration() {
         return modelParams;
     }
     
+    function getCrossPageParamsList() {
+        return crossPageParams;
+    }
+    
     /** ****************** API ********** */
     return {
         getProperty: getProperty,
@@ -344,6 +386,8 @@ function Configuration() {
         isParamRegistered: isParamRegistered,
         isParamGlobal: isParamGlobal,
         getGlobalParamList: getGlobalParamList,
+        getViewParamsWithNullValues: getViewParamsWithNullValues,
         removeForbiddenModelParams: removeForbiddenModelParams,
+        getCrossPageParamsList: getCrossPageParamsList, 
     }
 }

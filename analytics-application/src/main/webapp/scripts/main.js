@@ -88,7 +88,7 @@ function Main() {
         });
         
         // Hide session events selector
-        $("#hide-session-events").click(function () {
+        $("#hide-session-events").click(function (event) {
             reloadWidgets($("#hide-session-events").attr("targetWidgets"));
         });
     };
@@ -97,7 +97,7 @@ function Main() {
      * Get params from buttons state
      */
     function getParamsFromButtons() {   
-        var params = {};
+        var params = analytics.configuration.getViewParamsWithNullValues();
         
         // process time selector
         var selectedTimeButton = $("#timely-dd button.btn-primary");
@@ -137,17 +137,14 @@ function Main() {
            if (typeof ideVersionButton.attr("value") != "undefined") {
                params.ide = ideVersionButton.attr("value");
            } 
-           updateGlobalParamInStorage("ide", params["ide"]);  // params["ide"] is undefined if ideVersionButton.attr("value") is undefined 
+           updateGlobalParamInStorage("ide", params["ide"]);  // params["ide"] = null if ideVersionButton.attr("value") is undefined 
         }
         
         // process hide session events selector
         var hideSesionEventsCheckbox = $("#hide-session-events");
-        if (hideSesionEventsCheckbox.doesExist()) {
-            if (hideSesionEventsCheckbox.prop("checked")) {
-                params.event = hideSesionEventsCheckbox.attr("checked-value");                
-            } else {
-                params.event = hideSesionEventsCheckbox.attr("unchecked-value");
-            }
+        if (hideSesionEventsCheckbox.doesExist() 
+               && hideSesionEventsCheckbox.prop("checked")) {
+                params.event = hideSesionEventsCheckbox.attr("value");
         }
         
         return params;
@@ -180,6 +177,12 @@ function Main() {
            
            // union url params with button params and choose button params values above url params values 
            var params = analytics.util.unionWithRewrite(urlParams, buttonParams);
+           
+           var urlParams = analytics.util.getSubset(urlParams, analytics.configuration.getCrossPageParamsList());
+           
+           var params = analytics.util.unionWithRewrite(params, urlParams);
+           
+           params = analytics.util.removeParamsWithNullValues(params);
            
            if (widgetName == "_all") {               
                loadAllWidgets(params);
@@ -373,11 +376,12 @@ function Main() {
        // update hide session events selector
        var hideSesionEventsCheckbox = jQuery("#hide-session-events"); 
        if (hideSesionEventsCheckbox.doesExist()) {
-           if (typeof params["event"] != undefined 
-                   && params["event"] == hideSesionEventsCheckbox.attr("checked-value")) {
-               hideSesionEventsCheckbox.prop("checked", true);
-           } else {
-               hideSesionEventsCheckbox.prop("checked", false);
+           if (typeof params["event"] != undefined) {
+               if (params["event"] == hideSesionEventsCheckbox.attr("value")) {
+                   hideSesionEventsCheckbox.prop("checked", true);
+               } else {
+                   hideSesionEventsCheckbox.prop("checked", false);
+               }
            }
        }
     }
@@ -410,7 +414,7 @@ function Main() {
         }
         
         if (analytics.configuration.isParamGlobal(parameter)) {
-            if (typeof value != "undefined") {
+            if (value != null) {
                 localStorage.setItem(parameter, value);    // save param value in the HTML5 Web Storage                
             } else {
                 localStorage.removeItem(parameter);    // remove param from HTML5 Web Storage

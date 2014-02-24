@@ -89,17 +89,49 @@ function Util() {
 	}
 
     /**
-     * Set operation 'union': return (map1 + map2) where map1 params are re-written with params from map2
+     * Set operation 'union': return unionMap = (map1 + map2) where map1 params are re-written with params from map2. 
      */
 	function unionWithRewrite(map1, map2) {
 	    var unionMap = clone(map1);
 	    var map2Keys = Object.keys(map2);
         for (var i in map2Keys) {
             var map2Key = map2Keys[i];
-            unionMap[map2Key] = map2[map2Key];
+            unionMap[map2Key] = map2[map2Key];   // re-write map1 param value with param value from map2 
         }
         
         return unionMap;
+	}
+	
+	/**
+	 * Return subset of map with keys from keyList
+	 */
+	function getSubset(map, keyList) {
+	    var subsetMap = {};
+	    for (var i in map) {
+	        
+	        for (var j in keyList) {
+	            if (keyList[j] == i) {
+	                subsetMap[i] = map[i];
+	                break;
+	            }
+	        }
+	    }
+	    
+	    return subsetMap;
+	}
+	
+	
+	/**
+	 * Remove all params with null values from map
+	 */
+	function removeParamsWithNullValues(map) {
+        for (var i in map) {
+            if (map[i] == null) {
+                delete map[i];   // remove null map param
+            }
+        }
+        
+        return map;
 	}
 	
 	/**
@@ -144,7 +176,9 @@ function Util() {
     	isBrowserSupportWebStorage: isBrowserSupportWebStorage,
     	diff: diff,
     	unionWithRewrite: unionWithRewrite,
+    	removeParamsWithNullValues: removeParamsWithNullValues,
     	processUserLogOut: processUserLogOut,
+    	getSubset: getSubset,
     }
 
 }
