@@ -44,7 +44,7 @@ public class UsersProfiles extends AbstractUsersProfile {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", null);
+        group.put(ID, null);
         group.put("value", new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 

@@ -31,8 +31,8 @@ public class ProductUsersTime extends AbstractProductTime {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageSessionsList.USER,
-                            ProductUsageSessionsList.TIME,
+        return new String[]{USER,
+                            TIME,
                             SESSIONS};
     }
 

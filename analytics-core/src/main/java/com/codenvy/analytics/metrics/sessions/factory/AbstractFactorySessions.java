@@ -31,8 +31,6 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractFactorySessions extends ReadBasedMetric {
 
-    public static final String VALUE = "value";
-
     final private long    min;
     final private long    max;
     final private boolean includeMin;
@@ -77,7 +75,7 @@ public abstract class AbstractFactorySessions extends ReadBasedMetric {
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
-        group.put("_id", null);
+        group.put(ID, null);
         group.put(VALUE, new BasicDBObject("$sum", 1));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
@@ -91,7 +89,7 @@ public abstract class AbstractFactorySessions extends ReadBasedMetric {
         DBObject range = new BasicDBObject();
         range.put(includeMin ? "$gte" : "$gt", min);
         range.put(includeMax ? "$lte" : "$lt", max);
-        match.put(ProductUsageFactorySessionsList.TIME, range);
+        match.put(TIME, range);
 
         return dbObject;
     }

@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.users;
+package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
@@ -25,34 +25,29 @@ import com.mongodb.DBObject;
 import javax.annotation.security.RolesAllowed;
 import java.util.Map;
 
+import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersStatisticsList extends AbstractListValueResulted {
+public class WorkspacesStatisticsList extends AbstractListValueResulted {
 
-    public static final String PROJECTS     = "projects";
-    public static final String BUILDS       = "builds";
-    public static final String DEPLOYS      = "deploys";
-    public static final String RUNS         = "runs";
-    public static final String DEBUGS       = "debugs";
-    public static final String FACTORIES    = "factories";
-    public static final String INVITES      = "invites";
-    public static final String LOGINS       = "logins";
-    public static final String RUN_TIME     = "run_time";
-    public static final String BUILD_TIME   = "build_time";
-    public static final String PAAS_DEPLOYS = "paas_deploys";
-
-    public UsersStatisticsList() {
-        super(MetricType.USERS_STATISTICS_LIST);
+    public WorkspacesStatisticsList() {
+        super(MetricType.WORKSPACES_STATISTICS_LIST);
     }
 
     @Override
     public String getDescription() {
-        return "Users' statistics data";
+        return "Workspaces' statistics data";
+    }
+
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.USERS_STATISTICS_LIST);
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{USER,
+        return new String[]{WS,
                             PROJECTS,
                             RUNS,
                             DEBUGS,
@@ -71,7 +66,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put(ID, "$" + USER);
+        group.put(ID, "$" + WS);
         group.put(PROJECTS, new BasicDBObject("$sum", "$" + PROJECTS));
         group.put(RUNS, new BasicDBObject("$sum", "$" + RUNS));
         group.put(DEBUGS, new BasicDBObject("$sum", "$" + DEBUGS));
@@ -86,9 +81,8 @@ public class UsersStatisticsList extends AbstractListValueResulted {
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(PAAS_DEPLOYS, new BasicDBObject("$sum", "$" + PAAS_DEPLOYS));
 
-
         DBObject project = new BasicDBObject();
-        project.put(USER, "$" + ID);
+        project.put(WS, "$" + ID);
         project.put(PROJECTS, "$" + PROJECTS);
         project.put(RUNS, "$" + RUNS);
         project.put(DEBUGS, "$" + DEBUGS);

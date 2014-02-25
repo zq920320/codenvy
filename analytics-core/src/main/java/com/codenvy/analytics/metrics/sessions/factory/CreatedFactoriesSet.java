@@ -25,14 +25,6 @@ import javax.annotation.security.RolesAllowed;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 public class CreatedFactoriesSet extends AbstractSetValueResulted {
-
-    public static final String WS           = "ws";
-    public static final String USER         = "user";
-    public static final String FACTORY      = "factory";
-    public static final String ORG_ID       = "org_id";
-    public static final String AFFILIATE_ID = "affiliate_id";
-    public static final String REPOSITORY   = "repository";
-
     public CreatedFactoriesSet() {
         super(MetricType.CREATED_FACTORIES_SET, FACTORY);
     }

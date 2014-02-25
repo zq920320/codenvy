@@ -34,15 +34,13 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMetric {
 
-    public static final String COUNT = "count";
-
     public WorkspacesWhereUsersHaveSeveralFactorySessions() {
         super(MetricType.WORKSPACES_WHERE_USERS_HAVE_SEVERAL_FACTORY_SESSIONS);
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{COUNT};
+        return new String[]{VALUE};
     }
 
     @Override
@@ -51,33 +49,33 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMet
 
         DBObject group = new BasicDBObject();
         Map<String, String> m = new HashMap<>();
-        m.put("user", "$" + ProductUsageFactorySessionsList.USER);
-        m.put("ws", "$" + ProductUsageFactorySessionsList.WS);
-        group.put("_id", m);
+        m.put("user", "$" + USER);
+        m.put("ws", "$" + WS);
+        group.put(ID, m);
         group.put("sum", new BasicDBObject("$sum", 1));
         dbOperations.add(new BasicDBObject("$group", group));
 
         DBObject match = new BasicDBObject();
-        match.put("sum", new BasicDBObject( "$gte", 2));
+        match.put("sum", new BasicDBObject("$gte", 2));
         dbOperations.add(new BasicDBObject("$match", match));
-        
+
         group = new BasicDBObject();
-        group.put("_id", "$_id." + ProductUsageFactorySessionsList.WS);
+        group.put(ID, "$_id." + WS);
         dbOperations.add(new BasicDBObject("$group", group));
-        
+
         group = new BasicDBObject();
-        group.put("_id", null);
-        group.put(COUNT, new BasicDBObject("$sum", 1));
+        group.put(ID, null);
+        group.put(VALUE, new BasicDBObject("$sum", 1));
         dbOperations.add(new BasicDBObject("$group", group));
 
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
     }
-    
+
     @Override
-    public Class< ? extends ValueData> getValueDataClass() {
+    public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
-    
+
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);

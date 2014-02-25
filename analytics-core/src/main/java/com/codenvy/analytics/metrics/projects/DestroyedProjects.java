@@ -32,7 +32,6 @@ public class DestroyedProjects extends AbstractLongValueResulted {
         super(MetricType.DESTROYED_PROJECTS);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of destroyed projects";

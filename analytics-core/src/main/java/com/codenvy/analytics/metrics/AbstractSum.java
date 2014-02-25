@@ -55,7 +55,7 @@ public abstract class AbstractSum extends ReadBasedMetric {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", null);
+        group.put(ID, null);
         group.put(field, new BasicDBObject("$sum", "$" + field));
 
         return new DBObject[]{new BasicDBObject("$group", group)};

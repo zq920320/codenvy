@@ -31,8 +31,6 @@ import java.util.Map;
 /** @author Anatoliy Bazko */
 public abstract class AbstractProductTime extends ReadBasedMetric {
 
-    public static final String SESSIONS = "sessions";
-
     public AbstractProductTime(MetricType metricType) {
         super(metricType);
     }
@@ -48,7 +46,7 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
         match.put(getTrackedFields()[0], new BasicDBObject("$ne", ""));
 
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + getTrackedFields()[0]);
+        group.put(ID, "$" + getTrackedFields()[0]);
         group.put(getTrackedFields()[1], new BasicDBObject("$sum", "$" + getTrackedFields()[1]));
         group.put(getTrackedFields()[2], new BasicDBObject("$sum", 1));
 
@@ -67,8 +65,8 @@ public abstract class AbstractProductTime extends ReadBasedMetric {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");
-        if (match.get(ProductUsageSessionsList.USER) == null) {
-            match.put(ProductUsageSessionsList.USER, REGISTERED_USER);
+        if (match.get(USER) == null) {
+            match.put(USER, REGISTERED_USER);
         }
 
         return filter;

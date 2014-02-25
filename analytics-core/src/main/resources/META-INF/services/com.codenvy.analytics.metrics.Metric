@@ -9,6 +9,9 @@ com.codenvy.analytics.metrics.workspaces.ActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.NewActiveWorkspaces
 com.codenvy.analytics.metrics.workspaces.ReturningActiveWorkspaces
+com.codenvy.analytics.metrics.workspaces.WorkspacesStatisticsList
+com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspaces
+com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList
 
 com.codenvy.analytics.metrics.users.UsersEvents
 com.codenvy.analytics.metrics.users.CreatedUsers
@@ -151,8 +154,6 @@ com.codenvy.analytics.metrics.users.UsersProfiles
 com.codenvy.analytics.metrics.users.UsersActivityList
 com.codenvy.analytics.metrics.users.UsersActivity
 com.codenvy.analytics.metrics.users.UsersStatisticsList
-com.codenvy.analytics.metrics.users.UsersTimeInWorkspaces
-com.codenvy.analytics.metrics.users.UsersTimeInWorkspacesList
 com.codenvy.analytics.metrics.users.CompletedProfiles
 
 com.codenvy.analytics.metrics.top.TopFactorySessionsBy1Day

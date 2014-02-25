@@ -29,7 +29,7 @@ public class Usage extends AbstractSum {
     public Usage() {
         super(MetricType.USAGE,
               MetricType.PRODUCT_USAGE_SESSIONS_LIST,
-              ProductUsageSessionsList.TIME);
+              TIME);
     }
 
     @Override

@@ -29,6 +29,7 @@ import com.mongodb.BasicDBObject;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Map;
 
 /** @author <a href="mailto:dnochevnov@codenvy.com">Dmytro Nochevnov</a> */
@@ -99,9 +100,7 @@ public abstract class AbstractTopMetrics extends ReadBasedMetric {
     protected BasicDBObject getAndOperation(BasicDBObject... predicates) {
         BasicDBList andArgs = new BasicDBList();
 
-        for (BasicDBObject predicate : predicates) {
-            andArgs.add(predicate);
-        }
+        Collections.addAll(andArgs, predicates);
 
         BasicDBObject andOperation = new BasicDBObject("$and", andArgs);
 

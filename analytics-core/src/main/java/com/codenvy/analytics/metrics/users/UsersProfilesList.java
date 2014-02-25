@@ -38,7 +38,7 @@ public class UsersProfilesList extends AbstractUsersProfile {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{USER_EMAIL,
+        return new String[]{ID,
                             USER_FIRST_NAME,
                             USER_LAST_NAME,
                             USER_COMPANY,

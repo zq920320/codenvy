@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,22 +15,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.sessions.factory;
+package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
-public class FactoriesRun extends AbstractFactoryAction {
+public class UsageTimeByUsers extends AbstractCount {
 
-    public FactoriesRun() {
-        super(MetricType.FACTORIES_RUN, RUN);
+    public UsageTimeByUsers() {
+        super(MetricType.USAGE_TIME_BY_USERS, MetricType.USAGE_TIME_BY_USERS_LIST);
     }
 
     @Override
     public String getDescription() {
-        return "The number of factory runs";
+        return "The total number of users workspaces";
     }
 }

@@ -25,12 +25,10 @@ import javax.annotation.security.RolesAllowed;
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersWhoInvited extends AbstractActiveEntities {
-    private static final String USER = "user";    
-    
     public UsersWhoInvited() {
         super(MetricType.USERS_WHO_INVITED, MetricType.USER_INVITE, USER);
     }
-    
+
     @Override
     public String getDescription() {
         return "The number of users who invited at least one user";

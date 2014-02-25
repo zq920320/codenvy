@@ -36,6 +36,6 @@ public class FactorySessionsWithRun extends AbstractFactorySessionsWithEvent {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.RUN};
+        return new String[]{RUN};
     }
 }

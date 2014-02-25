@@ -45,7 +45,6 @@ public class ProjectPaasAny extends CalculatedMetric {
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         long projectsAnyPaaS = 0;
@@ -57,13 +56,11 @@ public class ProjectPaasAny extends CalculatedMetric {
         return new LongValueData(projectsAnyPaaS);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of created project with some PaaS defined";

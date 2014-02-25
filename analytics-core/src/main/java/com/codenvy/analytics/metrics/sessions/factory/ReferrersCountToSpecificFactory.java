@@ -41,9 +41,7 @@ public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.FACTORY,
-                            UNIQUE_REFERRERS_COUNT,
-        };
+        return new String[]{FACTORY, UNIQUE_REFERRERS_COUNT};
     }
 
     @Override
@@ -51,19 +49,19 @@ public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
         List<DBObject> dbOperations = new ArrayList<>();
 
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + ProductUsageFactorySessionsList.FACTORY);
-        group.put("referrers", new BasicDBObject("$addToSet", "$" + ProductUsageFactorySessionsList.REFERRER));
+        group.put(ID, "$" + FACTORY);
+        group.put("referrers", new BasicDBObject("$addToSet", "$" + REFERRER));
         dbOperations.add(new BasicDBObject("$group", group));
 
         dbOperations.add(new BasicDBObject("$unwind", "$referrers"));
 
         group = new BasicDBObject();
-        group.put("_id", "$_id");
+        group.put(ID, "$_id");
         group.put(UNIQUE_REFERRERS_COUNT, new BasicDBObject("$sum", 1));
         dbOperations.add(new BasicDBObject("$group", group));
 
         DBObject project = new BasicDBObject();
-        project.put(ProductUsageFactorySessionsList.FACTORY, "$_id");
+        project.put(FACTORY, "$_id");
         project.put(UNIQUE_REFERRERS_COUNT, 1);
         dbOperations.add(new BasicDBObject("$project", project));
 
@@ -82,6 +80,6 @@ public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
 
     @Override
     public String getDescription() {
-        return "The referrers count to a specifc factory";
+        return "The referrers count to a specific factory";
     }
 }

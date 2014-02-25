@@ -18,7 +18,6 @@
 package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -29,6 +28,7 @@ import java.util.Map;
 
 /** @author Dmytro Nochevnov */
 public abstract class AbstractTopFactories extends AbstractTopMetrics {
+
     public static final String FACTORY_COUNT                      = "factory_count";
     public static final String BUILD_RATE                         = "build_rate";
     public static final String RUN_RATE                           = "run_rate";
@@ -46,10 +46,10 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.FACTORY,
-                            ProductUsageFactorySessionsList.WS_CREATED,
-                            ProductUsageFactorySessionsList.USER_CREATED,
-                            ProductUsageFactorySessionsList.TIME,
+        return new String[]{FACTORY,
+                            WS_CREATED,
+                            USER_CREATED,
+                            TIME,
                             BUILD_RATE,
                             RUN_RATE,
                             DEPLOY_RATE,
@@ -67,79 +67,55 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
         List<DBObject> dbOperations = new ArrayList<>();
 
         dbOperations.add(
-                new BasicDBObject(
-                        "$match",
-                        new BasicDBObject(ProductUsageFactorySessionsList.FACTORY,
-                                          new BasicDBObject("$ne", null))));
+                new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", null))));
 
         dbOperations.add(
                 new BasicDBObject(
                         "$group",
-                        new BasicDBObject("_id", "$" + ProductUsageFactorySessionsList.FACTORY)
-                                .append(ProductUsageFactorySessionsList.WS_CREATED,
-                                        new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.WS_CREATED))
-                                .append(ProductUsageFactorySessionsList.USER_CREATED,
-                                        new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.USER_CREATED))
+                        new BasicDBObject(ID, "$" + FACTORY)
+                                .append(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED))
+                                .append(USER_CREATED, new BasicDBObject("$sum", "$" + USER_CREATED))
                                 .append(FACTORY_COUNT, new BasicDBObject("$sum", 1))
-                                .append(ProductUsageFactorySessionsList.TIME,
-                                        new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.TIME))
-                                .append(ProductUsageFactorySessionsList.BUILD + "_count",
-                                        new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.BUILD))
-                                .append(ProductUsageFactorySessionsList.RUN + "_count",
-                                        new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.RUN))
-                                .append(ProductUsageFactorySessionsList.DEPLOY + "_count",
-                                        new BasicDBObject("$sum", "$" + ProductUsageFactorySessionsList.DEPLOY))
-                                .append(ProductUsageFactorySessionsList.AUTHENTICATED_SESSION + "_count",
-                                        new BasicDBObject("$sum",
-                                                          "$" + ProductUsageFactorySessionsList.AUTHENTICATED_SESSION))
-                                .append(ProductUsageFactorySessionsList.CONVERTED_SESSION + "_count",
-                                        new BasicDBObject("$sum",
-                                                          "$" + ProductUsageFactorySessionsList.CONVERTED_SESSION))
-                                .append(FIRST_SESSION_DATE,
-                                        new BasicDBObject("$first", "$" + ProductUsageFactorySessionsList.DATE))
-                                .append(LAST_SESSION_DATE,
-                                        new BasicDBObject("$last", "$" + ProductUsageFactorySessionsList.DATE))
+                                .append(TIME, new BasicDBObject("$sum", "$" + TIME))
+                                .append(BUILD + "_count", new BasicDBObject("$sum", "$" + BUILD))
+                                .append(RUN + "_count", new BasicDBObject("$sum", "$" + RUN))
+                                .append(DEPLOY + "_count", new BasicDBObject("$sum", "$" + DEPLOY))
+                                .append(AUTHENTICATED_SESSION + "_count",
+                                        new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION))
+                                .append(CONVERTED_SESSION + "_count",
+                                        new BasicDBObject("$sum", "$" + CONVERTED_SESSION))
+                                .append(FIRST_SESSION_DATE, new BasicDBObject("$first", "$" + DATE))
+                                .append(LAST_SESSION_DATE, new BasicDBObject("$last", "$" + DATE))
                 ));
 
         dbOperations.add(
                 new BasicDBObject(
                         "$project",
-                        new BasicDBObject("_id", 0)
+                        new BasicDBObject(ID, 0)
                                 .append(FIRST_SESSION_DATE, 1)
                                 .append(LAST_SESSION_DATE, 1)
-                                .append(ProductUsageFactorySessionsList.WS_CREATED, 1)
-                                .append(ProductUsageFactorySessionsList.USER_CREATED, 1)
-                                .append(ProductUsageFactorySessionsList.FACTORY, "$_id")
-                                .append(ProductUsageFactorySessionsList.TIME, 1)
-                                .append(BUILD_RATE,
-                                        getRateOperation(
-                                                "$" + ProductUsageFactorySessionsList.BUILD + "_count",
-                                                "$" + FACTORY_COUNT))
-                                .append(RUN_RATE,
-                                        getRateOperation(
-                                                "$" + ProductUsageFactorySessionsList.RUN + "_count",
-                                                "$" + FACTORY_COUNT))
-                                .append(DEPLOY_RATE,
-                                        getRateOperation(
-                                                "$" + ProductUsageFactorySessionsList.DEPLOY + "_count",
-                                                "$" + FACTORY_COUNT))
+                                .append(WS_CREATED, 1)
+                                .append(USER_CREATED, 1)
+                                .append(FACTORY, "$_id")
+                                .append(TIME, 1)
+                                .append(BUILD_RATE, getRateOperation("$" + BUILD + "_count", "$" + FACTORY_COUNT))
+                                .append(RUN_RATE, getRateOperation("$" + RUN + "_count", "$" + FACTORY_COUNT))
+                                .append(DEPLOY_RATE, getRateOperation("$" + DEPLOY + "_count", "$" + FACTORY_COUNT))
                                 .append(AUTHENTICATED_FACTORY_SESSION_RATE,
-                                        getRateOperation(
-                                                "$" + ProductUsageFactorySessionsList.AUTHENTICATED_SESSION + "_count",
-                                                "$" + FACTORY_COUNT))
+                                        getRateOperation("$" + AUTHENTICATED_SESSION + "_count",
+                                                         "$" + FACTORY_COUNT))
                                 .append(CONVERTED_FACTORY_SESSION_RATE,
-                                        getRateOperation(
-                                                "$" + ProductUsageFactorySessionsList.CONVERTED_SESSION + "_count",
-                                                "$" + FACTORY_COUNT))
+                                        getRateOperation("$" + CONVERTED_SESSION + "_count",
+                                                         "$" + FACTORY_COUNT))
                 ));
 
         dbOperations.add(
                 new BasicDBObject
                         ("$project",
-                         new BasicDBObject(ProductUsageFactorySessionsList.FACTORY, 1)
-                                 .append(ProductUsageFactorySessionsList.WS_CREATED, 1)
-                                 .append(ProductUsageFactorySessionsList.USER_CREATED, 1)
-                                 .append(ProductUsageFactorySessionsList.TIME, 1)
+                         new BasicDBObject(FACTORY, 1)
+                                 .append(WS_CREATED, 1)
+                                 .append(USER_CREATED, 1)
+                                 .append(TIME, 1)
                                  .append(CONVERTED_FACTORY_SESSION_RATE, 1)
                                  .append(AUTHENTICATED_FACTORY_SESSION_RATE, 1)
                                  .append(FIRST_SESSION_DATE, 1)
@@ -148,16 +124,12 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
                                  .append(RUN_RATE, 1)
                                  .append(DEPLOY_RATE, 1)
                                  .append(ANONYMOUS_FACTORY_SESSION_RATE,
-                                         getSubtractOperation(
-                                                 100,
-                                                 "$" + AUTHENTICATED_FACTORY_SESSION_RATE))
+                                         getSubtractOperation(100, "$" + AUTHENTICATED_FACTORY_SESSION_RATE))
                                  .append(ABANDON_FACTORY_SESSION_RATE,
-                                         getSubtractOperation(
-                                                 100,
-                                                 "$" + CONVERTED_FACTORY_SESSION_RATE))
+                                         getSubtractOperation(100, "$" + CONVERTED_FACTORY_SESSION_RATE))
                         ));
 
-        dbOperations.add(new BasicDBObject("$sort", new BasicDBObject(ProductUsageFactorySessionsList.TIME, -1)));
+        dbOperations.add(new BasicDBObject("$sort", new BasicDBObject(TIME, -1)));
         dbOperations.add(new BasicDBObject("$limit", MAX_DOCUMENT_COUNT));
 
         return dbOperations.toArray(new DBObject[dbOperations.size()]);

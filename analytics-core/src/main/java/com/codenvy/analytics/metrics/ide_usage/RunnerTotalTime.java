@@ -26,8 +26,6 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 public class RunnerTotalTime extends AbstractLongValueResulted {
 
-    private static final String TIME = "time";
-
     public RunnerTotalTime() {
         super(MetricType.RUNNER_TOTAL_TIME);
     }

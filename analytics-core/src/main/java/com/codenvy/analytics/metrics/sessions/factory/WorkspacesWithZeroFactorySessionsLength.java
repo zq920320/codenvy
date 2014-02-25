@@ -33,15 +33,13 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
 
-    public static final String COUNT = "count";
-
     public WorkspacesWithZeroFactorySessionsLength() {
         super(MetricType.WORKSPACES_WITH_ZERO_FACTORY_SESSIONS_LENGTH);
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{COUNT};
+        return new String[]{VALUE};
     }
 
     @Override
@@ -49,16 +47,16 @@ public class WorkspacesWithZeroFactorySessionsLength extends ReadBasedMetric {
         List<DBObject> dbOperations = new ArrayList<>();
 
         DBObject match = new BasicDBObject();
-        match.put(ProductUsageFactorySessionsList.TIME, new BasicDBObject("$lte", 0));
+        match.put(TIME, new BasicDBObject("$lte", 0));
         dbOperations.add(new BasicDBObject("$match", match));
 
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + ProductUsageFactorySessionsList.WS);
+        group.put(ID, "$" + WS);
         dbOperations.add(new BasicDBObject("$group", group));
 
         group = new BasicDBObject();
-        group.put("_id", null);
-        group.put(COUNT, new BasicDBObject("$sum", 1));
+        group.put(ID, null);
+        group.put(VALUE, new BasicDBObject("$sum", 1));
         dbOperations.add(new BasicDBObject("$group", group));
 
         return dbOperations.toArray(new DBObject[dbOperations.size()]);

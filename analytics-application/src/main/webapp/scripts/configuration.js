@@ -130,7 +130,7 @@ function Configuration() {
 
         usersProfiles: {
             presenterType: "UsersProfilesPresenter",
-            modelViewName: "users-profiles",
+            modelViewName: "users_profiles",
             modelMetricName: "users_profiles",
             isNeedToSaveInHistory: true,
             firstColumnLinkPrefix: "user-view.jsp?user",
@@ -151,7 +151,7 @@ function Configuration() {
 
         userSessions: {
             presenterType: "TablePresenter",
-            modelViewName: "user-sessions",
+            modelViewName: "user_sessions",
             isNeedToSaveInHistory: true,
 
             isPaginable: true,
@@ -169,7 +169,7 @@ function Configuration() {
             isNeedToSaveInHistory: true,
 
             isPaginable: true,
-            modelMetricName: "users_time_in_workspaces",
+            modelMetricName: "usage_time_by_workspaces",
         },
 
         userActivity: {
@@ -187,7 +187,7 @@ function Configuration() {
         userEvents: {
             presenterType: "TablePresenter",
             modelViewName: "users_events",
-            isNeedToSaveInHistory: true
+            isNeedToSaveInHistory: true,
         },
 
         analysis: {
@@ -226,7 +226,7 @@ function Configuration() {
             onePageRowsCount: 30,
 
             isSortable: true,
-            defaultSortParams: "-date",
+            defaultSortParams: "date",
         },        
         
     }

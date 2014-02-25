@@ -24,6 +24,7 @@ import javax.annotation.security.RolesAllowed;
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageConditionAbove300Min extends AbstractProductUsageCondition {
+
     public ProductUsageConditionAbove300Min() {
         super(MetricType.PRODUCT_USAGE_CONDITION_ABOVE_300_MIN,
               300 * 60 * 1000,

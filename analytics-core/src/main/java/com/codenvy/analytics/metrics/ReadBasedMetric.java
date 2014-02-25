@@ -24,7 +24,6 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.api.analytics.exception.MetricRestrictionException;
@@ -44,13 +43,12 @@ import java.util.regex.Pattern;
  */
 public abstract class ReadBasedMetric extends AbstractMetric {
 
-    /** The field name in collection containing the date of events. */
-    public static final String DATE                = "date";
     public static final String EXCLUDE_SIGN        = "~";
     public static final String SEPARATOR           = ",";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
-    public static final Pattern REGISTERED_USER = Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern REGISTERED_USER =
+            Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
     public static final Pattern PERSISTENT_WS   = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
 
 
@@ -92,7 +90,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             }
         }
     }
-    
+
     protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
         return valueData;
     }
@@ -243,7 +241,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             MapValueData user = (MapValueData)users.get(i);
             Map<String, ValueData> profile = user.getAll();
 
-            result[i] = profile.get(AbstractUsersProfile.USER_EMAIL).getAsString();
+            result[i] = profile.get(ID).getAsString();
         }
 
         return result;

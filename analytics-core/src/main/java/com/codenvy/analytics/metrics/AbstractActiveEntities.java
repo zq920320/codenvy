@@ -53,11 +53,11 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + valueField);
+        group.put(ID, "$" + valueField);
         BasicDBObject opGroupBy = new BasicDBObject("$group", group);
 
         group = new BasicDBObject();
-        group.put("_id", null);
+        group.put(ID, null);
         group.put(valueField, new BasicDBObject("$sum", 1));
         BasicDBObject opCount = new BasicDBObject("$group", group);
 

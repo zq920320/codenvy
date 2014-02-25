@@ -29,8 +29,6 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractFactoryAction extends ReadBasedMetric {
 
-    private static final String VALUE = "value";
-
     private final String field;
 
     public AbstractFactoryAction(MetricType metricType, String field) {
@@ -50,14 +48,14 @@ public abstract class AbstractFactoryAction extends ReadBasedMetric {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{VALUE};
+        return new String[]{field};
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", null);
-        group.put(VALUE, new BasicDBObject("$sum", "$" + field));
+        group.put(ID, null);
+        group.put(field, new BasicDBObject("$sum", "$" + field));
 
         return new DBObject[]{new BasicDBObject("$group", group)};
     }

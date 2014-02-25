@@ -35,7 +35,6 @@ public class ProjectNoPassDefined extends CalculatedMetric {
                                                                    MetricType.PROJECT_PAAS_ANY});
     }
 
-    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Map<String, String> context) throws IOException {
         LongValueData created = (LongValueData)basedMetric[0].getValue(context);
@@ -44,13 +43,11 @@ public class ProjectNoPassDefined extends CalculatedMetric {
         return new LongValueData(created.getAsLong() - deployed.getAsLong());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of created projects without PaaS defined";

@@ -25,12 +25,10 @@ import javax.annotation.security.RolesAllowed;
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersWhoBuilt extends AbstractActiveEntities {
-    private static final String USER = "user";    
-    
     public UsersWhoBuilt() {
         super(MetricType.USERS_WHO_BUILT, MetricType.BUILDS, USER);
     }
-    
+
     @Override
     public String getDescription() {
         return "The number of users who built at least once.";

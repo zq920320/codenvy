@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.users;
+package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
@@ -24,10 +24,10 @@ import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersTimeInWorkspaces extends AbstractCount {
+public class UsageTimeByWorkspaces extends AbstractCount {
 
-    public UsersTimeInWorkspaces() {
-        super(MetricType.USERS_TIME_IN_WORKSPACES, MetricType.USERS_TIME_IN_WORKSPACES_LIST);
+    public UsageTimeByWorkspaces() {
+        super(MetricType.USAGE_TIME_BY_WORKSPACES, MetricType.USAGE_TIME_BY_WORKSPACES_LIST);
     }
 
     @Override

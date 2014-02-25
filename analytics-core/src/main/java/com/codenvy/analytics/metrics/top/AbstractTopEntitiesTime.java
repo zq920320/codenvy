@@ -20,9 +20,6 @@ package com.codenvy.analytics.metrics.top;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.*;
-import com.codenvy.analytics.metrics.sessions.AbstractProductTime;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
-import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -32,7 +29,6 @@ import java.util.*;
 public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
     public static final String ENTITY      = "entity";
-    public static final String SESSIONS    = "sessions";
     public static final String BY_1_DAY    = "by_1_day";
     public static final String BY_7_DAY    = "by_7_days";
     public static final String BY_30_DAY   = "by_30_days";
@@ -108,14 +104,14 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
             Map<String, ValueData> row = new HashMap<>(9);
             row.put(ENTITY, StringValueData.valueOf(entityName));
-            row.put(SESSIONS, entity.get(AbstractProductTime.SESSIONS));
-            row.put(BY_1_DAY, getEntityTimeValue(by1Day, entityName, ProductUsageSessionsList.TIME));
-            row.put(BY_7_DAY, getEntityTimeValue(by7Day, entityName, ProductUsageSessionsList.TIME));
-            row.put(BY_30_DAY, getEntityTimeValue(by30Day, entityName, ProductUsageSessionsList.TIME));
-            row.put(BY_60_DAY, getEntityTimeValue(by60Day, entityName, ProductUsageSessionsList.TIME));
-            row.put(BY_90_DAY, getEntityTimeValue(by90Day, entityName, ProductUsageSessionsList.TIME));
-            row.put(BY_365_DAY, getEntityTimeValue(by365Day, entityName, ProductUsageSessionsList.TIME));
-            row.put(BY_LIFETIME, getEntityTimeValue(byLifetime, entityName, ProductUsageSessionsList.TIME));
+            row.put(SESSIONS, entity.get(SESSIONS));
+            row.put(BY_1_DAY, getEntityTimeValue(by1Day, entityName, TIME));
+            row.put(BY_7_DAY, getEntityTimeValue(by7Day, entityName, TIME));
+            row.put(BY_30_DAY, getEntityTimeValue(by30Day, entityName, TIME));
+            row.put(BY_60_DAY, getEntityTimeValue(by60Day, entityName, TIME));
+            row.put(BY_90_DAY, getEntityTimeValue(by90Day, entityName, TIME));
+            row.put(BY_365_DAY, getEntityTimeValue(by365Day, entityName, TIME));
+            row.put(BY_LIFETIME, getEntityTimeValue(byLifetime, entityName, TIME));
 
             result.add(new MapValueData(row));
         }
@@ -162,7 +158,7 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
             throws ParseException, IOException {
 
         context = initContext(context, dayCount);
-        Parameters.SORT.put(context, "-" + ProductUsageFactorySessionsList.TIME);
+        Parameters.SORT.put(context, "-" + TIME);
         Parameters.PAGE.put(context, "1");
         Parameters.PER_PAGE.put(context, "" + MAX_DOCUMENT_COUNT);
 

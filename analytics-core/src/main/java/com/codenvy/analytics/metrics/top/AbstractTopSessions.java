@@ -18,7 +18,6 @@
 package com.codenvy.analytics.metrics.top;
 
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.sessions.factory.ProductUsageFactorySessionsList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -33,18 +32,18 @@ public abstract class AbstractTopSessions extends AbstractTopMetrics {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.TIME,
-                            ProductUsageFactorySessionsList.FACTORY,
-                            ProductUsageFactorySessionsList.REFERRER,
-                            ProductUsageFactorySessionsList.AUTHENTICATED_SESSION,
-                            ProductUsageFactorySessionsList.CONVERTED_SESSION};
+        return new String[]{TIME,
+                            FACTORY,
+                            REFERRER,
+                            AUTHENTICATED_SESSION,
+                            CONVERTED_SESSION};
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject[] dbOperations = new DBObject[2];
 
-        dbOperations[0] = new BasicDBObject("$sort", new BasicDBObject(ProductUsageFactorySessionsList.TIME, -1));
+        dbOperations[0] = new BasicDBObject("$sort", new BasicDBObject(TIME, -1));
         dbOperations[1] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
 
         return dbOperations;

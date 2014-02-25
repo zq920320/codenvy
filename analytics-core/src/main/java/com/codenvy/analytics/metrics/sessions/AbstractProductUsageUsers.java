@@ -31,8 +31,6 @@ import java.util.Map;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
 
-    public static final String  VALUE              = "value";
-
     private final long    min;
     private final long    max;
     private final boolean includeMin;
@@ -76,21 +74,20 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + ProductUsageSessionsList.USER);
-        group.put("total", new BasicDBObject("$sum", "$" + ProductUsageSessionsList.TIME));
-        BasicDBObject opGroupBy = new BasicDBObject("$group", group);
+        group.put(ID, "$" + USER);
+        group.put("total", new BasicDBObject("$sum", "$" + TIME));
 
         DBObject range = new BasicDBObject();
         range.put(includeMin ? "$gte" : "$gt", min);
         range.put(includeMax ? "$lte" : "$lt", max);
-        BasicDBObject opHaving = new BasicDBObject("$match", new BasicDBObject("total", range));
 
-        group = new BasicDBObject();
-        group.put("_id", null);
-        group.put(VALUE, new BasicDBObject("$sum", 1));
-        BasicDBObject opCount = new BasicDBObject("$group", group);
+        BasicDBObject count = new BasicDBObject();
+        count.put("_id", null);
+        count.put(VALUE, new BasicDBObject("$sum", 1));
 
-        return new DBObject[]{opGroupBy, opHaving, opCount};
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$match", new BasicDBObject("total", range)),
+                              new BasicDBObject("$group", count)};
     }
 
     @Override
@@ -98,8 +95,8 @@ public abstract class AbstractProductUsageUsers extends ReadBasedMetric {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");
-        if (match.get(ProductUsageSessionsList.USER) == null) {
-            match.put(ProductUsageSessionsList.USER, REGISTERED_USER);
+        if (match.get(USER) == null) {
+            match.put(USER, REGISTERED_USER);
         }
 
         return filter;

@@ -31,11 +31,6 @@ import java.util.Map;
 /** @author Anatoliy Bazko */
 public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
 
-    public final String VALUE    = "value";
-    public final String SESSIONS = "sessions";
-    public final String TIME     = ProductUsageSessionsList.TIME;
-    public final String USER     = ProductUsageSessionsList.USER;
-
     final private long    minTime;
     final private long    maxTime;
     final private boolean includeMinTime;
@@ -81,7 +76,7 @@ public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + USER);
+        group.put(ID, "$" + USER);
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
         group.put(SESSIONS, new BasicDBObject("$sum", 1));
 
@@ -98,7 +93,7 @@ public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
                                            new BasicDBObject(TIME, timeRange)});
 
         DBObject count = new BasicDBObject();
-        count.put("_id", null);
+        count.put(ID, null);
         count.put(VALUE, new BasicDBObject("$sum", 1));
 
         return new DBObject[]{new BasicDBObject("$group", group),
@@ -111,8 +106,8 @@ public abstract class AbstractProductUsageCondition extends ReadBasedMetric {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");
-        if (match.get(ProductUsageSessionsList.USER) == null) {
-            match.put(ProductUsageSessionsList.USER, REGISTERED_USER);
+        if (match.get(USER) == null) {
+            match.put(USER, REGISTERED_USER);
         }
 
         return filter;

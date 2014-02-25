@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2014] Codenvy, S.A.
+ * [2012] - [2013] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -17,47 +17,46 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.Map;
 
-/**
- * @author Alexander Reshetnyak
- * @author Anatoliy Bazko
- */
-@RolesAllowed({"system/admin", "system/manager"})
-public class UsersEvents extends ReadBasedMetric {
 
-    public UsersEvents() {
-        super(MetricType.USERS_EVENTS);
+/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+@RolesAllowed({"system/admin", "system/manager"})
+public class UsageTimeByUsersList extends AbstractListValueResulted {
+
+    public static final String SESSIONS = "sessions";
+
+    public UsageTimeByUsersList() {
+        super(MetricType.USAGE_TIME_BY_USERS_LIST);
+    }
+
+    @Override
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
     }
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ACTION, COUNT};
-    }
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
+        return new String[]{TIME, SESSIONS, USER};
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
-
         DBObject group = new BasicDBObject();
-        group.put(ID, "$" + ACTION);
-        group.put(COUNT, new BasicDBObject("$sum", 1));
+        group.put(ID, "$" + USER);
+        group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
+        group.put(SESSIONS, new BasicDBObject("$sum", 1));
 
         DBObject project = new BasicDBObject();
-        project.put(ACTION, "$_id");
-        project.put(COUNT, "$" + COUNT);
+        project.put(USER, "$" + ID);
+        project.put(TIME, "$" + TIME);
+        project.put(SESSIONS, "$" + SESSIONS);
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
@@ -65,6 +64,6 @@ public class UsersEvents extends ReadBasedMetric {
 
     @Override
     public String getDescription() {
-        return "The number of user's events per action";
+        return "How much time every user has spent in workspaces";
     }
 }

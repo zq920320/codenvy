@@ -19,7 +19,6 @@ package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.users.UsersActivityList;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
@@ -32,7 +31,7 @@ import java.util.Map;
 public class ActiveWorkspaces extends AbstractActiveEntities {
 
     public ActiveWorkspaces() {
-        super(MetricType.ACTIVE_WORKSPACES, MetricType.ACTIVE_WORKSPACES_SET, UsersActivityList.WS);
+        super(MetricType.ACTIVE_WORKSPACES, MetricType.ACTIVE_WORKSPACES_SET, WS);
     }
 
     @Override
@@ -45,8 +44,8 @@ public class ActiveWorkspaces extends AbstractActiveEntities {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");
-        if (match.get(UsersActivityList.WS) == null) {
-            match.put(UsersActivityList.WS, PERSISTENT_WS);
+        if (match.get(WS) == null) {
+            match.put(WS, PERSISTENT_WS);
         }
 
         return filter;

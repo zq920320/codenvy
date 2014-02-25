@@ -26,7 +26,7 @@ import javax.annotation.security.RolesAllowed;
 public class FactoriesBuilt extends AbstractFactoryAction {
 
     public FactoriesBuilt() {
-        super(MetricType.FACTORIES_BUILT, ProductUsageFactorySessionsList.BUILD);
+        super(MetricType.FACTORIES_BUILT, BUILD);
     }
 
     @Override

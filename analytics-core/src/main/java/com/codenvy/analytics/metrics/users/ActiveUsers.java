@@ -22,7 +22,6 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class ActiveUsers extends AbstractActiveEntities {
     public ActiveUsers() {
         super(MetricType.ACTIVE_USERS,
               MetricType.USERS_ACTIVITY_LIST,
-              UsersActivityList.USER);
+              USER);
     }
 
     @Override
@@ -42,8 +41,8 @@ public class ActiveUsers extends AbstractActiveEntities {
         DBObject filter = super.getFilter(clauses);
 
         DBObject match = (DBObject)filter.get("$match");
-        if (match.get(UsersActivityList.USER) == null) {
-            match.put(UsersActivityList.USER, REGISTERED_USER);
+        if (match.get(USER) == null) {
+            match.put(USER, REGISTERED_USER);
         }
 
         return filter;

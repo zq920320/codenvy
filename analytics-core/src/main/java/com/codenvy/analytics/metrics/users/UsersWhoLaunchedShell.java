@@ -25,12 +25,10 @@ import javax.annotation.security.RolesAllowed;
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersWhoLaunchedShell extends AbstractActiveEntities {
-    private static final String USER = "user";    
-    
     public UsersWhoLaunchedShell() {
         super(MetricType.USERS_WHO_LAUNCHED_SHELL, MetricType.SHELL_LAUNCHED, USER);
     }
-    
+
     @Override
     public String getDescription() {
         return "The number of users who launched shell at least once.";

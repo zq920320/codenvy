@@ -31,13 +31,6 @@ import java.util.regex.Pattern;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 abstract public class AbstractUsersProfile extends ReadBasedMetric {
 
-    public static final String USER_EMAIL      = "_id";
-    public static final String USER_FIRST_NAME = "user_first_name";
-    public static final String USER_LAST_NAME  = "user_last_name";
-    public static final String USER_COMPANY    = "user_company";
-    public static final String USER_JOB        = "user_job";
-    public static final String USER_PHONE      = "user_phone";
-
     public AbstractUsersProfile(MetricType metricType) {
         super(metricType);
     }
@@ -50,7 +43,7 @@ abstract public class AbstractUsersProfile extends ReadBasedMetric {
             String[] values = filter.get(clauses).split(",");
 
             if (filter == MetricFilter.USER) {
-                match.put(USER_EMAIL, new BasicDBObject("$in", values));
+                match.put(ID, new BasicDBObject("$in", values));
 
             } else if (filter == MetricFilter.USER_COMPANY) {
                 StringBuilder builder = new StringBuilder();

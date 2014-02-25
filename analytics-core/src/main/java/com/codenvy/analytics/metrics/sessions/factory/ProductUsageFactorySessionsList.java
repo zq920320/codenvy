@@ -25,22 +25,6 @@ import javax.annotation.security.RolesAllowed;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageFactorySessionsList extends AbstractListValueResulted {
-
-    public static final String WS                    = "ws";
-    public static final String USER                  = "user";
-    public static final String TIME                  = "time";
-    public static final String ORG_ID                = "org_id";
-    public static final String AFFILIATE_ID          = "affiliate_id";
-    public static final String BUILD                 = "build";
-    public static final String DEPLOY                = "deploy";
-    public static final String RUN                   = "run";
-    public static final String REFERRER              = "referrer";
-    public static final String FACTORY               = "factory";
-    public static final String AUTHENTICATED_SESSION = "authenticated_factory_session";
-    public static final String CONVERTED_SESSION     = "converted_factory_session";
-    public static final String WS_CREATED            = "ws_created";
-    public static final String USER_CREATED          = "user_created";
-
     public ProductUsageFactorySessionsList() {
         super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }

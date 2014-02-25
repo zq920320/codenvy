@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.metrics.top;
 
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
@@ -29,11 +28,5 @@ public abstract class AbstractCompaniesTime extends AbstractTopEntitiesTime {
               new MetricType[]{MetricType.PRODUCT_COMPANIES_TIME},
               MetricFilter.USER_COMPANY,
               dayCount);
-    }
-
-
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return super.getValueDataClass();
     }
 }

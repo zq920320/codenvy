@@ -15,27 +15,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.users;
+package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.Map;
 
+
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsersTimeInWorkspacesList extends AbstractListValueResulted {
+public class UsageTimeByWorkspacesList extends AbstractListValueResulted {
 
-    public static final String WS       = "_id";
     public static final String SESSIONS = "sessions";
-    public static final String TIME     = "time";
 
-    public UsersTimeInWorkspacesList() {
-        super(MetricType.USERS_TIME_IN_WORKSPACES_LIST);
+    public UsageTimeByWorkspacesList() {
+        super(MetricType.USAGE_TIME_BY_WORKSPACES_LIST);
     }
 
     @Override
@@ -51,12 +49,17 @@ public class UsersTimeInWorkspacesList extends AbstractListValueResulted {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", "$" + ProductUsageSessionsList.WS);
-        group.put(TIME, new BasicDBObject("$sum", "$" + ProductUsageSessionsList.TIME));
+        group.put(ID, "$" + WS);
+        group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
         group.put(SESSIONS, new BasicDBObject("$sum", 1));
-        BasicDBObject opCount = new BasicDBObject("$group", group);
 
-        return new DBObject[]{opCount};
+        DBObject project = new BasicDBObject();
+        project.put(WS, "$" + ID);
+        project.put(TIME, "$" + TIME);
+        project.put(SESSIONS, "$" + SESSIONS);
+
+        return new DBObject[]{new BasicDBObject("$group", group),
+                              new BasicDBObject("$project", project)};
     }
 
     @Override

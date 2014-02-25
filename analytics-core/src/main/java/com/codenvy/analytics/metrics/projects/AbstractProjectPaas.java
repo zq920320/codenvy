@@ -63,7 +63,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric {
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
 
-        group.put("_id", null);
+        group.put(ID, null);
         for (String type : types) {
             group.put(type, new BasicDBObject("$sum", "$" + type));
         }

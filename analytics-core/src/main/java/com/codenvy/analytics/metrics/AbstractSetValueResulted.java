@@ -51,7 +51,7 @@ public abstract class AbstractSetValueResulted extends ReadBasedMetric {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
-        group.put("_id", null);
+        group.put(ID, null);
         group.put(valueField, new BasicDBObject("$addToSet", "$" + valueField));
 
         return new DBObject[]{new BasicDBObject("$group", group),

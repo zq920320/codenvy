@@ -17,14 +17,8 @@
  */
 package com.codenvy.analytics.metrics.ide_usage;
 
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
-
-import java.io.IOException;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractTimeSpentInAction extends AbstractLongValueResulted {
@@ -39,6 +33,6 @@ public abstract class AbstractTimeSpentInAction extends AbstractLongValueResulte
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageSessionsList.TIME};
+        return new String[]{TIME};
     }
 }

@@ -23,10 +23,7 @@ import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.services.Feature;
@@ -72,11 +69,11 @@ public class ActOn extends Feature {
     /** Map users_statistics collection columns into the csv file headers. */
     @SuppressWarnings("serial")
     public static final LinkedHashMap<String, String> headers = new LinkedHashMap<String, String>() {{
-        put(AbstractUsersProfile.USER_EMAIL, "email");
-        put(AbstractUsersProfile.USER_FIRST_NAME, "firstName");
-        put(AbstractUsersProfile.USER_LAST_NAME, "lastName");
-        put(AbstractUsersProfile.USER_PHONE, "phone");
-        put(AbstractUsersProfile.USER_COMPANY, "company");
+        put(AbstractMetric.ID, "email");
+        put(AbstractMetric.USER_FIRST_NAME, "firstName");
+        put(AbstractMetric.USER_LAST_NAME, "lastName");
+        put(AbstractMetric.USER_PHONE, "phone");
+        put(AbstractMetric.USER_COMPANY, "company");
         put(UsersStatisticsList.PROJECTS, "projects");
         put(UsersStatisticsList.BUILDS, "builts");
         put(UsersStatisticsList.RUNS, "runs");
@@ -287,7 +284,7 @@ public class ActOn extends Feature {
 
         for (ValueData object : valueData.getAll()) {
             Map<String, ValueData> profile = ((MapValueData)object).getAll();
-            result.put(profile.get(AbstractUsersProfile.USER_EMAIL), profile);
+            result.put(profile.get(AbstractMetric.ID), profile);
         }
 
         return result;
@@ -299,7 +296,7 @@ public class ActOn extends Feature {
                                  Map<String, ValueData> profile,
                                  boolean isActive) throws IOException {
 
-        writeString(out, profile.get(AbstractUsersProfile.USER_EMAIL));
+        writeString(out, profile.get(AbstractMetric.ID));
         out.write(",");
 
         writeString(out, profile.get(AbstractUsersProfile.USER_FIRST_NAME));
@@ -363,8 +360,8 @@ public class ActOn extends Feature {
         } else {
             writeNotNullStr(out, "" + (runTime.getAsLong() / 1000));  // convert from millisec into secs
         }
-        out.write(",");        
-        
+        out.write(",");
+
         boolean profileCompleted = isProfileCompleted(profile);
         writeNotNullStr(out, Boolean.toString(profileCompleted));
         out.write(",");
@@ -437,29 +434,29 @@ public class ActOn extends Feature {
             int invitations = new Integer(statistics.get(UsersStatisticsList.INVITES).toString());
 
             boolean profileCompleted = isProfileCompleted(profile);
-            int time = getTimeInHours(statistics, UsersStatisticsList.TIME); 
-            int buildTime = getTimeInHours(statistics, UsersStatisticsList.BUILD_TIME);           
-            int runTime = getTimeInHours(statistics, UsersStatisticsList.RUN_TIME); 
+            int time = getTimeInHours(statistics, UsersStatisticsList.TIME);
+            int buildTime = getTimeInHours(statistics, UsersStatisticsList.BUILD_TIME);
+            int runTime = getTimeInHours(statistics, UsersStatisticsList.RUN_TIME);
 
             /** compute MQL Score from Product **/
-            total +=        logins *  2;
-            total +=      projects *  2;
-            total +=        builds *  2;
-            total +=          runs *  2;
-            total +=        debugs *  2;
-            total +=       deploys *  2;
-            total +=   paasDeploys * 10;
-            total +=     factories * 10;
-            total +=   invitations * 10;
+            total += logins * 2;
+            total += projects * 2;
+            total += builds * 2;
+            total += runs * 2;
+            total += debugs * 2;
+            total += deploys * 2;
+            total += paasDeploys * 10;
+            total += factories * 10;
+            total += invitations * 10;
 
             // compute Metric Measurement Points
-            total +=       (logins > 5) ?  5 : 0;
-            total +=     (projects > 5) ?  5 : 0;
-            total +=  (paasDeploys > 5) ? 10 : 0;
-            total += (profileCompleted) ?  5 : 0;
-            total +=        (time > 40) ? 50 : 0;
-            total +=    (buildTime > 3) ? 50 : 0;
-            total +=      (runTime > 3) ? 50 : 0;
+            total += (logins > 5) ? 5 : 0;
+            total += (projects > 5) ? 5 : 0;
+            total += (paasDeploys > 5) ? 10 : 0;
+            total += (profileCompleted) ? 5 : 0;
+            total += (time > 40) ? 50 : 0;
+            total += (buildTime > 3) ? 50 : 0;
+            total += (runTime > 3) ? 50 : 0;
         }
 
         return ValueDataFactory.createValueData(total);
@@ -470,17 +467,17 @@ public class ActOn extends Feature {
     }
 
     private boolean isProfileCompleted(Map<String, ValueData> profile) {
-        return profile.containsKey(AbstractUsersProfile.USER_EMAIL)
-               && profile.containsKey(AbstractUsersProfile.USER_FIRST_NAME)
-               && profile.containsKey(AbstractUsersProfile.USER_LAST_NAME)
-               && profile.containsKey(AbstractUsersProfile.USER_JOB)
-               && profile.containsKey(AbstractUsersProfile.USER_PHONE)
-               && profile.containsKey(AbstractUsersProfile.USER_EMAIL)
-               && !profile.get(AbstractUsersProfile.USER_EMAIL).getAsString().isEmpty()
-               && !profile.get(AbstractUsersProfile.USER_FIRST_NAME).getAsString().isEmpty()
-               && !profile.get(AbstractUsersProfile.USER_LAST_NAME).getAsString().isEmpty()
-               && !profile.get(AbstractUsersProfile.USER_COMPANY).getAsString().isEmpty()
-               && !profile.get(AbstractUsersProfile.USER_JOB).getAsString().isEmpty()
-               && !profile.get(AbstractUsersProfile.USER_PHONE).getAsString().isEmpty();
+        return profile.containsKey(AbstractMetric.ID)
+               && profile.containsKey(AbstractMetric.USER_FIRST_NAME)
+               && profile.containsKey(AbstractMetric.USER_LAST_NAME)
+               && profile.containsKey(AbstractMetric.USER_JOB)
+               && profile.containsKey(AbstractMetric.USER_PHONE)
+               && profile.containsKey(AbstractMetric.ID)
+               && !profile.get(AbstractMetric.ID).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_FIRST_NAME).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_LAST_NAME).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_COMPANY).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_JOB).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_PHONE).getAsString().isEmpty();
     }
 }

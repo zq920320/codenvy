@@ -37,7 +37,7 @@ public class FactorySessionsProductUsageTotal extends AbstractLongValueResulted 
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.TIME};
+        return new String[]{TIME};
     }
 
     @Override

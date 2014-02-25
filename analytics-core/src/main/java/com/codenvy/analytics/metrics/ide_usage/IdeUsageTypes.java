@@ -174,17 +174,17 @@ public class IdeUsageTypes extends AbstractMapValueResulted {
     public static final String WINDOW_NAVIGATION_PREVIOUS_EDITOR = "window-navigation-previous-editor";
     public static final String WINDOW_WELCOME                    = "window-welcome";
     public static final String WINDOW_PREFERENCES                = "window-preferences";
-    
-    public static final String SHARE_FACTORY_URL                 = "share-factory-url";
-    public static final String SHARE_MANAGE_ACCESS               = "share-manage-access";
-    public static final String SHARE_INVITE_DEVELOPERS           = "share-invite-developers";
-    public static final String SHARE_INVITE_GITHUB_COLLABORATOS  = "share-invite-github-collaboratos";
 
-    public static final String HELP_ABOUT                        = "help-about";
-    public static final String HELP_SHOW_KEYBOARD_SHORTCUTS      = "help-show-keyboard-shortcuts";
-    public static final String HELP_DOCUMENTATION                = "help-documentation";
-    public static final String HELP_CONTACT_SUPPORT              = "help-contact-support";
-    public static final String HELP_SUBMIT_FEEDBACK              = "help-submit-feedback";
+    public static final String SHARE_FACTORY_URL                = "share-factory-url";
+    public static final String SHARE_MANAGE_ACCESS              = "share-manage-access";
+    public static final String SHARE_INVITE_DEVELOPERS          = "share-invite-developers";
+    public static final String SHARE_INVITE_GITHUB_COLLABORATOS = "share-invite-github-collaboratos";
+
+    public static final String HELP_ABOUT                   = "help-about";
+    public static final String HELP_SHOW_KEYBOARD_SHORTCUTS = "help-show-keyboard-shortcuts";
+    public static final String HELP_DOCUMENTATION           = "help-documentation";
+    public static final String HELP_CONTACT_SUPPORT         = "help-contact-support";
+    public static final String HELP_SUBMIT_FEEDBACK         = "help-submit-feedback";
 
     public static final String SHELL   = "shell";
     public static final String PROFILE = "profile";
@@ -343,7 +343,6 @@ public class IdeUsageTypes extends AbstractMapValueResulted {
                             LOGOUT};
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "IDE usage by types";

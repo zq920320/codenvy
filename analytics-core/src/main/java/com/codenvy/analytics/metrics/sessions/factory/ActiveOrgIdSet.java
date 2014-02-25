@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 public class ActiveOrgIdSet extends AbstractSetValueResulted {
 
     protected ActiveOrgIdSet() {
-        super(MetricType.ACTIVE_ORG_ID_SET, ProductUsageFactorySessionsList.ORG_ID);
+        super(MetricType.ACTIVE_ORG_ID_SET, ORG_ID);
     }
 
     @Override

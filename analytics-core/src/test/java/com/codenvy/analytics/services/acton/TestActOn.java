@@ -22,9 +22,9 @@ package com.codenvy.analytics.services.acton;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
@@ -113,11 +113,11 @@ public class TestActOn extends BaseTest {
         // verify "user1" data
         Map<String, String> user1Data = content.get("user1");
         assertEquals(HEADERS.size(), user1Data.size());
-        assertEquals("user1", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
-        assertEquals("f", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
-        assertEquals("l", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
-        assertEquals("phone", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
-        assertEquals("company", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("user1", user1Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("f", user1Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
+        assertEquals("l", user1Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
+        assertEquals("phone", user1Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
+        assertEquals("company", user1Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -137,11 +137,11 @@ public class TestActOn extends BaseTest {
         // verify "user2" data
         Map<String, String> user2Data = content.get("user2");
         assertEquals(HEADERS.size(), user2Data.size());
-        assertEquals("user2", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("user2", user2Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("7", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -161,11 +161,11 @@ public class TestActOn extends BaseTest {
         // verify "user3" data
         Map<String, String> user3Data = content.get("user3");
         assertEquals(HEADERS.size(), user3Data.size());
-        assertEquals("user3", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("user3", user3Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -208,11 +208,11 @@ public class TestActOn extends BaseTest {
         // verify "user1" data
         Map<String, String> user1Data = content.get("user1");
         assertEquals(HEADERS.size(), user1Data.size());
-        assertEquals("user1", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
-        assertEquals("f", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
-        assertEquals("l", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
-        assertEquals("phone", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
-        assertEquals("company", user1Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("user1", user1Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("f", user1Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
+        assertEquals("l", user1Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
+        assertEquals("phone", user1Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
+        assertEquals("company", user1Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("2", user1Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -232,11 +232,11 @@ public class TestActOn extends BaseTest {
         // verify "user2" data
         Map<String, String> user2Data = content.get("user2");
         assertEquals(HEADERS.size(), user2Data.size());
-        assertEquals("user2", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
-        assertEquals("", user2Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("user2", user2Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
+        assertEquals("", user2Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
@@ -256,11 +256,11 @@ public class TestActOn extends BaseTest {
         // verify "user3" data
         Map<String, String> user3Data = content.get("user3");
         assertEquals(HEADERS.size(), user3Data.size());
-        assertEquals("user3", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_EMAIL)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_FIRST_NAME)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_LAST_NAME)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_PHONE)));
-        assertEquals("", user3Data.get(HEADERS.get(AbstractUsersProfile.USER_COMPANY)));
+        assertEquals("user3", user3Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_FIRST_NAME)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_LAST_NAME)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_PHONE)));
+        assertEquals("", user3Data.get(HEADERS.get(AbstractMetric.USER_COMPANY)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));

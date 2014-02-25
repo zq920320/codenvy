@@ -26,8 +26,9 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
-import com.codenvy.analytics.metrics.users.UsersTimeInWorkspacesList;
+import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -52,24 +53,24 @@ public class TestUsersData extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
-                        .withDate("2013-11-01")
-                        .build());
-        
+                                .withDate("2013-11-01")
+                                .build());
+
         events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
-                        .withDate("2013-11-01").build());
+                                .withDate("2013-11-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company1", "11", "1")
-                        .withDate("2013-11-01").build());
+                                .withDate("2013-11-01").build());
         events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f2", "l2", "company2", "11", "1")
-                        .withDate("2013-11-01").build());
+                                .withDate("2013-11-01").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:00:00,155").build());
+                                .withTime("20:00:00,155").build());
         events.add(Event.Builder.createSessionFinishedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
-                        .withTime("20:05:00,655").build());
+                                .withTime("20:05:00,655").build());
         events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
-                        .withTime("19:00:00").build());
+                                .withTime("19:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
-                        .withTime("19:02:00").build());
+                                .withTime("19:02:00").build());
 
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate("2013-11-01")
@@ -84,30 +85,32 @@ public class TestUsersData extends BaseTest {
         events.add(Event.Builder.createBuildFinishedEvent("user3@gmail.com", "ws2", "project", "type", "id2")
                                 .withDate("2013-11-01")
                                 .withTime("19:14:00,655").build());
-         
+
         events.add(Event.Builder.createUserInviteEvent("user1@gmail.com", "ws2", "email")
-                         .withDate("2013-11-01").build());
-        
+                                .withDate("2013-11-01").build());
+
         events.add(Event.Builder.createProjectCreatedEvent("user1@gmail.com", "ws1", "s", "", "")
-                        .withDate("2013-11-01").withTime("20:01:00").build());
+                                .withDate("2013-11-01").withTime("20:01:00").build());
         events.add(Event.Builder.createProjectDeployedEvent("user4@gmail.com", "ws1", "s", "", "", "")
-                        .withDate("2013-11-01").withTime("20:02:00").build());
+                                .withDate("2013-11-01").withTime("20:02:00").build());
         events.add(Event.Builder.createFactoryCreatedEvent("ws1", "user1@gmail.com", "", "", "", "", "", "")
-                        .withDate("2013-11-01").withTime("20:03:00").build());
+                                .withDate("2013-11-01").withTime("20:03:00").build());
         events.add(Event.Builder.createRunStartedEvent("user4@gmail.com", "ws1", "", "", "id3")
-                        .withDate("2013-11-01").withTime("20:04:00").build());
+                                .withDate("2013-11-01").withTime("20:04:00").build());
         events.add(Event.Builder.createDebugStartedEvent("user4@gmail.com", "ws1", "", "", "id4")
-                        .withDate("2013-11-01").withTime("20:06:00").build());
+                                .withDate("2013-11-01").withTime("20:06:00").build());
 
         // projects deployed
-        events.add(Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "paas1")
-                        .withDate("2013-11-01")
-                        .withTime("20:10:00")
-                        .build());
-        events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2", "", "project1", "type1", "paas2")
-                        .withDate("2013-11-01")
-                        .withTime("20:15:00")
-                        .build());
+        events.add(
+                Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "paas1")
+                             .withDate("2013-11-01")
+                             .withTime("20:10:00")
+                             .build());
+        events.add(
+                Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2", "", "project1", "type1", "paas2")
+                             .withDate("2013-11-01")
+                             .withTime("20:15:00")
+                             .build());
 
         File log = LogGenerator.generateLog(events);
 
@@ -231,7 +234,7 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            String ws = all.get(UsersStatisticsList.USER).getAsString();
+            String ws = all.get(ProductUsageSessionsList.WS).getAsString();
 
             switch (ws) {
                 case "ws1":
@@ -267,9 +270,9 @@ public class TestUsersData extends BaseTest {
         List<ValueData> items = valueData.getAll();
         MapValueData entry = (MapValueData)items.get(0);
 
-        assertEquals(entry.getAll().get(UsersStatisticsList.SESSIONS).getAsString(), "1");
-        assertEquals(entry.getAll().get(UsersStatisticsList.TIME).getAsString(), "300500");
-        assertEquals(entry.getAll().get(UsersStatisticsList.USER).getAsString(), "ws1");
+        assertEquals(entry.getAll().get(UsageTimeByWorkspacesList.SESSIONS).getAsString(), "1");
+        assertEquals(entry.getAll().get(ProductUsageSessionsList.TIME).getAsString(), "300500");
+        assertEquals(entry.getAll().get(ProductUsageSessionsList.WS).getAsString(), "ws1");
 
     }
 
@@ -284,7 +287,7 @@ public class TestUsersData extends BaseTest {
         assertEquals(valueData.size(), 2);
     }
 
-    private class TestUsersTimeInWorkspaces extends UsersTimeInWorkspacesList {
+    private class TestUsersTimeInWorkspaces extends UsageTimeByWorkspacesList {
 
         @Override
         public String getStorageCollectionName() {

@@ -49,15 +49,15 @@ public class CompletedProfiles extends AbstractUsersProfile {
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject match = new BasicDBObject();
-        match.put(UsersProfilesList.USER_EMAIL, new BasicDBObject("$ne", ""));
-        match.put(UsersProfilesList.USER_COMPANY, new BasicDBObject("$ne", ""));
-        match.put(UsersProfilesList.USER_FIRST_NAME, new BasicDBObject("$ne", ""));
-        match.put(UsersProfilesList.USER_LAST_NAME, new BasicDBObject("$ne", ""));
-        match.put(UsersProfilesList.USER_JOB, new BasicDBObject("$ne", ""));
-        match.put(UsersProfilesList.USER_PHONE, new BasicDBObject("$ne", ""));
+        match.put(ID, new BasicDBObject("$ne", ""));
+        match.put(USER_COMPANY, new BasicDBObject("$ne", ""));
+        match.put(USER_FIRST_NAME, new BasicDBObject("$ne", ""));
+        match.put(USER_LAST_NAME, new BasicDBObject("$ne", ""));
+        match.put(USER_JOB, new BasicDBObject("$ne", ""));
+        match.put(USER_PHONE, new BasicDBObject("$ne", ""));
 
         DBObject count = new BasicDBObject();
-        count.put("_id", null);
+        count.put(ID, null);
         count.put(VALUE, new BasicDBObject("$sum", 1));
 
         return new DBObject[]{new BasicDBObject("$match", match),

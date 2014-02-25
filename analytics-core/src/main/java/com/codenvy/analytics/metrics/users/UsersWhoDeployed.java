@@ -25,12 +25,10 @@ import javax.annotation.security.RolesAllowed;
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersWhoDeployed extends AbstractActiveEntities {
-    private static final String USER = "user";    
-    
     public UsersWhoDeployed() {
         super(MetricType.USERS_WHO_DEPLOYED, MetricType.DEPLOYS, USER);
     }
-    
+
     @Override
     public String getDescription() {
         return "The number of users who deployed at least once.";

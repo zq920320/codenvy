@@ -24,53 +24,53 @@ IMPORT 'macros.pig';
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 a1 = filterByEvent(l, 'run-started');
-a = FOREACH a1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('runs', 1), TOTUPLE('ide', ide);
+a = FOREACH a1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('runs', 1), TOTUPLE('ide', ide);
 STORE a INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 b1 = filterByEvent(l, 'debug-started');
-b = FOREACH b1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('debugs', 1), TOTUPLE('ide', ide);
+b = FOREACH b1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('debugs', 1), TOTUPLE('ide', ide);
 STORE b INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 c1 = filterByEvent(l, 'project-built,application-created,project-deployed');
-c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('builds', 1), TOTUPLE('ide', ide);
+c = FOREACH c1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('builds', 1), TOTUPLE('ide', ide);
 STORE c INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 d1 = filterByEvent(l, 'application-created,project-deployed');
-d = FOREACH d1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('deploys', 1), TOTUPLE('ide', ide);
+d = FOREACH d1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('deploys', 1), TOTUPLE('ide', ide);
 STORE d INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 e1 = filterByEvent(l, 'factory-created');
-e = FOREACH e1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('factories', 1), TOTUPLE('ide', ide);
+e = FOREACH e1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('factories', 1), TOTUPLE('ide', ide);
 STORE e INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 n1 = filterByEvent(l, 'project-created');
-n = FOREACH n1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('projects', 1), TOTUPLE('ide', ide);
+n = FOREACH n1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('projects', 1), TOTUPLE('ide', ide);
 STORE n INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 m1 = filterByEvent(l, 'project-destroyed');
-m = FOREACH m1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('projects', -1), TOTUPLE('ide', ide);
+m = FOREACH m1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('projects', -1), TOTUPLE('ide', ide);
 STORE m INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 k1 = filterByEvent(l, 'user-invite');
-k = FOREACH k1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('invites', 1), TOTUPLE('ide', ide);
+k = FOREACH k1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('invites', 1), TOTUPLE('ide', ide);
 STORE k INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 p1 = filterByEvent(l, 'user-sso-logged-in');
-p = FOREACH p1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('logins', 1), TOTUPLE('ide', ide);
+p = FOREACH p1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('logins', 1), TOTUPLE('ide', ide);
 STORE p INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 q1 = FOREACH l GENERATE *, '' AS id; -- it requires 'id' field in scheme
 
 q2 = combineClosestEvents(q1, 'run-started', 'run-finished');
-q3 = FOREACH q2 GENERATE dt, user, delta, ide;
-q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('run_time', delta), TOTUPLE('ide', ide);
+q3 = FOREACH q2 GENERATE dt, ws, user, delta, ide;
+q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('run_time', delta), TOTUPLE('ide', ide);
 STORE q INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 r2 = combineClosestEvents(q1, 'build-started', 'build-finished');
-r3 = FOREACH r2 GENERATE dt, user, delta, ide;
-r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('build_time', delta), TOTUPLE('ide', ide);
+r3 = FOREACH r2 GENERATE dt, ws, user, delta, ide;
+r = FOREACH r3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('build_time', delta), TOTUPLE('ide', ide);
 STORE r INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 s1 = filterByEvent(l, 'application-created');
-s = FOREACH s1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('paas_deploys', 1), TOTUPLE('ide', ide);
+s = FOREACH s1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('paas_deploys', 1), TOTUPLE('ide', ide);
 STORE s INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

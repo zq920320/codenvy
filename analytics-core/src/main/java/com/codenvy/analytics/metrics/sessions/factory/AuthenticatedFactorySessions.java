@@ -37,7 +37,7 @@ public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
     @Override
     public String[] getTrackedFields() {
-        return new String[]{ProductUsageFactorySessionsList.AUTHENTICATED_SESSION};
+        return new String[]{AUTHENTICATED_SESSION};
     }
 
     @Override
