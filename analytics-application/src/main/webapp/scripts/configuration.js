@@ -133,7 +133,7 @@ function Configuration() {
             modelViewName: "users_profiles",
             modelMetricName: "users_profiles",
             isNeedToSaveInHistory: true,
-            firstColumnLinkPrefix: "user-view.jsp?user",
+            firstColumnLinkPrefix: "/analytics/pages/user-view.jsp?user",
         },
 
         userOverview: {
@@ -160,7 +160,7 @@ function Configuration() {
             isSortable: true,
             defaultSortParams: "-date",
             
-            firstColumnLinkPrefix: "session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+            firstColumnLinkPrefix: "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
         },
 
         userWorkspaceData: {
@@ -226,7 +226,7 @@ function Configuration() {
             onePageRowsCount: 30,
 
             isSortable: true,
-            defaultSortParams: "date",
+            defaultSortParams: "+date",
         },        
         
     }
@@ -273,7 +273,6 @@ function Configuration() {
         "sort",        // users-profiles > users-profiles
         "page",        // user-view > user-view; users-profiles > users-profiles
         "session_id",  // user-view > session-view
-//        "event",       // user-view > session-view
     ];
     
     var globalParams = [
