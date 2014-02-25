@@ -278,13 +278,13 @@ public class MetricRow extends AbstractRow {
     private StringValueData formatTimeValue(ValueData valueData) {
         long milliseconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
 
+        int secs = (int)((milliseconds / 1000) % 60);
         int minutes = (int)((milliseconds / (1000 * 60)) % 60);
         int hours = (int)(milliseconds / (1000 * 60 * 60));
-        int secs = (int)((milliseconds / 1000) % 60);
 
         if (hours == 0 && minutes == 0) {
             if (secs > 0) {
-                return StringValueData.valueOf("< 1m");  // return "<1m" if hours == 0 && minutes == 0 && secs > 0
+                return StringValueData.valueOf("< 1m");
             } else {
                 return StringValueData.DEFAULT;
             }

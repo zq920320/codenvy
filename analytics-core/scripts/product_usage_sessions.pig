@@ -26,7 +26,27 @@ l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 u = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_PROFILES' USING MongoLoader;
 
 s1 = combineSmallSessions(l, 'session-started', 'session-finished');
-s = removeEmptyField(s1, 'user');
+s2 = removeEmptyField(s1, 'user');
+
+-- add factory sessions with delta == 0
+a1 = createdTemporaryWorkspaces(l);
+a = FOREACH a1 GENERATE ws, user;
+
+b1 = filterByEvent(l, 'factory-url-accepted');
+b = FOREACH b1 GENERATE dt, ws, ide;
+
+c1 = JOIN b BY ws FULL, a BY ws;
+c = FOREACH c1 GENERATE b::dt AS dt, b::ws AS ws, a::user AS user, b::ide AS ide;
+
+d1 = filterByEvent(l, 'session-started');
+d = FOREACH d1 GENERATE ws, user;
+
+e1 = JOIN c BY ws LEFT, d BY ws;
+e2 = FILTER e1 BY d::ws IS NULL;
+e = FOREACH e2 GENERATE c::ws AS ws, c::user AS user, c::dt AS dt, 0 AS delta, '' AS id, c::ide AS ide;
+
+-- combine all sessions together
+s = UNION s2, e;
 
 t1 = JOIN s by user LEFT, u BY id;
 t2 = FOREACH t1 GENERATE s::dt AS dt, s::ws AS ws, s::user AS user, s::id AS id, s::delta AS delta,
