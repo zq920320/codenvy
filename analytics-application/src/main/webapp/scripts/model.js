@@ -30,6 +30,11 @@ function Model() {
 
     var failFunctionStack = new Array();
 
+    var analyticsServerAddress = window.location.protocol
+            + "//"
+            + analytics.serverSideConfiguration["host"]
+            + (window.location.port.length > 0 ? ":" + window.location.port : "");
+    
     function doneFunction(data) {
         for (var i = doneFunctionStack.length - 1; i >= 0; i--) {
             doneFunctionStack[i](data);
@@ -46,7 +51,7 @@ function Model() {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-        var url = '/analytics/rest/analytics-private/metric/' + modelName;
+        var url = analyticsServerAddress + '/analytics/rest/analytics-private/metric/' + modelName;
 
         var callback = function (data) {
             data = parseInt(data.value);
@@ -68,7 +73,7 @@ function Model() {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-        var url = "/analytics/rest/view/" + modelName;
+        var url = analyticsServerAddress + "/analytics/rest/view/" + modelName;
 
         var callback = function (data) {
             data = convertJsonToTables(data);

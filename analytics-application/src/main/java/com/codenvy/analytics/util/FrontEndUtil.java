@@ -17,6 +17,13 @@
  */
 package com.codenvy.analytics.util;
 
+import java.io.IOException;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -25,14 +32,9 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
-
 /** @author Dmytro Nochevnov */
 public class FrontEndUtil {
-
+    
     /**
      * Read name of logged user from userPrincipal and read his/him first and last names by using metric
      * "users_profiles_list" filtered by logged user name.
@@ -86,4 +88,12 @@ public class FrontEndUtil {
         return firstAndLastName;
     }
 
+    /**
+     * Return configuration parameter "analytics.analytics-private.permit_access_from_host".
+     */
+    public static String getPermitHostName() {
+        Configurator configurator = Injector.getInstance(Configurator.class);
+        return configurator.getString("analytics.analytics-private.permit_access_from_host");
+    }
+    
 }
