@@ -207,6 +207,14 @@ function Configuration() {
         
 
         /** for Session View */
+        sessions: {
+            presenterType: "SessionsPresenter",
+            modelViewName: "session_overview",
+            modelMetricName: "product_usage_sessions",
+            isNeedToSaveInHistory: true,
+            firstColumnLinkPrefix: "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+        },        
+        
         sessionOverview: {
             widgetLabel: "Session Overview",
             presenterType: "VerticalTablePresenter",

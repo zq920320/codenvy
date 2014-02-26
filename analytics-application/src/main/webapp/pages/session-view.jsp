@@ -17,13 +17,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>User Session View</title>
+    <title>Session View</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
-    <jsp:param name="selectedMenuItemId" value="topmenu-users"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-sessions"/>
 </jsp:include>
 
 <div class="container-fluid">
