@@ -60,7 +60,8 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
                             LOGINS,
                             RUN_TIME,
                             BUILD_TIME,
-                            PAAS_DEPLOYS};
+                            PAAS_DEPLOYS,
+                            JOINED_USERS};
     }
 
     @Override
@@ -80,6 +81,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(PAAS_DEPLOYS, new BasicDBObject("$sum", "$" + PAAS_DEPLOYS));
+        group.put(JOINED_USERS, new BasicDBObject("$sum", "$" + JOINED_USERS));
 
         DBObject project = new BasicDBObject();
         project.put(WS, "$" + ID);
@@ -96,6 +98,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
         project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);
+        project.put(JOINED_USERS, "$" + JOINED_USERS);
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};

@@ -43,6 +43,10 @@ e1 = filterByEvent(l, 'factory-created');
 e = FOREACH e1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('factories', 1), TOTUPLE('ide', ide);
 STORE e INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
+f1 = filterByEvent(l, 'user-added-to-ws');
+f = FOREACH f1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('joined-users', 1), TOTUPLE('ide', ide);
+STORE f INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
 n1 = filterByEvent(l, 'project-created');
 n = FOREACH n1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('projects', 1), TOTUPLE('ide', ide);
 STORE n INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
@@ -60,7 +64,6 @@ p = FOREACH p1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('us
 STORE p INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 q1 = FOREACH l GENERATE *, '' AS id; -- it requires 'id' field in scheme
-
 q2 = combineClosestEvents(q1, 'run-started', 'run-finished');
 q3 = FOREACH q2 GENERATE dt, ws, user, delta, ide;
 q = FOREACH q3 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('run_time', delta), TOTUPLE('ide', ide);
