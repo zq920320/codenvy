@@ -40,6 +40,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     public static final String RUN_TIME     = "run_time";
     public static final String BUILD_TIME   = "build_time";
     public static final String PAAS_DEPLOYS = "paas_deploys";
+    public static final String JOINED_USERS = "joined-users";
 
     public UsersStatisticsList() {
         super(MetricType.USERS_STATISTICS_LIST);
