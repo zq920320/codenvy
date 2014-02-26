@@ -20,6 +20,18 @@ analytics.configuration = new Configuration();
 
 function Configuration() {
     var widgetConfiguration = {
+        /** Reports */
+        analysis: {
+            presenterType: "ReportPresenter",
+            modelViewName: "analysis",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            isNeedToSaveInHistory: false,
+        },
+        
         factoryStatistics: {
             presenterType: "ReportPresenter",
             modelViewName: "factory-timeline",
@@ -128,6 +140,7 @@ function Configuration() {
             isNeedToSaveInHistory: true,
         },
 
+        /** for User View */
         usersProfiles: {
             presenterType: "UsersProfilesPresenter",
             modelViewName: "users_profiles",
@@ -163,13 +176,15 @@ function Configuration() {
             firstColumnLinkPrefix: "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
         },
 
-        userWorkspaceData: {
+        userWorkspaceList: {
             presenterType: "TablePresenter",
-            modelViewName: "user_workspace_data",
+            modelViewName: "user_workspace_list",
             isNeedToSaveInHistory: true,
 
             isPaginable: true,
             modelMetricName: "usage_time_by_workspaces",
+            
+            firstColumnLinkPrefix: "/analytics/pages/workspace-view.jsp?ws",
         },
 
         userActivity: {
@@ -189,18 +204,9 @@ function Configuration() {
             modelViewName: "users_events",
             isNeedToSaveInHistory: true,
         },
+        
 
-        analysis: {
-            presenterType: "ReportPresenter",
-            modelViewName: "analysis",
-
-            defaultModelParams: {
-                "time_unit": "month"
-            },
-
-            isNeedToSaveInHistory: false,
-        },
-
+        /** for Session View */
         sessionOverview: {
             widgetLabel: "Session Overview",
             presenterType: "VerticalTablePresenter",
@@ -228,7 +234,65 @@ function Configuration() {
             isSortable: true,
             defaultSortParams: "+date",
         },        
-        
+
+        /** for Workspace View */
+        workspaces: {
+            presenterType: "WorkspacesPresenter",
+            modelViewName: "workspaces",
+            modelMetricName: "total_workspaces",
+            isNeedToSaveInHistory: true,
+            firstColumnLinkPrefix: "/analytics/pages/workspace-view.jsp?ws",
+        },
+
+        workspaceOverview: {
+            widgetLabel: "Workspace Overview",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "workspace_overview",
+            isNeedToSaveInHistory: false,
+        },
+
+        workspaceSessions: {
+            presenterType: "TablePresenter",
+            modelViewName: "workspace_sessions",
+            isNeedToSaveInHistory: true,
+
+            isPaginable: true,
+            modelMetricName: "product_usage_sessions",
+
+            isSortable: true,
+            defaultSortParams: "-date",
+            
+            firstColumnLinkPrefix: "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+        },
+
+        workspaceUserList: {
+            presenterType: "TablePresenter",
+            modelViewName: "workspace_user_list",
+            isNeedToSaveInHistory: true,
+
+            isPaginable: true,
+            modelMetricName: "usage_time_by_workspaces",
+            
+            firstColumnLinkPrefix: "/analytics/pages/user-view.jsp?user",
+        },
+
+        workspaceActivity: {
+            presenterType: "TablePresenter",
+            modelViewName: "workspace_activity",
+            isNeedToSaveInHistory: true,
+            
+            isPaginable: true,
+            modelMetricName: "users_activity",
+
+            isSortable: true,
+            defaultSortParams: "-date",
+        },
+
+        workspaceUserEvents: {
+            presenterType: "TablePresenter",
+            modelViewName: "workspace_users_events",
+            isNeedToSaveInHistory: true,
+        },
     }
 
     var registeredModelParams = [
@@ -249,6 +313,7 @@ function Configuration() {
         "from_date",
         "to_date",
         "event",
+        "ws",
     ];
 
     /** see method analytics.main.getParamsFromButtons()    */
@@ -262,17 +327,20 @@ function Configuration() {
         "user_last_name",    // users-profiles
         "ide",               // top-menu
         "metric",            // top-metrics
-        "from_date",         // user-view
-        "to_date",           // user-view
+        "from_date",         // user-view, workspace-view
+        "to_date",           // user-view, workspace-view
         "event",             // session-view
+        "ws",                // workspaces-view
+        "session_id",        // workspaces-view
     ];
     
     /** url params which are passed from other pages */
     var crossPageParams = [
-        "user",        // users-profiles > user-view
-        "sort",        // users-profiles > users-profiles
-        "page",        // user-view > user-view; users-profiles > users-profiles
-        "session_id",  // user-view > session-view
+        "user",        // users-profiles > user-view; workspace-view > user-view
+        "sort",        // users-profiles > users-profiles; workspaces-view > workspaces-view
+        "page",        // user-view > user-view; users-profiles > users-profiles; workspaces-view > workspaces-view; workspace-view > workspace-view
+        "session_id",  // user-view > session-view; workspace-view > session-view
+        "ws",          // workspaces-view > workspace-view; user-view > workspace-view
     ];
     
     var globalParams = [

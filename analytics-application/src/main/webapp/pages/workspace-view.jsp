@@ -17,13 +17,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>User View</title>
+    <title>Workspace View</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
-    <jsp:param name="selectedMenuItemId" value="topmenu-users"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-workspaces"/>
 </jsp:include>
 
 <div class="container-fluid">
@@ -32,7 +32,7 @@
             <div class="hero-unit full-width">
                 <div class="well topFilteringPanel">
                     <div id="date-range" class="btn-group"
-                         targetWidgets="userData,userSessions,userWorkspaceList,userActivity">
+                         targetWidgets="workspaceSessions,workspaceUserList,workspaceActivity,workspaceUserEvents">
                        <span>
                            From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
                            To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
@@ -41,34 +41,29 @@
                         <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
                     </div>
                 </div>
-                <div id="userOverview"></div>
+                <div id="workspaceOverview"></div>
 
                 <div class="single-column-gadget full-width">
                     <div class="view">
                         <div class="tables">
                             <div class="item">
-                                <div class="header">User Statistics</div>
-                                <div class="body" id="userData"></div>
-                            </div>
-
-                            <div class="item">
                                 <div class="header">Sessions</div>
-                                <div class="body" id="userSessions"></div>
+                                <div class="body" id="workspaceSessions"></div>
                             </div>
 
                             <div class="item">
-                                <div class="header">Workspaces</div>
-                                <div class="body" id="userWorkspaceList"></div>
+                                <div class="header">Users</div>
+                                <div class="body" id="workspaceUserList"></div>
                             </div>
 
                             <div class="item">
-                                <div class="header">User Logs</div>
-                                <div class="body" id="userActivity"></div>
+                                <div class="header">Workspace Logs</div>
+                                <div class="body" id="workspaceActivity"></div>
                             </div>
 
                             <div class="item">
-                                <div class="header">User Action</div>
-                                <div class="body" id="userEvents"></div>
+                                <div class="header">Workspace Action</div>
+                                <div class="body" id="workspaceUserEvents"></div>
                             </div>
                         </div>
                     </div>

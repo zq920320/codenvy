@@ -30,16 +30,16 @@
         </section>
     </view>
 
-    <view name="workspace_data" on-demand="true">
-        <section name="workspace_data">
+    <view name="workspace_overview" on-demand="true">
+        <section name="workspace_overview">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
+                           value="Name,Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_statistics_list"/>
                 <parameter key="fields"
-                           value="sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>
+                           value="ws,sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories"/>
                 <parameter key="time-fields" value="time,time_build,time_run"/>
             </row>
         </section>
@@ -59,8 +59,8 @@
         </section>
     </view>
 
-    <view name="user_workspace_data" on-demand="true">
-        <section name="user_workspace_data">
+    <view name="workspace_user_list" on-demand="true">
+        <section name="workspace_user_list">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Name,Sessions,Time"/>
             </row>
@@ -72,8 +72,8 @@
         </section>
     </view>
 
-    <view name="user_activity" on-demand="true">
-        <section name="user_activity">
+    <view name="workspace_activity" on-demand="true">
+        <section name="workspace_activity">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Date,Console Log"/>
 
@@ -86,8 +86,8 @@
         </section>
     </view>
 
-    <view name="users_events" on-demand="true">
-        <section name="users_events">
+    <view name="workspace_users_events" on-demand="true">
+        <section name="workspace_users_events">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Action,Count"/>
             </row>

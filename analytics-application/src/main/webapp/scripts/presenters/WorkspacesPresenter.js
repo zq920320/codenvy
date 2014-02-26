@@ -21,16 +21,14 @@ if (typeof analytics === "undefined") {
 
 analytics.presenter = analytics.presenter || {};
 
-analytics.presenter.UsersProfilesPresenter = function UsersProfilesPresenter() {};
+analytics.presenter.WorkspacesPresenter = function WorkspacesPresenter() {};
 
-analytics.presenter.UsersProfilesPresenter.prototype = new EntryViewPresenter();
+analytics.presenter.WorkspacesPresenter.prototype = new EntryViewPresenter();
 
-analytics.presenter.UsersProfilesPresenter.prototype.TARGET_PAGE_LINK = "users-profiles.jsp";
+analytics.presenter.WorkspacesPresenter.prototype.TARGET_PAGE_LINK = "workspaces-view.jsp";
 
-analytics.presenter.UsersProfilesPresenter.prototype.mapColumnNameToSortValue = {
-        "Email": "user",
-        "First Name": "user_first_name",
-        "Last Name": "user_last_name",
-        "Company": "user_company",            
-        "Job": "user_job",
+analytics.presenter.WorkspacesPresenter.prototype.mapColumnNameToSortValue = {
+    "Workspace": "ws",
+    "Time": "time",
+    "Sessions": "sessions",
 };

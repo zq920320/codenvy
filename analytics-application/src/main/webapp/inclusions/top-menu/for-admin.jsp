@@ -25,7 +25,7 @@
 
             <div class="left">
 				<a class="nav" href="/analytics/pages/users-profiles.jsp" id="topmenu-users">Users</a>
-				<a class="nav" href="#">Workspaces</a> 
+				<a class="nav" href="/analytics/pages/workspaces-view.jsp" id="topmenu-workspaces">Workspaces</a> 
 				<a class="nav" href="#">Projects</a> 
 				<a class="nav" href="#">Factories</a>
 	

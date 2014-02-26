@@ -72,8 +72,8 @@
         </section>
     </view>
 
-    <view name="user_workspace_data" on-demand="true">
-        <section name="user_workspace_data">
+    <view name="user_workspace_list" on-demand="true">
+        <section name="user_workspace_list">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Name,Sessions,Time"/>
             </row>

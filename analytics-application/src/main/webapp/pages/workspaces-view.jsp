@@ -17,13 +17,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Users Profiles</title>
+    <title>Workspaces</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
 
 <jsp:include page="/inclusions/top-menu/top-menu.jsp">
-    <jsp:param name="selectedMenuItemId" value="topmenu-users"/>
+    <jsp:param name="selectedMenuItemId" value="topmenu-workspaces"/>
 </jsp:include>
 
 <div class="container-fluid">
@@ -33,15 +33,13 @@
                 <div id="filter-by" class="left" targetWidgets="_all">
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn command-btn" value="_id">Email</button>
-                    <button class="btn command-btn" value="user_first_name">First Name</button>
-                    <button class="btn command-btn" value="user_last_name">Last Name</button>                
-                    <button class="btn command-btn" value="user_company">Company</button>
+                    <button class="btn command-btn" value="ws">Workspace</button>
+                    <button class="btn command-btn" value="session_id">Session</button>
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="usersProfiles" class="single-column-gadget"></div>
+                <div id="workspaces" class="single-column-gadget"></div>
             </div>
         </div>
     </div>
@@ -49,7 +47,7 @@
 
 <jsp:include page="/inclusions/footer.jsp">
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/UsersProfilesPresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/WorkspacesPresenter.js"/>
 </jsp:include>
 
 </body>
