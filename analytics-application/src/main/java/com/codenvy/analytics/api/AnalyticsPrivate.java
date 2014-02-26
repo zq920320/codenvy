@@ -19,8 +19,6 @@
 package com.codenvy.analytics.api;
 
 
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.Utils;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
@@ -32,11 +30,13 @@ import com.codenvy.api.core.rest.annotations.GenerateLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.Map;
 
 
@@ -54,37 +54,6 @@ public class AnalyticsPrivate {
 
     @Inject
     private MetricHandler metricHandler;
-
-    @GenerateLink(rel = "metric value")
-    @GET
-    @Path("private-metric/{name}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed("user")
-    public Response getPrivateValue(@PathParam("name") String metricName,
-                                    @QueryParam("page") String page,
-                                    @QueryParam("per_page") String perPage,
-                                    @Context UriInfo uriInfo,
-                                    @Context SecurityContext securityContext) {
-        try {
-            Map<String, String> context = Utils.extractContext(uriInfo,
-                                                               securityContext.getUserPrincipal(),
-                                                               page,
-                                                               perPage);
-
-            if (!Utils.isSystemUser(Parameters.USER_PRINCIPAL.get(context))) {
-                MetricFilter.USER.put(context, Parameters.USER_PRINCIPAL.get(context));
-            }
-
-            MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
-            return Response.status(Response.Status.OK).entity(value).build();
-        } catch (MetricNotFoundException e) {
-            LOG.error(e.getMessage(), e);
-            return Response.status(Response.Status.NOT_FOUND).build();
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }
-    }
 
     @GenerateLink(rel = "metric value")
     @GET

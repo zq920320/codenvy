@@ -23,7 +23,10 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
+import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.Utils;
+import com.codenvy.api.analytics.dto.MetricValueDTO;
+import com.codenvy.api.analytics.exception.MetricNotFoundException;
 import com.codenvy.dto.server.JsonStringMapImpl;
 
 import org.slf4j.Logger;
@@ -32,14 +35,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,6 +56,39 @@ public class View {
     @Inject
     private ViewBuilder viewBuilder;
 
+    @Inject
+    private MetricHandler metricHandler;
+
+    @GET
+    @Path("metric/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
+    public Response getMetricValue(@PathParam("name") String metricName,
+                                   @QueryParam("page") String page,
+                                   @QueryParam("per_page") String perPage,
+                                   @Context UriInfo uriInfo,
+                                   @Context SecurityContext securityContext) {
+        try {
+            Map<String, String> context = Utils.extractContext(uriInfo,
+                                                               securityContext.getUserPrincipal(),
+                                                               page,
+                                                               perPage);
+
+            if (!Utils.isSystemUser(Parameters.USER_PRINCIPAL.get(context))) {
+                MetricFilter.USER.put(context, Parameters.USER_PRINCIPAL.get(context));
+            }
+
+            MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
+            return Response.status(Response.Status.OK).entity(value).build();
+        } catch (MetricNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
     @GET
     @Path("{name}")
     @Produces({"application/json"})
@@ -67,7 +97,8 @@ public class View {
                                 @Context UriInfo uriInfo,
                                 @Context SecurityContext securityContext) {
         try {
-            Map<String, String> context = Utils.extractContext(uriInfo, securityContext.getUserPrincipal());
+            Map<String, String> context = Utils.extractContext(uriInfo,
+                                                               securityContext.getUserPrincipal());
 
             if (!Utils.isSystemUser(Parameters.USER_PRINCIPAL.get(context))) {
                 MetricFilter.USER.put(context, Parameters.USER_PRINCIPAL.get(context));

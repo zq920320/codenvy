@@ -46,7 +46,7 @@ function Model() {
         if (typeof isAsync == "undefined") {
             isAsync = true;
         }
-        var url = '/analytics/rest/analytics-private/private-metric/' + modelName;
+        var url = '/analytics/rest/view/metric/' + modelName;
 
         var callback = function (data) {
             data = parseInt(data.value);
