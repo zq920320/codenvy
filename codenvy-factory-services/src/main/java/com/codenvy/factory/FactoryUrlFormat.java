@@ -18,7 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.SimpleFactoryUrl;
+import com.codenvy.api.factory.dto.SimpleFactoryUrl;
 
 import java.net.URL;
 

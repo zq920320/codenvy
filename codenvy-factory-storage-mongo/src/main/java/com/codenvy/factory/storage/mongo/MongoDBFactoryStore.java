@@ -18,7 +18,11 @@
 package com.codenvy.factory.storage.mongo;
 
 import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
+import com.codenvy.api.factory.dto.WelcomeConfiguration;
+import com.codenvy.api.factory.dto.WelcomePage;
 import com.codenvy.commons.lang.NameGenerator;
+import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.factory.MongoDbConfiguration;
 import com.mongodb.*;
 
@@ -138,7 +142,7 @@ public class MongoDBFactoryStore implements FactoryStore {
 
     @Override
     public AdvancedFactoryUrl getFactory(String id) throws FactoryUrlException {
-        AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
+        AdvancedFactoryUrl factoryUrl = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
         DBObject query = new BasicDBObject();
         query.put("_id", id);
         DBObject res = factories.findOne(query);
@@ -175,12 +179,21 @@ public class MongoDBFactoryStore implements FactoryStore {
             BasicDBObject authDBConfiguration = (BasicDBObject)welcomeDBObject.get("authenticated");
             BasicDBObject nonAuthDBConfiguration = (BasicDBObject)welcomeDBObject.get("nonauthenticated");
 
-            WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration((String)authDBConfiguration.get("title"),
-                                                                               (String)authDBConfiguration.get("iconurl"),
-                                                                               (String)authDBConfiguration.get("contenturl")),
-                                                      new WelcomeConfiguration((String)nonAuthDBConfiguration.get("title"),
-                                                                               (String)nonAuthDBConfiguration.get("iconurl"),
-                                                                               (String)nonAuthDBConfiguration.get("contenturl")));
+            WelcomePage welcomePage = DtoFactory.getInstance().createDto(WelcomePage.class);
+            WelcomeConfiguration authWelcomeConfiguration = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+            WelcomeConfiguration notAuthWelcomeConfiguration = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+
+            authWelcomeConfiguration.setTitle((String)authDBConfiguration.get("title"));
+            authWelcomeConfiguration.setIconurl((String)authDBConfiguration.get("iconurl"));
+            authWelcomeConfiguration.setContenturl((String)authDBConfiguration.get("contenturl"));
+
+            notAuthWelcomeConfiguration.setTitle((String)nonAuthDBConfiguration.get("title"));
+            notAuthWelcomeConfiguration.setIconurl((String)nonAuthDBConfiguration.get("iconurl"));
+            notAuthWelcomeConfiguration.setContenturl((String)nonAuthDBConfiguration.get("contenturl"));
+
+            welcomePage.setAuthenticated(authWelcomeConfiguration);
+            welcomePage.setNonauthenticated(notAuthWelcomeConfiguration);
+
             factoryUrl.setWelcome(welcomePage);
         }
 

@@ -21,7 +21,9 @@ import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.dto.*;
 import com.codenvy.commons.lang.NameGenerator;
+import com.codenvy.dto.server.DtoFactory;
 import com.mongodb.*;
 
 import org.everrest.core.impl.provider.json.*;
@@ -74,10 +76,21 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
-        WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration("title1", "url1", "conten1"),
-                                                  new WelcomeConfiguration("title2", "url2", "content2"));
+        WelcomePage welcomePage = DtoFactory.getInstance().createDto(WelcomePage.class);
+        WelcomeConfiguration authConf = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+        WelcomeConfiguration notAuthConf = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
 
-        AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
+        authConf.setTitle("title1");
+        authConf.setIconurl("url1");
+        authConf.setContenturl("content1");
+        notAuthConf.setTitle("title2");
+        notAuthConf.setIconurl("url2");
+        notAuthConf.setContenturl("content2");
+
+        welcomePage.setAuthenticated(authConf);
+        welcomePage.setNonauthenticated(notAuthConf);
+
+        AdvancedFactoryUrl factoryUrl = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
         factoryUrl.setAuthor("someAuthor");
         factoryUrl.setContactmail("test@test.com");
         factoryUrl.setDescription("testDescription");
@@ -106,7 +119,7 @@ public class MongoDBFactoryStoreTest {
         AdvancedFactoryUrl result = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
         result.setId(id);
         factoryUrl.setId(id);
-        assertEquals(result, factoryUrl);
+        compareFactories(result, factoryUrl);
 
     }
 
@@ -121,7 +134,7 @@ public class MongoDBFactoryStoreTest {
 
         WelcomePage welcomePage = null;
 
-        AdvancedFactoryUrl factoryUrl = new AdvancedFactoryUrl();
+        AdvancedFactoryUrl factoryUrl = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
         factoryUrl.setAuthor("someAuthor");
         factoryUrl.setContactmail("test@test.com");
         factoryUrl.setDescription("testDescription");
@@ -150,7 +163,7 @@ public class MongoDBFactoryStoreTest {
         AdvancedFactoryUrl result = ObjectBuilder.createObject(AdvancedFactoryUrl.class, jsonValue);
         result.setId(id);
         factoryUrl.setId(id);
-        assertEquals(result, factoryUrl);
+        compareFactories(result, factoryUrl);
 
     }
 
@@ -179,17 +192,33 @@ public class MongoDBFactoryStoreTest {
         attrs.put("testattr2", "testValue2");
         attrs.put("testattr3", "testValue3");
 
-        WelcomePage welcomePage = new WelcomePage(new WelcomeConfiguration("title1", "url1", "conten1"),
-                                                  new WelcomeConfiguration("title2", "url2", "content2"));
+        WelcomePage welcomePage = DtoFactory.getInstance().createDto(WelcomePage.class);
+        WelcomeConfiguration authConf = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+        WelcomeConfiguration notAuthConf = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
+
+        authConf.setTitle("title1");
+        authConf.setIconurl("url1");
+        authConf.setContenturl("content1");
+        notAuthConf.setTitle("title2");
+        notAuthConf.setIconurl("url2");
+        notAuthConf.setContenturl("content2");
+
+        welcomePage.setAuthenticated(authConf);
+        welcomePage.setNonauthenticated(notAuthConf);
 
         byte[] b = new byte[4096];
         new Random().nextBytes(b);
 
         BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(attrs);
 
-        List<Variable> variables = Collections.singletonList(
-                new Variable(Collections.singletonList("glob"),
-                             Collections.singletonList(new Variable.Replacement("find", "replace", "text_multipass"))));
+        Variable variable = DtoFactory.getInstance().createDto(Variable.class);
+        Replacement replacement = DtoFactory.getInstance().createDto(Replacement.class);
+        replacement.setFind("find");
+        replacement.setReplacemode("replace");
+        replacement.setReplacemode("text_multipass");
+        variable.setFiles(Collections.singletonList("glob"));
+        variable.setEntries(Collections.<Replacement>singletonList(replacement));
+        List<Variable> variables = Collections.<Variable>singletonList(variable);
 
         List<DBObject> imageList = new ArrayList<>();
 
@@ -226,9 +255,9 @@ public class MongoDBFactoryStoreTest {
                          .add("affiliateid", "testaffiliate123")
                          .add("vcsbranch", "master")
                          .add("userid", "123456798")
-                         .add("validsince", 123645L)
-                         .add("validuntil", 123645L)
-                         .add("created", 123645L)
+                         .add("validsince", System.currentTimeMillis())
+                         .add("validuntil", System.currentTimeMillis())
+                         .add("created", System.currentTimeMillis())
                          .add("projectattributes", attributes.get())
                          .add("variables", VariableHelper.toBasicDBFormat(variables))
                          .add("welcome", welcomeDBObject);
@@ -251,7 +280,7 @@ public class MongoDBFactoryStoreTest {
         source.setVariables(variables);
         source.setWelcome(welcomePage);
 
-        assertEquals(result, source);
+        compareFactories(source, result);
     }
 
     @Test
@@ -270,9 +299,14 @@ public class MongoDBFactoryStoreTest {
 
         BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(attrs);
 
-        List<Variable> variables = Collections.singletonList(
-                new Variable(Collections.singletonList("glob"),
-                             Collections.singletonList(new Variable.Replacement("find", "replace", "text_multipass"))));
+        Variable variable = DtoFactory.getInstance().createDto(Variable.class);
+        Replacement replacement = DtoFactory.getInstance().createDto(Replacement.class);
+        replacement.setFind("find");
+        replacement.setReplacemode("replace");
+        replacement.setReplacemode("text_multipass");
+        variable.setFiles(Collections.singletonList("glob"));
+        variable.setEntries(Collections.<Replacement>singletonList(replacement));
+        List<Variable> variables = Collections.<Variable>singletonList(variable);
 
         List<DBObject> imageList = new ArrayList<>();
 
@@ -293,9 +327,9 @@ public class MongoDBFactoryStoreTest {
                          .add("affiliateid", "testaffiliate123")
                          .add("vcsbranch", "master")
                          .add("userid", "123456798")
-                         .add("validsince", 123645L)
-                         .add("validuntil", 123645L)
-                         .add("created", 123645L)
+                         .add("validsince", System.currentTimeMillis())
+                         .add("validuntil", System.currentTimeMillis())
+                         .add("created", System.currentTimeMillis())
                          .add("projectattributes", attributes.get())
                          .add("variables", VariableHelper.toBasicDBFormat(variables))
                          .add("welcome", null);
@@ -317,7 +351,7 @@ public class MongoDBFactoryStoreTest {
         source.setId(id);
         source.setVariables(variables);
 
-        assertEquals(result, source);
+        compareFactories(result, source);
     }
 
     @Test
@@ -357,5 +391,24 @@ public class MongoDBFactoryStoreTest {
         assertTrue(newImage.getName().endsWith(image.getName()));
         assertEquals(newImage.getMediaType(), image.getMediaType());
         assertEquals(newImage.getImageData(), image.getImageData());
+    }
+
+    private void compareFactories(AdvancedFactoryUrl source, AdvancedFactoryUrl result) {
+        //need specific comparison, beacause proxy object generated by json helper doesn't have equals method
+        assertEquals(source.getId(), result.getId());
+        assertEquals(source.getAuthor(), result.getAuthor());
+        assertEquals(source.getContactmail(), result.getContactmail());
+        assertEquals(source.getCreated(), result.getCreated());
+        assertEquals(source.getDescription(), result.getDescription());
+        assertEquals(source.getStyle(), result.getStyle());
+        assertEquals(source.getV(), result.getV());
+        assertEquals(source.getVcs(), result.getVcs());
+        assertEquals(source.getVcsurl(), result.getVcsurl());
+        assertEquals(source.getProjectattributes(), result.getProjectattributes());
+        assertEquals(source.getCommitid(), result.getCommitid());
+        assertEquals(source.getVcsbranch(), result.getVcsbranch());
+        assertEquals(source.getVcsinfo(), result.getVcsinfo());
+        assertEquals(source.getAction(), result.getAction());
+        assertEquals(source.getOpenfile(), result.getOpenfile());
     }
 }

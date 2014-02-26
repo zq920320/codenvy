@@ -17,8 +17,8 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.AdvancedFactoryUrl;
 import com.codenvy.api.factory.FactoryUrlException;
+import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
 import com.codenvy.commons.lang.UrlUtils;
 
 import org.slf4j.Logger;
