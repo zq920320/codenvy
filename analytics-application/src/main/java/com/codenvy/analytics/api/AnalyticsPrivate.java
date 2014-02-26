@@ -19,6 +19,8 @@
 package com.codenvy.analytics.api;
 
 
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.Utils;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
@@ -26,18 +28,15 @@ import com.codenvy.api.analytics.dto.MetricInfoListDTO;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
 import com.codenvy.api.core.rest.annotations.GenerateLink;
-import com.google.inject.name.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.Map;
 
 
@@ -56,11 +55,35 @@ public class AnalyticsPrivate {
     @Inject
     private MetricHandler metricHandler;
 
-    @Inject
-    @Named("analytics.analytics-private.permit_access_from_host")
-    protected String permittedHost;
+    @GenerateLink(rel = "metric value")
+    @GET
+    @Path("private-metric/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
+    public Response getPrivateValue(@PathParam("name") String metricName,
+                                    @QueryParam("page") String page,
+                                    @QueryParam("per_page") String perPage,
+                                    @Context UriInfo uriInfo,
+                                    @Context SecurityContext securityContext) {
+        try {
+            Map<String, String> context = Utils.extractContext(uriInfo,
+                                                               securityContext.getUserPrincipal(),
+                                                               page,
+                                                               perPage);
 
-    public AnalyticsPrivate() {
+            if (!Utils.isSystemUser(Parameters.USER_PRINCIPAL.get(context))) {
+                MetricFilter.USER.put(context, Parameters.USER_PRINCIPAL.get(context));
+            }
+
+            MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
+            return Response.status(Response.Status.OK).entity(value).build();
+        } catch (MetricNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
     }
 
     @GenerateLink(rel = "metric value")
@@ -72,10 +95,8 @@ public class AnalyticsPrivate {
                              @QueryParam("per_page") String perPage,
                              @Context UriInfo uriInfo) {
         try {
-            validateAccess(uriInfo);
-
-            Map<String, String> metricContext = Utils.extractContext(uriInfo, page, perPage);
-            MetricValueDTO value = metricHandler.getValue(metricName, metricContext, uriInfo);
+            Map<String, String> context = Utils.extractContext(uriInfo, page, perPage);
+            MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
         } catch (MetricNotFoundException e) {
             LOG.error(e.getMessage(), e);
@@ -92,8 +113,6 @@ public class AnalyticsPrivate {
     @Path("metricinfo/{name}")
     public Response getInfo(@PathParam("name") String metricName, @Context UriInfo uriInfo) {
         try {
-            validateAccess(uriInfo);
-
             MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
             return Response.status(Response.Status.OK).entity(metricInfoDTO).build();
         } catch (MetricNotFoundException e) {
@@ -109,19 +128,11 @@ public class AnalyticsPrivate {
     @Path("metricinfo")
     public Response getAllInfo(@Context UriInfo uriInfo) {
         try {
-            validateAccess(uriInfo);
-
             MetricInfoListDTO metricInfoListDTO = metricHandler.getAllInfo(uriInfo);
             return Response.status(Response.Status.OK).entity(metricInfoListDTO).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }
-    }
-
-    private void validateAccess(UriInfo uriInfo) {
-        if (!uriInfo.getBaseUri().getHost().equals(permittedHost)) {
-            throw new IllegalStateException("Access is not permitted");
         }
     }
 }
