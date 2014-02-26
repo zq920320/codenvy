@@ -63,7 +63,7 @@ STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 -- REGISTERED USERS: The total time of the sessions
 ---------------------------------------
 x1 = FILTER t BY INDEXOF(UPPER(user), 'ANONYMOUSUSER_', 0) < 0;
-x = FOREACH x1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('time', delta),
+x = FOREACH x1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('time', delta),
         TOTUPLE('sessions', 1), TOTUPLE('ide', ide);
 
 STORE x INTO '$STORAGE_URL.$STORAGE_TABLE_USERS_STATISTICS' USING MongoStorage;

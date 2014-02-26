@@ -331,7 +331,6 @@ function Configuration() {
         "to_date",           // user-view, workspace-view
         "event",             // session-view
         "ws",                // workspaces-view
-        "session_id",        // workspaces-view
     ];
     
     /** url params which are passed from other pages */

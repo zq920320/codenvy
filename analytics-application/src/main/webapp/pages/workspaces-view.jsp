@@ -34,7 +34,6 @@
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
                     <button class="btn command-btn" value="ws">Workspace</button>
-                    <button class="btn command-btn" value="session_id">Session</button>
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
                 </div>
             </div>
