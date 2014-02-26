@@ -66,17 +66,19 @@ String _image_url = "";
 String _create_project_url = "";
 
 try {
-    _factory_id = request.getPathInfo();
+    _factory_id = request.getRequestURI();
 
     if (_factory_id == null || _factory_id.trim().isEmpty() || "/".equals(_factory_id.trim())) {
         _error_message = "Factory is not specified";
         throw new Exception();
     }
 
-    if (_factory_id.startsWith("/")) {
-        _factory_id = _factory_id.substring(1);
+    while (_factory_id.endsWith("/")) {
+        _factory_id = _factory_id.substring(0, _factory_id.length() - 1);
     }
-    
+
+    _factory_id = _factory_id.substring(_factory_id.lastIndexOf("/") + 1);
+
     _server = request.getScheme() + "://" + request.getServerName() +
         (request.getServerPort() == 80 ? "" : ":" + request.getServerPort());
     
