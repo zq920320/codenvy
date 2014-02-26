@@ -337,15 +337,22 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
 -- @return {user : bytearray, ws: bytearray, dt: datetime, delta: long}
 ---------------------------------------------------------------------------------------------
 DEFINE combineSmallSessions(X, startEvent, finishEvent) RETURNS Y {
-    a = extractEventsWithSessionId($X, '$startEvent');
+    a1 = extractEventsWithSessionId($X, '$startEvent');
+
+    -- avoids cases when there are several $finishEvent with same id, let's take the first one
+    a2 = FOREACH a1 GENERATE ws, user, id, dt, ide;
+    a3 = GROUP a2 BY id;
+    a4 = FOREACH a3 GENERATE FLATTEN(group), MIN(a2.dt) AS minDt, FLATTEN(a2);
+    a5 = FILTER a4 BY dt == minDt;
+    a = FOREACH a5 GENERATE a2::ws AS ws, a2::user AS user, id AS id, a2::dt AS dt, a2::ide AS ide;
 
     b1 = extractEventsWithSessionId($X, '$finishEvent');
 
     -- avoids cases when there are several $finishEvent with same id, let's take the first one
-    b2 = FOREACH b1 GENERATE ws, user, id, dt, MilliSecondsBetween(dt, ToDate('2010-01-01', 'yyyy-MM-dd')) AS delta, ide;
+    b2 = FOREACH b1 GENERATE ws, user, id, dt, ide;
     b3 = GROUP b2 BY id;
-    b4 = FOREACH b3 GENERATE FLATTEN(group), MIN(b2.delta) AS minDelta, FLATTEN(b2);
-    b5 = FILTER b4 BY delta == minDelta;
+    b4 = FOREACH b3 GENERATE FLATTEN(group), MIN(b2.dt) AS minDt, FLATTEN(b2);
+    b5 = FILTER b4 BY dt == minDt;
     b = FOREACH b5 GENERATE b2::ws AS ws, b2::user AS user, id AS id, b2::dt AS dt, b2::ide AS ide;
 
     -- joins $startEvent and $finishEvent by same id, removes events without corresponding pair
