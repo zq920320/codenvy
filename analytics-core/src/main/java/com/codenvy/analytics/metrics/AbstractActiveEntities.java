@@ -22,22 +22,30 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractActiveEntities extends ReadBasedMetric {
 
-    private final String valueField;
-    private final String basedMetricName;
+    private final ReadBasedMetric basedMetric;
+    private final String          valueField;
 
     public AbstractActiveEntities(String metricName, String basedMetricName, String valueField) {
         super(metricName);
-        this.basedMetricName = basedMetricName;
+        this.basedMetric = (ReadBasedMetric)MetricFactory.getMetric(basedMetricName);
         this.valueField = valueField;
     }
 
-    protected AbstractActiveEntities(MetricType metricType, MetricType basedMetric, String valueField) {
+    public AbstractActiveEntities(MetricType metricType, MetricType basedMetric, String valueField) {
         this(metricType.name(), basedMetric.name(), valueField);
+    }
+
+    public AbstractActiveEntities(String metricName, Metric basedMetric, String valueField) {
+        super(metricName);
+        this.basedMetric = (ReadBasedMetric)basedMetric;
+        this.valueField = valueField;
     }
 
     @Override
@@ -46,8 +54,13 @@ public abstract class AbstractActiveEntities extends ReadBasedMetric {
     }
 
     @Override
+    public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
+        return basedMetric.getFilter(clauses);
+    }
+
+    @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(basedMetricName);
+        return basedMetric.getStorageCollectionName();
     }
 
     @Override

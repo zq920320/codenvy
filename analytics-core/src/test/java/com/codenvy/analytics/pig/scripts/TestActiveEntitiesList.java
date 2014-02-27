@@ -26,6 +26,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.*;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.mongodb.DBObject;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -99,10 +100,10 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130101");
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = new TestedSetValueResulted();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws2"))));
-        metric = new TestActiveUsersMetric();
+        metric = new TestedActiveUsersMetric();
         assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
@@ -112,13 +113,13 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.FROM_DATE.put(context, "20130101");
         Parameters.TO_DATE.put(context, "20130102");
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = new TestedSetValueResulted();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws2"),
                                                                                          new StringValueData("ws3"),
                                                                                          new StringValueData("ws4"))));
 
-        metric = new TestActiveUsersMetric();
+        metric = new TestedActiveUsersMetric();
         assertEquals(metric.getValue(context), new LongValueData(3));
     }
 
@@ -129,11 +130,11 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com");
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = new TestedSetValueResulted();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws3"))));
 
-        metric = new TestActiveUsersMetric();
+        metric = new TestedActiveUsersMetric();
         assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
@@ -144,12 +145,12 @@ public class TestActiveEntitiesList extends BaseTest {
         Parameters.TO_DATE.put(context, "20130102");
         MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = new TestedSetValueResulted();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws1"),
                                                                                          new StringValueData("ws2"),
                                                                                          new StringValueData("ws3"))));
 
-        metric = new TestActiveUsersMetric();
+        metric = new TestedActiveUsersMetric();
         assertEquals(metric.getValue(context), new LongValueData(2));
     }
 
@@ -161,18 +162,18 @@ public class TestActiveEntitiesList extends BaseTest {
         MetricFilter.USER.put(context, "user1@gmail.com,user2@gmail.com");
         MetricFilter.WS.put(context, "ws2");
 
-        Metric metric = new TestSetValueResulted();
+        Metric metric = new TestedSetValueResulted();
         assertEquals(metric.getValue(context), new SetValueData(Arrays.<ValueData>asList(new StringValueData("ws2"))));
 
-        metric = new TestActiveUsersMetric();
+        metric = new TestedActiveUsersMetric();
         assertEquals(metric.getValue(context), new LongValueData(1));
     }
 
     // =======================> Tested Metrics
 
-    private class TestSetValueResulted extends AbstractSetValueResulted {
+    private class TestedSetValueResulted extends AbstractSetValueResulted {
 
-        public TestSetValueResulted() {
+        public TestedSetValueResulted() {
             super(COLLECTION, "ws");
         }
 
@@ -187,10 +188,27 @@ public class TestActiveEntitiesList extends BaseTest {
         }
     }
 
-    private class TestActiveUsersMetric extends AbstractActiveEntities {
+    private class TestedActiveUsersMetric extends AbstractActiveEntities {
 
-        public TestActiveUsersMetric() {
-            super(COLLECTION, COLLECTION, "user");
+        public TestedActiveUsersMetric() {
+            super(COLLECTION, new TestedBasedMetric(), "user");
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+    }
+
+    private class TestedBasedMetric extends ReadBasedMetric {
+
+        public TestedBasedMetric() {
+            super(COLLECTION);
+        }
+
+        @Override
+        public String[] getTrackedFields() {
+            return new String[0];
         }
 
         @Override
@@ -198,6 +216,15 @@ public class TestActiveEntitiesList extends BaseTest {
             return COLLECTION;
         }
 
+        @Override
+        public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
+            return new DBObject[0];
+        }
+
+        @Override
+        public Class<? extends ValueData> getValueDataClass() {
+            return null;
+        }
 
         @Override
         public String getDescription() {

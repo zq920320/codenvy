@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -22,16 +22,20 @@ import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
-public class ActiveWorkspaces extends AbstractActiveEntities {
+public class WorkspacesStatistics extends AbstractActiveEntities {
 
-    public ActiveWorkspaces() {
-        super(MetricType.ACTIVE_WORKSPACES, MetricType.ACTIVE_WORKSPACES_SET, WS);
+    public WorkspacesStatistics() {
+        super(MetricType.WORKSPACES_STATISTICS,
+              MetricType.WORKSPACES_STATISTICS_LIST,
+              WS);
     }
 
     @Override
     public String getDescription() {
-        return "The number of active workspaces";
+        return "The number of workspaces in statistics";
     }
 }
