@@ -41,15 +41,17 @@ public class BitbucketIntegrationFactoryServlet extends HttpServlet {
         URL currentUrl =
                 UriBuilder.fromUri(req.getRequestURL().toString()).replaceQuery(req.getQueryString()).build().toURL();
 
-        Map<String, List<String>> params = UrlUtils.getQueryParameters(currentUrl);
+        Map<String, List<String>> bitbucketParams = UrlUtils.getQueryParameters(currentUrl);
 
-        List<String> urls = params.get("url");
+        List<String> urls = bitbucketParams.get("url");
         if (urls != null && !urls.isEmpty()) {
+            String bitbucketUrl = urls.iterator().next();
             UriBuilder factoryUrl = UriBuilder.fromPath("/factory");
             factoryUrl.queryParam("v", "1.0");
             factoryUrl.queryParam("vcs", "git");
-            factoryUrl.queryParam("vcsurl", URLEncoder.encode(urls.iterator().next(), "UTF-8"));
+            factoryUrl.queryParam("vcsurl", URLEncoder.encode(bitbucketUrl, "UTF-8"));
             factoryUrl.queryParam("vcsinfo", "true");
+            factoryUrl.queryParam("pname", bitbucketUrl.substring(bitbucketUrl.lastIndexOf('/') + 1, bitbucketUrl.lastIndexOf('.')));
 
             resp.sendRedirect(factoryUrl.build().toString());
         } else {
