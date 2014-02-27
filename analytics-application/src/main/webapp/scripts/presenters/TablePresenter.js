@@ -37,14 +37,6 @@ analytics.presenter.TablePresenter.prototype.load = function() {
     var viewParams = view.getParams();
     
     var onePageRowsCount = analytics.configuration.getProperty(widgetName, "onePageRowsCount") || presenter.DEFAULT_ONE_PAGE_ROWS_COUNT;
-        
-    // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
-    if (typeof viewParams["from_date"] != "undefined") {
-        viewParams["from_date"] = viewParams["from_date"].replace(/-/g, "");
-    }
-    if (typeof viewParams["to_date"] != "undefined") {
-        viewParams["to_date"] = viewParams["to_date"].replace(/-/g, "");
-    }
     
     var modelParams = presenter.getModelParams(viewParams);
     

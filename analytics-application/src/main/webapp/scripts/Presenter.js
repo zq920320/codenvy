@@ -52,5 +52,13 @@ Presenter.prototype.getModelParams = function(viewParams) {
     
     analytics.configuration.removeForbiddenModelParams(this.widgetName, modelParams);
     
+    // fix date range value format: fix "yyyy-mm-dd" on "yyyymmdd"
+    if (typeof modelParams["from_date"] != "undefined") {
+        modelParams["from_date"] = modelParams["from_date"].replace(/-/g, "");
+    }
+    if (typeof modelParams["to_date"] != "undefined") {
+        modelParams["to_date"] = modelParams["to_date"].replace(/-/g, "");
+    }
+    
     return modelParams;
 }
