@@ -23,6 +23,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
@@ -62,6 +64,18 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
                             BUILD_TIME,
                             PAAS_DEPLOYS,
                             JOINED_USERS};
+    }
+
+    @Override
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+        DBObject filter = super.getFilter(clauses);
+
+        DBObject match = (DBObject)filter.get("$match");
+        if (match.get(WS) == null) {
+            match.put(WS, PERSISTENT_WS);
+        }
+
+        return filter;
     }
 
     @Override

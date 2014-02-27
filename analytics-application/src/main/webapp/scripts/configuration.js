@@ -253,7 +253,7 @@ function Configuration() {
         workspaces: {
             presenterType: "WorkspacesPresenter",
             modelViewName: "workspaces",
-            modelMetricName: "total_workspaces",
+            modelMetricName: "workspaces_statistics",
             isNeedToSaveInHistory: true,
             columnLinkPrefixList: ["/analytics/pages/workspace-view.jsp?ws"],
         },

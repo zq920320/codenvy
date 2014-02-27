@@ -147,9 +147,6 @@ public class TestUsersActivity extends BaseTest {
 
         Metric metric = new TestUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
-
-        LOG.info("[testOneSessionActivity]:");
-        LOG.info(Arrays.toString(value.getAll().toArray()));
         
         assertEquals(value.size(), 14);
 
@@ -295,8 +292,6 @@ public class TestUsersActivity extends BaseTest {
 
         Metric metric = new TestUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
-        LOG.info("[testOneSessionActivityWithHidedSessionEvents]:");
-        LOG.info(Arrays.toString(value.getAll().toArray()));
         
         assertEquals(value.size(), 3);
 
@@ -339,10 +334,8 @@ public class TestUsersActivity extends BaseTest {
 
         Metric metric = new TestUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
-        LOG.info("[testOneSessionActivity]:");
-        LOG.info(Arrays.toString(value.getAll().toArray()));
         
-        assertEquals(value.size(), 6);
+        assertEquals(value.size(), 7);
 
         assertItem(value,
                    0,
@@ -398,8 +391,17 @@ public class TestUsersActivity extends BaseTest {
                    fullTimeFormat.parse("2013-11-01 20:02:00,600").getTime(),
                    3720445);
 
+        assertItem(value,
+                   6,
+                   "session-finished",
+                   TARGET_WORKSPACE,
+                   TARGET_USER,
+                   null,
+                   fullTimeFormat.parse("2013-11-01 20:04:00,220").getTime(),
+                   3840065);
+        
         metric = new TestNumberOfUsersOfActivity();
-        Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(6));
+        Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(7));
     }
     
     
