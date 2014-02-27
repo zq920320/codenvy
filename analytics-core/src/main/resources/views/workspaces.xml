@@ -25,12 +25,12 @@
 		<section name="workspace_overview">
 			<row class="com.codenvy.analytics.services.view.TitleRow">
 				<parameter key="titles"
-					value="Name,Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories" />
+					value="Workspace,Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories,Users" />
 			</row>
 			<row class="com.codenvy.analytics.services.view.MetricRow">
 				<parameter key="name" value="workspaces_statistics_list" />
 				<parameter key="fields"
-					value="ws,sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories" />
+					value="ws,sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories,joined_users" />
 				<parameter key="time-fields" value="time,time_build,time_run" />
 			</row>
 		</section>
@@ -39,7 +39,7 @@
 	<view name="workspace_sessions" on-demand="true">
 		<section name="workspace_sessions">
 			<row class="com.codenvy.analytics.services.view.TitleRow">
-				<parameter key="titles" value="Id,User,Start Time,End Time,Duration" />
+				<parameter key="titles" value="ID,User,Start Time,End Time,Duration" />
 			</row>
 			<row class="com.codenvy.analytics.services.view.MetricRow">
 				<parameter key="name" value="product_usage_sessions_list" />
@@ -73,18 +73,6 @@
 				<parameter key="name" value="users_activity_list" />
 				<parameter key="fields" value="date,message" />
 				<parameter key="date-fields" value="date" />
-			</row>
-		</section>
-	</view>
-
-	<view name="workspace_users_events" on-demand="true">
-		<section name="workspace_users_events">
-			<row class="com.codenvy.analytics.services.view.TitleRow">
-				<parameter key="titles" value="Action,Count" />
-			</row>
-			<row class="com.codenvy.analytics.services.view.MetricRow">
-				<parameter key="name" value="users_events" />
-				<parameter key="fields" value="action,count" />
 			</row>
 		</section>
 	</view>

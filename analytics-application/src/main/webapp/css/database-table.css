@@ -111,6 +111,7 @@
 .database-table-vertical-row .cell-name {
    padding-right: 5px;
    font-weight: normal;
+   min-width: 180px;
 }
 
 .database-table-vertical-row .cell {

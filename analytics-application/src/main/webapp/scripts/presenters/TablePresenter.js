@@ -74,11 +74,13 @@ analytics.presenter.TablePresenter.prototype.load = function() {
 
             var table = data[0];  // there is only one table in data
             
-            // make user id in first column as linked 
-            var firstColumnLinkPrefix = analytics.configuration.getProperty(presenter.widgetName, "firstColumnLinkPrefix");
-            if (typeof firstColumnLinkPrefix != "undefined") {
-                table = view.makeFirstTableColumnAsLinked(table, firstColumnLinkPrefix);
-            }            
+            // make table columns linked 
+            var columnLinkPrefixList = analytics.configuration.getProperty(presenter.widgetName, "columnLinkPrefixList");
+            if (typeof columnLinkPrefixList != "undefined") {
+                for (var i in columnLinkPrefixList) {
+                    table = view.makeTableColumnLinked(table, i, columnLinkPrefixList[i]);    
+                }                
+            }       
             
             view.printTable(table, false);
             

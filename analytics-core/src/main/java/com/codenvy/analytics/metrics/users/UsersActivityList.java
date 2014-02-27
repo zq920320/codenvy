@@ -150,7 +150,7 @@ public class UsersActivityList extends AbstractListValueResulted {
 
         DBObject range = new BasicDBObject();
         range.put("$gte", fromDateInMillis);
-        range.put("$lt", toDateInMillis);
+        range.put("$lte", toDateInMillis);
 
         return range;
     }

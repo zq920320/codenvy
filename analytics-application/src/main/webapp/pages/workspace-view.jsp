@@ -60,11 +60,6 @@
                                 <div class="header">Workspace Logs</div>
                                 <div class="body" id="workspaceActivity"></div>
                             </div>
-
-                            <div class="item">
-                                <div class="header">Workspace Action</div>
-                                <div class="body" id="workspaceUserEvents"></div>
-                            </div>
                         </div>
                     </div>
                 </div>

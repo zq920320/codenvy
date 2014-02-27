@@ -146,7 +146,7 @@ function Configuration() {
             modelViewName: "users_profiles",
             modelMetricName: "users_profiles",
             isNeedToSaveInHistory: true,
-            firstColumnLinkPrefix: "/analytics/pages/user-view.jsp?user",
+            columnLinkPrefixList: ["/analytics/pages/user-view.jsp?user"],
         },
 
         userOverview: {
@@ -173,7 +173,9 @@ function Configuration() {
             isSortable: true,
             defaultSortParams: "-date",
             
-            firstColumnLinkPrefix: "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+            columnLinkPrefixList: [
+                "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+                "/analytics/pages/workspace-view.jsp?ws"],
         },
 
         userWorkspaceList: {
@@ -184,7 +186,7 @@ function Configuration() {
             isPaginable: true,
             modelMetricName: "usage_time_by_workspaces",
             
-            firstColumnLinkPrefix: "/analytics/pages/workspace-view.jsp?ws",
+            columnLinkPrefixList: ["/analytics/pages/workspace-view.jsp?ws"],
         },
 
         userActivity: {
@@ -212,7 +214,11 @@ function Configuration() {
             modelViewName: "session_overview",
             modelMetricName: "product_usage_sessions",
             isNeedToSaveInHistory: true,
-            firstColumnLinkPrefix: "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+            columnLinkPrefixList: [
+                "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+                "/analytics/pages/user-view.jsp?user",
+                "/analytics/pages/workspace-view.jsp?ws"
+            ],
         },        
         
         sessionOverview: {
@@ -249,7 +255,7 @@ function Configuration() {
             modelViewName: "workspaces",
             modelMetricName: "total_workspaces",
             isNeedToSaveInHistory: true,
-            firstColumnLinkPrefix: "/analytics/pages/workspace-view.jsp?ws",
+            columnLinkPrefixList: ["/analytics/pages/workspace-view.jsp?ws"],
         },
 
         workspaceOverview: {
@@ -270,7 +276,10 @@ function Configuration() {
             isSortable: true,
             defaultSortParams: "-date",
             
-            firstColumnLinkPrefix: "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+            columnLinkPrefixList: [
+                "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+                "/analytics/pages/user-view.jsp?user"
+            ],
         },
 
         workspaceUserList: {
@@ -281,7 +290,7 @@ function Configuration() {
             isPaginable: true,
             modelMetricName: "usage_time_by_workspaces",
             
-            firstColumnLinkPrefix: "/analytics/pages/user-view.jsp?user",
+            columnLinkPrefixList: ["/analytics/pages/user-view.jsp?user"],
         },
 
         workspaceActivity: {
@@ -294,12 +303,6 @@ function Configuration() {
 
             isSortable: true,
             defaultSortParams: "-date",
-        },
-
-        workspaceUserEvents: {
-            presenterType: "TablePresenter",
-            modelViewName: "workspace_users_events",
-            isNeedToSaveInHistory: true,
         },
     }
 
@@ -451,6 +454,7 @@ function Configuration() {
     function getCrossPageParamsList() {
         return crossPageParams;
     }
+
     
     /** ****************** API ********** */
     return {
@@ -462,6 +466,7 @@ function Configuration() {
         getGlobalParamList: getGlobalParamList,
         getViewParamsWithNullValues: getViewParamsWithNullValues,
         removeForbiddenModelParams: removeForbiddenModelParams,
-        getCrossPageParamsList: getCrossPageParamsList, 
+        getCrossPageParamsList: getCrossPageParamsList,
+
     }
 }

@@ -137,13 +137,13 @@ function View() {
 	}	
 	
 	/**
-	 * Make first column of table as linked with link = "firstColumnLinkPrefix + {firstColumnValue}"
+	 * Make i-th columnIndex (starting from 0) of table as linked with link = "columnLinkPrefix + {columnValue}"
 	 */
-    function makeFirstTableColumnAsLinked(table, firstColumnLinkPrefix) {
+    function makeTableColumnLinked(table, columnIndex, columnLinkPrefix) {
         for (var i = 0; i < table.rows.length; i++) {
-            var firstColumnValue = table.rows[i][0];
-            var href = firstColumnLinkPrefix + "=" + firstColumnValue;
-            table.rows[i][0] = "<a href='" + href + "'>" + firstColumnValue + "</a>";
+            var columnValue = table.rows[i][columnIndex];
+            var href = columnLinkPrefix + "=" + columnValue;
+            table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
         }
     
         return table;
@@ -286,7 +286,7 @@ function View() {
     	printTable: printTable,
     	loadTableHandlers: loadTableHandlers,
     	printTableVerticalRow: printTableVerticalRow,
-    	makeFirstTableColumnAsLinked: makeFirstTableColumnAsLinked,
+    	makeTableColumnLinked: makeTableColumnLinked,
     	
     	// page navigation
     	printBottomPageNavigator: printBottomPageNavigator,

@@ -28,7 +28,7 @@ analytics.presenter.SessionsPresenter.prototype = new EntryViewPresenter();
 analytics.presenter.SessionsPresenter.prototype.TARGET_PAGE_LINK = "sessions-view.jsp";
 
 analytics.presenter.SessionsPresenter.prototype.mapColumnNameToSortValue = {
-    "Id": "session_id",
+    "ID": "session_id",
     "User": "user",
     "Workspace": "ws",
     "Start Time": "start_time",

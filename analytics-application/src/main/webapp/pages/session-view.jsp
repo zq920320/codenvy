@@ -34,10 +34,11 @@
                 
 	            <div class="well topFilteringPanel">
 	                <div id="filter-by" class="left">
-	                    <input type="checkbox" checked=true id="hide-session-events" 
+	                    <label><input type="checkbox" checked=true id="hide-session-events" 
                                value="~session-started,~session-finished,~session-factory-started,~session-factory-stopped" 
                                targetWidgets="userSessionActivity" />
-	                    hide session events
+	                       hide session events
+	                    </label>
 	                </div>
 	            </div>
 
