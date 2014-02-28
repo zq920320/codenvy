@@ -26,7 +26,7 @@
     <fileSets>
         <!-- Default files -->
         <fileSet>
-            <directory>${project.build.directory}/tomcat-analytics</directory>
+            <directory>${project.build.directory}/analytics-tomcat</directory>
             <outputDirectory/>
             <excludes>
                 <exclude>**/*.sh</exclude>
@@ -34,7 +34,7 @@
         </fileSet>
         <!-- Executable files-->
         <fileSet>
-            <directory>${project.build.directory}/tomcat-analytics</directory>
+            <directory>${project.build.directory}/analytics-tomcat</directory>
             <outputDirectory/>
             <includes>
                 <include>**/*.sh</include>

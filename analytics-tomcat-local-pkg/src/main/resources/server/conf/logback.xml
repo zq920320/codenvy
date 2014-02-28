@@ -17,31 +17,31 @@
          from Codenvy S.A..
 -->
 <configuration>
-   <jmxConfigurator />
+    <jmxConfigurator/>
 
-   <timestamp key="date" datePattern="yyyy-MM-dd"/>
+    <timestamp key="date" datePattern="yyyy-MM-dd"/>
 
-   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-      <encoder>
-         <pattern>%-41(%date[%.15thread]) %-45([%-5level] [%.30logger{30} %L]) - %msg%n</pattern>
-      </encoder>
-   </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-41(%date[%.15thread]) %-45([%-5level] [%.30logger{30} %L]) - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-         <fileNamePattern>${com.codenvy.analytics.logpath}/%d{yyyy/MM/dd}/catalina-%i.log</fileNamePattern>
-         <Append>true</Append>
-         <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-            <maxFileSize>10MB</maxFileSize>
-         </timeBasedFileNamingAndTriggeringPolicy>
-      </rollingPolicy>
-      <encoder>
-         <pattern>%-41(%date[%.15thread]) %-45([%-5level] [%.30logger{30} %L]) - %msg%n</pattern>
-      </encoder>
-   </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${com.codenvy.analytics.logpath}/%d{yyyy/MM/dd}/catalina-%i.log</fileNamePattern>
+            <Append>true</Append>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-41(%date[%.15thread]) %-45([%-5level] [%.30logger{30} %L]) - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-   <root level="INFO">
-      <appender-ref ref="STDOUT"/>
-      <appender-ref ref="FILE"/>
-   </root>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
 </configuration>

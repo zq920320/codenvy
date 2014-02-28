@@ -26,16 +26,16 @@
     <fileSets>
         <!-- Default files -->
         <fileSet>
-            <directory>${project.build.directory}/wso2bam-analytics</directory>
-            <outputDirectory></outputDirectory>
+            <directory>${project.build.directory}/analytics-tomcat</directory>
+            <outputDirectory/>
             <excludes>
                 <exclude>**/*.sh</exclude>
             </excludes>
         </fileSet>
         <!-- Executable files-->
         <fileSet>
-            <directory>${project.build.directory}/wso2bam-analytics</directory>
-            <outputDirectory></outputDirectory>
+            <directory>${project.build.directory}/analytics-tomcat</directory>
+            <outputDirectory/>
             <includes>
                 <include>**/*.sh</include>
             </includes>

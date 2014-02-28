@@ -128,7 +128,7 @@
                                     <target>
                                         <!-- unpacking resources -->
                                         <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/tomcat.zip" />
-                                        <move todir="${project.build.directory}/tomcat-analytics">
+                                        <move todir="${project.build.directory}/analytics-tomcat">
                                             <fileset dir="${project.build.directory}/apache-tomcat-${tomcat.version}/">
                                                 <exclude name="**/ROOT/**" />
                                                 <exclude name="**/docs/**" />
@@ -137,25 +137,26 @@
                                                 <exclude name="**/host-manager/**" />
                                             </fileset>
                                         </move>
+                                        <!-- Set basic authentication mechanism -->
                                         <unwar dest="${project.build.directory}/packager-conf/war/analytics-application" src="${project.build.directory}/packager-conf/war/analytics-application.war" />
                                         <copy file="src/main/resources/analytics-application-basic-auth.web.xml" overwrite="true" tofile="${project.build.directory}/packager-conf/war/analytics-application/WEB-INF/web.xml" />
                                         <copy file="src/main/resources/analytics-application-basic-auth.context.xml" overwrite="true" tofile="${project.build.directory}/packager-conf/war/analytics-application/META-INF/context.xml" />
-                                        <war destfile="${project.build.directory}/tomcat-analytics/webapps/analytics.war" needxmlfile="true">
+                                        <war destfile="${project.build.directory}/analytics-tomcat/webapps/analytics.war" needxmlfile="true">
                                             <fileset dir="${project.build.directory}/packager-conf/war/analytics-application" />
                                         </war>
                                         <!-- Coping resources -->
-                                        <copy overwrite="true" todir="${project.build.directory}/tomcat-analytics/">
+                                        <copy overwrite="true" todir="${project.build.directory}/analytics-tomcat/">
                                             <fileset dir="${basedir}/src/main/resources/server" />
                                         </copy>
-                                        <copy overwrite="true" todir="${project.build.directory}/tomcat-analytics/pig/scripts">
+                                        <copy overwrite="true" todir="${project.build.directory}/analytics-tomcat/pig/scripts">
                                             <fileset dir="${basedir}/../analytics-core/scripts/" />
                                         </copy>
-                                        <copy file="${project.build.directory}/packager-conf/jar/logback-classic-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/logback-classic.jar" />
-                                        <copy file="${project.build.directory}/packager-conf/jar/logback-core-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/logback-core.jar" />
-                                        <copy file="${project.build.directory}/packager-conf/jar/slf4j-api-${org.slf4j.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/slf4j-api.jar" />
-                                        <copy file="${project.build.directory}/packager-conf/jar/jul-to-slf4j-${org.slf4j.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/jul-to-slf4j.jar" />
-                                        <copy file="${project.build.directory}/packager-conf/jar/mail-${javax.mail.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/mail.jar" />
-                                        <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-classic-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/logback-classic.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-core-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/logback-core.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/slf4j-api-${org.slf4j.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/slf4j-api.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/jul-to-slf4j-${org.slf4j.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/jul-to-slf4j.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/mail-${javax.mail.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/mail.jar" />
+                                        <chmod file="${project.build.directory}/analytics-tomcat/bin/*.sh" perm="+x" />
                                         <!-- prepare last day log (based on 2013.12.15) -->
                                         <tstamp>
                                             <format offset="-1" pattern="yyyy/MM/dd" property="offset.1day.date.dir" unit="day" />
@@ -166,10 +167,10 @@
                                         <tstamp>
                                             <format offset="-1" pattern="yyyyMMdd" property="offset.1day.date.param" unit="day" />
                                         </tstamp>
-                                        <mkdir dir="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1day.date.dir}" />
-                                        <unzip dest="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1day.date.dir}" src="${project.build.directory}/tomcat-analytics/data/logs-production/2013.12.15/messages" />
-                                        <delete dir="${project.build.directory}/tomcat-analytics/data/logs-production/2013.12.15" />
-                                        <replace file="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1day.date.dir}/messages" token="2013-12-15" value="${offset.1day.date.stamp}" />
+                                        <mkdir dir="${project.build.directory}/analytics-tomcat/data/logs-production/${offset.1day.date.dir}" />
+                                        <unzip dest="${project.build.directory}/analytics-tomcat/data/logs-production/${offset.1day.date.dir}" src="${project.build.directory}/analytics-tomcat/data/logs-production/2013.12.15/messages" />
+                                        <delete dir="${project.build.directory}/analytics-tomcat/data/logs-production/2013.12.15" />
+                                        <replace file="${project.build.directory}/analytics-tomcat/data/logs-production/${offset.1day.date.dir}/messages" token="2013-12-15" value="${offset.1day.date.stamp}" />
                                         <!-- prepare last month log (based on 2013.12.14) -->
                                         <tstamp>
                                             <format offset="-1" pattern="yyyy/MM/dd" property="offset.1month.date.dir" unit="month" />
@@ -180,12 +181,12 @@
                                         <tstamp>
                                             <format offset="-1" pattern="yyyyMMdd" property="offset.1month.date.param" unit="month" />
                                         </tstamp>
-                                        <mkdir dir="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1month.date.dir}" />
-                                        <unzip dest="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1month.date.dir}" src="${project.build.directory}/tomcat-analytics/data/logs-production/2013.12.14/messages" />
-                                        <delete dir="${project.build.directory}/tomcat-analytics/data/logs-production/2013.12.14" />
-                                        <replace file="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1month.date.dir}/messages" token="2013-12-14" value="${offset.1month.date.stamp}" />
+                                        <mkdir dir="${project.build.directory}/analytics-tomcat/data/logs-production/${offset.1month.date.dir}" />
+                                        <unzip dest="${project.build.directory}/analytics-tomcat/data/logs-production/${offset.1month.date.dir}" src="${project.build.directory}/analytics-tomcat/data/logs-production/2013.12.14/messages" />
+                                        <delete dir="${project.build.directory}/analytics-tomcat/data/logs-production/2013.12.14" />
+                                        <replace file="${project.build.directory}/analytics-tomcat/data/logs-production/${offset.1month.date.dir}/messages" token="2013-12-14" value="${offset.1month.date.stamp}" />
                                         <!-- update analytics.properties -->
-                                        <replace file="${project.build.directory}/tomcat-analytics/data/conf/analytics.properties" token="20131214,20131215" value="${offset.1month.date.param},${offset.1day.date.param}" />
+                                        <replace file="${project.build.directory}/analytics-tomcat/data/conf/analytics.properties" token="20131214,20131215" value="${offset.1month.date.param},${offset.1day.date.param}" />
                                     </target>
                                 </configuration>
                             </execution>

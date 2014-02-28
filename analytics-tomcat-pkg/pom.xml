@@ -16,7 +16,8 @@
          is strictly forbidden unless prior written permission is obtained
          from Codenvy S.A..
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>analytics-parent</artifactId>
@@ -28,21 +29,41 @@
     <name>Codenvy :: Analytics :: Tomcat Assembly</name>
     <dependencies>
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.codenvy.analytics</groupId>
             <artifactId>analytics-application</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2</groupId>
-            <artifactId>bam</artifactId>
-            <version>2.3.0</version>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat</artifactId>
+            <version>${tomcat.version}</version>
             <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
         </dependency>
     </dependencies>
     <profiles>
@@ -93,25 +114,13 @@
                                     <outputDirectory>${project.build.directory}/packager-conf/zip</outputDirectory>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>copy-dependencies-tbox</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <includeTypes>tbox</includeTypes>
-                                    <stripVersion>false</stripVersion>
-                                    <outputDirectory>${project.build.directory}/packager-conf/tbox</outputDirectory>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>wso2bam</id>
+                                <id>tomcat</id>
                                 <phase>process-resources</phase>
                                 <goals>
                                     <goal>run</goal>
@@ -119,35 +128,30 @@
                                 <configuration>
                                     <target>
                                         <!-- unpacking resources -->
-                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/bam.zip" />
-                                        <move todir="${project.build.directory}/wso2bam-analytics">
-                                            <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}" />
+                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/tomcat.zip" />
+                                        <move todir="${project.build.directory}/analytics-tomcat">
+                                            <fileset dir="${project.build.directory}/apache-tomcat-${tomcat.version}/">
+                                                <exclude name="**/ROOT/**" />
+                                                <exclude name="**/docs/**" />
+                                                <exclude name="**/examples/**" />
+                                                <exclude name="**/manager/**" />
+                                                <exclude name="**/host-manager/**" />
+                                            </fileset>
                                         </move>
-
-                                        <!--Repacking-->
-                                        <jar destfile="${project.build.directory}/wso2bam-analytics/lib/org.wso2.carbon.logging-4.1.0.jar" update="true">
-                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
-                                        </jar>
-                                        <jar destfile="${project.build.directory}/wso2bam-analytics/repository/components/plugins/org.wso2.carbon.logging_4.1.0.jar" update="true">
-                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
-                                        </jar>
-                                        <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/packager-conf/war/analytics.war" />
-
-                                        <!-- Removal useless resources -->
-                                        <delete file="${project.build.directory}/wso2bam-analytics/repository/conf/user-mgt.xml" />
-                                        <delete file="${project.build.directory}/wso2bam-analytics/repository/conf/log4j.properties" />
-
                                         <!-- Coping resources -->
-                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/">
+                                        <copy overwrite="true" todir="${project.build.directory}/analytics-tomcat/">
                                             <fileset dir="${basedir}/src/main/resources/server" />
                                         </copy>
-                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/pig/scripts">
+                                        <copy overwrite="true" todir="${project.build.directory}/analytics-tomcat/pig/scripts">
                                             <fileset dir="${basedir}/../analytics-core/scripts/" />
                                         </copy>
-                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/">
-                                            <fileset dir="${project.build.directory}/packager-conf/war" />
-                                        </copy>
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x" />
+                                        <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/analytics-tomcat/webapps/analytics.war"/>
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-classic-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/logback-classic.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-core-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/logback-core.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/slf4j-api-${org.slf4j.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/slf4j-api.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/jul-to-slf4j-${org.slf4j.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/jul-to-slf4j.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/mail-${javax.mail.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/mail.jar" />
+                                        <chmod file="${project.build.directory}/analytics-tomcat/bin/*.sh" perm="+x" />
                                     </target>
                                 </configuration>
                             </execution>

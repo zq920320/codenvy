@@ -68,7 +68,7 @@ public class Scheduler implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent context) {
         try {
-            scheduler.shutdown();
+            scheduler.shutdown(true);
         } catch (SchedulerException e) {
             LOG.error(e.getMessage(), e);
         }

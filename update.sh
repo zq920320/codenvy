@@ -1,9 +1,9 @@
 #!/bin/bash
-filename=`ls analytics-wso2bam-pkg/target | grep analytics-wso2bam`
+filename=`ls analytics-tomcat-pkg/target | grep analytics-tomcat`
 SSH_KEY_NAME=cl-server-prod-20130219
 SSH_AS_USER_NAME=logreader
 AS_IP=syslog.codenvycorp.com
-home=/home/logreader/wso2bam-analytics
+home=/home/logreader/analytics-tomcat
 
 deleteFileIfExists() {
     if [ -f $1 ]; then
@@ -13,7 +13,7 @@ deleteFileIfExists() {
 }
 
     echo "==== Step [1/7] =======================> [upload a new Tomcat]"
-    scp -i ~/.ssh/${SSH_KEY_NAME} analytics-wso2bam-pkg/target/${filename} ${SSH_AS_USER_NAME}@${AS_IP}:${filename}
+    scp -i ~/.ssh/${SSH_KEY_NAME} analytics-tomcat-pkg/target/${filename} ${SSH_AS_USER_NAME}@${AS_IP}:${filename}
     echo "==== Step [2/7] =======================> [stop Tomcat]"
     ssh -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP} "cp ${home}/wso2carbon.pid ${home}/pid"
     ssh -i ~/.ssh/${SSH_KEY_NAME} ${SSH_AS_USER_NAME}@${AS_IP} "cd ${home}/bin/;if [ -f wso2server.sh ]; then ./wso2server.sh stop; fi"
