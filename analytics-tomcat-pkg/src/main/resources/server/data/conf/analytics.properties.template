@@ -1,0 +1,82 @@
+# Common configuration
+analytics.home.dir=$CATALINA_HOME
+analytics.tmp.dir=$CATALINA_TMPDIR
+analytics.data.dir=$HOME/analytics_data
+analytics.logs.dir=$HOME/logs-production
+analytics.reports.dir=${analytics.home.dir}/webapps/analytics/reports
+analytics.backup.reports.dir=${analytics.data.dir}/backup/reports
+
+# Pig server configuration
+pig.scripts.dir=${analytics.home.dir}/pig/scripts
+
+# MongoDB storage configuration
+analytics.storage.embedded=false
+analytics.storage.url=
+
+# JDBC data persister configuration
+jdbc.data-persister.url=jdbc:hsqldb:file:${analytics.data.dir}/database/analytics
+jdbc.data-persister.driver=org.hsqldb.jdbcDriver
+jdbc.data-persister.user=sa
+jdbc.data-persister.password=
+
+# Metrics initial values configuration
+initial.value.date=2013-01-01
+initial.value.metrics=total_workspaces,total_users,total_projects
+initial.value.metric.total_workspaces=0
+initial.value.metric.total_users=0
+initial.value.metric.total_projects=0
+
+# Scheduler configuration
+scheduler.cron.timetable=0 0 1 ? * *
+# scheduler.force.run.class=com.codenvy.analytics.services.PigRunnerFeature
+# scheduler.force.run.class=com.codenvy.analytics.services.ViewBuilderFeature
+# scheduler.force.run.class=com.codenvy.analytics.services.LogCheckerFeature
+# scheduler.force.run.class=com.codenvy.analytics.services.ReportSenderFeature
+# scheduler.force.run.class=com.codenvy.analytics.services.ActOnFeature
+# scheduler.force.run.period=alltime|lastday|20131201,20131231
+# scheduler.force.run.asynchronous=false|true
+
+# MetricHandler configuration
+com.codenvy.api.analytics.MetricHandler=com.codenvy.analytics.impl.FileBasedMetricHandler
+
+# Views
+views.configuration=views/summary-report.xml,views/collaboration-report.xml,views/project-report.xml,views/session-report.xml,views/usage-report.xml,views/user-report.xml,views/workspace-report.xml,views/factory-timeline.xml,views/ide-usage.xml,views/users.xml,views/top-factory-sessions.xml,views/top-factories.xml,views/top-referrers.xml,views/top-users.xml,views/top-domains.xml,views/top-companies.xml,views/analysis.xml,views/sessions.xml,views/workspaces.xml
+
+# Common mail configuration
+mail.smtp.auth=true
+mail.smtp.starttls.enable=true
+mail.smtp.host=smtp.gmail.com
+mail.smtp.port=465
+mail.user=
+mail.password=
+
+# LogChecker configuration
+log-checker.available=true
+log-checker.mail.text=Hi.\n\nBest regards, Analytics Team.
+log-checker.mail.subject=Log checking for [date]
+log-checker.mail.to=
+
+# Reports configuration
+reports.available=true
+reports.configuration=reports.xml
+reports.recipients.configuration=recipients.xml
+reports.mail.text=Hi.\n\nBest regards, Analytics Team.
+reports.mail.subject=[period] Analytics reports
+
+# ActOn configuration
+acton.available=true
+acton.page.size=1000
+acton.mail.text=Hi.\n\nNew file was transferred to ActOn.\n\nBest regards, Analytics Team.
+acton.mail.subject=ActOn is updated
+acton.mail.to=
+acton.ftp.server=ftp2.actonsoftware.com
+acton.ftp.port=21
+acton.ftp.login=
+acton.ftp.password=
+acton.ftp.timeout=5000
+acton.ftp.auth=TLS
+acton.ftp.maxEfforts=5
+
+# security
+api.endpoint=https://codenyv.com/api
+
