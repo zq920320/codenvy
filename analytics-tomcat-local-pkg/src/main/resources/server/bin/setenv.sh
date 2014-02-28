@@ -40,4 +40,4 @@ export CLASSPATH="${CATALINA_HOME}/conf/:${CATALINA_HOME}/lib/jul-to-slf4j.jar:\
 ${CATALINA_HOME}/lib/slf4j-api.jar:${CATALINA_HOME}/lib/logback-classic.jar:${CATALINA_HOME}/lib/logback-core.jar:\
 ${CATALINA_HOME}/lib/mail.jar"
 
-echo "Using LOCAL_CONF_DIR   $CODENVY_LOCAL_CONF_DIR"
+echo "Using LOCAL_CONF_DIR:  $CODENVY_LOCAL_CONF_DIR"
