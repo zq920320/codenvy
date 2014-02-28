@@ -17,16 +17,14 @@
  */
 package com.codenvy.analytics.persistent;
 
+import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.AbstractMongoConfig.Net;
-import de.flapdoodle.embed.mongo.config.AbstractMongoConfig.Storage;
-import de.flapdoodle.embed.mongo.config.AbstractMongoConfig.Timeout;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.RuntimeConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Parameters;
@@ -131,48 +129,38 @@ public class MongoDataStorage {
         }
     }
 
-    private void initEmbeddedStorage() {
+    private void initEmbeddedStorage() throws IOException {
         if (isStarted()) {
             return;
         }
 
-        File dirTemp = new File(configurator.getTmpDir(), "embedded-getDb-tmp");
+        LOG.info("Embedded MongoDB is starting up");
+
+        MongodConfigBuilder mongodConfigBuilder = new MongodConfigBuilder();
+        mongodConfigBuilder.net(new Net(12000, false));
+        mongodConfigBuilder.replication(new Storage(getDir("database"), null, 0));
+        mongodConfigBuilder.version(Version.V2_5_4);
+
+        RuntimeConfigBuilder runtimeConfigBuilder = new RuntimeConfigBuilder().defaults(Command.MongoD);
+
+        MongodStarter starter = MongodStarter.getInstance(runtimeConfigBuilder.build());
+        MongodExecutable mongoExe = starter.prepare(mongodConfigBuilder.build());
+
+        try {
+            mongoExe.start();
+            LOG.info("Embedded MongoDB has been started");
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private String getDir(String dirName) {
+        File dirTemp = new File(configurator.getTmpDir(), "mongodb" + File.separator + dirName);
         if (!dirTemp.exists() && !dirTemp.mkdirs()) {
             throw new IllegalStateException("Can't create directory tree " + dirTemp.getAbsolutePath());
         }
 
-        File databaseDir = new File(configurator.getTmpDir(), "embedded-getDb-database");
-        if (!databaseDir.exists() && !databaseDir.mkdirs()) {
-            throw new IllegalStateException("Can't create directory tree " + databaseDir.getAbsolutePath());
-        }
-
-        LOG.info("Embedded MongoDB is starting up");
-
-        RuntimeConfig config = new RuntimeConfig();
-        config.setTempDirFactory(new FixedPath(dirTemp.getAbsolutePath()));
-
-        Net net = new Net(null, 12000, false);
-        Storage storage = new Storage(databaseDir.getAbsolutePath(), null, 0);
-
-        MongodStarter starter = MongodStarter.getInstance(config);
-        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, net, storage, new Timeout()));
-        final MongodProcess mongodProcess;
-
-        try {
-            mongodProcess = mongoExe.start();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-
-        LOG.info("Embedded MongoDB has been started");
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                LOG.info("Embedded MongoDB is shutting down");
-                mongodProcess.stop();
-            }
-        });
+        return dirTemp.getAbsolutePath();
     }
 
     /**

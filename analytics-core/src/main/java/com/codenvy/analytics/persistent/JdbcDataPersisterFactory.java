@@ -40,6 +40,7 @@ public class JdbcDataPersisterFactory {
     private static final String JDBC_DATA_PERSISTER_URL        = "jdbc.data-persister.url";
     private static final String JDBC_DATA_PERSISTER_USER       = "jdbc.data-persister.user";
     private static final String JDBC_DATA_PERSISTER_PASSWORD   = "jdbc.data-persister.password";
+    private static final String JDBC_DATA_PERSISTER_DRIVER     = "jdbc.data-persister.driver";
 
     private final DataPersister dataPersister;
 
@@ -76,13 +77,19 @@ public class JdbcDataPersisterFactory {
             String url = configurator.getString(JDBC_DATA_PERSISTER_URL);
             String user = configurator.getString(JDBC_DATA_PERSISTER_USER);
             String password = configurator.getString(JDBC_DATA_PERSISTER_PASSWORD);
+            String driver = configurator.getString(JDBC_DATA_PERSISTER_DRIVER);
+
+            Class.forName(driver);
 
             if (url.toUpperCase().contains(":H2:")) {
+                return new H2DataPersister(url, user, password);
+            } else if (url.toUpperCase().contains(":HSQLDB:")) {
                 return new H2DataPersister(url, user, password);
             } else {
                 throw new IllegalStateException("Driver for " + url + " not found");
             }
         }
+
     }
 
     public DataPersister getDataPersister() {

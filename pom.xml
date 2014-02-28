@@ -32,8 +32,8 @@
     <modules>
         <module>analytics-core</module>
         <module>analytics-application</module>
-        <module>analytics-wso2bam-pkg</module>
-        <module>analytics-wso2bam-local-pkg</module>
+        <!--<module>analytics-tomcat-pkg</module>-->
+        <module>analytics-tomcat-local-pkg</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/analytics.git</connection>
@@ -50,7 +50,7 @@
         <commons.io.version>2.4</commons.io.version>
         <commons.lang.version>2.6</commons.lang.version>
         <commons.net.version>3.2</commons.net.version>
-        <embedded.mongo.version>1.28</embedded.mongo.version>
+        <embedded.mongo.version>1.42</embedded.mongo.version>
         <everrest.version>1.1.7</everrest.version>
         <guava.version>13.0.1</guava.version>
         <guice.version>3.0</guice.version>
@@ -67,12 +67,12 @@
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
         <mockito.version>1.9.0</mockito.version>
-        <mongo.driver.version>2.10.1</mongo.driver.version>
+        <mongo.driver.version>2.11.4</mongo.driver.version>
         <org.slf4j.version>1.6.1</org.slf4j.version>
         <pig.version>0.12.0</pig.version>
         <quartz.version>2.1.7</quartz.version>
         <servlet-api.version>3.0.1</servlet-api.version>
         <testng.version>6.3.1</testng.version>
-        <wso2.bam.version>2.3.0</wso2.bam.version>
+        <tomcat.version>7.0.50</tomcat.version>
     </properties>
 </project>

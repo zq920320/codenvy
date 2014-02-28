@@ -18,31 +18,19 @@
 
 package com.codenvy.analytics;
 
-import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.RuntimeConfig;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.io.directories.FixedPath;
 
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
 import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoException;
 
 import org.apache.pig.data.TupleFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeTest;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Set;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
@@ -68,31 +56,6 @@ public class BaseTest {
         this.mongoDb = mongoDataStorage.getDb();
     }
 
-    @BeforeTest
-    public void setUp() throws Exception {
-        File dirTemp = new File(configurator.getTmpDir(), "embedded-getDb-tmp");
-        dirTemp.mkdirs();
-
-        RuntimeConfig config = new RuntimeConfig();
-        config.setTempDirFactory(new FixedPath(dirTemp.getAbsolutePath()));
-
-        MongodStarter starter = MongodStarter.getInstance(config);
-        MongodExecutable mongoExe = starter.prepare(new MongodConfig(Version.V2_3_0, 12000, false));
-
-        try {
-            embeddedMongoProcess = mongoExe.start();
-        } catch (IOException | MongoException e) {
-            embeddedMongoProcess = mongoExe.start();
-        }
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                embeddedMongoProcess.stop();
-            }
-        });
-    }
-    
     @AfterClass
     public void clearDatabase() {        
         for (String collectionName: mongoDb.getCollectionNames()) {

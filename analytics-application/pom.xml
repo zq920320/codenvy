@@ -31,12 +31,6 @@
             <groupId>com.codenvy.analytics</groupId>
             <artifactId>analytics-core</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.codenvy.commons</groupId>

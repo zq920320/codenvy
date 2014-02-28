@@ -26,7 +26,7 @@
     <fileSets>
         <!-- Default files -->
         <fileSet>
-            <directory>${project.build.directory}/wso2bam-analytics</directory>
+            <directory>${project.build.directory}/tomcat-analytics</directory>
             <outputDirectory/>
             <excludes>
                 <exclude>**/*.sh</exclude>
@@ -34,7 +34,7 @@
         </fileSet>
         <!-- Executable files-->
         <fileSet>
-            <directory>${project.build.directory}/wso2bam-analytics</directory>
+            <directory>${project.build.directory}/tomcat-analytics</directory>
             <outputDirectory/>
             <includes>
                 <include>**/*.sh</include>

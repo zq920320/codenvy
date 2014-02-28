@@ -18,5 +18,5 @@
 <Context path="/analytics" docBase="analytics" reloadable="true" crossContext="false" sessionCookiePath="/">
     <Logger className='org.apache.catalina.logger.SystemOutLogger'
             prefix='localhost_site_log.' suffix='.txt' timestamp='true'/>
-    <Realm className="org.apache.catalina.realm.MemoryRealm" pathname="../../repository/conf/tomcat/tomcat-users.xml"/>
+    <Realm className="org.apache.catalina.realm.MemoryRealm" pathname="conf/tomcat-users.xml"/>
 </Context>

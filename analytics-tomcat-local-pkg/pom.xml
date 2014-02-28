@@ -23,10 +23,20 @@
         <groupId>com.codenvy.analytics</groupId>
         <version>2.2.0-SNAPSHOT</version>
     </parent>
-    <artifactId>analytics-wso2bam-local-pkg</artifactId>
+    <artifactId>analytics-tomcat-local-pkg</artifactId>
     <packaging>pom</packaging>
-    <name>Codenvy :: Analytics :: WSo2 BAM Local Assembly</name>
+    <name>Codenvy :: Analytics :: Tomcat Local Assembly</name>
     <dependencies>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.codenvy.analytics</groupId>
             <artifactId>analytics-application</artifactId>
@@ -34,15 +44,25 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2</groupId>
-            <artifactId>bam</artifactId>
-            <version>${wso2.bam.version}</version>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat</artifactId>
+            <version>${tomcat.version}</version>
             <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
         </dependency>
     </dependencies>
     <profiles>
@@ -93,25 +113,13 @@
                                     <outputDirectory>${project.build.directory}/packager-conf/zip</outputDirectory>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>copy-dependencies-tbox</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <includeTypes>tbox</includeTypes>
-                                    <stripVersion>false</stripVersion>
-                                    <outputDirectory>${project.build.directory}/packager-conf/tbox</outputDirectory>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>wso2bam</id>
+                                <id>tomcat</id>
                                 <phase>process-resources</phase>
                                 <goals>
                                     <goal>run</goal>
@@ -119,38 +127,35 @@
                                 <configuration>
                                     <target>
                                         <!-- unpacking resources -->
-                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/bam.zip" />
-                                        <move todir="${project.build.directory}/wso2bam-analytics">
-                                            <fileset dir="${project.build.directory}/wso2bam-${wso2.bam.version}" />
+                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/tomcat.zip" />
+                                        <move todir="${project.build.directory}/tomcat-analytics">
+                                            <fileset dir="${project.build.directory}/apache-tomcat-${tomcat.version}/">
+                                                <exclude name="**/ROOT/**" />
+                                                <exclude name="**/docs/**" />
+                                                <exclude name="**/examples/**" />
+                                                <exclude name="**/manager/**" />
+                                                <exclude name="**/host-manager/**" />
+                                            </fileset>
                                         </move>
-                                        <!--Repacking-->
-                                        <jar destfile="${project.build.directory}/wso2bam-analytics/lib/org.wso2.carbon.logging-4.1.0.jar" update="true">
-                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
-                                        </jar>
-                                        <jar destfile="${project.build.directory}/wso2bam-analytics/repository/components/plugins/org.wso2.carbon.logging_4.1.0.jar" update="true">
-                                            <zipgroupfileset dir="${project.build.directory}/packager-conf/jar" includes="log4j-${log4j.version}.jar" />
-                                        </jar>
-                                        <!-- Patching war file to configure simple authentication -->
-                                        <unzip dest="${project.build.directory}/packager-conf/war/analytics-application" src="${project.build.directory}/packager-conf/war/analytics-application.war" />
+                                        <unwar dest="${project.build.directory}/packager-conf/war/analytics-application" src="${project.build.directory}/packager-conf/war/analytics-application.war" />
                                         <copy file="src/main/resources/analytics-application-basic-auth.web.xml" overwrite="true" tofile="${project.build.directory}/packager-conf/war/analytics-application/WEB-INF/web.xml" />
                                         <copy file="src/main/resources/analytics-application-basic-auth.context.xml" overwrite="true" tofile="${project.build.directory}/packager-conf/war/analytics-application/META-INF/context.xml" />
-                                        <war destfile="${project.build.directory}/packager-conf/war/analytics-application.war">
+                                        <war destfile="${project.build.directory}/tomcat-analytics/webapps/analytics.war" needxmlfile="true">
                                             <fileset dir="${project.build.directory}/packager-conf/war/analytics-application" />
                                         </war>
-                                        <delete dir="${project.build.directory}/packager-conf/war/analytics-application" />
-                                        <move file="${project.build.directory}/packager-conf/war/analytics-application.war" tofile="${project.build.directory}/packager-conf/war/analytics.war" />
-
                                         <!-- Coping resources -->
-                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/">
+                                        <copy overwrite="true" todir="${project.build.directory}/tomcat-analytics/">
                                             <fileset dir="${basedir}/src/main/resources/server" />
                                         </copy>
-                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/pig/scripts">
+                                        <copy overwrite="true" todir="${project.build.directory}/tomcat-analytics/pig/scripts">
                                             <fileset dir="${basedir}/../analytics-core/scripts/" />
                                         </copy>
-                                        <copy overwrite="true" todir="${project.build.directory}/wso2bam-analytics/repository/deployment/server/webapps/">
-                                            <fileset dir="${project.build.directory}/packager-conf/war" />
-                                        </copy>
-
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-classic-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/logback-classic.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-core-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/logback-core.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/slf4j-api-${org.slf4j.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/slf4j-api.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/jul-to-slf4j-${org.slf4j.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/jul-to-slf4j.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/mail-${javax.mail.version}.jar" tofile="${project.build.directory}/tomcat-analytics/lib/mail.jar" />
+                                        <chmod file="${project.build.directory}/tomcat-analytics/bin/*.sh" perm="+x" />
                                         <!-- prepare last day log (based on 2013.12.15) -->
                                         <tstamp>
                                             <format offset="-1" pattern="yyyy/MM/dd" property="offset.1day.date.dir" unit="day" />
@@ -161,11 +166,10 @@
                                         <tstamp>
                                             <format offset="-1" pattern="yyyyMMdd" property="offset.1day.date.param" unit="day" />
                                         </tstamp>
-                                        <mkdir dir="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1day.date.dir}" />
-                                        <unzip dest="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1day.date.dir}" src="${project.build.directory}/wso2bam-analytics/logs-production/2013.12.15/messages" />
-                                        <delete dir="${project.build.directory}/wso2bam-analytics/logs-production/2013.12.15" />
-                                        <replace file="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1day.date.dir}/messages" token="2013-12-15" value="${offset.1day.date.stamp}" />
-
+                                        <mkdir dir="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1day.date.dir}" />
+                                        <unzip dest="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1day.date.dir}" src="${project.build.directory}/tomcat-analytics/data/logs-production/2013.12.15/messages" />
+                                        <delete dir="${project.build.directory}/tomcat-analytics/data/logs-production/2013.12.15" />
+                                        <replace file="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1day.date.dir}/messages" token="2013-12-15" value="${offset.1day.date.stamp}" />
                                         <!-- prepare last month log (based on 2013.12.14) -->
                                         <tstamp>
                                             <format offset="-1" pattern="yyyy/MM/dd" property="offset.1month.date.dir" unit="month" />
@@ -176,15 +180,12 @@
                                         <tstamp>
                                             <format offset="-1" pattern="yyyyMMdd" property="offset.1month.date.param" unit="month" />
                                         </tstamp>
-                                        <mkdir dir="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1month.date.dir}" />
-                                        <unzip dest="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1month.date.dir}" src="${project.build.directory}/wso2bam-analytics/logs-production/2013.12.14/messages" />
-                                        <delete dir="${project.build.directory}/wso2bam-analytics/logs-production/2013.12.14" />
-                                        <replace file="${project.build.directory}/wso2bam-analytics/logs-production/${offset.1month.date.dir}/messages" token="2013-12-14" value="${offset.1month.date.stamp}" />
-
-                                        <!-- prepare analytics.properties -->
-                                        <replace file="${project.build.directory}/wso2bam-analytics/repository/conf/analytics.properties" token="20131214,20131215" value="${offset.1month.date.param},${offset.1day.date.param}" />
-
-                                        <chmod file="${project.build.directory}/wso2bam-analytics/bin/*.sh" perm="+x" />
+                                        <mkdir dir="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1month.date.dir}" />
+                                        <unzip dest="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1month.date.dir}" src="${project.build.directory}/tomcat-analytics/data/logs-production/2013.12.14/messages" />
+                                        <delete dir="${project.build.directory}/tomcat-analytics/data/logs-production/2013.12.14" />
+                                        <replace file="${project.build.directory}/tomcat-analytics/data/logs-production/${offset.1month.date.dir}/messages" token="2013-12-14" value="${offset.1month.date.stamp}" />
+                                        <!-- update analytics.properties -->
+                                        <replace file="${project.build.directory}/tomcat-analytics/data/conf/analytics.properties" token="20131214,20131215" value="${offset.1month.date.param},${offset.1day.date.param}" />
                                     </target>
                                 </configuration>
                             </execution>
