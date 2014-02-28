@@ -40,6 +40,8 @@
         </encoder>
     </appender>
 
+    <logger name="org.apache.catalina.loader.WebappClassLoader" level="OFF"/>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>

@@ -25,10 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Enumeration;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @Singleton
@@ -64,23 +61,6 @@ public class JdbcDataPersisterFactory {
         String user = configurator.getString(JDBC_DATA_PERSISTER_USER);
         String password = configurator.getString(JDBC_DATA_PERSISTER_PASSWORD);
         Class.forName(configurator.getString(JDBC_DATA_PERSISTER_DRIVER));
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                Enumeration<Driver> drivers = DriverManager.getDrivers();
-                while (drivers.hasMoreElements()) {
-                    Driver driver = drivers.nextElement();
-
-                    try {
-                        DriverManager.deregisterDriver(driver);
-                        LOG.info("Driver " + driver + " successfully unregistered");
-                    } catch (SQLException e) {
-                        LOG.error("Failed to unregister driver " + driver);
-                    }
-                }
-            }
-        });
 
         if (url.toUpperCase().contains(":H2:")) {
             return new H2DataPersister(url, user, password);
