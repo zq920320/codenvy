@@ -68,6 +68,17 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
             ListValueData top = getTopEntities(context, dayCount);
             String filterValue = extractEntityNames(top);
 
+            if (filterValue.isEmpty()) {
+                return combineResult(top,
+                                     ListValueData.DEFAULT,
+                                     ListValueData.DEFAULT,
+                                     ListValueData.DEFAULT,
+                                     ListValueData.DEFAULT,
+                                     ListValueData.DEFAULT,
+                                     ListValueData.DEFAULT,
+                                     ListValueData.DEFAULT);
+            }
+
             ListValueData by1Day = getEntities(context, 1, filterValue);
             ListValueData by7Day = getEntities(context, 7, filterValue);
             ListValueData by30Day = getEntities(context, 30, filterValue);
@@ -76,8 +87,14 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
             ListValueData by365Day = getEntities(context, 365, filterValue);
             ListValueData byLifetime = getEntities(context, LIFE_TIME_PERIOD, filterValue);
 
-            return combineResult(top, by1Day, by7Day, by30Day, by60Day, by90Day, by365Day, byLifetime);
-
+            return combineResult(top,
+                                 by1Day,
+                                 by7Day,
+                                 by30Day,
+                                 by60Day,
+                                 by90Day,
+                                 by365Day,
+                                 byLifetime);
         } catch (ParseException e) {
             throw new IOException(e);
         }
@@ -94,9 +111,8 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
 
         List<ValueData> result = new ArrayList<>(top.size());
 
-        Iterator<ValueData> iterator = top.getAll().iterator();
-        while (iterator.hasNext()) {
-            MapValueData next = (MapValueData)iterator.next();
+        for (ValueData item : top.getAll()) {
+            MapValueData next = (MapValueData)item;
             String paramName = filterParameter.name().toLowerCase();
 
             Map<String, ValueData> entity = next.getAll();
@@ -120,9 +136,8 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     }
 
     private ValueData getEntityTimeValue(ListValueData valueData, String entityName, String valueParam) {
-        Iterator<ValueData> iterator = valueData.getAll().iterator();
-        while (iterator.hasNext()) {
-            MapValueData next = (MapValueData)iterator.next();
+        for (ValueData item : valueData.getAll()) {
+            MapValueData next = (MapValueData)item;
             String entityParam = filterParameter.name().toLowerCase();
 
             Map<String, ValueData> entity = next.getAll();
@@ -137,9 +152,8 @@ public abstract class AbstractTopEntitiesTime extends CalculatedMetric {
     private String extractEntityNames(ListValueData top) {
         StringBuilder filterValue = new StringBuilder();
 
-        Iterator<ValueData> iterator = top.getAll().iterator();
-        while (iterator.hasNext()) {
-            MapValueData next = (MapValueData)iterator.next();
+        for (ValueData item : top.getAll()) {
+            MapValueData next = (MapValueData)item;
             String entityParam = filterParameter.name().toLowerCase();
             String entityName = next.getAll().get(entityParam).getAsString();
 

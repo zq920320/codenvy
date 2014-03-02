@@ -190,7 +190,6 @@ public class ViewBuilder extends Feature {
             } catch (Throwable e) {
                 String message = "Can't compute view " + viewId;
                 LOG.error(message, e);
-                throw new IllegalStateException(message, e);
             }
         }
 
