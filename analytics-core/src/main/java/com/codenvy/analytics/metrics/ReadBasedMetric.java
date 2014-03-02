@@ -26,7 +26,6 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
-import com.codenvy.api.analytics.exception.MetricRestrictionException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -85,7 +84,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
             if (!requiredFilter.exists(context)) {
-                throw new MetricRestrictionException(
+                throw new IllegalStateException(
                         "Parameter " + requiredFilter + " required to be passed to get the value of the metric");
             }
         }
@@ -95,9 +94,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return valueData;
     }
 
-    /**
-     * Allows modify context before evaluation if necessary.
-     */
+    /** Allows modify context before evaluation if necessary. */
     protected Map<String, String> modifyContext(Map<String, String> context) throws IOException {
         return context;
     }
@@ -106,7 +103,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     /**
      * @return the fields are interested in by given metric. In other words, they are valuable for given metric. It
-     * might returns empty array to read all available fields
+     *         might returns empty array to read all available fields
      */
     public abstract String[] getTrackedFields();
 

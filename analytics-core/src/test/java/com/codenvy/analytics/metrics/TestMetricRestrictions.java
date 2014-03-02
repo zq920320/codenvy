@@ -20,7 +20,6 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.api.analytics.exception.MetricRestrictionException;
 
 import org.testng.annotations.Test;
 
@@ -28,12 +27,10 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
-/**
- * @author Anatoliy Bazko
- */
+/** @author Anatoliy Bazko */
 public class TestMetricRestrictions extends BaseTest {
 
-    @Test(expectedExceptions = MetricRestrictionException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void shouldThrowExceptionIfFilterMissed() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.FACTORY_USED);
 

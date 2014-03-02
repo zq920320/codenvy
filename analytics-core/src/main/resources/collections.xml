@@ -214,32 +214,6 @@
         </indexes>
     </collection>
 
-    <collection name="active_workspaces_set">
-        <indexes>
-            <index name="user">
-                <field>date</field>
-                <field>user</field>
-            </index>
-            <index name="ws">
-                <field>date</field>
-                <field>ws</field>
-            </index>
-        </indexes>
-    </collection>
-
-    <collection name="active_users_set">
-        <indexes>
-            <index name="user">
-                <field>date</field>
-                <field>user</field>
-            </index>
-            <index name="ws">
-                <field>date</field>
-                <field>ws</field>
-            </index>
-        </indexes>
-    </collection>
-
     <collection name="project_types">
         <indexes>
             <index name="user">
