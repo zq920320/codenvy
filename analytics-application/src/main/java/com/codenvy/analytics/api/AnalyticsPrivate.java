@@ -90,13 +90,7 @@ public class AnalyticsPrivate {
                              @Context UriInfo uriInfo) {
         try {
             Map<String, String> context = Utils.extractContext(uriInfo, page, perPage);
-            
-            List<MetricValueDTO> metricValues = new ArrayList<>();
-            for (String metricName : metricNames) {
-                metricValues.add(metricHandler.getValue(metricName, context, uriInfo));
-            }
-            
-            return Response.status(Response.Status.OK).entity(metricValues).build();
+            return Response.status(Response.Status.OK).entity(metricHandler.getValues(metricNames, context, uriInfo)).build();
         } catch (MetricNotFoundException e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();

@@ -34,6 +34,7 @@ import com.codenvy.dto.server.DtoFactory;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriInfo;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,15 @@ public class FileBasedMetricHandler implements MetricHandler {
             throw new MetricNotFoundException("Metric not found");
         }
         return metricValueDTO;
+    }
+    
+    @Override
+    public List<MetricValueDTO> getValues(List<String> metricNames, Map<String, String> metricContext, UriInfo uriInfo) throws MetricNotFoundException {
+        List<MetricValueDTO> metricValues = new ArrayList<>();
+        for (String metricName : metricNames) {
+            metricValues.add(this.getValue(metricName, metricContext, uriInfo));
+        }
+        return metricValues;
     }
 
     @Override
