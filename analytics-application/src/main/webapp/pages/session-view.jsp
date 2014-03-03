@@ -35,7 +35,7 @@
 	            <div class="well topFilteringPanel">
 	                <div id="filter-by" class="left">
 	                    <label><input type="checkbox" checked=true id="hide-session-events" 
-                               value="~session-started,~session-finished,~session-factory-started,~session-factory-stopped" 
+                               value="~session-started,~session-finished"
                                targetWidgets="userSessionActivity" />
 	                       hide micro events
 	                    </label>

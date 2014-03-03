@@ -65,6 +65,10 @@ public class Utils {
         return parseDate(Parameters.FROM_DATE.get(context));
     }
 
+    public static boolean isDateFormat(String date) {
+        return date.length() == Parameters.PARAM_DATE_FORMAT.length();
+    }
+
     /** @return toDate value */
     public static Calendar getToDate(Map<String, String> context) throws ParseException {
         return parseDate(Parameters.TO_DATE.get(context));

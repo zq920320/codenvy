@@ -103,7 +103,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     /**
      * @return the fields are interested in by given metric. In other words, they are valuable for given metric. It
-     *         might returns empty array to read all available fields
+     * might returns empty array to read all available fields
      */
     public abstract String[] getTrackedFields();
 
@@ -191,21 +191,33 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     }
 
     /**
-     * The date field contains the date of the event. The only exceptions related to user's profile
-     * metrics.
-     *
-     * @see com.codenvy.analytics.metrics.users.AbstractUsersProfile
+     * The date field contains the date of the event.
      */
     private void setDateFilter(Map<String, String> clauses, BasicDBObject match) throws ParseException {
         DBObject dateFilter = new BasicDBObject();
         match.put(DATE, dateFilter);
 
-        dateFilter.put("$gte", Parameters.FROM_DATE.exists(clauses)
-                               ? Utils.getFromDate(clauses).getTimeInMillis()
-                               : 0);
-        dateFilter.put("$lt", Parameters.TO_DATE.exists(clauses)
-                              ? Utils.getToDate(clauses).getTimeInMillis() + DAY_IN_MILLISECONDS
-                              : Long.MAX_VALUE);
+        String fromDate = Parameters.FROM_DATE.get(clauses);
+        if (fromDate != null) {
+            if (Utils.isDateFormat(fromDate)) {
+                dateFilter.put("$gte", Utils.parseDate(fromDate).getTimeInMillis());
+            } else {
+                dateFilter.put("$gte", Long.parseLong(fromDate));
+            }
+        } else {
+            dateFilter.put("$gte", 0);
+        }
+
+        String toDate = Parameters.TO_DATE.get(clauses);
+        if (toDate != null) {
+            if (Utils.isDateFormat(toDate)) {
+                dateFilter.put("$lt", Utils.parseDate(toDate).getTimeInMillis() + DAY_IN_MILLISECONDS);
+            } else {
+                dateFilter.put("$lte", Long.parseLong(toDate));
+            }
+        } else {
+            dateFilter.put("$lte", Long.MAX_VALUE);
+        }
     }
 
     private Pattern getUsersInDomains(String[] domains) {

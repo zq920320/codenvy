@@ -77,7 +77,13 @@ public enum MetricFilter {
         context.put(name(), value);
         return context;
     }
-    
+
+    /** Removes parameters from execution context */
+    public void remove(Map<String, String> context) {
+        context.remove(name());
+    }
+
+
     public boolean isNumericType() {
         return isNumeric;
     }

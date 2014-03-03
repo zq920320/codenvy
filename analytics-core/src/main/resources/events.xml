@@ -235,7 +235,7 @@
         </parameters>
     </event>
     <event name="session-started">
-        <description>Session started</description>
+        <description>Ide focused</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>user
@@ -244,7 +244,7 @@
         </parameters>
     </event>
     <event name="session-finished">
-        <description>Session finished</description>
+        <description>Ide defocused</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>

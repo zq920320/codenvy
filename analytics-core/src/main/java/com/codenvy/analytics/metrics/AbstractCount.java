@@ -22,32 +22,42 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public abstract class AbstractCount extends ReadBasedMetric {
 
-    public static final String VALUE = "value";
+    private final ReadBasedMetric basedMetric;
 
-    private final String basedMetricName;
-
-    protected AbstractCount(String metricName, String basedMetricName) {
+    public AbstractCount(String metricName, String basedMetricName) {
         super(metricName);
-        this.basedMetricName = basedMetricName;
+        this.basedMetric = (ReadBasedMetric)MetricFactory.getMetric(basedMetricName);
     }
 
     public AbstractCount(MetricType metricType, MetricType basedMetric) {
         this(metricType.name(), basedMetric.name());
     }
 
+    public AbstractCount(String metricName, Metric basedMetric) {
+        super(metricName);
+        this.basedMetric = (ReadBasedMetric)basedMetric;
+    }
+
     @Override
     public String getStorageCollectionName() {
-        return getStorageCollectionName(basedMetricName);
+        return basedMetric.getStorageCollectionName();
     }
 
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
+    }
+
+    @Override
+    public DBObject getFilter(Map<String, String> clauses) throws IOException, ParseException {
+        return basedMetric.getFilter(clauses);
     }
 
     @Override

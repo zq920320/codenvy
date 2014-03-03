@@ -215,7 +215,7 @@ function Configuration() {
             modelMetricName: "product_usage_sessions",
             isNeedToSaveInHistory: true,
             columnLinkPrefixList: [
-                "/analytics/pages/session-view.jsp?session_id",
+                "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
                 "/analytics/pages/user-view.jsp?user",
                 "/analytics/pages/workspace-view.jsp?ws"
             ],
@@ -277,7 +277,7 @@ function Configuration() {
             defaultSortParams: "-date",
             
             columnLinkPrefixList: [
-                "/analytics/pages/session-view.jsp?session_id",
+                "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
                 "/analytics/pages/user-view.jsp?user"
             ],
         },

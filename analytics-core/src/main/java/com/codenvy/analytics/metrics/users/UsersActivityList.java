@@ -17,15 +17,12 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AbstractListValueResulted;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.MetricType;
-import com.mongodb.BasicDBObject;
+import com.codenvy.analytics.metrics.*;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
@@ -66,106 +63,116 @@ public class UsersActivityList extends AbstractListValueResulted {
     protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
         long startSessionTime = 0;
 
+        ListValueData listValueData = (ListValueData)valueData;
+        List<ValueData> list2Return = new ArrayList<>(listValueData.size());
+
         // get start session time
         if (MetricFilter.SESSION_ID.exists(clauses)) {
             MapValueData sessionData = getSessionData(MetricFilter.SESSION_ID.get(clauses));
             startSessionTime = Long.parseLong(sessionData.getAll().get(DATE).getAsString());
         }
 
-
-        // calculate time from beginning of session and add it into separate column
-        List<ValueData> updatedValueData = new ArrayList<>(((ListValueData)valueData).size());
-        Iterator<ValueData> iterator = ((ListValueData)valueData).getAll().iterator();
-
+        Iterator<ValueData> iterator = listValueData.getAll().iterator();
         while (iterator.hasNext()) {
-            MapValueData next = (MapValueData)iterator.next();
-            Map<String, ValueData> updatedNext = new HashMap<>(next.size());
-            updatedNext.putAll(next.getAll());
+            Map<String, ValueData> items = ((MapValueData)iterator.next()).getAll();
+
+            Map<String, ValueData> items2Return = new HashMap<>();
+            items2Return.putAll(items);
 
             if (startSessionTime != 0) {
-                long activityDate = ((LongValueData)updatedNext.get(DATE)).getAsLong();
+                long activityDate = ((LongValueData)items2Return.get(DATE)).getAsLong();
                 long delta = activityDate - startSessionTime;
 
-                updatedNext.put(TIME_FROM_BEGINNING, new LongValueData(delta));
+                items2Return.put(TIME_FROM_BEGINNING, LongValueData.valueOf(delta));
             } else {
-                updatedNext.put(TIME_FROM_BEGINNING, new LongValueData(
-                        0));   // store 0 if SESSION_ID is undefined in clauses
+                items2Return.put(TIME_FROM_BEGINNING, LongValueData.DEFAULT);
             }
 
-            updatedValueData.add(new MapValueData(updatedNext));
+            list2Return.add(new MapValueData(items2Return));
         }
 
-        return new ListValueData(updatedValueData);
+        return new ListValueData(list2Return);
     }
+
 
     @Override
     public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
-        DBObject initialFilter = super.getFilter(clauses);
-        DBObject match = (DBObject)initialFilter.get("$match");
+        clauses = Utils.clone(clauses);
 
-        replaceFilterSessionIdWithUserAndDate(clauses, match);
+        excludeFactorySessions(clauses);
 
-        return initialFilter;
+        if (MetricFilter.SESSION_ID.exists(clauses)) {
+            replaceSessionIdWithUserAndDate(clauses);
+        }
+
+        return super.getFilter(clauses);
+    }
+
+    private void excludeFactorySessions(Map<String, String> clauses) {
+        String eventFilter = MetricFilter.EVENT.get(clauses);
+
+        if (eventFilter != null) {
+            MetricFilter.EVENT.put(clauses, eventFilter + ",~session-factory-stopped,~session-factory-started");
+        } else {
+            MetricFilter.EVENT.put(clauses, "~session-factory-stopped,~session-factory-started");
+        }
     }
 
     /**
      * Update "user", "from_date", "to_date", "ws", "event" fields in match object due to info of session with
      * session_id from clauses. Exclude "session-started" and "session-finished" events.
      */
-    protected static void replaceFilterSessionIdWithUserAndDate(Map<String, String> clauses,
-                                                                DBObject match) throws IOException {
+    private void replaceSessionIdWithUserAndDate(Map<String, String> clauses) throws IOException {
+        MapValueData sessionData = getSessionData(MetricFilter.SESSION_ID.get(clauses));
 
-        if (MetricFilter.SESSION_ID.exists(clauses)) {
-            MapValueData sessionData = getSessionData(MetricFilter.SESSION_ID.get(clauses));
-
-            if (sessionData == null) {
-                match.put(USER, null);
-                match.put(DATE, null);
-
-            } else {
-                // don't replace filter on logged user
-                if (!match.containsField(USER)) {
-                    match.put(USER, getSessionUser(sessionData));
-                }
-
-                match.put(DATE, getSessionStartAndFinishDateRange(sessionData));
-                match.put(WS, getSessionWorkspace(sessionData));
+        if (sessionData != null) {
+            // don't replace filter on logged user
+            if (!MetricFilter.USER.exists(clauses)) {
+                MetricFilter.USER.put(clauses, getSessionUser(sessionData));
             }
 
-            match.removeField(SESSION_ID);
-        }
-    }
-
-    private static String getSessionWorkspace(MapValueData sessionData) {
-        return sessionData.getAll().get(WS).toString();
-    }
-
-    private static String getSessionUser(MapValueData sessionData) {
-        return sessionData.getAll().get(USER).toString();
-    }
-
-    private static DBObject getSessionStartAndFinishDateRange(MapValueData sessionData) {
-        long fromDateInMillis = Long.parseLong(sessionData.getAll().get(DATE).getAsString());
-        long toDateInMillis = fromDateInMillis + Long.parseLong(sessionData.getAll().get(TIME).getAsString());
-
-        DBObject range = new BasicDBObject();
-        range.put("$gte", fromDateInMillis);
-        range.put("$lte", toDateInMillis);
-
-        return range;
-    }
-
-    private static MapValueData getSessionData(String sessionId) throws IOException {
-        Map<String, String> context = new HashMap<>();
-        context.put(MetricFilter.SESSION_ID.toString(), sessionId);
-
-        ListValueData value =
-                (ListValueData)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST).getValue(context);
-
-        if (value.size() == 0) {
-            return null;
+            MetricFilter.WS.put(clauses, getSessionWorkspace(sessionData));
+            Parameters.FROM_DATE.put(clauses, getSessionFromDate(sessionData));
+            Parameters.TO_DATE.put(clauses, getSessionToDate(sessionData));
         }
 
-        return (MapValueData)value.getAll().get(0);
+        MetricFilter.SESSION_ID.remove(clauses);
+    }
+
+    private String getSessionToDate(MapValueData sessionData) {
+        String sessionStartDate = getSessionFromDate(sessionData);
+        String sessionTime = getSessionTime(sessionData);
+
+        return "" + (Long.parseLong(sessionStartDate) + Long.parseLong(sessionTime));
+    }
+
+    private String getSessionWorkspace(MapValueData sessionData) {
+        return getSessionParameter(sessionData, WS);
+    }
+
+    private String getSessionUser(MapValueData sessionData) {
+        return getSessionParameter(sessionData, USER);
+    }
+
+    private String getSessionFromDate(MapValueData sessionData) {
+        return getSessionParameter(sessionData, DATE);
+    }
+
+    private String getSessionTime(MapValueData sessionData) {
+        return getSessionParameter(sessionData, TIME);
+    }
+
+    private String getSessionParameter(MapValueData sessionData, String param) {
+        return sessionData.getAll().get(param).getAsString();
+    }
+
+    private MapValueData getSessionData(String sessionId) throws IOException {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.SESSION_ID.put(context, sessionId);
+
+        Metric metric = MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
+        ListValueData valueData = (ListValueData)metric.getValue(context);
+
+        return valueData.size() == 0 ? null : (MapValueData)valueData.getAll().get(0);
     }
 }
