@@ -18,19 +18,19 @@
 
 package com.codenvy.analytics;
 
-import de.flapdoodle.embed.mongo.MongodProcess;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import org.apache.pig.data.TupleFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeClass;
 
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
 import com.mongodb.DB;
 
-import org.apache.pig.data.TupleFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.AfterClass;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import de.flapdoodle.embed.mongo.MongodProcess;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
@@ -49,14 +49,7 @@ public class BaseTest {
     protected final MongoDataStorage mongoDataStorage;
     protected final DB               mongoDb;
 
-    public BaseTest() {
-        this.configurator = Injector.getInstance(Configurator.class);
-        this.pigServer = Injector.getInstance(PigServer.class);
-        this.mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
-        this.mongoDb = mongoDataStorage.getDb();
-    }
-
-    @AfterClass
+    @BeforeClass
     public void clearDatabase() {        
         for (String collectionName: mongoDb.getCollectionNames()) {
             if (collectionName.startsWith("system.")) {           // don't drop system collections
@@ -66,4 +59,12 @@ public class BaseTest {
             mongoDb.getCollection(collectionName).drop();
         }
     }
+    
+    public BaseTest() {
+        this.configurator = Injector.getInstance(Configurator.class);
+        this.pigServer = Injector.getInstance(PigServer.class);
+        this.mongoDataStorage = Injector.getInstance(MongoDataStorage.class);
+        this.mongoDb = mongoDataStorage.getDb();
+    }
+
 }
