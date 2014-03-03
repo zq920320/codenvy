@@ -60,6 +60,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         }
 
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
+        metricValueDTO.setName(metricName);
         try {
             ValueData vd = getMetricValue(metricName, context);
             metricValueDTO.setType(vd.getType());

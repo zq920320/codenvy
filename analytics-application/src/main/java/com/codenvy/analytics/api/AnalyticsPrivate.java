@@ -37,6 +37,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -67,6 +70,33 @@ public class AnalyticsPrivate {
             Map<String, String> context = Utils.extractContext(uriInfo, page, perPage);
             MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
+        } catch (MetricNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+    
+    @GenerateLink(rel = "list metric value")
+    @POST
+    @Path("/metric/user")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getValues(List<String> metricNames,
+                             @QueryParam("page") String page,
+                             @QueryParam("per_page") String perPage,
+                             @Context UriInfo uriInfo) {
+        try {
+            Map<String, String> context = Utils.extractContext(uriInfo, page, perPage);
+            
+            List<MetricValueDTO> metricValues = new ArrayList<>();
+            for (String metricName : metricNames) {
+                metricValues.add(metricHandler.getValue(metricName, context, uriInfo));
+            }
+            
+            return Response.status(Response.Status.OK).entity(metricValues).build();
         } catch (MetricNotFoundException e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();
