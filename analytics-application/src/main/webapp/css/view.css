@@ -7,7 +7,6 @@
    border: 1px solid #ddd;
    border-radius: 4px;
    display: inline-block;
-   min-width: 50%;
 }
 
 .view div.header {
@@ -30,9 +29,7 @@
 }
 
 .view .tables .item {
-   float: left;
    margin-bottom: 20px;	
-   width: 100%;
 }
 
 .view .tables .body table {

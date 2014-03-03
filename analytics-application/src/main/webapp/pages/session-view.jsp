@@ -29,7 +29,7 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div>
-            <div class="hero-unit full-width">
+            <div class="hero-unit">
                 <div id="sessionOverview"></div>
                 
 	            <div class="well topFilteringPanel">
@@ -37,7 +37,7 @@
 	                    <label><input type="checkbox" checked=true id="hide-session-events" 
                                value="~session-started,~session-finished,~session-factory-started,~session-factory-stopped" 
                                targetWidgets="userSessionActivity" />
-	                       hide session events
+	                       hide micro events
 	                    </label>
 	                </div>
 	            </div>
