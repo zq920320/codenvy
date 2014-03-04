@@ -408,7 +408,6 @@ public class TestAnalysisView extends BaseTest {
         pigServer.execute(ScriptType.EVENTS, context);
 
         /** create collections "user_invite" to calculate "users_who_invited" metric */
-        // Parameters.USER.put(context, Parameters.USER_TYPES.REGISTERED.toString());  // TODO
         Parameters.WS.put(context, Parameters.WS_TYPES.PERSISTENT.toString());
         Parameters.EVENT.put(context, "user-invite");
         Parameters.STORAGE_TABLE.put(context, "user_invite");

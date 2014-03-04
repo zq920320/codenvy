@@ -19,7 +19,6 @@
 
 package com.codenvy.analytics.services.view;
 
-
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.*;
@@ -30,19 +29,20 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Anatoliy Bazko
  */
 public class MetricRow extends AbstractRow {
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("00");
+
     private static final String DEFAULT_NUMERIC_FORMAT         = "%,.0f";
     private static final String DEFAULT_DATE_FORMAT            = "yyyy-MM-dd HH:mm:ss";
+    private static final String DEFAULT_TIME_FORMAT            = "HH:mm:ss";
     private static final String SET_FROM_DATE_TO_DEFAULT_VALUE = "set-from-date-to-default-value";
 
     /** The name of the metric. */
@@ -76,15 +76,15 @@ public class MetricRow extends AbstractRow {
      */
     private static final String NUMERIC_FORMAT = "numeric-format";
 
-    private final Metric       metric;
-    private final String       numericFormat;
-    private final String[]     fields;
-    private final boolean      hideNegativeValues;
-    private final List<String> booleanFields;
-    private final List<String> dateFields;
-    private final List<String> timeFields;
-    private final List<String> eventFields;
-    private final boolean      isTimeField;
+    private final Metric              metric;
+    private final String              numericFormat;
+    private final String[]            fields;
+    private final boolean             hideNegativeValues;
+    private final List<String>        booleanFields;
+    private final Map<String, String> dateFields;
+    private final Map<String, String> timeFields;
+    private final List<String>        eventFields;
+    private final boolean             isTimeField;
 
     private final EventsHolder eventsHolder;
 
@@ -115,14 +115,45 @@ public class MetricRow extends AbstractRow {
         booleanFields =
                 parameters.containsKey(BOOLEAN_FIELDS) ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(","))
                                                        : new ArrayList<String>();
-        dateFields = parameters.containsKey(DATE_FIELDS) ? Arrays.asList(parameters.get(DATE_FIELDS).split(","))
-                                                         : new ArrayList<String>();
-        timeFields = parameters.containsKey(TIME_FIELDS) ? Arrays.asList(parameters.get(TIME_FIELDS).split(","))
-                                                         : new ArrayList<String>();
+
+        this.dateFields = new HashMap<>();
+        this.timeFields = new HashMap<>();
+
+        readFieldsParameters(parameters, DATE_FIELDS, dateFields, DEFAULT_DATE_FORMAT);
+        readFieldsParameters(parameters, TIME_FIELDS, timeFields, DEFAULT_TIME_FORMAT);
+
+        if (parameters.containsKey(TIME_FIELDS)) {
+            for (String timeField : parameters.get(TIME_FIELDS).split(",")) {
+                if (timeField.contains("=")) {
+                    String[] fieldAndFormat = timeField.split("=");
+                    timeFields.put(fieldAndFormat[0], fieldAndFormat[1]);
+                } else {
+                    timeFields.put(timeField, DEFAULT_TIME_FORMAT);
+                }
+            }
+        }
+
         eventFields = parameters.containsKey(EVENT_FIELDS) ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
                                                            : new ArrayList<String>();
 
         isTimeField = parameters.containsKey(TIME_FIELD) && Boolean.parseBoolean(parameters.get(TIME_FIELD));
+    }
+
+    private void readFieldsParameters(Map<String, String> parameters,
+                                      String parameter,
+                                      Map<String, String> fields,
+                                      String defaultFormat) {
+
+        if (parameters.containsKey(parameter)) {
+            for (String dateField : parameters.get(parameter).split(",")) {
+                if (dateField.contains("=")) {
+                    String[] fieldAndFormat = dateField.split("=");
+                    fields.put(fieldAndFormat[0], fieldAndFormat[1]);
+                } else {
+                    fields.put(dateField, defaultFormat);
+                }
+            }
+        }
     }
 
     @Override
@@ -178,7 +209,7 @@ public class MetricRow extends AbstractRow {
             if (value == 0 || (value < 0 && hideNegativeValues)) {
                 formattedValue = StringValueData.DEFAULT;
             } else if (isTimeField) {
-                formattedValue = formatTimeValue(valueData);
+                formattedValue = formatTimeValue(valueData, DEFAULT_TIME_FORMAT);
             } else {
                 formattedValue = new StringValueData(String.format(numericFormat, value));
             }
@@ -227,10 +258,10 @@ public class MetricRow extends AbstractRow {
                 ValueData item = items.containsKey(field) ? items.get(field) : StringValueData.DEFAULT;
                 if (booleanFields.contains(field)) {
                     singleValue.add(formatBooleanValue(item));
-                } else if (dateFields.contains(field)) {
-                    singleValue.add(formatDateValue(item));
-                } else if (timeFields.contains(field)) {
-                    singleValue.add(formatTimeValue(item));
+                } else if (dateFields.containsKey(field)) {
+                    singleValue.add(formatDateValue(item, dateFields.get(field)));
+                } else if (timeFields.containsKey(field)) {
+                    singleValue.add(formatTimeValue(item, timeFields.get(field)));
                 } else if (eventFields.contains(field)) {
                     singleValue.add(formatEventValue(item));
                 } else {
@@ -256,9 +287,9 @@ public class MetricRow extends AbstractRow {
         return new StringValueData(formattedValue);
     }
 
-    private StringValueData formatDateValue(ValueData valueData) {
-        Long value = new Long(valueData.getAsString());
-        String formattedValue = new SimpleDateFormat(DEFAULT_DATE_FORMAT).format(value);
+    private StringValueData formatDateValue(ValueData valueData, String format) {
+        Long value = Long.valueOf(valueData.getAsString());
+        String formattedValue = new SimpleDateFormat(format).format(value);
 
         return new StringValueData(formattedValue);
     }
@@ -275,31 +306,19 @@ public class MetricRow extends AbstractRow {
         }
     }
 
-    private StringValueData formatTimeValue(ValueData valueData) {
+    private StringValueData formatTimeValue(ValueData valueData, String format) {
         long milliseconds = valueData.equals(StringValueData.DEFAULT) ? 0 : Long.parseLong(valueData.getAsString());
 
         int secs = (int)((milliseconds / 1000) % 60);
         int minutes = (int)((milliseconds / (1000 * 60)) % 60);
         int hours = (int)(milliseconds / (1000 * 60 * 60));
 
-        if (hours == 0 && minutes == 0) {
-            if (secs > 0) {
-                return StringValueData.valueOf("< 1m");
-            } else {
-                return StringValueData.DEFAULT;
-            }
-        } else {
-            StringBuilder builder = new StringBuilder();
-            if (hours > 0) {
-                builder.append(hours);
-                builder.append("h ");
-            }
+        format = format.replace("ss", DECIMAL_FORMAT.format(secs));
+        format = format.replace("mm", DECIMAL_FORMAT.format(minutes));
+        format = format.replace("HH", DECIMAL_FORMAT.format(hours));
+        format = format.replace("\'", "");
 
-            builder.append(minutes);
-            builder.append("m");
-
-            return StringValueData.valueOf(builder.toString());
-        }
+        return StringValueData.valueOf(format);
     }
 
     protected ValueData getMetricValue(Map<String, String> context) throws IOException {
