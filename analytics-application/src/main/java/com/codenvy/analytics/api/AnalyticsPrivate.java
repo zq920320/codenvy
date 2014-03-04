@@ -24,6 +24,7 @@ import com.codenvy.api.analytics.Utils;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
 import com.codenvy.api.analytics.dto.MetricInfoListDTO;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
+import com.codenvy.api.analytics.dto.MetricValueListDTO;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
 import com.codenvy.api.core.rest.annotations.GenerateLink;
 
@@ -88,14 +89,12 @@ public class AnalyticsPrivate {
         }
     }
     
-    @GenerateLink(rel = "list metric value")
+    @GenerateLink(rel = "list of metric values")
     @POST
     @Path("/metric/user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getValues(List<String> metricNames,
-                             @QueryParam("page") String page,
-                             @QueryParam("per_page") String perPage,
+    public Response getUserValues(List<String> metricNames,
                              @Context UriInfo uriInfo,
                              @Context SecurityContext securityContext) {
         try {
@@ -106,8 +105,9 @@ public class AnalyticsPrivate {
                 }
             }
             
-            Map<String, String> context = Utils.extractContext(uriInfo, page, perPage);
-            return Response.status(Response.Status.OK).entity(metricHandler.getValues(metricNames, context, uriInfo)).build();
+            Map<String, String> context = Utils.extractContext(uriInfo);
+            MetricValueListDTO list = metricHandler.getUserValues(metricNames, context, uriInfo);
+            return Response.status(Response.Status.OK).entity(list).build();
         } catch (MetricNotFoundException e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();

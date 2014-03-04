@@ -76,7 +76,7 @@ public class FileBasedMetricHandler implements MetricHandler {
     }
     
     @Override
-    public MetricValueListDTO getValues(List<String> metricNames, Map<String, String> metricContext, UriInfo uriInfo) throws MetricNotFoundException {
+    public MetricValueListDTO getUserValues(List<String> metricNames, Map<String, String> metricContext, UriInfo uriInfo) throws MetricNotFoundException {
         MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
         List<MetricValueDTO> metricValues = new ArrayList<>();
         for (String metricName : metricNames) {
