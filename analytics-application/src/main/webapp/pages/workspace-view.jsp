@@ -29,7 +29,7 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div>
-            <div class="well topFilteringPanel full-width">
+            <div class="well topFilteringPanel">
                 <div id="date-range" class="btn-group"
                      targetWidgets="workspaceSessions,workspaceUserList,workspaceActivity,workspaceUserEvents">
                    <span>
