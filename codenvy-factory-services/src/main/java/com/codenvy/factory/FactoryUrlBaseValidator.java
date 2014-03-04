@@ -143,11 +143,10 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
             FactoryClient factoryClient = new HttpFactoryClient(factoryUrl.getScheme(), factoryUrl.getHost(), factoryUrl.getPort());
             // TODO ensure that there is one value of 'id'
             Factory factory = factoryClient.getFactory(params.get("id").iterator().next());
-            factory = factoryBuilder.validateFactoryCompatibility(factory, Compatibility.Encoding.ENCODED);
+            factory = factoryBuilder.validateFactoryCompatibility(factory, FactoryParameter.Format.ENCODED);
             this.validateObject(factory, true);
         } else {
             Factory factory = factoryBuilder.buildNonEncoded(factoryUrl.getQuery());
-            factory = factoryBuilder.validateFactoryCompatibility(factory, Compatibility.Encoding.NONENCODED);
             this.validateObject(factory, false);
         }
     }
