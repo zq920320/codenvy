@@ -18,6 +18,14 @@
 
 package com.codenvy.analytics.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Singleton;
+import javax.ws.rs.core.UriInfo;
+
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
@@ -28,17 +36,10 @@ import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
 import com.codenvy.api.analytics.dto.MetricInfoListDTO;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
+import com.codenvy.api.analytics.dto.MetricValueListDTO;
 import com.codenvy.api.analytics.exception.MetricNotFoundException;
 import com.codenvy.api.analytics.exception.MetricRestrictionException;
 import com.codenvy.dto.server.DtoFactory;
-
-import javax.inject.Singleton;
-import javax.ws.rs.core.UriInfo;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Metric handler implementation base on data stored in files on file system. Which should be preliminary prepared by
@@ -75,12 +76,14 @@ public class FileBasedMetricHandler implements MetricHandler {
     }
     
     @Override
-    public List<MetricValueDTO> getValues(List<String> metricNames, Map<String, String> metricContext, UriInfo uriInfo) throws MetricNotFoundException {
+    public MetricValueListDTO getValues(List<String> metricNames, Map<String, String> metricContext, UriInfo uriInfo) throws MetricNotFoundException {
+        MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
         List<MetricValueDTO> metricValues = new ArrayList<>();
         for (String metricName : metricNames) {
             metricValues.add(this.getValue(metricName, metricContext, uriInfo));
         }
-        return metricValues;
+        metricValueListDTO.setMetrics(metricValues);
+        return metricValueListDTO;
     }
 
     @Override

@@ -36,9 +36,12 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -65,8 +68,14 @@ public class AnalyticsPrivate {
     public Response getValue(@PathParam("name") String metricName,
                              @QueryParam("page") String page,
                              @QueryParam("per_page") String perPage,
-                             @Context UriInfo uriInfo) {
+                             @Context UriInfo uriInfo,
+                             @Context SecurityContext securityContext) {
         try {
+            MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
+            if (!isRolesAllowed(metricInfoDTO, securityContext)) {
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+            
             Map<String, String> context = Utils.extractContext(uriInfo, page, perPage);
             MetricValueDTO value = metricHandler.getValue(metricName, context, uriInfo);
             return Response.status(Response.Status.OK).entity(value).build();
@@ -87,8 +96,16 @@ public class AnalyticsPrivate {
     public Response getValues(List<String> metricNames,
                              @QueryParam("page") String page,
                              @QueryParam("per_page") String perPage,
-                             @Context UriInfo uriInfo) {
+                             @Context UriInfo uriInfo,
+                             @Context SecurityContext securityContext) {
         try {
+            for (String metricName : metricNames) {
+                MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
+                if (!isRolesAllowed(metricInfoDTO, securityContext)) {
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
+            }
+            
             Map<String, String> context = Utils.extractContext(uriInfo, page, perPage);
             return Response.status(Response.Status.OK).entity(metricHandler.getValues(metricNames, context, uriInfo)).build();
         } catch (MetricNotFoundException e) {
@@ -104,9 +121,16 @@ public class AnalyticsPrivate {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("metricinfo/{name}")
-    public Response getInfo(@PathParam("name") String metricName, @Context UriInfo uriInfo) {
+    public Response getInfo(@PathParam("name") String metricName, 
+                             @Context UriInfo uriInfo,
+                             @Context SecurityContext securityContext) {
         try {
             MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
+            
+            if (!isRolesAllowed(metricInfoDTO, securityContext)) {
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+            
             return Response.status(Response.Status.OK).entity(metricInfoDTO).build();
         } catch (MetricNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -119,13 +143,43 @@ public class AnalyticsPrivate {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("metricinfo")
-    public Response getAllInfo(@Context UriInfo uriInfo) {
+    public Response getAllInfo(@Context UriInfo uriInfo,
+                               @Context SecurityContext securityContext) {
         try {
             MetricInfoListDTO metricInfoListDTO = metricHandler.getAllInfo(uriInfo);
+            
+            Iterator<MetricInfoDTO> iterator = metricInfoListDTO.getMetrics().iterator();
+            while (iterator.hasNext()) {
+                if (!isRolesAllowed(iterator.next(), securityContext)) {
+                    iterator.remove();
+                }
+            }
+            
             return Response.status(Response.Status.OK).entity(metricInfoListDTO).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
+    }
+    
+    private boolean isRolesAllowed(MetricInfoDTO metricInfoDTO, SecurityContext securityContext) {
+        Principal principal = securityContext.getUserPrincipal();
+
+        if (principal != null && Utils.isSystemUser(principal.getName())) {
+            return true;
+        }
+
+        List<String> rolesAllowed = metricInfoDTO.getRolesAllowed();
+        if (rolesAllowed.isEmpty()) {
+            return true;
+        }
+
+        for (String role : rolesAllowed) {
+            if (securityContext.isUserInRole(role)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
