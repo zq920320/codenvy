@@ -18,7 +18,7 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
+import com.codenvy.api.factory.dto.Factory;
 
 /** Allows to get factory from factories storage. */
 public interface FactoryClient {
@@ -30,5 +30,5 @@ public interface FactoryClient {
      * @return - stored factory if id is correct, null otherwise
      * @throws FactoryUrlException
      */
-    public AdvancedFactoryUrl getFactory(String factoryId) throws FactoryUrlException;
+    public Factory getFactory(String factoryId) throws FactoryUrlException;
 }

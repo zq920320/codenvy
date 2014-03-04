@@ -17,24 +17,16 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.FactoryUrlValidator;
-import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
-import com.codenvy.api.factory.dto.SimpleFactoryUrl;
-import com.codenvy.commons.lang.UrlUtils;
+import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.dto.Factory;
+import com.codenvy.commons.lang.URLEncodedUtils;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.client.UserManager;
-import com.codenvy.organization.exception.OrganizationServiceException;
-import com.codenvy.organization.model.Account;
-import com.codenvy.organization.model.User;
 
 import javax.inject.Inject;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.Date;
-import java.util.List;
+import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -50,33 +42,15 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
 
     private UserManager userManager;
 
+    private FactoryBuilder factoryBuilder;
+
     @Inject
-    public FactoryUrlBaseValidator(AccountManager accountManager, UserManager userManager) {
+    public FactoryUrlBaseValidator(AccountManager accountManager, UserManager userManager, FactoryBuilder factoryBuilder) {
         this.accountManager = accountManager;
         this.userManager = userManager;
+        this.factoryBuilder = factoryBuilder;
     }
-
-    @Override
-    public void validateUrl(URL url) throws FactoryUrlException {
-        try {
-            Map<String, List<String>> params = UrlUtils.getQueryParameters(url);
-
-            if (params.get("id") != null) {
-                AdvancedFactoryUrlFormat factoryUrlFormat =
-                        new AdvancedFactoryUrlFormat(new HttpFactoryClient(url.getProtocol(), url.getHost(), url.getPort()));
-
-                this.validateUrl(factoryUrlFormat.parse(url));
-            } else {
-                SimpleFactoryUrlFormat factoryUrlFormat = new SimpleFactoryUrlFormat();
-
-                this.validateUrl(factoryUrlFormat.parse(url));
-            }
-        } catch (UnsupportedEncodingException e) {
-            throw new FactoryUrlException(e.getLocalizedMessage(), e);
-        }
-    }
-
-    @Override
+    /*@Override
     public void validateUrl(SimpleFactoryUrl factoryUrl) throws FactoryUrlException {
         // check mandatory parameters
         if (!"1.0".equals(factoryUrl.getV())) {
@@ -159,5 +133,27 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
                         "Project name must contain only Latin letters, digits or these following special characters -._.");
             }
         }
+    }*/
+
+    @Override
+    public void validateUrl(URI factoryUrl) throws FactoryUrlException {
+        Map<String, Set<String>> params = URLEncodedUtils.parse(factoryUrl, "UTF-8");
+
+        if (params.get("id") != null) {
+            FactoryClient factoryClient = new HttpFactoryClient(factoryUrl.getScheme(), factoryUrl.getHost(), factoryUrl.getPort());
+            // TODO ensure that there is one value of 'id'
+            Factory factory = factoryClient.getFactory(params.get("id").iterator().next());
+            factory = factoryBuilder.validateFactoryCompatibility(factory, Compatibility.Encoding.ENCODED);
+            this.validateObject(factory, true);
+        } else {
+            Factory factory = factoryBuilder.buildNonEncoded(factoryUrl.getQuery());
+            factory = factoryBuilder.validateFactoryCompatibility(factory, Compatibility.Encoding.NONENCODED);
+            this.validateObject(factory, false);
+        }
+    }
+
+    @Override
+    public void validateObject(Factory factory, boolean encoded) throws FactoryUrlException {
+
     }
 }

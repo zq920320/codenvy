@@ -17,10 +17,8 @@
  */
 package com.codenvy.factory.storage;
 
-import com.codenvy.api.factory.FactoryImage;
-import com.codenvy.api.factory.FactoryStore;
-import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
+import com.codenvy.api.factory.*;
+import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.dto.server.DtoFactory;
 
@@ -29,15 +27,15 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class InMemoryFactoryStore implements FactoryStore {
-    private              Map<String, Set<FactoryImage>>  images    = new HashMap<>();
-    private              Map<String, AdvancedFactoryUrl> factories = new HashMap<>();
-    private static final ReentrantReadWriteLock          lock      = new ReentrantReadWriteLock();
+    private              Map<String, Set<FactoryImage>> images    = new HashMap<>();
+    private              Map<String, Factory>           factories = new HashMap<>();
+    private static final ReentrantReadWriteLock         lock      = new ReentrantReadWriteLock();
 
     @Override
-    public String saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
+    public String saveFactory(Factory factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
         lock.writeLock().lock();
         try {
-            AdvancedFactoryUrl newFactoryUrl = DtoFactory.getInstance().clone(factoryUrl);
+            Factory newFactoryUrl = DtoFactory.getInstance().clone(factoryUrl);
             newFactoryUrl.setId(NameGenerator.generate("", 16));
             Set<FactoryImage> newImages = new HashSet<>();
             for (FactoryImage image : images) {
@@ -69,7 +67,7 @@ public class InMemoryFactoryStore implements FactoryStore {
     }
 
     @Override
-    public AdvancedFactoryUrl getFactory(String id) throws FactoryUrlException {
+    public Factory getFactory(String id) throws FactoryUrlException {
         lock.readLock().lock();
         try {
             return factories.get(id);
