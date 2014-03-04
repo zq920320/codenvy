@@ -26,6 +26,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
+import com.codenvy.api.analytics.exception.MetricRestrictionException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -84,7 +85,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
             if (!requiredFilter.exists(context)) {
-                throw new IllegalStateException(
+                throw new MetricRestrictionException( 
                         "Parameter " + requiredFilter + " required to be passed to get the value of the metric");
             }
         }
