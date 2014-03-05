@@ -34,7 +34,7 @@
     <view name="user" on-demand="true">
         <section name="user">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Email,First Name,Last Name,Company,Phone,Job,# Sessions,# Usage Time,# Projects"/>
+                <parameter key="titles" value="Email,First Name,Last Name,Company,Phone,Job,Number of Sessions,Usage Time,Number of Projects"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics_list"/>
