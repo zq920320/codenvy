@@ -25,12 +25,12 @@
 		<section name="workspace_overview">
 			<row class="com.codenvy.analytics.services.view.TitleRow">
 				<parameter key="titles"
-					value="Workspace,Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories,Number of Users" />
+					value="Workspace,Number of Sessions,Total Time,Total Build Time,Total Run Time,Number of Active Projects,Number of Builds,Number of Debugs,Number of Deploys,Number of Factories,Number of Users,Number of Sessions" />
 			</row>
 			<row class="com.codenvy.analytics.services.view.MetricRow">
 				<parameter key="name" value="workspaces_statistics_list" />
 				<parameter key="fields"
-					value="ws,sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories,joined_users" />
+					value="ws,sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories,joined_users,sessions" />
 				<parameter key="time-fields" value="time,time_build,time_run" />
                 <parameter key="display_zero_values" value="true"/>
 			</row>
