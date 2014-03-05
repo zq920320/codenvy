@@ -21,6 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
@@ -56,11 +57,9 @@ public class TestUsersData extends BaseTest {
                                 .withDate("2013-11-01")
                                 .build());
 
-        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f2", "l2", "company1", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("user1@gmail.com", "f1", "l1", "company1", "11", "1")
                                 .withDate("2013-11-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company1", "11", "1")
-                                .withDate("2013-11-01").build());
-        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f2", "l2", "company2", "11", "1")
+        events.add(Event.Builder.createUserUpdateProfile("user2@gmail.com", "f2", "l2", "company1", "22", "2")
                                 .withDate("2013-11-01").build());
 
         events.add(Event.Builder.createSessionStartedEvent("user1@gmail.com", "ws1", "ide", "1").withDate("2013-11-01")
@@ -100,6 +99,14 @@ public class TestUsersData extends BaseTest {
         events.add(Event.Builder.createDebugStartedEvent("user4@gmail.com", "ws1", "", "", "id4")
                                 .withDate("2013-11-01").withTime("20:06:00").build());
 
+        events.add(Event.Builder.createSessionStartedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
+                   .withTime("19:00:00").build());
+
+        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "", "", "", "", "")
+                   .withDate("2013-11-01").withTime("19:10:00,155").build());
+        events.add(Event.Builder.createUserUpdateProfile("user3@gmail.com", "f3", "l3", "company3", "33", "3")
+                   .withDate("2013-11-01").withTime("19:15:00,155").build());
+        
         // projects deployed
         events.add(
                 Event.Builder.createApplicationCreatedEvent("user2@gmail.com", "ws2", "", "project1", "type1", "paas1")
@@ -110,8 +117,8 @@ public class TestUsersData extends BaseTest {
                 Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2", "", "project1", "type1", "paas2")
                              .withDate("2013-11-01")
                              .withTime("20:15:00")
-                             .build());
-
+                             .build());      
+        
         File log = LogGenerator.generateLog(events);
 
         Parameters.FROM_DATE.put(params, "20131101");
@@ -147,7 +154,7 @@ public class TestUsersData extends BaseTest {
             MapValueData valueData = (MapValueData)object;
 
             Map<String, ValueData> all = valueData.getAll();
-            assertEquals(all.size(), 14);
+            assertEquals(all.size(), 18);
 
             String user = all.get(UsersStatisticsList.USER).getAsString();
             switch (user) {
@@ -165,6 +172,10 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f1");
+                    assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), "l1");
+                    assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company1");
+                    assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), "Other");                    
                     break;
 
                 case "user2@gmail.com":
@@ -181,6 +192,10 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "120500");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f2");
+                    assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), "l2");
+                    assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company1");
+                    assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), "Other");
                     break;
 
                 case "user3@gmail.com":
@@ -197,6 +212,10 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120500");
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "1");
+                    assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), "f3");
+                    assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), "l3");
+                    assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), "company3");
+                    assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), "Other");
                     break;
 
                 case "user4@gmail.com":
@@ -212,6 +231,10 @@ public class TestUsersData extends BaseTest {
                     assertEquals(all.get(UsersStatisticsList.RUN_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILD_TIME).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.PAAS_DEPLOYS).getAsString(), "0");
+                    assertEquals(all.get(UsersStatisticsList.USER_FIRST_NAME).getAsString(), StringValueData.DEFAULT);
+                    assertEquals(all.get(UsersStatisticsList.USER_LAST_NAME).getAsString(), StringValueData.DEFAULT);
+                    assertEquals(all.get(UsersStatisticsList.USER_COMPANY).getAsString(), StringValueData.DEFAULT);
+                    assertEquals(all.get(UsersStatisticsList.USER_JOB).getAsString(), StringValueData.DEFAULT);
                     break;
 
                 default:

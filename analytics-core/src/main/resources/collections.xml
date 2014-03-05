@@ -488,6 +488,15 @@
                 <field>date</field>
                 <field>ws</field>
             </index>
+            <index name="sessions">
+                <field>sessions</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+            </index>
+            <index name="projects">
+                <field>projects</field>
+            </index>
         </indexes>
     </collection>
 

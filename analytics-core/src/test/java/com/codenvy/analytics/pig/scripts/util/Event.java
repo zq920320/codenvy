@@ -275,8 +275,8 @@ public class Event {
                                                       String company,
                                                       String phone,
                                                       String jobTitle) {
-            return new Builder().withParam("USER", user)
-                                .withParam("EVENT", "user-update-profile")
+            return new Builder().withParam("EVENT", "user-update-profile")
+                                .withParam("USER", user)
                                 .withParam("FIRSTNAME", firstName)
                                 .withParam("LASTNAME", lastName)
                                 .withParam("COMPANY", company)

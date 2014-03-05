@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Users Profiles</title>
+    <title>Users</title>
     <%@ include file="/inclusions/header.jsp"%>
 </head>
 <body>
@@ -33,7 +33,7 @@
                 <div id="filter-by" class="left" targetWidgets="_all">
                     Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
-                    <button class="btn command-btn" value="_id">Email</button>
+                    <button class="btn command-btn" value="user">Email</button>
                     <button class="btn command-btn" value="user_first_name">First Name</button>
                     <button class="btn command-btn" value="user_last_name">Last Name</button>                
                     <button class="btn command-btn" value="user_company">Company</button>
@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div class="hero-unit">
-                <div id="usersProfiles" class="single-column-gadget"></div>
+                <div id="users" class="single-column-gadget"></div>
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
 
 <jsp:include page="/inclusions/footer.jsp">
     <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/UsersProfilesPresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/UsersPresenter.js"/>
 </jsp:include>
 
 </body>

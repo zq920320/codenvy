@@ -141,9 +141,9 @@ function Configuration() {
         },
 
         /** for User View */
-        usersProfiles: {
-            presenterType: "UsersProfilesPresenter",
-            modelViewName: "users_profiles",
+        users: {
+            presenterType: "UsersPresenter",
+            modelViewName: "users",
             modelMetricName: "users_profiles",
             isNeedToSaveInHistory: true,
             columnLinkPrefixList: ["/analytics/pages/user-view.jsp?user"],
@@ -152,7 +152,7 @@ function Configuration() {
         userOverview: {
             widgetLabel: "User Overview",
             presenterType: "VerticalTablePresenter",
-            modelViewName: "user_profile",
+            modelViewName: "users",
             isNeedToSaveInHistory: false,
         },
 
@@ -215,7 +215,7 @@ function Configuration() {
             modelMetricName: "product_usage_sessions",
             isNeedToSaveInHistory: true,
             columnLinkPrefixList: [
-                "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+                "/analytics/pages/session-view.jsp?session_id",
                 "/analytics/pages/user-view.jsp?user",
                 "/analytics/pages/workspace-view.jsp?ws"
             ],
@@ -277,7 +277,7 @@ function Configuration() {
             defaultSortParams: "-date",
             
             columnLinkPrefixList: [
-                "/analytics/pages/session-view.jsp?event=~session-started%2C~session-finished%2C~session-factory-started%2C~session-factory-stopped&session_id",
+                "/analytics/pages/session-view.jsp?session_id",
                 "/analytics/pages/user-view.jsp?user"
             ],
         },
@@ -309,7 +309,6 @@ function Configuration() {
     var registeredModelParams = [
         "time_unit",
         "user",
-        "_id",
         "domain",
         "user_company",
         "org_id",
@@ -329,13 +328,13 @@ function Configuration() {
 
     /** see method analytics.main.getParamsFromButtons()    */
     var registeredViewParams = [
-        "user",              // factory-statistics, *-reports
+        "user",              // users-view, factory-statistics, *-reports
         "domain",            // *-reports
-        "user_company",      // users-profiles, *-reports
+        "user_company",      // users-view, *-reports
         "org_id",            // factory-statistics
         "affiliate_id",      // factory-statistics
-        "user_first_name",   // users-profiles
-        "user_last_name",    // users-profiles
+        "user_first_name",   // users-view
+        "user_last_name",    // users-view
         "ide",               // top-menu
         "metric",            // top-metrics
         "from_date",         // user-view, workspace-view
@@ -346,9 +345,9 @@ function Configuration() {
     
     /** url params which are passed from other pages */
     var crossPageParams = [
-        "user",        // users-profiles > user-view; workspace-view > user-view
-        "sort",        // users-profiles > users-profiles; workspaces-view > workspaces-view
-        "page",        // user-view > user-view; users-profiles > users-profiles; workspaces-view > workspaces-view; workspace-view > workspace-view
+        "user",        // users-view > user-view; workspace-view > user-view
+        "sort",        // users-view > users-view; workspaces-view > workspaces-view
+        "page",        // user-view > user-view; users-view > users-view; workspaces-view > workspaces-view; workspace-view > workspace-view
         "session_id",  // user-view > session-view; workspace-view > session-view
         "ws",          // workspaces-view > workspace-view; user-view > workspace-view
     ];

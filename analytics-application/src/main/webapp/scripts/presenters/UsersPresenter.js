@@ -21,16 +21,19 @@ if (typeof analytics === "undefined") {
 
 analytics.presenter = analytics.presenter || {};
 
-analytics.presenter.UsersProfilesPresenter = function UsersProfilesPresenter() {};
+analytics.presenter.UsersPresenter = function UsersPresenter() {};
 
-analytics.presenter.UsersProfilesPresenter.prototype = new EntryViewPresenter();
+analytics.presenter.UsersPresenter.prototype = new EntryViewPresenter();
 
-analytics.presenter.UsersProfilesPresenter.prototype.TARGET_PAGE_LINK = "users-profiles.jsp";
+analytics.presenter.UsersPresenter.prototype.TARGET_PAGE_LINK = "users-view.jsp";
 
-analytics.presenter.UsersProfilesPresenter.prototype.mapColumnNameToSortValue = {
+analytics.presenter.UsersPresenter.prototype.mapColumnNameToSortValue = {
         "Email": "user",
-        "First Name": "user_first_name",
-        "Last Name": "user_last_name",
-        "Company": "user_company",            
-        "Job": "user_job",
+//        "First Name": "user_first_name",
+//        "Last Name": "user_last_name",
+//        "Company": "user_company",            
+//        "Job": "user_job",
+        "# Sessions": "sessions",
+        "# Usage Time": "time",
+        "# Projects": "projects",
 };

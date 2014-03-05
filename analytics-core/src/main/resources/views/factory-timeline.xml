@@ -130,11 +130,11 @@
 
         <section name="factory_product_usage">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Usage Time (mins)"/>
+                <parameter key="section-name" value="Usage Time"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_product_usage_time_total"/>
-                <parameter key="description" value="Product Usage Mins"/>
+                <parameter key="description" value="Product Usage Time"/>
                 <parameter key="time-field" value="true"/>
             </row>
             <row class="com.codenvy.analytics.services.view.EmptyRow"/>

@@ -83,6 +83,9 @@ EntryViewPresenter.prototype.load = function() {
             for (var i = 0; i < table.columns.length; i++) {
                var columnName = table.columns[i];
                var sortParamColumnName = presenter.mapColumnNameToSortValue[columnName];
+               if (typeof sortParamColumnName == "undefined") {
+                   continue;
+               }
                
                var isAscending = presenter.isSortingOrderAscending(sortParamColumnName, sortingParameterValue);
                

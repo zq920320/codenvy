@@ -29,6 +29,7 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.CompletedProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfiles;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
+import com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspacesList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
@@ -246,6 +247,42 @@ public class TestUserUpdateProfile extends BaseTest {
         assertEquals(value.size(), 1);
     }
 
+    @Test
+    public void testSearchUsersByFirstName() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_FIRST_NAME.put(context, "f4");
+
+        Metric metric = new TestedUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 2);
+        
+        List<ValueData> items = value.getAll();
+        MapValueData entry = (MapValueData)items.get(0);
+        assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user3@gmail.com");
+        
+        entry = (MapValueData)items.get(1);
+        assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user4@gmail.com");
+    }
+    
+    @Test
+    public void testSearchUsersByLastName() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.USER_LAST_NAME.put(context, "l4");
+
+        Metric metric = new TestedUsersProfilesList();
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 2);
+        
+        List<ValueData> items = value.getAll();
+        MapValueData entry = (MapValueData)items.get(0);
+        assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user3@gmail.com");
+        
+        entry = (MapValueData)items.get(1);
+        assertEquals(entry.getAll().get(UsersProfilesList.ID).getAsString(), "user4@gmail.com");
+    }
+    
     @Test
     public void testCompletedProfiles() throws Exception {
         Metric metric = new TestedCompletedProfiles();
