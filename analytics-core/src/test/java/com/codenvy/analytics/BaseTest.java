@@ -39,6 +39,7 @@ public class BaseTest {
 
     protected final TupleFactory tupleFactory      = TupleFactory.getInstance();
     protected final DateFormat   dateFormat        = new SimpleDateFormat("yyyyMMdd");
+    protected final DateFormat   shortDateFormat   = new SimpleDateFormat("HH:mm:ss");
     protected final DateFormat   dateAndTimeFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
     protected final DateFormat fullDateFormat     = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -60,7 +60,7 @@ public class TestDateFieldsMetricRow extends BaseTest {
         assertEquals(items.size(), 3);
 
         assertEquals(items.get(0), StringValueData.valueOf(fullDateFormat.format(new Date(1 * 60 * 60 * 1000))));
-        assertEquals(items.get(1), StringValueData.valueOf("02:00:00"));
+        assertEquals(items.get(1), StringValueData.valueOf(shortDateFormat.format(new Date(2 * 60 * 60 * 1000))));
         assertEquals(items.get(2), StringValueData.valueOf("10,800,000"));
     }
 
