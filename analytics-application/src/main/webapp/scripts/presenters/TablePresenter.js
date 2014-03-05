@@ -112,7 +112,7 @@ analytics.presenter.TablePresenter.prototype.printTableNavigation = function(cur
     
     model.setParams(modelParams);
     model.pushDoneFunction(function(data) {
-        var pageCount = data / onePageRowsCount;
+        var pageCount = Math.ceil(data / onePageRowsCount);
         if (pageCount > 1) {
             var queryString = "?" + analytics.util.constructUrlParams(modelParams);
 
