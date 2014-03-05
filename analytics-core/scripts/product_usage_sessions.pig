@@ -22,11 +22,47 @@ DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
 
 IMPORT 'macros.pig';
 
+%DEFAULT inactiveInterval '10';
+
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+DEFINE addLogoutInterval(X, L, inactiveIntervalParam) RETURNS Y {
+  z1 = filterByEvent($L, 'user-sso-logged-out');
+  z = FOREACH z1 GENERATE dt, user;
+
+  -- finds out if logout event occurred just after session ends
+  x1 = JOIN $X BY user LEFT, z BY user;
+  x2 = FOREACH x1 GENERATE *, (z::user IS NULL ? 0 -- there is not logout event
+                                             : (MilliSecondsBetween(z::dt, $X::dt) > 0 AND MilliSecondsBetween(z::dt, $X::dt) < $X::delta ? 0 -- logout during sessions
+                                                                                                                                          : (MilliSecondsBetween(z::dt, $X::dt) > $X::delta AND MilliSecondsBetween(z::dt, $X::dt) <= $X::delta + (long) $inactiveIntervalParam*60*1000 ? MilliSecondsBetween(z::dt, $X::dt) - $X::delta -- logout event after the end of the session
+                                                                                                                                                                                                                                                                                        : 0))) -- logout far from the end of the session
+                              AS logout_interval;
+
+  x3 = FOREACH x2 GENERATE $X::ws AS ws, $X::user AS user, $X::dt AS dt, $X::delta AS delta, $X::ide AS ide, $X::id AS id,
+                    logout_interval AS logout_interval;
+
+  -- if several events were occurred then keep only
+  x4 = GROUP x3 BY (dt, id);
+  x5 = FOREACH x4 {
+        t = LIMIT x3 1;
+        GENERATE FLATTEN(t);
+    }
+
+  $Y = FOREACH x5 GENERATE t::ws AS ws, t::user AS user, t::dt AS dt, (t::delta + t::logout_interval) AS delta,
+                        t::id AS id, t::ide AS ide, t::logout_interval AS logout_interval;
+};
+
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 u = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_PROFILES' USING MongoLoader;
 
 s1 = combineSmallSessions(l, 'session-started', 'session-finished');
 s2 = removeEmptyField(s1, 'user');
+s3 = addLogoutInterval(s2, l, '$inactiveInterval');
+s4 = FOREACH s3 GENERATE ws, user, dt, delta, id, ide, logout_interval;
 
 -- add factory sessions with delta == 0
 a1 = createdTemporaryWorkspaces(l);
@@ -43,19 +79,21 @@ d = FOREACH d1 GENERATE ws, user;
 
 e1 = JOIN c BY ws LEFT, d BY ws;
 e2 = FILTER e1 BY d::ws IS NULL;
-e = FOREACH e2 GENERATE c::ws AS ws, c::user AS user, c::dt AS dt, 0 AS delta, '' AS id, c::ide AS ide;
+e = FOREACH e2 GENERATE c::ws AS ws, c::user AS user, c::dt AS dt, 0 AS delta, '' AS id, c::ide AS ide, 0 AS logout_interval;
 
 -- combine all sessions together
-s = UNION s2, e;
+s = UNION s4, e;
 
 t1 = JOIN s by user LEFT, u BY id;
 t2 = FOREACH t1 GENERATE s::dt AS dt, s::ws AS ws, s::user AS user, s::id AS id, s::delta AS delta,
-        (u::user_company IS NULL ? '' : u::user_company) AS company, s::ide AS ide;
-t3 = FOREACH t2 GENERATE dt, ws, user, id, delta, company, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, ide;
-t = FOREACH t3 GENERATE dt, ws, user, id, delta, company, (domain IS NULL ? '' : domain) AS domain, ide;
+        (u::user_company IS NULL ? '' : u::user_company) AS company, s::ide AS ide,
+        s::logout_interval AS logout_interval;
+t3 = FOREACH t2 GENERATE dt, ws, user, id, delta, company, REGEX_EXTRACT(user, '.*@(.*)', 1) AS domain, ide, logout_interval;
+t = FOREACH t3 GENERATE dt, ws, user, id, delta, company, (domain IS NULL ? '' : domain) AS domain, ide, logout_interval;
+
 
 result = FOREACH t GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-            TOTUPLE('session_id', id), TOTUPLE('ide', ide),
+            TOTUPLE('session_id', id), TOTUPLE('ide', ide), TOTUPLE('logout_interval', logout_interval),
             TOTUPLE('time', delta), TOTUPLE('domain', domain), TOTUPLE('user_company', company);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 

@@ -27,10 +27,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.testng.Assert.assertEquals;
 
@@ -62,7 +59,7 @@ public class TestDateFieldsMetricRow extends BaseTest {
         List<ValueData> items = data.get(0);
         assertEquals(items.size(), 3);
 
-        assertEquals(items.get(0), StringValueData.valueOf("1970-01-01 01:00:00"));
+        assertEquals(items.get(0), StringValueData.valueOf(fullDateFormat.format(new Date(1 * 60 * 60 * 1000))));
         assertEquals(items.get(1), StringValueData.valueOf("02:00:00"));
         assertEquals(items.get(2), StringValueData.valueOf("10,800,000"));
     }

@@ -81,8 +81,6 @@ function stripBanner( files ) {
 }
 
 function stripDirectory( file ) {
-	// TODO: we're receiving the directive, so we need to strip the trailing >
-	// we should be receving a clean path without the directive
 	return file.replace( /.+\/(.+?)>?$/, "$1" );
 }
 // allow access from banner template
@@ -366,22 +364,6 @@ grunt.registerMultiTask( "copy", "Copy files to destination folder and replace 1
 
 
 grunt.registerMultiTask( "zip", "Create a zip file for release", function() {
-	// TODO switch back to adm-zip for better cross-platform compability once it actually works
-	// 0.1.3 works, but result can't be unzipped
-	// its also a lot slower then zip program, probably due to how its used...
-	// var files = grunt.file.expandFiles( "dist/" + this.file.src + "/**/*" );
-	// grunt.log.writeln( "Creating zip file " + this.file.dest );
-
-	//var AdmZip = require( "adm-zip" );
-	//var zip = new AdmZip();
-	//files.forEach(function( file ) {
-	//	grunt.verbose.writeln( "Zipping " + file );
-	//	// rewrite file names from dist folder (created by build), drop the /dist part
-	//	zip.addFile(file.replace(/^dist/, "" ), fs.readFileSync( file ) );
-	//});
-	//zip.writeZip( "dist/" + this.file.dest );
-	//grunt.log.writeln( "Wrote " + files.length + " files to " + this.file.dest );
-
 	var done = this.async();
 	var dest = this.file.dest;
 	var src = grunt.template.process( this.file.src, grunt.config() );
@@ -467,10 +449,6 @@ grunt.registerTask( "download_themes", function() {
 		var out = fs.createWriteStream( zipFileName );
 		out.on( "close", function() {
 			grunt.log.writeln( "done downloading " + zipFileName );
-			// TODO AdmZip produces "crc32 checksum failed", need to figure out why
-			// var zip = new AdmZip(zipFileName);
-			// zip.extractAllTo('dist/tmp/' + index + '/');
-			// until then, using cli unzip...
 			grunt.utils.spawn({
 				cmd: "unzip",
 				args: [ "-d", "dist/tmp/" + index, zipFileName ]
@@ -493,7 +471,7 @@ grunt.registerTask( "copy_themes", function() {
 	var files = grunt.file.expandFiles( "dist/tmp/*/development-bundle/themes/**/*" ).filter(function( file ) {
 		return !filter.test( file );
 	});
-	// TODO the grunt.template.process call shouldn't be necessary
+
 	var target = "dist/" + grunt.template.process( grunt.config( "files.themes" ), grunt.config() ) + "/";
 	files.forEach(function( fileName ) {
 		var targetFile = fileName.replace( /dist\/tmp\/\d+\/development-bundle\//, "" ).replace( "jquery-ui-.custom", "jquery-ui" );
@@ -501,7 +479,6 @@ grunt.registerTask( "copy_themes", function() {
 	});
 
 	// copy minified base theme from regular release
-	// TODO same as the one above
 	var distFolder = "dist/" + grunt.template.process( grunt.config( "files.dist" ), grunt.config() );
 	files = grunt.file.expandFiles( distFolder + "/themes/base/**/*" );
 	files.forEach(function( fileName ) {

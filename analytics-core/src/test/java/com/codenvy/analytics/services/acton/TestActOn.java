@@ -123,7 +123,7 @@ public class TestActOn extends BaseTest {
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("5", user1Data.get(HEADERS.get(UsersStatisticsList.TIME)));
-        assertEquals("true", user1Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("true", user1Data.get(HEADERS.get(ActOn.ACTIVE)));
         assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
         assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
@@ -147,7 +147,7 @@ public class TestActOn extends BaseTest {
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("6", user2Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("10", user2Data.get(HEADERS.get(UsersStatisticsList.TIME)));
-        assertEquals("true", user2Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("true", user2Data.get(HEADERS.get(ActOn.ACTIVE)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
@@ -171,7 +171,7 @@ public class TestActOn extends BaseTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("1", user3Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
-        assertEquals("true", user3Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("true", user3Data.get(HEADERS.get(ActOn.ACTIVE)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
@@ -218,7 +218,7 @@ public class TestActOn extends BaseTest {
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.TIME)));
-        assertEquals("true", user1Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("true", user1Data.get(HEADERS.get(ActOn.ACTIVE)));
         assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
         assertEquals("1", user1Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
         assertEquals("0", user1Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
@@ -242,7 +242,7 @@ public class TestActOn extends BaseTest {
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.TIME)));
-        assertEquals("true", user2Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("true", user2Data.get(HEADERS.get(ActOn.ACTIVE)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
         assertEquals("0", user2Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
         assertEquals("1", user2Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));
@@ -266,7 +266,7 @@ public class TestActOn extends BaseTest {
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.TIME)));
-        assertEquals("false", user3Data.get(HEADERS.get(ActOn.INACTIVE)));
+        assertEquals("false", user3Data.get(HEADERS.get(ActOn.ACTIVE)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.INVITES)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.FACTORIES)));
         assertEquals("0", user3Data.get(HEADERS.get(UsersStatisticsList.DEBUGS)));

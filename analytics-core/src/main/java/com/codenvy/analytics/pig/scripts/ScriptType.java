@@ -96,7 +96,6 @@ public enum ScriptType {
             return params;
         }
     },
-    RUNNER_TOTAL_TIME,
 
     CHECK_LOGS_1 {
         @Override

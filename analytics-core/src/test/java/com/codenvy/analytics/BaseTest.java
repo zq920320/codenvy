@@ -18,29 +18,31 @@
 
 package com.codenvy.analytics;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import de.flapdoodle.embed.mongo.MongodProcess;
+
+import com.codenvy.analytics.persistent.MongoDataStorage;
+import com.codenvy.analytics.pig.PigServer;
+import com.mongodb.DB;
 
 import org.apache.pig.data.TupleFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 
-import com.codenvy.analytics.persistent.MongoDataStorage;
-import com.codenvy.analytics.pig.PigServer;
-import com.mongodb.DB;
-
-import de.flapdoodle.embed.mongo.MongodProcess;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
     public static final    String BASE_DIR = "target";
     protected static final Logger LOG      = LoggerFactory.getLogger(BaseTest.class);
 
-    protected final TupleFactory tupleFactory   = TupleFactory.getInstance();
-    protected final DateFormat   dateFormat     = new SimpleDateFormat("yyyyMMdd");
-    protected final DateFormat   timeFormat     = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-    protected final DateFormat   fullTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+    protected final TupleFactory tupleFactory      = TupleFactory.getInstance();
+    protected final DateFormat   dateFormat        = new SimpleDateFormat("yyyyMMdd");
+    protected final DateFormat   dateAndTimeFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+
+    protected final DateFormat fullDateFormat     = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    protected final DateFormat fullDateFormatMils = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
     private MongodProcess embeddedMongoProcess;
 
@@ -50,16 +52,16 @@ public class BaseTest {
     protected final DB               mongoDb;
 
     @BeforeClass
-    public void clearDatabase() {        
-        for (String collectionName: mongoDb.getCollectionNames()) {
+    public void clearDatabase() {
+        for (String collectionName : mongoDb.getCollectionNames()) {
             if (collectionName.startsWith("system.")) {           // don't drop system collections
                 continue;
             }
-            
+
             mongoDb.getCollection(collectionName).drop();
         }
     }
-    
+
     public BaseTest() {
         this.configurator = Injector.getInstance(Configurator.class);
         this.pigServer = Injector.getInstance(PigServer.class);

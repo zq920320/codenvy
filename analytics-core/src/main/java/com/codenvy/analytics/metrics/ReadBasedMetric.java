@@ -51,6 +51,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
     public static final Pattern PERSISTENT_WS   = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
 
+    public static final String ASC_SORT_SIGN = "+";
+
 
     public final DataLoader dataLoader;
 
@@ -279,7 +281,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             String sortCondition = Parameters.SORT.get(clauses);
 
             String field = sortCondition.substring(1);
-            boolean asc = sortCondition.substring(0, 1).equals("+");
+            boolean asc = sortCondition.substring(0, 1).equals(ASC_SORT_SIGN);
 
             dbOp[0] = new BasicDBObject("$sort", new BasicDBObject(field, asc ? 1 : -1));
         }

@@ -61,6 +61,12 @@ public enum MetricFilter {
         context.put(name(), value);
     }
 
+    public void putIfAbsent(Map<String, String> context, String value) {
+        if (!exists(context)) {
+            context.put(name(), value);
+        }
+    }
+
     /** Gets value from execution context */
     public String get(Map<String, String> context) {
         return context.get(name());

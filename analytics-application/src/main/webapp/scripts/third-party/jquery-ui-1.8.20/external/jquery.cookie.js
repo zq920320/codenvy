@@ -10,8 +10,6 @@
  *
  */
 
-// TODO JsDoc
-
 /**
  * Create a cookie with the given key and value and other optional parameters.
  *

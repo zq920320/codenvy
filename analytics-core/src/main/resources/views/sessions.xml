@@ -34,14 +34,13 @@
     <view name="session_events" on-demand="true">
         <section name="session_events">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Date,Event,Time From Beginning"/>
+                <parameter key="titles" value="Started,Event,Time,Cumulative Time"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_activity_list"/>
-                <parameter key="fields" value="date,event,time_from_beginning"/>
-                <parameter key="date-fields" value="date"/>
+                <parameter key="fields" value="date,event,time,cumulative_time"/>
+                <parameter key="date-fields" value="date,time=HH:mm:ss,cumulative_time=HH:mm:ss"/>
                 <parameter key="event-fields" value="event"/>
-                <parameter key="time-fields" value="time_from_beginning"/>
             </row>
         </section>
     </view>

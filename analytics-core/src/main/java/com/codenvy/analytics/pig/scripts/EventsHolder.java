@@ -27,6 +27,11 @@ import java.io.IOException;
 @Singleton
 public class EventsHolder {
 
+    public static final String IDE_CLOSED            = "ide-closed";
+    public static final String IDE_OPENED            = "ide-opened";
+    public static final String NOT_FACTORY_SESSIONS  = "~session-factory-stopped,~session-factory-started";
+    public static final String USER_SSO_LOGOUT_EVENT = "user-sso-logged-out";
+
     private static final String CONFIGURATION = "events.xml";
 
     private final EventHolderConfiguration configuration;
@@ -45,10 +50,11 @@ public class EventsHolder {
 
         return false;
     }
-    
+
     /**
      * @return the description of the event
-     * @throws IllegalArgumentException if event doesn't exist into configuration
+     * @throws IllegalArgumentException
+     *         if event doesn't exist into configuration
      */
     public String getDescription(String eventName) throws IllegalArgumentException {
         for (EventConfiguration eventConfiguration : configuration.getEvents()) {
@@ -56,7 +62,7 @@ public class EventsHolder {
                 return eventConfiguration.getDescription();
             }
         }
-        
+
         throw new IllegalArgumentException("There is no event with name " + eventName);
     }
 }

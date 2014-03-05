@@ -50,25 +50,27 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
                             TIME,
                             END_TIME,
                             SESSION_ID,
-                            DATE};
+                            DATE,
+                            LOGOUT_INTERVAL};
     }
 
     @Override
     protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
         List<ValueData> value = new ArrayList<>();
-        ListValueData listValueData = (ListValueData)valueData;
+        ListValueData list2Return = (ListValueData)valueData;
 
-        for (ValueData items : listValueData.getAll()) {
+        for (ValueData items : list2Return.getAll()) {
             MapValueData prevItems = (MapValueData)items;
-            Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());
+            Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
-            LongValueData date = (LongValueData)newItems.get(DATE);
-            LongValueData delta = (LongValueData)newItems.get(TIME);
+            LongValueData date = (LongValueData)items2Return.get(DATE);
+            LongValueData delta = (LongValueData)items2Return.get(TIME);
+            LongValueData logoutInterval = (LongValueData)items2Return.get(LOGOUT_INTERVAL);
 
-            newItems.put(START_TIME, date);
-            newItems.put(END_TIME, LongValueData.valueOf(date.getAsLong() + delta.getAsLong()));
+            items2Return.put(START_TIME, date);
+            items2Return.put(END_TIME, LongValueData.valueOf(date.getAsLong() + delta.getAsLong()));
 
-            value.add(new MapValueData(newItems));
+            value.add(new MapValueData(items2Return));
         }
 
         return new ListValueData(value);

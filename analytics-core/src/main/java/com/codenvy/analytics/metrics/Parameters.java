@@ -162,6 +162,11 @@ public enum Parameters {
     }
 
     /** Puts value into execution context */
+    public void put(Map<String, String> context, long value) {
+        context.put(name(), Long.toString(value));
+    }
+
+    /** Puts value into execution context */
     public Map<String, String> cloneAndPut(Map<String, String> context, String value) {
         context = Utils.clone(context);
         context.put(name(), value);
@@ -176,6 +181,11 @@ public enum Parameters {
     /** Gets value from execution context */
     public String get(Map<String, String> context) {
         return context.get(name());
+    }
+
+    /** Gets value from execution context */
+    public long getAsLong(Map<String, String> context) {
+        return Long.valueOf(context.get(name()));
     }
 
     /** @return true if context contains given parameter */

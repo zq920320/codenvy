@@ -37,7 +37,7 @@
 	                    <label><input type="checkbox" checked=true id="hide-session-events" 
                                value="~session-started,~session-finished"
                                targetWidgets="userSessionActivity" />
-	                       hide micro events
+	                       Hide micro events
 	                    </label>
 	                </div>
 	            </div>

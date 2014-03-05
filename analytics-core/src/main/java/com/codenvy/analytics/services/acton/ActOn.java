@@ -62,7 +62,7 @@ public class ActOn extends Feature {
     private static final String FTP_MAX_EFFORTS = "acton.ftp.maxEfforts";
     private static final String FTP_AUTH        = "acton.ftp.auth";
 
-    public static final String INACTIVE          = "inactive";
+    public static final String ACTIVE            = "active";
     public static final String PROFILE_COMPLETED = "profileCompleted";
     public static final String POINTS            = "points";
 
@@ -79,7 +79,7 @@ public class ActOn extends Feature {
         put(UsersStatisticsList.RUNS, "runs");
         put(UsersStatisticsList.DEPLOYS, "deployments");
         put(UsersStatisticsList.TIME, "spentTime");
-        put(INACTIVE, INACTIVE);
+        put(ACTIVE, ACTIVE);
         put(UsersStatisticsList.INVITES, UsersStatisticsList.INVITES);
         put(UsersStatisticsList.FACTORIES, UsersStatisticsList.FACTORIES);
         put(UsersStatisticsList.DEBUGS, UsersStatisticsList.DEBUGS);

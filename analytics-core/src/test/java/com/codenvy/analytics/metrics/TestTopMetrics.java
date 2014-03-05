@@ -161,12 +161,12 @@ public class TestTopMetrics extends BaseTest {
         List<ValueData> all = value.getAll();
 
         checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1", "1", "1500000", "0.0", "0.0", "0.0",
-                                  "50.0", "50.0", "100.0", "0.0", "" + timeFormat.parse("20130210 10:20:00").getTime(),
-                                  "" + timeFormat.parse("20130210 11:00:00").getTime());
+                                  "50.0", "50.0", "100.0", "0.0", "" + dateAndTimeFormat.parse("20130210 10:20:00").getTime(),
+                                  "" + dateAndTimeFormat.parse("20130210 11:00:00").getTime());
         checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300000", "100.0", "100.0",
                                   "100.0",
-                                  "0.0", "100.0", "0.0", "100.0", "" + timeFormat.parse("20130210 10:00:00").getTime(),
-                                  "" + timeFormat.parse("20130210 10:00:00").getTime());
+                                  "0.0", "100.0", "0.0", "100.0", "" + dateAndTimeFormat.parse("20130210 10:00:00").getTime(),
+                                  "" + dateAndTimeFormat.parse("20130210 10:00:00").getTime());
     }
 
     private void checkTopSessionDataItem(MapValueData item, String time, String factory, String referrer,
@@ -229,11 +229,11 @@ public class TestTopMetrics extends BaseTest {
         List<ValueData> all = value.getAll();
         checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1", "1", "1500000", "0.0", "0.0", "0.0",
                                   "50.0",
-                                  "50.0", "100.0", "0.0", "" + timeFormat.parse("20130210 10:20:00").getTime(),
-                                  "" + timeFormat.parse("20130210 11:00:00").getTime());
+                                  "50.0", "100.0", "0.0", "" + dateAndTimeFormat.parse("20130210 10:20:00").getTime(),
+                                  "" + dateAndTimeFormat.parse("20130210 11:00:00").getTime());
         checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "1", "0", "300000", "100.0", "100.0", "100.0",
-                                  "0.0", "100.0", "0.0", "100.0", "" + timeFormat.parse("20130210 10:00:00").getTime(),
-                                  "" + timeFormat.parse("20130210 10:00:00").getTime());
+                                  "0.0", "100.0", "0.0", "100.0", "" + dateAndTimeFormat.parse("20130210 10:00:00").getTime(),
+                                  "" + dateAndTimeFormat.parse("20130210 10:00:00").getTime());
     }
 
     @Test

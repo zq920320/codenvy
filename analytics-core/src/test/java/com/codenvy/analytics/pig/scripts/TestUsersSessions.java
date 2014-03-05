@@ -22,6 +22,7 @@ import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.Parameters;
@@ -43,6 +44,10 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersSessions extends BaseTest {
 
+    private static final String COLLECTION          = TestUsersSessions.class.getSimpleName().toLowerCase();
+    private static final String COLLECTION_PROFILES = TestUsersSessions.class.getSimpleName().toLowerCase() + "prof";
+    private static final String COLLECTION_STATS    = TestUsersSessions.class.getSimpleName().toLowerCase() + "stat";
+
     @BeforeClass
     public void prepare() throws Exception {
         Map<String, String> params = Utils.newContext();
@@ -60,22 +65,19 @@ public class TestUsersSessions extends BaseTest {
                                 .withTime("20:00:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
                                 .withTime("20:05:00").build());
+        events.add(Event.Builder.createUserSSOLoggedOutEvent("user@gmail.com").withDate("2013-11-01")
+                                .withTime("20:06:00").build());
+
 
         // sessions #3 - 120s
         events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                                .withDate("2013-11-01").withTime("18:00:00").build());
+                                .withDate("2013-11-01").withTime("19:30:00").build());
         events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "ws2", "ide", "3")
-                                .withDate("2013-11-01").withTime("18:02:00").build());
+                                .withDate("2013-11-01").withTime("19:32:00").build());
 
         // by mistake
         events.add(Event.Builder.createSessionFinishedEvent("user@gmail.com", "ws1", "ide", "2").withDate("2013-11-01")
                                 .withTime("20:25:00").build());
-
-        // session will be ignored,
-        events.add(Event.Builder.createSessionStartedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
-                                .withDate("2013-11-01").withTime("20:00:00").build());
-        events.add(Event.Builder.createSessionFinishedEvent("ANONYMOUSUSER_user11", "tmp-1", "ide", "4")
-                                .withDate("2013-11-01").withTime("20:05:00").build());
 
         events.add(Event.Builder.createUserUpdateProfile("user@gmail.com", "", "", "company", "", "")
                                 .withDate("2013-11-01").build());
@@ -84,23 +86,64 @@ public class TestUsersSessions extends BaseTest {
 
         Parameters.FROM_DATE.put(params, "20131101");
         Parameters.TO_DATE.put(params, "20131101");
-        Parameters.USER.put(params, Parameters.USER_TYPES.REGISTERED.name());
+        Parameters.USER.put(params, Parameters.USER_TYPES.ANY.name());
         Parameters.WS.put(params, Parameters.WS_TYPES.ANY.name());
-        Parameters.STORAGE_TABLE.put(params, "testuserssessions-profiles");
+        Parameters.STORAGE_TABLE.put(params, COLLECTION_PROFILES);
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         pigServer.execute(ScriptType.USERS_UPDATE_PROFILES, params);
 
-        Parameters.STORAGE_TABLE.put(params, "testuserssessions");
-        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, "testuserssessions-stat");
-        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, "testuserssessions-profiles");
+        Parameters.STORAGE_TABLE.put(params, COLLECTION);
+        Parameters.STORAGE_TABLE_USERS_STATISTICS.put(params, COLLECTION_STATS);
+        Parameters.STORAGE_TABLE_USERS_PROFILES.put(params, COLLECTION_PROFILES);
         Parameters.LOG.put(params, log.getAbsolutePath());
 
         pigServer.execute(ScriptType.PRODUCT_USAGE_SESSIONS, params);
     }
 
     @Test
-    public void shouldReturnListOfSessions() throws Exception {
+    public void shouldReturnSessionsListForAnonUser() throws Exception {
+        Map<String, String> context = Utils.newContext();
+        Parameters.FROM_DATE.put(context, "20131101");
+        Parameters.TO_DATE.put(context, "20131101");
+        Parameters.SORT.put(context, "+date");
+        MetricFilter.USER.put(context, "ANONYMOUSUSER_user11");
+
+        Metric metric = new TestProductUsageSessionsList();
+
+        ListValueData valueData = (ListValueData)metric.getValue(context);
+        assertEquals(2, valueData.size());
+
+        MapValueData items = (MapValueData)valueData.getAll().get(0);
+        assertEquals(items.getAll().get("start_time"),
+                     LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:00:00,000").getTime()));
+        assertEquals(items.getAll().get("end_time"),
+                     LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:04:00,000").getTime()));
+        assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("1"));
+        assertEquals(items.getAll().get("time"), LongValueData.valueOf(4 * 60 * 1000));
+        assertEquals(items.getAll().get("domain"), StringValueData.valueOf(""));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws1"));
+        assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
+        assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
+
+        items = (MapValueData)valueData.getAll().get(1);
+        assertEquals(items.getAll().get("start_time"),
+                     LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:30:00,000").getTime()));
+        assertEquals(items.getAll().get("end_time"),
+                     LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:32:00,000").getTime()));
+        assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("3"));
+        assertEquals(items.getAll().get("time"), LongValueData.valueOf(2 * 60 * 1000));
+        assertEquals(items.getAll().get("domain"), StringValueData.valueOf(""));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws2"));
+        assertEquals(items.getAll().get("user_company"), StringValueData.valueOf(""));
+        assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
+
+        metric = new TestProductUsageSessions();
+        assertEquals(metric.getValue(context), LongValueData.valueOf(2));
+    }
+
+    @Test
+    public void shouldReturnSessionsListForRegisteredUser() throws Exception {
         Map<String, String> context = Utils.newContext();
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
@@ -113,16 +156,18 @@ public class TestUsersSessions extends BaseTest {
 
         MapValueData items = (MapValueData)valueData.getAll().get(0);
         assertEquals(items.getAll().get("start_time"),
-                     LongValueData.valueOf(fullTimeFormat.parse("2013-11-01 20:00:00,000").getTime()));
+                     LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 20:00:00,000").getTime()));
         assertEquals(items.getAll().get("end_time"),
-                     LongValueData.valueOf(fullTimeFormat.parse("2013-11-01 20:05:00,000").getTime()));
-        assertEquals(items.getAll().get("session_id").getAsString(), "2");
-        assertEquals(items.getAll().get("time").getAsString(), "300000");
-        assertEquals(items.getAll().get("domain").getAsString(), "gmail.com");
-        assertEquals(items.getAll().get("user_company").getAsString(), "company");
+                     LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 20:06:00,000").getTime()));
+        assertEquals(items.getAll().get("session_id"), StringValueData.valueOf("2"));
+        assertEquals(items.getAll().get("ws"), StringValueData.valueOf("ws1"));
+        assertEquals(items.getAll().get("time"), LongValueData.valueOf(360000));
+        assertEquals(items.getAll().get("domain"), StringValueData.valueOf("gmail.com"));
+        assertEquals(items.getAll().get("user_company"), StringValueData.valueOf("company"));
+        assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(60 * 1000));
 
         metric = new TestProductUsageSessions();
-        assertEquals(metric.getValue(context).getAsString(), "1");
+        assertEquals(metric.getValue(context), LongValueData.valueOf(1));
     }
 
     @Test
@@ -141,18 +186,19 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(metric.getValue(context).getAsString(), "0");
     }
 
+    //----------------- Tested Metrics
+
     private class TestProductUsageSessions extends ProductUsageSessions {
         @Override
         public String getStorageCollectionName() {
-            return "testuserssessions";
+            return COLLECTION;
         }
     }
 
     private class TestProductUsageSessionsList extends ProductUsageSessionsList {
-
         @Override
         public String getStorageCollectionName() {
-            return "testuserssessions";
+            return COLLECTION;
         }
     }
 }

@@ -133,13 +133,6 @@ public class Event {
             return new Builder().withParam("EVENT", "tenant-created").withParam("WS", ws).withParam("USER", user);
         }
 
-        public static Builder createRunnerTotalTimeEvent(String ws, String user, String time) {
-            return new Builder().withParam("EVENT", "runner-total-time")
-                                .withParam("WS", ws)
-                                .withParam("USER", user)
-                                .withParam("TIME", time);
-        }
-
         public static Builder createProjectBuiltEvent(String user, String ws, String session, String project,
                                                       String type) {
             return new Builder().withContext(user, ws, session).withParam("EVENT", "project-built")
@@ -241,6 +234,10 @@ public class Event {
                                 .withParam("WS", wsParam)
                                 .withParam("USER", userParam)
                                 .withParam("FROM", from);
+        }
+
+        public static Builder createUserSSOLoggedOutEvent(String user) {
+            return new Builder().withParam("EVENT", "user-sso-logged-out").withParam("USER", user);
         }
 
         public static Builder createUserSSOLoggedInEvent(String user, String using) {

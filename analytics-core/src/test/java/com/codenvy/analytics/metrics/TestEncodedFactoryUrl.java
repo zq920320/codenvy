@@ -143,8 +143,8 @@ public class TestEncodedFactoryUrl extends BaseTest {
                                   "0.0",
                                   "100.0",
                                   "0.0",
-                                  "" + timeFormat.parse("20130210 11:00:00").getTime(),
-                                  "" + timeFormat.parse("20130210 11:00:00").getTime());
+                                  "" + dateAndTimeFormat.parse("20130210 11:00:00").getTime(),
+                                  "" + dateAndTimeFormat.parse("20130210 11:00:00").getTime());
     }
 
     private void checkTopFactoriesDataItem(MapValueData item,
