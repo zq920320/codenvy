@@ -152,7 +152,7 @@ function Configuration() {
         userOverview: {
             widgetLabel: "User Overview",
             presenterType: "VerticalTablePresenter",
-            modelViewName: "users",
+            modelViewName: "user",
             isNeedToSaveInHistory: false,
         },
 

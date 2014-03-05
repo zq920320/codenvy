@@ -56,7 +56,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     public static final String RUN_TIME     = "run_time";
     public static final String BUILD_TIME   = "build_time";
     public static final String PAAS_DEPLOYS = "paas_deploys";
-    public static final String JOINED_USERS = "joined-users";
+    public static final String JOINED_USERS = "joined_users";
 
     public UsersStatisticsList() {
         super(MetricType.USERS_STATISTICS_LIST);
@@ -107,6 +107,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(PAAS_DEPLOYS, new BasicDBObject("$sum", "$" + PAAS_DEPLOYS));
+        group.put(JOINED_USERS, new BasicDBObject("$sum", "$" + JOINED_USERS));
 
         DBObject project = new BasicDBObject();
         project.put(USER, "$" + ID);
@@ -123,6 +124,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
         project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);
+        project.put(JOINED_USERS, "$" + JOINED_USERS);        
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};

@@ -32,6 +32,7 @@
 				<parameter key="fields"
 					value="ws,sessions,time,time_build,time_run,projects,builds,debugs,deploys,factories,joined_users" />
 				<parameter key="time-fields" value="time,time_build,time_run" />
+                <parameter key="display_zero_values" value="true"/>
 			</row>
 		</section>
 	</view>

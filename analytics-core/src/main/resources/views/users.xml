@@ -31,6 +31,21 @@
         </section>
     </view>
 
+    <view name="user" on-demand="true">
+        <section name="user">
+            <row class="com.codenvy.analytics.services.view.TitleRow">
+                <parameter key="titles" value="Email,First Name,Last Name,Company,Phone,Job,# Sessions,# Usage Time,# Projects"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_statistics_list"/>
+                <parameter key="fields"
+                           value="user,user_first_name,user_last_name,user_company,user_phone,user_job,sessions,time,projects"/>
+                <parameter key="time-fields" value="time"/>
+                <parameter key="display_zero_values" value="true"/>
+            </row>
+        </section>
+    </view>
+
     <view name="user_data" on-demand="true">
         <section name="user_data">
             <row class="com.codenvy.analytics.services.view.TitleRow">

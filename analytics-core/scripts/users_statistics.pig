@@ -44,7 +44,7 @@ e = FOREACH e1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('us
 STORE e INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 f1 = filterByEvent(l, 'user-added-to-ws');
-f = FOREACH f1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('joined-users', 1), TOTUPLE('ide', ide);
+f = FOREACH f1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('joined_users', 1), TOTUPLE('ide', ide);
 STORE f INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 n1 = filterByEvent(l, 'project-created');

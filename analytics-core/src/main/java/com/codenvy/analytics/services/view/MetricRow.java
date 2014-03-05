@@ -53,10 +53,10 @@ public class MetricRow extends AbstractRow {
     private static final String FIELDS = "fields";
 
     /** The names of fields of multi-valued metric which should be formatted corresponding to their type. */
-    private static final String BOOLEAN_FIELDS = "boolean-fields";
-    private static final String DATE_FIELDS    = "date-fields";
-    private static final String TIME_FIELDS    = "time-fields";
-    private static final String EVENT_FIELDS   = "event-fields";
+    private static final String BOOLEAN_FIELDS          = "boolean-fields";
+    private static final String DATE_FIELDS             = "date-fields";
+    private static final String TIME_FIELDS             = "time-fields";
+    private static final String EVENT_FIELDS            = "event-fields";
 
     /**
      * Indicates if single-value should be treated as time and formatted in appropriate way.
@@ -76,6 +76,8 @@ public class MetricRow extends AbstractRow {
      */
     private static final String NUMERIC_FORMAT = "numeric-format";
 
+    private static final String DISPLAY_ZERO_VALUES = "display_zero_values";
+    
     private final Metric              metric;
     private final String              numericFormat;
     private final String[]            fields;
@@ -85,6 +87,7 @@ public class MetricRow extends AbstractRow {
     private final Map<String, String> timeFields;
     private final List<String>        eventFields;
     private final boolean             isTimeField;
+    private final boolean             displayZeroValues;
 
     private final EventsHolder eventsHolder;
 
@@ -112,6 +115,10 @@ public class MetricRow extends AbstractRow {
 
         hideNegativeValues = parameters.containsKey(HIDE_NEGATIVE_VALUES) &&
                              Boolean.parseBoolean(parameters.get(HIDE_NEGATIVE_VALUES));
+        
+        displayZeroValues = parameters.containsKey(DISPLAY_ZERO_VALUES) &&
+            Boolean.parseBoolean(parameters.get(DISPLAY_ZERO_VALUES));
+        
         booleanFields =
                 parameters.containsKey(BOOLEAN_FIELDS) ? Arrays.asList(parameters.get(BOOLEAN_FIELDS).split(","))
                                                        : new ArrayList<String>();
@@ -135,7 +142,7 @@ public class MetricRow extends AbstractRow {
 
         eventFields = parameters.containsKey(EVENT_FIELDS) ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
                                                            : new ArrayList<String>();
-
+        
         isTimeField = parameters.containsKey(TIME_FIELD) && Boolean.parseBoolean(parameters.get(TIME_FIELD));
     }
 
@@ -206,10 +213,15 @@ public class MetricRow extends AbstractRow {
             double value = ((LongValueData)valueData).getAsDouble();
 
             ValueData formattedValue;
-            if (value == 0 || (value < 0 && hideNegativeValues)) {
+            if (value < 0 && hideNegativeValues) {
                 formattedValue = StringValueData.DEFAULT;
+                
+            } else if (value == 0 && !displayZeroValues) {
+                formattedValue = StringValueData.DEFAULT;
+                
             } else if (isTimeField) {
                 formattedValue = formatTimeValue(valueData, DEFAULT_TIME_FORMAT);
+                
             } else {
                 formattedValue = new StringValueData(String.format(numericFormat, value));
             }
@@ -220,8 +232,12 @@ public class MetricRow extends AbstractRow {
             double value = ((DoubleValueData)valueData).getAsDouble();
 
             ValueData formattedValue;
-            if (value == 0 || Double.isInfinite(value) || Double.isNaN(value) || (value < 0 && hideNegativeValues)) {
+            if (Double.isInfinite(value) || Double.isNaN(value) || (value < 0 && hideNegativeValues)) {
                 formattedValue = StringValueData.DEFAULT;
+
+            } else if (value == 0 && !displayZeroValues) {
+                formattedValue = StringValueData.DEFAULT;                
+                
             } else {
                 formattedValue = new StringValueData(String.format(numericFormat, value));
             }
