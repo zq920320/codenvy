@@ -28,7 +28,8 @@
 ANALYTICS_OPTS="-Dcodenvy.local.conf.dir=${CODENVY_LOCAL_CONF_DIR} \
                 -Dorganization.application.server.url=${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL} \
                 -Danalytics.logback.smtp-appender.configuration=${CODENVY_LOCAL_CONF_DIR}/logback-smtp-appender.xml \
-                -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
+                -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs \
+                -Dtomcat.users=${CATALINA_HOME}/conf/tomcat-users.xml"
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
 SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf"
 

@@ -140,7 +140,6 @@
                                         <!-- Set basic authentication mechanism -->
                                         <unwar dest="${project.build.directory}/packager-conf/war/analytics-application" src="${project.build.directory}/packager-conf/war/analytics-application.war" />
                                         <copy file="src/main/resources/analytics-application-basic-auth.web.xml" overwrite="true" tofile="${project.build.directory}/packager-conf/war/analytics-application/WEB-INF/web.xml" />
-                                        <copy file="src/main/resources/analytics-application-basic-auth.context.xml" overwrite="true" tofile="${project.build.directory}/packager-conf/war/analytics-application/META-INF/context.xml" />
                                         <war destfile="${project.build.directory}/analytics-tomcat/webapps/analytics.war" needxmlfile="true">
                                             <fileset dir="${project.build.directory}/packager-conf/war/analytics-application" />
                                         </war>

@@ -31,17 +31,12 @@ import com.codenvy.api.core.rest.annotations.GenerateLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-
+import javax.ws.rs.core.*;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +44,7 @@ import java.util.Map;
 
 /**
  * Service is responsible for processing REST requests for analytics data.
- * Private API. No authentication is required.
+ * Private API.
  *
  * @author Anatoliy Bazko
  */
@@ -66,6 +61,7 @@ public class AnalyticsPrivate {
     @GET
     @Path("metric/{name}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"analytics-admin"})
     public Response getValue(@PathParam("name") String metricName,
                              @QueryParam("page") String page,
                              @QueryParam("per_page") String perPage,
@@ -94,6 +90,7 @@ public class AnalyticsPrivate {
     @Path("/metric/user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"analytics-admin"})
     public Response getUserValues(List<String> metricNames,
                              @Context UriInfo uriInfo,
                              @Context SecurityContext securityContext) {
@@ -121,6 +118,7 @@ public class AnalyticsPrivate {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("metricinfo/{name}")
+    @RolesAllowed({"analytics-admin"})
     public Response getInfo(@PathParam("name") String metricName, 
                              @Context UriInfo uriInfo,
                              @Context SecurityContext securityContext) {
@@ -143,6 +141,7 @@ public class AnalyticsPrivate {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("metricinfo")
+    @RolesAllowed({"analytics-admin"})
     public Response getAllInfo(@Context UriInfo uriInfo,
                                @Context SecurityContext securityContext) {
         try {

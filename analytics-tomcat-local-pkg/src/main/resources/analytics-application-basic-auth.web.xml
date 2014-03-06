@@ -84,19 +84,45 @@
 
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>analytics</web-resource-name>
-            <url-pattern>/*</url-pattern>
+            <web-resource-name>Analytics-API</web-resource-name>
+            <url-pattern>/api/analytics-private/*</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>user</role-name>
+            <role-name>analytics-admin</role-name>
         </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
     </security-constraint>
 
     <login-config>
         <auth-method>BASIC</auth-method>
+        <realm-name>Analytics</realm-name>
     </login-config>
+
+    <security-role>
+        <role-name>analytics-admin</role-name>
+    </security-role>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Analytics</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>user</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 
     <security-role>
         <role-name>user</role-name>
     </security-role>
+
 </web-app>

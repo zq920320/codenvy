@@ -27,10 +27,9 @@
       <!.. ..> that surrounds them.
     -->
     <role rolename="user"/>
-    <role rolename="system/admin"/>
-    <role rolename="system/manager"/>
-    <user username="admin" password="admin" roles="user"/>
-    <user username="admin@codenvy.com" password="admin" roles="user"/>
+    <role rolename="analytics-admin"/>
+    <user username="admin" password="admin" roles="user,analytics-admin"/>
+    <user username="admin@codenvy.com" password="admin" roles="user,analytics-admin"/>
     <user username="admin@gmail.com" password="admin" roles="user"/>
     <user username="kwfvltbop@exzl.bfz" password="admin" roles="user"/>
 </tomcat-users>
