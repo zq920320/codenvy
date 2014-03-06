@@ -215,6 +215,9 @@
                                 <exclude>com/codenvy/analytics/**/TestAcceptance.java</exclude>
                                 <exclude>com/codenvy/analytics/**/LoadTestMongoIndexes.java</exclude>
                             </excludes>
+                            <systemPropertyVariables>
+                                <organization.application.server.url>http://localhost:8080/organization</organization.application.server.url>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>
