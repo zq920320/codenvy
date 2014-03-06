@@ -16,7 +16,8 @@
          is strictly forbidden unless prior written permission is obtained
          from Codenvy S.A..
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>analytics-parent</artifactId>
@@ -214,42 +215,10 @@
                                 <exclude>com/codenvy/analytics/**/TestAcceptance.java</exclude>
                                 <exclude>com/codenvy/analytics/**/LoadTestMongoIndexes.java</exclude>
                             </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>acceptance</id>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <includes>
-                            <include>**/*</include>
-                        </includes>
-                    </resource>
-                    <resource>
-                        <directory>src/main/java</directory>
-                    </resource>
-                </resources>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                        <includes>
-                            <include>**/*</include>
-                        </includes>
-                    </testResource>
-                </testResources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>com/codenvy/analytics/**/TestLogCollector.java</exclude>
-                                <exclude>com/codenvy/analytics/**/LoadTestMongoIndexes.java</exclude>
-                            </excludes>
+                            <systemPropertyVariables>
+                                <organization.application.implementation>inmemory</organization.application.implementation>
+                                <organization.application.server.url>http://localhost:8080/organization</organization.application.server.url>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -257,3 +226,5 @@
         </profile>
     </profiles>
 </project>
+
+
