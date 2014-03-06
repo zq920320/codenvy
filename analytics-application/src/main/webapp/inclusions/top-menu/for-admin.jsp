@@ -14,7 +14,7 @@
  is strictly forbidden unless prior written permission is obtained
  from Codenvy S.A.. 
 --%>
-<%@page import="com.codenvy.analytics.util.FrontEndUtil" %>  
+<%@page import="com.codenvy.analytics.util.FrontEndUtil" %>
 
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
@@ -26,10 +26,10 @@
             <div class="left">
 				<a class="nav" href="/analytics/pages/users-view.jsp" id="topmenu-users">Users</a>
                 <a class="nav" href="/analytics/pages/sessions-view.jsp?sort=-start_time" id="topmenu-sessions">Sessions</a>
-				<a class="nav" href="/analytics/pages/workspaces-view.jsp?sort=%2Bws" id="topmenu-workspaces">Workspaces</a> 
-				<a class="nav" href="#">Projects</a> 
-				<a class="nav" href="#">Factories</a>
-	
+				<a class="nav" href="/analytics/pages/workspaces-view.jsp?sort=%2Bws" id="topmenu-workspaces">Workspaces</a>
+				<%--<a class="nav" href="#">Projects</a> --%>
+				<%--<a class="nav" href="#">Factories</a>--%>
+
 				<div class="nav">
 					<div>
 						<button id="topmenu-reports">Reports</button>
@@ -45,20 +45,20 @@
 					    <li><a href="/analytics/pages/reports/factory-statistics.jsp" id="topmenu-reports-factories">Factory</a></li>
 					    <li><a href="/analytics/pages/reports/top-metrics.jsp" id="topmenu-reports-top_metrics">Top Metrics</a></li>
 					    <li><a href="/analytics/pages/reports/analysis.jsp" id="topmenu-reports-analysis">Analysis</a></li>
-				    </ul>	    
+				    </ul>
 				</div>
 		    </div>
 
-			<div class="right">			
-                <div class="nav">                
+			<div class="right">
+                <div class="nav">
                     <div>
                         <button id="topmenu-preferences">Preferences</button>
                     </div>
                     <ul class="dropdown-menu" id="ide-version" targetWidgets="_all">
 	                    <li><a class="command-btn" default>IDE<i>2</i> & IDE<i>3</i></a></li>
-	                    <li><a class="command-btn" value="2">IDE<i>2</i> only</a></li>                    
+	                    <li><a class="command-btn" value="2">IDE<i>2</i> only</a></li>
 	                    <li><a class="command-btn" value="3">IDE<i>3</i> only</a></li>
-                    </ul> 
+                    </ul>
                 </div>
 
 				<div class="nav">
@@ -84,15 +84,15 @@
 	    analytics.views.topMenu.turnOnNavButtons();
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-reports", false);    // turn-on reports menu button
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-user", true);    // turn-on user menu button
-	    
+
 	    analytics.views.topMenu.turnOnDropdownButton("topmenu-preferences", false);    // turn-on preferences menu button
-	    
+
 	    // select menu items connected to page where top menu is displaying
-	<%  if (request.getParameterValues("selectedMenuItemId") != null) { 
+	<%  if (request.getParameterValues("selectedMenuItemId") != null) {
 	        String[] menuItemIds = request.getParameterValues("selectedMenuItemId");
-	        for (int i = 0; i < menuItemIds.length; i++) { 
+	        for (int i = 0; i < menuItemIds.length; i++) {
 	%>
-	    analytics.views.topMenu.selectMenuItem("<%= menuItemIds[i]%>");  
+	    analytics.views.topMenu.selectMenuItem("<%= menuItemIds[i]%>");
 	<%      }
 	    }
 	%>
