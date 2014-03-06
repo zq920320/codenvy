@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.security.RolesAllowed;
+import javax.naming.directory.BasicAttribute;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
@@ -35,9 +37,11 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.organization.client.WorkspaceManager;
 import com.codenvy.organization.exception.OrganizationServiceException;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -74,7 +78,6 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
                             TIME,
                             SESSIONS,
                             INVITES,
-                            LOGINS,
                             RUN_TIME,
                             BUILD_TIME,
                             PAAS_DEPLOYS,
@@ -82,14 +85,22 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
     }
 
     @Override
-    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {        
         DBObject filter = super.getFilter(clauses);
 
-        DBObject match = (DBObject)filter.get("$match");
-        if (match.get(WS) == null) {
+        BasicDBObject match = (BasicDBObject)filter.get("$match");
+        
+        // filter temporary workspaces and "default" workspace
+        BasicDBObject wsMatch = (BasicDBObject) match.get(WS);
+        if (wsMatch == null) {
             match.put(WS, PERSISTENT_WS);
+        } else {
+            // create pattern like "(?=^(?!(TMP-|DEFAULT)).*)(?=targetWorkspace)"
+            String persistentWsAndTargetWorkspace = String.format("(?=%1$s)(?=%2$s)", PERSISTENT_WS.pattern(), Parameters.WS.get(clauses));
+            Pattern persistentWsAndTargetWorkspacePattern = Pattern.compile(persistentWsAndTargetWorkspace, Pattern.CASE_INSENSITIVE);
+            match.put(WS, persistentWsAndTargetWorkspacePattern);
         }
-
+ 
         return filter;
     }
 
@@ -106,7 +117,6 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         group.put(TIME, new BasicDBObject("$sum", "$" + TIME));
         group.put(SESSIONS, new BasicDBObject("$sum", "$" + SESSIONS));
         group.put(INVITES, new BasicDBObject("$sum", "$" + INVITES));
-        group.put(LOGINS, new BasicDBObject("$sum", "$" + LOGINS));
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(PAAS_DEPLOYS, new BasicDBObject("$sum", "$" + PAAS_DEPLOYS));
@@ -123,7 +133,6 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         project.put(TIME, "$" + TIME);
         project.put(SESSIONS, "$" + SESSIONS);
         project.put(INVITES, "$" + INVITES);
-        project.put(LOGINS, "$" + LOGINS);
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
         project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);
