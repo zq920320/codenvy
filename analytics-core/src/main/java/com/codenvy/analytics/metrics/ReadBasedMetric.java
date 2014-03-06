@@ -87,7 +87,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         if (getClass().isAnnotationPresent(FilterRequired.class)) {
             MetricFilter requiredFilter = getClass().getAnnotation(FilterRequired.class).value();
             if (!requiredFilter.exists(context)) {
-                throw new MetricRestrictionException( 
+                throw new MetricRestrictionException(
                         "Parameter " + requiredFilter + " required to be passed to get the value of the metric");
             }
         }
@@ -137,7 +137,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         for (MetricFilter filter : Utils.getFilters(clauses)) {
             String[] values;
 
-            if (filter == MetricFilter.USER_COMPANY 
+            if (filter == MetricFilter.USER_COMPANY
                 || filter == MetricFilter.USER_FIRST_NAME
                 || filter == MetricFilter.USER_LAST_NAME) {
                 values = getUsers(filter, filter.get(clauses));
