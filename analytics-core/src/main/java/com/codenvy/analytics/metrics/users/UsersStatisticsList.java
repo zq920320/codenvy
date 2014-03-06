@@ -17,11 +17,16 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import static com.mongodb.util.MyAsserts.assertEquals;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.security.RolesAllowed;
 
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -32,14 +37,6 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-
-import javax.annotation.security.RolesAllowed;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -56,7 +53,6 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     public static final String RUN_TIME     = "run_time";
     public static final String BUILD_TIME   = "build_time";
     public static final String PAAS_DEPLOYS = "paas_deploys";
-    public static final String JOINED_USERS = "joined_users";
 
     public UsersStatisticsList() {
         super(MetricType.USERS_STATISTICS_LIST);
@@ -82,12 +78,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
                             LOGINS,
                             RUN_TIME,
                             BUILD_TIME,
-                            PAAS_DEPLOYS,
-                            USER_FIRST_NAME,
-                            USER_LAST_NAME,
-                            USER_COMPANY,
-                            USER_JOB,
-                            USER_PHONE};
+                            PAAS_DEPLOYS};
     }
 
     @Override
@@ -107,7 +98,6 @@ public class UsersStatisticsList extends AbstractListValueResulted {
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(PAAS_DEPLOYS, new BasicDBObject("$sum", "$" + PAAS_DEPLOYS));
-        group.put(JOINED_USERS, new BasicDBObject("$sum", "$" + JOINED_USERS));
 
         DBObject project = new BasicDBObject();
         project.put(USER, "$" + ID);
@@ -123,8 +113,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
         project.put(LOGINS, "$" + LOGINS);
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
-        project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);
-        project.put(JOINED_USERS, "$" + JOINED_USERS);        
+        project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);        
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};

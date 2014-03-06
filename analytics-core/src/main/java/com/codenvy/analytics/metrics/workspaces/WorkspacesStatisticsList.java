@@ -17,26 +17,37 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
+import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.security.RolesAllowed;
+
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.organization.client.WorkspaceManager;
 import com.codenvy.organization.exception.OrganizationServiceException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Map;
-
-import static com.codenvy.analytics.metrics.users.UsersStatisticsList.*;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 public class WorkspacesStatisticsList extends AbstractListValueResulted {
-
+    
+    public static final String USERS = "users";
+    public static final String JOINED_USERS = "joined_users";
+    
     public WorkspacesStatisticsList() {
         super(MetricType.WORKSPACES_STATISTICS_LIST);
     }
@@ -66,7 +77,8 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
                             LOGINS,
                             RUN_TIME,
                             BUILD_TIME,
-                            PAAS_DEPLOYS};
+                            PAAS_DEPLOYS,
+                            JOINED_USERS};
     }
 
     @Override
@@ -98,6 +110,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         group.put(RUN_TIME, new BasicDBObject("$sum", "$" + RUN_TIME));
         group.put(BUILD_TIME, new BasicDBObject("$sum", "$" + BUILD_TIME));
         group.put(PAAS_DEPLOYS, new BasicDBObject("$sum", "$" + PAAS_DEPLOYS));
+        group.put(JOINED_USERS, new BasicDBObject("$sum", "$" + JOINED_USERS));
 
         DBObject project = new BasicDBObject();
         project.put(WS, "$" + ID);
@@ -114,28 +127,46 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
         project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);
+        project.put(JOINED_USERS, "$" + JOINED_USERS);
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
     }
 
-    @Override
-    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
-        String ws = MetricFilter.WS.get(clauses);
-        if (ws != null) {
-
-            try {
-                WorkspaceManager workspaceManager = organizationClient.getWorkspaceManager();
-                int members = workspaceManager.getWorkspaceMembers(ws).size();
-            } catch (OrganizationServiceException e) {
-                throw new IOException(e);
-            }
-
-            // TODO
-
-            return valueData;
-        } else {
-            return valueData;
-        }
-    }
+//    @Override
+//    protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+//        String wsName = MetricFilter.WS.get(clauses);
+//        
+//        if (wsName != null) {
+//            int wsMemberCount = getWsUserCount(wsName);
+//            
+//            List<ValueData> value = new ArrayList<>();
+//            ListValueData listValueData = (ListValueData)valueData;
+//            
+//            for (ValueData items : listValueData.getAll()) {
+//                MapValueData prevItems = (MapValueData)items;
+//                Map<String, ValueData> newItems = new HashMap<>(prevItems.getAll());
+//
+//                // add workspace user number
+//                newItems.put(USERS, LongValueData.valueOf(wsMemberCount));
+//
+//                value.add(new MapValueData(newItems));
+//            }
+//
+//            return new ListValueData(value); 
+//            
+//        } else {
+//            return valueData;
+//        }
+//    }
+//
+//    
+//    private int getWsUserCount(String wsName) throws IOException {
+//        try {
+//            WorkspaceManager workspaceManager = organizationClient.getWorkspaceManager();
+//            return workspaceManager.getWorkspaceMembers(wsName).size();
+//        } catch (OrganizationServiceException e) {
+//            throw new IOException(e);
+//        }
+//    }
 }

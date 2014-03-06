@@ -71,6 +71,9 @@ public class TestUsersData extends BaseTest {
         events.add(Event.Builder.createSessionFinishedEvent("user3@gmail.com", "ws2", "ide", "2").withDate("2013-11-01")
                                 .withTime("19:02:00").build());
 
+        events.add(Event.Builder.createUserAddedToWsEvent("user2@gmail.com", "ws2", "id1", "", "", "")
+                                .withDate("2013-11-01")
+                                .withTime("19:07:00").build());
         events.add(Event.Builder.createRunStartedEvent("user2@gmail.com", "ws2", "project", "type", "id1")
                                 .withDate("2013-11-01")
                                 .withTime("19:08:00,155").build());
