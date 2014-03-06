@@ -19,6 +19,7 @@ package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.organization.client.AccountManager;
+import com.codenvy.organization.client.WorkspaceManager;
 import com.codenvy.organization.exception.OrganizationServiceException;
 
 import org.slf4j.Logger;
@@ -34,17 +35,23 @@ public class OrganizationClient {
     private static final Logger LOG                                 = LoggerFactory.getLogger(OrganizationClient.class);
     private static final String ORGANIZATION_APPLICATION_SERVER_URL = "organization.application.server.url";
 
-    private final AccountManager accountManager;
+    private final AccountManager   accountManager;
+    private final WorkspaceManager workspaceManager;
 
     @Inject
     public OrganizationClient(Configurator configurator) throws OrganizationServiceException {
         System.setProperty(ORGANIZATION_APPLICATION_SERVER_URL,
                            configurator.getString(ORGANIZATION_APPLICATION_SERVER_URL));
-        accountManager = new AccountManager();
 
+        accountManager = new AccountManager();
+        workspaceManager = new WorkspaceManager();
     }
 
     public AccountManager getAccountManager() {
         return accountManager;
+    }
+
+    public WorkspaceManager getWorkspaceManager() {
+        return workspaceManager;
     }
 }
