@@ -506,6 +506,12 @@
             showSupportLink(paid);
             },
 
+            // Changing login page behavior if authtype=ldap
+            isAuthtypeLdap : function() {
+                var type = getQueryParameterByName("authtype");
+                return type;
+
+            },
 
             waitForTenant : function(success, error){
                 //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js

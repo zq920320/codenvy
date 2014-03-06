@@ -26,6 +26,9 @@
                 initialize : function(attributes){
                     AccountFormBase.prototype.initialize.apply(this,attributes);
                     Account.supportTab();
+                    if (Account.isAuthtypeLdap()){
+                        $(".email").attr("placeholder", "Type your login here").removeClass("email");}
+                    
                     //bind onclick to Google and GitHub buttons
                     $(".oauth-button.google").click(function(){
                         Account.loginWithGoogle("Login page", function(url){
@@ -41,16 +44,18 @@
                 },
 
                 __validationRules : function(){
-                    return {
-                        password : {
-                            required: true
-                        },
-                        email: {
+                    var rule = {};
+                    rule.password = {required: true};
+                    if (Account.isAuthtypeLdap){
+                        rule.email = {required: true};
+                    } else {
+                        rule.email = {
                             required: true,
                             checkEmail : true,
                             email: true
-                        }
-                    };
+                        };
+                    }
+                    return rule;
                 },
 
                 __submit : function(){
