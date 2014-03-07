@@ -228,7 +228,7 @@ function Main() {
        for(var i in widgetNames) {
            var widgetName = widgetNames[i];
            if (jQuery("#" + widgetName).doesExist()) {
-               if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory")) {       
+/*               if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory")) {       
                    // update div when navigating in history
                    var everPushedSomething = false;
                    var initialUrl = window.location.href;
@@ -248,7 +248,7 @@ function Main() {
                           loadWidget(event.state.widgetName, params);
                       }
                    });
-               }
+               }*/
                
                loadWidget(widgetName, params);
            }

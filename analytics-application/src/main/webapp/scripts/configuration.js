@@ -346,6 +346,8 @@ function Configuration() {
     /** url params which are passed from other pages */
     var crossPageParams = [
         "user",        // users-view > user-view; workspace-view > user-view
+        "sort",        // users-view > users-view; workspaces-view > workspaces-view
+        "page",        // user-view > user-view; users-view > users-view; workspaces-view > workspaces-view; workspace-view > workspace-view
         "session_id",  // user-view > session-view; workspace-view > session-view
         "ws",          // workspaces-view > workspace-view; user-view > workspace-view
     ];

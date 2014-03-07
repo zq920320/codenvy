@@ -96,12 +96,12 @@ public class UsersActivityList extends AbstractListValueResulted {
                     } else {
                         // taking into account the date of last event from previous page
                         if (Parameters.PAGE.exists(clauses) && Parameters.PER_PAGE.exists(clauses)) {
-                            long eventNumber = (Parameters.PAGE.getAsLong(clauses) - 1) * Parameters.PER_PAGE.getAsLong(clauses) + rowNumber;
+                            int eventNumber = (int) ((Parameters.PAGE.getAsLong(clauses) - 1) * Parameters.PER_PAGE.getAsLong(clauses) + rowNumber + 1);
                             long previousEventData = getDateOfEvent(clauses, eventNumber - 1);  // get date of previous event by requesting to database
                             time = date - previousEventData;
                         } else {
                             time = 0;
-                        }
+                        } 
                     }
                 } else {
                     time = date - prevActionStartDate;
@@ -123,21 +123,21 @@ public class UsersActivityList extends AbstractListValueResulted {
             addArtificialActions(clauses, sessionData, list2Return);
         }
 
-        return new ListValueData(list2Return);
+        return new ListValueData(list2Return); 
     }
 
     /**
      * Returns date of event from USERS_ACTIVITY_LIST
      * @param eventNumber starting from 0 
      */
-    private long getDateOfEvent(Map<String, String> clauses, long eventNumber) throws IOException {
+    private long getDateOfEvent(Map<String, String> clauses, int eventNumber) throws IOException {
         if (eventNumber <= 0) {
             return 0;  // first event time = 0
         }
         
         Map<String, String> context = Utils.clone(clauses);
-        Parameters.PAGE.put(context, eventNumber);
-        Parameters.PER_PAGE.put(context, 1);
+        Parameters.PAGE.put(context, 1);
+        Parameters.PER_PAGE.put(context, eventNumber);
         
         Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
         
@@ -145,11 +145,11 @@ public class UsersActivityList extends AbstractListValueResulted {
         
         List<ValueData> events = valueData.getAll();
         
-        if (events.size() != 1) {
+        if (events.size() == 0) {
             return 0;
         }
         
-        Map<String, ValueData> event = ((MapValueData)events.get(0)).getAll();
+        Map<String, ValueData> event = ((MapValueData)events.get(eventNumber)).getAll();
         
         long date = ((LongValueData)event.get(DATE)).getAsLong();
         

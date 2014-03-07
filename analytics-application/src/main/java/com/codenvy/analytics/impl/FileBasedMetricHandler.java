@@ -65,7 +65,6 @@ public class FileBasedMetricHandler implements MetricHandler {
         return metricValueDTO;
     }
 
-    @Override
     public MetricValueDTO getPublicValue(String metricName,
                                          Map<String, String> context,
                                          UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {

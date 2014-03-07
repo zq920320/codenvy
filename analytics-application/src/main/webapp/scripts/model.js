@@ -127,7 +127,7 @@ function Model() {
         for (var id in data) {
             tableIds.push(id);
         }
-        tableIds.sort();
+//        tableIds.sort();
 
         for (var t = 0; t < tableIds.length; t++) {
             var rows = [];
@@ -138,14 +138,14 @@ function Model() {
             for (var id in data[tableIds[t]]) {
                 rowIds.push(id);
             }
-            rowIds.sort();
+//            rowIds.sort();
 
             // get sorted columns' identifications
             var colIds = [];
             for (var id in data[tableIds[t]]['r00']) {
                 colIds.push(id);
             }
-            colIds.sort();
+//            colIds.sort();
 
             for (var r = 0; r < rowIds.length; r++) {
                 if (r == 0) {
