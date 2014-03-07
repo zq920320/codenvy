@@ -17,10 +17,7 @@
  */
 package com.codenvy.analytics.metrics.sessions;
 
-import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.*;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
@@ -36,6 +33,8 @@ import java.util.Map;
  */
 @RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageSessionsList extends AbstractListValueResulted {
+
+    private static final String EMPTY_SESSION_MARKER = "User Did Not Enter Workspace";
 
     public ProductUsageSessionsList() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
@@ -65,8 +64,11 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
 
             LongValueData date = (LongValueData)items2Return.get(DATE);
             LongValueData delta = (LongValueData)items2Return.get(TIME);
-            LongValueData logoutInterval = (LongValueData)items2Return.get(LOGOUT_INTERVAL);
+            String sessionId = items2Return.get(SESSION_ID).getAsString();
 
+            if (sessionId == null || sessionId.isEmpty()) {
+                items2Return.put(SESSION_ID, StringValueData.valueOf(EMPTY_SESSION_MARKER));
+            }
             items2Return.put(START_TIME, date);
             items2Return.put(END_TIME, LongValueData.valueOf(date.getAsLong() + delta.getAsLong()));
 

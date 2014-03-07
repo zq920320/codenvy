@@ -249,6 +249,9 @@ public class UsersActivityList extends AbstractListValueResulted {
             MetricFilter.WS.put(clauses, sessionData.ws);
             Parameters.FROM_DATE.put(clauses, sessionData.fromDate);
             Parameters.TO_DATE.put(clauses, sessionData.toDate);
+        } else {
+            Parameters.FROM_DATE.put(clauses, 0);
+            Parameters.TO_DATE.put(clauses, 0);
         }
     }
 
