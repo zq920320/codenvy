@@ -49,7 +49,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
 
     public static final Pattern REGISTERED_USER =
             Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern PERSISTENT_WS   = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern NON_DEFAULT_WS   = Pattern.compile("^(?!DEFAULT).*", Pattern.CASE_INSENSITIVE);
 
     public static final String ASC_SORT_SIGN = "+";
 

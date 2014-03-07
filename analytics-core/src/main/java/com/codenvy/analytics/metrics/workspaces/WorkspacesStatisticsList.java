@@ -93,10 +93,10 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted {
         // filter temporary workspaces and "default" workspace
         BasicDBObject wsMatch = (BasicDBObject) match.get(WS);
         if (wsMatch == null) {
-            match.put(WS, PERSISTENT_WS);
+            match.put(WS, NON_DEFAULT_WS);
         } else {
             // create pattern like "(?=^(?!(TMP-|DEFAULT)).*)(?=targetWorkspace)"
-            String persistentWsAndTargetWorkspace = String.format("(?=%1$s)(?=%2$s)", PERSISTENT_WS.pattern(), Parameters.WS.get(clauses));
+            String persistentWsAndTargetWorkspace = String.format("(?=%1$s)(?=%2$s)", NON_DEFAULT_WS.pattern(), Parameters.WS.get(clauses));
             Pattern persistentWsAndTargetWorkspacePattern = Pattern.compile(persistentWsAndTargetWorkspace, Pattern.CASE_INSENSITIVE);
             match.put(WS, persistentWsAndTargetWorkspacePattern);
         }
