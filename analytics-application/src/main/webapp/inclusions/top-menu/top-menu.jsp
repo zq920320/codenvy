@@ -13,8 +13,8 @@
  Dissemination of this information or reproduction of this material
  is strictly forbidden unless prior written permission is obtained
  from Codenvy S.A.. 
---%>  
-<%@page import="com.codenvy.api.analytics.Utils" %>
+--%>
+<%@ page import="com.codenvy.analytics.util.Utils" %>
 
 <%@ include file="/inclusions/top-menu/header.jsp"%>
 

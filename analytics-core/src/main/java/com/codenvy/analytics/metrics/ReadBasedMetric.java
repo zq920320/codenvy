@@ -26,7 +26,6 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.persistent.DataLoader;
 import com.codenvy.analytics.persistent.MongoDataStorage;
-import com.codenvy.api.analytics.exception.MetricRestrictionException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 

@@ -58,7 +58,7 @@ public class MetricFactory {
     public static Metric getMetric(String name) {
         Metric metric = metrics.get(name.toLowerCase());
         if (metric == null) {
-            throw new IllegalArgumentException("There is no metric with name " + name);
+            throw new MetricNotFoundException("There is no metric with name " + name);
         }
 
         return metric;

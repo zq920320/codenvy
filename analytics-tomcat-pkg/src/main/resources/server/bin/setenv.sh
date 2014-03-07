@@ -28,15 +28,16 @@
 ANALYTICS_OPTS="-Dcodenvy.local.conf.dir=${CODENVY_LOCAL_CONF_DIR} \
                 -Dorganization.application.server.url=${ORGANIZATION_SERVICE_APPLICATION_SERVER_URL} \
                 -Danalytics.logback.smtp-appender.configuration=${CODENVY_LOCAL_CONF_DIR}/logback-smtp-appender.xml \
-                -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs \
-                -Dtomcat.users=${CODENVY_LOCAL_CONF_DIR}/tomcat-users.xml"
+                -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
+#REMOTE_DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
+REMOTE_DEBUG=""
 SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf"
 
 export CATALINA_HOME
 export CATALINA_TMPDIR
 export CODENVY_LOCAL_CONF_DIR
-export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $QUARTZ_OPTS"
+export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $QUARTZ_OPTS $REMOTE_DEBUG"
 export CLASSPATH="${CATALINA_HOME}/conf/:${CATALINA_HOME}/lib/jul-to-slf4j.jar:\
 ${CATALINA_HOME}/lib/slf4j-api.jar:${CATALINA_HOME}/lib/logback-classic.jar:${CATALINA_HOME}/lib/logback-core.jar:\
 ${CATALINA_HOME}/lib/mail.jar"

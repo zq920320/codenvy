@@ -18,28 +18,25 @@
 
 package com.codenvy.analytics.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Singleton;
-import javax.ws.rs.core.UriInfo;
-
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricFilter;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.MetricNotFoundException;
+import com.codenvy.analytics.metrics.MetricRestrictionException;
 import com.codenvy.analytics.util.MetricDTOFactory;
 import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.dto.MetricInfoDTO;
 import com.codenvy.api.analytics.dto.MetricInfoListDTO;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
 import com.codenvy.api.analytics.dto.MetricValueListDTO;
-import com.codenvy.api.analytics.exception.MetricNotFoundException;
-import com.codenvy.api.analytics.exception.MetricRestrictionException;
 import com.codenvy.dto.server.DtoFactory;
+
+import javax.inject.Singleton;
+import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Metric handler implementation base on data stored in files on file system. Which should be preliminary prepared by
@@ -49,18 +46,11 @@ import com.codenvy.dto.server.DtoFactory;
  */
 @Singleton
 public class FileBasedMetricHandler implements MetricHandler {
+
     @Override
     public MetricValueDTO getValue(String metricName,
                                    Map<String, String> context,
                                    UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
-
-        String userPrincipal = Parameters.USER_PRINCIPAL.get(context);
-        if (userPrincipal != null) {
-            if (!com.codenvy.api.analytics.Utils.isSystemUser(userPrincipal)) {
-                MetricFilter.USER.put(context, userPrincipal);
-            }
-        }
-
         MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
         metricValueDTO.setName(metricName);
         try {
@@ -74,15 +64,24 @@ public class FileBasedMetricHandler implements MetricHandler {
         }
         return metricValueDTO;
     }
-    
+
     @Override
-    public MetricValueListDTO getUserValues(List<String> metricNames, 
-                                            Map<String, String> metricContext, 
+    public MetricValueDTO getPublicValue(String metricName,
+                                         Map<String, String> context,
+                                         UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
+
+        return getValue(metricName, context, uriInfo);
+    }
+
+    @Override
+    public MetricValueListDTO getUserValues(List<String> metricNames,
+                                            Map<String, String> context,
                                             UriInfo uriInfo) throws MetricNotFoundException {
+
         MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
         List<MetricValueDTO> metricValues = new ArrayList<>();
         for (String metricName : metricNames) {
-            metricValues.add(this.getValue(metricName, metricContext, uriInfo));
+            metricValues.add(getValue(metricName, context, uriInfo));
         }
         metricValueListDTO.setMetrics(metricValues);
         return metricValueListDTO;
@@ -99,7 +98,7 @@ public class FileBasedMetricHandler implements MetricHandler {
     }
 
     @Override
-    public MetricInfoListDTO getAllInfo(UriInfo uriInfo) {
+    public MetricInfoListDTO getAllInfo(UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
         List<MetricInfoDTO> metricInfoDTOs = new ArrayList<>();
 
         for (Metric metric : MetricFactory.getAllMetrics()) {
@@ -111,15 +110,7 @@ public class FileBasedMetricHandler implements MetricHandler {
         return metricInfoListDTO;
     }
 
-    protected ValueData getMetricValue(String metricName, Map<String, String> executionContext) throws IOException {
-        if (executionContext.get(Parameters.FROM_DATE.name()) == null) {
-            Parameters.FROM_DATE.putDefaultValue(executionContext);
-        }
-
-        if (executionContext.get(Parameters.TO_DATE.name()) == null) {
-            Parameters.TO_DATE.putDefaultValue(executionContext);
-        }
-
-        return MetricFactory.getMetric(metricName).getValue(executionContext);
+    protected ValueData getMetricValue(String metricName, Map<String, String> context) throws IOException {
+        return MetricFactory.getMetric(metricName).getValue(context);
     }
 }
