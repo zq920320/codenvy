@@ -24,6 +24,7 @@ import com.codenvy.analytics.pig.scripts.EventsHolder;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -79,7 +80,9 @@ public class UsersActivityList extends AbstractListValueResulted {
         List<ValueData> list2Return = new ArrayList<>();
 
         SessionData sessionData = SessionData.init(clauses);
+        int rowNumber = -1;
         for (ValueData row : ((ListValueData)valueData).getAll()) {
+            rowNumber++;
             Map<String, ValueData> items2Return = new HashMap<>(((MapValueData)row).getAll());
 
             if (sessionData != null) {
@@ -91,7 +94,14 @@ public class UsersActivityList extends AbstractListValueResulted {
                     if (isFirstPage(clauses)) {
                         time = 0;
                     } else {
-                        time = 0; //TODO
+                        // taking into account the date of last event from previous page
+                        if (Parameters.PAGE.exists(clauses) && Parameters.PER_PAGE.exists(clauses)) {
+                            long eventNumber = (Parameters.PAGE.getAsLong(clauses) - 1) * Parameters.PER_PAGE.getAsLong(clauses) + rowNumber;
+                            long previousEventData = getDateOfEvent(clauses, eventNumber - 1);  // get date of previous event by requesting to database
+                            time = date - previousEventData;
+                        } else {
+                            time = 0;
+                        }
                     }
                 } else {
                     time = date - prevActionStartDate;
@@ -114,6 +124,36 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         return new ListValueData(list2Return);
+    }
+
+    /**
+     * Returns date of event from USERS_ACTIVITY_LIST
+     * @param eventNumber starting from 0 
+     */
+    private long getDateOfEvent(Map<String, String> clauses, long eventNumber) throws IOException {
+        if (eventNumber <= 0) {
+            return 0;  // first event time = 0
+        }
+        
+        Map<String, String> context = Utils.clone(clauses);
+        Parameters.PAGE.put(context, eventNumber);
+        Parameters.PER_PAGE.put(context, 1);
+        
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
+        
+        ListValueData valueData = (ListValueData)metric.getValue(context);
+        
+        List<ValueData> events = valueData.getAll();
+        
+        if (events.size() != 1) {
+            return 0;
+        }
+        
+        Map<String, ValueData> event = ((MapValueData)events.get(0)).getAll();
+        
+        long date = ((LongValueData)event.get(DATE)).getAsLong();
+        
+        return date;
     }
 
     private void addArtificialActions(Map<String, String> clauses,
