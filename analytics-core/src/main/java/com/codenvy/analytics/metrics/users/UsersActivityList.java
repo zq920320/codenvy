@@ -179,8 +179,12 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     private long getTotalActionsNumber(Map<String, String> clauses) throws IOException {
+        // remove misleading parameter PAGE from clauses
+        Map<String, String> clausesWithoutPageParameter = Utils.clone(clauses);
+        Parameters.PAGE.remove(clausesWithoutPageParameter);
+        
         Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
-        return ((LongValueData)metric.getValue(clauses)).getAsLong();
+        return ((LongValueData)metric.getValue(clausesWithoutPageParameter)).getAsLong();
     }
 
     private void overrideSortOrder(Map<String, String> clauses) {
