@@ -20,7 +20,6 @@ package com.codenvy.analytics.metrics;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.api.analytics.exception.MetricRestrictionException;
 
 import org.testng.annotations.Test;
 
