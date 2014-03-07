@@ -143,6 +143,10 @@ public abstract class ReadBasedMetric extends AbstractMetric {
                 values = getUsers(filter, filter.get(clauses));
                 match.put(MetricFilter.USER.name().toLowerCase(), new BasicDBObject("$in", values));
 
+            } else if (filter == MetricFilter.DOMAIN) {
+                String[] domains = filter.get(clauses).split(SEPARATOR);
+                match.put(MetricFilter.USER.name().toLowerCase(), getUsersInDomains(domains));
+                
             } else {
                 values = filter.get(clauses).split(SEPARATOR);
                 match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
