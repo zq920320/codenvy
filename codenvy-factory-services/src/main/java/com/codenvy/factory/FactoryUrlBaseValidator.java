@@ -22,11 +22,15 @@ import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.URLEncodedUtils;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.client.UserManager;
+import com.codenvy.organization.exception.OrganizationServiceException;
+import com.codenvy.organization.model.Account;
+import com.codenvy.organization.model.User;
 
 import javax.inject.Inject;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.Map;
-import java.util.Set;
+import java.net.URLDecoder;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -50,61 +54,65 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         this.userManager = userManager;
         this.factoryBuilder = factoryBuilder;
     }
-    /*@Override
-    public void validateUrl(SimpleFactoryUrl factoryUrl) throws FactoryUrlException {
-        // check mandatory parameters
-        if (!"1.0".equals(factoryUrl.getV())) {
-            throw new FactoryUrlException("Version has illegal value. Version must be equal to '1.0'");
-        }
 
-        validateCommonParams(factoryUrl);
+    @Override
+    public void validateUrl(URI factoryUrl) throws FactoryUrlException {
+        Map<String, Set<String>> params = URLEncodedUtils.parse(factoryUrl, "UTF-8");
+
+        if (params.get("id") != null) {
+            if (params.get("id").size() != 1) {
+                throw new FactoryUrlException("Parameters must not has multiple values");
+            }
+            FactoryClient factoryClient = new HttpFactoryClient(factoryUrl.getScheme(), factoryUrl.getHost(), factoryUrl.getPort());
+            Factory factory = factoryClient.getFactory(params.get("id").iterator().next());
+            factory = factoryBuilder.convertToLatest(factory);
+            this.validateObject(factory, true);
+        } else {
+            Factory factory = factoryBuilder.buildNonEncoded(factoryUrl.getQuery());
+            this.validateObject(factoryBuilder.convertToLatest(factory), false);
+        }
     }
 
     @Override
-    public void validateUrl(AdvancedFactoryUrl factoryUrl) throws FactoryUrlException {
-        // check mandatory parameters
-        if (!"1.1".equals(factoryUrl.getV())) {
-            throw new FactoryUrlException("Version has illegal value. Version must be equal to '1.1'");
-        }
+    public void validateObject(Factory factory, boolean encoded) throws FactoryUrlException {
+        validateCommonParams(factory);
 
-        validateCommonParams(factoryUrl);
-
-        if (factoryUrl.getUserid() != null) {
-            try {
-                User user = userManager.getUserById(factoryUrl.getUserid());
-                if (user.isTemporary()) {
-                    throw new FactoryUrlException("Current user is not allowed for using this method.");
-                }
-                if (factoryUrl.getWelcome() != null) {
-                    String orgid = factoryUrl.getOrgid();
-                    Account account = accountManager.getAccountById(orgid);
-                    if (!account.getOwner().getId().equals(user.getId())) {
-                        throw new FactoryUrlException("You are not authorized to use this orgid.");
+        if (encoded) {
+            if (factory.getUserid() != null) {
+                try {
+                    User user = userManager.getUserById(factory.getUserid());
+                    if (user.isTemporary()) {
+                        throw new FactoryUrlException("Current user is not allowed for using this method.");
                     }
+                    if (factory.getWelcome() != null) {
+                        String orgid = factory.getOrgid();
+                        Account account = accountManager.getAccountById(orgid);
+                        if (!account.getOwner().getId().equals(user.getId())) {
+                            throw new FactoryUrlException("You are not authorized to use this orgid.");
+                        }
+                    }
+                } catch (OrganizationServiceException e) {
+                    throw new FactoryUrlException("Unable to validate user " + factory.getUserid());
                 }
-            } catch (OrganizationServiceException e) {
-                throw new FactoryUrlException("Unable to validate user " + factoryUrl.getUserid());
             }
-        }
-        if (factoryUrl.getWelcome() != null && (factoryUrl.getOrgid() == null || factoryUrl.getOrgid().isEmpty())) {
-            throw new FactoryUrlException("Using a custom Welcome Page requires a valid orgid parameter.");
+            if (factory.getWelcome() != null && (factory.getOrgid() == null || factory.getOrgid().isEmpty())) {
+                throw new FactoryUrlException("Using a custom Welcome Page requires a valid orgid parameter.");
+            }
         }
     }
 
-    protected void validateCommonParams(SimpleFactoryUrl factoryUrl) throws FactoryUrlException {
+    protected void validateCommonParams(Factory factoryUrl) throws FactoryUrlException {
         // check that vcs value is correct (only git is supported for now)
         if (!"git".equals(factoryUrl.getVcs())) {
-            throw new FactoryUrlException("Parameter vcs has illegal value. Only \"git\" is supported for now.");
+            throw new FactoryUrlException("Parameter 'vcs' has illegal value. Only \"git\" is supported for now.");
         }
         if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
-            throw new FactoryUrlException("Parameter vcsurl is null or empty.");
+            throw new FactoryUrlException("Parameter 'vcsurl' is null or empty.");
         } else {
             try {
                 URLDecoder.decode(factoryUrl.getVcsurl(), "UTF-8");
-            } catch (IllegalArgumentException e) {
-                throw new FactoryUrlException("Vcsurl is invalid. " + e.getMessage());
-            } catch (UnsupportedEncodingException e) {
-                throw new FactoryUrlException("During decoding vcsurl. " + e.getMessage());
+            } catch (IllegalArgumentException | UnsupportedEncodingException e) {
+                throw new FactoryUrlException("Parameter 'vcsurl' has illegal value.");
             }
         }
 
@@ -127,32 +135,11 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
         }
 
         String pname;
-        if (factoryUrl.getProjectattributes() != null && (pname = factoryUrl.getProjectattributes().get("pname")) != null) {
+        if (factoryUrl.getProjectattributes() != null && (pname = factoryUrl.getProjectattributes().getPname()) != null) {
             if (!PROJECT_NAME_VALIDATOR.matcher(pname).matches()) {
                 throw new FactoryUrlException(
                         "Project name must contain only Latin letters, digits or these following special characters -._.");
             }
         }
-    }*/
-
-    @Override
-    public void validateUrl(URI factoryUrl) throws FactoryUrlException {
-        Map<String, Set<String>> params = URLEncodedUtils.parse(factoryUrl, "UTF-8");
-
-        if (params.get("id") != null) {
-            FactoryClient factoryClient = new HttpFactoryClient(factoryUrl.getScheme(), factoryUrl.getHost(), factoryUrl.getPort());
-            // TODO ensure that there is one value of 'id'
-            Factory factory = factoryClient.getFactory(params.get("id").iterator().next());
-            factory = factoryBuilder.validateFactoryCompatibility(factory, FactoryParameter.Format.ENCODED);
-            this.validateObject(factory, true);
-        } else {
-            Factory factory = factoryBuilder.buildNonEncoded(factoryUrl.getQuery());
-            this.validateObject(factory, false);
-        }
-    }
-
-    @Override
-    public void validateObject(Factory factory, boolean encoded) throws FactoryUrlException {
-
     }
 }

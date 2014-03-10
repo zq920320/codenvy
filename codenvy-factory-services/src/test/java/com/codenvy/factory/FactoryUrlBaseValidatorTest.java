@@ -18,10 +18,8 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.*;
-import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
-import com.codenvy.api.factory.dto.SimpleFactoryUrl;
-import com.codenvy.api.factory.dto.WelcomeConfiguration;
-import com.codenvy.api.factory.dto.WelcomePage;
+import com.codenvy.api.factory.dto.*;
+import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.client.UserManager;
@@ -57,31 +55,24 @@ public class FactoryUrlBaseValidatorTest {
     @Mock
     private UserManager userManager;
 
+    @Mock
+    private FactoryBuilder builder;
+
     @InjectMocks
     private FactoryUrlBaseValidator validator;
 
-    private SimpleFactoryUrl url;
-
-    private AdvancedFactoryUrl advUrl;
-
     private SimpleDateFormat datetimeFormatter;
+
+    private Factory url;
 
     @BeforeMethod
     public void setUp() {
-        SimpleFactoryUrl simpleFactoryUrl = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
-        simpleFactoryUrl.setV("1.0");
-        simpleFactoryUrl.setVcs("git");
-        simpleFactoryUrl.setVcsurl(VALID_REPOSITORY_URL);
-        simpleFactoryUrl.setVcsinfo(false);
-        url = simpleFactoryUrl;
-
-        AdvancedFactoryUrl advancedFactoryUrl = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
-        advancedFactoryUrl.setV("1.1");
-        advancedFactoryUrl.setVcs("git");
-        advancedFactoryUrl.setVcsurl(VALID_REPOSITORY_URL);
-        advancedFactoryUrl.setCommitid("123456798");
-        advancedFactoryUrl.setVcsinfo(false);
-        advUrl = advancedFactoryUrl;
+        Factory nonencoded = DtoFactory.getInstance().createDto(Factory.class);
+        nonencoded.setV("1.2");
+        nonencoded.setVcs("git");
+        nonencoded.setVcsurl(VALID_REPOSITORY_URL);
+        nonencoded.setVcsinfo(false);
+        url = nonencoded;
 
         datetimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         datetimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -94,7 +85,7 @@ public class FactoryUrlBaseValidatorTest {
         doThrow(new AccountExistenceException()).when(accountManager).getAccountById(ID);
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -103,7 +94,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("http://codenvy.com/git/04%2");
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test
@@ -112,7 +103,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("ssh://codenvy@review.gerrithub.io:29418/codenvy/exampleProject");
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test
@@ -121,7 +112,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("https://github.com/codenvy/example.git");
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -133,7 +124,7 @@ public class FactoryUrlBaseValidatorTest {
         when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -145,7 +136,7 @@ public class FactoryUrlBaseValidatorTest {
         when(account.getAttribute("tariff_plan")).thenReturn("Personal Premium");
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -158,7 +149,7 @@ public class FactoryUrlBaseValidatorTest {
         when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
@@ -170,7 +161,7 @@ public class FactoryUrlBaseValidatorTest {
         when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test
@@ -182,29 +173,25 @@ public class FactoryUrlBaseValidatorTest {
         when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test(dataProvider = "validProjectNamesProvider")
     public void shouldBeAbleToValidateValidProjectName(String projectName) throws Exception {
         // given
-        Map<String, String> projectAttributes = new HashMap<>();
-        projectAttributes.put("pname", projectName);
-        url.setProjectattributes(projectAttributes);
+        url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @Test(dataProvider = "invalidProjectNamesProvider", expectedExceptions = FactoryUrlException.class)
     public void shouldThrowFactoryUrlExceptionIfProjectNameInvalid(String projectName) throws Exception {
         // given
-        Map<String, String> projectAttributes = new HashMap<>();
-        projectAttributes.put("pname", projectName);
-        url.setProjectattributes(projectAttributes);
+        url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
 
         // when, then
-        validator.validateUrl(url);
+        validator.validateObject(url, false);
     }
 
     @DataProvider(name = "validProjectNamesProvider")
@@ -236,69 +223,18 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldBeAbleToValidateSimpleFactoryUrlObject() throws FactoryUrlException {
-        validator.validateUrl(url);
-    }
-
-    @Test(dataProvider = "badSimpleFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfObjectInvalid(SimpleFactoryUrl factoryUrl) throws FactoryUrlException {
-        validator.validateUrl(factoryUrl);
-    }
-
-    @DataProvider(name = "badSimpleFactoryUrlProvider")
-    public Object[][] invalidParameterssimpleFactoryUrlProvider() throws UnsupportedEncodingException {
-        SimpleFactoryUrl f1 = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
-        f1.setV("1.1");
-        f1.setVcs("notagit");
-        f1.setVcsurl(VALID_REPOSITORY_URL);
-        f1.setCommitid("commit123456789");
-        f1.setVcsinfo(false);
-        f1.setVcsbranch("newBranch");
-
-        SimpleFactoryUrl f2 = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
-        f2.setV("1.1");
-        f2.setVcs("git");
-        f2.setCommitid("commit123456789");
-        f2.setVcsinfo(false);
-        f2.setVcsbranch("newBranch");
-
-        SimpleFactoryUrl f3 = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
-        f3.setV("1.1");
-        f3.setVcs("git");
-        f3.setVcsurl("");
-        f3.setCommitid("commit123456789");
-        f3.setVcsinfo(false);
-        f3.setVcsbranch("newBranch");
-
-        SimpleFactoryUrl f4 = DtoFactory.getInstance().createDto(SimpleFactoryUrl.class);
-        f4.setV("1.0");
-        f4.setVcs("notagit");
-        f4.setVcsurl(VALID_REPOSITORY_URL);
-        f4.setCommitid("commit123456789");
-        f4.setVcsinfo(false);
-        f4.setVcsbranch("newBranch");
-
-        return new Object[][]{
-                {f1},// invalid vcs
-                {f2},// invalid vcsurl
-                {f3},// invalid vcsurl
-                {f4},// invalid v
-        };
-    }
-
-    @Test
-    public void shouldBeAbleToValidateAdvancedFactoryUrlObject() throws FactoryUrlException {
-        validator.validateUrl(advUrl);
+    public void shouldBeAbleToValidateFactoryUrlObject() throws FactoryUrlException {
+        validator.validateObject(url, false);
     }
 
     @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfObjectInvalid(AdvancedFactoryUrl factoryUrl) throws FactoryUrlException {
-        validator.validateUrl(factoryUrl);
+    public void shouldNotValidateIfObjectInvalid(Factory factoryUrl) throws FactoryUrlException {
+        validator.validateObject(factoryUrl, false);
     }
 
     @DataProvider(name = "badAdvancedFactoryUrlProvider")
-    public Object[][] invalidParametersAdvancedFactoryUrlProvider() throws UnsupportedEncodingException {
-        AdvancedFactoryUrl adv1 = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+    public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
+        Factory adv1 = DtoFactory.getInstance().createDto(Factory.class);
         adv1.setV("1.1");
         adv1.setVcs("notagit");
         adv1.setVcsurl(VALID_REPOSITORY_URL);
@@ -306,7 +242,7 @@ public class FactoryUrlBaseValidatorTest {
         adv1.setVcsinfo(false);
         adv1.setVcsbranch("newBranch");
 
-        AdvancedFactoryUrl adv2 = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+        Factory adv2 = DtoFactory.getInstance().createDto(Factory.class);
         adv2.setV("1.1");
         adv2.setVcs("git");
         adv2.setVcsurl(null);
@@ -314,7 +250,7 @@ public class FactoryUrlBaseValidatorTest {
         adv2.setVcsinfo(false);
         adv2.setVcsbranch("newBranch");
 
-        AdvancedFactoryUrl adv3 = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+        Factory adv3 = DtoFactory.getInstance().createDto(Factory.class);
         adv3.setV("1.1");
         adv3.setVcs("git");
         adv3.setVcsurl("");
@@ -322,24 +258,15 @@ public class FactoryUrlBaseValidatorTest {
         adv3.setVcsinfo(false);
         adv3.setVcsbranch("newBranch");
 
-        AdvancedFactoryUrl adv4 = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
-        adv4.setV("1.0");
-        adv4.setVcs("notagit");
-        adv4.setVcsurl(VALID_REPOSITORY_URL);
-        adv4.setCommitid("commit123456789");
-        adv4.setVcsinfo(false);
-        adv4.setVcsbranch("newBranch");
-
         return new Object[][]{
                 {adv1},// invalid vcs
                 {adv2},// invalid vcsurl
-                {adv3},// invalid vcsurl
-                {adv4},// invalid v
+                {adv3}// invalid vcsurl
         };
     }
 
     @Test
-    public void shouldBeAbleToValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsValid()
+    public void shouldBeAbleToValidateEncodedFactoryUrlObjectWithWelcomePageIfOrgIdIsValid()
             throws FactoryUrlException, OrganizationServiceException, ParseException {
         // given
         WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
@@ -354,18 +281,18 @@ public class FactoryUrlBaseValidatorTest {
         welcome.setAuthenticated(conf1);
         welcome.setNonauthenticated(conf2);
 
-        advUrl.setWelcome(welcome);
-        advUrl.setOrgid(ID);
+        url.setWelcome(welcome);
+        url.setOrgid(ID);
         when(accountManager.getAccountById(ID)).thenReturn(account);
         when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
         when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
-        validator.validateUrl(advUrl);
+        validator.validateObject(url, true);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsNull() throws FactoryUrlException {
+    public void shouldNotValidateEncodedFactoryUrlObjectWithWelcomePageIfOrgIdIsNull() throws FactoryUrlException {
         // given
         WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
         WelcomeConfiguration conf1 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
@@ -379,15 +306,15 @@ public class FactoryUrlBaseValidatorTest {
         welcome.setAuthenticated(conf1);
         welcome.setNonauthenticated(conf2);
 
-        advUrl.setWelcome(welcome);
-        advUrl.setOrgid(null);
+        url.setWelcome(welcome);
+        url.setOrgid(null);
 
         // when, then
-        validator.validateUrl(advUrl);
+        validator.validateObject(url, true);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateAdvancedFactoryUrlObjectWithWelcomePageIfOrgIdIsEmpty() throws FactoryUrlException {
+    public void shouldNotValidateEncodedFactoryUrlObjectWithWelcomePageIfOrgIdIsEmpty() throws FactoryUrlException {
         // given
         WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
         WelcomeConfiguration conf1 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
@@ -401,10 +328,10 @@ public class FactoryUrlBaseValidatorTest {
         welcome.setAuthenticated(conf1);
         welcome.setNonauthenticated(conf2);
 
-        advUrl.setWelcome(welcome);
-        advUrl.setOrgid("");
+        url.setWelcome(welcome);
+        url.setOrgid("");
 
         // when, then
-        validator.validateUrl(advUrl);
+        validator.validateObject(url, true);
     }
 }
