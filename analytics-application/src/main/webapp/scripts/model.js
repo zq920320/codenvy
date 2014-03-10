@@ -122,40 +122,20 @@ function Model() {
     function convertJsonToTables(data) {
         var result = {};
 
-        // get sorted tables identifications
-        var tableIds = [];
-        for (var id in data) {
-            tableIds.push(id);
-        }
-//        tableIds.sort();
-
-        for (var t = 0; t < tableIds.length; t++) {
+        for (var t in data) {
             var rows = [];
             var columns = [];
-
-            // get sorted rows' identifications
-            var rowIds = [];
-            for (var id in data[tableIds[t]]) {
-                rowIds.push(id);
-            }
-//            rowIds.sort();
-
-            // get sorted columns' identifications
-            var colIds = [];
-            for (var id in data[tableIds[t]]['r00']) {
-                colIds.push(id);
-            }
-//            colIds.sort();
-
-            for (var r = 0; r < rowIds.length; r++) {
+            
+            for (var r in data[t]) {
                 if (r == 0) {
-                    for (var c = 0; c < colIds.length; c++) {
-                        columns.push(data[tableIds[t]][rowIds[r]][colIds[c]]);
+                    // create header row
+                    for (var c in data[t][r]) {
+                        columns.push(data[t][r][c]);
                     }
                 } else {
                     var row = [];
-                    for (var c = 0; c < colIds.length; c++) {
-                        row.push(data[tableIds[t]][rowIds[r]][colIds[c]]);
+                    for (var c in data[t][r]) {
+                        row.push(data[t][r][c]);
                     }
                     rows.push(row);
                 }

@@ -17,6 +17,29 @@
  */
 package com.codenvy.analytics.api;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
 import com.codenvy.analytics.services.view.SectionData;
@@ -25,20 +48,7 @@ import com.codenvy.analytics.services.view.ViewData;
 import com.codenvy.analytics.util.Utils;
 import com.codenvy.api.analytics.MetricHandler;
 import com.codenvy.api.analytics.dto.MetricValueDTO;
-import com.codenvy.dto.server.JsonStringMapImpl;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.text.DecimalFormat;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.codenvy.dto.server.JsonArrayImpl;
 
 /**
  * @author Alexander Reshetnyak
@@ -49,7 +59,6 @@ import java.util.Map;
 public class View {
 
     private static final Logger        LOG            = LoggerFactory.getLogger(View.class);
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("00");
 
     @Inject
     private ViewBuilder viewBuilder;
@@ -105,34 +114,42 @@ public class View {
     }
 
     /**
-     * Transforms map into json format.
-     *
-     * @param data
-     *         the view data
-     * @return the resulted format will be: {"t00" : {"r00" : {"c00" : ...} ...} ...}, where txx - the sequences
-     * numbers of tables, rxx - the sequences numbers of rows and cxx - the sequences numbers of columns.
+     * Transforms view data into table in json format.
+     * @return the resulted format will be:
+     *  [
+     *     [ 
+     *         ["section0-row0-column0", "section0-row0-column1", ...]
+     *         ["section0-row1-column0", "section0-row1-column1", ...]
+     *         ...
+     *     ],
+     *     [
+     *         ["section1-row0-column0", "section0-row0-column1", ...]
+     *         ["section1-row1-column0", "section0-row1-column1", ...]
+     *         ...
+     *     ],
+     *     ...
+     *  ]
      */
-    private JsonStringMapImpl transform(ViewData data) {
-        Map<String, Object> result = new LinkedHashMap<>(data.size());
+    private JsonArrayImpl transform(ViewData data) {
+        List result = new ArrayList(data.size());
 
-        int t = 0;
-        for (Map.Entry<String, SectionData> sectionEntry : data.entrySet()) {
-            Map<String, Object> newSectionData = new LinkedHashMap<>(sectionEntry.getValue().size());
+        for (Entry<String, SectionData> sectionEntry : data.entrySet()) {
+            LinkedHashSet<Object> newSectionData = new LinkedHashSet<>(sectionEntry.getValue().size());
 
             for (int i = 0; i < sectionEntry.getValue().size(); i++) {
                 List<ValueData> rowData = sectionEntry.getValue().get(i);
-                Map<String, String> newRowData = new LinkedHashMap<>(rowData.size());
+                List<String> newRowData = new ArrayList<>(rowData.size());
 
                 for (int j = 0; j < rowData.size(); j++) {
-                    newRowData.put("c" + DECIMAL_FORMAT.format(j), rowData.get(j).getAsString());
+                    newRowData.add(rowData.get(j).getAsString());
                 }
 
-                newSectionData.put("r" + DECIMAL_FORMAT.format(i), newRowData);
+                newSectionData.add(newRowData);
             }
 
-            result.put("t" + DECIMAL_FORMAT.format(t++), newSectionData);
+            result.add(newSectionData);
         }
 
-        return new JsonStringMapImpl(result);
+        return new JsonArrayImpl(result);
     }
 }
