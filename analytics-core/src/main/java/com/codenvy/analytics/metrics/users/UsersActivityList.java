@@ -43,10 +43,10 @@ public class UsersActivityList extends AbstractListValueResulted {
     @Override
     public String[] getTrackedFields() {
         return new String[]{DATE,
-                            MESSAGE,
-                            EVENT,
-                            WS,
-                            USER};
+                MESSAGE,
+                EVENT,
+                WS,
+                USER};
     }
 
     @Override
@@ -70,47 +70,30 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     /**
-     * Adds {@link #CUMULATIVE_TIME} and {@link #TIME} fields to the result.
-     * Also adds {@link com.codenvy.analytics.pig.scripts.EventsHolder#IDE_OPENED} and
+     * Adds {@link #CUMULATIVE_TIME} and {@link #TIME} fields to the result. Also adds
+     * {@link com.codenvy.analytics.pig.scripts.EventsHolder#IDE_OPENED} and
      * {@link com.codenvy.analytics.pig.scripts.EventsHolder#IDE_CLOSED} events.
      */
     @Override
     protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
+        int itemNumber = -1;
         long prevActionStartDate = -1;
+        SessionData sessionData = SessionData.init(clauses);
         List<ValueData> list2Return = new ArrayList<>();
 
-        SessionData sessionData = SessionData.init(clauses);
-        int rowNumber = -1;
         for (ValueData row : ((ListValueData)valueData).getAll()) {
-            rowNumber++;
+            itemNumber++;
             Map<String, ValueData> items2Return = new HashMap<>(((MapValueData)row).getAll());
+            long eventDate = ((LongValueData)items2Return.get(DATE)).getAsLong();
 
             if (sessionData != null) {
-                long time;
-                long date = ((LongValueData)items2Return.get(DATE)).getAsLong();
-                long cumulativeTime = date - sessionData.fromDate;
+                long eventDurationTime = getDurationTime(eventDate, clauses, prevActionStartDate, itemNumber);
+                long eventCumulativeTime = getCumulativeTime(eventDate, sessionData.fromDate);
 
-                if (prevActionStartDate < 0) {
-                    if (isFirstPage(clauses)) {
-                        time = 0;
-                    } else {
-                        // taking into account the date of last event from previous page
-                        if (Parameters.PAGE.exists(clauses) && Parameters.PER_PAGE.exists(clauses)) {
-                            int eventNumber = (int) ((Parameters.PAGE.getAsLong(clauses) - 1) * Parameters.PER_PAGE.getAsLong(clauses) + rowNumber + 1);
-                            long previousEventData = getDateOfEvent(clauses, eventNumber - 1);  // get date of previous event by requesting to database
-                            time = date - previousEventData;
-                        } else {
-                            time = 0;
-                        } 
-                    }
-                } else {
-                    time = date - prevActionStartDate;
-                }
+                items2Return.put(TIME, LongValueData.valueOf(eventDurationTime));
+                items2Return.put(CUMULATIVE_TIME, LongValueData.valueOf(eventCumulativeTime));
 
-                items2Return.put(TIME, LongValueData.valueOf(time));
-                items2Return.put(CUMULATIVE_TIME, LongValueData.valueOf(cumulativeTime));
-
-                prevActionStartDate = date;
+                prevActionStartDate = eventDate;
             } else {
                 items2Return.put(TIME, LongValueData.DEFAULT);
                 items2Return.put(CUMULATIVE_TIME, LongValueData.DEFAULT);
@@ -123,36 +106,81 @@ public class UsersActivityList extends AbstractListValueResulted {
             addArtificialActions(clauses, sessionData, list2Return);
         }
 
-        return new ListValueData(list2Return); 
+        return new ListValueData(list2Return);
+    }
+
+    /**
+     * Calculate duration of event, in millisec.
+     */
+    private long getDurationTime(long eventDate,
+                                 Map<String, String> clauses,
+                                 long prevEventStartDate,
+                                 int numberOfEventWithinList2Return) throws IOException {
+        long durationTime;
+
+        if (prevEventStartDate < 0) { // calculate duration time of first event on page
+            if (isFirstPage(clauses)) {
+                durationTime = 0;
+            } else {
+                // taking into account the date of last event from previous page
+                if (Parameters.PAGE.exists(clauses)
+                    && Parameters.PER_PAGE.exists(clauses)
+                    && Parameters.PER_PAGE.getAsLong(clauses) > 1) // to protect from recursion of method
+                                                                   // getDateOfEvent()
+                {
+                    int eventNumber = (int)((Parameters.PAGE.getAsLong(clauses) - 1) * Parameters.PER_PAGE.getAsLong(clauses) 
+                                      + numberOfEventWithinList2Return + 1);
+                    
+                    long previousEventData = getDateOfEvent(clauses, eventNumber - 1); // get date of previous event by
+                                                                                       // requesting to database
+                    durationTime = eventDate - previousEventData;
+                } else {
+                    durationTime = 0;
+                }
+            }
+        } else {
+            durationTime = eventDate - prevEventStartDate;
+        }
+
+        return durationTime;
+    }
+
+    /**
+     * Calculate cumulative time which is passed from start of session to start of event, in millisec.
+     */
+    private long getCumulativeTime(long eventDate, long startSessionDate) {
+        return eventDate - startSessionDate;
     }
 
     /**
      * Returns date of event from USERS_ACTIVITY_LIST
-     * @param eventNumber starting from 0 
+     * 
+     * @param eventNumber starting from 0
      */
     private long getDateOfEvent(Map<String, String> clauses, int eventNumber) throws IOException {
         if (eventNumber <= 0) {
-            return 0;  // first event time = 0
+            return 0; // first event time = 0
         }
-        
+
         Map<String, String> context = Utils.clone(clauses);
-        Parameters.PAGE.put(context, 1);
-        Parameters.PER_PAGE.put(context, eventNumber);
-        
+        // get only one document with number = eventNumber
+        Parameters.PAGE.put(context, eventNumber);
+        Parameters.PER_PAGE.put(context, 1);
+
         Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
-        
+
         ListValueData valueData = (ListValueData)metric.getValue(context);
-        
+
         List<ValueData> events = valueData.getAll();
-        
+
         if (events.size() == 0) {
             return 0;
         }
-        
-        Map<String, ValueData> event = ((MapValueData)events.get(eventNumber)).getAll();
-        
+
+        Map<String, ValueData> event = ((MapValueData)events.get(0)).getAll();
+
         long date = ((LongValueData)event.get(DATE)).getAsLong();
-        
+
         return date;
     }
 
@@ -222,7 +250,7 @@ public class UsersActivityList extends AbstractListValueResulted {
         // remove misleading parameter PAGE from clauses
         Map<String, String> clausesWithoutPageParameter = Utils.clone(clauses);
         Parameters.PAGE.remove(clausesWithoutPageParameter);
-        
+
         Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
         return ((LongValueData)metric.getValue(clausesWithoutPageParameter)).getAsLong();
     }
@@ -259,10 +287,10 @@ public class UsersActivityList extends AbstractListValueResulted {
      * The data of the sessions that contains all given user's actions.
      */
     private static class SessionData {
-        private long fromDate;
-        private long toDate;
-        private long time;
-        private long logoutInterval;
+        private long   fromDate;
+        private long   toDate;
+        private long   time;
+        private long   logoutInterval;
 
         private String ws;
         private String user;
