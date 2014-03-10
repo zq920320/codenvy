@@ -168,7 +168,7 @@ function Main() {
      * Reload widgets
      * @param widgetNames: String with widget names divided by ","
      */
-    function reloadWidgets(widgetNames) { 
+    function reloadWidgets(widgetNames) {
         if (typeof widgetNames != "undefined") {
            var widgetName = widgetNames.split(',');
 
@@ -183,6 +183,11 @@ function Main() {
            var params = analytics.util.unionWithRewrite(params, urlParams);
            
            params = analytics.util.removeParamsWithNullValues(params);
+           
+           // set 'page' parameter = 1 to receive correct result from server after performing filter from view filter (not view url)
+           if (typeof params["page"] != "undefined") {
+               params["page"] = 1;
+           }
            
            if (widgetName == "_all") {               
                loadAllWidgets(params);
