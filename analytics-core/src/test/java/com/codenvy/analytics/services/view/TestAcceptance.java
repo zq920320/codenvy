@@ -488,7 +488,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(4).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Workspaces"), sectionData.get(4).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(4).get(1));
+        aggregateResult(row, new StringValueData("0"), sectionData.get(4).get(1));
     }
 
     private void assertUsageTimeDay(SectionData sectionData) {
@@ -564,7 +564,7 @@ public class TestAcceptance extends BaseTest {
 
         row = sectionData.get(3).get(0).getAsString();
         aggregateResult(row, new StringValueData("Non-Active Users"), sectionData.get(3).get(0));
-        aggregateResult(row, new StringValueData(""), sectionData.get(3).get(1));
+        aggregateResult(row, new StringValueData("0"), sectionData.get(3).get(1));
     }
 
     private void assertActiveUsersUsageDay(SectionData sectionData) {

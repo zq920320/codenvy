@@ -45,7 +45,7 @@ public class ActiveWorkspacesSet extends AbstractSetValueResulted {
 
         DBObject match = (DBObject)filter.get("$match");
         if (match.get(WS) == null) {
-            match.put(WS, NON_DEFAULT_WS);
+            match.put(WS, PERSISTENT_WS);
         }
 
         return filter;

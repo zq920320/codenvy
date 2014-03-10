@@ -46,9 +46,9 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final String SEPARATOR           = ",";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
-    public static final Pattern REGISTERED_USER =
-            Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
-    public static final Pattern NON_DEFAULT_WS   = Pattern.compile("^(?!DEFAULT).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern REGISTERED_USER = Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern NON_DEFAULT_WS  = Pattern.compile("^(?!DEFAULT).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PERSISTENT_WS   = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
 
     public static final String ASC_SORT_SIGN = "+";
 
@@ -145,7 +145,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
             } else if (filter == MetricFilter.DOMAIN) {
                 String[] domains = filter.get(clauses).split(SEPARATOR);
                 match.put(MetricFilter.USER.name().toLowerCase(), getUsersInDomains(domains));
-                
+
             } else {
                 values = filter.get(clauses).split(SEPARATOR);
                 match.put(filter.name().toLowerCase(), processExclusiveValues(values, filter.isNumericType()));
