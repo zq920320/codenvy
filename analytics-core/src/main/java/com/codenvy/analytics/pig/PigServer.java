@@ -49,8 +49,8 @@ import java.util.regex.Pattern;
 @Singleton
 public class PigServer {
 
-    private static final String     LOGS_DIR    = "analytics.logs.dir";
-    private static final String     SCRIPTS_DIR = "pig.scripts.dir";
+    private static final String     LOGS_DIR    = "analytics.pig.logs_dir";
+    private static final String     SCRIPTS_DIR = "analytics.pig.scripts_dir";
     private static final Logger     LOG         = LoggerFactory.getLogger(PigServer.class);
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat(Parameters.PARAM_DATE_FORMAT);
 
@@ -68,8 +68,6 @@ public class PigServer {
         this.scriptDir = configurator.getString(SCRIPTS_DIR);
         this.server = initEmbeddedServer();
         this.outdatedScriptDirectories = getOutdatedScriptDirectories();
-
-        checkIfMongoIsStarted();
     }
 
     private List<String> getOutdatedScriptDirectories() {
@@ -99,10 +97,6 @@ public class PigServer {
         });
 
         return server;
-    }
-
-    private void checkIfMongoIsStarted() {
-        mongoDataStorage.getDb();
     }
 
     /**

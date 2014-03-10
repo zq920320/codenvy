@@ -39,6 +39,7 @@ public class Configurator {
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
 
     private static final String  CONFIGURATION     = "analytics.properties";
+    private static final String  ANALYTICS_TMP_DIR = "analytics.tmp_dir";
     private static final Pattern TEMPLATE_PROP_VAR = Pattern.compile("\\$\\{([^\\}]*)\\}");
     private static final Pattern TEMPLATE_ENV_VAR  = Pattern.compile("\\$([^\\/]*)[\\/]?");
 
@@ -49,7 +50,7 @@ public class Configurator {
     }
 
     public String getTmpDir() {
-        return getString("analytics.tmp.dir");
+        return getString(ANALYTICS_TMP_DIR);
     }
 
     /** @return value of the property as the array of String */

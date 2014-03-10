@@ -46,21 +46,21 @@ public class ActOn extends Feature {
     private static final Logger LOG = LoggerFactory.getLogger(ActOn.class);
 
     public static final  String FILE_NAME = "ideuserupdate.csv";
-    private static final String PAGE_SIZE = "acton.page.size";
+    private static final String PAGE_SIZE = "analytics.acton.page_size";
 
-    private static final String AVAILABLE = "acton.available";
+    private static final String AVAILABLE = "analytics.acton.available";
 
-    private static final String MAIL_TEXT    = "acton.mail.text";
-    private static final String MAIL_SUBJECT = "acton.mail.subject";
-    private static final String MAIL_TO      = "acton.mail.to";
+    private static final String MAIL_TEXT    = "analytics.acton.mail_text";
+    private static final String MAIL_SUBJECT = "analytics.acton.mail_subject";
+    private static final String MAIL_TO      = "analytics.acton.mail_to";
 
-    private static final String FTP_PASSWORD    = "acton.ftp.password";
-    private static final String FTP_LOGIN       = "acton.ftp.login";
-    private static final String FTP_SERVER      = "acton.ftp.server";
-    private static final String FTP_PORT        = "acton.ftp.port";
-    private static final String FTP_TIMEOUT     = "acton.ftp.timeout";
-    private static final String FTP_MAX_EFFORTS = "acton.ftp.maxEfforts";
-    private static final String FTP_AUTH        = "acton.ftp.auth";
+    private static final String FTP_PASSWORD    = "analytics.acton.ftp_password";
+    private static final String FTP_LOGIN       = "analytics.acton.ftp_login";
+    private static final String FTP_SERVER      = "analytics.acton.ftp_server";
+    private static final String FTP_PORT        = "analytics.acton.ftp_port";
+    private static final String FTP_TIMEOUT     = "analytics.acton.ftp_timeout";
+    private static final String FTP_MAX_EFFORTS = "analytics.acton.ftp_maxEfforts";
+    private static final String FTP_AUTH        = "analytics.acton.ftp_auth";
 
     public static final String ACTIVE            = "active";
     public static final String PROFILE_COMPLETED = "profileCompleted";

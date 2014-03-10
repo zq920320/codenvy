@@ -30,13 +30,12 @@
         <param-value>0</param-value>
     </context-param>
 
-
     <listener>
-        <listener-class>com.codenvy.analytics.Scheduler</listener-class>
+        <listener-class>com.codenvy.inject.CodenvyBootstrap</listener-class>
     </listener>
 
     <listener>
-        <listener-class>com.codenvy.inject.CodenvyBootstrap</listener-class>
+        <listener-class>com.codenvy.analytics.Scheduler</listener-class>
     </listener>
 
     <filter>

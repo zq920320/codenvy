@@ -44,7 +44,7 @@ public class CSVReportPersister {
             new SimpleDateFormat("yyyy" + File.separator + "MM" + File.separator + "dd");
 
     private final String REPORTS_DIR        = "analytics.reports.dir";
-    private final String BACKUP_REPORTS_DIR = "analytics.backup.reports.dir";
+    private final String BACKUP_REPORTS_DIR = "analytics.reports.backup_dir";
 
     private final String reportsDir;
     private final String backupReportsDir;

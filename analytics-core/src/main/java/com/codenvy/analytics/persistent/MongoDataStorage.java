@@ -53,8 +53,8 @@ public class MongoDataStorage {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDataStorage.class);
 
-    private static final String URL      = "analytics.storage.url";
-    private static final String EMBEDDED = "analytics.storage.embedded";
+    private static final String URL      = "analytics.mongodb.url";
+    private static final String EMBEDDED = "analytics.mongodb.embedded";
 
     private final MongoClientURI uri;
     private final DB             mongoDb;

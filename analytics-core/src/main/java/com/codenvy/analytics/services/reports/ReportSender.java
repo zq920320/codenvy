@@ -44,10 +44,10 @@ public class ReportSender extends Feature {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReportSender.class);
 
-    private static final String AVAILABLE     = "reports.available";
-    private static final String CONFIGURATION = "reports.configuration";
-    private static final String MAIL_TEXT     = "reports.mail.text";
-    private static final String MAIL_SUBJECT  = "reports.mail.subject";
+    private static final String AVAILABLE     = "analytics.reports.available";
+    private static final String CONFIGURATION = "analytics.reports";
+    private static final String MAIL_TEXT     = "analytics.reports.mail_text";
+    private static final String MAIL_SUBJECT  = "analytics.reports.mail_subject";
 
     private final RecipientsHolder     recipientsHolder;
     private final ViewBuilder          viewBuilder;

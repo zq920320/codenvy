@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 public class ViewBuilder extends Feature {
 
     private static final Logger LOG                 = LoggerFactory.getLogger(ViewBuilder.class);
-    public static final  String VIEWS_CONFIGURATION = "views.configuration";
+    private static final String VIEWS_CONFIGURATION = "analytics.views";
 
     private final DataPersister        jdbcPersister;
     private final CSVReportPersister   csvReportPersister;

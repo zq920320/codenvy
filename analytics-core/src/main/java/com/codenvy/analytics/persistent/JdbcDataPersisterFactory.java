@@ -33,10 +33,10 @@ public class JdbcDataPersisterFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcDataPersisterFactory.class);
 
-    private static final String JDBC_DATA_PERSISTER_URL      = "jdbc.data-persister.url";
-    private static final String JDBC_DATA_PERSISTER_USER     = "jdbc.data-persister.user";
-    private static final String JDBC_DATA_PERSISTER_PASSWORD = "jdbc.data-persister.password";
-    private static final String JDBC_DATA_PERSISTER_DRIVER   = "jdbc.data-persister.driver";
+    private static final String URL      = "analytics.jdbc.url";
+    private static final String USER     = "analytics.jdbc.user";
+    private static final String PASSWORD = "analytics.jdbc.password";
+    private static final String DRIVER   = "analytics.jdbc.driver";
 
     private final DataPersister dataPersister;
 
@@ -57,10 +57,10 @@ public class JdbcDataPersisterFactory {
                                                                               IllegalAccessException,
                                                                               SQLException {
 
-        String url = configurator.getString(JDBC_DATA_PERSISTER_URL);
-        String user = configurator.getString(JDBC_DATA_PERSISTER_USER);
-        String password = configurator.getString(JDBC_DATA_PERSISTER_PASSWORD);
-        Class.forName(configurator.getString(JDBC_DATA_PERSISTER_DRIVER));
+        String url = configurator.getString(URL);
+        String user = configurator.getString(USER);
+        String password = configurator.getString(PASSWORD);
+        Class.forName(configurator.getString(DRIVER));
 
         if (url.toUpperCase().contains(":H2:")) {
             return new H2DataPersister(url, user, password);

@@ -37,7 +37,7 @@ import java.util.Set;
 @Singleton
 public class RecipientsHolder {
 
-    private static final String CONFIGURATION = "reports.recipients.configuration";
+    private static final String CONFIGURATION = "analytics.reports.recipients";
 
     private final RecipientsHolderConfiguration configuration;
 

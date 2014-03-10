@@ -36,12 +36,12 @@ import java.util.Properties;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MailService {
 
-    private static final String SMTP_AUTH            = "mail.smtp.auth";
-    private static final String SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
-    private static final String SMTP_HOST            = "mail.smtp.host";
-    private static final String SMTP_PORT            = "mail.smtp.port";
-    private static final String USER                 = "mail.user";
-    private static final String PASSWORD             = "mail.password";
+    private static final String SMTP_AUTH            = "analytics.mail.smtp_auth";
+    private static final String SMTP_STARTTLS_ENABLE = "analytics.mail.smtp_starttls_enable";
+    private static final String SMTP_HOST            = "analytics.mail.smtp_host";
+    private static final String SMTP_PORT            = "analytics.mail.smtp_port";
+    private static final String USER                 = "analytics.mail.user";
+    private static final String PASSWORD             = "analytics.mail.password";
 
     private final String     subject;
     private final String     text;

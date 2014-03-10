@@ -38,35 +38,35 @@ import java.util.Map;
  * values of metrics. The example belows explains that statistic had been started collecting from 2012-01-01 but the
  * day before (on 2011-12-31) 10 workspaces, 20 users and 30 projects already had been created.
  * <p/>
- * initial.value.date=2011-12-31
- * initial.value.metrics=total_workspaces,total_users,total_projects
- * initial.value.metric.total_workspaces=10
- * initial.value.metric.total_users=20
- * initial.value.metric.total_projects=30
+ * analytics.initial_values.date=2011-12-31
+ * analytics.initial_values.metrics=total_workspaces,total_users,total_projects
+ * analytics.initial_values.metric_total_workspaces=10
+ * analytics.initial_values.metric_total_users=20
+ * analytics.initial_values.metric_total_projects=30
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
 @Singleton
 public class InitialValueContainer {
 
-    private static final String INITIAL_VALUE_METRICS = "initial.value.metrics";
-    private static final String INITIAL_VALUE_METRIC  = "initial.value.metric.";
-    private static final String INITIAL_VALUE_DATE    = "initial.value.date";
+    private static final String INITIAL_VALUES_DATE    = "analytics.initial_values.date";
+    private static final String INITIAL_VALUES_METRICS = "analytics.initial_values.metrics";
+    private static final String INITIAL_VALUES_METRIC  = "analytics.initial_values.metric_";
 
     private final Calendar               initialValueDate = Calendar.getInstance();
     private final Map<String, ValueData> initialValues    = new HashMap<>();
 
     @Inject
     public InitialValueContainer(Configurator configurator) {
-        for (String name : configurator.getArray(INITIAL_VALUE_METRICS)) {
-            String key = INITIAL_VALUE_METRIC + name;
+        for (String name : configurator.getArray(INITIAL_VALUES_METRICS)) {
+            String key = INITIAL_VALUES_METRIC + name;
             LongValueData initialValue = new LongValueData(configurator.getInt(key));
 
             initialValues.put(name.toLowerCase(), initialValue);
         }
 
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(configurator.getString(INITIAL_VALUE_DATE));
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(configurator.getString(INITIAL_VALUES_DATE));
             initialValueDate.setTime(date);
         } catch (ParseException e) {
             throw new IllegalArgumentException();

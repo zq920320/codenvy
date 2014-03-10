@@ -47,10 +47,10 @@ public class LogChecker extends Feature {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogChecker.class);
 
-    private static final String AVAILABLE    = "log-checker.available";
-    private static final String MAIL_TEXT    = "log-checker.mail.text";
-    private static final String MAIL_SUBJECT = "log-checker.mail.subject";
-    private static final String MAIL_TO      = "log-checker.mail.to";
+    private static final String AVAILABLE    = "analytics.log-checker.available";
+    private static final String MAIL_TEXT    = "analytics.log-checker.mail_text";
+    private static final String MAIL_SUBJECT = "analytics.log-checker.mail_subject";
+    private static final String MAIL_TO      = "analytics.log-checker.mail_to";
 
     private final Configurator configurator;
     private final PigServer    pigServer;
