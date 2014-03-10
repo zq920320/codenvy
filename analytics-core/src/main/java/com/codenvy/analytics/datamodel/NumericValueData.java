@@ -3,7 +3,7 @@
  * CODENVY CONFIDENTIAL
  * ________________
  *
- * [2012] - [2013] Codenvy, S.A.
+ * [2012] - [2014] Codenvy, S.A.
  * All Rights Reserved.
  * NOTICE: All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
@@ -15,20 +15,11 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-package com.codenvy.analytics.metrics;
-
-import java.io.IOException;
+package com.codenvy.analytics.datamodel;
 
 /**
- * Is thrown when cumulative metric can be evaluated since there is no initial value.
- *
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ * @author Anatoliy Bazko
  */
-@SuppressWarnings("serial")
-public class InitialValueNotFoundException extends IOException {
-
-    public InitialValueNotFoundException(String message) {
-        super(message);
-    }
+public abstract class NumericValueData extends AbstractValueData {
+    public abstract double getAsDouble();
 }

@@ -92,7 +92,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_projects"/>
-                <parameter key="description" value="Total"/>
+                <parameter key="description" value="Total Created Projects in Period"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="project_type_jar"/>
@@ -155,7 +155,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_projects"/>
-                <parameter key="description" value="Total"/>
+                <parameter key="description" value="Total Created Projects in Period"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="project_paas_aws"/>

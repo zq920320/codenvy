@@ -209,8 +209,6 @@ public class TestTopMetrics extends BaseTest {
                      abandonFactorySessionRate);
         assertEquals(item.getAll().get(AbstractTopFactories.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
                      convertedFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopFactories.FIRST_SESSION_DATE).getAsString(), firstSessionDate);
-        assertEquals(item.getAll().get(AbstractTopFactories.LAST_SESSION_DATE).getAsString(), lastSessionDate);
     }
 
     @Test
@@ -290,8 +288,6 @@ public class TestTopMetrics extends BaseTest {
                      abandonFactorySessionRate);
         assertEquals(item.getAll().get(AbstractTopReferrers.CONVERTED_FACTORY_SESSION_RATE).getAsString(),
                      convertedFactorySessionRate);
-        assertEquals(item.getAll().get(AbstractTopReferrers.FIRST_SESSION_DATE).getAsString(), firstSessionDate);
-        assertEquals(item.getAll().get(AbstractTopReferrers.LAST_SESSION_DATE).getAsString(), lastSessionDate);
     }
 
     // ------------------------> Tested Metrics

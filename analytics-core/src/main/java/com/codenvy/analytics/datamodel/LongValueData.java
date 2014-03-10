@@ -24,7 +24,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class LongValueData extends AbstractValueData {
+public class LongValueData extends NumericValueData {
 
     public static final LongValueData DEFAULT = new LongValueData(0);
 

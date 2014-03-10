@@ -41,7 +41,6 @@
                 <parameter key="fields"
                            value="user,user_first_name,user_last_name,user_company,user_phone,user_job,sessions,time,projects"/>
                 <parameter key="time-fields" value="time"/>
-                <parameter key="display_zero_values" value="true"/>
             </row>
         </section>
     </view>

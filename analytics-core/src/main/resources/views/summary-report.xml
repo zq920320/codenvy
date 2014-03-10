@@ -61,7 +61,7 @@
             </row>            
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="total_factories"/>
-                <parameter key="description" value="Factories"/>
+                <parameter key="description" value="Factories Registered"/>
             </row>            
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="user_invite"/>

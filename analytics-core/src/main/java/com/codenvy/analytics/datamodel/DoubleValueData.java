@@ -24,7 +24,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class DoubleValueData extends AbstractValueData {
+public class DoubleValueData extends NumericValueData {
 
     public static final DoubleValueData DEFAULT = new DoubleValueData(0);
 
@@ -38,43 +38,36 @@ public class DoubleValueData extends AbstractValueData {
         this.value = value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAsString() {
         return Double.toString(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getType() {
         return ValueDataTypes.DOUBLE.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean doEquals(ValueData valueData) {
         return value == ((DoubleValueData)valueData).value;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected int doHashCode() {
         return (int)Double.doubleToLongBits(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ValueData doUnion(ValueData valueData) {
         return new DoubleValueData(value + ((DoubleValueData)valueData).value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeDouble(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         value = in.readDouble();

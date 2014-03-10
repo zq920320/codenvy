@@ -21,13 +21,12 @@
         <section name="top_referrers_by_1day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,# Sessions,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_1day"/>
                 <parameter key="fields"
-                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
-                <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
@@ -37,13 +36,12 @@
         <section name="top_referrers_by_7day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,# Sessions,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_7day"/>
                 <parameter key="fields"
-                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
-                <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
@@ -53,13 +51,12 @@
         <section name="top_referrers_by_30day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,# Sessions,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_30day"/>
                 <parameter key="fields"
-                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
-                <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
@@ -69,13 +66,12 @@
         <section name="top_referrers_by_60day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,# Sessions,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_60day"/>
                 <parameter key="fields"
-                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
-                <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
@@ -85,13 +81,12 @@
         <section name="top_referrers_by_90day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,# Sessions,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_90day"/>
                 <parameter key="fields"
-                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
-                <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
@@ -101,13 +96,12 @@
         <section name="top_referrers_by_365day">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,# Sessions,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_365day"/>
                 <parameter key="fields"
-                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
-                <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
@@ -117,13 +111,12 @@
         <section name="top_referrers_by_lifetime">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Referrer,Workspace Creations,User Creations,Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert,First Session Date,Last Session Date"/>
+                           value="Referrer,# Sessions,# Accounts Created,Aggregate Time,% Build,% Run,% Deployed,% Anon,% Auth,% Abandon,% Convert"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="top_referrers_by_lifetime"/>
                 <parameter key="fields"
-                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate,first_session_date,last_session_date"/>
-                <parameter key="date-fields" value="first_session_date,last_session_date"/>
+                           value="referrer,ws_created,user_created,time,build_rate,run_rate,deploy_rate,anonymous_factory_session_rate,authenticated_factory_session_rate,abandon_factory_session_rate,converted_factory_session_rate"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>

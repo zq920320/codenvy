@@ -24,11 +24,11 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_factories"/>
-                <parameter key="description" value="Factories Created"/>
+                <parameter key="description" value="Factories Registered"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_users_from_factory"/>
-                <parameter key="description" value="Accounts Created From Factories"/>
+                <parameter key="description" value="Accounts Created from Factory Sessions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="temporary_workspaces_created"/>

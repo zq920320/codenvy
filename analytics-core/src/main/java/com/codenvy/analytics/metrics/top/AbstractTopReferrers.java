@@ -38,8 +38,6 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
     public static final String AUTHENTICATED_FACTORY_SESSION_RATE = "authenticated_factory_session_rate";
     public static final String ABANDON_FACTORY_SESSION_RATE       = "abandon_factory_session_rate";
     public static final String CONVERTED_FACTORY_SESSION_RATE     = "converted_factory_session_rate";
-    public static final String FIRST_SESSION_DATE                 = "first_session_date";
-    public static final String LAST_SESSION_DATE                  = "last_session_date";
 
     public AbstractTopReferrers(MetricType factoryMetricType, int dayCount) {
         super(factoryMetricType, dayCount);
@@ -57,10 +55,7 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
                             ANONYMOUS_FACTORY_SESSION_RATE,
                             AUTHENTICATED_FACTORY_SESSION_RATE,
                             ABANDON_FACTORY_SESSION_RATE,
-                            CONVERTED_FACTORY_SESSION_RATE,
-                            FIRST_SESSION_DATE,
-                            LAST_SESSION_DATE
-        };
+                            CONVERTED_FACTORY_SESSION_RATE};
     }
 
     @Override
@@ -88,10 +83,7 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
                                 .append(AUTHENTICATED_SESSION + "_count",
                                         new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION))
                                 .append(CONVERTED_SESSION + "_count",
-                                        new BasicDBObject("$sum", "$" + CONVERTED_SESSION))
-                                .append(FIRST_SESSION_DATE, new BasicDBObject("$first", "$" + DATE))
-                                .append(LAST_SESSION_DATE, new BasicDBObject("$last", "$" + DATE))
-                ));
+                                        new BasicDBObject("$sum", "$" + CONVERTED_SESSION))));
 
         dbOperations.add(
                 new BasicDBObject(
@@ -100,8 +92,6 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
                                 .append(WS_CREATED, 1)
                                 .append(USER_CREATED, 1)
                                 .append(REFERRER, "$_id")
-                                .append(FIRST_SESSION_DATE, 1)
-                                .append(LAST_SESSION_DATE, 1)
                                 .append(ID, 0)
                                 .append(BUILD_RATE, getRateOperation("$" + BUILD + "_count", "$" + REFERRER_COUNT))
                                 .append(RUN_RATE, getRateOperation("$" + RUN + "_count", "$" + REFERRER_COUNT))
@@ -123,8 +113,6 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
                                 .append(BUILD_RATE, 1)
                                 .append(RUN_RATE, 1)
                                 .append(DEPLOY_RATE, 1)
-                                .append(FIRST_SESSION_DATE, 1)
-                                .append(LAST_SESSION_DATE, 1)
                                 .append(CONVERTED_FACTORY_SESSION_RATE, 1)
                                 .append(AUTHENTICATED_FACTORY_SESSION_RATE, 1)
                                 .append(ANONYMOUS_FACTORY_SESSION_RATE,

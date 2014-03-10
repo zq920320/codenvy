@@ -169,13 +169,13 @@ public class TestAnalysisView extends BaseTest {
         // test data of column 4 with label "Oct 2013"
         Map<RowLabel, String> column4Data = getColumn(4, analysisReport, rowsLabels, true);
         assertEquals(column4Data.get(RowLabel.TOTAL_USERS), "20");
-        assertEquals(column4Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "");
-        assertEquals(column4Data.get(RowLabel.CREATED_PROJECTS), "");
-        assertEquals(column4Data.get(RowLabel.AND_BUILT), "");
-        assertEquals(column4Data.get(RowLabel.AND_RUN), "");
-        assertEquals(column4Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "");
-        assertEquals(column4Data.get(RowLabel.SENT_INVITES), "");
-        assertEquals(column4Data.get(RowLabel.SHELL_LAUNCHED), "");
+        assertEquals(column4Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "0");
+        assertEquals(column4Data.get(RowLabel.CREATED_PROJECTS), "0");
+        assertEquals(column4Data.get(RowLabel.AND_BUILT), "0");
+        assertEquals(column4Data.get(RowLabel.AND_RUN), "0");
+        assertEquals(column4Data.get(RowLabel.AND_DEPLOYED_TO_PAAS), "0");
+        assertEquals(column4Data.get(RowLabel.SENT_INVITES), "0");
+        assertEquals(column4Data.get(RowLabel.SHELL_LAUNCHED), "0");
 
         // test data of column 3 with label "Nov 2013"
         Map<RowLabel, String> column3Data = getColumn(3, analysisReport, rowsLabels, true);

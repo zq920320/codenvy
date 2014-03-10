@@ -291,11 +291,11 @@ public class TestAcceptance extends BaseTest {
 
     private void assertFactoriesDay(SectionData sectionData) {
         String row = sectionData.get(1).get(0).getAsString();
-        aggregateResult(row, new StringValueData("Factories Created"), sectionData.get(1).get(0));
+        aggregateResult(row, new StringValueData("Factories Registered"), sectionData.get(1).get(0));
         aggregateResult(row, new StringValueData("7"), sectionData.get(1).get(1));
 
         row = sectionData.get(2).get(0).getAsString();
-        aggregateResult(row, new StringValueData("Accounts Created From Factories"), sectionData.get(2).get(0));
+        aggregateResult(row, new StringValueData("Accounts Created from Factory Sessions"), sectionData.get(2).get(0));
         aggregateResult(row, new StringValueData("5"), sectionData.get(2).get(1));
 
         row = sectionData.get(3).get(0).getAsString();
