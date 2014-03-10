@@ -31,8 +31,7 @@ analytics.presenter.SessionsPresenter.prototype.mapColumnNameToSortValue = {
     "ID": "session_id",
     "User": "user",
     "Workspace": "ws",
-    "Start Time": "start_time",
-    "End Time": "end_time",
+    "Start Time": "date",
     "Duration": "time",
     
 };
