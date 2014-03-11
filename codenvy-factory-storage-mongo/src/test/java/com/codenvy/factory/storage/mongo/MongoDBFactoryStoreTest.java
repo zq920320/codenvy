@@ -20,8 +20,7 @@ package com.codenvy.factory.storage.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
-import com.codenvy.api.factory.FactoryImage;
-import com.codenvy.api.factory.FactoryStore;
+import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.api.factory.dto.*;
 import com.codenvy.commons.lang.NameGenerator;
@@ -31,6 +30,7 @@ import com.mongodb.*;
 import org.testng.annotations.*;
 
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 import static org.testng.Assert.*;
@@ -43,10 +43,11 @@ public class MongoDBFactoryStoreTest {
 
     private static final String DB_NAME   = "test1";
     private static final String COLL_NAME = "factory1";
-    private DBCollection collection;
-    private MongoClient  client;
-    private MongoServer  server;
-    FactoryStore store;
+    private DBCollection   collection;
+    private MongoClient    client;
+    private MongoServer    server;
+    private FactoryStore   store;
+    private FactoryBuilder factoryBuilder;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -65,6 +66,36 @@ public class MongoDBFactoryStoreTest {
     public void tearDown() throws Exception {
         client.close();
         server.shutdownNow();
+    }
+
+    @Test(enabled = false)
+    public void shouldBeAbleToValidateProductionData() throws UnknownHostException, FactoryUrlException {
+        // mongo server configuration
+        String username = "Mongo username";
+        String password = "Mongo password";
+        String hostname = "dev.box.com";
+        int port = 27017;
+
+        client = new MongoClient(hostname, port);
+        DB db = client.getDB("factory");
+        // authentication is done
+        assertTrue(db.authenticate(username, password.toCharArray()));
+        DBCollection collection = db.getCollection("factory");
+        factoryBuilder = new FactoryBuilder();
+
+        try (DBCursor cursor = collection.find()) {
+            for (DBObject one : cursor) {
+                BasicDBObject factoryObject = (BasicDBObject)one.get("factoryurl");
+                Factory factory = DtoFactory.getInstance().createDtoFromJson(factoryObject.toString(), Factory.class);
+                Factory toCheck = (Factory)DtoFactory.getInstance().clone(factory).withUserid(null).withCreated(0);
+                try {
+                    factoryBuilder.checkValid(toCheck, FactoryFormat.ENCODED);
+                } catch (FactoryUrlException e) {
+                    System.err.println(factory.toString());
+                    fail();
+                }
+            }
+        }
     }
 
     @Test
