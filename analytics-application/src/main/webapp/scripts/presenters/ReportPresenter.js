@@ -37,7 +37,10 @@ analytics.presenter.ReportPresenter.prototype.load = function() {
             view.printTable(data[table], true);
         }
         
-        view.loadTableHandlers();           
+        view.loadTableHandlers();   
+        
+        // finish loading widget
+        analytics.views.loader.needLoader = false;
     });
 
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");

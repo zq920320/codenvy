@@ -55,6 +55,9 @@ analytics.presenter.VerticalTablePresenter.prototype.load = function() {
         
         view.print("</div>");
         view.print("</div>");
+        
+        // finish loading widget
+        analytics.views.loader.needLoader = false;
     });
         
     var modelViewName = analytics.configuration.getProperty(presenter.widgetName, "modelViewName");

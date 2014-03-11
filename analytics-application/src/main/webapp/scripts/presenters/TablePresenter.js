@@ -85,9 +85,10 @@ analytics.presenter.TablePresenter.prototype.load = function() {
             
             delete modelParams.sort;
             view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
+            
+            // finish loading widget
+            analytics.views.loader.needLoader = false;
         })
-        
-
         
         model.getAllResults(modelViewName);
 
@@ -97,6 +98,9 @@ analytics.presenter.TablePresenter.prototype.load = function() {
         model.pushDoneFunction(function(data) {
             view.printTable(data[0], false);            
             view.loadTableHandlers();
+            
+            // finish loading widget
+            analytics.views.loader.needLoader = false;
         });
         
         model.getAllResults(modelViewName);

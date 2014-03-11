@@ -279,11 +279,12 @@ function Main() {
         var model = analytics.factory.getModel(widgetName);
         model.clearDoneFunction();
         model.pushDoneFunction(function() {
-            analytics.views.loader.needLoader = false;
-            view.show();
-            analytics.views.loader.hide();
-            callback();            
-        })      
+            if (!analytics.views.loader.needLoader) {  // verify if creating of widget is finished entirely
+                view.show();
+                analytics.views.loader.hide();
+                callback();
+            }
+        });
         
         model.clearFailFunction();
         model.pushFailFunction(function(status, textStatus, errorThrown) {

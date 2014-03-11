@@ -48,6 +48,9 @@ analytics.presenter.TopMetricsPresenter.prototype.load = function() {
         }
 
         view.loadTableHandlers();
+        
+        // finish loading widget
+        analytics.views.loader.needLoader = false;
     });
 
     model.getAllResults(modelViewName);

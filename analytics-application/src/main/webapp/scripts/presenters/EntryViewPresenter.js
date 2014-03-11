@@ -128,7 +128,10 @@ EntryViewPresenter.prototype.load = function() {
             
                view.printBottomPageNavigator(pageCount, currentPageNumber, queryString, presenter.CURRENT_PAGE_QUERY_PARAMETER);
                view.loadPageNavigationHandlers("analytics.main.reloadWidgetOnPageNavigation");
-            }          
+            }
+            
+            // finish loading widget
+            analytics.views.loader.needLoader = false;
         });
         
         model.setParams(modelParams);
