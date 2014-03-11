@@ -131,7 +131,7 @@ public class TestUsersActivity extends BaseTest {
         Parameters.FROM_DATE.put(context, "20131101");
         Parameters.TO_DATE.put(context, "20131101");
 
-        Metric metric = new TestUsersActivityList();
+        Metric metric = new TestedUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
 
         assertEquals(value.size(), 12);
@@ -142,7 +142,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    1,
@@ -150,7 +150,7 @@ public class TestUsersActivity extends BaseTest {
                    "ws2",
                    "user2@gmail.com",
                    fullDateFormatMils.parse("2013-11-01 19:08:00,000").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    2,
@@ -158,7 +158,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    3,
@@ -166,7 +166,7 @@ public class TestUsersActivity extends BaseTest {
                    "ws2",
                    "user2@gmail.com",
                    fullDateFormatMils.parse("2013-11-01 19:10:00,000").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    4,
@@ -174,7 +174,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    5,
@@ -182,7 +182,7 @@ public class TestUsersActivity extends BaseTest {
                    "ws2",
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:12:00,000").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    6,
@@ -190,7 +190,7 @@ public class TestUsersActivity extends BaseTest {
                    "ws2",
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:14:00,000").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    7,
@@ -198,7 +198,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    8,
@@ -206,7 +206,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    9,
@@ -214,7 +214,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    10,
@@ -222,7 +222,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
-                   0);
+                   0, 0);
 
         assertItem(value,
                    11,
@@ -230,9 +230,9 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,320").getTime(),
-                   0);
+                   0, 0);
 
-        metric = new TestNumberOfUsersOfActivity();
+        metric = new TestedNumberOfUsersOfActivity();
         Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(12));
     }
 
@@ -242,10 +242,10 @@ public class TestUsersActivity extends BaseTest {
         MetricFilter.SESSION_ID.put(context, SESSION_ID);
         MetricFilter.EVENT.put(context, NON_SESSIONS_EVENTS);
 
-        Metric metric = new TestUsersActivityList();
+        Metric metric = new TestedUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
 
-        assertEquals(value.size(), 5);
+        assertEquals(value.size(), 6);
 
         long startTime = fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime();
 
@@ -255,6 +255,7 @@ public class TestUsersActivity extends BaseTest {
                    null,
                    null,
                    fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime(),
+                   0,
                    startTime - fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime());
 
         assertItem(value,
@@ -263,6 +264,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
+                   0,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime() - startTime);
 
         assertItem(value,
@@ -271,6 +273,8 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() - startTime);
 
         assertItem(value,
@@ -279,6 +283,8 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() - startTime);
 
         assertItem(value,
@@ -287,9 +293,19 @@ public class TestUsersActivity extends BaseTest {
                    null,
                    null,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
+                   0,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
 
-        metric = new TestNumberOfUsersOfActivity();
+        assertItem(value,
+                   5,
+                   "idle",
+                   null,
+                   null,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
+                   0,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
+
+        metric = new TestedNumberOfUsersOfActivity();
         Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(3));
     }
 
@@ -299,10 +315,10 @@ public class TestUsersActivity extends BaseTest {
         Map<String, String> context = Utils.newContext();
         MetricFilter.SESSION_ID.put(context, SESSION_ID);
 
-        Metric metric = new TestUsersActivityList();
+        Metric metric = new TestedUsersActivityList();
         ListValueData value = (ListValueData)metric.getValue(context);
 
-        assertEquals(value.size(), 9);
+        assertEquals(value.size(), 10);
 
         long startTime = fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime();
 
@@ -312,6 +328,7 @@ public class TestUsersActivity extends BaseTest {
                    null,
                    null,
                    fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime(),
+                   0,
                    fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime() - startTime);
 
         assertItem(value,
@@ -320,6 +337,7 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime(),
+                   0,
                    fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime() - startTime);
 
         assertItem(value,
@@ -328,6 +346,8 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime() - startTime);
 
         assertItem(value,
@@ -336,6 +356,8 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() - startTime);
 
         assertItem(value,
@@ -344,6 +366,8 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
                    fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime() - startTime);
 
         assertItem(value,
@@ -352,6 +376,8 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime(),
                    fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime() - startTime);
 
         assertItem(value,
@@ -360,6 +386,8 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime(),
                    fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() - startTime);
 
         assertItem(value,
@@ -368,6 +396,8 @@ public class TestUsersActivity extends BaseTest {
                    WS,
                    USER,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
 
         assertItem(value,
@@ -376,10 +406,140 @@ public class TestUsersActivity extends BaseTest {
                    null,
                    null,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
+                   0,
                    fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
 
-        metric = new TestNumberOfUsersOfActivity();
+        assertItem(value,
+                   9,
+                   "idle",
+                   null,
+                   null,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
+                   0,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
+
+
+        metric = new TestedNumberOfUsersOfActivity();
         Assert.assertEquals(metric.getValue(context), LongValueData.valueOf(7));
+    }
+
+    @Test
+    public void testOneSessionActivityPagination() throws Exception {
+        Metric metric = new TestedUsersActivityList();
+
+        Map<String, String> context = Utils.newContext();
+        MetricFilter.SESSION_ID.put(context, SESSION_ID);
+        Parameters.PAGE.put(context, 1);
+        Parameters.PER_PAGE.put(context, 3);
+
+        ListValueData value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 4);
+
+        long startTime = fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime();
+
+        assertItem(value,
+                   0,
+                   "ide-opened",
+                   null,
+                   null,
+                   fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime(),
+                   0,
+                   fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime() - startTime);
+
+        assertItem(value,
+                   1,
+                   "session-started",
+                   WS,
+                   USER,
+                   fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime(),
+                   0,
+                   fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime() - startTime);
+
+        assertItem(value,
+                   2,
+                   "run-started",
+                   WS,
+                   USER,
+                   fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:00:00,155").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime() - startTime);
+
+        assertItem(value,
+                   3,
+                   "run-finished",
+                   WS,
+                   USER,
+                   fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:08:00,600").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime() - startTime);
+
+        Parameters.PAGE.put(context, 2);
+        value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 3);
+
+        assertItem(value,
+                   0,
+                   "session-finished",
+                   WS,
+                   USER,
+                   fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:10:00,900").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime() - startTime);
+
+        assertItem(value,
+                   1,
+                   "session-started",
+                   WS,
+                   USER,
+                   fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 19:55:00,555").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime() - startTime);
+
+        assertItem(value,
+                   2,
+                   "debug-started",
+                   WS,
+                   USER,
+                   fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 20:00:00,100").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime() - startTime);
+
+        Parameters.PAGE.put(context, 3);
+        value = (ListValueData)metric.getValue(context);
+        assertEquals(value.size(), 3);
+
+        assertItem(value,
+                   0,
+                   "session-finished",
+                   WS,
+                   USER,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() -
+                   fullDateFormatMils.parse("2013-11-01 20:02:00,600").getTime(),
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
+
+        assertItem(value,
+                   1,
+                   "ide-closed",
+                   null,
+                   null,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
+                   0,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
+
+        assertItem(value,
+                   2,
+                   "idle",
+                   null,
+                   null,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime(),
+                   0,
+                   fullDateFormatMils.parse("2013-11-01 20:04:00,220").getTime() - startTime);
     }
 
     private void assertItem(ListValueData items,
@@ -388,6 +548,7 @@ public class TestUsersActivity extends BaseTest {
                             String ws,
                             String user,
                             long date,
+                            long time,
                             long cumulativeTime) {
 
         Map<String, ValueData> itemContent = ((MapValueData)items.getAll().get(itemIndex)).getAll();
@@ -396,18 +557,23 @@ public class TestUsersActivity extends BaseTest {
         assertEquals(itemContent.get(ReadBasedMetric.USER), user == null ? null : StringValueData.valueOf(user));
         assertEquals(itemContent.get(ReadBasedMetric.DATE), LongValueData.valueOf(date));
         assertEquals(itemContent.get(UsersActivityList.CUMULATIVE_TIME), LongValueData.valueOf(cumulativeTime));
+        assertEquals(itemContent.get(UsersActivityList.TIME), LongValueData.valueOf(time));
     }
 
     // ------------------------> Tested classes
 
-    private class TestNumberOfUsersOfActivity extends UsersActivity {
+    private class TestedNumberOfUsersOfActivity extends UsersActivity {
         @Override
         public String getStorageCollectionName() {
             return COLLECTION;
         }
     }
 
-    private class TestUsersActivityList extends UsersActivityList {
+    private class TestedUsersActivityList extends UsersActivityList {
+        private TestedUsersActivityList() {
+            super(new TestedNumberOfUsersOfActivity());
+        }
+
         @Override
         public String getStorageCollectionName() {
             return COLLECTION;

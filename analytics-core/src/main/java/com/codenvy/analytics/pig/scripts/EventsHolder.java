@@ -31,6 +31,7 @@ public class EventsHolder {
     public static final String IDE_OPENED            = "ide-opened";
     public static final String NOT_FACTORY_SESSIONS  = "~session-factory-stopped,~session-factory-started";
     public static final String USER_SSO_LOGOUT_EVENT = "user-sso-logged-out";
+    public static final String USER_IDLE_EVENT       = "idle";
 
     private static final String CONFIGURATION = "events.xml";
 

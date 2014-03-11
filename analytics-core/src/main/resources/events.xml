@@ -257,6 +257,13 @@
             <param>USER</param>
         </parameters>
     </event>
+    <event name="idle">
+        <description>Idle</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+        </parameters>
+    </event>
     <event name="session-finished">
         <description>Ide defocused</description>
         <parameters>

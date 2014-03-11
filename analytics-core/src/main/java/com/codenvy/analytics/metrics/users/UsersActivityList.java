@@ -24,7 +24,6 @@ import com.codenvy.analytics.pig.scripts.EventsHolder;
 import com.mongodb.DBObject;
 
 import javax.annotation.security.RolesAllowed;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -36,17 +35,27 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersActivityList extends AbstractListValueResulted {
 
+    private Metric totalActionsNumberMetric;
+
     public UsersActivityList() {
         super(MetricType.USERS_ACTIVITY_LIST);
+    }
+
+    /**
+     * For testing purpose only.
+     */
+    public UsersActivityList(Metric totalActionsNumberMetric) {
+        super(MetricType.USERS_ACTIVITY_LIST);
+        this.totalActionsNumberMetric = totalActionsNumberMetric;
     }
 
     @Override
     public String[] getTrackedFields() {
         return new String[]{DATE,
-                MESSAGE,
-                EVENT,
-                WS,
-                USER};
+                            MESSAGE,
+                            EVENT,
+                            WS,
+                            USER};
     }
 
     @Override
@@ -76,127 +85,103 @@ public class UsersActivityList extends AbstractListValueResulted {
      */
     @Override
     protected ValueData postEvaluation(ValueData valueData, Map<String, String> clauses) throws IOException {
-        int itemNumber = -1;
-        long prevActionStartDate = -1;
         SessionData sessionData = SessionData.init(clauses);
-        List<ValueData> list2Return = new ArrayList<>();
 
-        for (ValueData row : ((ListValueData)valueData).getAll()) {
-            itemNumber++;
-            Map<String, ValueData> items2Return = new HashMap<>(((MapValueData)row).getAll());
-            long eventDate = ((LongValueData)items2Return.get(DATE)).getAsLong();
+        long prevActionDate = -1;
+
+        List<ValueData> items = ((ListValueData)valueData).getAll();
+        List<ValueData> item2Return = new ArrayList<>(items.size() + 3);
+
+        for (int i = 0; i < items.size(); i++) {
+            Map<String, ValueData> row = ((MapValueData)items.get(i)).getAll();
+            Map<String, ValueData> row2Return = new HashMap<>(row);
+
+            long actionDate = ((LongValueData)row.get(DATE)).getAsLong();
 
             if (sessionData != null) {
-                long eventDurationTime = getDurationTime(eventDate, clauses, prevActionStartDate, itemNumber);
-                long eventCumulativeTime = getCumulativeTime(eventDate, sessionData.fromDate);
+                long actionTime = getTime(actionDate, prevActionDate, i, clauses);
+                long actionCumulativeTime = actionDate - sessionData.fromDate;
 
-                items2Return.put(TIME, LongValueData.valueOf(eventDurationTime));
-                items2Return.put(CUMULATIVE_TIME, LongValueData.valueOf(eventCumulativeTime));
+                prevActionDate = actionDate;
 
-                prevActionStartDate = eventDate;
+                row2Return.put(TIME, LongValueData.valueOf(actionTime));
+                row2Return.put(CUMULATIVE_TIME, LongValueData.valueOf(actionCumulativeTime));
             } else {
-                items2Return.put(TIME, LongValueData.DEFAULT);
-                items2Return.put(CUMULATIVE_TIME, LongValueData.DEFAULT);
+                row2Return.put(TIME, LongValueData.DEFAULT);
+                row2Return.put(CUMULATIVE_TIME, LongValueData.DEFAULT);
             }
 
-            list2Return.add(new MapValueData(items2Return));
+            item2Return.add(new MapValueData(row2Return));
         }
 
         if (sessionData != null) {
-            addArtificialActions(clauses, sessionData, list2Return);
+            addArtificialActions(sessionData, clauses, item2Return);
         }
 
-        return new ListValueData(list2Return);
+        return new ListValueData(item2Return);
     }
 
     /**
-     * Calculate duration of event, in millisec.
+     * Calculate duration of action, in millisec.
      */
-    private long getDurationTime(long eventDate,
-                                 Map<String, String> clauses,
-                                 long prevEventStartDate,
-                                 int numberOfEventWithinList2Return) throws IOException {
-        long durationTime;
-
-        if (prevEventStartDate < 0) { // calculate duration time of first event on page
+    private long getTime(long actionDate,
+                         long prevActionDate,
+                         int actionNumber,
+                         Map<String, String> clauses) throws IOException {
+        if (actionNumber == 0) {
             if (isFirstPage(clauses)) {
-                durationTime = 0;
+                return 0;
             } else {
-                // taking into account the date of last event from previous page
-                if (Parameters.PAGE.exists(clauses)
-                    && Parameters.PER_PAGE.exists(clauses)
-                    && Parameters.PER_PAGE.getAsLong(clauses) > 1) // to protect from recursion of method
-                                                                   // getDateOfEvent()
-                {
-                    int eventNumber = (int)((Parameters.PAGE.getAsLong(clauses) - 1) * Parameters.PER_PAGE.getAsLong(clauses) 
-                                      + numberOfEventWithinList2Return + 1);
-                    
-                    long previousEventData = getDateOfEvent(clauses, eventNumber - 1); // get date of previous event by
-                                                                                       // requesting to database
-                    durationTime = eventDate - previousEventData;
+                if (Parameters.PER_PAGE.exists(clauses) && Parameters.PER_PAGE.getAsLong(clauses) > 1) {
+                    long prevGlobalActionNumber =
+                            (Parameters.PAGE.getAsLong(clauses) - 1) * Parameters.PER_PAGE.getAsLong(clauses);
+
+                    return actionDate - getDateOfAction(clauses, prevGlobalActionNumber);
                 } else {
-                    durationTime = 0;
+                    return 0;
                 }
             }
         } else {
-            durationTime = eventDate - prevEventStartDate;
+            return actionDate - prevActionDate;
         }
-
-        return durationTime;
-    }
-
-    /**
-     * Calculate cumulative time which is passed from start of session to start of event, in millisec.
-     */
-    private long getCumulativeTime(long eventDate, long startSessionDate) {
-        return eventDate - startSessionDate;
     }
 
     /**
      * Returns date of event from USERS_ACTIVITY_LIST
-     * 
-     * @param eventNumber starting from 0
+     *
+     * @param globalActionNumber
+     *         starting from 0
      */
-    private long getDateOfEvent(Map<String, String> clauses, int eventNumber) throws IOException {
-        if (eventNumber <= 0) {
-            return 0; // first event time = 0
-        }
-
+    private long getDateOfAction(Map<String, String> clauses, long globalActionNumber) throws IOException {
         Map<String, String> context = Utils.clone(clauses);
-        // get only one document with number = eventNumber
-        Parameters.PAGE.put(context, eventNumber);
+        Parameters.PAGE.put(context, globalActionNumber);
         Parameters.PER_PAGE.put(context, 1);
 
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY_LIST);
+        ListValueData valueData = (ListValueData)getValue(context);
 
-        ListValueData valueData = (ListValueData)metric.getValue(context);
-
-        List<ValueData> events = valueData.getAll();
-
-        if (events.size() == 0) {
+        List<ValueData> items = valueData.getAll();
+        if (items.size() == 0) {
             return 0;
         }
 
-        Map<String, ValueData> event = ((MapValueData)events.get(0)).getAll();
-
-        long date = ((LongValueData)event.get(DATE)).getAsLong();
-
-        return date;
+        Map<String, ValueData> row = ((MapValueData)items.get(0)).getAll();
+        return ((LongValueData)row.get(DATE)).getAsLong();
     }
 
-    private void addArtificialActions(Map<String, String> clauses,
-                                      SessionData sessionData,
-                                      List<ValueData> list2Return) throws IOException {
+    private void addArtificialActions(SessionData sessionData,
+                                      Map<String, String> clauses,
+                                      List<ValueData> items2Return) throws IOException {
         if (isFirstPage(clauses)) {
-            list2Return.add(0, getIdeOpenedEvent(sessionData));
+            items2Return.add(0, getIdeOpenedEvent(sessionData));
         }
 
         if (isLastPage(clauses)) {
-            list2Return.add(getIdeClosedEvent(sessionData));
-        }
-
-        if (sessionData.logoutInterval != 0 && isLastPage(clauses)) {
-            list2Return.add(getUserLogoutEvent(sessionData));
+            items2Return.add(getIdeClosedEvent(sessionData));
+            if (sessionData.logoutInterval != 0) {
+                items2Return.add(getUserLogoutEvent(sessionData));
+            } else {
+                items2Return.add(getUserIdleEvent(sessionData));
+            }
         }
     }
 
@@ -205,6 +190,17 @@ public class UsersActivityList extends AbstractListValueResulted {
 
         items.put(DATE, LongValueData.valueOf(sessionData.toDate));
         items.put(EVENT, StringValueData.valueOf(EventsHolder.USER_SSO_LOGOUT_EVENT));
+        items.put(TIME, LongValueData.valueOf(sessionData.logoutInterval));
+        items.put(CUMULATIVE_TIME, LongValueData.valueOf(sessionData.time));
+
+        return new MapValueData(items);
+    }
+
+    private ValueData getUserIdleEvent(SessionData sessionData) {
+        Map<String, ValueData> items = new HashMap<>();
+
+        items.put(DATE, LongValueData.valueOf(sessionData.toDate));
+        items.put(EVENT, StringValueData.valueOf(EventsHolder.USER_IDLE_EVENT));
         items.put(TIME, LongValueData.valueOf(0));
         items.put(CUMULATIVE_TIME, LongValueData.valueOf(sessionData.time));
 
@@ -247,12 +243,14 @@ public class UsersActivityList extends AbstractListValueResulted {
     }
 
     private long getTotalActionsNumber(Map<String, String> clauses) throws IOException {
-        // remove misleading parameter PAGE from clauses
-        Map<String, String> clausesWithoutPageParameter = Utils.clone(clauses);
-        Parameters.PAGE.remove(clausesWithoutPageParameter);
+        clauses = Utils.clone(clauses);
+        Parameters.PAGE.remove(clauses);
+        Parameters.PER_PAGE.remove(clauses);
 
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
-        return ((LongValueData)metric.getValue(clausesWithoutPageParameter)).getAsLong();
+        if (totalActionsNumberMetric == null) {
+            totalActionsNumberMetric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
+        }
+        return ValueDataUtil.getAsLong(totalActionsNumberMetric.getValue(clauses));
     }
 
     private void overrideSortOrder(Map<String, String> clauses) {
@@ -287,10 +285,10 @@ public class UsersActivityList extends AbstractListValueResulted {
      * The data of the sessions that contains all given user's actions.
      */
     private static class SessionData {
-        private long   fromDate;
-        private long   toDate;
-        private long   time;
-        private long   logoutInterval;
+        private long fromDate;
+        private long toDate;
+        private long time;
+        private long logoutInterval;
 
         private String ws;
         private String user;
@@ -362,7 +360,7 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         private static long getLongParameter(MapValueData valueData, String param) {
-            return ((LongValueData)valueData.getAll().get(param)).getAsLong();
+            return ValueDataUtil.getAsLong(valueData.getAll().get(param));
         }
     }
 }
