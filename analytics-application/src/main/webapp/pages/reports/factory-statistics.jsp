@@ -34,7 +34,7 @@
                 <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="_all">
                     <button class="btn command-btn" default value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>
-                    <button class="btn command-btn" default value="Month">Month</button>
+                    <button class="btn command-btn" value="Month">Month</button>
                     <button class="btn command-btn" value="LifeTime">LifeTime</button>
                 </div>
                 <div id="filter-by" class="right" targetWidgets="_all">
