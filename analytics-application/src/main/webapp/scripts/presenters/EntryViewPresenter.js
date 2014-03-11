@@ -102,7 +102,11 @@ EntryViewPresenter.prototype.load = function() {
                   var newSortingParameterValue = undefined;
                }
             
-               modelParams.sort = newSortingParameterValue;
+               if (typeof newSortingParameterValue == "undefined") {
+                   delete modelParams.sort;
+               } else {
+                   modelParams.sort = newSortingParameterValue;
+               }
             
                var headerHref = presenter.TARGET_PAGE_LINK + "?" + analytics.util.constructUrlParams(modelParams);
                table.columns[i] = "<a href='" + headerHref + "' " + headerClassOption + ">" + columnName + "</a>";
