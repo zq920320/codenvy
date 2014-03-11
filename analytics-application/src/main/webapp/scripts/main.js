@@ -174,13 +174,12 @@ function Main() {
 
            var urlParams = analytics.util.extractUrlParams(window.location.href);
            var buttonParams = getParamsFromButtons();
+             
+           // remove unregistered url params
+           var urlParams = analytics.util.getSubset(urlParams, analytics.configuration.getCrossPageParamsList());
            
            // union url params with button params and choose button params values above url params values 
            var params = analytics.util.unionWithRewrite(urlParams, buttonParams);
-           
-           var urlParams = analytics.util.getSubset(urlParams, analytics.configuration.getCrossPageParamsList());
-           
-           var params = analytics.util.unionWithRewrite(params, urlParams);
            
            params = analytics.util.removeParamsWithNullValues(params);
            
@@ -301,7 +300,7 @@ function Main() {
             }
         });
         
-        var presenter = analytics.factory.getPresenter(widgetName, view, model);        
+        var presenter = analytics.factory.getPresenter(widgetName, view, model);
 
         view.clear();        
         presenter.load();
