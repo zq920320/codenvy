@@ -30,12 +30,14 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div>
-            <div class="single-column-gadget">
-                <div class="view">
-                    <div class="tables">
-                        <div class="item">
-                            <div class="header">Signup Analysis</div>
-                            <div class="body" id="analysis"></div>
+            <div class="hero-unit">
+                <div class="single-column-gadget">
+                    <div class="view">
+                        <div class="tables">
+                            <div class="item">
+                                <div class="header">Signup Analysis</div>
+                                <div class="body" id="analysis"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

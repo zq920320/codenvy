@@ -20,6 +20,7 @@
 <link rel="stylesheet" type="text/css" href="/analytics/css/styles.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/single-column.css"/>
 <link rel="stylesheet" type="text/css" href="/analytics/css/view.css"/>
+<link rel="stylesheet" type="text/css" href="/analytics/css/database-table.css" />
 
 <style type="text/css">
     body {

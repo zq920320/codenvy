@@ -25,10 +25,10 @@ iframe {
 
 .single-column-gadget {
     width: 100%;
-    min-height: 420px;
+/*    min-height: 420px;*/
     border: none;
-	 margin: 0px;
-	 display: block;    
+	margin: 0px;
+	display: block;    
 }
 
 .hero-unit .jqplot-table-legend {

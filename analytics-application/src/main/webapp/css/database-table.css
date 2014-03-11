@@ -52,8 +52,8 @@
 }
 
 .database-table .header a.descending{
-	font-weight: bold;
-	padding-left: 14px;
+   font-weight: bold;
+   padding-left: 14px;
    background-image: url('../images/small_triangular_down_arrow.png');
    background-repeat: no-repeat;
    background-position: left center;

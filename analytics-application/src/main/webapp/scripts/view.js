@@ -31,8 +31,7 @@ function View() {
 
     var ABORT_LOADING_MESSAGE = "<i>Loading has been aborted.</i>";
 	
-    function printTable(table, isDisplaySpecificFirstCell) {
-        print('<link href="/analytics/css/database-table.css" rel="stylesheet" type="text/css" />');	    
+    function printTable(table, isDisplaySpecificFirstCell) {	    
 	    print('<table cellspacing="0" class="database-table" align="center">');
 	    print('<thead aria-hidden="false">');
 	    print('<tr>');
@@ -151,7 +150,6 @@ function View() {
 	
 	//load handlers of table events
 	function loadTableHandlers() {
-	    print("<script src='/analytics/scripts/views/database-table.js'></script>");
 	    print("<script>");
 	    print("  jQuery(function() { ");
 	    print("       analytics.views.databaseTable.setupRowHandlers();");
