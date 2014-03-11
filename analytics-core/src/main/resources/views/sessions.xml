@@ -24,9 +24,9 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions_list"/>
-                <parameter key="fields" value="session_id,user,ws,start_time,end_time,time"/>
+                <parameter key="fields" value="session_id,user,ws,date,end_time,time"/>
                 <parameter key="time-fields" value="time"/>
-                <parameter key="date-fields" value="start_time,end_time"/>
+                <parameter key="date-fields" value="date,end_time"/>
             </row>
         </section>
     </view>

@@ -34,8 +34,6 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageSessionsList extends AbstractListValueResulted {
 
-    private static final String EMPTY_SESSION_MARKER = "User Did Not Enter Workspace";
-
     public ProductUsageSessionsList() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
     }
@@ -47,7 +45,6 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
                             USER_COMPANY,
                             DOMAIN,
                             TIME,
-                            END_TIME,
                             SESSION_ID,
                             DATE,
                             LOGOUT_INTERVAL};
@@ -62,16 +59,10 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
             MapValueData prevItems = (MapValueData)items;
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
-            LongValueData date = (LongValueData)items2Return.get(DATE);
-            LongValueData delta = (LongValueData)items2Return.get(TIME);
-            String sessionId = items2Return.get(SESSION_ID).getAsString();
+            long date = ValueDataUtil.getAsLong(items2Return.get(DATE));
+            long delta = ValueDataUtil.getAsLong(items2Return.get(TIME));
 
-            if (sessionId == null || sessionId.isEmpty()) {
-                items2Return.put(SESSION_ID, StringValueData.valueOf(EMPTY_SESSION_MARKER));
-            }
-            items2Return.put(START_TIME, date);
-            items2Return.put(END_TIME, LongValueData.valueOf(date.getAsLong() + delta.getAsLong()));
-
+            items2Return.put(END_TIME, LongValueData.valueOf(date + delta));
             value.add(new MapValueData(items2Return));
         }
 

@@ -115,7 +115,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(2, valueData.size());
 
         MapValueData items = (MapValueData)valueData.getAll().get(0);
-        assertEquals(items.getAll().get("start_time"),
+        assertEquals(items.getAll().get("date"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:00:00,000").getTime()));
         assertEquals(items.getAll().get("end_time"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:04:00,000").getTime()));
@@ -127,7 +127,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(items.getAll().get("logout_interval"), LongValueData.valueOf(0));
 
         items = (MapValueData)valueData.getAll().get(1);
-        assertEquals(items.getAll().get("start_time"),
+        assertEquals(items.getAll().get("date"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:30:00,000").getTime()));
         assertEquals(items.getAll().get("end_time"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 19:32:00,000").getTime()));
@@ -155,7 +155,7 @@ public class TestUsersSessions extends BaseTest {
         assertEquals(1, valueData.size());
 
         MapValueData items = (MapValueData)valueData.getAll().get(0);
-        assertEquals(items.getAll().get("start_time"),
+        assertEquals(items.getAll().get("date"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 20:00:00,000").getTime()));
         assertEquals(items.getAll().get("end_time"),
                      LongValueData.valueOf(fullDateFormatMils.parse("2013-11-01 20:06:00,000").getTime()));

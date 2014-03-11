@@ -20,7 +20,8 @@
     <view name="users" on-demand="true">
         <section name="users">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Email,First Name,Last Name,Company,Phone,Job,# Sessions,# Usage Time,# Projects"/>
+                <parameter key="titles"
+                           value="Email,First Name,Last Name,Company,Phone,Job,# Sessions,# Usage Time,# Projects"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics_list"/>
@@ -34,7 +35,8 @@
     <view name="user" on-demand="true">
         <section name="user">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Email,First Name,Last Name,Company,Phone,Job,Number of Sessions,Usage Time,Number of Projects"/>
+                <parameter key="titles"
+                           value="Email,First Name,Last Name,Company,Phone,Job,Number of Sessions,Usage Time,Number of Projects"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics_list"/>
@@ -67,9 +69,9 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="product_usage_sessions_list"/>
-                <parameter key="fields" value="session_id,ws,start_time,end_time,time"/>
+                <parameter key="fields" value="session_id,ws,date,end_time,time"/>
                 <parameter key="time-fields" value="time"/>
-                <parameter key="date-fields" value="start_time,end_time"/>
+                <parameter key="date-fields" value="date,end_time"/>
             </row>
         </section>
     </view>

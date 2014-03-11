@@ -35,9 +35,9 @@ t3 = FOREACH t2 GENERATE dt, ws, user, id, delta, company, REGEX_EXTRACT(user, '
 t = FOREACH t3 GENERATE dt, ws, user, id, delta, company, (domain IS NULL ? '' : domain) AS domain;
 
 result = FOREACH t GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-            TOTUPLE('session_id', id), TOTUPLE('start_time', ToString(dt, 'yyyy-MM-dd HH:mm:ss')), TOTUPLE('ide', 2),
-            TOTUPLE('end_time', ToString(ToDate(ToMilliSeconds(dt) + delta), 'yyyy-MM-dd HH:mm:ss')),
+            TOTUPLE('session_id', id), TOTUPLE('ide', 2),
             TOTUPLE('time', delta), TOTUPLE('domain', domain), TOTUPLE('user_company', company);
+
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 ---------------------------------------
