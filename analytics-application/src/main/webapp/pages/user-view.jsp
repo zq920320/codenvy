@@ -30,8 +30,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="date-range" class="btn-group"
-                     targetWidgets="userData,userSessions,userWorkspaceList,userActivity">
+                <div id="date-range" targetWidgets="userData,userSessions,userWorkspaceList,userActivity">
                    <span>
                        From: <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
                        To: <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
