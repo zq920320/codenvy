@@ -61,7 +61,7 @@
 
 .database-table .first-cell {
    background: #d9e4f6 !important;
-   min-width: 180px;
+   min-width: 200px;
    /* border-bottom: 1px solid #ededed;*/ 
    border: none;
    word-break: break-all;   
