@@ -24,8 +24,8 @@
 			</a>
 
             <div class="left">
-				<a class="nav" href="/analytics/pages/users-view.jsp" id="topmenu-users">Users</a>
-                <a class="nav" href="/analytics/pages/sessions-view.jsp?sort=-start_time" id="topmenu-sessions">Sessions</a>
+				<a class="nav" href="/analytics/pages/users-view.jsp?sort=%2Buser" id="topmenu-users">Users</a>
+                <a class="nav" href="/analytics/pages/sessions-view.jsp?sort=-date" id="topmenu-sessions">Sessions</a>
 				<a class="nav" href="/analytics/pages/workspaces-view.jsp?sort=%2Bws" id="topmenu-workspaces">Workspaces</a>
 				<%--<a class="nav" href="#">Projects</a> --%>
 				<%--<a class="nav" href="#">Factories</a>--%>
