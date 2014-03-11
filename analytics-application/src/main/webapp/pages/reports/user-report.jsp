@@ -48,10 +48,9 @@
             </div>
             <div class="hero-unit">
                 <div id="userReport" class="single-column-gadget"></div>
-            </div>
-            <div class="hero-unit">
+                <div class="empty-field"></div>
                 <div id="engagementLevels" class="single-column-gadget"></div>
-            </div> 
+            </div>
         </div>
     </div>
 </div>

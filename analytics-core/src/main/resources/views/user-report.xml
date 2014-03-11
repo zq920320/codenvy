@@ -107,7 +107,7 @@
         </section>           
     </view>
     
-    <view name="engagement_levels">
+    <view name="engagement_levels" columns="7">
         <section name="engagement_levels">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles" value="Engagement Levels,1 Day,7 Days,30 Days,60 Days,90 Days,1 Year"/>
