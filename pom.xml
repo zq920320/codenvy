@@ -42,9 +42,9 @@
         <url>https://fisheye.codenvycorp.com/browse/factory</url>
     </scm>
     <properties>
-        <codenvy.commons.version>0.16.0-SNAPSHOT</codenvy.commons.version>
+        <codenvy.commons.version>0.17.0-SNAPSHOT</codenvy.commons.version>
         <codenvy.organization.version>0.14.0-SNAPSHOT</codenvy.organization.version>
-        <codenvy.platform-api.version>0.10.0-SNAPSHOT</codenvy.platform-api.version>
+        <codenvy.platform-api.version>0.11.0-SNAPSHOT</codenvy.platform-api.version>
         <commons.fileupload.version>1.0</commons.fileupload.version>
         <everrest.assured.version>0.17</everrest.assured.version>
         <everrest.version>1.1.9</everrest.version>
