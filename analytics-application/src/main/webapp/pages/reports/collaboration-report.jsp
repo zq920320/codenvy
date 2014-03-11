@@ -31,13 +31,7 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="timely-dd" class="btn-group timely-dd-btns left" targetWidgets="_all">
-                    <button class="btn command-btn" value="Day">Day</button>
-                    <button class="btn command-btn" value="Week">Week</button>
-                    <button class="btn command-btn" default value="Month">Month</button>
-                    <button class="btn command-btn" value="LifeTime">LifeTime</button>
-                </div>
-                <div id="filter-by" class="right" targetWidgets="_all">
+                <div id="filter-by" class="left" targetWidgets="_all">
                      Filter by:
                     <input type="text" id="filterByKeywordInput" name="keyword" class="text-box" />
                     <button class="btn command-btn" value="user">Email</button>
@@ -45,6 +39,12 @@
                     <button class="btn command-btn" value="user_company">Company</button>
                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>                   
                 </div>
+	            <div id="timely-dd" class="btn-group timely-dd-btns right" targetWidgets="_all">
+	                <button class="btn command-btn" value="Day">Day</button>
+	                <button class="btn command-btn" value="Week">Week</button>
+	                <button class="btn command-btn" default value="Month">Month</button>
+	                <button class="btn command-btn" value="LifeTime">LifeTime</button>
+	            </div>
             </div>
             <div class="hero-unit">
                 <div id="collaborationReport" class="single-column-gadget"></div>
