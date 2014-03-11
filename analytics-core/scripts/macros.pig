@@ -19,7 +19,7 @@
 DEFINE URLDecode com.codenvy.analytics.pig.udf.URLDecode;
 DEFINE GetQueryValue com.codenvy.analytics.pig.udf.GetQueryValue;
 DEFINE CutQueryParam com.codenvy.analytics.pig.udf.CutQueryParam;
-DEFINE EventExists com.codenvy.analytics.pig.udf.EventExists;
+DEFINE EventExists   com.codenvy.analytics.pig.udf.EventExists;
 
 ---------------------------------------------------------------------------
 -- Loads resources.
