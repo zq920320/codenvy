@@ -17,26 +17,22 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.security.RolesAllowed;
-
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.AbstractListValueResulted;
-import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.analytics.metrics.MetricFactory;
-import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.*;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
@@ -82,7 +78,19 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     }
 
     @Override
-    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {       
+    public DBObject getFilter(Map<String, String> clauses) throws ParseException, IOException {
+        DBObject filter = super.getFilter(clauses);
+
+        DBObject match = (DBObject)filter.get("$match");
+        if (match.get(USER) == null) {
+            match.put(USER, REGISTERED_USER);
+        }
+
+        return filter;
+    }
+
+    @Override
+    public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + USER);
         group.put(PROJECTS, new BasicDBObject("$sum", "$" + PROJECTS));
@@ -113,12 +121,12 @@ public class UsersStatisticsList extends AbstractListValueResulted {
         project.put(LOGINS, "$" + LOGINS);
         project.put(RUN_TIME, "$" + RUN_TIME);
         project.put(BUILD_TIME, "$" + BUILD_TIME);
-        project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);        
+        project.put(PAAS_DEPLOYS, "$" + PAAS_DEPLOYS);
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
     }
-    
+
     /**
      * To add user profile data.
      */
@@ -148,7 +156,7 @@ public class UsersStatisticsList extends AbstractListValueResulted {
             value.add(new MapValueData(newItems));
         }
 
-        return new ListValueData(value);       
+        return new ListValueData(value);
     }
 
     /**
@@ -158,17 +166,17 @@ public class UsersStatisticsList extends AbstractListValueResulted {
     private Map<String, ValueData> getUserProfile(String user, Map<String, String> clauses) throws IOException {
         Map<String, String> context = Utils.clone(clauses);
         Parameters.USER.put(context, user);
-        
-        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
-        List<ValueData> users = ((ListValueData) metric.getValue(context)).getAll();
 
-        if (users.size() > 0) { 
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+        List<ValueData> users = ((ListValueData)metric.getValue(context)).getAll();
+
+        if (users.size() > 0) {
             MapValueData userProfile = (MapValueData)users.get(0);
             return userProfile.getAll();
         } else {
             return null;
         }
     }
-    
-    
+
+
 }

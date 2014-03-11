@@ -30,8 +30,6 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class UsersProfiles extends AbstractUsersProfile {
 
-    public static final String VALUE = "value";
-
     public UsersProfiles() {
         super(MetricType.USERS_PROFILES);
     }

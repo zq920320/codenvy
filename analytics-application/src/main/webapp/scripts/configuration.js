@@ -144,7 +144,7 @@ function Configuration() {
         users: {
             presenterType: "UsersPresenter",
             modelViewName: "users",
-            modelMetricName: "users_profiles",
+            modelMetricName: "active_users",
             isNeedToSaveInHistory: true,
             columnLinkPrefixList: ["/analytics/pages/user-view.jsp?user"],
         },
