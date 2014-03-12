@@ -150,7 +150,7 @@ public class MongoDBFactoryStoreTest {
         factoryUrl.setVariables(Arrays.asList(variable, variable));
         factoryUrl.setGit(DtoFactory.getInstance().createDto(Git.class).withConfigbranchmerge("configbranchmerge")
                                     .withConfigpushdefault("configpushdefault").withConfigremoteoriginfetch("configremoteoriginfetch"));
-        factoryUrl.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValidsessioncount(123).withValiduntil(123456798)
+        factoryUrl.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withMaxsessioncount(123).withValiduntil(123456798)
                                             .withRefererhostname("host").withValidsince(123).withPassword("password")
                                             .withRestrictbypassword(true));
 
