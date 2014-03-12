@@ -17,17 +17,17 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.commons.lang.UrlUtils;
+import com.codenvy.commons.lang.URLEncodedUtils;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Convert bitbucket edit repo endpoint to factory url.
@@ -38,12 +38,12 @@ import java.util.Map;
 public class BitbucketIntegrationFactoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        URL currentUrl =
-                UriBuilder.fromUri(req.getRequestURL().toString()).replaceQuery(req.getQueryString()).build().toURL();
+        URI currentUrl =
+                UriBuilder.fromUri(req.getRequestURL().toString()).replaceQuery(req.getQueryString()).build();
 
-        Map<String, List<String>> bitbucketParams = UrlUtils.getQueryParameters(currentUrl);
+        Map<String, Set<String>> bitbucketParams = URLEncodedUtils.parse(currentUrl, "UTF-8");
 
-        List<String> urls = bitbucketParams.get("url");
+        Set<String> urls = bitbucketParams.get("url");
         if (urls != null && !urls.isEmpty()) {
             String bitbucketUrl = urls.iterator().next();
             UriBuilder factoryUrl = UriBuilder.fromPath("/factory");

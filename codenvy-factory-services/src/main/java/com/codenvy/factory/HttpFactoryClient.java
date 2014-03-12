@@ -18,17 +18,17 @@
 package com.codenvy.factory;
 
 import com.codenvy.api.factory.FactoryUrlException;
-import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
-import com.codenvy.commons.json.JsonHelper;
-import com.codenvy.commons.json.JsonParseException;
+import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.IoUtil;
+import com.codenvy.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /** Retrieve factory parameters over http connection. */
 public class HttpFactoryClient implements FactoryClient {
@@ -45,7 +45,7 @@ public class HttpFactoryClient implements FactoryClient {
     }
 
     @Override
-    public AdvancedFactoryUrl getFactory(String factoryId) throws FactoryUrlException {
+    public Factory getFactory(String factoryId) throws FactoryUrlException {
         HttpURLConnection conn = null;
         try {
 
@@ -68,9 +68,9 @@ public class HttpFactoryClient implements FactoryClient {
                 throw new FactoryUrlException(responseCode, message);
             }
 
-            return JsonHelper.fromJson(conn.getInputStream(), AdvancedFactoryUrl.class, null);
+            return DtoFactory.getInstance().createDtoFromJson(conn.getInputStream(), Factory.class);
 
-        } catch (IOException | JsonParseException e) {
+        } catch (IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new FactoryUrlException(e.getLocalizedMessage(), e);
         } finally {

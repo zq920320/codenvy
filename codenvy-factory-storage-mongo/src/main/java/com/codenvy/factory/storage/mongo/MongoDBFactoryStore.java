@@ -18,13 +18,12 @@
 package com.codenvy.factory.storage.mongo;
 
 import com.codenvy.api.factory.*;
-import com.codenvy.api.factory.dto.AdvancedFactoryUrl;
-import com.codenvy.api.factory.dto.WelcomeConfiguration;
-import com.codenvy.api.factory.dto.WelcomePage;
+import com.codenvy.api.factory.dto.Factory;
 import com.codenvy.commons.lang.NameGenerator;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.factory.MongoDbConfiguration;
 import com.mongodb.*;
+import com.mongodb.util.JSON;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,30 +68,9 @@ public class MongoDBFactoryStore implements FactoryStore {
 
 
     @Override
-    public String saveFactory(AdvancedFactoryUrl factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
+    public String saveFactory(Factory factoryUrl, Set<FactoryImage> images) throws FactoryUrlException {
 
         factoryUrl.setId(NameGenerator.generate("", 16));
-        BasicDBObjectBuilder attributes = BasicDBObjectBuilder.start(factoryUrl.getProjectattributes());
-
-        BasicDBObject welcomeDBObject = null;
-
-        if (factoryUrl.getWelcome() != null) {
-            welcomeDBObject = new BasicDBObject();
-            WelcomeConfiguration authConfiguration = factoryUrl.getWelcome().getAuthenticated();
-            BasicDBObject authDBOWelcome = new BasicDBObject();
-            authDBOWelcome.put("title", authConfiguration.getTitle());
-            authDBOWelcome.put("iconurl", authConfiguration.getIconurl());
-            authDBOWelcome.put("contenturl", authConfiguration.getContenturl());
-
-            WelcomeConfiguration nonAuthConfiguration = factoryUrl.getWelcome().getNonauthenticated();
-            BasicDBObject nonAuthDBOWelcome = new BasicDBObject();
-            nonAuthDBOWelcome.put("title", nonAuthConfiguration.getTitle());
-            nonAuthDBOWelcome.put("iconurl", nonAuthConfiguration.getIconurl());
-            nonAuthDBOWelcome.put("contenturl", nonAuthConfiguration.getContenturl());
-
-            welcomeDBObject.put("authenticated", authDBOWelcome);
-            welcomeDBObject.put("nonauthenticated", nonAuthDBOWelcome);
-        }
 
         List<DBObject> imageList = new ArrayList<>();
         for (FactoryImage one : images) {
@@ -101,32 +79,9 @@ public class MongoDBFactoryStore implements FactoryStore {
                                                     .add("data", one.getImageData()).get());
         }
 
-        BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
-        factoryURLbuilder.add("v", factoryUrl.getV())
-                         .add("vcs", factoryUrl.getVcs())
-                         .add("vcsurl", factoryUrl.getVcsurl())
-                         .add("commitid", factoryUrl.getCommitid())
-                         .add("action", factoryUrl.getAction())
-                         .add("openfile", factoryUrl.getOpenfile())
-                         .add("vcsinfo", factoryUrl.getVcsinfo())
-                         .add("style", factoryUrl.getStyle())
-                         .add("description", factoryUrl.getDescription())
-                         .add("contactmail", factoryUrl.getContactmail())
-                         .add("author", factoryUrl.getAuthor())
-                         .add("orgid", factoryUrl.getOrgid())
-                         .add("affiliateid", factoryUrl.getAffiliateid())
-                         .add("vcsbranch", factoryUrl.getVcsbranch())
-                         .add("projectattributes", attributes.get())
-                         .add("userid", factoryUrl.getUserid())
-                         .add("validsince", factoryUrl.getValidsince())
-                         .add("validuntil", factoryUrl.getValiduntil())
-                         .add("created", factoryUrl.getCreated())
-                         .add("variables", VariableHelper.toBasicDBFormat(factoryUrl.getVariables()))
-                         .add("welcome", welcomeDBObject);
-
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", factoryUrl.getId());
-        factoryDatabuilder.add("factoryurl", factoryURLbuilder.get());
+        factoryDatabuilder.add("factoryurl", JSON.parse(DtoFactory.getInstance().toJson(factoryUrl)));
         factoryDatabuilder.add("images", imageList);
 
         factories.save(factoryDatabuilder.get());
@@ -141,8 +96,7 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public AdvancedFactoryUrl getFactory(String id) throws FactoryUrlException {
-        AdvancedFactoryUrl factoryUrl = DtoFactory.getInstance().createDto(AdvancedFactoryUrl.class);
+    public Factory getFactory(String id) throws FactoryUrlException {
         DBObject query = new BasicDBObject();
         query.put("_id", id);
         DBObject res = factories.findOne(query);
@@ -151,51 +105,9 @@ public class MongoDBFactoryStore implements FactoryStore {
         }
 
         // Processing factory
+        Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(res.get("factoryurl").toString(), Factory.class);
+
         factoryUrl.setId((String)res.get("_id"));
-        BasicDBObject factoryAsDbObject = (BasicDBObject)res.get("factoryurl");
-        factoryUrl.setV((String)factoryAsDbObject.get("v"));
-        factoryUrl.setVcs((String)factoryAsDbObject.get("vcs"));
-        factoryUrl.setVcsurl((String)factoryAsDbObject.get("vcsurl"));
-        factoryUrl.setCommitid((String)factoryAsDbObject.get("commitid"));
-        factoryUrl.setAction((String)factoryAsDbObject.get("action"));
-        factoryUrl.setVcsinfo((boolean)factoryAsDbObject.get("vcsinfo"));
-        factoryUrl.setOpenfile((String)factoryAsDbObject.get("openfile"));
-        factoryUrl.setStyle((String)factoryAsDbObject.get("style"));
-        factoryUrl.setDescription((String)factoryAsDbObject.get("description"));
-        factoryUrl.setContactmail((String)factoryAsDbObject.get("contactmail"));
-        factoryUrl.setAuthor((String)factoryAsDbObject.get("author"));
-        factoryUrl.setOrgid((String)factoryAsDbObject.get("orgid"));
-        factoryUrl.setAffiliateid((String)factoryAsDbObject.get("affiliateid"));
-        factoryUrl.setVcsbranch((String)factoryAsDbObject.get("vcsbranch"));
-        factoryUrl.setProjectattributes(((BasicDBObject)factoryAsDbObject.get("projectattributes")).toMap());
-        factoryUrl.setUserid((String)factoryAsDbObject.get("userid"));
-        factoryUrl.setValidsince((long)factoryAsDbObject.get("validsince"));
-        factoryUrl.setValiduntil((long)factoryAsDbObject.get("validuntil"));
-        factoryUrl.setCreated((long)factoryAsDbObject.get("created"));
-        factoryUrl.setVariables(VariableHelper.fromBasicDBFormat(factoryAsDbObject));
-
-        BasicDBObject welcomeDBObject = (BasicDBObject)factoryAsDbObject.get("welcome");
-        if (welcomeDBObject != null) {
-            BasicDBObject authDBConfiguration = (BasicDBObject)welcomeDBObject.get("authenticated");
-            BasicDBObject nonAuthDBConfiguration = (BasicDBObject)welcomeDBObject.get("nonauthenticated");
-
-            WelcomePage welcomePage = DtoFactory.getInstance().createDto(WelcomePage.class);
-            WelcomeConfiguration authWelcomeConfiguration = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
-            WelcomeConfiguration notAuthWelcomeConfiguration = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
-
-            authWelcomeConfiguration.setTitle((String)authDBConfiguration.get("title"));
-            authWelcomeConfiguration.setIconurl((String)authDBConfiguration.get("iconurl"));
-            authWelcomeConfiguration.setContenturl((String)authDBConfiguration.get("contenturl"));
-
-            notAuthWelcomeConfiguration.setTitle((String)nonAuthDBConfiguration.get("title"));
-            notAuthWelcomeConfiguration.setIconurl((String)nonAuthDBConfiguration.get("iconurl"));
-            notAuthWelcomeConfiguration.setContenturl((String)nonAuthDBConfiguration.get("contenturl"));
-
-            welcomePage.setAuthenticated(authWelcomeConfiguration);
-            welcomePage.setNonauthenticated(notAuthWelcomeConfiguration);
-
-            factoryUrl.setWelcome(welcomePage);
-        }
 
         return factoryUrl;
     }
