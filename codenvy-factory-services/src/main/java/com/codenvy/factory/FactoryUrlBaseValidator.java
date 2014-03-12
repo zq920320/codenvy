@@ -68,7 +68,7 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
             factory = factoryBuilder.convertToLatest(factory);
             this.validateObject(factory, true);
         } else {
-            Factory factory = factoryBuilder.buildNonEncoded(factoryUrl.getQuery());
+            Factory factory = factoryBuilder.buildNonEncoded(factoryUrl);
             this.validateObject(factoryBuilder.convertToLatest(factory), false);
         }
     }
