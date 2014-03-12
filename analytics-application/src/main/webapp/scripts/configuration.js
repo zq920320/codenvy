@@ -352,8 +352,14 @@ function Configuration() {
         "ws",          // workspaces-view > workspace-view; user-view > workspace-view
     ];
     
+    /** Global parameters stored in Browser Storage  */
     var globalParams = [
         "ide",
+    ];
+    
+    /** List of system messages of Analytics  */
+    var systemMessagesList = [
+        "User Did Not Enter Workspace",
     ];
     
     function getProperty(widgetName, property) {
@@ -454,6 +460,16 @@ function Configuration() {
         return crossPageParams;
     }
 
+    function isSystemMessage(message) {
+        for (var i in systemMessagesList) {
+            if (systemMessagesList[i] == message) {
+                return true;
+            }
+            
+            return false;
+        }
+    }
+    
     
     /** ****************** API ********** */
     return {
@@ -466,6 +482,7 @@ function Configuration() {
         getViewParamsWithNullValues: getViewParamsWithNullValues,
         removeForbiddenModelParams: removeForbiddenModelParams,
         getCrossPageParamsList: getCrossPageParamsList,
+        isSystemMessage: isSystemMessage,
 
     }
 }

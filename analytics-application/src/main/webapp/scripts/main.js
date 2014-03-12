@@ -214,7 +214,7 @@ function Main() {
                 newPageUrl += "?" + urlParams;
              }
           
-             window.history.pushState({"widgetName": widgetName}, document.title, newPageUrl);
+//              window.history.pushState({"widgetName": widgetName}, document.title, newPageUrl);  // TODO fix browser history
           }
        });
        
@@ -232,7 +232,7 @@ function Main() {
        for(var i in widgetNames) {
            var widgetName = widgetNames[i];
            if (jQuery("#" + widgetName).doesExist()) {
-/*               if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory")) {       
+/*             if (analytics.configuration.getProperty(widgetName, "isNeedToSaveInHistory")) {    // TODO fix browser history       
                    // update div when navigating in history
                    var everPushedSomething = false;
                    var initialUrl = window.location.href;

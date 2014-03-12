@@ -25,8 +25,7 @@ analytics.views.databaseTable = new DatabaseTable();
 function DatabaseTable() {  
    var lastClickedRow;
    var lastMouseoveredRow;
-   
-   // ***** Private members    
+     
    var MOUSEOVER_ROW_STYLE = " mouseover-row";
    var CLICKED_ROW_STYLE = " clicked-row";
  
@@ -79,8 +78,7 @@ function DatabaseTable() {
       }
    };
    
-
-    function onRowClick(event) {
+   function onRowClick(event) {
         var row = event.currentTarget;
 
         if (typeof lastClickedRow != "undefined") {
@@ -96,7 +94,7 @@ function DatabaseTable() {
         row.className += CLICKED_ROW_STYLE;
 
         lastClickedRow = row;
-    }
+   }
    
    function onRowMouseover(event) {	
       var row = event.currentTarget;

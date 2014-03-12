@@ -80,6 +80,11 @@
    color: #08c;
 }
 
+.database-table .cell .system {
+   font-style: italic;
+   color: gray;
+}
+
 .text-cursor {
    cursor: text;
 }

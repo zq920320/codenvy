@@ -30,6 +30,7 @@ function View() {
 	var params;
 
     var ABORT_LOADING_MESSAGE = "<i>Loading has been aborted.</i>";
+
 	
     function printTable(table, isDisplaySpecificFirstCell) {	    
 	    print('<table cellspacing="0" class="database-table" align="center">');
@@ -130,7 +131,6 @@ function View() {
 	        }
 	    }
 	
-	
 	    print('</tbody>');
 	    print('</table>');
 	}	
@@ -141,8 +141,13 @@ function View() {
     function makeTableColumnLinked(table, columnIndex, columnLinkPrefix) {
         for (var i = 0; i < table.rows.length; i++) {
             var columnValue = table.rows[i][columnIndex];
-            var href = columnLinkPrefix + "=" + columnValue;
-            table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
+            
+            if (analytics.configuration.isSystemMessage(columnValue)) {
+               table.rows[i][columnIndex] = getSystemMessageLabel(columnValue);    
+            } else {
+               var href = columnLinkPrefix + "=" + columnValue;
+               table.rows[i][columnIndex] = "<a href='" + href + "'>" + columnValue + "</a>";
+            }
         }
     
         return table;
@@ -270,6 +275,13 @@ function View() {
         viewHtml = "<i>Error of loading data</i>: (" + status + ") '" + errorThrown + "'.";
         show();
     };
+
+    function getSystemMessageLabel(message) {
+        return "<div class='system'>(" + message + ")</div>";
+    }
+    
+
+    
     
     /** ****************** API ********** */
 	return {
@@ -279,12 +291,14 @@ function View() {
 	    clear: clear,
 	    show: show,
     	print: print,
+        getSystemMessageLabel: getSystemMessageLabel,
     	
     	// table
     	printTable: printTable,
     	loadTableHandlers: loadTableHandlers,
     	printTableVerticalRow: printTableVerticalRow,
     	makeTableColumnLinked: makeTableColumnLinked,
+
     	
     	// page navigation
     	printBottomPageNavigator: printBottomPageNavigator,

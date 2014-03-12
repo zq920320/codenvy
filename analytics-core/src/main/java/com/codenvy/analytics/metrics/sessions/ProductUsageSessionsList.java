@@ -34,6 +34,8 @@ import java.util.Map;
 @RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageSessionsList extends AbstractListValueResulted {
 
+    private static final String EMPTY_SESSION_MESSAGE = "User Did Not Enter Workspace";
+    
     public ProductUsageSessionsList() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
     }
@@ -56,6 +58,8 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
         ListValueData list2Return = (ListValueData)valueData;
 
         for (ValueData items : list2Return.getAll()) {
+
+            // add END_TIME field
             MapValueData prevItems = (MapValueData)items;
             Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
 
@@ -63,6 +67,13 @@ public class ProductUsageSessionsList extends AbstractListValueResulted {
             long delta = ValueDataUtil.getAsLong(items2Return.get(TIME));
 
             items2Return.put(END_TIME, LongValueData.valueOf(date + delta));
+            
+            // replace empty session_id field on explanation message
+            if (items2Return.get(SESSION_ID).getAsString().isEmpty() 
+                   && delta == 0) {
+                items2Return.put(SESSION_ID, StringValueData.valueOf(EMPTY_SESSION_MESSAGE));
+            }
+            
             value.add(new MapValueData(items2Return));
         }
 
