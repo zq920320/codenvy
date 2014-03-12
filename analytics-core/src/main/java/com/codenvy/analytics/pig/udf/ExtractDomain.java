@@ -25,6 +25,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ExtractDomain extends EvalFunc<String> {
@@ -39,10 +40,10 @@ public class ExtractDomain extends EvalFunc<String> {
             String url = (String)input.get(0);
 
             try {
-                URI uri = new URI(url);
-                return uri.getHost();
-            } catch (NumberFormatException e) {
-                return url;
+                String host = new URI(url).getHost();
+                return host == null ? "" : host;
+            } catch (URISyntaxException e) {
+                return "";
             }
         } catch (Exception e) {
             warn("Error reading input: " + e.getMessage(), PigWarning.UDF_WARNING_1);

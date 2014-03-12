@@ -40,11 +40,9 @@ import static org.testng.Assert.assertEquals;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestProductUsageFactorySessions extends BaseTest {
 
-    private Map<String, String> params;
-
     @BeforeClass
     public void init() throws Exception {
-        params = Utils.newContext();
+        Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createSessionFactoryStartedEvent("id1", "tmp-1", "user1", "true", "brType")
@@ -66,13 +64,13 @@ public class TestProductUsageFactorySessions extends BaseTest {
                         .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "referrer1", "org1", "affiliate1")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "http://referrer1", "org1", "affiliate1")
                      .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "referrer2", "org2", "affiliate1")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
                      .withDate("2013-02-10").withTime("11:00:01").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer3", "org3", "affiliate2")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer3", "org3", "affiliate2")
                      .withDate("2013-02-10").withTime("11:00:02").build());
 
         events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")

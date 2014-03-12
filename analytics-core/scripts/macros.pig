@@ -20,6 +20,7 @@ DEFINE URLDecode com.codenvy.analytics.pig.udf.URLDecode;
 DEFINE GetQueryValue com.codenvy.analytics.pig.udf.GetQueryValue;
 DEFINE CutQueryParam com.codenvy.analytics.pig.udf.CutQueryParam;
 DEFINE EventExists   com.codenvy.analytics.pig.udf.EventExists;
+DEFINE ExtractDomain com.codenvy.analytics.pig.udf.ExtractDomain;
 
 ---------------------------------------------------------------------------
 -- Loads resources.
@@ -279,7 +280,7 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
     x2 = extractUrlParam(x1, 'REFERRER', 'referrer');
     x3 = extractUrlParam(x2, 'FACTORY-URL', 'factory');
     x4 = extractOrgAndAffiliateId(x3);
-    x = FOREACH x4 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+    x = FOREACH x4 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId;
 
     -- created temporary workspaces
     w1 = filterByEvent($X, 'tenant-created');
@@ -299,7 +300,7 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     u2 = extractUrlParam(u1, 'REFERRER', 'referrer');
     u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
     u4 = extractOrgAndAffiliateId(u3);
-    u = FOREACH u4 GENERATE ws AS tmpWs, referrer, factory, orgId, affiliateId;
+    u = FOREACH u4 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId;
 
     -- finds in which temporary workspaces anonymous users have worked
     x1 = filterByEvent($X, 'user-added-to-ws');

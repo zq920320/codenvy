@@ -18,6 +18,7 @@
 
 DEFINE MongoStorage com.codenvy.analytics.pig.udf.MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
 DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
+DEFINE ExtractDomain com.codenvy.analytics.pig.udf.ExtractDomain;
 
 IMPORT 'macros.pig';
 
@@ -27,7 +28,7 @@ a1 = filterByEvent(l, 'factory-url-accepted');
 a2 = extractUrlParam(a1, 'REFERRER', 'referrer');
 a3 = extractUrlParam(a2, 'FACTORY-URL', 'factoryUrl');
 a4 = extractOrgAndAffiliateId(a3);
-a = FOREACH a4 GENERATE dt, ws, user, referrer, factoryUrl, ide, orgId, affiliateId;
+a = FOREACH a4 GENERATE dt, ws, user, ExtractDomain(referrer) AS referrer, factoryUrl, ide, orgId, affiliateId;
 
 
 result = FOREACH a GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),

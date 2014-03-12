@@ -72,14 +72,17 @@ public class TestTopMetrics extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "referrer1", "org1", "affiliate1")
-                             .withDate("2013-02-10").withTime("11:00:00").build());
+                Event.Builder
+                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "http://referrer1", "org1", "affiliate1")
+                        .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "referrer2", "org2", "affiliate1")
-                             .withDate("2013-02-10").withTime("11:00:01").build());
+                Event.Builder
+                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
+                        .withDate("2013-02-10").withTime("11:00:01").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer2", "org3", "affiliate2")
-                             .withDate("2013-02-10").withTime("11:00:02").build());
+                Event.Builder
+                        .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer2", "org3", "affiliate2")
+                        .withDate("2013-02-10").withTime("11:00:02").build());
 
         events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")
                                 .withDate("2013-02-10").withTime("12:00:00").build());
@@ -161,12 +164,12 @@ public class TestTopMetrics extends BaseTest {
         List<ValueData> all = value.getAll();
 
         checkTopFactoriesDataItem((MapValueData)all.get(0), "factoryUrl1", "1", "1", "1500000", "0.0", "0.0", "0.0",
-                                  "50.0", "50.0", "100.0", "0.0", "" + dateAndTimeFormat.parse("20130210 10:20:00").getTime(),
-                                  "" + dateAndTimeFormat.parse("20130210 11:00:00").getTime());
+                                  "50.0", "50.0", "100.0", "0.0"
+                                 );
         checkTopFactoriesDataItem((MapValueData)all.get(1), "factoryUrl0", "1", "0", "300000", "100.0", "100.0",
                                   "100.0",
-                                  "0.0", "100.0", "0.0", "100.0", "" + dateAndTimeFormat.parse("20130210 10:00:00").getTime(),
-                                  "" + dateAndTimeFormat.parse("20130210 10:00:00").getTime());
+                                  "0.0", "100.0", "0.0", "100.0"
+                                 );
     }
 
     private void checkTopSessionDataItem(MapValueData item, String time, String factory, String referrer,
@@ -191,9 +194,7 @@ public class TestTopMetrics extends BaseTest {
                                            String anonymousFactorySessionRate,
                                            String authenticatedFactorySessionRate,
                                            String abandonFactorySessionRate,
-                                           String convertedFactorySessionRate,
-                                           String firstSessionDate,
-                                           String lastSessionDate) {
+                                           String convertedFactorySessionRate) {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.FACTORY).getAsString(), factory);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.WS_CREATED).getAsString(), wsCreated);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.USER_CREATED).getAsString(), userCreated);
@@ -227,11 +228,11 @@ public class TestTopMetrics extends BaseTest {
         List<ValueData> all = value.getAll();
         checkTopReferrersDataItem((MapValueData)all.get(0), "referrer2", "1", "1", "1500000", "0.0", "0.0", "0.0",
                                   "50.0",
-                                  "50.0", "100.0", "0.0", "" + dateAndTimeFormat.parse("20130210 10:20:00").getTime(),
-                                  "" + dateAndTimeFormat.parse("20130210 11:00:00").getTime());
+                                  "50.0", "100.0", "0.0"
+                                 );
         checkTopReferrersDataItem((MapValueData)all.get(1), "referrer1", "1", "0", "300000", "100.0", "100.0", "100.0",
-                                  "0.0", "100.0", "0.0", "100.0", "" + dateAndTimeFormat.parse("20130210 10:00:00").getTime(),
-                                  "" + dateAndTimeFormat.parse("20130210 10:00:00").getTime());
+                                  "0.0", "100.0", "0.0", "100.0"
+                                 );
     }
 
     @Test
@@ -270,9 +271,7 @@ public class TestTopMetrics extends BaseTest {
                                            String anonymousFactorySessionRate,
                                            String authenticatedFactorySessionRate,
                                            String abandonFactorySessionRate,
-                                           String convertedFactorySessionRate,
-                                           String firstSessionDate,
-                                           String lastSessionDate) {
+                                           String convertedFactorySessionRate) {
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.REFERRER).getAsString(), referrer);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.WS_CREATED).getAsString(), wsCreated);
         assertEquals(item.getAll().get(ProductUsageFactorySessionsList.USER_CREATED).getAsString(), userCreated);

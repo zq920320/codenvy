@@ -31,7 +31,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,7 @@ import static org.testng.Assert.assertEquals;
 public class TestProductUsageFactoryReferrers extends BaseTest {
 
     @BeforeClass
-    public void init() throws IOException, Exception {
+    public void init() throws Exception {
         Map<String, String> params = Utils.newContext();
 
         List<Event> events = new ArrayList<>();
@@ -75,16 +74,16 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
                         .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "referrer1", "org1", "affiliate1")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "http://referrer1", "org1", "affiliate1")
                      .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "referrer2", "org2", "affiliate1")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
                      .withDate("2013-02-10").withTime("11:00:01").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer2", "org3", "affiliate2")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer2", "org3", "affiliate2")
                      .withDate("2013-02-10").withTime("11:00:02").build());
         events.add(
-                   Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl0", "referrer3", "org4", "affiliate2")
+                   Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl0", "http://referrer3", "org4", "affiliate2")
                         .withDate("2013-02-10").withTime("11:00:03").build());
 
         events.add(Event.Builder.createTenantCreatedEvent("tmp-1", "user1")

@@ -64,10 +64,7 @@ public abstract class AbstractTopReferrers extends AbstractTopMetrics {
 
         dbOperations.add(
                 new BasicDBObject(
-                        "$match",
-                        getAndOperation(
-                                new BasicDBObject(REFERRER,
-                                                  new BasicDBObject("$ne", "")))));
+                        "$match", getAndOperation(new BasicDBObject(REFERRER, new BasicDBObject("$ne", "")))));
 
         dbOperations.add(
                 new BasicDBObject(
