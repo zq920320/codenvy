@@ -61,24 +61,23 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
 
-        dbOperations.add(
-                new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", ""))));
+        dbOperations.add(new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", ""))));
+        dbOperations.add(new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", null))));
 
         dbOperations.add(
-                new BasicDBObject(
-                        "$group",
-                        new BasicDBObject(ID, "$" + FACTORY)
-                                .append(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED))
-                                .append(USER_CREATED, new BasicDBObject("$sum", "$" + USER_CREATED))
-                                .append(FACTORY_COUNT, new BasicDBObject("$sum", 1))
-                                .append(TIME, new BasicDBObject("$sum", "$" + TIME))
-                                .append(BUILD + "_count", new BasicDBObject("$sum", "$" + BUILD))
-                                .append(RUN + "_count", new BasicDBObject("$sum", "$" + RUN))
-                                .append(DEPLOY + "_count", new BasicDBObject("$sum", "$" + DEPLOY))
-                                .append(AUTHENTICATED_SESSION + "_count",
-                                        new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION))
-                                .append(CONVERTED_SESSION + "_count",
-                                        new BasicDBObject("$sum", "$" + CONVERTED_SESSION))));
+                new BasicDBObject("$group",
+                                  new BasicDBObject(ID, "$" + FACTORY)
+                                          .append(WS_CREATED, new BasicDBObject("$sum", "$" + WS_CREATED))
+                                          .append(USER_CREATED, new BasicDBObject("$sum", "$" + USER_CREATED))
+                                          .append(FACTORY_COUNT, new BasicDBObject("$sum", 1))
+                                          .append(TIME, new BasicDBObject("$sum", "$" + TIME))
+                                          .append(BUILD + "_count", new BasicDBObject("$sum", "$" + BUILD))
+                                          .append(RUN + "_count", new BasicDBObject("$sum", "$" + RUN))
+                                          .append(DEPLOY + "_count", new BasicDBObject("$sum", "$" + DEPLOY))
+                                          .append(AUTHENTICATED_SESSION + "_count",
+                                                  new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION))
+                                          .append(CONVERTED_SESSION + "_count",
+                                                  new BasicDBObject("$sum", "$" + CONVERTED_SESSION))));
 
         dbOperations.add(
                 new BasicDBObject(
