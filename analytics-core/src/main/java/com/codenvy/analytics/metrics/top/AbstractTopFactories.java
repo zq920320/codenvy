@@ -62,7 +62,7 @@ public abstract class AbstractTopFactories extends AbstractTopMetrics {
         List<DBObject> dbOperations = new ArrayList<>();
 
         dbOperations.add(
-                new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", null))));
+                new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", ""))));
 
         dbOperations.add(
                 new BasicDBObject(
