@@ -133,7 +133,28 @@ function Util() {
         
         return map;
 	}
+
+	 /**
+     * Remove from map all params with names from array namesOfParamsToRemove 
+     */
+    function removeParams(map, namesOfParamsToRemove) {
+        for (var i in namesOfParamsToRemove) {
+            delete map[namesOfParamsToRemove[i]];
+        }
+        
+        return map;
+    }
 	
+    /** Return array without certain element  */
+    function removeElementFromArray(array, element) {
+        var index = array.indexOf(element);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+        
+        return array;
+    }
+    
 	/**
 	 * Shallow copy object
 	 * @see http://api.jquery.com/jQuery.extend/
@@ -179,6 +200,8 @@ function Util() {
     	removeParamsWithNullValues: removeParamsWithNullValues,
     	processUserLogOut: processUserLogOut,
     	getSubset: getSubset,
+    	removeParams: removeParams,
+    	removeElementFromArray: removeElementFromArray,
     }
 
 }

@@ -44,14 +44,19 @@ function Main() {
            $("#filter-by button").removeClass('btn-primary');
            if ($("#filter-by input[name='keyword']").val() != "") {  // select button only if there is some text in keyword input
               $(this).addClass('btn-primary');
-              reloadWidgets($("#filter-by").attr("targetWidgets"));
+              
+              var filterParamNames = getFilterParamNames($("#filter-by button"));
+              filterParamNames = analytics.util.removeElementFromArray(filterParamNames, $(this).attr("value"));   // remove param with name = value of clicked button
+              reloadWidgets($("#filter-by").attr("targetWidgets"), filterParamNames);
            }
         });
         $("#filter-by button.clear-btn").click(function() {    // clearing
             $("#filter-by button").removeClass('btn-primary');
             $("#filter-by input[name='keyword']").val("");
             
-            reloadWidgets($("#filter-by").attr("targetWidgets"));            
+            // remove from URL all params with names from buttons of this group
+            var filterParamNames = getFilterParamNames($("#filter-by button"));
+            reloadWidgets($("#filter-by").attr("targetWidgets"), filterParamNames);            
         });
         
         // "Date range" group
@@ -68,7 +73,9 @@ function Main() {
             $("#date-range input[name='from_date']").val("");
             $("#date-range input[name='to_date']").val("");
             
-            reloadWidgets($("#date-range").attr("targetWidgets"));          
+            // remove from URL all params with names from buttons of this group
+            var filterParamNames = getFilterParamNames($("#filter-by button"));
+            reloadWidgets($("#date-range").attr("targetWidgets"), filterParamNames);          
         });
         
         // Metric selectors group
@@ -97,7 +104,7 @@ function Main() {
      * Get params from buttons state
      */
     function getParamsFromButtons() {   
-        var params = analytics.configuration.getViewParamsWithNullValues();
+        var params = {};
         
         // process time selector
         var selectedTimeButton = $("#timely-dd button.btn-primary");
@@ -167,21 +174,25 @@ function Main() {
     /**
      * Reload widgets
      * @param widgetNames: String with widget names divided by ","
+     * @param namesOfParamsToRemove: set of parameter names from filter in which the clear button had been clicked  
      */
-    function reloadWidgets(widgetNames) {
+    function reloadWidgets(widgetNames, namesOfParamsToRemove) {
+        var namesOfParamsToRemove = namesOfParamsToRemove || {};
+        
         if (typeof widgetNames != "undefined") {
            var widgetName = widgetNames.split(',');
 
            var urlParams = analytics.util.extractUrlParams(window.location.href);
            var buttonParams = getParamsFromButtons();
-             
+           
            // remove unregistered url params
            var urlParams = analytics.util.getSubset(urlParams, analytics.configuration.getCrossPageParamsList());
            
            // union url params with button params and choose button params values above url params values 
            var params = analytics.util.unionWithRewrite(urlParams, buttonParams);
            
-           params = analytics.util.removeParamsWithNullValues(params);
+           // remove conflicting params
+           params = analytics.util.removeParams(params, namesOfParamsToRemove);
            
            // set 'page' parameter = 1 to receive correct result from server after performing filter from view filter (not view url)
            if (typeof params["page"] != "undefined") {
@@ -448,7 +459,20 @@ function Main() {
                }
            }
         }
-     }
+    }
+    
+    function getFilterParamNames(filterButtons) {
+        var paramNames = [];
+        for (var i in Object.keys(filterButtons)) {
+            if (typeof filterButtons[i]  != "undefined"
+                 && typeof filterButtons[i].value != "undefined"
+                 && filterButtons[i].value != "") {
+                paramNames.push(filterButtons[i].value);
+            }
+        }
+        
+        return paramNames;
+    }
     
     /** ****************** library API ********** */
     return {
