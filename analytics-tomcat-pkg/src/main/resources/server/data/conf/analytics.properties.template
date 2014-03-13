@@ -42,7 +42,7 @@ analytics.views=views/summary-report.xml,views/collaboration-report.xml,views/pr
 
 # Common mail configuration
 analytics.mail.smtp_auth=true
-analytics.mail.smtp_starttls.enable=true
+analytics.mail.smtp_starttls_enable=true
 analytics.mail.smtp_host=smtp.gmail.com
 analytics.mail.smpt_port=465
 analytics.mail.user=
