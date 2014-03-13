@@ -329,11 +329,11 @@
                 <field>date</field>
                 <field>ws</field>
             </index>
-            <index name="orgId">
+            <index name="org_id">
                 <field>date</field>
                 <field>orgdate</field>
             </index>
-            <index name="affiliateId">
+            <index name="affiliate_id">
                 <field>date</field>
                 <field>affiliatedate</field>
             </index>
@@ -358,11 +358,11 @@
                 <field>date</field>
                 <field>ws</field>
             </index>
-            <index name="orgId">
+            <index name="org_id">
                 <field>date</field>
                 <field>orgdate</field>
             </index>
-            <index name="affiliateId">
+            <index name="affiliate_id">
                 <field>date</field>
                 <field>affiliatedate</field>
             </index>
@@ -387,11 +387,11 @@
                 <field>date</field>
                 <field>ws</field>
             </index>
-            <index name="orgId">
+            <index name="org_id">
                 <field>date</field>
                 <field>orgdate</field>
             </index>
-            <index name="affiliateId">
+            <index name="affiliate_id">
                 <field>date</field>
                 <field>affiliatedate</field>
             </index>
@@ -416,11 +416,11 @@
                 <field>date</field>
                 <field>ws</field>
             </index>
-            <index name="orgId">
+            <index name="org_id">
                 <field>date</field>
                 <field>orgdate</field>
             </index>
-            <index name="affiliateId">
+            <index name="affiliate_id">
                 <field>date</field>
                 <field>affiliatedate</field>
             </index>
@@ -445,11 +445,11 @@
                 <field>date</field>
                 <field>ws</field>
             </index>
-            <index name="orgId">
+            <index name="org_id">
                 <field>date</field>
                 <field>orgdate</field>
             </index>
-            <index name="affiliateId">
+            <index name="affiliate_id">
                 <field>date</field>
                 <field>affiliatedate</field>
             </index>

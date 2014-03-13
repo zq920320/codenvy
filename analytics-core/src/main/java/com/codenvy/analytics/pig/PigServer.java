@@ -74,9 +74,11 @@ public class PigServer {
         List<String> result = new ArrayList<>();
 
         File[] files = new File(scriptDir).listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                result.add(file.getName());
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    result.add(file.getName());
+                }
             }
         }
 

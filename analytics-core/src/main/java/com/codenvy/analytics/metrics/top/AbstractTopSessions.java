@@ -41,10 +41,12 @@ public abstract class AbstractTopSessions extends AbstractTopMetrics {
 
     @Override
     public DBObject[] getSpecificDBOperations(Map<String, String> clauses) {
-        DBObject[] dbOperations = new DBObject[2];
+        DBObject[] dbOperations = new DBObject[4];
 
-        dbOperations[0] = new BasicDBObject("$sort", new BasicDBObject(TIME, -1));
-        dbOperations[1] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
+        dbOperations[0] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", "")));
+        dbOperations[1] = new BasicDBObject("$match", new BasicDBObject(FACTORY, new BasicDBObject("$ne", null)));
+        dbOperations[2] = new BasicDBObject("$sort", new BasicDBObject(TIME, -1));
+        dbOperations[3] = new BasicDBObject("$limit", MAX_DOCUMENT_COUNT);
 
         return dbOperations;
     }

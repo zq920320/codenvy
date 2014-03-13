@@ -31,7 +31,7 @@ a5 = extractOrgAndAffiliateId(a4);
 a = FOREACH a5 GENERATE dt, ws, user, factory, repository, projectType, ide, orgId, affiliateId;
 
 result = FOREACH a GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('ws', ws), TOTUPLE('user', user),
-                    TOTUPLE('orgId', orgId), TOTUPLE('affiliateId', affiliateId), TOTUPLE('ide', ide),
+                    TOTUPLE('org_id', orgId), TOTUPLE('affiliate_id', affiliateId), TOTUPLE('ide', ide),
                     TOTUPLE('repository', repository), TOTUPLE('project_type', projectType), TOTUPLE('factory', factory);
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
