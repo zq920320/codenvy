@@ -18,5 +18,5 @@
 <% if (Utils.isSystemUser(request.getUserPrincipal().getName())) { %>
     <jsp:forward page="pages/reports/summary-report.jsp"/>
 <% } else { %>
-    <jsp:forward page="pages/reports/summary-report.jsp"/>
+    <jsp:forward page="pages/user-view.jsp"/>
 <% } %>
