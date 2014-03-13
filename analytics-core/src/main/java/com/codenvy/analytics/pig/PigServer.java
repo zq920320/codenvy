@@ -27,12 +27,12 @@ import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.mongodb.DBObject;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.FuncSpec;
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -46,8 +46,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
  */
-@Singleton
-public class PigServer {
+public class PigServer implements AutoCloseable {
 
     private static final String     LOGS_DIR    = "analytics.pig.logs_dir";
     private static final String     SCRIPTS_DIR = "analytics.pig.scripts_dir";
@@ -57,7 +56,7 @@ public class PigServer {
     private final String scriptDir;
     private final String logsDir;
 
-    private final org.apache.pig.PigServer server;
+    private org.apache.pig.PigServer server;
     private final MongoDataStorage         mongoDataStorage;
     private final List<String>             outdatedScriptDirectories;
 
@@ -89,15 +88,6 @@ public class PigServer {
 
     private org.apache.pig.PigServer initEmbeddedServer() throws IOException {
         final org.apache.pig.PigServer server = initializeServer();
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                LOG.info("Embedded PigServer is shutting down");
-                server.shutdown();
-            }
-        });
-
         return server;
     }
 
@@ -127,6 +117,7 @@ public class PigServer {
                 server.setBatchOn();
                 server.registerScript(scriptContent, context);
                 server.executeBatch();
+                server.discardBatch();
             } finally {
                 LOG.info("Execution " + scriptType + " is finished");
             }
@@ -142,7 +133,41 @@ public class PigServer {
         server.registerJar(PigServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         server.registerJar(DBObject.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 
+
+        server.registerFunction("UUID", new FuncSpec("com.codenvy.analytics.pig.udf.UUID"));
+        server.registerFunction("ExtractDomain", new FuncSpec("com.codenvy.analytics.pig.udf.ExtractDomain"));
+        server.registerFunction("URLDecode", new FuncSpec("com.codenvy.analytics.pig.udf.URLDecode"));
+        server.registerFunction("GetQueryValue", new FuncSpec("com.codenvy.analytics.pig.udf.GetQueryValue"));
+        server.registerFunction("CutQueryParam", new FuncSpec("com.codenvy.analytics.pig.udf.CutQueryParam"));
+        server.registerFunction("EventExists", new FuncSpec("com.codenvy.analytics.pig.udf.EventExists"));
+        server.registerFunction("FixJobTitle", new FuncSpec("com.codenvy.analytics.pig.udf.FixJobTitle"));
+
+        server.registerFunction("MongoStorage",
+                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoStorage",
+                                             new String[]{"$STORAGE_USER", "$STORAGE_PASSWORD"}));
+
+        server.registerFunction("MongoLoaderUsersProfiles",
+                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
+                                             new String[]{"$STORAGE_USER",
+                                                          "$STORAGE_PASSWORD",
+                                                          "id: chararray,user_company: chararray"}));
+
+        server.registerFunction("MongoLoaderTest",
+                                new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
+                                             new String[]{"$STORAGE_USER",
+                                                          "$STORAGE_PASSWORD",
+                                                          "value:Long"}));
+
         return server;
+    }
+
+    /**
+     * Cell shutdown on org.apache.pig.PigServer
+     */
+    public void close() {
+        server.shutdown();
+        server = null;
+        LOG.info("Embedded PigServer is shutting down");
     }
 
     /**
@@ -181,6 +206,7 @@ public class PigServer {
             }
 
             server.executeBatch();
+            server.discardBatch();
 
             return tuples.iterator();
         } finally {

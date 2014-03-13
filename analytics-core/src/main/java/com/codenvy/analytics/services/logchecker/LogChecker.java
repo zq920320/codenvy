@@ -18,6 +18,7 @@
 package com.codenvy.analytics.services.logchecker;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.MailService;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.metrics.Parameters;
@@ -53,12 +54,10 @@ public class LogChecker extends Feature {
     private static final String MAIL_TO      = "analytics.log-checker.mail_to";
 
     private final Configurator configurator;
-    private final PigServer    pigServer;
 
     @Inject
-    public LogChecker(Configurator configurator, PigServer pigServer) {
+    public LogChecker(Configurator configurator) {
         this.configurator = configurator;
-        this.pigServer = pigServer;
     }
 
     @Override
@@ -105,10 +104,18 @@ public class LogChecker extends Feature {
                              Map<String, String> context,
                              BufferedWriter out) throws IOException, ParseException {
 
-        Iterator<Tuple> iterator = pigServer.executeAndReturn(scriptType, context);
-        while (iterator.hasNext()) {
-            out.write(iterator.next().toString());
-            out.newLine();
+        PigServer pigServer = Injector.getInstance(PigServer.class);
+        try {
+            Iterator<Tuple> iterator = pigServer.executeAndReturn(scriptType, context);
+            while (iterator.hasNext()) {
+                out.write(iterator.next().toString());
+                out.newLine();
+            }
+        } finally {
+            if (pigServer != null) {
+                pigServer.close();
+                pigServer = null;
+            }
         }
     }
 

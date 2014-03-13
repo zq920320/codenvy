@@ -16,8 +16,6 @@
  * from Codenvy S.A..
  */
 
-DEFINE MongoLoader com.codenvy.analytics.pig.udf.MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'value:Long');
-
 IMPORT 'macros.pig';
 
-result = LOAD '$STORAGE_URL.$STORAGE_TABLE' USING MongoLoader;
+result = LOAD '$STORAGE_URL.$STORAGE_TABLE' USING MongoLoaderTest;

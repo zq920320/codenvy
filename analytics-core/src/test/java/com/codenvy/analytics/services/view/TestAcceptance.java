@@ -27,7 +27,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
-import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.codenvy.analytics.services.pig.PigRunnerConfiguration;
@@ -681,9 +680,7 @@ public class TestAcceptance extends BaseTest {
                     }
                 });
 
-        return spy(new PigRunner(Injector.getInstance(CollectionsManagement.class),
-                                 pigRunnerConfigurationManager,
-                                 Injector.getInstance(PigServer.class)));
+        return spy(new PigRunner(Injector.getInstance(CollectionsManagement.class), pigRunnerConfigurationManager));
     }
 
     /** Get pig runner with default configuration */

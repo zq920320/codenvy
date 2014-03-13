@@ -16,9 +16,6 @@
  * from Codenvy S.A..
  */
 
-DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
-DEFINE MongoStorage  com.codenvy.analytics.pig.udf.MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
-DEFINE ExtractDomain com.codenvy.analytics.pig.udf.ExtractDomain;
 
 IMPORT 'macros.pig';
 

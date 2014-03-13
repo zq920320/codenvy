@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.services.pig;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.pig.scripts.ScriptType;
@@ -41,15 +42,12 @@ public class PigRunner extends Feature {
 
     private final PigRunnerConfiguration configuration;
     private final CollectionsManagement  collectionsManagement;
-    private final PigServer              pigServer;
 
     @Inject
     public PigRunner(CollectionsManagement collectionsManagement,
-                     XmlConfigurationManager confManger,
-                     PigServer pigServer) throws IOException {
+                     XmlConfigurationManager confManger) throws IOException {
         this.configuration = confManger.loadConfiguration(PigRunnerConfiguration.class, CONFIGURATION);
         this.collectionsManagement = collectionsManagement;
-        this.pigServer = pigServer;
     }
 
     @Override
@@ -66,6 +64,7 @@ public class PigRunner extends Feature {
         LOG.info("PigRunner is started");
         long start = System.currentTimeMillis();
 
+        PigServer pigServer = Injector.getInstance(PigServer.class);
         try {
             collectionsManagement.removeData(context);
             collectionsManagement.dropIndexes();
@@ -81,8 +80,13 @@ public class PigRunner extends Feature {
             }
 
             collectionsManagement.ensureIndexes();
+
         } finally {
             LOG.info("PigRunner is finished in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
+            if (pigServer != null) {
+                pigServer.close();
+                pigServer = null;
+            }
         }
     }
 }

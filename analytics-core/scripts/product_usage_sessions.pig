@@ -16,10 +16,6 @@
  * from Codenvy S.A..
  */
 
-DEFINE MongoStorage com.codenvy.analytics.pig.udf.MongoStorage('$STORAGE_USER', '$STORAGE_PASSWORD');
-DEFINE MongoLoader com.codenvy.analytics.pig.udf.MongoLoader('$STORAGE_USER', '$STORAGE_PASSWORD', 'id: chararray,user_company: chararray');
-DEFINE UUID com.codenvy.analytics.pig.udf.UUID;
-
 IMPORT 'macros.pig';
 
 %DEFAULT inactiveInterval '10';
@@ -57,7 +53,7 @@ DEFINE addLogoutInterval(X, L, inactiveIntervalParam) RETURNS Y {
 ---------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-u = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_PROFILES' USING MongoLoader;
+u = LOAD '$STORAGE_URL.$STORAGE_TABLE_USERS_PROFILES' USING MongoLoaderUsersProfiles;
 
 s1 = combineSmallSessions(l, 'session-started', 'session-finished');
 s2 = removeEmptyField(s1, 'user');
