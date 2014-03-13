@@ -37,7 +37,7 @@
 }
 
 .database-table .header a {
-	color: #08c;
+   color: #08c;
    padding-left: 14px;
    background-image: url('../images/small_triangular_arrows.png');
    background-repeat: no-repeat;
@@ -62,7 +62,7 @@
 
 .database-table .first-cell {
    background: #d9e4f6 !important;
-   min-width: 200px;
+   min-width: 205px;
    /* border-bottom: 1px solid #ededed;*/ 
    border: none;
    word-break: break-all;   

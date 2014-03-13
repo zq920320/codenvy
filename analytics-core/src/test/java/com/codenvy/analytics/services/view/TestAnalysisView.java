@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
+import static com.mongodb.util.MyAsserts.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -55,13 +56,25 @@ public class TestAnalysisView extends BaseTest {
     private static final String DATE1 = "2013-11-01";
     private static final String DATE2 = "2013-12-02";
 
-    private static final List<String> columnLabels = Arrays.asList("", "Jan 2014", "Dec 2013",
-                                                                   "Nov 2013", "Oct 2013", "Sep 2013",
-                                                                   "Aug 2013", "Jul 2013", "Jun 2013",
-                                                                   "May 2013", "Apr 2013",
-                                                                   "Mar 2013", "Feb 2013", "Jan 2013",
-                                                                   "Dec 2012");
+    private static final List<String> monthlyReportColumnLabels = Arrays.asList("", "Jan 2014", "Dec 2013",
+                                                                                "Nov 2013", "Oct 2013", "Sep 2013",
+                                                                                "Aug 2013", "Jul 2013", "Jun 2013",
+                                                                                "May 2013", "Apr 2013",
+                                                                                "Mar 2013", "Feb 2013", "Jan 2013",
+                                                                                "Dec 2012");
+    
+    private static final List<String>   weeklyReportColumnLabels    = Arrays.asList("", "04 Jan", "28 Dec", "21 Dec",
+                                                                                    "14 Dec", "07 Dec", "30 Nov",
+                                                                                    "23 Nov", "16 Nov", "09 Nov",
+                                                                                    "02 Nov", "26 Oct", "19 Oct",
+                                                                                    "12 Oct", "05 Oct");
 
+    private static final List<String>   dailyReportColumnLabels     = Arrays.asList("", "01 Jan", "31 Dec", "30 Dec",
+                                                                                    "29 Dec", "28 Dec", "27 Dec",
+                                                                                    "26 Dec", "25 Dec", "24 Dec",
+                                                                                    "23 Dec", "22 Dec", "21 Dec",
+                                                                                    "20 Dec", "19 Dec");                                                                               
+    
     private static final List<RowLabel> rowsLabels = Arrays.asList(RowLabel.EMPTY,
                                                                    RowLabel.TOTAL_USERS,
                                                                    RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK,
@@ -133,41 +146,82 @@ public class TestAnalysisView extends BaseTest {
     }
 
     @Test
-    public void testFourColumns() throws Exception {
+    public void testAnalysisReport() throws Exception {
         ArgumentCaptor<String> viewId = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ViewData> viewData = ArgumentCaptor.forClass(ViewData.class);
         ArgumentCaptor<Map> context = ArgumentCaptor.forClass(Map.class);
 
         Map<String, String> executionContext = Utils.newContext();
         Parameters.TO_DATE.put(executionContext, "20140101");
+        Parameters.TIME_UNIT.put(executionContext, Parameters.TimeUnit.MONTH.toString().toLowerCase());
 
         viewBuilder.computeDisplayData(executionContext);
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
-
-        ViewData actualData = viewData.getAllValues().get(0);
-        assertEquals(actualData.size(), 1);
-
-        SectionData analysisReport = actualData.get("analysis_month");
-
+        
+        List<ViewData> allReports = viewData.getAllValues();
+        
+        assertEquals(allReports.size(), 4);
+        
+        for (ViewData data: allReports) {
+            if (data.containsKey("analysis_lifetime")) {
+                testLifetimeReport(data.get("analysis_lifetime"));
+            } else if (data.containsKey("analysis_month")) {
+                testMonthlyReport(data.get("analysis_month"));                
+            } else if (data.containsKey("analysis_week")) {
+                testWeeklyReport(data.get("analysis_week"));       
+            } else if (data.containsKey("analysis_day")) {
+                testDailyReport(data.get("analysis_day"));       
+            } else {
+                fail("Unknown analysis report: '" + data.keySet().toString() + "'");
+            }
+        }
+    }
+    
+    private void testLifetimeReport(SectionData lifetimeAnalysisReport) {
         // test row labels
-        assertEquals(analysisReport.size(), 9);
-        for (int i = 0; i < analysisReport.size(); i++) {
-            String actualRowLabel = analysisReport.get(i).get(0).getAsString();
+        assertEquals(lifetimeAnalysisReport.size(), 9);
+        for (int i = 0; i < lifetimeAnalysisReport.size(); i++) {
+            String actualRowLabel = lifetimeAnalysisReport.get(i).get(0).getAsString();
             String expectedRowLabel = rowsLabels.get(i).getLabel();
             assertEquals(actualRowLabel, expectedRowLabel);
         }
 
         // test column labels
-        List<ValueData> actualColumnLabels = analysisReport.get(0);
+        List<ValueData> actualColumnLabels = lifetimeAnalysisReport.get(0);
+        assertEquals(actualColumnLabels.size(), 2);
+
+        // test data of column
+        Map<RowLabel, String> columnData = getColumn(1, lifetimeAnalysisReport, rowsLabels, true);
+        assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
+        assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
+        assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
+        assertEquals(columnData.get(RowLabel.AND_BUILT), "3");
+        assertEquals(columnData.get(RowLabel.AND_RUN), "3");
+        assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
+        assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
+        assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
+    }
+
+    private void testMonthlyReport(SectionData monthlyAnalysisReport) { 
+        // test row labels
+        assertEquals(monthlyAnalysisReport.size(), 9);
+        for (int i = 0; i < monthlyAnalysisReport.size(); i++) {
+            String actualRowLabel = monthlyAnalysisReport.get(i).get(0).getAsString();
+            String expectedRowLabel = rowsLabels.get(i).getLabel();
+            assertEquals(actualRowLabel, expectedRowLabel);
+        }
+
+        // test column labels
+        List<ValueData> actualColumnLabels = monthlyAnalysisReport.get(0);
         assertEquals(actualColumnLabels.size(), 15);
-        for (int i = 0; i < columnLabels.size(); i++) {
+        for (int i = 0; i < monthlyReportColumnLabels.size(); i++) {
             String actualColumnLabel = actualColumnLabels.get(i).getAsString();
-            String expectedColumnLabel = columnLabels.get(i);
+            String expectedColumnLabel = monthlyReportColumnLabels.get(i);
             assertEquals(actualColumnLabel, expectedColumnLabel);
         }
 
         // test data of column 4 with label "Oct 2013"
-        Map<RowLabel, String> column4Data = getColumn(4, analysisReport, rowsLabels, true);
+        Map<RowLabel, String> column4Data = getColumn(4, monthlyAnalysisReport, rowsLabels, true);
         assertEquals(column4Data.get(RowLabel.TOTAL_USERS), "20");
         assertEquals(column4Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "0");
         assertEquals(column4Data.get(RowLabel.CREATED_PROJECTS), "0");
@@ -178,7 +232,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column4Data.get(RowLabel.SHELL_LAUNCHED), "0");
 
         // test data of column 3 with label "Nov 2013"
-        Map<RowLabel, String> column3Data = getColumn(3, analysisReport, rowsLabels, true);
+        Map<RowLabel, String> column3Data = getColumn(3, monthlyAnalysisReport, rowsLabels, true);
         assertEquals(column3Data.get(RowLabel.TOTAL_USERS), "22");
         assertEquals(column3Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
         assertEquals(column3Data.get(RowLabel.CREATED_PROJECTS), "2");
@@ -189,7 +243,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column3Data.get(RowLabel.SHELL_LAUNCHED), "1");
 
         // test data of column 2 with label "Dec 2013"
-        Map<RowLabel, String> column2Data = getColumn(2, analysisReport, rowsLabels, true);
+        Map<RowLabel, String> column2Data = getColumn(2, monthlyAnalysisReport, rowsLabels, true);
         assertEquals(column2Data.get(RowLabel.TOTAL_USERS), "23");
         assertEquals(column2Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column2Data.get(RowLabel.CREATED_PROJECTS), "3");
@@ -200,7 +254,7 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column2Data.get(RowLabel.SHELL_LAUNCHED), "2");
 
         // test data of column 1 with label "Jan 2014"
-        Map<RowLabel, String> column1Data = getColumn(1, analysisReport, rowsLabels, true);
+        Map<RowLabel, String> column1Data = getColumn(1, monthlyAnalysisReport, rowsLabels, true);
         assertEquals(column1Data.get(RowLabel.TOTAL_USERS), "23");
         assertEquals(column1Data.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
         assertEquals(column1Data.get(RowLabel.CREATED_PROJECTS), "3");
@@ -211,6 +265,109 @@ public class TestAnalysisView extends BaseTest {
         assertEquals(column1Data.get(RowLabel.SHELL_LAUNCHED), "2");
     }
 
+    private void testWeeklyReport(SectionData weeklyAnalysisReport) { 
+        // test row labels
+        assertEquals(weeklyAnalysisReport.size(), 9);
+        for (int i = 0; i < weeklyAnalysisReport.size(); i++) {
+            String actualRowLabel = weeklyAnalysisReport.get(i).get(0).getAsString();
+            String expectedRowLabel = rowsLabels.get(i).getLabel();
+            assertEquals(actualRowLabel, expectedRowLabel);
+        }
+
+        // test column labels
+        List<ValueData> actualColumnLabels = weeklyAnalysisReport.get(0);
+        assertEquals(actualColumnLabels.size(), 15);
+        for (int i = 0; i < weeklyReportColumnLabels.size(); i++) {
+            String actualColumnLabel = actualColumnLabels.get(i).getAsString();
+            String expectedColumnLabel = weeklyReportColumnLabels.get(i);
+            assertEquals(actualColumnLabel, expectedColumnLabel);
+        }
+
+        // test data of column 1 with label "04 Jan"
+        {
+            Map<RowLabel, String> columnData = getColumn(1, weeklyAnalysisReport, rowsLabels, true);
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
+            assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
+            assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "3");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "3");
+            assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
+            assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
+            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
+        }
+
+        // test data of column 6 with label "30 Nov"
+        {
+            Map<RowLabel, String> columnData = getColumn(6, weeklyAnalysisReport, rowsLabels, true);
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "22");
+            assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "2");
+            assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "2");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "2");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "2");
+            assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "1");
+            assertEquals(columnData.get(RowLabel.SENT_INVITES), "1");
+            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "1");
+        }
+
+        // test data of column 11 with label "26 Oct"
+        { 
+            Map<RowLabel, String> columnData = getColumn(11, weeklyAnalysisReport, rowsLabels, true);
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "20");
+            assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "0");
+            assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "0");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "0");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "0");
+            assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "0");
+            assertEquals(columnData.get(RowLabel.SENT_INVITES), "0");
+            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "0");
+        }
+    }
+    
+    private void testDailyReport(SectionData weeklyAnalysisReport) { 
+        // test row labels
+        assertEquals(weeklyAnalysisReport.size(), 9);
+        for (int i = 0; i < weeklyAnalysisReport.size(); i++) {
+            String actualRowLabel = weeklyAnalysisReport.get(i).get(0).getAsString();
+            String expectedRowLabel = rowsLabels.get(i).getLabel();
+            assertEquals(actualRowLabel, expectedRowLabel);
+        }
+
+        // test column labels
+        List<ValueData> actualColumnLabels = weeklyAnalysisReport.get(0);
+        assertEquals(actualColumnLabels.size(), 15);
+        for (int i = 0; i < dailyReportColumnLabels.size(); i++) {
+            String actualColumnLabel = actualColumnLabels.get(i).getAsString();
+            String expectedColumnLabel = dailyReportColumnLabels.get(i);
+            assertEquals(actualColumnLabel, expectedColumnLabel);
+        }
+
+        // test data of first column 1 with label "01 Jan"
+        {
+            Map<RowLabel, String> columnData = getColumn(1, weeklyAnalysisReport, rowsLabels, true);
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
+            assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
+            assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "3");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "3");
+            assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
+            assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
+            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
+        }
+
+        // test data of last column 14 with label "19 Dec"
+        {
+            Map<RowLabel, String> columnData = getColumn(14, weeklyAnalysisReport, rowsLabels, true);
+            assertEquals(columnData.get(RowLabel.TOTAL_USERS), "23");
+            assertEquals(columnData.get(RowLabel.TOTAL_NUMBER_OF_USERS_WE_TRACK), "3");
+            assertEquals(columnData.get(RowLabel.CREATED_PROJECTS), "3");
+            assertEquals(columnData.get(RowLabel.AND_BUILT), "3");
+            assertEquals(columnData.get(RowLabel.AND_RUN), "3");
+            assertEquals(columnData.get(RowLabel.AND_DEPLOYED_TO_PAAS), "3");
+            assertEquals(columnData.get(RowLabel.SENT_INVITES), "2");
+            assertEquals(columnData.get(RowLabel.SHELL_LAUNCHED), "2");
+        }
+    }    
+    
     /**
      * Returns column from section table of view
      */
