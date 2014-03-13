@@ -21,7 +21,7 @@
         <section name="users">
             <row class="com.codenvy.analytics.services.view.TitleRow">
                 <parameter key="titles"
-                           value="Email,First Name,Last Name,Company,Phone,Job,# Sessions,# Usage Time,# Projects"/>
+                           value="Email,First Name,Last Name,Company,Phone,Job,# Sessions,Usage Time,# Projects"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics_list"/>

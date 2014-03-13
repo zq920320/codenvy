@@ -17,7 +17,7 @@
          from Codenvy S.A..
 -->
 <display>
-    <view time-unit="month" name="analysis" columns="15">
+    <view time-unit="day,week,month,lifetime" name="analysis" columns="15">
         <section name="analysis">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value=""/>
