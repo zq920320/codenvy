@@ -356,11 +356,19 @@ public class UsersActivityList extends AbstractListValueResulted {
         }
 
         private static String getStringParameter(MapValueData valueData, String param) {
-            return valueData.getAll().get(param).getAsString();
+            if (valueData.getAll().containsKey(param)) {
+                return valueData.getAll().get(param).getAsString();
+            } else {
+                return StringValueData.DEFAULT.getAsString();
+            }
         }
 
         private static long getLongParameter(MapValueData valueData, String param) {
-            return ValueDataUtil.getAsLong(valueData.getAll().get(param));
+            if (valueData.getAll().containsKey(param)) {
+                return ValueDataUtil.getAsLong(valueData.getAll().get(param));
+            } else {
+                return LongValueData.DEFAULT.getAsLong();
+            }
         }
     }
 }
