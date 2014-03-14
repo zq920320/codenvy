@@ -21,9 +21,13 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
@@ -125,13 +129,30 @@ public class TestAcceptance extends BaseTest {
         verify(viewBuilder, atLeastOnce()).retainViewData(viewId.capture(), viewData.capture(), context.capture());
 
         for (ViewData actualData : viewData.getAllValues()) {
-            System.out.println(viewData.getAllValues().toString());
             for (Map.Entry<String, SectionData> entry : actualData.entrySet()) {
                 acceptResult(entry.getKey(), entry.getValue());
             }
         }
 
         assertEquals(builder.length(), 0, builder.toString());
+
+        assertNumberOfItems(MetricType.USAGE_TIME_BY_WORKSPACES_LIST, MetricType.USAGE_TIME_BY_WORKSPACES);
+        assertNumberOfItems(MetricType.USERS_ACTIVITY_LIST, MetricType.USERS_ACTIVITY);
+        assertNumberOfItems(MetricType.USAGE_TIME_BY_USERS_LIST, MetricType.USAGE_TIME_BY_USERS);
+        assertNumberOfItems(MetricType.WORKSPACES_STATISTICS_LIST, MetricType.WORKSPACES_STATISTICS);
+        assertNumberOfItems(MetricType.PRODUCT_USAGE_SESSIONS_LIST, MetricType.PRODUCT_USAGE_SESSIONS);
+    }
+
+    private void assertNumberOfItems(MetricType listMetricType, MetricType countMetricType) throws IOException {
+        Map<String, String> context = Utils.newContext();
+
+        Metric listMetric = MetricFactory.getMetric(listMetricType);
+        Metric countMetric = MetricFactory.getMetric(countMetricType);
+
+        ListValueData listValueData = (ListValueData)listMetric.getValue(context);
+        LongValueData longValueData = (LongValueData)countMetric.getValue(context);
+
+        assertEquals(listValueData.size(), longValueData.getAsLong());
     }
 
     private void acceptResult(String tableName, SectionData sectionData) {

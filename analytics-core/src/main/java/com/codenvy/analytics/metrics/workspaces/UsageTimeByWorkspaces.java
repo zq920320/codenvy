@@ -17,17 +17,19 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsageTimeByWorkspaces extends AbstractCount {
+public class UsageTimeByWorkspaces extends AbstractActiveEntities {
 
     public UsageTimeByWorkspaces() {
-        super(MetricType.USAGE_TIME_BY_WORKSPACES, MetricType.USAGE_TIME_BY_WORKSPACES_LIST);
+        super(MetricType.USAGE_TIME_BY_WORKSPACES,
+              MetricType.USAGE_TIME_BY_WORKSPACES_LIST,
+              WS);
     }
 
     @Override

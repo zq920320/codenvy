@@ -17,17 +17,19 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Dmytro Nochevnov */
 @RolesAllowed({"system/admin", "system/manager"})
-public class UsageTimeByUsers extends AbstractCount {
+public class UsageTimeByUsers extends AbstractActiveEntities {
 
     public UsageTimeByUsers() {
-        super(MetricType.USAGE_TIME_BY_USERS, MetricType.USAGE_TIME_BY_USERS_LIST);
+        super(MetricType.USAGE_TIME_BY_USERS,
+              MetricType.USAGE_TIME_BY_USERS_LIST,
+              USER);
     }
 
     @Override

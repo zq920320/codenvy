@@ -46,7 +46,8 @@ public abstract class ReadBasedMetric extends AbstractMetric {
     public static final String SEPARATOR           = ",";
     public static final long   DAY_IN_MILLISECONDS = 86400000L;
 
-    public static final Pattern REGISTERED_USER = Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
+    public static final Pattern REGISTERED_USER =
+            Pattern.compile("^(?!(ANONYMOUSUSER_|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
     public static final Pattern NON_DEFAULT_WS  = Pattern.compile("^(?!DEFAULT).*", Pattern.CASE_INSENSITIVE);
     public static final Pattern PERSISTENT_WS   = Pattern.compile("^(?!(TMP-|DEFAULT)).*", Pattern.CASE_INSENSITIVE);
 
@@ -300,7 +301,7 @@ public abstract class ReadBasedMetric extends AbstractMetric {
         return dbOp;
     }
 
-    public DBObject[] unionDBOperations(DBObject[] dbOp1, DBObject[] dbOp2) {
+    protected DBObject[] unionDBOperations(DBObject[] dbOp1, DBObject[] dbOp2) {
         DBObject[] result = new DBObject[dbOp1.length + dbOp2.length];
 
         System.arraycopy(dbOp1, 0, result, 0, dbOp1.length);

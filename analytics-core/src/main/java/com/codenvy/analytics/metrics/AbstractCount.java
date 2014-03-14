@@ -65,9 +65,8 @@ public abstract class AbstractCount extends ReadBasedMetric {
         DBObject group = new BasicDBObject();
         group.put(ID, null);
         group.put(VALUE, new BasicDBObject("$sum", 1));
-        BasicDBObject opCount = new BasicDBObject("$group", group);
 
-        return new DBObject[]{opCount};
+        return new DBObject[]{new BasicDBObject("$group", group)};
     }
 
     @Override

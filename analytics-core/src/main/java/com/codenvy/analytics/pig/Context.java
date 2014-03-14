@@ -35,6 +35,13 @@ public class Context {
         this.context = context;
     }
 
+    public static Context valueOf(Map<String, String> context) {
+        Builder builder = new Builder();
+        builder.putAll(context);
+
+        return builder.build();
+    }
+
     public String get(Parameters key) {
         return context.get(key.name());
     }
@@ -118,8 +125,8 @@ public class Context {
             return this;
         }
 
-        public Builder putAll(Map<String, String> context) {
-            context.putAll(context);
+        public Builder putAll(Map<String, String> params) {
+            context.putAll(params);
             return this;
         }
 

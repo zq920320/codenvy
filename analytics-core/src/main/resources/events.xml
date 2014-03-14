@@ -244,21 +244,21 @@
         </parameters>
     </event>
     <event name="ide-opened">
-        <description>Ide opened</description>
+        <description>IDE opened</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
         </parameters>
     </event>
     <event name="ide-closed">
-        <description>Ide closed</description>
+        <description>IDE closed</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
         </parameters>
     </event>
     <event name="idle">
-        <description>Idle</description>
+        <description>Session Terminated</description>
         <parameters>
             <param>WS</param>
             <param>USER</param>
