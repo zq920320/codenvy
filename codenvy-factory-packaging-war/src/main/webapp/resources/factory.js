@@ -1,4 +1,4 @@
-/*
+/* 
     CODENVY CONFIDENTIAL
     __________________
 
@@ -16,412 +16,172 @@
     from Codenvy S.A..
 */
 
-/*
+if (!window["codenvy-factories"]) {
 
-The main rule is given below to understand how to use this script for embedding Code button on your page. (prefered)
-	
-<script type="text/javascript" 
+    window["codenvy-factories"] = new Array();
 
-	src="factory.js"
-			// URL to this script
+    window.addEventListener("message", function(event) {
+        try {
+            // Get message.
+            var message = event.data;
 
-	factory="http://url.to/your/factory"
-			// Specify URL to your factory:
-			//		factory="http://url.to/your/factory" will lead to open 
-			//		"http://url.to/your/factory" in new window after clicking the button;
-			//		if factory attribute is not set, clicking the button will be ignored.
-
-	style="white"
-			// Specify style of Code button:
-			// 		attribute not set or style="dark" shows dark button;
-			//		style="white" shows white button;
-			//		style="advanced" shows advanced button with user defined Logo.
-
-	counter="vertical"
-			// Appearance and orientation of Counter to see how many projects were created by your factory:
-			//		not set or counter="none" shows button without counter;
-			//		counter="horizontal" shows counter on the right near the button;
-			//		counter="vertical" shows counter above the button.
-
-></script>
-
-Examples:
-
-- default button
-
-		<script type="text/javascript" src="factory.js" factory="http://codenvy.com/api/factory/factoryixak9964p942mikq"></script>
-
-- white button
-		
-		<script type="text/javascript" src="factory.js" style="white"></script>
-
-- default button with vertical counter
-		
-		<script type="text/javascript" src="factory.js" counter="vertical"></script>
-
-- white button with horizontal counter
-		
-		<script type="text/javascript" src="factory.js" style="white" counter="horizontal"></script>
-
-- advanced button with User defined Logo
-
-		<script type="text/javascript" src="factory.js" style="advanced"></script>
-
-*/
-
-function Factory() {
-
-    // This script element in Document
-    var _script = null;
-
-    var _parent = null;
-
-    // URL to CSS file
-    var _cssURL = null;
-
-    // Factory button type.
-    // Allowable values: "simple-dark", "simple-white" or "advanced".
-    //
-    // 		After refactoring: remove counter attribute.
-    //		Use only one type attribute:
-    //			"dark", "dark-counter-right", "dark-counter-top", "white", "white-counter-right", "white-counter-top", "advanced".
-    var _type = true;
-
-    this.getType = function() {
-        return _type;
-    }
-
-    // Indicates visibility and orientation of the Counter.
-    // Allowable values: null, "horizontal", "vertical".
-    // Null means counter is not visible.
-    var _counter = null;
-
-    // Counter value
-    var _counterValue = 0;
-
-    // Counter Element
-    var _counterElement = null;
-
-    // Deprecated. This variable and "target" attribute must be deleted when Factory 1.1 was fully used.
-    var _target = null;
-
-    // Deprecated. This variable and "img" attribute must be deleted when Factory 1.1 was fully used.
-    var _logoURL = null;
-
-    var _logoImage = null;
-
-    this.getLogoImage = function() {
-        return _logoImage;
-    }
-
-    function fetchButtonOptions() {
-        // Fetch this script HTML element
-        var scripts = document.getElementsByTagName('script');
-        _script = scripts[scripts.length - 1];
-        _parent = _script.parentNode;
-
-        // Fetch URL to factory-1.1.css file
-        _cssURL = _script.src;
-        _cssURL = _cssURL.substring(0, _cssURL.lastIndexOf("/")) + "/factory.css";
-
-        // Fetch button type
-        if ("advanced" == _script.getAttribute("style")) {
-            _type = "advanced";
-        } else if ("white" == _script.getAttribute("style")) {
-            _type = "simple-white";
-        } else {
-            _type = "simple-dark";
-        }
-
-        // Fetch counter appearance and orientation
-        if ("vertical" == _script.getAttribute("counter")) {
-            _counter = "vertical";
-        } else if ("horizontal" == _script.getAttribute("counter")) {
-            _counter = "horizontal";
-        } else if ("visible" == _script.getAttribute("counter")) {
-            _counter = "visible";
-        }
-
-        // Deprecated. Must be deleted when Factory 1.1 was fully used.
-        if (_script.hasAttribute("target")) {
-            _target = _script.getAttribute("target");
-        }
-
-        // Deprecated. Must be deleted when Factory 1.1 was fully used.
-        if (_script.hasAttribute("img")) {
-            _logoURL = _script.getAttribute("img");
-        }
-    }
-
-    // Adds a link to factory.css styles as a child of HEAD element
-    function injectStyles() {
-        var head = document.getElementsByTagName('head')[0];
-        var links = head.getElementsByTagName('link');
-
-        for (i = 0; i < links.length; i++) {
-            if (_cssURL == links[i].href) {
+            // It must be the request for resize Factory button.
+            if (message.indexOf("resize-factory-button:") != 0) {
                 return;
+            }
+
+            // Parse message and resize Factory Button.
+            var parts = message.split(':');
+
+            // resize all, which ID is equal to required
+            for (var i = 0; i < window["codenvy-factories"].length; i++) {
+                var iframe = window["codenvy-factories"][i];
+
+                if (iframe["factory"] && iframe["factory"] === parts[1] &&
+                    iframe["uid"] && iframe["uid"] === parts[2]) {
+
+                    iframe.style.width = "" + parts[3] + "px";
+                    iframe.style.height = "" + parts[4] + "px";
+                }
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    }, false);
+
+
+    var uniqueId = null;
+
+    function getUID(prefix) {
+        if (!uniqueId) uniqueId = (new Date()).getTime();
+        return (prefix || 'id') + (uniqueId++);
+    };
+
+
+    setTimeout(function() {
+
+        function injectFrame(script) {
+
+            var uid = getUID();
+
+            // Fetch Factory button initial params
+
+            var _factory = null;
+            if (script.src.indexOf("/factory.js?") >= 0) {
+                _factory = script.src.substring(script.src.indexOf('?') + 1);
+            }
+
+            var _style = script.getAttribute("style");
+
+            var _url = script.getAttribute("url");
+
+            var _logo = script.getAttribute("logo");
+
+
+            // Build query string
+            var frameQuery = "";
+
+            if (_factory) {
+                frameQuery += "&factory=" + _factory;
+                frameQuery += "&uid=" + uid;
+            }
+
+            if (_style) {
+                frameQuery += "&style=" + _style;
+            }
+
+            if (_url) {
+                frameQuery += "&url=" + _url;
+            }
+
+            if (_logo) {
+                frameQuery += "&logo=" + _logo;
+            }
+
+            // Inject Factory button frame
+            if (frameQuery) {
+                var frameURL = script.src.substring(0, script.src.lastIndexOf("/")) + "/factory.html?" + frameQuery.substring(1);
+
+                var _frame = document.createElement("iframe");
+                _frame.src = frameURL;
+
+                if (_factory) {
+                    _frame.factory = _factory;
+                    _frame.uid = uid;
+                    window["codenvy-factories"].push(_frame);
+                }
+
+                if (_style) {
+                    switch(_style.toLowerCase()) {
+                        case "white":
+                        case "dark":
+                            _frame.style.width = "77px";
+                            _frame.style.height = "21px";
+                            break;
+
+                        case "horizontal,white":
+                        case "white,horizontal":
+                        case "horizontal,dark":
+                        case "dark,horizontal":
+                            _frame.style.width = "118px";
+                            _frame.style.height = "21px";
+                            break;
+
+                        case "vertical,white":
+                        case "white,vertical":
+                        case "vertical,dark":
+                        case "dark,vertical":
+                            _frame.style.width = "77px";
+                            _frame.style.height = "61px";
+                            break;
+
+                        case "advanced":
+                        case "advanced with counter":
+                        case "advanced,counter":
+                        case "counter,advanced":
+                            _frame.style.width = "112px";
+                            _frame.style.height = "113px";
+                            break;
+
+                        default:
+                            _frame.style.width = "0px";
+                            _frame.style.height = "0px";
+                    }
+                } else {
+                    _frame.style.width = "0px";
+                    _frame.style.height = "0px";
+                }
+
+                // Style attributes
+                _frame.style.background = "transparent";
+                _frame.style.border = "0px none transparent";
+                _frame.style.padding = "0px";
+                _frame.style.overflow = "hidden";
+
+                // Properties
+                _frame.scrolling = "no";
+                _frame.frameborder = "0";
+                _frame.allowtransparency = "true"
+
+                setTimeout(function() {
+                    script.parentNode.replaceChild(_frame, script);
+                }, 10);
+
+            } else {
+                console.log("You have an error in your script properties : " + script.outerHTML);
             }
         }
 
-        // Add a link to factory-1.1.css to HEAD element
-        var link = document.createElement('link');
-        link.rel = "stylesheet";
-        link.type = "text/css";
-        link.href = _cssURL;
-        head.appendChild(link);
-    }
-
-    function embedDark() {
-        /*
-            <div class="codenow-dark"></div>
-        */
-
-        var _embed = document.createElement("div");
-        _embed.classList.add("codenow-dark");
-        _embed.onclick = factoryButtonClickHandler;
-        _parent.appendChild(_embed);
-    }
-
-    function embedDarkCounterHorizontal() {
-        /*
-            <div class="codenow-horizontal">
-                <div class="codenow-dark codenow-bottom"></div>
-                <div class="codenow-counter-horizontal"><span>333</span></div>
-            </div>
-        */
-
-        var _embed = document.createElement("div");
-        _embed.classList.add("codenow-horizontal");
-        _parent.appendChild(_embed);
-
-        var _button = document.createElement("div");
-        _button.classList.add("codenow-dark");
-        _button.classList.add("codenow-bottom");
-        _button.onclick = factoryButtonClickHandler;
-        _embed.appendChild(_button);
-
-        var _counter = document.createElement("div");
-        _counter.classList.add("codenow-counter-horizontal");
-        _embed.appendChild(_counter);
-
-        _counterElement = document.createElement("span");
-        _counter.appendChild(_counterElement);
-    }
-
-    function embedDarkCounterVertical() {
-        /*
-            <div class="codenow-vertical">
-                <div class="codenow-counter-vertical"><span>333</span></div>
-                <div class="codenow-dark codenow-bottom"></div>
-            </div>
-        */
-
-        var _embed = document.createElement("div");
-        _embed.classList.add("codenow-vertical");
-        _parent.appendChild(_embed);
-
-        var _counter = document.createElement("div");
-        _counter.classList.add("codenow-counter-vertical");
-        _embed.appendChild(_counter);
-
-        _counterElement = document.createElement("span");
-        _counter.appendChild(_counterElement);
-
-        var _button = document.createElement("div");
-        _button.classList.add("codenow-dark");
-        _button.classList.add("codenow-bottom");
-        _button.onclick = factoryButtonClickHandler;
-        _embed.appendChild(_button);
-    }
-
-    function embedWhite() {
-        /*
-            <div class="codenow-white"></div>
-        */
-
-        var _embed = document.createElement("div");
-        _embed.classList.add("codenow-white");
-        _embed.onclick = factoryButtonClickHandler;
-        _parent.appendChild(_embed);
-    }
-
-    function embedWhiteCounterHorizontal() {
-        /*
-            <div class="codenow-horizontal">
-                <div class="codenow-white codenow-bottom"></div>
-                <div class="codenow-counter-horizontal"><span>333</span></div>
-            </div>
-        */
-
-        var _embed = document.createElement("div");
-        _embed.classList.add("codenow-horizontal");
-        _parent.appendChild(_embed);
-
-        var _button = document.createElement("div");
-        _button.classList.add("codenow-white");
-        _button.classList.add("codenow-bottom");
-        _button.onclick = factoryButtonClickHandler;
-        _embed.appendChild(_button);
-
-        var _counter = document.createElement("div");
-        _counter.classList.add("codenow-counter-horizontal");
-        _embed.appendChild(_counter);
-
-        _counterElement = document.createElement("span");
-        _counter.appendChild(_counterElement);
-    }
-
-    function embedWhiteCounterVertical() {
-        /*
-            <div class="codenow-vertical">
-                <div class="codenow-counter-vertical"><span>333</span></div>
-                <div class="codenow-white codenow-bottom"></div>
-            </div>
-        */
-
-        var _embed = document.createElement("div");
-        _embed.classList.add("codenow-vertical");
-        _parent.appendChild(_embed);
-
-        var _counter = document.createElement("div");
-        _counter.classList.add("codenow-counter-vertical");
-        _embed.appendChild(_counter);
-
-        _counterElement = document.createElement("span");
-        _counter.appendChild(_counterElement);
-
-        var _button = document.createElement("div");
-        _button.classList.add("codenow-white");
-        _button.classList.add("codenow-bottom");
-        _button.onclick = factoryButtonClickHandler;
-        _embed.appendChild(_button);
-    }
-
-    function logoLoadComplete() {
-        _logoImage.style.opacity = 1;
-    }
-
-    function logoLoadError() {
-        _logoImage.style.opacity = 1;
-        //_logoImage.classList.add("advanced-factory-no-logo-available");
-    }
-
-    function embedAdvanced() {
-        /*
-            <div class="advanced-factory">
-                <img alt="" src="..." />
-                <div></div>
-            </div>
-        */
-
-        var _embed = document.createElement("div");
-        _embed.classList.add("advanced-factory");
-        _parent.appendChild(_embed);
-
-        _logoImage = document.createElement("img");
-        _logoImage.src = _logoURL;
-        _logoImage.onload = logoLoadComplete;
-        _logoImage.onabort = logoLoadError;
-        _logoImage.onerror = logoLoadError;
-        _embed.appendChild(_logoImage);
-
-        _logoImage.style.opacity = 0;
-
-        var _button = document.createElement("div");
-        _button.onclick = factoryButtonClickHandler;
-        _embed.appendChild(_button);
-
-//        if (_logoURL == null || "" == _logoURL) {
-//            logoLoadError();
-//        }
-    }
-
-    function embedAdvancedWithCounter() {
-        /*
-            <div class="advanced-factory-noted">
-                <img alt="" src="..." />
-                <div></div>
-                <span>33</span>
-            </div>
-        */
-
-        var _embed = document.createElement("div");
-        _embed.classList.add("advanced-factory-noted");
-        _parent.appendChild(_embed);
-
-        _logoImage = document.createElement("img");
-        _logoImage.src = _logoURL;
-        _logoImage.onload = logoLoadComplete;
-        _logoImage.onabort = logoLoadError;
-        _logoImage.onerror = logoLoadError;
-        _embed.appendChild(_logoImage);
-
-        _logoImage.style.opacity = 0;
-
-        var _button = document.createElement("div");
-        _button.onclick = factoryButtonClickHandler;
-        _embed.appendChild(_button);
-
-        _counterElement = document.createElement("span");
-        _embed.appendChild(_counterElement);
-
-//        if (_logoURL == null || "" == _logoURL) {
-//            logoLoadError();
-//        }
-    }
-
-    function updateCounter() {
-        if (_counterElement == null || _counterElement == undefined) {
-            return;
+        var scripts = document.getElementsByTagName('script');
+        for (var i = 0; i < scripts.length; i++) {
+            var script = scripts.item(i);
+            try {
+                injectFrame(script);
+            } catch (e) {
+                console.log(e.message);
+            }
         }
 
-        _counterElement.innerHTML = "" + _counterValue;
-    }
+    }, 10);
 
-    function factoryButtonClickHandler() {
-        if (_target == null || "" == _target) {
-            _counterValue++;
-            updateCounter();
-            return;
-        }
-
-        window.open(_target, "_blank");
-    }
-
-    // Prepare button's options
-    fetchButtonOptions();
-
-    // Inject styles
-    injectStyles();
-
-    // Remove this script element from Document
-    _parent.removeChild(_script);
-
-    if (!_logoURL) {
-        _logoURL = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
-    }
-
-    // Place Factory button
-    if (_type == "simple-dark" && _counter == null) {
-        embedDark();
-    } else if (_type == "simple-dark" && _counter == "horizontal") {
-        embedDarkCounterHorizontal();
-    } else if (_type == "simple-dark" && _counter == "vertical") {
-        embedDarkCounterVertical();
-    } else if (_type == "simple-white" && _counter == null) {
-        embedWhite();
-    } else if (_type == "simple-white" && _counter == "horizontal") {
-        embedWhiteCounterHorizontal();
-    } else if (_type == "simple-white" && _counter == "vertical") {
-        embedWhiteCounterVertical();
-    } else if (_type == "advanced" && _counter == null) {
-        embedAdvanced();
-    } else if (_type == "advanced" && _counter == "visible") {
-        embedAdvancedWithCounter();
-    }
-
-    updateCounter();
 }
-
-var factory = new Factory();
