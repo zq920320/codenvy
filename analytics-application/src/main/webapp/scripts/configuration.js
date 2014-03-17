@@ -144,7 +144,7 @@ function Configuration() {
         users: {
             presenterType: "UsersPresenter",
             modelViewName: "users",
-            modelMetricName: "active_users",
+            modelMetricName: "users_statistics",
             isNeedToSaveInHistory: true,
             columnLinkPrefixList: ["/analytics/pages/user-view.jsp?user"],
         },
@@ -288,7 +288,7 @@ function Configuration() {
             isNeedToSaveInHistory: true,
 
             isPaginable: true,
-            modelMetricName: "usage_time_by_workspaces",
+            modelMetricName: "usage_time_by_users",
             
             columnLinkPrefixList: ["/analytics/pages/user-view.jsp?user"],
         },

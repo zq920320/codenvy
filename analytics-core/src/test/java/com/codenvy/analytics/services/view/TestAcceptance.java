@@ -138,6 +138,7 @@ public class TestAcceptance extends BaseTest {
         assertNumberOfItems(MetricType.USERS_ACTIVITY_LIST, MetricType.USERS_ACTIVITY);
         assertNumberOfItems(MetricType.USAGE_TIME_BY_USERS_LIST, MetricType.USAGE_TIME_BY_USERS);
         assertNumberOfItems(MetricType.WORKSPACES_STATISTICS_LIST, MetricType.WORKSPACES_STATISTICS);
+        assertNumberOfItems(MetricType.USERS_STATISTICS_LIST, MetricType.USERS_STATISTICS);
         assertNumberOfItems(MetricType.PRODUCT_USAGE_SESSIONS_LIST, MetricType.PRODUCT_USAGE_SESSIONS);
     }
 
