@@ -19,6 +19,7 @@ package com.codenvy.factory;
 
 import com.codenvy.api.factory.*;
 import com.codenvy.api.factory.dto.Factory;
+import com.codenvy.api.factory.dto.Restriction;
 import com.codenvy.commons.lang.URLEncodedUtils;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.client.UserManager;
@@ -27,18 +28,33 @@ import com.codenvy.organization.model.Account;
 import com.codenvy.organization.model.User;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLDecoder;
+import java.net.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Validates parameters of factory
+ * Validates values of factory parameters.
  *
  * @author Alexander Garagatyi
  */
 public class FactoryUrlBaseValidator implements FactoryUrlValidator {
+
+    private static final String PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE =
+            "You have provided an invalid orgId %s. You could have provided the wrong code, your subscription has expired, or you do not have a valid subscription account. Please contact info@codenvy.com with any questions.";
+
+    private static final String PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE =
+            "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have provided the wrong code, your subscription has expired, or you do not have a valid subscription account. Please contact info@codenvy.com with any questions.";
+
+    private static final String ILLEGAL_HOSTNAME_MESSAGE =
+            "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.";
+
+    private static final String ILLEGAL_VALIDSINCE_MESSAGE =
+            "This Factory is not yet valid due to time restrictions applied by its owner.  Please, contact owner for more information.";
+
+    private static final String ILLEGAL_VALIDUNTIL_MESSAGE =
+            "This Factory has expired due to time restrictions applied by its owner.  Please, contact owner for more information.";
 
     private static final Pattern PROJECT_NAME_VALIDATOR = Pattern.compile("^[\\\\\\w\\\\\\d]+[\\\\\\w\\\\\\d_.-]*$");
 
@@ -56,89 +72,160 @@ public class FactoryUrlBaseValidator implements FactoryUrlValidator {
     }
 
     @Override
-    public void validateUrl(URI factoryUrl) throws FactoryUrlException {
+    public void validateUrl(URI factoryUrl, HttpServletRequest request) throws FactoryUrlException {
         Map<String, Set<String>> params = URLEncodedUtils.parse(factoryUrl, "UTF-8");
 
         if (params.get("id") != null) {
             if (params.get("id").size() != 1) {
-                throw new FactoryUrlException("Parameters must not has multiple values");
+                throw new FactoryUrlException("Parameter 'id' has illegal value.");
             }
             FactoryClient factoryClient = new HttpFactoryClient(factoryUrl.getScheme(), factoryUrl.getHost(), factoryUrl.getPort());
             Factory factory = factoryClient.getFactory(params.get("id").iterator().next());
             factory = factoryBuilder.convertToLatest(factory);
-            this.validateObject(factory, true);
+            this.validateObject(factoryBuilder.convertToLatest(factory), true, request);
         } else {
             Factory factory = factoryBuilder.buildNonEncoded(factoryUrl);
-            this.validateObject(factoryBuilder.convertToLatest(factory), false);
+            this.validateObject(factoryBuilder.convertToLatest(factory), false, request);
         }
     }
 
     @Override
-    public void validateObject(Factory factory, boolean encoded) throws FactoryUrlException {
-        validateCommonParams(factory);
-
-        if (encoded) {
-            if (factory.getUserid() != null) {
-                try {
-                    User user = userManager.getUserById(factory.getUserid());
-                    if (user.isTemporary()) {
-                        throw new FactoryUrlException("Current user is not allowed for using this method.");
-                    }
-                    if (factory.getWelcome() != null) {
-                        String orgid = factory.getOrgid();
-                        Account account = accountManager.getAccountById(orgid);
-                        if (!account.getOwner().getId().equals(user.getId())) {
-                            throw new FactoryUrlException("You are not authorized to use this orgid.");
-                        }
-                    }
-                } catch (OrganizationServiceException e) {
-                    throw new FactoryUrlException("Unable to validate user " + factory.getUserid());
-                }
-            }
-            if (factory.getWelcome() != null && (factory.getOrgid() == null || factory.getOrgid().isEmpty())) {
-                throw new FactoryUrlException("Using a custom Welcome Page requires a valid orgid parameter.");
-            }
-        }
-    }
-
-    protected void validateCommonParams(Factory factoryUrl) throws FactoryUrlException {
+    public void validateObject(Factory factory, boolean encoded, HttpServletRequest request) throws FactoryUrlException {
         // check that vcs value is correct (only git is supported for now)
-        if (!"git".equals(factoryUrl.getVcs())) {
-            throw new FactoryUrlException("Parameter 'vcs' has illegal value. Only \"git\" is supported for now.");
+        if (!"git".equals(factory.getVcs())) {
+            throw new FactoryUrlException("Parameter 'vcs' has illegal value. Only 'git' is supported for now.");
         }
-        if (factoryUrl.getVcsurl() == null || factoryUrl.getVcsurl().isEmpty()) {
-            throw new FactoryUrlException("Parameter 'vcsurl' is null or empty.");
+        if (factory.getVcsurl() == null || factory.getVcsurl().isEmpty()) {
+            throw new FactoryUrlException("Parameter 'vcsurl' has illegal value.");
         } else {
             try {
-                URLDecoder.decode(factoryUrl.getVcsurl(), "UTF-8");
+                URLDecoder.decode(factory.getVcsurl(), "UTF-8");
             } catch (IllegalArgumentException | UnsupportedEncodingException e) {
                 throw new FactoryUrlException("Parameter 'vcsurl' has illegal value.");
             }
         }
 
+        // validate project name
+        String pname = null;
+        if (factory.getV().equals("1.0")) {
+            pname = factory.getPname();
+        } else if (factory.getProjectattributes() != null) {
+            pname = factory.getProjectattributes().getPname();
+        }
+        if (null != pname && !PROJECT_NAME_VALIDATOR.matcher(pname).matches()) {
+            throw new FactoryUrlException(
+                    "Project name must contain only Latin letters, digits or these following special characters -._.");
+        }
+
         // validate orgid
-        if (factoryUrl.getOrgid() != null && !factoryUrl.getOrgid().isEmpty()) {
+        String orgid = "".equals(factory.getOrgid()) ? null : factory.getOrgid();
+        if (null != orgid) {
             try {
-                Account account = accountManager.getAccountById(factoryUrl.getOrgid());
+                Account account = accountManager.getAccountById(orgid);
+
+                if (factory.getUserid() != null) {
+                    User user = userManager.getUserById(factory.getUserid());
+                    if (user.isTemporary()) {
+                        throw new FactoryUrlException("Current user is not allowed for using this method.");
+                    }
+                    if (!account.getOwner().getId().equals(user.getId())) {
+                        throw new FactoryUrlException("You are not authorized to use this orgid.");
+                    }
+                }
+
 
                 String endTime;
                 if ("Managed Factory".equals(account.getAttribute("tariff_plan")) &&
                     (endTime = account.getAttribute("tariff_end_time")) != null) {
                     Date endTimeDate = new Date(Long.valueOf(endTime));
-                    if (endTimeDate.after(new Date())) {
-                        return;
+                    if (!endTimeDate.after(new Date())) {
+                        throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                     }
+                } else {
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
                 }
-            } catch (OrganizationServiceException | NumberFormatException ignore) {
+            } catch (OrganizationServiceException | NumberFormatException e) {
+                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_ORGID_PARAMETER_MESSAGE, factory.getOrgid()));
             }
-            throw new FactoryUrlException("Parameter orgid is invalid.");
         }
 
-        String pname;
-        if (factoryUrl.getProjectattributes() != null && (pname = factoryUrl.getProjectattributes().getPname()) != null) {
-            if (!PROJECT_NAME_VALIDATOR.matcher(pname).matches()) {
-                throw new FactoryUrlException(
-                        "Project name must contain only Latin letters, digits or these following special characters -._.");
+        // validate tracked parameters
+        Restriction restriction = factory.getRestriction();
+        if (restriction != null) {
+            if (0 != restriction.getValidsince()) {
+                if (null == orgid) {
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "validsince", null));
+                }
+
+                if (new Date().before(new Date(restriction.getValidsince()))) {
+                    throw new FactoryUrlException(ILLEGAL_VALIDSINCE_MESSAGE);
+                }
+            }
+
+            if (0 != restriction.getValiduntil()) {
+                if (null == orgid) {
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "validuntil", null));
+                }
+
+                if (new Date().after(new Date(restriction.getValiduntil()))) {
+                    throw new FactoryUrlException(ILLEGAL_VALIDUNTIL_MESSAGE);
+                }
+            }
+
+            if (null != restriction.getRefererhostname()) {
+                if (null == orgid) {
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "refererhostname", null));
+                }
+
+                String host = null;
+                if (null != request.getHeader("Referer")) {
+                    try {
+                        URI referer = new URI(request.getHeader("Referer"));
+
+                        // relative url
+                        if (null == referer.getHost()) {
+                            host = request.getServerName();
+                        } else {
+                            host = referer.getHost();
+                        }
+                    } catch (URISyntaxException ignored) {
+                    }
+                }
+
+                if (!restriction.getRefererhostname().equals(host)) {
+                    throw new FactoryUrlException(ILLEGAL_HOSTNAME_MESSAGE);
+                }
+            }
+
+            if (restriction.getRestrictbypassword()) {
+                if (null == orgid) {
+                    throw new FactoryUrlException(
+                            String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "restrictbypassword", null));
+                }
+
+                // TODO implement
+            }
+
+            if (null != restriction.getPassword()) {
+                if (null == orgid) {
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "password", null));
+                }
+
+                // TODO implement
+            }
+
+            if (0 != restriction.getMaxsessioncount()) {
+                if (null == orgid) {
+                    throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "maxsessioncount", null));
+                }
+
+                // TODO implement
+            }
+        }
+
+        if (null != factory.getWelcome()) {
+            if (null == orgid) {
+                throw new FactoryUrlException(String.format(PARAMETRIZED_ILLEGAL_TRACKED_PARAMETER_MESSAGE, "welcome", null));
             }
         }
     }

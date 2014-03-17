@@ -17,31 +17,40 @@
  */
 package com.codenvy.factory;
 
-import com.codenvy.api.factory.*;
-import com.codenvy.api.factory.dto.*;
+import com.codenvy.api.factory.FactoryBuilder;
+import com.codenvy.api.factory.FactoryUrlException;
 import com.codenvy.api.factory.dto.Factory;
+import com.codenvy.api.factory.dto.*;
 import com.codenvy.dto.server.DtoFactory;
 import com.codenvy.organization.client.AccountManager;
 import com.codenvy.organization.client.UserManager;
 import com.codenvy.organization.exception.AccountExistenceException;
 import com.codenvy.organization.exception.OrganizationServiceException;
-import com.codenvy.organization.model.Account;
+import com.codenvy.organization.model.*;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.fail;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class FactoryUrlBaseValidatorTest {
+    private static String TF_PARAMETER_WITHOUT_ORGID_MESSAGE =
+            "You have provided a Tracked Factory parameter %s, and you do not have a valid orgId %s. You could have provided the wrong code, your subscription has expired, or you do not have a valid subscription account. Please contact info@codenvy.com with any questions.";
+
     private static String VALID_REPOSITORY_URL = "http://github.com/codenvy/cloudide";
 
     private static final String ID = "id";
@@ -58,6 +67,9 @@ public class FactoryUrlBaseValidatorTest {
     @Mock
     private FactoryBuilder builder;
 
+    @Mock
+    private HttpServletRequest request;
+
     @InjectMocks
     private FactoryUrlBaseValidator validator;
 
@@ -71,30 +83,25 @@ public class FactoryUrlBaseValidatorTest {
         nonencoded.setV("1.2");
         nonencoded.setVcs("git");
         nonencoded.setVcsurl(VALID_REPOSITORY_URL);
-        nonencoded.setVcsinfo(false);
         url = nonencoded;
 
         datetimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         datetimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountDoesNotExist() throws OrganizationServiceException, FactoryUrlException {
-        // given
-        url.setOrgid(ID);
-        doThrow(new AccountExistenceException()).when(accountManager).getAccountById(ID);
-
-        // when, then
-        validator.validateObject(url, false);
+    @Test
+    public void shouldBeAbleToValidateFactoryUrlObject() throws FactoryUrlException {
+        validator.validateObject(url, false, request);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
+
+    @Test(expectedExceptions = FactoryUrlException.class, expectedExceptionsMessageRegExp = "Parameter 'vcsurl' has illegal value.")
     public void shouldNotValidateIfVcsurlContainIncorrectEncodedSymbol() throws FactoryUrlException {
         // given
         url.setVcsurl("http://codenvy.com/git/04%2");
 
         // when, then
-        validator.validateObject(url, false);
+        validator.validateObject(url, false, request);
     }
 
     @Test
@@ -103,7 +110,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("ssh://codenvy@review.gerrithub.io:29418/codenvy/exampleProject");
 
         // when, then
-        validator.validateObject(url, false);
+        validator.validateObject(url, false, request);
     }
 
     @Test
@@ -112,68 +119,46 @@ public class FactoryUrlBaseValidatorTest {
         url.setVcsurl("https://github.com/codenvy/example.git");
 
         // when, then
-        validator.validateObject(url, false);
+        validator.validateObject(url, false, request);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountHasNoCertainProperty() throws OrganizationServiceException, FactoryUrlException {
-        // given
-        url.setOrgid(ID);
-        when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn(null);
-        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
-
-        // when, then
-        validator.validateObject(url, false);
+    @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfVcsOrVcsUrlIsInvalid(Factory factoryUrl) throws FactoryUrlException {
+        validator.validateObject(factoryUrl, false, request);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfAccountHasIllegalTariffPlan() throws OrganizationServiceException, FactoryUrlException, ParseException {
-        // given
-        url.setOrgid(ID);
-        when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2050-11-21 11:11:11").getTime()));
-        when(account.getAttribute("tariff_plan")).thenReturn("Personal Premium");
+    @DataProvider(name = "badAdvancedFactoryUrlProvider")
+    public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
+        Factory adv1 = DtoFactory.getInstance().createDto(Factory.class);
+        adv1.setV("1.1");
+        adv1.setVcs("notagit");
+        adv1.setVcsurl(VALID_REPOSITORY_URL);
 
-        // when, then
-        validator.validateObject(url, false);
+        Factory adv2 = DtoFactory.getInstance().createDto(Factory.class);
+        adv2.setV("1.1");
+        adv2.setVcs("git");
+        adv2.setVcsurl(null);
+
+        Factory adv3 = DtoFactory.getInstance().createDto(Factory.class);
+        adv3.setV("1.1");
+        adv3.setVcs("git");
+        adv3.setVcsurl("");
+
+        return new Object[][]{
+                {adv1},// invalid vcs
+                {adv2},// invalid vcsurl
+                {adv3}// invalid vcsurl
+        };
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfTariffEndTimePropertyHasIllegalFormat()
-            throws OrganizationServiceException, FactoryUrlException, ParseException {
+    @Test(dataProvider = "invalidProjectNamesProvider", expectedExceptions = FactoryUrlException.class,
+          expectedExceptionsMessageRegExp = "Project name must contain only Latin letters, digits or these following special characters -._.")
+    public void shouldThrowFactoryUrlExceptionIfProjectNameInvalid(String projectName) throws Exception {
         // given
-        url.setOrgid(ID);
-        when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn("smth");
-        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+        url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
 
         // when, then
-        validator.validateObject(url, false);
-    }
-
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfOrgIdExpires() throws OrganizationServiceException, FactoryUrlException, ParseException {
-        // given
-        url.setOrgid(ID);
-        when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2012-11-30 11:21:15").getTime()));
-        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
-
-        // when, then
-        validator.validateObject(url, false);
-    }
-
-    @Test
-    public void shouldBeAbleToValidateIfOrgIdIsValid() throws OrganizationServiceException, FactoryUrlException, ParseException {
-        // given
-        url.setOrgid(ID);
-        when(accountManager.getAccountById(ID)).thenReturn(account);
-        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
-        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
-
-        // when, then
-        validator.validateObject(url, false);
+        validator.validateObject(url, false, request);
     }
 
     @Test(dataProvider = "validProjectNamesProvider")
@@ -182,16 +167,7 @@ public class FactoryUrlBaseValidatorTest {
         url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
 
         // when, then
-        validator.validateObject(url, false);
-    }
-
-    @Test(dataProvider = "invalidProjectNamesProvider", expectedExceptions = FactoryUrlException.class)
-    public void shouldThrowFactoryUrlExceptionIfProjectNameInvalid(String projectName) throws Exception {
-        // given
-        url.setProjectattributes(DtoFactory.getInstance().createDto(ProjectAttributes.class).withPname(projectName));
-
-        // when, then
-        validator.validateObject(url, false);
+        validator.validateObject(url, false, request);
     }
 
     @DataProvider(name = "validProjectNamesProvider")
@@ -223,98 +199,245 @@ public class FactoryUrlBaseValidatorTest {
     }
 
     @Test
-    public void shouldBeAbleToValidateFactoryUrlObject() throws FactoryUrlException {
-        validator.validateObject(url, false);
-    }
-
-    @Test(dataProvider = "badAdvancedFactoryUrlProvider", expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateIfObjectInvalid(Factory factoryUrl) throws FactoryUrlException {
-        validator.validateObject(factoryUrl, false);
-    }
-
-    @DataProvider(name = "badAdvancedFactoryUrlProvider")
-    public Object[][] invalidParametersFactoryUrlProvider() throws UnsupportedEncodingException {
-        Factory adv1 = DtoFactory.getInstance().createDto(Factory.class);
-        adv1.setV("1.1");
-        adv1.setVcs("notagit");
-        adv1.setVcsurl(VALID_REPOSITORY_URL);
-        adv1.setCommitid("commit123456789");
-        adv1.setVcsinfo(false);
-        adv1.setVcsbranch("newBranch");
-
-        Factory adv2 = DtoFactory.getInstance().createDto(Factory.class);
-        adv2.setV("1.1");
-        adv2.setVcs("git");
-        adv2.setVcsurl(null);
-        adv2.setCommitid("commit123456789");
-        adv2.setVcsinfo(false);
-        adv2.setVcsbranch("newBranch");
-
-        Factory adv3 = DtoFactory.getInstance().createDto(Factory.class);
-        adv3.setV("1.1");
-        adv3.setVcs("git");
-        adv3.setVcsurl("");
-        adv3.setCommitid("commit123456789");
-        adv3.setVcsinfo(false);
-        adv3.setVcsbranch("newBranch");
-
-        return new Object[][]{
-                {adv1},// invalid vcs
-                {adv2},// invalid vcsurl
-                {adv3}// invalid vcsurl
-        };
-    }
-
-    @Test
-    public void shouldBeAbleToValidateEncodedFactoryUrlObjectWithWelcomePageIfOrgIdIsValid()
-            throws FactoryUrlException, OrganizationServiceException, ParseException {
+    public void shouldBeAbleToValidateIfOrgIdIsValid() throws OrganizationServiceException, FactoryUrlException, ParseException {
         // given
-        WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
-        WelcomeConfiguration conf1 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
-        WelcomeConfiguration conf2 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
-
-        conf1.setTitle("title");
-        conf1.setIconurl("http://codenvy.com/favicon.ico");
-        conf2.setTitle("title");
-        conf2.setIconurl("http://codenvy.com/favicon.ico");
-
-        welcome.setAuthenticated(conf1);
-        welcome.setNonauthenticated(conf2);
-
-        url.setWelcome(welcome);
         url.setOrgid(ID);
         when(accountManager.getAccountById(ID)).thenReturn(account);
         when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
         when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
-        validator.validateObject(url, true);
+        validator.validateObject(url, false, request);
     }
 
-    @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateEncodedFactoryUrlObjectWithWelcomePageIfOrgIdIsNull() throws FactoryUrlException {
+    @Test
+    public void shouldBeAbleToValidateIfOrgIdAndOwnerAreValid() throws OrganizationServiceException, FactoryUrlException, ParseException {
         // given
-        WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
-        WelcomeConfiguration conf1 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
-        WelcomeConfiguration conf2 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
-
-        conf1.setTitle("title");
-        conf1.setIconurl("http://codenvy.com/favicon.ico");
-        conf2.setTitle("title");
-        conf2.setIconurl("http://codenvy.com/favicon.ico");
-
-        welcome.setAuthenticated(conf1);
-        welcome.setNonauthenticated(conf2);
-
-        url.setWelcome(welcome);
-        url.setOrgid(null);
+        url.setOrgid(ID);
+        url.setUserid("userid");
+        User user = new User();
+        user.setId("userid");
+        when(userManager.getUserById("userid")).thenReturn(user);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getOwner()).thenReturn(new ItemReference("userid"));
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
 
         // when, then
-        validator.validateObject(url, true);
+        validator.validateObject(url, false, request);
     }
 
     @Test(expectedExceptions = FactoryUrlException.class)
-    public void shouldNotValidateEncodedFactoryUrlObjectWithWelcomePageIfOrgIdIsEmpty() throws FactoryUrlException {
+    public void shouldNotValidateIfAccountDoesNotExist() throws OrganizationServiceException, FactoryUrlException {
+        // given
+        url.setOrgid(ID);
+        doThrow(new AccountExistenceException()).when(accountManager).getAccountById(ID);
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class, expectedExceptionsMessageRegExp = "You are not authorized to use this orgid.")
+    public void shouldNotValidateIfFactoryOwnerIsNotOrgidOwner() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        url.setUserid("userid");
+        User user = new User();
+        user.setId("userid");
+        when(userManager.getUserById("userid")).thenReturn(user);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getOwner()).thenReturn(new ItemReference("anotheruserid"));
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfAccountHasNoCertainProperty() throws OrganizationServiceException, FactoryUrlException {
+        // given
+        url.setOrgid(ID);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(null);
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfAccountHasIllegalTariffPlan() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2050-11-21 11:11:11").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Personal Premium");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfTariffEndTimePropertyHasIllegalFormat()
+            throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn("smth");
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfOrgIdIsExpired() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2012-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test
+    public void shouldValidateIfCurrentDateIsAfterValidsince() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValidsince(new Date().getTime()));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfCurrentDateIsBeforeValidsince()
+            throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2015, 4, 1);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValidsince(calendar.getTimeInMillis()));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test
+    public void shouldValidateIfCurrentDateIsBeforeValidUntil() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2015, 4, 1);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValiduntil(calendar.getTimeInMillis()));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateIfCurrentDateIsAfterValidUntil() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withValiduntil(new Date().getTime() - 1));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test
+    public void shouldValidateIfHostNameIsLegal() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+        when(request.getHeader("Referer")).thenReturn("http://notcodenvy.com/factories-examples");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test
+    public void shouldValidateIfRefererIsRelativeAndCurrentHostnameIsEqualToRequiredHostName()
+            throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("next.codenvy.com"));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+        when(request.getHeader("Referer")).thenReturn("/factories-examples");
+        when(request.getServerName()).thenReturn("next.codenvy.com");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class,
+          expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
+    public void shouldNotValidateIfRefererIsEmpty() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+        when(request.getHeader("Referer")).thenReturn(null);
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class,
+          expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
+    public void shouldNotValidateIfRefererIsNotEqualToHostName() throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+        when(request.getHeader("Referer")).thenReturn("http://codenvy.com/factories-examples");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class,
+          expectedExceptionsMessageRegExp = "This Factory has its access restricted by certain hostname. Your client does not match the specified policy. Please contact the owner of this Factory for more information.")
+    public void shouldNotValidateIfRefererIsRelativeUrlAndCurrentHostnameIsNotEqualToRequired()
+            throws OrganizationServiceException, FactoryUrlException, ParseException {
+        // given
+        url.setOrgid(ID);
+        url.setRestriction(DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("notcodenvy.com"));
+        when(accountManager.getAccountById(ID)).thenReturn(account);
+        when(account.getAttribute("tariff_end_time")).thenReturn(Long.toString(datetimeFormatter.parse("2022-11-30 11:21:15").getTime()));
+        when(account.getAttribute("tariff_plan")).thenReturn("Managed Factory");
+        when(request.getHeader("Referer")).thenReturn("/factories-examples");
+
+        // when, then
+        validator.validateObject(url, false, request);
+    }
+
+    @Test(expectedExceptions = FactoryUrlException.class)
+    public void shouldNotValidateEncodedFactoryWithWelcomePageIfOrgIdIsEmpty() throws FactoryUrlException {
         // given
         WelcomePage welcome = DtoFactory.getInstance().createDto(WelcomePage.class);
         WelcomeConfiguration conf1 = DtoFactory.getInstance().createDto(WelcomeConfiguration.class);
@@ -332,6 +455,43 @@ public class FactoryUrlBaseValidatorTest {
         url.setOrgid("");
 
         // when, then
-        validator.validateObject(url, true);
+        validator.validateObject(url, true, request);
+    }
+
+    @Test(dataProvider = "trackedFactoryParametersProvider")
+    public <T> void shouldNotValidateIfThereIsTrackedOnlyParameterAndOrgidIsNull(String methodName, T arg, Class<T> argClass,
+                                                                                 String parameter)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        // given
+        Factory.class.getMethod(methodName, argClass).invoke(url, arg);
+
+        // when
+        try {
+            validator.validateObject(url, false, request);
+        } catch (FactoryUrlException e) {
+            // then
+            if (!String.format(TF_PARAMETER_WITHOUT_ORGID_MESSAGE, parameter, null).equals(e.getLocalizedMessage())) {
+                fail();
+            }
+        }
+    }
+
+    @DataProvider(name = "trackedFactoryParametersProvider")
+    public static Object[][] trackedFactoryParametersProvider() throws URISyntaxException, IOException, NoSuchMethodException {
+        return new Object[][]{
+                {"setWelcome", DtoFactory.getInstance().createDto(WelcomePage.class), WelcomePage.class, "welcome"},
+                {"setRestriction", DtoFactory.getInstance().createDto(Restriction.class).withValidsince(123456), Restriction.class,
+                 "validsince"},
+                {"setRestriction", DtoFactory.getInstance().createDto(Restriction.class).withValiduntil(123456798), Restriction.class,
+                 "validuntil"},
+                {"setRestriction", DtoFactory.getInstance().createDto(Restriction.class).withPassword("123456"), Restriction.class,
+                 "password"},
+                {"setRestriction", DtoFactory.getInstance().createDto(Restriction.class).withMaxsessioncount(1234), Restriction.class,
+                 "maxsessioncount"},
+                {"setRestriction", DtoFactory.getInstance().createDto(Restriction.class).withRefererhostname("host"), Restriction.class,
+                 "refererhostname"},
+                {"setRestriction", DtoFactory.getInstance().createDto(Restriction.class).withRestrictbypassword(true), Restriction.class,
+                 "restrictbypassword"}
+        };
     }
 }
